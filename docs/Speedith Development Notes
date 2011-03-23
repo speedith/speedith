@@ -1,0 +1,28 @@
+*** Building & Developing
+
+The easiest way to build and develop Speedith is to install the NetBeans IDE:
+
+    http://netbeans.org/
+
+Or just download the Java SE version of NetBeans from here (make sure that you
+have the JDK installed):
+
+    http://netbeans.org/downloads/index.html
+
+
+
+*** Dependencies
+
+Right now Speedith depends on the following libraries:
+
+    * iCircles (Inductive Circles), found here:
+
+        http://git.gitorious.org/speedith/inductive_circles.git
+
+    * Apache Commons CLI (Jakarta CLI), found here:
+
+        http://commons.apache.org/cli/
+
+    * ANTLRv3, found here:
+    
+        http://www.antlr.org/
