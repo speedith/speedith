@@ -1,13 +1,17 @@
 *** Building & Developing
 
-The easiest way to build and develop Speedith is to install the NetBeans IDE:
+The easiest way to build and develop Speedith is to install either
+Eclipse or the NetBeans IDEs:
 
-    http://netbeans.org/
+    http://www.eclipse.org/downloads/
 
-Or just download the Java SE version of NetBeans from here (make sure that you
-have the JDK installed):
+    http://netbeans.org/downloads/
 
-    http://netbeans.org/downloads/index.html
+Download one of the following:
+
+    * the Eclipse IDE for Java Developers, or
+
+    * the Java SE version of NetBeans.
 
 
 
