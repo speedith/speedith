@@ -1,5 +1,13 @@
 grammar SpiderDiagrams;
 
+@header {
+package speedith.lang.parser;
+}
+
+@lexer::header {
+package speedith.lang.parser;
+}
+
 
 
 
@@ -12,15 +20,39 @@ grammar SpiderDiagrams;
 spiderDiagram
 	:	unitarySD
 	|	compoundSD
-	|	'NullSD'
+	|	nullSD
+	;
+
+nullSD
+	:	'NullSD' (attributes)?
 	;
 
 unitarySD
-	:	'UnitarySD' habitats shadedZones
+	:	'UnitarySD' habitats shadedZones (attributes)? (spiderNames)?
+	;
+
+attributes
+	:	'Attributes' keyValues
+	;
+
+keyValues
+	:	'{' (keyValue (',' keyValue)*)? '}'
+	;
+
+keyValue
+	:	ID '=' STRING
+	;
+
+spiderNames
+	:	'SpiderNames' stringList
+	;
+
+stringList
+	:	'[' (STRING (',' STRING)*)? ']'
 	;
 
 compoundSD
-	:	ID unitarySD unitarySD
+	:	ID unitarySD unitarySD (attributes)?
 	;
 
 shadedZones
@@ -49,6 +81,34 @@ habitats
 /*******************************************************************************
 								  Lexer section
 *******************************************************************************/
+
+STRING
+	:	'"' ( ESC_SEQ | ~('\\'|'"') )* '"'
+	;
+
+fragment
+HEX_DIGIT
+	:	('0'..'9'|'a'..'f'|'A'..'F')
+	;
+
+fragment
+ESC_SEQ
+	:	'\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\')
+	|	UNICODE_ESC
+	|	OCTAL_ESC
+	;
+
+fragment
+OCTAL_ESC
+	:	'\\' ('0'..'3') ('0'..'7') ('0'..'7')
+	|	'\\' ('0'..'7') ('0'..'7')
+	|	'\\' ('0'..'7')
+	;
+
+fragment
+UNICODE_ESC
+	:	'\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+	;
 
 ID
 	:	IdentifierStart IdentifierPart*

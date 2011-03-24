@@ -28,7 +28,8 @@
 package speedith.lang;
 
 /**
- * Represents an empty spider diagram (it evaluates to {@code true}).
+ * Represents an empty spider diagram (it is a tautology and evaluates to '⊤' or
+ * {@code true}).
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class NullSpiderDiagram {
