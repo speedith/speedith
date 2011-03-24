@@ -8,6 +8,7 @@ grammar SpiderDiagrams;
 ********************************************************************************/
 
 
+/* Entry. */
 spiderDiagram
 	:	unitarySD
 	|	compoundSD

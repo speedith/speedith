@@ -71,4 +71,33 @@
     nbproject/build-impl.xml file. 
 
     -->
+    <target name="-pre-compile">
+        <antcall target="-compile-speedith-grammar" />
+    </target>
+
+    <target name="-post-clean">
+        <antcall target="-clean-speedith-grammar" />
+    </target>
+
+
+
+    <!-- =======================================================================
+            Grammar Compilation Target
+    ======================================================================== -->
+    <target name="-check-grammar-uptodate">
+        <uptodate property="speedith.grammar.isUptodate" srcfile="${speedith.grammar}.g" targetfile="${speedith.grammar}Parser.java" />
+    </target>
+
+    <target name="-compile-speedith-grammar" depends="-check-grammar-uptodate" unless="speedith.grammar.isUptodate">
+        <echo message="Compiling the speedith grammar: ${speedith.grammar}.g"/>
+        <exec executable="antlr3">
+            <arg value="${speedith.grammar}.g"/>
+        </exec>
+    </target>
+
+    <target name="-clean-speedith-grammar">
+        <delete file="${speedith.grammar}Parser.java"/>
+        <delete file="${speedith.grammar}Lexer.java"/>
+    </target>
+    
 </project>
