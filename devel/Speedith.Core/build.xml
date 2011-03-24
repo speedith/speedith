@@ -93,6 +93,8 @@
         <exec executable="antlr3">
             <arg value="${speedith.grammar}.g"/>
         </exec>
+        <basename file="${speedith.grammar}.tokens" property="speedith.grammar.tokensFile" />
+        <delete file="${speedith.grammar.tokensFile}"/>
     </target>
 
     <target name="-clean-speedith-grammar">
