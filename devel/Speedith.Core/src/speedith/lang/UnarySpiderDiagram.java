@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: UnitarySpiderDiagram.java
+ * File name: BinarySpiderDiagram.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2010 Matej Urbas
@@ -28,11 +28,10 @@
 package speedith.lang;
 
 /**
- * Represents a unitary spider diagram.
- * <p>It contains all information about the habitats of spiders, shaded zones,
- * contour names, zones etc.</p>
+ * A compound spider diagram that applies one spider diagram to a unary
+ * operator (e.g.: negation '¬').
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class UnitarySpiderDiagram extends SpiderDiagram {
+public class UnarySpiderDiagram extends SpiderDiagram {
 
 }

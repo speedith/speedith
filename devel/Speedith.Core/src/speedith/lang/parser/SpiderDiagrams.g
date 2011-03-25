@@ -17,70 +17,58 @@ package speedith.lang.parser;
 
 
 /* Entry. */
+start
+	:	spiderDiagram
+	;
+
 spiderDiagram
-	:	unitarySD
-	|	compoundSD
-	|	nullSD
-	;
-
-nullSD
-	:	'NullSD' (attributes)?
-	;
-
-unitarySD
-	:	'UnitarySD' habitats shadedZones (attributes)? (spiderNames)?
-	;
-
-attributes
-	:	'Attributes' keyValues
+	:	'PrimarySD' keyValues
+	|	'UnarySD' keyValues
+	|	'BinarySD' keyValues
+	|	'NullSD' keyValues
 	;
 
 keyValues
 	:	'{' (keyValue (',' keyValue)*)? '}'
 	;
 
+list
+	:	'[' (languageElement (',' languageElement)*)? ']'
+	;
+	
+sortedList
+	:	'(' (languageElement (',' languageElement)*)? ')'
+	;
+
 keyValue
-	:	ID '=' STRING
+	:	ID '=' languageElement
 	;
 
-spiderNames
-	:	'SpiderNames' stringList
+languageElement
+	:	STRING
+	|	keyValues
+	|	list
+	|	sortedList
+	|	spiderDiagram
 	;
-
-stringList
-	:	'[' (STRING (',' STRING)*)? ']'
-	;
-
-compoundSD
-	:	ID unitarySD unitarySD (attributes)?
-	;
-
-shadedZones
-	:	'{' (zone (',' zone)*)? '}'
-	;
-
-region
-	:	'{' (zone (',' zone)*)? '}'
-	;
-
-zone
-	:	'(' setSet ',' setSet ')'
-	;
-
-setSet
-	:	'{' (ID (',' ID)*)? '}'
-	;
-
-habitats
-	:	'[' (region (',' region)*)? ']'
-	;
-
 
 
 
 /*******************************************************************************
 								  Lexer section
 *******************************************************************************/
+
+COMMENT
+    :   '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
+    |   '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;}
+    ;
+
+WS  :   ( ' '
+        | '\t'
+        | '\r'
+        | '\n'
+        ) {$channel=HIDDEN;}
+    ;
 
 STRING
 	:	'"' ( ESC_SEQ | ~('\\'|'"') )* '"'

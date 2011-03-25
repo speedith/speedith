@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: CompoundSpiderDiagram.java
+ * File name: BinarySpiderDiagram.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2010 Matej Urbas
@@ -33,6 +33,6 @@ package speedith.lang;
  * '¬', etc.).
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class CompoundSpiderDiagram extends SpiderDiagram {
+public class BinarySpiderDiagram extends SpiderDiagram {
 
 }
