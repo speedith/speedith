@@ -1,6 +1,20 @@
 grammar SpiderDiagrams;
 
-@header {
+options {
+	output=AST;
+	ASTLabelType=CommonTree;
+}
+
+/* These tokens are used simply as indicator 'head' nodes in the generated AST
+tree. */
+tokens {
+	DICT;		// The 'dictionary' node in the generated AST (contains KEY_VALUE nodes).
+	PAIR;		// The 'key value' node in the AST.
+	LIST;		// The 'list' node (contains comma separated elements enclosed in block braces '[' and ']').
+	SLIST;		// The 'sorted list' node (contains comma separated elements enclosed in parentheses '(' and ')').
+}
+
+@parser::header {
 package speedith.lang.parser;
 }
 
@@ -22,26 +36,27 @@ start
 	;
 
 spiderDiagram
-	:	'PrimarySD' keyValues
-	|	'UnarySD' keyValues
-	|	'BinarySD' keyValues
-	|	'NullSD' keyValues
+	:	('PrimarySD' | 'UnarySD' | 'BinarySD' | 'NullSD')^ keyValues
 	;
 
 keyValues
 	:	'{' (keyValue (',' keyValue)*)? '}'
+		->	 ^(DICT keyValue*)
 	;
 
 list
 	:	'[' (languageElement (',' languageElement)*)? ']'
+		->	^(LIST languageElement*)
 	;
 	
 sortedList
 	:	'(' (languageElement (',' languageElement)*)? ')'
+		->	^(SLIST languageElement*)
 	;
 
 keyValue
 	:	ID '=' languageElement
+		->	^(PAIR ID languageElement)
 	;
 
 languageElement
