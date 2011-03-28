@@ -12,6 +12,10 @@ tokens {
 	PAIR;		// The 'key value' node in the AST.
 	LIST;		// The 'list' node (contains comma separated elements enclosed in block braces '[' and ']').
 	SLIST;		// The 'sorted list' node (contains comma separated elements enclosed in parentheses '(' and ')').
+	SD_PRIMARY;	// The 'primary spider diagram'.
+	SD_BINARY;	// The 'binar spider diagram'.
+	SD_UNARY;	// The 'unary spider diagram'.
+	SD_NULL;	// The 'null spider diagram'.
 }
 
 @parser::header {
@@ -36,7 +40,14 @@ start
 	;
 
 spiderDiagram
-	:	('PrimarySD' | 'UnarySD' | 'BinarySD' | 'NullSD')^ keyValues
+	:	'PrimarySD' '{' (keyValue (',' keyValue)*)? '}'
+		->	^(SD_PRIMARY keyValue*)
+	|	'UnarySD' '{' (keyValue (',' keyValue)*)? '}'
+		->	^(SD_UNARY keyValue*)
+	|	'BinarySD' '{' (keyValue (',' keyValue)*)? '}'
+		->	^(SD_BINARY keyValue*)
+	|	'NullSD' '{' (keyValue (',' keyValue)*)? '}'
+		->	^(SD_NULL keyValue*)
 	;
 
 keyValues
