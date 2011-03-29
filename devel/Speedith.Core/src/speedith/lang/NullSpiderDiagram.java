@@ -24,14 +24,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package speedith.lang;
 
 /**
  * Represents an empty spider diagram (it is a tautology and evaluates to '⊤' or
  * {@code true}).
+ * <p>This class is a singleton. To get the only instance of the {@link
+ * NullSpiderDiagram} use the {@link NullSpiderDiagram#getInstance()} method.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class NullSpiderDiagram {
 
+    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+    /**
+     * Returns the only instance of the null spider diagram.
+     * @return the only instance of the null spider diagram.
+     */
+    public static NullSpiderDiagram getInstance() {
+        return SingletonHolder.Instance;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="The Singleton Holder Class">
+    private static class SingletonHolder {
+        public static final NullSpiderDiagram Instance = new NullSpiderDiagram();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Private Constructor">
+    private NullSpiderDiagram() {
+    }
+    // </editor-fold>
 }

@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: BinarySpiderDiagram.java
+ * File name: UnarySpiderDiagram.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2010 Matej Urbas
@@ -34,4 +34,53 @@ package speedith.lang;
  */
 public class UnarySpiderDiagram extends SpiderDiagram {
 
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    /**
+     * The unary operator used in this unitary spider diagram (e.g.: negation
+     * '¬').
+     */
+    private String operator;
+    /**
+     * This is the operand of the unary operation.
+     */
+    private SpiderDiagram operand;
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Constructors">
+    /**
+     * Initialises a new unary spider diagram.
+     * @param operator the {@link UnarySpiderDiagram#getOperator() unary
+     * operator} that operates over the single
+     * {@link UnarySpiderDiagram#getOperand() operand} of this unary spider
+     * diagram.
+     * @param operand the {@link UnarySpiderDiagram#getOperand() operand}
+     * to the {@link UnarySpiderDiagram#getOperator() unary operator}.
+     */
+    public UnarySpiderDiagram(String operator, SpiderDiagram operand) {
+        this.operator = operator;
+        this.operand = operand;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Public Properties">
+    /**
+     * Returns the unary operator that binds the {@link UnarySpiderDiagram#getOperand() operand}
+     * in this unary spider diagram.
+     * @return the unary operator that binds the {@link UnarySpiderDiagram#getOperand() operand}
+     * in this unary spider diagram.
+     */
+    public String getOperator() {
+        return operator;
+    }
+
+    /**
+     * Returns the only operand of the {@link UnarySpiderDiagram#getOperator()
+     * unary operator} in this unary spider diagram.
+     * @return the only operand of the {@link UnarySpiderDiagram#getOperator()
+     * unary operator} in this unary spider diagram.
+     */
+    public SpiderDiagram getOperand() {
+        return operand;
+    }
+    // </editor-fold>
 }
