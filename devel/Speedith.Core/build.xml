@@ -86,10 +86,7 @@
     ======================================================================== -->
     <target name="-check-grammar-uptodate">
         <condition property="speedith.grammar.isUptodate">
-            <and>
-                <uptodate srcfile="${speedith.grammar}.g" targetfile="${speedith.grammar}Parser.java" />
-                <uptodate srcfile="${speedith.grammar}TG.g" targetfile="${speedith.grammar}TG.java" />
-            </and>
+            <uptodate srcfile="${speedith.grammar}.g" targetfile="${speedith.grammar}Parser.java" />
         </condition>
     </target>
 
@@ -97,18 +94,14 @@
         <echo message="Compiling the speedith grammar: ${speedith.grammar}.g"/>
         <exec executable="antlr3">
             <arg value="${speedith.grammar}.g"/>
-            <arg value="${speedith.grammar}TG.g"/>
         </exec>
         <basename file="${speedith.grammar}.tokens" property="speedith.grammar.tokensFile" />
-        <basename file="${speedith.grammar}TG.tokens" property="speedith.grammar.tgTokensFile" />
         <delete file="${speedith.grammar.tokensFile}"/>
-        <delete file="${speedith.grammar.tgTokensFile}"/>
     </target>
 
     <target name="-clean-speedith-grammar">
         <delete file="${speedith.grammar}Parser.java"/>
         <delete file="${speedith.grammar}Lexer.java"/>
-        <delete file="${speedith.grammar}TG.java"/>
         <delete dir="${src.dir}/speedith/lang/parser/output" />
     </target>
     
