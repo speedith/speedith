@@ -37,7 +37,7 @@ import java.util.TreeSet;
  * {@link Region#getZones() a set of zones} which constitute it.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-class Region {
+public class Region {
 
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
     private TreeSet<Zone> zones;
