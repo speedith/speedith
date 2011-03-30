@@ -27,7 +27,6 @@
 
 package speedith.core.lang.parser;
 
-import speedith.core.lang.parser.SpiderDiagramsLexer;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.junit.After;
@@ -64,6 +63,7 @@ public class SpiderDiagramsParserTest {
 
     /**
      * Test of spiderDiagram method, of class SpiderDiagramsParser.
+     * @throws Exception 
      */
     @Test
     public void testSpiderDiagram() throws Exception {

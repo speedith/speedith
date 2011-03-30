@@ -29,6 +29,7 @@ package speedith.core.util;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.SortedSet;
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * Provides some utility functions for sorted sets (e.g.:
@@ -41,35 +42,43 @@ public final class SortedSets {
     // <editor-fold defaultstate="collapsed" desc="Public Static Methods">
     /**
      * Compares the elements in the two sorted sets lexicographically (pair by
-     * pair) and returns:
+     * pair in the order they appear in the set via the sets' iterators) and
+     * returns:
      * <ul>
-     *   <li> {@code -1} when the smaller element in the first non-equal pair is
-     *        from the first set, or when the first set is the head of the
-     *        second set (i.e.: its subset).</li>
+     *   <li> {@code -1} if either of the two is true:
+     *      <ul>
+     *          <li>the first set contains the first such element that is
+     *          smaller when compared to the element of the second set (at the
+     *          same position).</li>
+     *          <li>if the first set is contained entirely in the second set and
+     *          the second set contains only larger elements.</li>
+     *      </ul>
      *   <li> {@code 0} when the two sets are equal, if both are null or empty,
-     *        or if one of them is null and the other is empty).</li>
+     *        or if one of them is null and the other is empty.</li>
      *   <li> {@code 1} otherwise.</li>
      * </ul>
-     * <p>Note: if one of the sets is {@code null}, it will be considered as
-     * an empty set (an empty set equals to a {@code null} set, and it is also
-     * smaller than any non-empty set).</p>
-     * <p>Important: the comparator used will be the one given by the sorted
-     * sets (provided both are the same). If these comparators are not the same,
-     * an {@link IllegalArgumentException} exception will be thrown. If the
-     * sets do not provide comparators, this
-     * method will try to cast the separate elements to {@link Comparable} and
-     * compare them via the {@link Comparable#compareTo(java.lang.Object)
-     * compareTo} method (which will throw a {@link java.lang.ClassCastException}
-     * if the elements do not implement the {@link Comparable} interface).</p>
+     * <p>Note: if one of the sets is {@code null}, it will be treated as
+     * an empty set (a {@code null} set thus equals to the empty set, and it is
+     * in effect smaller than any non-empty set).</p>
+     * <p>Important: this method uses the comparators of the given sets. If the
+     * comparators of the two given sets are not the same, or if none of the
+     * sets provide any comparators, an {@link IllegalArgumentException}
+     * exception will be thrown.</p>
      * @param <E> the type of the elements in the set.
      * @param s1 the first set.
      * @param s2 the second set.
      * @return one of the following:
      * <ul>
-     *   <li> {@code -1} when the smaller element in the first non-equal pair is
-     *        from the first set, or when the first set is the head of the
-     *        second set (i.e.: its subset).</li>
-     *   <li> {@code 0} when the two sets are equal.</li>
+     *   <li> {@code -1} if either of the two is true:
+     *      <ul>
+     *          <li>the first set contains the first such element that is
+     *          smaller when compared to the element of the second set (at the
+     *          same position).</li>
+     *          <li>if the first set is contained entirely in the second set and
+     *          the second set contains only larger elements.</li>
+     *      </ul>
+     *   <li> {@code 0} when the two sets are equal, if both are null or empty,
+     *        or if one of them is null and the other is empty.</li>
      *   <li> {@code 1} otherwise.</li>
      * </ul>
      */
@@ -91,15 +100,67 @@ public final class SortedSets {
             if (s2.comparator() != comparator) {
                 // Both of the sets provide comparators, but the two comparators
                 // are not the same. This is an illegal situation.
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException(i18n("ERR_SORTED_SETS_COMPARATORS_DIFFER"));
             } else if (comparator == null) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException(i18n("ERR_SORTED_SETS_NO_COMPARATOR"));
             }
+            // Use natural ordering
+            Iterator<E> i1 = s1.iterator(),
+                    i2 = s2.iterator();
+            // Start the comparison
+            while (i1.hasNext() && i2.hasNext()) {
+                E el1 = i1.next();
+                E el2 = i2.next();
+                int retVal = comparator.compare(el1, el2);
+                if (retVal != 0)
+                    return Integer.signum(retVal);
+            }
+            // Okay, if we reached this point, then the two sets share the same
+            // head and at least one of them has ended.
+            return i1.hasNext() ? 1 : (i2.hasNext() ? -1 : 0);
         }
-        // TODO: Do the comparison
-        return 0;
     }
 
+    /**
+     * Compares the elements in the two sorted sets lexicographically (pair by
+     * pair in the order they appear in the set via the sets' iterators) and
+     * returns:
+     * <ul>
+     *   <li> {@code -1} if either of the two is true:
+     *      <ul>
+     *          <li>the first set contains the first such element that is
+     *          smaller when compared to the element of the second set (at the
+     *          same position).</li>
+     *          <li>if the first set is contained entirely in the second set and
+     *          the second set contains only larger elements.</li>
+     *      </ul>
+     *   <li> {@code 0} when the two sets are equal, if both are null or empty,
+     *        or if one of them is null and the other is empty.</li>
+     *   <li> {@code 1} otherwise.</li>
+     * </ul>
+     * <p>Note: if one of the sets is {@code null}, it will be treated as
+     * an empty set (a {@code null} set thus equals to the empty set, and it is
+     * in effect smaller than any non-empty set).</p>
+     * <p>Important: this method uses the {@link Comparable} interface, which
+     * should be implemented by the elements of the two given sets.</p>
+     * @param <E> the type of the elements in the set.
+     * @param s1 the first set.
+     * @param s2 the second set.
+     * @return one of the following:
+     * <ul>
+     *   <li> {@code -1} if either of the two is true:
+     *      <ul>
+     *          <li>the first set contains the first such element that is
+     *          smaller when compared to the element of the second set (at the
+     *          same position).</li>
+     *          <li>if the first set is contained entirely in the second set and
+     *          the second set contains only larger elements.</li>
+     *      </ul>
+     *   <li> {@code 0} when the two sets are equal, if both are null or empty,
+     *        or if one of them is null and the other is empty.</li>
+     *   <li> {@code 1} otherwise.</li>
+     * </ul>
+     */
     public static <E extends Comparable<E>> int compareNaturally(SortedSet<E> s1, SortedSet<E> s2) {
         if (s1 == s2) {
             // The sets are the same.
@@ -113,13 +174,31 @@ public final class SortedSets {
             // first set (which we know is not empty)
             return 1;
         } else {
-            int retVal = 0;
             // Use natural ordering
             Iterator<E> i1 = s1.iterator(),
                     i2 = s2.iterator();
+            // Start the comparison
             while (i1.hasNext() && i2.hasNext()) {
+                E el1 = i1.next();
+                E el2 = i2.next();
+                // Compare the current two elements. If exactly one of them is
+                // null, then use the other to compare them. If both are null,
+                // consider them the same.
+                if (el1 == null) {
+                    if (el2 != null) {
+                        int retVal = el2.compareTo(el1);
+                        if (retVal != 0)
+                            return Integer.signum(-retVal);
+                    }
+                } else if (el2 != null) {
+                    int retVal = el1.compareTo(el2);
+                    if (retVal != 0)
+                        return Integer.signum(retVal);
+                }
             }
-            return retVal;
+            // Okay, if we reached this point, then the two sets share the same
+            // head and at least one of them has ended.
+            return i1.hasNext() ? 1 : (i2.hasNext() ? -1 : 0);
         }
     }
     // </editor-fold>
