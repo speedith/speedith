@@ -24,18 +24,58 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package speedith.core.lang.reader;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.ANTLRReaderStream;
+import org.antlr.runtime.ANTLRStringStream;
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.lang.reader.SpiderDiagramsParser.spiderDiagram_return;
+import static speedith.core.i18n.Translations.i18n;
+
 /**
- * This class provides the functionality of reading textual representations of
- * spider diagrams and producing Java objects that represent the read spider
- * diagrams.
+ * This class provides static methods for reading spider diagrams (in a textual
+ * form) and from it producing corresponding Java objects (of type
+ * {@link SpiderDiagram}).
  * <p>The syntax of the textual representation of spider diagrams is specified
- * in the 'SpiderDiagrams.g' file (which generates the {@link SpiderDiagramsParser parser}
- * and the {@link SpiderDiagramsLexer lexer}).
+ * in the 'SpiderDiagrams.g' ANTLR file (which generates the
+ * {@link SpiderDiagramsParser parser} and the {@link SpiderDiagramsLexer
+ * lexer}).</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SpiderDiagramsReader {
 
+    public static SpiderDiagram readSpiderDiagram(String input) throws SpiderDiagramParseException {
+        return readSpiderDiagram(new ANTLRStringStream(input));
+    }
+
+    public static SpiderDiagram readSpiderDiagram(Reader reader) throws SpiderDiagramParseException, IOException {
+        return readSpiderDiagram(new ANTLRReaderStream(reader));
+    }
+
+    public static SpiderDiagram readSpiderDiagram(InputStream iStream) throws SpiderDiagramParseException, IOException {
+        return readSpiderDiagram(new ANTLRInputStream(iStream));
+    }
+
+    public static SpiderDiagram readSpiderDiagram(InputStream iStream, String encoding) throws SpiderDiagramParseException, IOException {
+        return readSpiderDiagram(new ANTLRInputStream(iStream, encoding));
+    }
+
+    private static SpiderDiagram readSpiderDiagram(CharStream chrStream) throws SpiderDiagramParseException {
+        SpiderDiagramsLexer lexer = new SpiderDiagramsLexer(chrStream);
+        SpiderDiagramsParser parser = new SpiderDiagramsParser(new CommonTokenStream(lexer));
+        try {
+            spiderDiagram_return spiderDiagram = parser.spiderDiagram();
+        } catch (RecognitionException ex) {
+            throw new SpiderDiagramParseException(i18n("ERR_PARSE_EXCEPTION"), ex);
+        }
+        throw new RuntimeException("Not implemented.");
+        // TODO: Implement.
+    }
 }

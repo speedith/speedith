@@ -40,8 +40,7 @@ import java.util.TreeSet;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class PrimarySpiderDiagram extends SpiderDiagram {
-    // TODO: Provide sets for spider names and shaded zones.
-    // TODO: Provide a hash table of spiders with their corresponding habitats.
+    // TODO: Comment the code.
     // TODO: Provide a way to easily extract names of contours (perhaps maintain
     // a set of contour names, which is filled when it is first accessed).
 
