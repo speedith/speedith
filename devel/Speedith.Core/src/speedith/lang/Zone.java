@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: PrimarySpiderDiagram.java
+ * File name: Zone.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2010 Matej Urbas
@@ -24,29 +24,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package speedith.lang;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 /**
- * Represents a unitary spider diagram.
- * <p>It contains all necessary information about the habitats of spiders,
- * shaded zones, contour names, zones etc.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class PrimarySpiderDiagram extends SpiderDiagram {
-    // TODO: Provide sets for spider names and shaded zones.
-    // TODO: Provide a hash table of spiders with their corresponding habitats.
-    // TODO: Provide a way to easily extract names of contours (perhaps maintain
-    // a set of contour names, which is filled when it is first accessed).
-
+class Zone implements Comparable<Zone> {
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
-    private Set<String> spiders;
 
-    private Map<String, Region> habitats;
+    private TreeSet<String> inContours;
+    private TreeSet<String> outContours;
+    // </editor-fold>
 
-    private Set<Zone> shadedZones;
+    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+    public int compareTo(Zone o) {
+        if (o == null) {
+            throw new NullPointerException();
+        }
+        if (this == o) {
+            return 0;
+        } else {
+            int retVal = 0;
+            Iterator<String> i1 = inContours.iterator(),
+                    i2 = o.inContours.iterator();
+            return retVal;
+        }
+    }
     // </editor-fold>
 }
