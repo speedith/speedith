@@ -26,10 +26,8 @@
  */
 
 /**
- * Here one can find the basic data structures used to represent spider
- * diagrams.
- * <p>The most important class is {@link speedith.lang.SpiderDiagram
- * SpiderDiagram}. It it the base class of all the data structures which capture
- * particular spider diagrams.</p>
+ * This package contains the parser for the textual spider diagram notation
+ * (which is used to pass data to Speedith via the command line or through
+ * source files).
  */
-package speedith.lang;
+package speedith.core.lang.parser;

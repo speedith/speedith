@@ -24,7 +24,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.lang;
+package speedith.core.lang;
 
 /**
  * A compound spider diagram connects two spider diagrams with a binary

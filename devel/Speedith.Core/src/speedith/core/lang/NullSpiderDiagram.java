@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: PrimarySpiderDiagram.java
+ * File name: NullSpiderDiagram.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2010 Matej Urbas
@@ -24,29 +24,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-package speedith.lang;
-
-import java.util.Map;
-import java.util.Set;
+package speedith.core.lang;
 
 /**
- * Represents a unitary spider diagram.
- * <p>It contains all necessary information about the habitats of spiders,
- * shaded zones, contour names, zones etc.</p>
+ * Represents an empty spider diagram (it is a tautology and evaluates to '⊤' or
+ * {@code true}).
+ * <p>This class is a singleton. To get the only instance of the {@link
+ * NullSpiderDiagram} use the {@link NullSpiderDiagram#getInstance()} method.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class PrimarySpiderDiagram extends SpiderDiagram {
-    // TODO: Provide sets for spider names and shaded zones.
-    // TODO: Provide a hash table of spiders with their corresponding habitats.
-    // TODO: Provide a way to easily extract names of contours (perhaps maintain
-    // a set of contour names, which is filled when it is first accessed).
+public class NullSpiderDiagram {
 
-    // <editor-fold defaultstate="collapsed" desc="Private Fields">
-    private Set<String> spiders;
+    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+    /**
+     * Returns the only instance of the null spider diagram.
+     * @return the only instance of the null spider diagram.
+     */
+    public static NullSpiderDiagram getInstance() {
+        return SingletonHolder.Instance;
+    }
+    // </editor-fold>
 
-    private Map<String, Region> habitats;
+    // <editor-fold defaultstate="collapsed" desc="The Singleton Holder Class">
+    private static class SingletonHolder {
+        public static final NullSpiderDiagram Instance = new NullSpiderDiagram();
+    }
+    // </editor-fold>
 
-    private Set<Zone> shadedZones;
+    // <editor-fold defaultstate="collapsed" desc="Private Constructor">
+    private NullSpiderDiagram() {
+    }
     // </editor-fold>
 }

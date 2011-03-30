@@ -25,7 +25,7 @@
  * THE SOFTWARE.
  */
 
-package speedith.lang;
+package speedith.core.lang;
 
 /**
  * A compound spider diagram that applies one spider diagram to a unary

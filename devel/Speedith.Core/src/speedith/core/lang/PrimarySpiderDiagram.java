@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: SpiderDiagramsParserTest.java
+ * File name: PrimarySpiderDiagram.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2010 Matej Urbas
@@ -25,51 +25,28 @@
  * THE SOFTWARE.
  */
 
-package speedith.lang.parser;
+package speedith.core.lang;
 
-import org.antlr.runtime.ANTLRFileStream;
-import org.antlr.runtime.CommonTokenStream;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import speedith.lang.parser.SpiderDiagramsParser.spiderDiagram_return;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * JUnit 4.0 tester class for the spider diagrams parser.
+ * Represents a unitary spider diagram.
+ * <p>It contains all necessary information about the habitats of spiders,
+ * shaded zones, contour names, zones etc.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SpiderDiagramsParserTest {
+public class PrimarySpiderDiagram extends SpiderDiagram {
+    // TODO: Provide sets for spider names and shaded zones.
+    // TODO: Provide a hash table of spiders with their corresponding habitats.
+    // TODO: Provide a way to easily extract names of contours (perhaps maintain
+    // a set of contour names, which is filled when it is first accessed).
 
-    public SpiderDiagramsParserTest() {
-    }
+    // <editor-fold defaultstate="collapsed" desc="Private Fields">
+    private Set<String> spiders;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
+    private Map<String, Region> habitats;
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
-    /**
-     * Test of spiderDiagram method, of class SpiderDiagramsParser.
-     */
-    @Test
-    public void testSpiderDiagram() throws Exception {
-        SpiderDiagramsLexer lexer = new SpiderDiagramsLexer(new ANTLRFileStream("./test/speedith/lang/parser/ParserExample1.sd"));
-        SpiderDiagramsParser parser = new SpiderDiagramsParser(new CommonTokenStream(lexer));
-        spiderDiagram_return sd = parser.spiderDiagram();
-        System.out.println(sd.tree.toStringTree());
-    }
-
+    private Set<Zone> shadedZones;
+    // </editor-fold>
 }

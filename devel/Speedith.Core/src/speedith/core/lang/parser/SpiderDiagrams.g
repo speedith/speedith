@@ -19,11 +19,11 @@ tokens {
 }
 
 @parser::header {
-package speedith.lang.parser;
+package speedith.core.lang.parser;
 }
 
 @lexer::header {
-package speedith.lang.parser;
+package speedith.core.lang.parser;
 }
 
 

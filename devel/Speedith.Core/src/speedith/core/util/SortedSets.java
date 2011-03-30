@@ -24,9 +24,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.util;
+package speedith.core.util;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.SortedSet;
 
 /**
@@ -58,7 +59,8 @@ public final class SortedSets {
      * sets do not provide comparators, this
      * method will try to cast the separate elements to {@link Comparable} and
      * compare them via the {@link Comparable#compareTo(java.lang.Object)
-     * compareTo} method.</p>
+     * compareTo} method (which will throw a {@link java.lang.ClassCastException}
+     * if the elements do not implement the {@link Comparable} interface).</p>
      * @param <E> the type of the elements in the set.
      * @param s1 the first set.
      * @param s2 the second set.
@@ -72,27 +74,57 @@ public final class SortedSets {
      * </ul>
      */
     public static <E> int compare(SortedSet<E> s1, SortedSet<E> s2) {
-        if (s1 == null) {
+        if (s1 == s2) {
+            // The sets are the same.
+            return 0;
+        } else if (s1 == null || s1.isEmpty()) {
+            // If the first set is empty, then just check whether the second one
+            // is too, otherwise the second one will be invariably greater then.
             return (s2 == null || s2.isEmpty()) ? 0 : -1;
-        } else if (s2 == null) {
-            return s1.isEmpty() ? 0 : 1;
-        } else if (s1 == s2) {
-            return 0;
+        } else if (s2 == null || s2.isEmpty()) {
+            // If the second set is empty then it should compare lower to the
+            // first set (which we know is not empty)
+            return 1;
         } else {
+            // Neither of the sets is either null or empty. Compare them.
             Comparator<? super E> comparator = s1.comparator();
-            if (s2.comparator() != comparator)
+            if (s2.comparator() != comparator) {
+                // Both of the sets provide comparators, but the two comparators
+                // are not the same. This is an illegal situation.
                 throw new IllegalArgumentException();
-            if (comparator == null) {
-                // TODO: Use natural ordering
-            } else {
-                // TODO: Use the comparator
+            } else if (comparator == null) {
+                throw new IllegalArgumentException();
             }
+        }
+        // TODO: Do the comparison
+        return 0;
+    }
+
+    public static <E extends Comparable<E>> int compareNaturally(SortedSet<E> s1, SortedSet<E> s2) {
+        if (s1 == s2) {
+            // The sets are the same.
             return 0;
+        } else if (s1 == null || s1.isEmpty()) {
+            // If the first set is empty, then just check whether the second one
+            // is too, otherwise the second one will be invariably greater then.
+            return (s2 == null || s2.isEmpty()) ? 0 : -1;
+        } else if (s2 == null || s2.isEmpty()) {
+            // If the second set is empty then it should compare lower to the
+            // first set (which we know is not empty)
+            return 1;
+        } else {
+            int retVal = 0;
+            // Use natural ordering
+            Iterator<E> i1 = s1.iterator(),
+                    i2 = s2.iterator();
+            while (i1.hasNext() && i2.hasNext()) {
+            }
+            return retVal;
         }
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Hidden Constructor">
+    // <editor-fold defaultstate="collapsed" desc="Disabled Constructor">
     private SortedSets() {
     }
     // </editor-fold>

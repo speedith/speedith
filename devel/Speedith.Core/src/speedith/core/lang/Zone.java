@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: package-info.java
+ * File name: Zone.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2010 Matej Urbas
@@ -24,10 +24,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package speedith.core.lang;
+
+import java.util.Iterator;
+import java.util.TreeSet;
 
 /**
- * This package contains the parser for the textual spider diagram notation
- * (which is used to pass data to Speedith via the command line or through
- * source files).
+ *
+ * @author Matej Urbas [matej.urbas@gmail.com]
  */
-package speedith.lang.parser;
+class Zone implements Comparable<Zone> {
+    // <editor-fold defaultstate="collapsed" desc="Private Fields">
+
+    private TreeSet<String> inContours;
+    private TreeSet<String> outContours;
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+    public int compareTo(Zone o) {
+        if (o == null) {
+            throw new NullPointerException();
+        }
+        if (this == o) {
+            return 0;
+        } else {
+            int retVal = 0;
+            Iterator<String> i1 = inContours.iterator(),
+                    i2 = o.inContours.iterator();
+            return retVal;
+        }
+    }
+    // </editor-fold>
+}

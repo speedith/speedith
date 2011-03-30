@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: SpiderDiagram.java
+ * File name: package-info.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2010 Matej Urbas
@@ -25,13 +25,11 @@
  * THE SOFTWARE.
  */
 
-package speedith.lang;
-
 /**
- * This is the base class of all data structures which contain information about
- * particular spider diagrams.
- * @author Matej Urbas [matej.urbas@gmail.com]
+ * Here one can find the basic data structures used to represent spider
+ * diagrams.
+ * <p>The most important class is {@link speedith.lang.SpiderDiagram
+ * SpiderDiagram}. It it the base class of all the data structures which capture
+ * particular spider diagrams.</p>
  */
-public class SpiderDiagram {
-
-}
+package speedith.core.lang;
