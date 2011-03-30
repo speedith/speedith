@@ -26,8 +26,8 @@
  */
 
 /**
- * This package contains the parser for the textual spider diagram notation
+ * This package contains the reader for the textual spider diagram notation
  * (which is used to pass data to Speedith via the command line or through
  * source files).
  */
-package speedith.core.lang.parser;
+package speedith.core.lang.reader;

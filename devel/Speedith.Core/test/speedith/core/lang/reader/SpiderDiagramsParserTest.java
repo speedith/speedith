@@ -25,8 +25,9 @@
  * THE SOFTWARE.
  */
 
-package speedith.core.lang.parser;
+package speedith.core.lang.reader;
 
+import speedith.core.lang.reader.SpiderDiagramsLexer;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.junit.After;
@@ -34,7 +35,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import speedith.core.lang.parser.SpiderDiagramsParser.spiderDiagram_return;
+import speedith.core.lang.reader.SpiderDiagramsParser.spiderDiagram_return;
 
 /**
  * JUnit 4.0 tester class for the spider diagrams parser.
@@ -67,7 +68,7 @@ public class SpiderDiagramsParserTest {
      */
     @Test
     public void testSpiderDiagram() throws Exception {
-        SpiderDiagramsLexer lexer = new SpiderDiagramsLexer(new ANTLRFileStream("./test/speedith/core/lang/parser/ParserExample1.sd"));
+        SpiderDiagramsLexer lexer = new SpiderDiagramsLexer(new ANTLRFileStream("./test/speedith/core/lang/reader/ParserExample1.sd"));
         SpiderDiagramsParser parser = new SpiderDiagramsParser(new CommonTokenStream(lexer));
         spiderDiagram_return sd = parser.spiderDiagram();
         System.out.println(sd.tree.toStringTree());
