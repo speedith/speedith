@@ -24,11 +24,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package speedith.core.lang;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Represents a unitary spider diagram.
@@ -43,10 +46,39 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     // a set of contour names, which is filled when it is first accessed).
 
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
-    private Set<String> spiders;
-
+    private SortedSet<String> spiders;
     private Map<String, Region> habitats;
+    private SortedSet<Zone> shadedZones;
+    // </editor-fold>
 
-    private Set<Zone> shadedZones;
+    // <editor-fold defaultstate="collapsed" desc="Constructors">
+    /**
+     * Creates an empty primary (unitary) spider diagram.
+     */
+    public PrimarySpiderDiagram() {
+        spiders = new TreeSet<String>();
+        habitats = new HashMap<String, Region>();
+        shadedZones = new TreeSet<Zone>();
+    }
+
+    public PrimarySpiderDiagram(Collection<String> spiders, Map<String, Region> habitats, Collection<Zone> shadedZones) {
+        this.spiders = spiders == null ? null : new TreeSet<String>(spiders);
+        this.habitats = habitats == null ? null : new HashMap<String, Region>(habitats);
+        this.shadedZones = shadedZones == null ? null : new TreeSet<Zone>(shadedZones);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Public Properties">
+    public Map<String, Region> getHabitats() {
+        return habitats == null ? null : Collections.unmodifiableMap(habitats);
+    }
+
+    public SortedSet<Zone> getShadedZones() {
+        return shadedZones == null ? null : Collections.unmodifiableSortedSet(shadedZones);
+    }
+
+    public SortedSet<String> getSpiders() {
+        return spiders == null ? null : Collections.unmodifiableSortedSet(spiders);
+    }
     // </editor-fold>
 }
