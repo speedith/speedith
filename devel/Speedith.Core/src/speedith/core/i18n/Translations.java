@@ -57,11 +57,23 @@ public final class Translations {
      * Returns a string in the language of the current locale.
      * <p>It looks up the internationalised string based on the provided
      * key.</p>
-     * @param key the key of the string which to fetch.
+     * @param key the key of the string to fetch.
      * @return a string in the language of the current locale.
      */
     public static String i18n(String key) {
         return java.util.ResourceBundle.getBundle(I18N_STRINGS_BUNDLE).getString(key);
+    }
+
+    /**
+     * Returns a formatted string in the language of the current locale.
+     * <p>It looks up the internationalised string based on the provided
+     * key.</p>
+     * @param key the key of the <a href="http://download.oracle.com/javase/6/docs/api/java/util/Formatter.html#syntax">format specification string</a> to fetch.
+     * @param args the arguments to the formatted string (the same as arguments to {@link String#format(java.lang.String, java.lang.Object[])}).
+     * @return a string in the language of the current locale.
+     */
+    public static String i18n(String key, Object... args) {
+        return String.format(java.util.ResourceBundle.getBundle(I18N_STRINGS_BUNDLE).getString(key), args);
     }
     // </editor-fold>
 }

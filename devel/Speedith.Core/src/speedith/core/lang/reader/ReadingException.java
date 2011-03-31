@@ -1,0 +1,116 @@
+/*
+ *   Project: Speedith.Core
+ * 
+ * File name: ReadingException.java
+ *    Author: Matej Urbas [matej.urbas@gmail.com]
+ * 
+ *  Copyright © 2010 Matej Urbas
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+package speedith.core.lang.reader;
+
+import org.antlr.runtime.RecognitionException;
+
+/**
+ * Indicates an exception which can be raised during reading a spider diagram
+ * from a string (i.e.: during parsing, translating, and semantic checking).
+ * @author Matej Urbas [matej.urbas@gmail.com]
+ */
+public class ReadingException extends Exception {
+
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    private int lineNumber = -1;
+    private int charIndex = -1;
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Constructors">
+    /**
+     * Creates a new instance of <code>ReadingException</code> without detail message.
+     */
+    public ReadingException() {
+    }
+
+    /**
+     * Constructs an instance of <code>ReadingException</code> with the specified detail message.
+     * @param msg the detail message.
+     */
+    public ReadingException(String msg) {
+        super(msg);
+    }
+
+    /**
+     * Constructs an instance of <code>ReadingException</code> with the specified detail message.
+     * @param msg the detail message.
+     * @param cause the cause for this exception.
+     */
+    public ReadingException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
+
+    /**
+     * Constructs an instance of <code>ReadingException</code> with the specified detail message.
+     * @param msg the detail message.
+     * @param lineNumber the number of the line at which the reading hit an
+     * error.
+     * @param charIndex the character position (in the line) at which the
+     * reading hit an error.
+     */
+    public ReadingException(String msg, int lineNumber, int charIndex) {
+        super(msg);
+        this.lineNumber = lineNumber;
+        this.charIndex = charIndex;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Properties">
+    /**
+     * Returns the number of the line at which the reading hit an error.
+     * <p>Note: a negative number is returned if the line number is not
+     * known.</p>
+     * @return the number of the line at which the reading hit an error.
+     * <p>Note: a negative number is returned if the line number is not
+     * known.</p>
+     */
+    public int getCharIndex() {
+        if (charIndex < 0 && getCause() instanceof RecognitionException) {
+            return ((RecognitionException)getCause()).charPositionInLine;
+        }
+        return charIndex;
+    }
+
+    /**
+     * Returns the character position (in the line) at which the reading hit an
+     * error.
+     * <p>Note: a negative number is returned if the character position is not
+     * known.</p>
+     * @return the character position (in the line) at which the reading hit an
+     * error.
+     * <p>Note: a negative number is returned if the character position is not
+     * known.</p>
+     */
+    public int getLineNumber() {
+        if (lineNumber < 0 && getCause() instanceof RecognitionException) {
+            return ((RecognitionException)getCause()).line;
+        }
+        return lineNumber;
+    }
+    // </editor-fold>
+}

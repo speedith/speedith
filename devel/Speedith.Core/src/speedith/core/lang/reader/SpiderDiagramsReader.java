@@ -26,6 +26,7 @@
  */
 package speedith.core.lang.reader;
 
+import org.antlr.runtime.tree.Tree;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -35,6 +36,8 @@ import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.tree.CommonTree;
+import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.reader.SpiderDiagramsParser.spiderDiagram_return;
 import static speedith.core.i18n.Translations.i18n;
@@ -53,38 +56,92 @@ public class SpiderDiagramsReader {
 
     // TODO: Document the functions below.
 
-    public static SpiderDiagram readSpiderDiagram(String input) throws ParseException {
+    public static SpiderDiagram readSpiderDiagram(String input) throws ReadingException {
         return readSpiderDiagram(new ANTLRStringStream(input));
     }
 
-    public static SpiderDiagram readSpiderDiagram(Reader reader) throws ParseException, IOException {
+    public static SpiderDiagram readSpiderDiagram(Reader reader) throws ReadingException, IOException {
         return readSpiderDiagram(new ANTLRReaderStream(reader));
     }
 
-    public static SpiderDiagram readSpiderDiagram(InputStream iStream) throws ParseException, IOException {
+    public static SpiderDiagram readSpiderDiagram(InputStream iStream) throws ReadingException, IOException {
         return readSpiderDiagram(new ANTLRInputStream(iStream));
     }
 
-    public static SpiderDiagram readSpiderDiagram(InputStream iStream, String encoding) throws ParseException, IOException {
+    public static SpiderDiagram readSpiderDiagram(InputStream iStream, String encoding) throws ReadingException, IOException {
         return readSpiderDiagram(new ANTLRInputStream(iStream, encoding));
     }
 
     // TODO: Here for testing. Will be removed (or moved into a JUnit test) eventually.
-    public static void main(String[] args) throws ParseException {
-        readSpiderDiagram("BinarySD {arg1 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])], sh_zones = [}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" ");
+    public static void main(String[] args) throws ReadingException {
+        readSpiderDiagram("BinarySD {arg1 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])], sh_zones = []}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }");
     }
 
-    private static SpiderDiagram readSpiderDiagram(CharStream chrStream) throws ParseException {
+    private static SpiderDiagram readSpiderDiagram(CharStream chrStream) throws ReadingException {
         SpiderDiagramsLexer lexer = new SpiderDiagramsLexer(chrStream);
         SpiderDiagramsParser parser = new SpiderDiagramsParser(new CommonTokenStream(lexer));
         try {
-            spiderDiagram_return spiderDiagram = parser.spiderDiagram();
-        } catch (ParseException pe) {
-            System.out.println("Test..." + pe.getMessage());
+            return toSpiderDiagram(parser.spiderDiagram());
         } catch (RecognitionException re) {
-            throw new ParseException(i18n("ERR_PARSE_INVALID_SYNTAX"), re);
+            throw new ReadingException(i18n("ERR_PARSE_INVALID_SYNTAX"), re);
+        } catch (ParseException pe) {
+            throw new ReadingException(pe.getMessage(), pe.getCause());
         }
-        throw new RuntimeException("Not implemented.");
-        // TODO: Implement.
     }
+
+    // <editor-fold defaultstate="collapsed" desc="Translation Methods (from the AST to SpiderDiagram)">
+    private static SpiderDiagram toSpiderDiagram(spiderDiagram_return spiderDiagram) throws ReadingException {
+        if (spiderDiagram == null)
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "spiderDiagram"));
+        return toSpiderDiagram(spiderDiagram.tree);
+    }
+
+    private static SpiderDiagram toSpiderDiagram(CommonTree tree) throws ReadingException {
+        if (tree == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "tree"));
+        }
+        switch (tree.token.getType()) {
+            case SpiderDiagramsParser.SD_BINARY:
+                return toBinarySD(tree);
+            case SpiderDiagramsParser.SD_UNARY:
+                return toUnarySD(tree);
+            case SpiderDiagramsParser.SD_PRIMARY:
+                return toPrimary(tree);
+            case SpiderDiagramsParser.SD_NULL:
+                return NullSpiderDiagram.getInstance();
+            default:
+                throw new ReadingException(i18n("ERR_UNKNOWN_SD_TYPE"));
+        }
+    }
+
+    private static SpiderDiagram toBinarySD(CommonTree tree) throws ReadingException {
+        if (tree == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "tree"));
+        }
+        String operator = null;
+        SpiderDiagram arg1 = null;
+        SpiderDiagram arg2 = null;
+        for (Object child : tree.getChildren()) {
+            if (child instanceof CommonTree) {
+                CommonTree childTree = (CommonTree)child;
+                if (!isKeyValuePair(childTree))
+                    throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", i18n("TRANSLATE_KEY_VALUE_PAIR")), childTree.getLine(), childTree.getCharPositionInLine());
+            } else
+                throw new AssertionError();
+        }
+        return null;
+    }
+
+    private static SpiderDiagram toUnarySD(CommonTree tree) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    private static SpiderDiagram toPrimary(CommonTree tree) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    private static boolean isKeyValuePair(CommonTree childTree) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+    // </editor-fold>
 }

@@ -102,7 +102,7 @@
     <target name="-clean-speedith-grammar">
         <delete file="${speedith.grammar}Parser.java"/>
         <delete file="${speedith.grammar}Lexer.java"/>
-        <delete dir="${src.dir}/speedith/lang/parser/output" />
+        <delete dir="${src.dir}/speedith/core/lang/reader/output" />
     </target>
     
 </project>

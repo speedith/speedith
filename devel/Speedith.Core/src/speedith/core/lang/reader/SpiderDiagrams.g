@@ -8,19 +8,19 @@ options {
 /* These tokens are used simply as indicator 'head' nodes in the generated AST
 tree. */
 tokens {
-	DICT;		// The 'dictionary' node in the generated AST (contains KEY_VALUE nodes).
-	PAIR;		// The 'key value' node in the AST.
-	LIST;		// The 'list' node (contains comma separated elements enclosed in block braces '[' and ']').
-	SLIST;		// The 'sorted list' node (contains comma separated elements enclosed in parentheses '(' and ')').
-	SD_PRIMARY;	// The 'primary spider diagram'.
-	SD_BINARY;	// The 'binar spider diagram'.
-	SD_UNARY;	// The 'unary spider diagram'.
-	SD_NULL;	// The 'null spider diagram'.
+	DICT       =         '{';	// The 'dictionary' node in the generated AST (contains KEY_VALUE nodes).
+	PAIR       =         '=';		// The 'key value' node in the AST.
+	LIST       =         '[';		// The 'list' node (contains comma separated elements enclosed in block braces '[' and ']').
+	SLIST      =         '(';		// The 'sorted list' node (contains comma separated elements enclosed in parentheses '(' and ')').
+	SD_PRIMARY = 'PrimarySD';	// The 'primary spider diagram'.
+	SD_BINARY  =  'BinarySD';	// The 'binar spider diagram'.
+	SD_UNARY   =   'UnarySD';	// The 'unary spider diagram'.
+	SD_NULL    =    'NullSD';	// The 'null spider diagram'.
 }
 
 @parser::header {
 package speedith.core.lang.reader;
-import static speedith.core.i18n.Translations.i18n;
+//import static speedith.core.i18n.Translations.i18n;
 }
 
 @lexer::header {
@@ -30,7 +30,7 @@ package speedith.core.lang.reader;
 @members {
 @Override
 public void reportError(RecognitionException e) {
-    throw new ParseException(i18n("ERR_PARSE_INVALID_SYNTAX"), e);
+//    throw new ParseException(i18n("ERR_PARSE_INVALID_SYNTAX"), e);
 }
 }
 
@@ -46,43 +46,29 @@ public void reportError(RecognitionException e) {
 start
 	:	spiderDiagram
 	;
-	catch [RecognitionException re] { throw re; }
 
 spiderDiagram
-	:	'PrimarySD' '{' (keyValue (',' keyValue)*)? '}'
-		->	^(SD_PRIMARY keyValue*)
-	|	'UnarySD' '{' (keyValue (',' keyValue)*)? '}'
-		->	^(SD_UNARY keyValue*)
-	|	'BinarySD' '{' (keyValue (',' keyValue)*)? '}'
-		->	^(SD_BINARY keyValue*)
-	|	'NullSD' '{' (keyValue (',' keyValue)*)? '}'
-		->	^(SD_NULL keyValue*)
+	:	'PrimarySD'^ '{'! (keyValue (','! keyValue)*)? '}'!
+	|	'UnarySD'^ '{'! (keyValue (','! keyValue)*)? '}'!
+	|	'BinarySD'^ '{'! (keyValue (','! keyValue)*)? '}'!
+	|	'NullSD'^ '{'! (keyValue (','! keyValue)*)? '}'!
 	;
-//	catch [RecognitionException re] { throw re; }
 
 keyValues
-	:	'{' (keyValue (',' keyValue)*)? '}'
-		->	 ^(DICT keyValue*)
+	:	'{'^ (keyValue (','! keyValue)*)? '}'!
 	;
-//	catch [RecognitionException re] { throw re; }
 
 list
-	:	'[' (languageElement (',' languageElement)*)? ']'
-		->	^(LIST languageElement*)
+	:	'['^ (languageElement (','! languageElement)*)? ']'!
 	;
-//	catch [RecognitionException re] { throw re; }
 	
 sortedList
-	:	'(' (languageElement (',' languageElement)*)? ')'
-		->	^(SLIST languageElement*)
+	:	'('^ (languageElement (','! languageElement)*)? ')'!
 	;
-//	catch [RecognitionException re] { throw re; }
 
 keyValue
-	:	ID '=' languageElement
-		->	^(PAIR ID languageElement)
+	:	ID '='^ languageElement
 	;
-//	catch [RecognitionException re] { throw re; }
 
 languageElement
 	:	STRING
@@ -91,7 +77,6 @@ languageElement
 	|	sortedList
 	|	spiderDiagram
 	;
-//	catch [RecognitionException re] { throw re; }
 
 
 
