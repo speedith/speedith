@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: SpiderDiagramParseException.java
+ * File name: ParseException.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2010 Matej Urbas
@@ -35,11 +35,24 @@ import org.antlr.runtime.RecognitionException;
  * representation of the spider diagram) uses an invalid syntax.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SpiderDiagramParseException extends Exception {
+public class ParseException extends RuntimeException {
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
-    public SpiderDiagramParseException(String i18n, RecognitionException ex) {
-        super(i18n, ex);
+    /**
+     * Initialises an instance of the {@link ParseException} class.
+     * <p>It takes a description of the exception (usually a syntax error on the
+     * user's side) and the detailed description of the syntax error (an
+     * instance of the ANTLR's {@link RecognitionException} class).</p>
+     * <p>For a detailed description of the {@code RecognitionException} class
+     * see the
+     * <a href="http://www.antlr.org/api/Java/classorg_1_1antlr_1_1runtime_1_1_recognition_exception.html">ANTLR Java Runtime API Documentation</a>.</p>
+     * @param description the string describing the syntax error.
+     * @param ex the class which contains detailed information on what went
+     * wrong during parsing (can be used to give feedback to the user, see the <a href="http://www.antlr.org/depot/antlr3/release-3.2/runtime/Java/src/main/java/org/antlr/runtime/BaseRecognizer.java">source of the {@link BaseRecognizer} class</a>,
+     * specifically the method {@code displayRecognitionError} on how to do this).
+     */
+    public ParseException(String description, RecognitionException ex) {
+        super(description, ex);
     }
     // </editor-fold>
 

@@ -42,8 +42,9 @@ public final class SortedSets {
     // <editor-fold defaultstate="collapsed" desc="Public Static Methods">
     /**
      * Compares the elements in the two sorted sets lexicographically (pair by
-     * pair in the order they appear in the set via the sets' iterators) and
+     * pair in the order they appear in the set via the sets' iterators). It
      * returns:
+     * <p>
      * <ul>
      *   <li> {@code -1} if either of the two is true:
      *      <ul>
@@ -57,6 +58,7 @@ public final class SortedSets {
      *        or if one of them is null and the other is empty.</li>
      *   <li> {@code 1} otherwise.</li>
      * </ul>
+     * </p>
      * <p>Note: if one of the sets is {@code null}, it will be treated as
      * an empty set (a {@code null} set thus equals to the empty set, and it is
      * in effect smaller than any non-empty set).</p>
@@ -123,8 +125,9 @@ public final class SortedSets {
 
     /**
      * Compares the elements in the two sorted sets lexicographically (pair by
-     * pair in the order they appear in the set via the sets' iterators) and
+     * pair in the order they appear in the set via the sets' iterators). It
      * returns:
+     * <p>
      * <ul>
      *   <li> {@code -1} if either of the two is true:
      *      <ul>
@@ -138,6 +141,7 @@ public final class SortedSets {
      *        or if one of them is null and the other is empty.</li>
      *   <li> {@code 1} otherwise.</li>
      * </ul>
+     * </p>
      * <p>Note: if one of the sets is {@code null}, it will be treated as
      * an empty set (a {@code null} set thus equals to the empty set, and it is
      * in effect smaller than any non-empty set).</p>

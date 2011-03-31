@@ -51,29 +51,38 @@ import static speedith.core.i18n.Translations.i18n;
  */
 public class SpiderDiagramsReader {
 
-    public static SpiderDiagram readSpiderDiagram(String input) throws SpiderDiagramParseException {
+    // TODO: Document the functions below.
+
+    public static SpiderDiagram readSpiderDiagram(String input) throws ParseException {
         return readSpiderDiagram(new ANTLRStringStream(input));
     }
 
-    public static SpiderDiagram readSpiderDiagram(Reader reader) throws SpiderDiagramParseException, IOException {
+    public static SpiderDiagram readSpiderDiagram(Reader reader) throws ParseException, IOException {
         return readSpiderDiagram(new ANTLRReaderStream(reader));
     }
 
-    public static SpiderDiagram readSpiderDiagram(InputStream iStream) throws SpiderDiagramParseException, IOException {
+    public static SpiderDiagram readSpiderDiagram(InputStream iStream) throws ParseException, IOException {
         return readSpiderDiagram(new ANTLRInputStream(iStream));
     }
 
-    public static SpiderDiagram readSpiderDiagram(InputStream iStream, String encoding) throws SpiderDiagramParseException, IOException {
+    public static SpiderDiagram readSpiderDiagram(InputStream iStream, String encoding) throws ParseException, IOException {
         return readSpiderDiagram(new ANTLRInputStream(iStream, encoding));
     }
 
-    private static SpiderDiagram readSpiderDiagram(CharStream chrStream) throws SpiderDiagramParseException {
+    // TODO: Here for testing. Will be removed (or moved into a JUnit test) eventually.
+    public static void main(String[] args) throws ParseException {
+        readSpiderDiagram("BinarySD {arg1 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])], sh_zones = [}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" ");
+    }
+
+    private static SpiderDiagram readSpiderDiagram(CharStream chrStream) throws ParseException {
         SpiderDiagramsLexer lexer = new SpiderDiagramsLexer(chrStream);
         SpiderDiagramsParser parser = new SpiderDiagramsParser(new CommonTokenStream(lexer));
         try {
             spiderDiagram_return spiderDiagram = parser.spiderDiagram();
-        } catch (RecognitionException ex) {
-            throw new SpiderDiagramParseException(i18n("ERR_PARSE_EXCEPTION"), ex);
+        } catch (ParseException pe) {
+            System.out.println("Test..." + pe.getMessage());
+        } catch (RecognitionException re) {
+            throw new ParseException(i18n("ERR_PARSE_INVALID_SYNTAX"), re);
         }
         throw new RuntimeException("Not implemented.");
         // TODO: Implement.

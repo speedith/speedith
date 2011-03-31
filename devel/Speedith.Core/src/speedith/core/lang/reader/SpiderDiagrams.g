@@ -20,10 +20,18 @@ tokens {
 
 @parser::header {
 package speedith.core.lang.reader;
+import static speedith.core.i18n.Translations.i18n;
 }
 
 @lexer::header {
 package speedith.core.lang.reader;
+}
+
+@members {
+@Override
+public void reportError(RecognitionException e) {
+    throw new ParseException(i18n("ERR_PARSE_INVALID_SYNTAX"), e);
+}
 }
 
 
@@ -38,6 +46,7 @@ package speedith.core.lang.reader;
 start
 	:	spiderDiagram
 	;
+	catch [RecognitionException re] { throw re; }
 
 spiderDiagram
 	:	'PrimarySD' '{' (keyValue (',' keyValue)*)? '}'
@@ -49,26 +58,31 @@ spiderDiagram
 	|	'NullSD' '{' (keyValue (',' keyValue)*)? '}'
 		->	^(SD_NULL keyValue*)
 	;
+//	catch [RecognitionException re] { throw re; }
 
 keyValues
 	:	'{' (keyValue (',' keyValue)*)? '}'
 		->	 ^(DICT keyValue*)
 	;
+//	catch [RecognitionException re] { throw re; }
 
 list
 	:	'[' (languageElement (',' languageElement)*)? ']'
 		->	^(LIST languageElement*)
 	;
+//	catch [RecognitionException re] { throw re; }
 	
 sortedList
 	:	'(' (languageElement (',' languageElement)*)? ')'
 		->	^(SLIST languageElement*)
 	;
+//	catch [RecognitionException re] { throw re; }
 
 keyValue
 	:	ID '=' languageElement
 		->	^(PAIR ID languageElement)
 	;
+//	catch [RecognitionException re] { throw re; }
 
 languageElement
 	:	STRING
@@ -77,6 +91,7 @@ languageElement
 	|	sortedList
 	|	spiderDiagram
 	;
+//	catch [RecognitionException re] { throw re; }
 
 
 

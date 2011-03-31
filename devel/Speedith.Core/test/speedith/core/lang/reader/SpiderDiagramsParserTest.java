@@ -27,15 +27,16 @@
 
 package speedith.core.lang.reader;
 
-import speedith.core.lang.reader.SpiderDiagramsLexer;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import speedith.core.lang.reader.SpiderDiagramsParser.spiderDiagram_return;
+import static org.junit.Assert.*;
 
 /**
  * JUnit 4.0 tester class for the spider diagrams parser.
@@ -71,7 +72,23 @@ public class SpiderDiagramsParserTest {
         SpiderDiagramsLexer lexer = new SpiderDiagramsLexer(new ANTLRFileStream("./test/speedith/core/lang/reader/ParserExample1.sd"));
         SpiderDiagramsParser parser = new SpiderDiagramsParser(new CommonTokenStream(lexer));
         spiderDiagram_return sd = parser.spiderDiagram();
-        System.out.println(sd.tree.toStringTree());
+    }
+
+    /**
+     * Test of spiderDiagram method, of class SpiderDiagramsParser.
+     * @throws Exception
+     */
+    @Test
+    public void testSpiderDiagram1() throws Exception {
+        SpiderDiagramsLexer lexer = new SpiderDiagramsLexer(new ANTLRFileStream("./test/speedith/core/lang/reader/ParserExample1_1.sd"));
+        SpiderDiagramsParser parser = new SpiderDiagramsParser(new CommonTokenStream(lexer));
+        spiderDiagram_return sd = null;
+        try {
+            sd = parser.spiderDiagram();
+            fail("This test should throw an exception.");
+        } catch (ParseException pe) {
+            assertNotNull(pe);
+        }
     }
 
 }
