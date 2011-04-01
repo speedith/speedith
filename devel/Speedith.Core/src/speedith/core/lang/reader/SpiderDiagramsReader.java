@@ -82,6 +82,11 @@ public class SpiderDiagramsReader {
         readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])], sh_zones = []}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }");
     }
 
+    private static String stringFromStringToken(CommonTree childTree) {
+        String str = childTree.getChild(1).getText();
+        return str.substring(1, str.length() - 1);
+    }
+
     private static String getKeyFromPair(CommonTree childTree) {
         return childTree.getChild(0).getText();
     }
@@ -143,7 +148,7 @@ public class SpiderDiagramsReader {
             } else if (ARG2.equals(key)) {
                 arg2 = toSpiderDiagram((CommonTree)childTree.getChild(1));
             } else if (OPERATOR.equals(key)) {
-                operator = childTree.getChild(1).getText();
+                operator = stringFromStringToken(childTree);
             } else
                 throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", ARG1 + " | " + ARG2 + " | " + OPERATOR), childTree.getLine(), childTree.getCharPositionInLine());
         }
@@ -168,7 +173,7 @@ public class SpiderDiagramsReader {
             if (ARG1.equals(key)) {
                 arg1 = toSpiderDiagram((CommonTree)childTree.getChild(1));
             } else if (OPERATOR.equals(key)) {
-                operator = childTree.getChild(1).getText();
+                operator = stringFromStringToken(childTree);
             } else
                 throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", ARG1 + " | " + OPERATOR), childTree.getLine(), childTree.getCharPositionInLine());
         }
