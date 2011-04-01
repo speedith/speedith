@@ -28,7 +28,7 @@
 /**
  * Here one can find the basic data structures used to represent spider
  * diagrams.
- * <p>The most important class is {@link speedith.lang.SpiderDiagram
+ * <p>The most important class is {@link speedith.core.lang.SpiderDiagram
  * SpiderDiagram}. It it the base class of all the data structures which capture
  * particular spider diagrams.</p>
  */

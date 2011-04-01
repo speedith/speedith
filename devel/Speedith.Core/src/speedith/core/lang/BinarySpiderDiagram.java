@@ -71,10 +71,10 @@ public class BinarySpiderDiagram extends SpiderDiagram {
     // <editor-fold defaultstate="collapsed" desc="Public Properties">
     /**
      * Returns the binary operator that binds the {@link BinarySpiderDiagram#getLeftOperand() left}
-     * and {@link BinarySpiderDiagram#getRighOperand() right} operands in this
+     * and {@link BinarySpiderDiagram#getRightOperand() right} operands in this
      * binary spider diagram.
      * @return the binary operator that binds the {@link BinarySpiderDiagram#getLeftOperand() left}
-     * and {@link BinarySpiderDiagram#getRighOperand() right} operands in this
+     * and {@link BinarySpiderDiagram#getRightOperand() right} operands in this
      * binary spider diagram.
      */
     public String getOperator() {

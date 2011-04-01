@@ -90,7 +90,7 @@
         </condition>
     </target>
 
-    <target name="-compile-speedith-grammar" depends="-check-grammar-uptodate" unless="speedith.grammar.isUptodate">
+    <target name="-compile-speedith-grammar" depends="-check-grammar-uptodate,-clean-antlrworks-output" unless="speedith.grammar.isUptodate">
         <echo message="Compiling the speedith grammar: ${speedith.grammar}.g"/>
         <exec executable="antlr3">
             <arg value="${speedith.grammar}.g"/>
@@ -99,9 +99,12 @@
         <delete file="${speedith.grammar.tokensFile}"/>
     </target>
 
-    <target name="-clean-speedith-grammar">
+    <target name="-clean-speedith-grammar" depends="-clean-antlrworks-output">
         <delete file="${speedith.grammar}Parser.java"/>
         <delete file="${speedith.grammar}Lexer.java"/>
+    </target>
+
+    <target name="-clean-antlrworks-output">
         <delete dir="${src.dir}/speedith/core/lang/reader/output" />
     </target>
     

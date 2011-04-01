@@ -34,7 +34,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
- * Represents a unitary spider diagram.
+ * Represents a unitary spider diagram. For a complete and formal description of
+ * spider diagrams see paper
+ * <a href="http://journals.cambridge.org/action/displayAbstract?fromPage=online&aid=6564924" title="10.1112/S1461157000000942">
+ * Spider Diagrams (2005)</a>.
  * <p>It contains all necessary information about the habitats of spiders,
  * shaded zones, contour names, zones etc.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
@@ -60,6 +63,15 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         shadedZones = new TreeSet<Zone>();
     }
 
+    /**
+     * Creates an instance of a primary spider diagram with the given spiders,
+     * their habitats and shaded zones.
+     * @param spiders a set of spiders (their names) that appear in this
+     * spider diagram.
+     * @param habitats a key-value map of spiders and their corresponding
+     * {@link Region habitats}.
+     * @param shadedZones a set of shaded {@link Zone zones}.
+     */
     public PrimarySpiderDiagram(Collection<String> spiders, Map<String, Region> habitats, Collection<Zone> shadedZones) {
         this.spiders = spiders == null ? null : new TreeSet<String>(spiders);
         this.habitats = habitats == null ? null : new HashMap<String, Region>(habitats);
@@ -68,14 +80,30 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public Properties">
+    /**
+     * Returns an unmodifiable key-value map of spiders with their corresponding
+     * {@link Region habitats}.
+     * @return an unmodifiable key-value map of spiders with their corresponding
+     * {@link Region habitats}.
+     */
     public Map<String, Region> getHabitats() {
         return habitats == null ? null : Collections.unmodifiableMap(habitats);
     }
 
+    /**
+     * Returns a set of shaded {@link Zone zones} in this spider diagram.
+     * @return a set of shaded {@link Zone zones} in this spider diagram..
+     */
     public SortedSet<Zone> getShadedZones() {
         return shadedZones == null ? null : Collections.unmodifiableSortedSet(shadedZones);
     }
 
+    /**
+     * Returns a set of spiders (their names) that appear in this spider
+     * diagram.
+     * @return a set of spiders (their names) that appear in this spider
+     * diagram.
+     */
     public SortedSet<String> getSpiders() {
         return spiders == null ? null : Collections.unmodifiableSortedSet(spiders);
     }
