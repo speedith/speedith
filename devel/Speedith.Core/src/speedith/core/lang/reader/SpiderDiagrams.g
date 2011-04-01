@@ -20,17 +20,20 @@ tokens {
 
 @parser::header {
 package speedith.core.lang.reader;
-//import static speedith.core.i18n.Translations.i18n;
+import static speedith.core.i18n.Translations.i18n;
 }
 
 @lexer::header {
 package speedith.core.lang.reader;
 }
 
+@rulecatch {
+}
+
 @members {
 @Override
 public void reportError(RecognitionException e) {
-//    throw new ParseException(i18n("ERR_PARSE_INVALID_SYNTAX"), e);
+    throw new ParseException(i18n("ERR_PARSE_INVALID_SYNTAX"), e);
 }
 }
 

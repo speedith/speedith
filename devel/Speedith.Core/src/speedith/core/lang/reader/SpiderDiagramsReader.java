@@ -26,10 +26,11 @@
  */
 package speedith.core.lang.reader;
 
-import org.antlr.runtime.tree.Tree;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.ANTLRReaderStream;
 import org.antlr.runtime.ANTLRStringStream;
@@ -37,8 +38,10 @@ import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
+import speedith.core.lang.BinarySpiderDiagram;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
+import speedith.core.lang.UnarySpiderDiagram;
 import speedith.core.lang.reader.SpiderDiagramsParser.spiderDiagram_return;
 import static speedith.core.i18n.Translations.i18n;
 
@@ -53,9 +56,11 @@ import static speedith.core.i18n.Translations.i18n;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SpiderDiagramsReader {
+    public static final String ARG1 = "arg1";
+    public static final String ARG2 = "arg2";
+    public static final String OPERATOR = "operator";
 
     // TODO: Document the functions below.
-
     public static SpiderDiagram readSpiderDiagram(String input) throws ReadingException {
         return readSpiderDiagram(new ANTLRStringStream(input));
     }
@@ -74,7 +79,11 @@ public class SpiderDiagramsReader {
 
     // TODO: Here for testing. Will be removed (or moved into a JUnit test) eventually.
     public static void main(String[] args) throws ReadingException {
-        readSpiderDiagram("BinarySD {arg1 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])], sh_zones = []}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }");
+        readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])], sh_zones = []}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }");
+    }
+
+    private static String getKeyFromPair(CommonTree childTree) {
+        return childTree.getChild(0).getText();
     }
 
     private static SpiderDiagram readSpiderDiagram(CharStream chrStream) throws ReadingException {
@@ -89,10 +98,11 @@ public class SpiderDiagramsReader {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="Translation Methods (from the AST to SpiderDiagram)">
+    // <editor-fold defaultstate="collapsed" desc="Translation Methods (from the AST to SpiderDiagrams)">
     private static SpiderDiagram toSpiderDiagram(spiderDiagram_return spiderDiagram) throws ReadingException {
-        if (spiderDiagram == null)
+        if (spiderDiagram == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "spiderDiagram"));
+        }
         return toSpiderDiagram(spiderDiagram.tree);
     }
 
@@ -114,34 +124,82 @@ public class SpiderDiagramsReader {
         }
     }
 
-    private static SpiderDiagram toBinarySD(CommonTree tree) throws ReadingException {
+    private static BinarySpiderDiagram toBinarySD(CommonTree tree) throws ReadingException {
         if (tree == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "tree"));
         }
+        // operator, arg1 and arg2 are the expected arguments that a binary
+        // spider diagram needs.
         String operator = null;
         SpiderDiagram arg1 = null;
         SpiderDiagram arg2 = null;
+        // Go through all the children of the BinarySD tree node (all these
+        // children should be key value PAIRs).
         for (Object child : tree.getChildren()) {
-            if (child instanceof CommonTree) {
-                CommonTree childTree = (CommonTree)child;
-                if (!isKeyValuePair(childTree))
-                    throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", i18n("TRANSLATE_KEY_VALUE_PAIR")), childTree.getLine(), childTree.getCharPositionInLine());
+            CommonTree childTree = checkKeyValuePair(child);
+            String key = getKeyFromPair(childTree);
+            if (ARG1.equals(key)) {
+                arg1 = toSpiderDiagram((CommonTree)childTree.getChild(1));
+            } else if (ARG2.equals(key)) {
+                arg2 = toSpiderDiagram((CommonTree)childTree.getChild(1));
+            } else if (OPERATOR.equals(key)) {
+                operator = childTree.getChild(1).getText();
             } else
-                throw new AssertionError();
+                throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", ARG1 + " | " + ARG2 + " | " + OPERATOR), childTree.getLine(), childTree.getCharPositionInLine());
         }
-        return null;
+        if (operator == null || arg1 == null || arg2 == null)
+            throw new ReadingException(i18n("ERR_TRANSLATE_MISSING_ELEMENTS", ARG1 + " | " + ARG2 + " | " + OPERATOR), tree.getLine(), tree.getCharPositionInLine());
+        return new BinarySpiderDiagram(operator, arg1, arg2);
     }
 
-    private static SpiderDiagram toUnarySD(CommonTree tree) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    private static UnarySpiderDiagram toUnarySD(CommonTree tree) throws ReadingException {
+        if (tree == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "tree"));
+        }
+        // operator, arg1 and arg2 are the expected arguments that a binary
+        // spider diagram needs.
+        String operator = null;
+        SpiderDiagram arg1 = null;
+        // Go through all the children of the BinarySD tree node (all these
+        // children should be key value PAIRs).
+        for (Object child : tree.getChildren()) {
+            CommonTree childTree = checkKeyValuePair(child);
+            String key = getKeyFromPair(childTree);
+            if (ARG1.equals(key)) {
+                arg1 = toSpiderDiagram((CommonTree)childTree.getChild(1));
+            } else if (OPERATOR.equals(key)) {
+                operator = childTree.getChild(1).getText();
+            } else
+                throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", ARG1 + " | " + OPERATOR), childTree.getLine(), childTree.getCharPositionInLine());
+        }
+        if (operator == null || arg1 == null)
+            throw new ReadingException(i18n("ERR_TRANSLATE_MISSING_ELEMENTS", ARG1 + " & " + OPERATOR), tree.getLine(), tree.getCharPositionInLine());
+        return new UnarySpiderDiagram(operator, arg1);
     }
 
     private static SpiderDiagram toPrimary(CommonTree tree) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return null;
     }
 
-    private static boolean isKeyValuePair(CommonTree childTree) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    /**
+     * Checks if the given {@code node} is a {@link CommonTree} and is of type
+     * {@link SpiderDiagramsParser#PAIR}. It returns the type-cast reference to
+     * the node upon success, or throws an {@link ReadingException} otherwise.
+     * @param node the node to check that it represents a key-value pair.
+     * @return the node (properly type cast).
+     * @throws ReadingException
+     */
+    private static CommonTree checkKeyValuePair(Object node) throws ReadingException {
+        if (node instanceof CommonTree) {
+            CommonTree treeNode = (CommonTree) node;
+            if (treeNode.token != null && treeNode.token.getType() == SpiderDiagramsParser.PAIR) {
+                return treeNode;
+            } else {
+                throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", i18n("TRANSLATE_KEY_VALUE_PAIR")), treeNode.getLine(), treeNode.getCharPositionInLine());
+            }
+        } else {
+            return null;
+        }
     }
     // </editor-fold>
 }
