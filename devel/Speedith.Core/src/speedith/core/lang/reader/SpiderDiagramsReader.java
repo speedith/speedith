@@ -33,8 +33,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.ANTLRReaderStream;
 import org.antlr.runtime.ANTLRStringStream;
@@ -49,6 +52,7 @@ import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.UnarySpiderDiagram;
 import speedith.core.lang.Zone;
 import speedith.core.lang.reader.SpiderDiagramsParser.spiderDiagram_return;
+import sun.security.jca.GetInstance.Instance;
 import static speedith.core.i18n.Translations.i18n;
 
 /**
@@ -89,7 +93,7 @@ public class SpiderDiagramsReader {
 
     // TODO: Here for testing. Will be removed (or moved into a JUnit test) eventually.
     public static void main(String[] args) throws ReadingException {
-        readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])], sh_zones = []}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }");
+        readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }");
     }
 
 //    /**
@@ -298,6 +302,52 @@ public class SpiderDiagramsReader {
         public abstract T fromASTNode(CommonTree treeNode) throws ReadingException;
     }
 
+    private static class ZoneTranslator extends ElementTranslator<Zone> {
+
+        public static final ZoneTranslator Instance = new ZoneTranslator();
+        public static final ListTranslator<Zone> ZoneListTranslator = new ListTranslator<Zone>(Instance);
+        private ListTranslator<ArrayList<String>> translator;
+
+        private ZoneTranslator() {
+            translator = new ListTranslator<ArrayList<String>>(SpiderDiagramsParser.SLIST, ListTranslator.StringListTranslator);
+        }
+
+        @Override
+        public Zone fromASTNode(CommonTree treeNode) throws ReadingException {
+            ArrayList<ArrayList<String>> inOutContours = translator.fromASTNode(treeNode);
+            if (inOutContours == null || inOutContours.size() != 2) {
+                throw new ReadingException(i18n("ERR_TRANSLATE_ZONE"), treeNode.getLine(), treeNode.getCharPositionInLine());
+            }
+            return new Zone(inOutContours.get(0), inOutContours.get(1));
+        }
+    }
+
+    private static class HabitatTranslator extends ElementTranslator<Map<String, Region>> {
+
+        public static final HabitatTranslator Instance = new HabitatTranslator();
+
+        private ListTranslator<ArrayList<Object>> regionListTranslator;
+
+        private HabitatTranslator() {
+            regionListTranslator = new ListTranslator<ArrayList<Object>>(new TupleTranslator<Object>(new ElementTranslator[]{StringTranslator.Instance, ZoneTranslator.ZoneListTranslator}));
+        }
+
+        @Override
+        public Map<String, Region> fromASTNode(CommonTree treeNode) throws ReadingException {
+            ArrayList<ArrayList<Object>> rawHabitats = regionListTranslator.fromASTNode(treeNode);
+            if (rawHabitats == null || rawHabitats.size() < 1) {
+                return null;
+            }
+            HashMap<String, Region> habitats = new HashMap<String, Region>();
+            for (ArrayList<Object> rawHabitat : rawHabitats) {
+                if (rawHabitat.size() == 2) {
+                    habitats.put((String)rawHabitat.get(0), new Region((ArrayList<Zone>)rawHabitat.get(1)));
+                }
+            }
+            return habitats;
+        }
+    }
+
     private static class StringTranslator extends ElementTranslator<String> {
 
         public static final StringTranslator Instance = new StringTranslator();
@@ -428,8 +478,8 @@ public class SpiderDiagramsReader {
         private PrimarySDTranslator() {
             super(SpiderDiagramsParser.SD_PRIMARY);
             addMandatoryAttribute(SPIDERS, ListTranslator.StringListTranslator);
-            addMandatoryAttribute(HABITATS, null);
-            addMandatoryAttribute(SH_ZONES, null);
+            addMandatoryAttribute(HABITATS, HabitatTranslator.Instance);
+            addMandatoryAttribute(SH_ZONES, new ListTranslator<Zone>(ZoneTranslator.Instance));
         }
 
         @Override
@@ -453,29 +503,90 @@ public class SpiderDiagramsReader {
         }
     }
 
-    private static class ListTranslator<V> extends ElementTranslator<ArrayList<V>> {
+    private static abstract class CollectionTranslator<V> extends ElementTranslator<ArrayList<V>> {
 
-        public static final ListTranslator<String> StringListTranslator = new ListTranslator<String>(StringTranslator.Instance);
+        private int headTokenType;
 
-        ElementTranslator<V> valueTranslator = null;
-
-        public ListTranslator(ElementTranslator<V> valueTranslator) {
-            this.valueTranslator = valueTranslator;
+        public CollectionTranslator(int headTokenType) {
+            if (headTokenType == SpiderDiagramsParser.SLIST || headTokenType == SpiderDiagramsParser.LIST) {
+                this.headTokenType = headTokenType;
+            } else {
+                throw new IllegalArgumentException(i18n("GERR_ILLEGAL_ARGUMENT", "headTokenType"));
+            }
         }
 
         @Override
         public ArrayList<V> fromASTNode(CommonTree treeNode) throws ReadingException {
-            if (treeNode.token != null && (treeNode.token.getType() == SpiderDiagramsParser.LIST || treeNode.token.getType() == SpiderDiagramsParser.SLIST)) {
+            if (treeNode.token != null && treeNode.token.getType() == headTokenType) {
                 if (treeNode.getChildCount() < 1) {
                     return null;
                 }
                 ArrayList<V> objs = new ArrayList<V>(treeNode.getChildCount());
+                int i = 0;
                 for (Object obj : treeNode.getChildren()) {
-                    objs.add(valueTranslator.fromASTNode((CommonTree) obj));
+                    objs.add(fromASTChildAt(i++, (CommonTree) obj));
                 }
                 return objs;
             }
             throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", i18n(i18n("ERR_TRANSLATE_LIST_OR_SLIST"))), treeNode.getLine(), treeNode.getCharPositionInLine());
+        }
+
+        protected abstract V fromASTChildAt(int i, CommonTree treeNode) throws ReadingException;
+    }
+
+    private static class ListTranslator<V> extends CollectionTranslator<V> {
+
+        public static final ListTranslator<String> StringListTranslator = new ListTranslator<String>(StringTranslator.Instance);
+        ElementTranslator<? extends V> valueTranslator = null;
+
+        public ListTranslator(ElementTranslator<? extends V> valueTranslator) {
+            this(SpiderDiagramsParser.LIST, valueTranslator);
+        }
+
+        public ListTranslator(int headTokenType, ElementTranslator<? extends V> valueTranslator) {
+            super(headTokenType);
+            if (valueTranslator == null) {
+                throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "valueTranslator"));
+            }
+            this.valueTranslator = valueTranslator;
+        }
+
+        @Override
+        protected V fromASTChildAt(int i, CommonTree treeNode) throws ReadingException {
+            return valueTranslator.fromASTNode(treeNode);
+        }
+    }
+
+    private static class TupleTranslator<V> extends CollectionTranslator<V> {
+
+        List<ElementTranslator<? extends V>> valueTranslators = null;
+
+        public TupleTranslator(List<ElementTranslator<? extends V>> valueTranslators) {
+            this(SpiderDiagramsParser.SLIST, valueTranslators);
+        }
+
+        public TupleTranslator(ElementTranslator<? extends V>[] valueTranslators) {
+            this(SpiderDiagramsParser.SLIST, Arrays.asList(valueTranslators));
+        }
+
+        public TupleTranslator(int headTokenType, ElementTranslator<? extends V>[] valueTranslators) {
+            this(headTokenType, Arrays.asList(valueTranslators));
+        }
+
+        public TupleTranslator(int headTokenType, List<ElementTranslator<? extends V>> valueTranslators) {
+            super(headTokenType);
+            if (valueTranslators == null) {
+                throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "valueTranslators"));
+            }
+            this.valueTranslators = valueTranslators;
+        }
+
+        @Override
+        protected V fromASTChildAt(int i, CommonTree treeNode) throws ReadingException {
+            if (i >= valueTranslators.size()) {
+                throw new ReadingException(i18n("ERR_TRANSLATE_TOO_MANY_ELMNTS"), treeNode.getLine(), treeNode.getCharPositionInLine());
+            }
+            return valueTranslators.get(i).fromASTNode(treeNode);
         }
     }
 
