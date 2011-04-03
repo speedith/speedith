@@ -26,18 +26,17 @@
  */
 package speedith.core.lang.reader;
 
-import java.util.AbstractMap.SimpleEntry;
-import speedith.core.lang.Region;
-import java.util.Map;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.ANTLRReaderStream;
 import org.antlr.runtime.ANTLRStringStream;
@@ -51,9 +50,11 @@ import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.UnarySpiderDiagram;
 import speedith.core.lang.Zone;
+import speedith.core.lang.Region;
 import speedith.core.lang.reader.SpiderDiagramsParser.spiderDiagram_return;
-import sun.security.jca.GetInstance.Instance;
 import static speedith.core.i18n.Translations.i18n;
+import static speedith.core.lang.PrimarySpiderDiagram.*;
+import static speedith.core.lang.BinarySpiderDiagram.*;
 
 /**
  * This class provides static methods for reading spider diagrams (in a textual
@@ -65,64 +66,115 @@ import static speedith.core.i18n.Translations.i18n;
  * lexer}).</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SpiderDiagramsReader {
+public final class SpiderDiagramsReader {
 
-    public static final String ARG1 = "arg1";
-    public static final String ARG2 = "arg2";
-    public static final String OPERATOR = "operator";
-    public static final String HABITATS = "habitats";
-    public static final String SH_ZONES = "sh_zones";
-    public static final String SPIDERS = "spiders";
+    // <editor-fold defaultstate="collapsed" desc="Disabled Constructor">
+    private SpiderDiagramsReader() {
+    }
+    // </editor-fold>
 
-    // TODO: Document the functions below.
+    // <editor-fold defaultstate="collapsed" desc="Public Reading Methods">
+    /**
+     * This method takes a string, parses it, and converts it to the internal
+     * representation of spider diagrams (see {@link SpiderDiagram}).
+     * @param input the textual representation of a spider diagram.
+     * @return the internal representation of the spider diagram.
+     * @throws ReadingException this exception is thrown if the textual
+     * representation could not be translated or is malformed.
+     */
     public static SpiderDiagram readSpiderDiagram(String input) throws ReadingException {
         return readSpiderDiagram(new ANTLRStringStream(input));
     }
 
+    /**
+     * This method takes a {@link Reader}, parses it, and converts it to the
+     * internal representation of spider diagrams (see {@link SpiderDiagram}).
+     * @param reader the textual representation of a spider diagram.
+     * @return the internal representation of the spider diagram.
+     * @throws ReadingException this exception is thrown if the textual
+     * representation could not be translated or is malformed.
+     * @throws IOException thrown if the input could not be read.
+     */
     public static SpiderDiagram readSpiderDiagram(Reader reader) throws ReadingException, IOException {
         return readSpiderDiagram(new ANTLRReaderStream(reader));
     }
 
-    public static SpiderDiagram readSpiderDiagram(InputStream iStream) throws ReadingException, IOException {
-        return readSpiderDiagram(new ANTLRInputStream(iStream));
+    /**
+     * This method takes an input stream, parses its contents, and converts it
+     * to the internal representation of spider diagrams (see {@link
+     * SpiderDiagram}).
+     * @param input the textual representation of a spider diagram (a file input
+     * stream stream or similar).
+     * @return the internal representation of the spider diagram.
+     * @throws ReadingException this exception is thrown if the textual
+     * representation could not be translated or is malformed.
+     * @throws IOException thrown if the input could not be read.
+     */
+    public static SpiderDiagram readSpiderDiagram(InputStream input) throws ReadingException, IOException {
+        return readSpiderDiagram(new ANTLRInputStream(input));
     }
 
-    public static SpiderDiagram readSpiderDiagram(InputStream iStream, String encoding) throws ReadingException, IOException {
-        return readSpiderDiagram(new ANTLRInputStream(iStream, encoding));
+    /**
+     * This method takes an input stream, parses its contents, and converts it
+     * to the internal representation of spider diagrams (see {@link
+     * SpiderDiagram}).
+     * @param input the textual representation of a spider diagram (a file input
+     * stream stream or similar).
+     * @param encoding the encoding of the input stream.
+     * @return the internal representation of the spider diagram.
+     * @throws ReadingException this exception is thrown if the textual
+     * representation could not be translated or is malformed.
+     * @throws IOException thrown if the input could not be read.
+     */
+    public static SpiderDiagram readSpiderDiagram(InputStream input, String encoding) throws ReadingException, IOException {
+        return readSpiderDiagram(new ANTLRInputStream(input, encoding));
     }
+
+    /**
+     * This method takes an input stream, parses its contents, and converts it
+     * to the internal representation of spider diagrams (see {@link
+     * SpiderDiagram}).
+     * @param inputFile a file containing the textual representation of a spider
+     * diagram.
+     * @return the internal representation of the spider diagram.
+     * @throws ReadingException this exception is thrown if the textual
+     * representation could not be translated or is malformed.
+     * @throws IOException thrown if the input could not be read.
+     */
+    public static SpiderDiagram readSpiderDiagram(File inputFile) throws ReadingException, IOException {
+        return readSpiderDiagram(new ANTLRFileStream(inputFile.getPath()));
+    }
+
+    /**
+     * This method takes an input stream, parses its contents, and converts it
+     * to the internal representation of spider diagrams (see {@link
+     * SpiderDiagram}).
+     * @param inputFile a file containing the textual representation of a spider
+     * diagram.
+     * @param encoding the encoding of the input stream.
+     * @return the internal representation of the spider diagram.
+     * @throws ReadingException this exception is thrown if the textual
+     * representation could not be translated or is malformed.
+     * @throws IOException thrown if the input could not be read.
+     */
+    public static SpiderDiagram readSpiderDiagram(File inputFile, String encoding) throws ReadingException, IOException {
+        return readSpiderDiagram(new ANTLRFileStream(inputFile.getPath(), encoding));
+    }
+    // </editor-fold>
 
     // TODO: Here for testing. Will be removed (or moved into a JUnit test) eventually.
     public static void main(String[] args) throws ReadingException {
-        readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }");
+        SpiderDiagram sd = readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }");
+        StringBuilder sb = new StringBuilder();
+        sd.toString(sb);
+        System.out.println(sb.toString());
+        SpiderDiagram sd2 = readSpiderDiagram(sb.toString());
+        StringBuilder sb2 = new StringBuilder();
+        sd2.toString(sb2);
+        System.out.println(sb.toString().equals(sb2.toString()));
     }
 
-//    /**
-//     * Takes the tree node that is supposed to be the STRING language element,
-//     * checks that it is and tries to extract the Java string out of it.
-//     * <p>Upon failure it throws an exception.</p>
-//     * @param node
-//     * @return
-//     * @throws ReadingException
-//     */
-//    private static String stringFromStringNodeChecked(Object node) throws ReadingException {
-//        if (node instanceof CommonTree) {
-//            CommonTree treeNode = (CommonTree) node;
-//            if (treeNode.token != null && treeNode.token.getType() == SpiderDiagramsParser.STRING) {
-//                String str = treeNode.token.getText();
-//                if (str != null && str.length() >= 2) {
-//                    return str.substring(1, str.length() - 1);
-//                }
-//            }
-//        }
-//        if (node instanceof Tree) {
-//            throw new ReadingException(i18n("ERR_TRANSLATE_INVALID_STRING"), ((Tree) node).getLine(), ((Tree) node).getCharPositionInLine());
-//        } else {
-//            throw new IllegalStateException(i18n("GERR_ILLEGAL_STATE"));
-//        }
-//    }
-//    private static String getKeyFromPair(CommonTree childTree) {
-//        return childTree.getChild(0).getText();
-//    }
+    // <editor-fold defaultstate="collapsed" desc="Translation Methods (from the AST to SpiderDiagrams)">
     private static SpiderDiagram readSpiderDiagram(CharStream chrStream) throws ReadingException {
         SpiderDiagramsLexer lexer = new SpiderDiagramsLexer(chrStream);
         SpiderDiagramsParser parser = new SpiderDiagramsParser(new CommonTokenStream(lexer));
@@ -135,7 +187,6 @@ public class SpiderDiagramsReader {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="Translation Methods (from the AST to SpiderDiagrams)">
     private static SpiderDiagram toSpiderDiagram(spiderDiagram_return spiderDiagram) throws ReadingException {
         if (spiderDiagram == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "spiderDiagram"));
@@ -143,160 +194,6 @@ public class SpiderDiagramsReader {
         return SDTranslator.Instance.fromASTNode(spiderDiagram.tree);
     }
 
-//    private static SpiderDiagram toSpiderDiagram(CommonTree tree) throws ReadingException {
-//        return
-//        if (tree == null) {
-//            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "tree"));
-//        }
-//        switch (tree.token.getType()) {
-//            case SpiderDiagramsParser.SD_BINARY:
-//                return toBinarySD(tree);
-//            case SpiderDiagramsParser.SD_UNARY:
-//                return toUnarySD(tree);
-//            case SpiderDiagramsParser.SD_PRIMARY:
-//                return toPrimary(tree);
-//            case SpiderDiagramsParser.SD_NULL:
-//                return NullSpiderDiagram.getInstance();
-//            default:
-//                throw new ReadingException(i18n("ERR_UNKNOWN_SD_TYPE"));
-//        }
-//    }
-//
-//    private static BinarySpiderDiagram toBinarySD(CommonTree tree) throws ReadingException {
-//        if (tree == null) {
-//            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "tree"));
-//        }
-//        // operator, arg1 and arg2 are the expected arguments that a binary
-//        // spider diagram needs.
-//        String operator = null;
-//        SpiderDiagram arg1 = null;
-//        SpiderDiagram arg2 = null;
-//        // Go through all the children of the BinarySD tree node (all these
-//        // children should be key value PAIRs).
-//        for (Object child : tree.getChildren()) {
-//            CommonTree childTree = checkKeyValuePair(child);
-//            String key = getKeyFromPair(childTree);
-//            if (ARG1.equals(key)) {
-//                // NOTE: we allow ourselves an unchecked to CommonTree because
-//                // we trust the parser to have created CommonTree instead of
-//                // anything else.
-//                arg1 = toSpiderDiagram((CommonTree) childTree.getChild(1));
-//            } else if (ARG2.equals(key)) {
-//                // NOTE: we allow ourselves an unchecked to CommonTree because
-//                // we trust the parser to have created CommonTree instead of
-//                // anything else.
-//                arg2 = toSpiderDiagram((CommonTree) childTree.getChild(1));
-//            } else if (OPERATOR.equals(key)) {
-//                operator = stringFromStringNodeChecked(childTree.getChild(1));
-//            } else {
-//                throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", ARG1 + " | " + ARG2 + " | " + OPERATOR), childTree.getLine(), childTree.getCharPositionInLine());
-//            }
-//        }
-//        if (operator == null || arg1 == null || arg2 == null) {
-//            throw new ReadingException(i18n("ERR_TRANSLATE_MISSING_ELEMENTS", ARG1 + " | " + ARG2 + " | " + OPERATOR), tree.getLine(), tree.getCharPositionInLine());
-//        }
-//        return new BinarySpiderDiagram(operator, arg1, arg2);
-//    }
-//
-//    private static UnarySpiderDiagram toUnarySD(CommonTree tree) throws ReadingException {
-//        if (tree == null) {
-//            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "tree"));
-//        }
-//        // operator, arg1 and arg2 are the expected arguments that a binary
-//        // spider diagram needs.
-//        String operator = null;
-//        SpiderDiagram arg1 = null;
-//        // Go through all the children of the UnarySD tree node (all these
-//        // children should be key value PAIRs).
-//        for (Object child : tree.getChildren()) {
-//            CommonTree childTree = checkKeyValuePair(child);
-//            String key = getKeyFromPair(childTree);
-//            if (ARG1.equals(key)) {
-//                // NOTE: we allow ourselves an unchecked to CommonTree because
-//                // we trust the parser to have created CommonTree instead of
-//                // anything else.
-//                arg1 = toSpiderDiagram((CommonTree) childTree.getChild(1));
-//            } else if (OPERATOR.equals(key)) {
-//                operator = stringFromStringNodeChecked(childTree.getChild(1));
-//            } else {
-//                throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", ARG1 + " | " + OPERATOR), childTree.getLine(), childTree.getCharPositionInLine());
-//            }
-//        }
-//        if (operator == null || arg1 == null) {
-//            throw new ReadingException(i18n("ERR_TRANSLATE_MISSING_ELEMENTS", ARG1 + " & " + OPERATOR), tree.getLine(), tree.getCharPositionInLine());
-//        }
-//        return new UnarySpiderDiagram(operator, arg1);
-//    }
-//
-//    private static PrimarySpiderDiagram toPrimary(CommonTree tree) throws ReadingException {
-//        if (tree == null) {
-//            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "tree"));
-//        }
-//        // spiders, habitats and zones are the expected arguments to the primary
-//        // spider diagram.
-//        Collection<String> spiders = null;
-//        Map<String, Region> habitats = null;
-//        Collection<Zone> zones = null;
-//        // Go through all the children of the PrimarySD tree node (all these
-//        // children should be key value PAIRs).
-//        for (Object child : tree.getChildren()) {
-//            CommonTree childTree = checkKeyValuePair(child);
-//            String key = getKeyFromPair(childTree);
-//            if ("spiders".equals(key)) {
-//                spiders = toList(childTree.getChild(1), StringTranslator.Instance);
-//            } else if ("habitats".equals(key)) {
-//                System.out.println("habitats");
-//            } else if ("sh_zones".equals(key)) {
-//                System.out.println("shaded zones");
-//            } else {
-//                throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", ARG1 + " | " + OPERATOR), childTree.getLine(), childTree.getCharPositionInLine());
-//            }
-//        }
-//        return new PrimarySpiderDiagram(spiders, habitats, zones);
-//    }
-    /**
-     * Checks if the given {@code node} is a {@link CommonTree} and is of type
-     * {@link SpiderDiagramsParser#PAIR}. It returns the type-cast reference to
-     * the node upon success, or throws an {@link ReadingException} otherwise.
-     * @param node the node to check that it represents a key-value pair.
-     * @return the node (properly type cast).
-     * @throws ReadingException
-     */
-//    private static CommonTree checkKeyValuePair(Object node) throws ReadingException {
-//        if (node instanceof CommonTree) {
-//            CommonTree treeNode = (CommonTree) node;
-//            if (treeNode.token != null && treeNode.token.getType() == SpiderDiagramsParser.PAIR && treeNode.getChildCount() == 2) {
-//                return treeNode;
-//            }
-//        }
-//        if (node instanceof Tree) {
-//            throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", i18n("TRANSLATE_KEY_VALUE_PAIR")), ((Tree) node).getLine(), ((Tree) node).getCharPositionInLine());
-//        } else {
-//            throw new IllegalStateException(i18n("GERR_ILLEGAL_STATE"));
-//        }
-//    }
-//    private static <T> Collection<T> toList(Tree node, ElementTranslator<T> translator) throws ReadingException {
-//        if (node instanceof CommonTree) {
-//            CommonTree treeNode = (CommonTree) node;
-//            if (treeNode.token != null && treeNode.token.getType() == SpiderDiagramsParser.LIST) {
-//                if (treeNode.getChildCount() < 1) {
-//                    return null;
-//                }
-//                ArrayList<T> objs = new ArrayList<T>(treeNode.getChildCount());
-//                for (Object obj : treeNode.getChildren()) {
-//                    if (obj instanceof CommonTree) {
-//                        objs.add(translator.fromASTNode((CommonTree) obj));
-//                    }
-//                }
-//                return objs;
-//            }
-//        }
-//        if (node == null) {
-//            throw new IllegalStateException(i18n("GERR_ILLEGAL_STATE"));
-//        } else {
-//            throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", i18n("TRANSLATE_KEY_VALUE_PAIR")), node.getLine(), node.getCharPositionInLine());
-//        }
-//    }
     private abstract static class ElementTranslator<T> {
 
         public abstract T fromASTNode(CommonTree treeNode) throws ReadingException;
@@ -316,7 +213,7 @@ public class SpiderDiagramsReader {
         public Zone fromASTNode(CommonTree treeNode) throws ReadingException {
             ArrayList<ArrayList<String>> inOutContours = translator.fromASTNode(treeNode);
             if (inOutContours == null || inOutContours.size() != 2) {
-                throw new ReadingException(i18n("ERR_TRANSLATE_ZONE"), treeNode.getLine(), treeNode.getCharPositionInLine());
+                throw new ReadingException(i18n("ERR_TRANSLATE_ZONE"), treeNode);
             }
             return new Zone(inOutContours.get(0), inOutContours.get(1));
         }
@@ -328,11 +225,13 @@ public class SpiderDiagramsReader {
 
         private ListTranslator<ArrayList<Object>> regionListTranslator;
 
+        @SuppressWarnings("unchecked")
         private HabitatTranslator() {
             regionListTranslator = new ListTranslator<ArrayList<Object>>(new TupleTranslator<Object>(new ElementTranslator[]{StringTranslator.Instance, ZoneTranslator.ZoneListTranslator}));
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Map<String, Region> fromASTNode(CommonTree treeNode) throws ReadingException {
             ArrayList<ArrayList<Object>> rawHabitats = regionListTranslator.fromASTNode(treeNode);
             if (rawHabitats == null || rawHabitats.size() < 1) {
@@ -360,7 +259,7 @@ public class SpiderDiagramsReader {
                     return str.substring(1, str.length() - 1);
                 }
             }
-            throw new ReadingException(i18n("ERR_TRANSLATE_INVALID_STRING"), treeNode.getLine(), treeNode.getCharPositionInLine());
+            throw new ReadingException(i18n("ERR_TRANSLATE_INVALID_STRING"), treeNode);
         }
     }
 
@@ -373,7 +272,7 @@ public class SpiderDiagramsReader {
             if (treeNode.token != null && treeNode.token.getType() == SpiderDiagramsParser.ID) {
                 return treeNode.token.getText();
             }
-            throw new ReadingException(i18n("ERR_TRANSLATE_INVALID_ID"), treeNode.getLine(), treeNode.getCharPositionInLine());
+            throw new ReadingException(i18n("ERR_TRANSLATE_INVALID_ID"), treeNode);
         }
     }
 
@@ -407,7 +306,7 @@ public class SpiderDiagramsReader {
             if (areMandatoryPresent(attrs)) {
                 return createSD(attrs);
             } else {
-                throw new ReadingException(i18n("ERR_TRANSLATE_MISSING_ELEMENTS", keyValueMapTranslator.typedValueTranslators.keySet()), treeNode.getLine(), treeNode.getCharPositionInLine());
+                throw new ReadingException(i18n("ERR_TRANSLATE_MISSING_ELEMENTS", keyValueMapTranslator.typedValueTranslators.keySet()), treeNode);
             }
         }
 
@@ -444,14 +343,14 @@ public class SpiderDiagramsReader {
 
         private BinarySDTranslator() {
             super(SpiderDiagramsParser.SD_BINARY);
-            addMandatoryAttribute(ARG1, SDTranslator.Instance);
-            addMandatoryAttribute(ARG2, SDTranslator.Instance);
-            addMandatoryAttribute(OPERATOR, StringTranslator.Instance);
+            addMandatoryAttribute(SDTextArg1Attribute, SDTranslator.Instance);
+            addMandatoryAttribute(SDTextArg2Attribute, SDTranslator.Instance);
+            addMandatoryAttribute(SDTextOperatorAttribute, StringTranslator.Instance);
         }
 
         @Override
         BinarySpiderDiagram createSD(Map<String, Object> attributes) {
-            return new BinarySpiderDiagram((String) attributes.get(OPERATOR), (SpiderDiagram) attributes.get(ARG1), (SpiderDiagram) attributes.get(ARG2));
+            return new BinarySpiderDiagram((String) attributes.get(SDTextOperatorAttribute), (SpiderDiagram) attributes.get(SDTextArg1Attribute), (SpiderDiagram) attributes.get(SDTextArg2Attribute));
         }
     }
 
@@ -461,13 +360,13 @@ public class SpiderDiagramsReader {
 
         private UnarySDTranslator() {
             super(SpiderDiagramsParser.SD_UNARY);
-            addMandatoryAttribute(ARG1, SDTranslator.Instance);
-            addMandatoryAttribute(OPERATOR, StringTranslator.Instance);
+            addMandatoryAttribute(SDTextArg1Attribute, SDTranslator.Instance);
+            addMandatoryAttribute(SDTextOperatorAttribute, StringTranslator.Instance);
         }
 
         @Override
         UnarySpiderDiagram createSD(Map<String, Object> attributes) {
-            return new UnarySpiderDiagram((String) attributes.get(OPERATOR), (SpiderDiagram) attributes.get(ARG1));
+            return new UnarySpiderDiagram((String) attributes.get(SDTextOperatorAttribute), (SpiderDiagram) attributes.get(SDTextArg1Attribute));
         }
     }
 
@@ -477,15 +376,15 @@ public class SpiderDiagramsReader {
 
         private PrimarySDTranslator() {
             super(SpiderDiagramsParser.SD_PRIMARY);
-            addMandatoryAttribute(SPIDERS, ListTranslator.StringListTranslator);
-            addMandatoryAttribute(HABITATS, HabitatTranslator.Instance);
-            addMandatoryAttribute(SH_ZONES, new ListTranslator<Zone>(ZoneTranslator.Instance));
+            addMandatoryAttribute(SDTextSpidersAttribute, ListTranslator.StringListTranslator);
+            addMandatoryAttribute(SDTextHabitatsAttribute, HabitatTranslator.Instance);
+            addMandatoryAttribute(SDTextShadedZonesAttribute, new ListTranslator<Zone>(ZoneTranslator.Instance));
         }
 
         @Override
         @SuppressWarnings("unchecked")
         PrimarySpiderDiagram createSD(Map<String, Object> attributes) {
-            return new PrimarySpiderDiagram((Collection<String>) attributes.get(SPIDERS), (Map<String, Region>) attributes.get(HABITATS), (Collection<Zone>) attributes.get(SH_ZONES));
+            return new PrimarySpiderDiagram((Collection<String>) attributes.get(SDTextSpidersAttribute), (Map<String, Region>) attributes.get(SDTextHabitatsAttribute), (Collection<Zone>) attributes.get(SDTextShadedZonesAttribute));
         }
     }
 
@@ -518,6 +417,7 @@ public class SpiderDiagramsReader {
         @Override
         public ArrayList<V> fromASTNode(CommonTree treeNode) throws ReadingException {
             if (treeNode.token != null && treeNode.token.getType() == headTokenType) {
+                checkNode(treeNode);
                 if (treeNode.getChildCount() < 1) {
                     return null;
                 }
@@ -528,10 +428,21 @@ public class SpiderDiagramsReader {
                 }
                 return objs;
             }
-            throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", i18n(i18n("ERR_TRANSLATE_LIST_OR_SLIST"))), treeNode.getLine(), treeNode.getCharPositionInLine());
+            throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", i18n(i18n("ERR_TRANSLATE_LIST_OR_SLIST"))), treeNode);
         }
 
         protected abstract V fromASTChildAt(int i, CommonTree treeNode) throws ReadingException;
+
+        /**
+         * Checks whether the node (which should be a list) is okay for
+         * translation. It indicates so by not throwing an exception.
+         * <p>The default implementation does nothing.</p>
+         * @param treeNode the node which should be checked.
+         * @exception ReadingException this exception should be thrown if the
+         * AST node is not valid in some sense.
+         */
+        protected void checkNode(CommonTree treeNode) throws ReadingException {
+        }
     }
 
     private static class ListTranslator<V> extends CollectionTranslator<V> {
@@ -559,6 +470,8 @@ public class SpiderDiagramsReader {
 
     private static class TupleTranslator<V> extends CollectionTranslator<V> {
 
+        // TODO: A tuple should have exactly as many values as there are translators. Implement this.
+
         List<ElementTranslator<? extends V>> valueTranslators = null;
 
         public TupleTranslator(List<ElementTranslator<? extends V>> valueTranslators) {
@@ -584,36 +497,15 @@ public class SpiderDiagramsReader {
         @Override
         protected V fromASTChildAt(int i, CommonTree treeNode) throws ReadingException {
             if (i >= valueTranslators.size()) {
-                throw new ReadingException(i18n("ERR_TRANSLATE_TOO_MANY_ELMNTS"), treeNode.getLine(), treeNode.getCharPositionInLine());
+                throw new ReadingException(i18n("ERR_TRANSLATE_TOO_MANY_ELMNTS"), treeNode);
             }
             return valueTranslators.get(i).fromASTNode(treeNode);
         }
-    }
 
-    private static class KeyValueTranslator<V> extends ElementTranslator<SimpleEntry<String, V>> {
-
-        ElementTranslator<V> valueTranslator = null;
-
-        public KeyValueTranslator(ElementTranslator<V> valueTranslator) {
-            this.valueTranslator = valueTranslator;
-        }
-
-        /**
-         * Checks if the given {@code node} is a {@link CommonTree} and is of type
-         * {@link SpiderDiagramsParser#PAIR}. It returns the translated key-
-         * value upon success, or throws an {@link ReadingException} otherwise.
-         * @param treeNode the node to translate into a key-value pair.
-         * @return the translated key value pair.
-         * @throws ReadingException
-         */
         @Override
-        public SimpleEntry<String, V> fromASTNode(CommonTree treeNode) throws ReadingException {
-            if (treeNode.token != null && treeNode.token.getType() == SpiderDiagramsParser.PAIR && treeNode.getChildCount() == 2) {
-                String key = (String) IDTranslator.Instance.fromASTNode((CommonTree) treeNode.getChild(0));
-                V value = valueTranslator.fromASTNode((CommonTree) treeNode.getChild(1));
-                return new SimpleEntry<String, V>(key, value);
-            }
-            throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", i18n("TRANSLATE_KEY_VALUE_PAIR")), treeNode.getLine(), treeNode.getCharPositionInLine());
+        protected void checkNode(CommonTree treeNode) throws ReadingException {
+            if (treeNode.getChildCount() != valueTranslators.size())
+                throw new ReadingException(i18n("ERR_TRANSLATE_ELEMENTS_COUNT", valueTranslators.size(), treeNode.getChildCount()), treeNode);
         }
     }
 
@@ -662,17 +554,17 @@ public class SpiderDiagramsReader {
                             translator = defaultValueTranslator;
                         }
                         if (translator == null) {
-                            throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_KEY_VALUE", key, typedValueTranslators == null ? "" : typedValueTranslators.keySet()), node.getLine(), node.getCharPositionInLine());
+                            throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_KEY_VALUE", key, typedValueTranslators == null ? "" : typedValueTranslators.keySet()), node);
                         }
                         V value = translator.fromASTNode((CommonTree) node.getChild(1));
                         kVals.put(key, value);
                     } else {
-                        throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", i18n("TRANSLATE_KEY_VALUE_PAIR")), node.getLine(), node.getCharPositionInLine());
+                        throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", i18n("TRANSLATE_KEY_VALUE_PAIR")), node);
                     }
                 }
                 return kVals;
             }
-            throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", i18n(i18n("ERR_TRANSLATE_LIST_OR_SLIST"))), treeNode.getLine(), treeNode.getCharPositionInLine());
+            throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", i18n(i18n("ERR_TRANSLATE_LIST_OR_SLIST"))), treeNode);
         }
     }
     // </editor-fold>

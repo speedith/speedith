@@ -27,6 +27,8 @@
 
 package speedith.core.lang;
 
+import static speedith.core.i18n.Translations.i18n;
+
 /**
  * A compound spider diagram that applies one spider diagram to a unary
  * operator (e.g.: negation '¬').
@@ -81,6 +83,15 @@ public class UnarySpiderDiagram extends SpiderDiagram {
      */
     public SpiderDiagram getOperand() {
         return operand;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
+    @Override
+    public void toString(StringBuilder sb) {
+        if (sb == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
+        }
     }
     // </editor-fold>
 }

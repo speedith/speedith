@@ -26,6 +26,8 @@
  */
 package speedith.core.lang;
 
+import static speedith.core.i18n.Translations.i18n;
+
 /**
  * Represents an empty spider diagram (it is a tautology and evaluates to '⊤' or
  * {@code true}).
@@ -53,6 +55,15 @@ public class NullSpiderDiagram extends SpiderDiagram {
 
     // <editor-fold defaultstate="collapsed" desc="Private Constructor">
     private NullSpiderDiagram() {
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
+    @Override
+    public void toString(StringBuilder sb) {
+        if (sb == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
+        }
     }
     // </editor-fold>
 }

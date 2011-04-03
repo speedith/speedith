@@ -24,10 +24,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package speedith.core.lang.reader;
 
 import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.tree.CommonTree;
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * Indicates an exception which can be raised during reading a spider diagram
@@ -39,6 +40,7 @@ public class ReadingException extends Exception {
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private int lineNumber = -1;
     private int charIndex = -1;
+    private CommonTree node;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -78,6 +80,16 @@ public class ReadingException extends Exception {
         this.lineNumber = lineNumber;
         this.charIndex = charIndex;
     }
+
+    /**
+     * Constructs an instance of <code>ReadingException</code> with the specified detail message.
+     * @param msg the detail message.
+     * @param node the AST node where the exception occurred.
+     */
+    public ReadingException(String msg, CommonTree node) {
+        super(msg);
+        this.node = node;
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Properties">
@@ -90,8 +102,12 @@ public class ReadingException extends Exception {
      * known.</p>
      */
     public int getCharIndex() {
-        if (charIndex < 0 && getCause() instanceof RecognitionException) {
-            return ((RecognitionException)getCause()).charPositionInLine;
+        if (charIndex < 0) {
+            if (getCause() instanceof RecognitionException) {
+                return ((RecognitionException) getCause()).charPositionInLine;
+            } else if (getNode() != null) {
+                return getNode().getCharPositionInLine();
+            }
         }
         return charIndex;
     }
@@ -107,10 +123,33 @@ public class ReadingException extends Exception {
      * known.</p>
      */
     public int getLineNumber() {
-        if (lineNumber < 0 && getCause() instanceof RecognitionException) {
-            return ((RecognitionException)getCause()).line;
+        if (lineNumber < 0) {
+            if (getCause() instanceof RecognitionException) {
+                return ((RecognitionException) getCause()).line;
+            } else if (getNode() != null) {
+                return getNode().getLine();
+            }
         }
         return lineNumber;
+    }
+
+    /**
+     * Returns the AST node where the exception occurred.
+     * @return the AST node where the exception occurred.
+     */
+    public CommonTree getNode() {
+        return node;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Message Format Methods">
+    @Override
+    public String getLocalizedMessage() {
+        if (getCause() instanceof RecognitionException) {
+            return i18n("ERR_TRANSLTION_EXCEPTION_MSG", getMessage(), getLineNumber(), getCharIndex());
+        } else {
+            return i18n("ERR_TRANSLTION_EXCEPTION_MSG", getMessage(), getLineNumber(), getCharIndex());
+        }
     }
     // </editor-fold>
 }

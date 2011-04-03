@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * This class represents a region in spider diagrams.
@@ -104,6 +105,15 @@ public class Region {
         int hash = 7;
         hash = 37 * hash + (this.zones != null ? this.zones.hashCode() : 0);
         return hash;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
+    void toString(StringBuilder sb) {
+        if (sb == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
+        }
+        SpiderDiagram.printZoneList(sb, zones);
     }
     // </editor-fold>
 }

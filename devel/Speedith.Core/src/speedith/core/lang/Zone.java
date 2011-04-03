@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import speedith.core.util.SortedSets;
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  *
@@ -113,6 +114,19 @@ public class Zone implements Comparable<Zone> {
             }
             return retVal;
         }
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
+    void toString(StringBuilder sb) {
+        if (sb == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
+        }
+        sb.append('(');
+        SpiderDiagram.printStringList(sb, inContours);
+        sb.append(", ");
+        SpiderDiagram.printStringList(sb, outContours);
+        sb.append(')');
     }
     // </editor-fold>
 }

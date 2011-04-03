@@ -24,14 +24,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package speedith.core.lang;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * This is the base class of all data structures which contain information about
  * particular spider diagrams.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SpiderDiagram {
+public abstract class SpiderDiagram {
 
+    // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
+    public abstract void toString(StringBuilder sb);
+
+    public static void printString(StringBuilder sb, String str) {
+        sb.append('"').append(str).append('"');
+    }
+
+    public static void printStringList(StringBuilder sb, Collection<String> strList) {
+        sb.append('[');
+        if (strList != null) {
+            Iterator<String> strIter = strList.iterator();
+            if (strIter.hasNext()) {
+                sb.append('"').append(strIter.next()).append('"');
+                while (strIter.hasNext()) {
+                    printString(sb.append(", "), strIter.next());
+                }
+            }
+        }
+        sb.append(']');
+    }
+
+    public static void printZoneList(StringBuilder sb, Collection<Zone> zones) {
+        sb.append('[');
+        if (zones != null) {
+            Iterator<Zone> spIterator = zones.iterator();
+            if (spIterator.hasNext()) {
+                spIterator.next().toString(sb);
+                while (spIterator.hasNext()) {
+                    spIterator.next().toString(sb.append(", "));
+                }
+            }
+        }
+        sb.append(']');
+    }
+    // </editor-fold>
 }

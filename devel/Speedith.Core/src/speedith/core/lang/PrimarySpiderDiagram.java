@@ -26,12 +26,17 @@
  */
 package speedith.core.lang;
 
+import java.util.Map.Entry;
+import java.util.SortedMap;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * Represents a unitary spider diagram. For a complete and formal description of
@@ -43,13 +48,18 @@ import java.util.TreeSet;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class PrimarySpiderDiagram extends SpiderDiagram {
-    // TODO: Comment the code.
     // TODO: Provide a way to easily extract names of contours (perhaps maintain
     // a set of contour names, which is filled when it is first accessed).
 
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    public static final String SDTextPrimaryId = "PrimarySD";
+    public static final String SDTextHabitatsAttribute = "habitats";
+    public static final String SDTextShadedZonesAttribute = "sh_zones";
+    public static final String SDTextSpidersAttribute = "spiders";
+    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
     private SortedSet<String> spiders;
-    private Map<String, Region> habitats;
+    private TreeMap<String, Region> habitats;
     private SortedSet<Zone> shadedZones;
     // </editor-fold>
 
@@ -58,9 +68,9 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * Creates an empty primary (unitary) spider diagram.
      */
     public PrimarySpiderDiagram() {
-        spiders = new TreeSet<String>();
-        habitats = new HashMap<String, Region>();
-        shadedZones = new TreeSet<Zone>();
+        spiders = null;
+        habitats = null;
+        shadedZones = null;
     }
 
     /**
@@ -74,7 +84,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      */
     public PrimarySpiderDiagram(Collection<String> spiders, Map<String, Region> habitats, Collection<Zone> shadedZones) {
         this.spiders = spiders == null ? null : new TreeSet<String>(spiders);
-        this.habitats = habitats == null ? null : new HashMap<String, Region>(habitats);
+        this.habitats = habitats == null ? null : new TreeMap<String, Region>(habitats);
         this.shadedZones = shadedZones == null ? null : new TreeSet<Zone>(shadedZones);
     }
     // </editor-fold>
@@ -86,8 +96,8 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * @return an unmodifiable key-value map of spiders with their corresponding
      * {@link Region habitats}.
      */
-    public Map<String, Region> getHabitats() {
-        return habitats == null ? null : Collections.unmodifiableMap(habitats);
+    public SortedMap<String, Region> getHabitats() {
+        return habitats == null ? null : Collections.unmodifiableSortedMap(habitats);
     }
 
     /**
@@ -106,6 +116,56 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      */
     public SortedSet<String> getSpiders() {
         return spiders == null ? null : Collections.unmodifiableSortedSet(spiders);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
+    @Override
+    public void toString(StringBuilder sb) {
+        if (sb == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
+        }
+        sb.append(SDTextPrimaryId);
+        sb.append(" {");
+        printSpiders(sb);
+        sb.append(", ");
+        printHabitats(sb);
+        sb.append(", ");
+        printShadedZones(sb);
+        sb.append('}');
+    }
+
+    private void printSpiders(StringBuilder sb) {
+        sb.append(SDTextSpidersAttribute).append(" = ");
+        printStringList(sb, spiders);
+    }
+
+    private void printShadedZones(StringBuilder sb) {
+        sb.append(SDTextShadedZonesAttribute).append(" = ");
+        printZoneList(sb, shadedZones);
+    }
+
+    private void printHabitats(StringBuilder sb) {
+        sb.append(SDTextHabitatsAttribute).append(" = ");
+        sb.append('[');
+        Iterator<Entry<String, Region>> spIterator = habitats.entrySet().iterator();
+        if (spIterator.hasNext()) {
+            Entry<String, Region> habitat = spIterator.next();
+            printHabitat(sb, habitat.getKey(), habitat.getValue());
+            while (spIterator.hasNext()) {
+                habitat = spIterator.next();
+                printHabitat(sb.append(", "), habitat.getKey(), habitat.getValue());
+            }
+        }
+        sb.append(']');
+    }
+
+    private void printHabitat(StringBuilder sb, String key, Region value) {
+        sb.append('(');
+        printString(sb, key);
+        sb.append(", ");
+        value.toString(sb);
+        sb.append(')');
     }
     // </editor-fold>
 }

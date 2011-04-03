@@ -26,6 +26,8 @@
  */
 package speedith.core.lang;
 
+import static speedith.core.i18n.Translations.i18n;
+
 /**
  * A compound spider diagram connects two spider diagrams with a binary
  * predicate (e.g.: and '∧', or '∨', implication '⇒', equivalence '⇔', negation
@@ -33,6 +35,13 @@ package speedith.core.lang;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class BinarySpiderDiagram extends SpiderDiagram {
+    
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    public static final String SDTextBinaryId = "BinarySD";
+    public static final String SDTextArg1Attribute = "arg1";
+    public static final String SDTextArg2Attribute = "arg2";
+    public static final String SDTextOperatorAttribute = "operator";
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
@@ -99,6 +108,38 @@ public class BinarySpiderDiagram extends SpiderDiagram {
      */
     public SpiderDiagram getRightOperand() {
         return rightOperand;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
+    @Override
+    public void toString(StringBuilder sb) {
+        if (sb == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
+        }
+        sb.append(SDTextBinaryId);
+        sb.append(" {");
+        printOperator(sb);
+        sb.append(", ");
+        printArg1(sb);
+        sb.append(", ");
+        printArg2(sb);
+        sb.append('}');
+    }
+
+    private void printOperator(StringBuilder sb) {
+        sb.append(SDTextOperatorAttribute).append(" = ");
+        printString(sb, operator);
+    }
+
+    private void printArg1(StringBuilder sb) {
+        sb.append(SDTextArg1Attribute).append(" = ");
+        leftOperand.toString(sb);
+    }
+
+    private void printArg2(StringBuilder sb) {
+        sb.append(SDTextArg2Attribute).append(" = ");
+        rightOperand.toString(sb);
     }
     // </editor-fold>
 }
