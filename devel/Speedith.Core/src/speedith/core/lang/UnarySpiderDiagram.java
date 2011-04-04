@@ -37,6 +37,12 @@ import static speedith.core.i18n.Translations.i18n;
 public class UnarySpiderDiagram extends SpiderDiagram {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
+    /**
+     * The identifier of the unary spider diagram in the textual representation
+     * of spider diagrams.
+     * <p>This value is used in the textual representation of spider diagrams
+     * (see {@link BinarySpiderDiagram#toString()}).</p>
+     */
     public static final String SDTextBinaryId = "UnarySD";
     // </editor-fold>
 

@@ -28,9 +28,6 @@ package speedith.core.lang.reader;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
 import java.io.StringReader;
 import org.junit.After;
 import org.junit.AfterClass;

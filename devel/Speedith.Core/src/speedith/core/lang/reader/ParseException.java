@@ -48,7 +48,7 @@ public class ParseException extends RuntimeException {
      * <a href="http://www.antlr.org/api/Java/classorg_1_1antlr_1_1runtime_1_1_recognition_exception.html">ANTLR Java Runtime API Documentation</a>.</p>
      * @param description the string describing the syntax error.
      * @param ex the class which contains detailed information on what went
-     * wrong during parsing (can be used to give feedback to the user, see the <a href="http://www.antlr.org/depot/antlr3/release-3.2/runtime/Java/src/main/java/org/antlr/runtime/BaseRecognizer.java">source of the {@link BaseRecognizer} class</a>,
+     * wrong during parsing (can be used to give feedback to the user, see the <a href="http://www.antlr.org/depot/antlr3/release-3.2/runtime/Java/src/main/java/org/antlr/runtime/BaseRecognizer.java">source of the {@code BaseRecognizer} class</a>,
      * specifically the method {@code displayRecognitionError} on how to do this).
      */
     public ParseException(String description, RecognitionException ex) {

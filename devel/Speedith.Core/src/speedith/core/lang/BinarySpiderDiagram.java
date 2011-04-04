@@ -30,16 +30,38 @@ import static speedith.core.i18n.Translations.i18n;
 
 /**
  * A compound spider diagram connects two spider diagrams with a binary
- * predicate (e.g.: and '∧', or '∨', implication '⇒', equivalence '⇔', negation
- * '¬', etc.).
+ * predicate (e.g.: and '∧', or '∨', implication '⇒', equivalence '⇔', etc.).
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class BinarySpiderDiagram extends SpiderDiagram {
     
     // <editor-fold defaultstate="collapsed" desc="Constants">
+    /**
+     * The identifier of the binary spider diagram in the textual representation
+     * of spider diagrams.
+     * <p>This value is used in the textual representation of spider diagrams
+     * (see {@link BinarySpiderDiagram#toString()}).</p>
+     */
     public static final String SDTextBinaryId = "BinarySD";
+    /**
+     * The attribute key name for the first argument (operand) of the binary operation in
+     * a binary spider diagram.
+     * <p>This value is used in the textual representation of spider diagrams
+     * (see {@link BinarySpiderDiagram#toString()}).</p>
+     */
     public static final String SDTextArg1Attribute = "arg1";
+    /**
+     * The attribute key name for the second argument (operand) of the binary operation in
+     * a binary spider diagram.
+     * <p>This value is used in the textual representation of spider diagrams
+     * (see {@link BinarySpiderDiagram#toString()}).</p>
+     */
     public static final String SDTextArg2Attribute = "arg2";
+    /**
+     * The attribute key name for the binary operation of the binary spider diagram.
+     * <p>This value is used in the textual representation of spider diagrams
+     * (see {@link BinarySpiderDiagram#toString()}).</p>
+     */
     public static final String SDTextOperatorAttribute = "operator";
     // </editor-fold>
 

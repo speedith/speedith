@@ -77,6 +77,9 @@ public final class SpiderDiagramsReader {
     /**
      * This method takes a string, parses it, and converts it to the internal
      * representation of spider diagrams (see {@link SpiderDiagram}).
+     * <p>The formal definition of the syntax can be found in
+     * <a href="https://gitorious.org/speedith/speedith/blobs/master/devel/Speedith.Core/src/speedith/core/lang/reader/SpiderDiagrams.g">
+     * the ANTLR grammar definition file</a>.</p>
      * @param input the textual representation of a spider diagram.
      * @return the internal representation of the spider diagram.
      * @throws ReadingException this exception is thrown if the textual
@@ -89,6 +92,9 @@ public final class SpiderDiagramsReader {
     /**
      * This method takes a {@link Reader}, parses it, and converts it to the
      * internal representation of spider diagrams (see {@link SpiderDiagram}).
+     * <p>The formal definition of the syntax can be found in
+     * <a href="https://gitorious.org/speedith/speedith/blobs/master/devel/Speedith.Core/src/speedith/core/lang/reader/SpiderDiagrams.g">
+     * the ANTLR grammar definition file</a>.</p>
      * @param reader the textual representation of a spider diagram.
      * @return the internal representation of the spider diagram.
      * @throws ReadingException this exception is thrown if the textual
@@ -103,6 +109,9 @@ public final class SpiderDiagramsReader {
      * This method takes an input stream, parses its contents, and converts it
      * to the internal representation of spider diagrams (see {@link
      * SpiderDiagram}).
+     * <p>The formal definition of the syntax can be found in
+     * <a href="https://gitorious.org/speedith/speedith/blobs/master/devel/Speedith.Core/src/speedith/core/lang/reader/SpiderDiagrams.g">
+     * the ANTLR grammar definition file</a>.</p>
      * @param input the textual representation of a spider diagram (a file input
      * stream stream or similar).
      * @return the internal representation of the spider diagram.
@@ -118,6 +127,9 @@ public final class SpiderDiagramsReader {
      * This method takes an input stream, parses its contents, and converts it
      * to the internal representation of spider diagrams (see {@link
      * SpiderDiagram}).
+     * <p>The formal definition of the syntax can be found in
+     * <a href="https://gitorious.org/speedith/speedith/blobs/master/devel/Speedith.Core/src/speedith/core/lang/reader/SpiderDiagrams.g">
+     * the ANTLR grammar definition file</a>.</p>
      * @param input the textual representation of a spider diagram (a file input
      * stream stream or similar).
      * @param encoding the encoding of the input stream.
@@ -134,6 +146,9 @@ public final class SpiderDiagramsReader {
      * This method takes an input stream, parses its contents, and converts it
      * to the internal representation of spider diagrams (see {@link
      * SpiderDiagram}).
+     * <p>The formal definition of the syntax can be found in
+     * <a href="https://gitorious.org/speedith/speedith/blobs/master/devel/Speedith.Core/src/speedith/core/lang/reader/SpiderDiagrams.g">
+     * the ANTLR grammar definition file</a>.</p>
      * @param inputFile a file containing the textual representation of a spider
      * diagram.
      * @return the internal representation of the spider diagram.
@@ -149,6 +164,9 @@ public final class SpiderDiagramsReader {
      * This method takes an input stream, parses its contents, and converts it
      * to the internal representation of spider diagrams (see {@link
      * SpiderDiagram}).
+     * <p>The formal definition of the syntax can be found in
+     * <a href="https://gitorious.org/speedith/speedith/blobs/master/devel/Speedith.Core/src/speedith/core/lang/reader/SpiderDiagrams.g">
+     * the ANTLR grammar definition file</a>.</p>
      * @param inputFile a file containing the textual representation of a spider
      * diagram.
      * @param encoding the encoding of the input stream.

@@ -29,5 +29,7 @@
  * This package contains the reader for the textual spider diagram notation
  * (which is used to pass data to Speedith via the command line or through
  * source files).
+ * <p>Examples of a textual spider diagrams can be found in the test packages
+ * of Speedith.Core (see <a href="https://gitorious.org/speedith/speedith/blobs/master/devel/Speedith.Core/test/speedith/core/lang/reader/ParserExample1.sd">test sources in the repository</a>).</p>
  */
 package speedith.core.lang.reader;

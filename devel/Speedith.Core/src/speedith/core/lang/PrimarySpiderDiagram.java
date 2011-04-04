@@ -52,11 +52,33 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     // a set of contour names, which is filled when it is first accessed).
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
+    /**
+     * The identifier of the primary (unitary) spider diagram in the textual representation
+     * of spider diagrams.
+     * <p>This value is used in the textual representation of spider diagrams
+     * (see {@link BinarySpiderDiagram#toString()}).</p>
+     */
     public static final String SDTextPrimaryId = "PrimarySD";
+    /**
+     * The attribute key name for the list of habitats in the primary spider diagram.
+     * <p>This value is used in the textual representation of spider diagrams
+     * (see {@link BinarySpiderDiagram#toString()}).</p>
+     */
     public static final String SDTextHabitatsAttribute = "habitats";
+    /**
+     * The attribute key name for the list of shaded zones in the primary spider diagram.
+     * <p>This value is used in the textual representation of spider diagrams
+     * (see {@link BinarySpiderDiagram#toString()}).</p>
+     */
     public static final String SDTextShadedZonesAttribute = "sh_zones";
+    /**
+     * The attribute key name for the list of spiders in the primary spider diagram.
+     * <p>This value is used in the textual representation of spider diagrams
+     * (see {@link BinarySpiderDiagram#toString()}).</p>
+     */
     public static final String SDTextSpidersAttribute = "spiders";
     // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
     private SortedSet<String> spiders;
     private TreeMap<String, Region> habitats;

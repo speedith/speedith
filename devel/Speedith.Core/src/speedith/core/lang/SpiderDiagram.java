@@ -37,13 +37,26 @@ import java.util.Iterator;
 public abstract class SpiderDiagram {
 
     // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
+    /**
+     * Converts this spider diagram to its textual representation (see {@link speedith.core.lang.reader.SpiderDiagramsReader#readSpiderDiagram(java.lang.String)}
+     * for an explanation on how to read spider diagrams from this textual representation.
+     */
+    @Override
+    public abstract String toString();
+
+    /**
+     * Converts this spider diagram to its textual representation (see {@link speedith.core.lang.reader.SpiderDiagramsReader#readSpiderDiagram(java.lang.String)}
+     * for an explanation on how to read spider diagrams from this textual representation.
+     * @param sb the string builder into which to put the textual representation
+     * of this spider diagram (must not be {@code null}).
+     */
     public abstract void toString(StringBuilder sb);
 
-    public static void printString(StringBuilder sb, String str) {
+    static void printString(StringBuilder sb, String str) {
         sb.append('"').append(str).append('"');
     }
 
-    public static void printStringList(StringBuilder sb, Collection<String> strList) {
+    static void printStringList(StringBuilder sb, Collection<String> strList) {
         sb.append('[');
         if (strList != null) {
             Iterator<String> strIter = strList.iterator();
@@ -57,7 +70,7 @@ public abstract class SpiderDiagram {
         sb.append(']');
     }
 
-    public static void printZoneList(StringBuilder sb, Collection<Zone> zones) {
+    static void printZoneList(StringBuilder sb, Collection<Zone> zones) {
         sb.append('[');
         if (zones != null) {
             Iterator<Zone> spIterator = zones.iterator();
