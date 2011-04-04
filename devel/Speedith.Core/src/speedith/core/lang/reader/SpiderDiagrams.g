@@ -54,7 +54,7 @@ spiderDiagram
 	:	'PrimarySD'^ '{'! (keyValue (','! keyValue)*)? '}'!
 	|	'UnarySD'^ '{'! (keyValue (','! keyValue)*)? '}'!
 	|	'BinarySD'^ '{'! (keyValue (','! keyValue)*)? '}'!
-	|	'NullSD'^ '{'! (keyValue (','! keyValue)*)? '}'!
+	|	'NullSD'^ ('{'! (keyValue (','! keyValue)*)? '}'!)?
 	;
 
 keyValues

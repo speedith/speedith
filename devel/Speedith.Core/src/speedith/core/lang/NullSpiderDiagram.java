@@ -75,7 +75,6 @@ public class NullSpiderDiagram extends SpiderDiagram {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
         }
         sb.append(SDTextNullId);
-        sb.append("{}");
     }
 
     @Override

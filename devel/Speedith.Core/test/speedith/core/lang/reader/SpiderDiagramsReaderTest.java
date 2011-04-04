@@ -121,7 +121,6 @@ public class SpiderDiagramsReaderTest {
         try {
             sd = SpiderDiagramsReader.readSpiderDiagram(example);
         } catch (ReadingException readingException) {
-            System.out.println(readingException);
             assertEquals(readingException.getLineNumber(), errorLine);
             assertEquals(readingException.getCharIndex(), errorCharIndex);
         }
