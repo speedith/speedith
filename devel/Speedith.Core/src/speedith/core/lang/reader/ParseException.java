@@ -56,4 +56,10 @@ public class ParseException extends RuntimeException {
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+    @Override
+    public RecognitionException getCause() {
+        return (RecognitionException) super.getCause();
+    }
+    // </editor-fold>
 }

@@ -70,6 +70,16 @@ public class ReadingException extends Exception {
     /**
      * Constructs an instance of <code>ReadingException</code> with the specified detail message.
      * @param msg the detail message.
+     * @param cause the cause for this exception.
+     * @param parser the parser which reported the exception.
+     */
+    public ReadingException(String msg, RecognitionException cause, SpiderDiagramsParser parser) {
+        super(msg + " (" + parser.getErrorMessage(cause, parser.getTokenNames()) + ")", cause);
+    }
+
+    /**
+     * Constructs an instance of <code>ReadingException</code> with the specified detail message.
+     * @param msg the detail message.
      * @param lineNumber the number of the line at which the reading hit an
      * error.
      * @param charIndex the character position (in the line) at which the
@@ -145,11 +155,7 @@ public class ReadingException extends Exception {
     // <editor-fold defaultstate="collapsed" desc="Message Format Methods">
     @Override
     public String getLocalizedMessage() {
-        if (getCause() instanceof RecognitionException) {
-            return i18n("ERR_TRANSLTION_EXCEPTION_MSG", getMessage(), getLineNumber(), getCharIndex());
-        } else {
-            return i18n("ERR_TRANSLTION_EXCEPTION_MSG", getMessage(), getLineNumber(), getCharIndex());
-        }
+        return i18n("ERR_TRANSLTION_EXCEPTION_MSG", getMessage(), getLineNumber(), getCharIndex());
     }
     // </editor-fold>
 }

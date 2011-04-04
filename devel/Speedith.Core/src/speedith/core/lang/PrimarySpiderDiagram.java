@@ -167,5 +167,12 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         value.toString(sb);
         sb.append(')');
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        toString(sb);
+        return sb.toString();
+    }
     // </editor-fold>
 }

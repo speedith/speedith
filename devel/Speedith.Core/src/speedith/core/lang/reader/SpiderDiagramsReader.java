@@ -162,18 +162,6 @@ public final class SpiderDiagramsReader {
     }
     // </editor-fold>
 
-    // TODO: Here for testing. Will be removed (or moved into a JUnit test) eventually.
-    public static void main(String[] args) throws ReadingException {
-        SpiderDiagram sd = readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }");
-        StringBuilder sb = new StringBuilder();
-        sd.toString(sb);
-        System.out.println(sb.toString());
-        SpiderDiagram sd2 = readSpiderDiagram(sb.toString());
-        StringBuilder sb2 = new StringBuilder();
-        sd2.toString(sb2);
-        System.out.println(sb.toString().equals(sb2.toString()));
-    }
-
     // <editor-fold defaultstate="collapsed" desc="Translation Methods (from the AST to SpiderDiagrams)">
     private static SpiderDiagram readSpiderDiagram(CharStream chrStream) throws ReadingException {
         SpiderDiagramsLexer lexer = new SpiderDiagramsLexer(chrStream);
@@ -181,9 +169,9 @@ public final class SpiderDiagramsReader {
         try {
             return toSpiderDiagram(parser.spiderDiagram());
         } catch (RecognitionException re) {
-            throw new ReadingException(i18n("ERR_PARSE_INVALID_SYNTAX"), re);
+            throw new ReadingException(i18n("ERR_PARSE_INVALID_SYNTAX"), re, parser);
         } catch (ParseException pe) {
-            throw new ReadingException(pe.getMessage(), pe.getCause());
+            throw new ReadingException(pe.getMessage(), pe.getCause(), parser);
         }
     }
 

@@ -36,6 +36,10 @@ import static speedith.core.i18n.Translations.i18n;
  */
 public class UnarySpiderDiagram extends SpiderDiagram {
 
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    public static final String SDTextBinaryId = "UnarySD";
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
      * The unary operator used in this unitary spider diagram (e.g.: negation
@@ -92,6 +96,29 @@ public class UnarySpiderDiagram extends SpiderDiagram {
         if (sb == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
         }
+        sb.append(SDTextBinaryId);
+        sb.append(" {");
+        printOperator(sb);
+        sb.append(", ");
+        printArg1(sb);
+        sb.append('}');
+    }
+
+    private void printOperator(StringBuilder sb) {
+        sb.append(BinarySpiderDiagram.SDTextOperatorAttribute).append(" = ");
+        printString(sb, operator);
+    }
+
+    private void printArg1(StringBuilder sb) {
+        sb.append(BinarySpiderDiagram.SDTextArg1Attribute).append(" = ");
+        operand.toString(sb);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        toString(sb);
+        return sb.toString();
     }
     // </editor-fold>
 }

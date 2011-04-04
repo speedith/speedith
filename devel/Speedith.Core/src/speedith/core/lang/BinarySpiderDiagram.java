@@ -141,5 +141,12 @@ public class BinarySpiderDiagram extends SpiderDiagram {
         sb.append(SDTextArg2Attribute).append(" = ");
         rightOperand.toString(sb);
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        toString(sb);
+        return sb.toString();
+    }
     // </editor-fold>
 }

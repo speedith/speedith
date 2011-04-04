@@ -37,6 +37,10 @@ import static speedith.core.i18n.Translations.i18n;
  */
 public class NullSpiderDiagram extends SpiderDiagram {
 
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    public static final String SDTextNullId = "NullSD";
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
      * Returns the only instance of the null spider diagram.
@@ -64,6 +68,15 @@ public class NullSpiderDiagram extends SpiderDiagram {
         if (sb == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
         }
+        sb.append(SDTextNullId);
+        sb.append("{}");
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        toString(sb);
+        return sb.toString();
     }
     // </editor-fold>
 }
