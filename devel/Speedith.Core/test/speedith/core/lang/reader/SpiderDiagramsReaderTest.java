@@ -60,6 +60,7 @@ public class SpiderDiagramsReaderTest {
     private static final String SD_EXAMPLE_ERR_5 = "PrimarySD { spiders = [], sh__zones = [], habitats = []}";
     private static final String SD_EXAMPLE_ERR_6 = "UnarySD {operator = \", arg1 = NullSD }}";
     private static final String SD_EXAMPLE_ERR_7 = "BinarySD {operator = \"\", arg1 = NullSD {}, arg2 = NullSD {}";
+    private static final String SD_EXAMPLE_ERR_8 = "BinarySD aq {operator = \"\", arg1 = NullSD {}, arg2 = NullSD {}";
 
     public SpiderDiagramsReaderTest() {
     }
@@ -86,7 +87,17 @@ public class SpiderDiagramsReaderTest {
      */
     @Test
     public void testReadSpiderDiagram_String() throws Exception {
-        SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(SD_EXAMPLE_1);
+        checkSDExample(SD_EXAMPLE_1);
+        checkSDExample(SD_EXAMPLE_2);
+        checkSDExample(SD_EXAMPLE_3);
+        checkSDExample(SD_EXAMPLE_4);
+        checkSDExample(SD_EXAMPLE_5);
+        checkSDExample(SD_EXAMPLE_6);
+        checkSDExample(SD_EXAMPLE_7);
+    }
+
+    private void checkSDExample(String example) throws ReadingException {
+        SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(example);
         String str1 = sd.toString();
         SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(str1);
         assertEquals(str1, sd2.toString());
@@ -97,13 +108,25 @@ public class SpiderDiagramsReaderTest {
      * @throws Exception
      */
     @Test
-    public void testReadSpiderDiagram_String2() throws Exception {
+    public void testReadSpiderDiagram_String_Err() throws Exception {
+        checkSDExample_Err(SD_EXAMPLE_ERR_1, 1, 30);
+        checkSDExample_Err(SD_EXAMPLE_ERR_2, 0, -1);
+        checkSDExample_Err(SD_EXAMPLE_ERR_3, 1, 0);
+        checkSDExample_Err(SD_EXAMPLE_ERR_4, 1, 7);
+        checkSDExample_Err(SD_EXAMPLE_ERR_5, 1, 26);
+        checkSDExample_Err(SD_EXAMPLE_ERR_6, 0, -1);
+        checkSDExample_Err(SD_EXAMPLE_ERR_7, 1, 58);
+        checkSDExample_Err(SD_EXAMPLE_ERR_8, 1, 9);
+    }
+
+    private void checkSDExample_Err(String example, int errorLine, int errorCharIndex) {
         SpiderDiagram sd = null;
         try {
-            sd = SpiderDiagramsReader.readSpiderDiagram(SD_EXAMPLE_ERR_1);
+            sd = SpiderDiagramsReader.readSpiderDiagram(example);
         } catch (ReadingException readingException) {
-            assertEquals(readingException.getLineNumber(), 1);
-            assertEquals(readingException.getCharIndex(), 34);
+            System.out.println(readingException);
+            assertEquals(readingException.getLineNumber(), errorLine);
+            assertEquals(readingException.getCharIndex(), errorCharIndex);
         }
     }
 
@@ -164,15 +187,11 @@ public class SpiderDiagramsReaderTest {
      * @throws Exception
      */
     @Test
-    public void testReadSpiderDiagram_InputStream_String() throws Exception {
-    }
-
-    /**
-     * Test of readSpiderDiagram method, of class SpiderDiagramsReader.
-     * @throws Exception
-     */
-    @Test
     public void testReadSpiderDiagram_File() throws Exception {
+        SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(new File("./test/speedith/core/lang/reader/ParserExample1.sd"));
+        String str1 = sd.toString();
+        SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(str1);
+        assertEquals(str1, sd2.toString());
     }
 
     /**
@@ -180,6 +199,12 @@ public class SpiderDiagramsReaderTest {
      * @throws Exception
      */
     @Test
-    public void testReadSpiderDiagram_File_String() throws Exception {
+    public void testReadSpiderDiagram_File2() throws Exception {
+        try {
+            SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(new File("./test/speedith/core/lang/reader/ParserExample1_1.sd"));
+        } catch (ReadingException readingException) {
+            assertEquals(readingException.getLineNumber(), 6);
+            assertEquals(readingException.getCharIndex(), 8);
+        }
     }
 }

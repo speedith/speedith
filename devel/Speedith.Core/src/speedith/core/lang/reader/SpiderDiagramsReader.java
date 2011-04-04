@@ -210,7 +210,6 @@ public final class SpiderDiagramsReader {
     private static class HabitatTranslator extends ElementTranslator<Map<String, Region>> {
 
         public static final HabitatTranslator Instance = new HabitatTranslator();
-
         private ListTranslator<ArrayList<Object>> regionListTranslator;
 
         @SuppressWarnings("unchecked")
@@ -228,7 +227,7 @@ public final class SpiderDiagramsReader {
             HashMap<String, Region> habitats = new HashMap<String, Region>();
             for (ArrayList<Object> rawHabitat : rawHabitats) {
                 if (rawHabitat.size() == 2) {
-                    habitats.put((String)rawHabitat.get(0), new Region((ArrayList<Zone>)rawHabitat.get(1)));
+                    habitats.put((String) rawHabitat.get(0), new Region((ArrayList<Zone>) rawHabitat.get(1)));
                 }
             }
             return habitats;
@@ -459,7 +458,6 @@ public final class SpiderDiagramsReader {
     private static class TupleTranslator<V> extends CollectionTranslator<V> {
 
         // TODO: A tuple should have exactly as many values as there are translators. Implement this.
-
         List<ElementTranslator<? extends V>> valueTranslators = null;
 
         public TupleTranslator(List<ElementTranslator<? extends V>> valueTranslators) {
@@ -492,8 +490,9 @@ public final class SpiderDiagramsReader {
 
         @Override
         protected void checkNode(CommonTree treeNode) throws ReadingException {
-            if (treeNode.getChildCount() != valueTranslators.size())
+            if (treeNode.getChildCount() != valueTranslators.size()) {
                 throw new ReadingException(i18n("ERR_TRANSLATE_ELEMENTS_COUNT", valueTranslators.size(), treeNode.getChildCount()), treeNode);
+            }
         }
     }
 
@@ -542,7 +541,7 @@ public final class SpiderDiagramsReader {
                             translator = defaultValueTranslator;
                         }
                         if (translator == null) {
-                            throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_KEY_VALUE", key, typedValueTranslators == null ? "" : typedValueTranslators.keySet()), node);
+                            throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_KEY_VALUE", key, typedValueTranslators == null ? "" : typedValueTranslators.keySet()), (CommonTree) node.getChild(0));
                         }
                         V value = translator.fromASTNode((CommonTree) node.getChild(1));
                         kVals.put(key, value);

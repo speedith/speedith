@@ -148,13 +148,15 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     private void printHabitats(StringBuilder sb) {
         sb.append(SDTextHabitatsAttribute).append(" = ");
         sb.append('[');
-        Iterator<Entry<String, Region>> spIterator = habitats.entrySet().iterator();
-        if (spIterator.hasNext()) {
-            Entry<String, Region> habitat = spIterator.next();
-            printHabitat(sb, habitat.getKey(), habitat.getValue());
-            while (spIterator.hasNext()) {
-                habitat = spIterator.next();
-                printHabitat(sb.append(", "), habitat.getKey(), habitat.getValue());
+        if (habitats != null && !habitats.isEmpty()) {
+            Iterator<Entry<String, Region>> spIterator = habitats.entrySet().iterator();
+            if (spIterator.hasNext()) {
+                Entry<String, Region> habitat = spIterator.next();
+                printHabitat(sb, habitat.getKey(), habitat.getValue());
+                while (spIterator.hasNext()) {
+                    habitat = spIterator.next();
+                    printHabitat(sb.append(", "), habitat.getKey(), habitat.getValue());
+                }
             }
         }
         sb.append(']');

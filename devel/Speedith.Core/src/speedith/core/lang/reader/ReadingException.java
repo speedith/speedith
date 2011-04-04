@@ -26,7 +26,11 @@
  */
 package speedith.core.lang.reader;
 
+import org.antlr.runtime.Token;
+import org.antlr.runtime.MissingTokenException;
+import org.antlr.runtime.NoViableAltException;
 import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.UnwantedTokenException;
 import org.antlr.runtime.tree.CommonTree;
 import static speedith.core.i18n.Translations.i18n;
 
@@ -39,8 +43,9 @@ public class ReadingException extends Exception {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private int lineNumber = -1;
-    private int charIndex = -1;
+    private int charIndex = -2;
     private CommonTree node;
+    private Token token;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -71,19 +76,29 @@ public class ReadingException extends Exception {
      * Constructs an instance of <code>ReadingException</code> with the specified detail message.
      * @param msg the detail message.
      * @param cause the cause for this exception.
-     * @param parser the parser which reported the exception.
+     * @param parser the parser which reported the exception (useful for
+     * extracting better error messages).34
      */
     public ReadingException(String msg, RecognitionException cause, SpiderDiagramsParser parser) {
         super(msg + " (" + parser.getErrorMessage(cause, parser.getTokenNames()) + ")", cause);
+        if (cause instanceof MissingTokenException) {
+            MissingTokenException mte = (MissingTokenException) cause;
+            this.token = mte.inserted instanceof Token ? ((Token) mte.inserted) : null;
+        } else if (cause instanceof UnwantedTokenException) {
+            this.token = ((UnwantedTokenException) cause).getUnexpectedToken();
+        } else {
+            this.token = cause.token;
+        }
     }
 
     /**
      * Constructs an instance of <code>ReadingException</code> with the specified detail message.
      * @param msg the detail message.
      * @param lineNumber the number of the line at which the reading hit an
-     * error.
+     * error (-1 indicates that the line position is unknown).
      * @param charIndex the character position (in the line) at which the
-     * reading hit an error.
+     * reading hit an error (-2 indicates that the character position is
+     * unknown).
      */
     public ReadingException(String msg, int lineNumber, int charIndex) {
         super(msg);
@@ -104,40 +119,44 @@ public class ReadingException extends Exception {
 
     // <editor-fold defaultstate="collapsed" desc="Properties">
     /**
-     * Returns the number of the line at which the reading hit an error.
-     * <p>Note: a negative number is returned if the line number is not
+     * Returns the character position (in the line) at which the reading hit an
+     * error.
+     * <p>Note: -2 is returned if the character position is not
      * known.</p>
-     * @return the number of the line at which the reading hit an error.
-     * <p>Note: a negative number is returned if the line number is not
+     * @return the character position (in the line) at which the reading hit an
+     * error.
+     * <p>Note: -2 is returned if the character position is not
      * known.</p>
      */
     public int getCharIndex() {
-        if (charIndex < 0) {
-            if (getCause() instanceof RecognitionException) {
-                return ((RecognitionException) getCause()).charPositionInLine;
+        if (charIndex < -1) {
+            if (getToken() != null) {
+                charIndex = getToken().getCharPositionInLine();
             } else if (getNode() != null) {
-                return getNode().getCharPositionInLine();
+                charIndex = getNode().getCharPositionInLine();
+            } else if (getCause() instanceof RecognitionException) {
+                charIndex = ((RecognitionException) getCause()).charPositionInLine;
             }
         }
         return charIndex;
     }
 
     /**
-     * Returns the character position (in the line) at which the reading hit an
-     * error.
-     * <p>Note: a negative number is returned if the character position is not
+     * Returns the number of the line at which the reading hit an error.
+     * <p>Note: -1 is returned if the line number is not
      * known.</p>
-     * @return the character position (in the line) at which the reading hit an
-     * error.
-     * <p>Note: a negative number is returned if the character position is not
+     * @return the number of the line at which the reading hit an error.
+     * <p>Note: -1 is returned if the line number is not
      * known.</p>
      */
     public int getLineNumber() {
         if (lineNumber < 0) {
-            if (getCause() instanceof RecognitionException) {
-                return ((RecognitionException) getCause()).line;
+            if (getToken() != null) {
+                lineNumber = getToken().getLine();
             } else if (getNode() != null) {
-                return getNode().getLine();
+                lineNumber = getNode().getLine();
+            } else if (getCause() instanceof RecognitionException) {
+                lineNumber = ((RecognitionException) getCause()).line;
             }
         }
         return lineNumber;
@@ -150,12 +169,26 @@ public class ReadingException extends Exception {
     public CommonTree getNode() {
         return node;
     }
+
+    /**
+     * Returns the token which is somehow involved in the syntax error that
+     * caused this exception.
+     * @return the token which is somehow involved in the syntax error that
+     * caused this exception.
+     */
+    public Token getToken() {
+        return token;
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Message Format Methods">
     @Override
     public String getLocalizedMessage() {
-        return i18n("ERR_TRANSLTION_EXCEPTION_MSG", getMessage(), getLineNumber(), getCharIndex());
+        if (getLineNumber() > 0 && getCharIndex() >= 0) {
+            return i18n("ERR_TRANSLATION_EXCEPTION_MSG", getMessage(), getLineNumber(), getCharIndex());
+        } else {
+            return i18n("ERR_TRANSLATION_EXCEPTION_MSG_NO_POSITION", getMessage());
+        }
     }
     // </editor-fold>
 }
