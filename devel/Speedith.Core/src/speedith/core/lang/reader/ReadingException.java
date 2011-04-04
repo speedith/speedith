@@ -72,22 +72,39 @@ public class ReadingException extends Exception {
         super(msg, cause);
     }
 
+//    /**
+//     * Constructs an instance of <code>ReadingException</code> with the specified detail message.
+//     * @param msg the detail message.
+//     * @param cause the cause for this exception.
+//     * @param parser the parser which reported the exception (useful for
+//     * extracting better error messages).
+//     */
+//    public ReadingException(String msg, RecognitionException cause, SpiderDiagramsParser parser) {
+//        super(msg + " (" + parser.getErrorMessage(cause, parser.getTokenNames()) + ")", cause);
+//        if (cause instanceof MissingTokenException) {
+//            MissingTokenException mte = (MissingTokenException) cause;
+//            this.token = mte.inserted instanceof Token ? ((Token) mte.inserted) : null;
+//        } else if (cause instanceof UnwantedTokenException) {
+//            this.token = ((UnwantedTokenException) cause).getUnexpectedToken();
+//        } else {
+//            this.token = cause.token;
+//        }
+//    }
+
     /**
      * Constructs an instance of <code>ReadingException</code> with the specified detail message.
      * @param msg the detail message.
      * @param cause the cause for this exception.
-     * @param parser the parser which reported the exception (useful for
-     * extracting better error messages).34
      */
-    public ReadingException(String msg, RecognitionException cause, SpiderDiagramsParser parser) {
-        super(msg + " (" + parser.getErrorMessage(cause, parser.getTokenNames()) + ")", cause);
-        if (cause instanceof MissingTokenException) {
-            MissingTokenException mte = (MissingTokenException) cause;
+    public ReadingException(String msg, ParseException cause) {
+        super(msg + " (" + cause.getOrigin().getErrorMessage(cause.getCause(), cause.getOrigin().getTokenNames()) + ")", cause.getCause());
+        if (cause.getCause() instanceof MissingTokenException) {
+            MissingTokenException mte = (MissingTokenException) cause.getCause();
             this.token = mte.inserted instanceof Token ? ((Token) mte.inserted) : null;
-        } else if (cause instanceof UnwantedTokenException) {
-            this.token = ((UnwantedTokenException) cause).getUnexpectedToken();
+        } else if (cause.getCause() instanceof UnwantedTokenException) {
+            this.token = ((UnwantedTokenException) cause.getCause()).getUnexpectedToken();
         } else {
-            this.token = cause.token;
+            this.token = cause.getCause().token;
         }
     }
 

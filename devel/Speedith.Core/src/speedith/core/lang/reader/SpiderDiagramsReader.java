@@ -187,9 +187,9 @@ public final class SpiderDiagramsReader {
         try {
             return toSpiderDiagram(parser.spiderDiagram());
         } catch (RecognitionException re) {
-            throw new ReadingException(i18n("ERR_PARSE_INVALID_SYNTAX"), re, parser);
+            throw new ReadingException(i18n("ERR_PARSE_INVALID_SYNTAX"), re);
         } catch (ParseException pe) {
-            throw new ReadingException(pe.getMessage(), pe.getCause(), parser);
+            throw new ReadingException(pe.getMessage(), pe);
         }
     }
 

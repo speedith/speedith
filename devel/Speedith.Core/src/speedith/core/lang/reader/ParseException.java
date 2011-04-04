@@ -27,7 +27,9 @@
 
 package speedith.core.lang.reader;
 
+import org.antlr.runtime.BaseRecognizer;
 import org.antlr.runtime.RecognitionException;
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * This exception is thrown upon a parsing error.
@@ -36,6 +38,10 @@ import org.antlr.runtime.RecognitionException;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class ParseException extends RuntimeException {
+
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    private BaseRecognizer origin;
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
     /**
@@ -50,9 +56,18 @@ public class ParseException extends RuntimeException {
      * @param ex the class which contains detailed information on what went
      * wrong during parsing (can be used to give feedback to the user, see the <a href="http://www.antlr.org/depot/antlr3/release-3.2/runtime/Java/src/main/java/org/antlr/runtime/BaseRecognizer.java">source of the {@code BaseRecognizer} class</a>,
      * specifically the method {@code displayRecognitionError} on how to do this).
+     * @param origin the recogniser (either the parser or the lexer) that has
+     * thrown the exception.
      */
-    public ParseException(String description, RecognitionException ex) {
+    public ParseException(String description, RecognitionException ex, BaseRecognizer origin) {
         super(description, ex);
+        if (ex == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "ex"));
+        }
+        if (origin == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "origin"));
+        }
+        this.origin = origin;
     }
     // </editor-fold>
 
@@ -60,6 +75,16 @@ public class ParseException extends RuntimeException {
     @Override
     public RecognitionException getCause() {
         return (RecognitionException) super.getCause();
+    }
+
+    /**
+     * Returns the recogniser (either the parser or the lexer) that has
+     * thrown the exception.
+     * @return the recogniser (either the parser or the lexer) that has
+     * thrown the exception.
+     */
+    public BaseRecognizer getOrigin() {
+        return origin;
     }
     // </editor-fold>
 }

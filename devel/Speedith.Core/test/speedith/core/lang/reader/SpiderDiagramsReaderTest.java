@@ -111,7 +111,7 @@ public class SpiderDiagramsReaderTest {
         checkSDExample_Err(SD_EXAMPLE_ERR_3, 1, 0);
         checkSDExample_Err(SD_EXAMPLE_ERR_4, 1, 7);
         checkSDExample_Err(SD_EXAMPLE_ERR_5, 1, 26);
-        checkSDExample_Err(SD_EXAMPLE_ERR_6, 0, -1);
+        checkSDExample_Err(SD_EXAMPLE_ERR_6, 1, 39);
         checkSDExample_Err(SD_EXAMPLE_ERR_7, 1, 58);
         checkSDExample_Err(SD_EXAMPLE_ERR_8, 1, 9);
     }
@@ -120,9 +120,11 @@ public class SpiderDiagramsReaderTest {
         SpiderDiagram sd = null;
         try {
             sd = SpiderDiagramsReader.readSpiderDiagram(example);
+            fail("An exception should have been thrown.");
         } catch (ReadingException readingException) {
-            assertEquals(readingException.getLineNumber(), errorLine);
-            assertEquals(readingException.getCharIndex(), errorCharIndex);
+//            System.out.println(readingException);
+            assertEquals(errorLine, readingException.getLineNumber());
+            assertEquals(errorCharIndex, readingException.getCharIndex());
         }
     }
 

@@ -25,15 +25,32 @@ import static speedith.core.i18n.Translations.i18n;
 
 @lexer::header {
 package speedith.core.lang.reader;
+import static speedith.core.i18n.Translations.i18n;
 }
 
 @rulecatch {
+catch (RecognitionException e) {
+    throw new ParseException(i18n("ERR_PARSE_INVALID_SYNTAX"), e, this);
+}
+}
+
+@lexer::rulecatch {
+catch (RecognitionException e) {
+    throw new ParseException(i18n("ERR_PARSE_INVALID_SYNTAX"), e, this);
+}
 }
 
 @members {
 @Override
 public void reportError(RecognitionException e) {
-    throw new ParseException(i18n("ERR_PARSE_INVALID_SYNTAX"), e);
+    throw new ParseException(i18n("ERR_PARSE_INVALID_SYNTAX"), e, this);
+}
+}
+
+@lexer::members {
+@Override
+public void reportError(RecognitionException e) {
+    throw new ParseException(i18n("ERR_PARSE_INVALID_SYNTAX"), e, this);
 }
 }
 
