@@ -4,7 +4,7 @@
  * File name: ReadingException.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
- *  Copyright © 2010 Matej Urbas
+ *  Copyright © 2011 Matej Urbas
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,6 @@ package speedith.core.lang.reader;
 
 import org.antlr.runtime.Token;
 import org.antlr.runtime.MissingTokenException;
-import org.antlr.runtime.NoViableAltException;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.UnwantedTokenException;
 import org.antlr.runtime.tree.CommonTree;
@@ -71,25 +70,6 @@ public class ReadingException extends Exception {
     public ReadingException(String msg, Throwable cause) {
         super(msg, cause);
     }
-
-//    /**
-//     * Constructs an instance of <code>ReadingException</code> with the specified detail message.
-//     * @param msg the detail message.
-//     * @param cause the cause for this exception.
-//     * @param parser the parser which reported the exception (useful for
-//     * extracting better error messages).
-//     */
-//    public ReadingException(String msg, RecognitionException cause, SpiderDiagramsParser parser) {
-//        super(msg + " (" + parser.getErrorMessage(cause, parser.getTokenNames()) + ")", cause);
-//        if (cause instanceof MissingTokenException) {
-//            MissingTokenException mte = (MissingTokenException) cause;
-//            this.token = mte.inserted instanceof Token ? ((Token) mte.inserted) : null;
-//        } else if (cause instanceof UnwantedTokenException) {
-//            this.token = ((UnwantedTokenException) cause).getUnexpectedToken();
-//        } else {
-//            this.token = cause.token;
-//        }
-//    }
 
     /**
      * Constructs an instance of <code>ReadingException</code> with the specified detail message.

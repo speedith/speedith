@@ -26,7 +26,11 @@
  */
 
 /**
- * This package contains some useful utility functions used throughout Speedith
- * Core.
+ * Provides functionality of exporting spider diagrams into many different
+ * textual formats.
+ * <p>The class {@link speedith.core.lang.export.SDTextExporting} is the main entry point to getting the
+ * desired {@link speedith.core.lang.export.SDTextExporter} object, which then performs the translation
+ * through the methods {@link speedith.core.lang.export.SDTextExporter#export(SpiderDiagram)}, {@link
+ * speedith.core.lang.export.SDTextExporter#exportTo(SpiderDiagram, java.io.Writer)}.</p>
  */
-package speedith.core.util;
+package speedith.core.lang.export;

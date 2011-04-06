@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: package-info.java
+ * File name: SDTextExporting.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -25,8 +25,17 @@
  * THE SOFTWARE.
  */
 
+package speedith.core.lang.export;
+
+import speedith.core.lang.SpiderDiagram;
+
 /**
- * This package contains some useful utility functions used throughout Speedith
- * Core.
+ * The factory class providing an entry point to obtaining {@link SDTextExporter
+ * text exporters} for {@link SpiderDiagram spider diagrams}.
+ * @author Matej Urbas [matej.urbas@gmail.com]
  */
-package speedith.core.util;
+public class SDTextExporting {
+
+//    public static final String TextExporterProviders
+
+}

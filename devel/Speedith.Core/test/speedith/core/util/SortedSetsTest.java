@@ -4,7 +4,7 @@
  * File name: SortedSetsTest.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
- *  Copyright © 2010 Matej Urbas
+ *  Copyright © 2011 Matej Urbas
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
