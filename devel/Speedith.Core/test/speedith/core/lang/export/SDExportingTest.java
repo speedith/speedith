@@ -77,20 +77,6 @@ public class SDExportingTest {
     }
 
     /**
-     * Test of getExporter method, of class SDExporting.
-     */
-    @Test
-    public void testGetExporter_String_Map() {
-    }
-
-    /**
-     * Test of getProvider method, of class SDExporting.
-     */
-    @Test
-    public void testGetProvider() {
-    }
-
-    /**
      * Test of getSupportedFormats method, of class SDExporting.
      */
     @Test
@@ -106,13 +92,14 @@ public class SDExportingTest {
      */
     @Test
     public void testScanForExporters() {
-    }
-
-    /**
-     * Test of registerProvider method, of class SDExporting.
-     */
-    @Test
-    public void testRegisterProvider() {
+        SDExporting.scanForExporters();
+        Set<String> supportedFormats = SDExporting.getSupportedFormats();
+        assertNotNull(supportedFormats);
+        assertTrue(supportedFormats.contains(TestExportProvider.FormatName));
+        SDExporter exporter = SDExporting.getExporter(TestExportProvider.FormatName);
+        assertEquals(exporter.export(null), TestExportProvider.ExportContent);
+        SDExportProvider provider = SDExporting.getProvider(TestExportProvider.FormatName);
+        assertEquals(provider.getDescription(), TestExportProvider.Description);
     }
 
 }

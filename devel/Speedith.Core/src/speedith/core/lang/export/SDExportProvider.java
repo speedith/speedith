@@ -60,8 +60,8 @@ public abstract class SDExportProvider {
      * @param parameters optional parameters, which can be considered by the
      * export provider when constructing the exporter.
      * <p>A list of valid parameters can be inspected via {@link
-     * SDExportProvider#getParameterSet()}. Description of each of the
-     * parameters can be obtained via {@link SDExportProvider#getParameterDescriptions()}.</p>
+     * SDExportProvider#getParameters()}. Description of every parameter
+     * can be obtained via {@link SDExportProvider#getParameterDescription(java.lang.String, java.util.Locale)}.</p>
      * @return an exporter of spider diagrams. This exporter will export spider
      * diagrams to the format as indicated by
      * {@link SDExportProvider#getFormatName()}.
@@ -75,13 +75,13 @@ public abstract class SDExportProvider {
      * <p>Note: the default implementation returns {@code null}.</p>
      * @return a set of parameter names that are meaningful to {@link SDExportProvider#getExporter(java.util.Map)}.
      */
-    public Set<String> getParameterSet() {
+    public Set<String> getParameters() {
         return null;
     }
 
     /**
      * Gets the description for the given parameter (which is in the
-     * {@link SDExportProvider#getParameterSet()} set).
+     * {@link SDExportProvider#getParameters()} set).
      * <p>The default implementation returns {@code null}</p>
      * @param parameter the parameter for which we want a description.
      * @param locale the locale in which the description should be given.

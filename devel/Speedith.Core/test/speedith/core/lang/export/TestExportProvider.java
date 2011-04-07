@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: package-info.java
+ * File name: Isabelle2010ExportProvider.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -24,13 +24,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package speedith.core.lang.export;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Locale;
+import java.util.Map;
+import speedith.core.lang.SpiderDiagram;
 
 /**
- * Provides functionality of exporting spider diagrams into many different
- * textual formats.
- * <p>The class {@link speedith.core.lang.export.SDExporting} is the main entry point to getting the
- * desired {@link speedith.core.lang.export.SDExporter} object, which then performs the translation
- * through the methods {@link speedith.core.lang.export.SDExporter#export(SpiderDiagram)}, {@link
- * speedith.core.lang.export.SDExporter#exportTo(SpiderDiagram, java.io.Writer)}.</p>
+ * A stupid test export format provider.
+ * @author Matej Urbas [matej.urbas@gmail.com]
  */
-package speedith.core.lang.export;
+public class TestExportProvider extends SDExportProvider {
+
+    public static final String Description = "A dummy testing export provider.";
+    public static final String ExportContent = "Blabla";
+    /**
+     * The name of the export format of this provider.
+     */
+    public static final String FormatName = "DummyExportProvider";
+
+    @Override
+    public String getFormatName() {
+        return FormatName;
+    }
+
+    @Override
+    public SDExporter getExporter(Map<String, Object> parameters) {
+        return new Exporter();
+    }
+
+    @Override
+    public String getDescription(Locale locale) {
+        return Description;
+    }
+
+    private static class Exporter extends SDExporter {
+
+        @Override
+        public void exportTo(SpiderDiagram spiderDiagram, Writer output) throws IOException {
+            output.append(ExportContent);
+        }
+    }
+}
