@@ -33,6 +33,6 @@
  * <p>and use it anywhere in your code, like this:</p>
  * {@code i18n("STRING_RESOURCE_KEY"); }
  * <p>Additional strings can be added to the {@code "speedith/core/i18n/strings"}
- * bundle (see {@link speedith.core.i18n.Translations#I18N_STRINGS_BUNDLE}).</p>
+ * bundle (see {@link speedith.core.i18n.Translations#StringsBundle}).</p>
  */
 package speedith.core.i18n;

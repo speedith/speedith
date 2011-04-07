@@ -15,6 +15,7 @@ tokens {
 	SD_PRIMARY = 'PrimarySD';	// The 'primary spider diagram'.
 	SD_BINARY  =  'BinarySD';	// The 'binar spider diagram'.
 	SD_UNARY   =   'UnarySD';	// The 'unary spider diagram'.
+	SD_NARY    =    'NarySD';	// The 'nary spider diagram' (arbitrary arity).
 	SD_NULL    =    'NullSD';	// The 'null spider diagram'.
 }
 
@@ -71,6 +72,7 @@ spiderDiagram
 	:	'PrimarySD'^ '{'! (keyValue (','! keyValue)*)? '}'!
 	|	'UnarySD'^ '{'! (keyValue (','! keyValue)*)? '}'!
 	|	'BinarySD'^ '{'! (keyValue (','! keyValue)*)? '}'!
+	|	'NarySD'^ '{'! (keyValue (','! keyValue)*)? '}'!
 	|	'NullSD'^ ('{'! (keyValue (','! keyValue)*)? '}'!)?
 	;
 

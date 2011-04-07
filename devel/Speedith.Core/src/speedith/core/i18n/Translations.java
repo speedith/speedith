@@ -37,7 +37,7 @@ import java.util.Locale;
  * <p>and use it anywhere in your code, like this:</p>
  * {@code i18n("STRING_RESOURCE_KEY"); }
  * <p>Additional strings can be added to the {@code "speedith/core/i18n/strings"}
- * bundle (see {@link speedith.core.i18n.Translations#I18N_STRINGS_BUNDLE}).</p>
+ * bundle (see {@link speedith.core.i18n.Translations#StringsBundle}).</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public final class Translations {
@@ -51,7 +51,7 @@ public final class Translations {
     /**
      * The path to the bundle which contains translations for Speedith core.
      */
-    public static final String I18N_STRINGS_BUNDLE = "speedith/core/i18n/strings";
+    public static final String StringsBundle = "speedith/core/i18n/strings";
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Translated Strings">
@@ -63,7 +63,7 @@ public final class Translations {
      * @return a string in the language of the current locale.
      */
     public static String i18n(String key) {
-        return java.util.ResourceBundle.getBundle(I18N_STRINGS_BUNDLE).getString(key);
+        return java.util.ResourceBundle.getBundle(StringsBundle).getString(key);
     }
 
     /**
@@ -75,7 +75,7 @@ public final class Translations {
      * @return a string in the language of the current locale.
      */
     public static String i18n(String key, Object... args) {
-        return String.format(java.util.ResourceBundle.getBundle(I18N_STRINGS_BUNDLE).getString(key), args);
+        return String.format(java.util.ResourceBundle.getBundle(StringsBundle).getString(key), args);
     }
 
     /**
@@ -87,7 +87,7 @@ public final class Translations {
      * @return a string in the language of the current locale.
      */
     public static String i18n(Locale locale, String key) {
-        return java.util.ResourceBundle.getBundle(I18N_STRINGS_BUNDLE, locale).getString(key);
+        return java.util.ResourceBundle.getBundle(StringsBundle, locale).getString(key);
     }
 
     /**
@@ -100,7 +100,7 @@ public final class Translations {
      * @return a string in the language of the current locale.
      */
     public static String i18n(Locale locale, String key, Object... args) {
-        return String.format(java.util.ResourceBundle.getBundle(I18N_STRINGS_BUNDLE, locale).getString(key), args);
+        return String.format(java.util.ResourceBundle.getBundle(StringsBundle, locale).getString(key), args);
     }
     // </editor-fold>
 }

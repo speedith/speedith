@@ -26,6 +26,7 @@
  */
 package speedith.core.lang.reader;
 
+import org.antlr.runtime.CommonToken;
 import org.antlr.runtime.Token;
 import org.antlr.runtime.MissingTokenException;
 import org.antlr.runtime.RecognitionException;
@@ -168,6 +169,14 @@ public class ReadingException extends Exception {
     }
 
     /**
+     * Sets the AST node where the exception occurred.
+     * @param node the AST node where the exception occurred.
+     */
+    public void setNode(CommonTree node) {
+        this.node = node;
+    }
+
+    /**
      * Returns the token which is somehow involved in the syntax error that
      * caused this exception.
      * @return the token which is somehow involved in the syntax error that
@@ -175,6 +184,16 @@ public class ReadingException extends Exception {
      */
     public Token getToken() {
         return token;
+    }
+
+    /**
+     * Sets the token which is somehow involved in the syntax error that
+     * caused this exception.
+     * @param token the token which is somehow involved in the syntax error that
+     * caused this exception.
+     */
+    public void getToken(Token token) {
+        this.token = token;
     }
     // </editor-fold>
 

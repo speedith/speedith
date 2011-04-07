@@ -44,11 +44,10 @@ import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
-import speedith.core.lang.BinarySpiderDiagram;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.UnarySpiderDiagram;
+import speedith.core.lang.NarySpiderDiagram;
 import speedith.core.lang.Zone;
 import speedith.core.lang.Region;
 import speedith.core.lang.reader.SpiderDiagramsParser.spiderDiagram_return;
@@ -285,15 +284,18 @@ public final class SpiderDiagramsReader {
 
         private GeneralMapTranslator<Object> keyValueMapTranslator;
 
-        public GeneralSDTranslator() {
-        }
-
+//        public GeneralSDTranslator() {
+//        }
         private GeneralSDTranslator(int headTokenType) {
             keyValueMapTranslator = new GeneralMapTranslator<Object>(headTokenType, new HashMap<String, ElementTranslator<? extends Object>>(), null);
         }
 
         <T> void addMandatoryAttribute(String key, ElementTranslator<T> valueTranslator) {
             keyValueMapTranslator.typedValueTranslators.put(key, valueTranslator);
+        }
+
+        <T> void addDefaultAttribute(ElementTranslator<T> valueTranslator) {
+            keyValueMapTranslator.defaultValueTranslator = valueTranslator;
         }
 
         private boolean areMandatoryPresent(Map<String, Object> attributes) {
@@ -309,13 +311,18 @@ public final class SpiderDiagramsReader {
         public V fromASTNode(CommonTree treeNode) throws ReadingException {
             Map<String, Object> attrs = keyValueMapTranslator.fromASTNode(treeNode);
             if (areMandatoryPresent(attrs)) {
-                return createSD(attrs);
+                try {
+                    return createSD(attrs);
+                } catch (ReadingException re) {
+                    re.setNode(treeNode);
+                    throw re;
+                }
             } else {
                 throw new ReadingException(i18n("ERR_TRANSLATE_MISSING_ELEMENTS", keyValueMapTranslator.typedValueTranslators.keySet()), treeNode);
             }
         }
 
-        abstract V createSD(Map<String, Object> attributes);
+        abstract V createSD(Map<String, Object> attributes) throws ReadingException;
     }
 
     private static class SDTranslator extends ElementTranslator<SpiderDiagram> {
@@ -329,9 +336,11 @@ public final class SpiderDiagramsReader {
         public SpiderDiagram fromASTNode(CommonTree treeNode) throws ReadingException {
             switch (treeNode.token.getType()) {
                 case SpiderDiagramsParser.SD_BINARY:
-                    return BinarySDTranslator.Instance.fromASTNode(treeNode);
+                    return NarySDTranslator.BinaryTranslator.fromASTNode(treeNode);
                 case SpiderDiagramsParser.SD_UNARY:
-                    return UnarySDTranslator.Instance.fromASTNode(treeNode);
+                    return NarySDTranslator.UnaryTranslator.fromASTNode(treeNode);
+                case SpiderDiagramsParser.SD_NARY:
+                    return NarySDTranslator.NaryTranslator.fromASTNode(treeNode);
                 case SpiderDiagramsParser.SD_PRIMARY:
                     return PrimarySDTranslator.Instance.fromASTNode(treeNode);
                 case SpiderDiagramsParser.SD_NULL:
@@ -342,36 +351,34 @@ public final class SpiderDiagramsReader {
         }
     }
 
-    private static class BinarySDTranslator extends GeneralSDTranslator<BinarySpiderDiagram> {
+    private static class NarySDTranslator extends GeneralSDTranslator<NarySpiderDiagram> {
 
-        public static final BinarySDTranslator Instance = new BinarySDTranslator();
+        public static final NarySDTranslator NaryTranslator = new NarySDTranslator(SpiderDiagramsParser.SD_NARY);
+        public static final NarySDTranslator BinaryTranslator = new NarySDTranslator(SpiderDiagramsParser.SD_BINARY);
+        public static final NarySDTranslator UnaryTranslator = new NarySDTranslator(SpiderDiagramsParser.SD_UNARY);
 
-        private BinarySDTranslator() {
-            super(SpiderDiagramsParser.SD_BINARY);
-            addMandatoryAttribute(SDTextArg1Attribute, SDTranslator.Instance);
-            addMandatoryAttribute(SDTextArg2Attribute, SDTranslator.Instance);
+        public NarySDTranslator(int headTokenType) {
+            super(headTokenType);
             addMandatoryAttribute(SDTextOperatorAttribute, StringTranslator.Instance);
+            addDefaultAttribute(SDTranslator.Instance);
         }
 
         @Override
-        BinarySpiderDiagram createSD(Map<String, Object> attributes) {
-            return new BinarySpiderDiagram((String) attributes.get(SDTextOperatorAttribute), (SpiderDiagram) attributes.get(SDTextArg1Attribute), (SpiderDiagram) attributes.get(SDTextArg2Attribute));
-        }
-    }
-
-    private static class UnarySDTranslator extends GeneralSDTranslator<UnarySpiderDiagram> {
-
-        public static final UnarySDTranslator Instance = new UnarySDTranslator();
-
-        private UnarySDTranslator() {
-            super(SpiderDiagramsParser.SD_UNARY);
-            addMandatoryAttribute(SDTextArg1Attribute, SDTranslator.Instance);
-            addMandatoryAttribute(SDTextOperatorAttribute, StringTranslator.Instance);
-        }
-
-        @Override
-        UnarySpiderDiagram createSD(Map<String, Object> attributes) {
-            return new UnarySpiderDiagram((String) attributes.get(SDTextOperatorAttribute), (SpiderDiagram) attributes.get(SDTextArg1Attribute));
+        NarySpiderDiagram createSD(Map<String, Object> attributes) throws ReadingException {
+            String operator = (String) attributes.remove(SDTextOperatorAttribute);
+            ArrayList<SpiderDiagram> operands = new ArrayList<SpiderDiagram>();
+            int i = 1;
+            Object curSD;
+            while ((curSD = attributes.remove(NarySpiderDiagram.SDTextArgAttribute + i++)) instanceof SpiderDiagram) {
+                operands.add((SpiderDiagram) curSD);
+            }
+            if (curSD != null) {
+                throw new RuntimeException(i18n("GERR_ILLEGAL_STATE"));
+            }
+            if (!attributes.isEmpty()) {
+                throw new ReadingException(i18n("ERR_TRANSLATE_UNKNOWN_ATTRIBUTES", attributes));
+            }
+            return new NarySpiderDiagram(operator, operands);
         }
     }
 
@@ -388,7 +395,7 @@ public final class SpiderDiagramsReader {
 
         @Override
         @SuppressWarnings("unchecked")
-        PrimarySpiderDiagram createSD(Map<String, Object> attributes) {
+        PrimarySpiderDiagram createSD(Map<String, Object> attributes) throws ReadingException {
             return new PrimarySpiderDiagram((Collection<String>) attributes.get(SDTextSpidersAttribute), (Map<String, Region>) attributes.get(SDTextHabitatsAttribute), (Collection<Zone>) attributes.get(SDTextShadedZonesAttribute));
         }
     }
@@ -402,7 +409,7 @@ public final class SpiderDiagramsReader {
         }
 
         @Override
-        NullSpiderDiagram createSD(Map<String, Object> attributes) {
+        NullSpiderDiagram createSD(Map<String, Object> attributes) throws ReadingException {
             return NullSpiderDiagram.getInstance();
         }
     }
@@ -555,11 +562,13 @@ public final class SpiderDiagramsReader {
                         ElementTranslator<? extends V> translator = null;
                         if (typedValueTranslators != null) {
                             translator = typedValueTranslators.get(key);
-                        } else if (defaultValueTranslator != null) {
-                            translator = defaultValueTranslator;
                         }
                         if (translator == null) {
-                            throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_KEY_VALUE", key, typedValueTranslators == null ? "" : typedValueTranslators.keySet()), (CommonTree) node.getChild(0));
+                            if (defaultValueTranslator != null) {
+                                translator = defaultValueTranslator;
+                            } else {
+                                throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_KEY_VALUE", key, typedValueTranslators == null ? "" : typedValueTranslators.keySet()), (CommonTree) node.getChild(0));
+                            }
                         }
                         V value = translator.fromASTNode((CommonTree) node.getChild(1));
                         kVals.put(key, value);

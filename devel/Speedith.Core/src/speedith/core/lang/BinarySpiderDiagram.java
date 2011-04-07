@@ -70,7 +70,7 @@ public class BinarySpiderDiagram extends SpiderDiagram {
      * The connective that binds the left and right operands of this binary
      * spider diagram.
      */
-    private String operator;
+    private Operator operator;
     /**
      * This is the left operand of the binary operation.
      */
@@ -93,7 +93,13 @@ public class BinarySpiderDiagram extends SpiderDiagram {
      * operand of the {@link BinarySpiderDiagram#getOperator() binary operator}.
      */
     public BinarySpiderDiagram(String operator, SpiderDiagram leftOperand, SpiderDiagram rightOperand) {
-        this.operator = operator;
+        this.operator = Operator.fromString(operator);
+        if (this.operator == null) {
+            throw new IllegalArgumentException(i18n("ERR_OPERATOR_NOT_KNOWN", operator));
+        }
+        if (this.operator.getArity() != 2) {
+            throw new IllegalArgumentException(i18n("ERR_OPERATOR_WRONG_ARITY", operator, this.operator.getArity(), 2));
+        }
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }
@@ -108,7 +114,7 @@ public class BinarySpiderDiagram extends SpiderDiagram {
      * and {@link BinarySpiderDiagram#getRightOperand() right} operands in this
      * binary spider diagram.
      */
-    public String getOperator() {
+    public Operator getOperator() {
         return operator;
     }
 
@@ -151,7 +157,7 @@ public class BinarySpiderDiagram extends SpiderDiagram {
 
     private void printOperator(StringBuilder sb) {
         sb.append(SDTextOperatorAttribute).append(" = ");
-        printString(sb, operator);
+        printString(sb, operator.getName());
     }
 
     private void printArg1(StringBuilder sb) {
