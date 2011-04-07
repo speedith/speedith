@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: SDTextExporting.java
+ * File name: Isabelle2010ExportProvider.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -27,15 +27,45 @@
 
 package speedith.core.lang.export;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Locale;
+import java.util.Map;
+import static speedith.core.i18n.Translations.i18n;
 import speedith.core.lang.SpiderDiagram;
 
 /**
- * The factory class providing an entry point to obtaining {@link SDTextExporter
- * text exporters} for {@link SpiderDiagram spider diagrams}.
+ * The provider for exporting spider diagrams to Isabelle 2011 formulae.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SDTextExporting {
+public class Isabelle2010ExportProvider extends SDExportProvider {
+    /**
+     * The name of the export format of this provider.
+     */
+    public static final String FormatName = "Isabelle2010";
 
-//    public static final String TextExporterProviders
+    @Override
+    public String getFormatName() {
+        return FormatName;
+    }
+
+    @Override
+    public SDExporter getExporter(Map<String, Object> parameters) {
+        return new Exporter();
+    }
+
+    @Override
+    public String getDescription(Locale locale) {
+        return i18n(locale, "ISABELE_EXPORT_DESCRIPTION");
+    }
+
+    private static class Exporter extends SDExporter {
+
+        @Override
+        public void exportTo(SpiderDiagram spiderDiagram, Writer output) throws IOException {
+            output.append("NullSD");
+        }
+
+    }
 
 }

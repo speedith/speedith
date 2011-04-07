@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: SDTextExporter.java
+ * File name: SDExporter.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -27,6 +27,7 @@
 
 package speedith.core.lang.export;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
@@ -35,29 +36,34 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import speedith.core.lang.SpiderDiagram;
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * The class defining the interface of all spider diagram text exporters.
  * <p>This class also provides some default behaviour for some of the methods.
- * Only one method (namely {@link SDTextExporter#exportTo(speedith.core.lang.SpiderDiagram, java.io.Writer)})
+ * Only one method (namely {@link SDExporter#exportTo(speedith.core.lang.SpiderDiagram, java.io.Writer)})
  * needs to be implemented in deriving classes.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public abstract class SDTextExporter {
+public abstract class SDExporter {
 
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
      * Takes a {@link SpiderDiagram spider diagram}, converts it to a textual
      * form, and returns the latter as a Java string.
      * <p>The default implementation of this method simply calls
-     * {@link SDTextExporter#exportTo(speedith.core.lang.SpiderDiagram, java.io.Writer) }
+     * {@link SDExporter#exportTo(speedith.core.lang.SpiderDiagram, java.io.Writer) }
      * with a {@link StringWriter}.</p>
      * @param spiderDiagram the spider diagram to export to a textual form.
      * @return the textual form of the given spider diagram.
      */
     public String export(SpiderDiagram spiderDiagram) {
         StringWriter sw = new StringWriter();
-        exportTo(spiderDiagram, sw);
+        try {
+            exportTo(spiderDiagram, sw);
+        } catch (IOException ex) {
+            throw new RuntimeException(i18n("GERR_ILLEGAL_STATE"));
+        }
         return sw.toString();
     }
 
@@ -67,8 +73,10 @@ public abstract class SDTextExporter {
      * @param spiderDiagram the spider diagram to export to a textual form.
      * @param output the object to which to write the textual form of the
      * spider diagram to.
+     * @throws IOException this exception is thrown if an error occurred during
+     * writing to the output.
      */
-    public void exportTo(SpiderDiagram spiderDiagram, OutputStream output) {
+    public void exportTo(SpiderDiagram spiderDiagram, OutputStream output) throws IOException {
         exportTo(spiderDiagram, new OutputStreamWriter(output));
     }
 
@@ -81,8 +89,10 @@ public abstract class SDTextExporter {
      * @param encoding the character encoding to use when outputting.
      * @throws UnsupportedEncodingException this exception is thrown if (yes,
      * you've guessed it) the encoding is not supported.
+     * @throws IOException this exception is thrown if an error occurred during
+     * writing to the output.
      */
-    public void exportTo(SpiderDiagram spiderDiagram, OutputStream output, String encoding) throws UnsupportedEncodingException {
+    public void exportTo(SpiderDiagram spiderDiagram, OutputStream output, String encoding) throws UnsupportedEncodingException, IOException {
         exportTo(spiderDiagram, new OutputStreamWriter(output, encoding));
     }
 
@@ -93,8 +103,10 @@ public abstract class SDTextExporter {
      * @param output the object to which to write the textual form of the
      * spider diagram to.
      * @param encoding the character encoding to use when outputting.
+     * @throws IOException this exception is thrown if an error occurred during
+     * writing to the output.
      */
-    public void exportTo(SpiderDiagram spiderDiagram, OutputStream output, Charset encoding) {
+    public void exportTo(SpiderDiagram spiderDiagram, OutputStream output, Charset encoding) throws IOException {
         exportTo(spiderDiagram, new OutputStreamWriter(output, encoding));
     }
 
@@ -105,8 +117,10 @@ public abstract class SDTextExporter {
      * @param output the object to which to write the textual form of the
      * spider diagram to.
      * @param encoding the character encoder to use when outputting.
+     * @throws IOException this exception is thrown if an error occurred during
+     * writing to the output.
      */
-    public void exportTo(SpiderDiagram spiderDiagram, OutputStream output, CharsetEncoder encoding) {
+    public void exportTo(SpiderDiagram spiderDiagram, OutputStream output, CharsetEncoder encoding) throws IOException {
         exportTo(spiderDiagram, new OutputStreamWriter(output, encoding));
     }
 
@@ -116,7 +130,9 @@ public abstract class SDTextExporter {
      * @param spiderDiagram the spider diagram to export to a textual form.
      * @param output the object to which to write the textual form of the
      * spider diagram to.
+     * @throws IOException this exception is thrown if an error occurred during
+     * writing to the output.
      */
-    public abstract void exportTo(SpiderDiagram spiderDiagram, Writer output);
+    public abstract void exportTo(SpiderDiagram spiderDiagram, Writer output) throws IOException;
     // </editor-fold>
 }

@@ -27,6 +27,8 @@
 
 package speedith.core.i18n;
 
+import java.util.Locale;
+
 /**
  * This class provides translated strings for Speedith Core library.
  * <p>To use internationalised strings in Speedith Core, import the
@@ -74,6 +76,31 @@ public final class Translations {
      */
     public static String i18n(String key, Object... args) {
         return String.format(java.util.ResourceBundle.getBundle(I18N_STRINGS_BUNDLE).getString(key), args);
+    }
+
+    /**
+     * Returns a string in the language of the current locale.
+     * <p>It looks up the internationalised string based on the provided
+     * key.</p>
+     * @param locale the locale for which to return the internationalised string.
+     * @param key the key of the string to fetch.
+     * @return a string in the language of the current locale.
+     */
+    public static String i18n(Locale locale, String key) {
+        return java.util.ResourceBundle.getBundle(I18N_STRINGS_BUNDLE, locale).getString(key);
+    }
+
+    /**
+     * Returns a formatted string in the language of the current locale.
+     * <p>It looks up the internationalised string based on the provided
+     * key.</p>
+     * @param locale the locale for which to return the internationalised string.
+     * @param key the key of the <a href="http://download.oracle.com/javase/6/docs/api/java/util/Formatter.html#syntax">format specification string</a> to fetch.
+     * @param args the arguments to the formatted string (the same as arguments to {@link String#format(java.lang.String, java.lang.Object[])}).
+     * @return a string in the language of the current locale.
+     */
+    public static String i18n(Locale locale, String key, Object... args) {
+        return String.format(java.util.ResourceBundle.getBundle(I18N_STRINGS_BUNDLE, locale).getString(key), args);
     }
     // </editor-fold>
 }
