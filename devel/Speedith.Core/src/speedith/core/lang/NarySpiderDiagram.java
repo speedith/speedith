@@ -70,7 +70,14 @@ public class NarySpiderDiagram extends SpiderDiagram {
      * (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextArgAttribute = "arg";
+    /**
+     * The attribute key name for the binary operation of the binary spider diagram.
+     * <p>This value is used in the textual representation of spider diagrams
+     * (see {@link BinarySpiderDiagram#toString()}).</p>
+     */
+    public static final String SDTextOperatorAttribute = "operator";
     // </editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
      * The operator which to apply on the {@link NarySpiderDiagram#getOperands()
@@ -182,16 +189,22 @@ public class NarySpiderDiagram extends SpiderDiagram {
         }
     }
 
+    private void printArg(StringBuilder sb, int i) {
+        sb.append(SDTextArgAttribute).append(i).append(" = ");
+        operands.get(i - 1).toString(sb);
+    }
+
     private void printOperator(StringBuilder sb) {
-        sb.append(BinarySpiderDiagram.SDTextOperatorAttribute).append(" = ");
+        sb.append(SDTextOperatorAttribute).append(" = ");
         printString(sb, operator.getName());
     }
 
     private void printArgs(StringBuilder sb) {
-        for (int i = 0; i < operands.size(); i++) {
-            SpiderDiagram operand = operands.get(i);
-            sb.append(SDTextArgAttribute).append(i + 1).append(" = ");
-            operand.toString(sb);
+        if (operands.size() > 0) {
+            printArg(sb, 1);
+            for (int i = 2; i <= operands.size(); i++) {
+                printArg(sb.append(", "), i);
+            }
         }
     }
 

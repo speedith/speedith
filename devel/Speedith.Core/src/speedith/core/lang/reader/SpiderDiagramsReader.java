@@ -26,10 +26,12 @@
  */
 package speedith.core.lang.reader;
 
+import java.util.Map.Entry;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,7 +55,7 @@ import speedith.core.lang.Region;
 import speedith.core.lang.reader.SpiderDiagramsParser.spiderDiagram_return;
 import static speedith.core.i18n.Translations.i18n;
 import static speedith.core.lang.PrimarySpiderDiagram.*;
-import static speedith.core.lang.BinarySpiderDiagram.*;
+import static speedith.core.lang.NarySpiderDiagram.*;
 
 /**
  * This class provides static methods for reading spider diagrams (in a textual
@@ -298,7 +300,7 @@ public final class SpiderDiagramsReader {
             keyValueMapTranslator.defaultValueTranslator = valueTranslator;
         }
 
-        private boolean areMandatoryPresent(Map<String, Object> attributes) {
+        private boolean areMandatoryPresent(Map<String, ? extends Object> attributes) {
             for (String string : keyValueMapTranslator.typedValueTranslators.keySet()) {
                 if (!attributes.containsKey(string)) {
                     return false;
@@ -309,20 +311,15 @@ public final class SpiderDiagramsReader {
 
         @Override
         public V fromASTNode(CommonTree treeNode) throws ReadingException {
-            Map<String, Object> attrs = keyValueMapTranslator.fromASTNode(treeNode);
+            Map<String, Entry<Object, CommonTree>> attrs = keyValueMapTranslator.fromASTNode(treeNode);
             if (areMandatoryPresent(attrs)) {
-                try {
-                    return createSD(attrs);
-                } catch (ReadingException re) {
-                    re.setNode(treeNode);
-                    throw re;
-                }
+                return createSD(attrs);
             } else {
                 throw new ReadingException(i18n("ERR_TRANSLATE_MISSING_ELEMENTS", keyValueMapTranslator.typedValueTranslators.keySet()), treeNode);
             }
         }
 
-        abstract V createSD(Map<String, Object> attributes) throws ReadingException;
+        abstract V createSD(Map<String, Entry<Object, CommonTree>> attributes) throws ReadingException;
     }
 
     private static class SDTranslator extends ElementTranslator<SpiderDiagram> {
@@ -364,19 +361,19 @@ public final class SpiderDiagramsReader {
         }
 
         @Override
-        NarySpiderDiagram createSD(Map<String, Object> attributes) throws ReadingException {
-            String operator = (String) attributes.remove(SDTextOperatorAttribute);
+        NarySpiderDiagram createSD(Map<String, Entry<Object, CommonTree>> attributes) throws ReadingException {
+            String operator = (String) attributes.remove(SDTextOperatorAttribute).getKey();
             ArrayList<SpiderDiagram> operands = new ArrayList<SpiderDiagram>();
             int i = 1;
-            Object curSD;
-            while ((curSD = attributes.remove(NarySpiderDiagram.SDTextArgAttribute + i++)) instanceof SpiderDiagram) {
-                operands.add((SpiderDiagram) curSD);
+            Entry<Object, CommonTree> curSD;
+            while ((curSD = attributes.remove(NarySpiderDiagram.SDTextArgAttribute + i++)) != null && curSD.getKey() instanceof SpiderDiagram) {
+                operands.add((SpiderDiagram) curSD.getKey());
             }
             if (curSD != null) {
-                throw new RuntimeException(i18n("GERR_ILLEGAL_STATE"));
+                throw new ReadingException(i18n("GERR_ILLEGAL_STATE"), (CommonTree) curSD.getValue().getChild(0));
             }
             if (!attributes.isEmpty()) {
-                throw new ReadingException(i18n("ERR_TRANSLATE_UNKNOWN_ATTRIBUTES", attributes));
+                throw new ReadingException(i18n("ERR_TRANSLATE_UNKNOWN_ATTRIBUTES", attributes.keySet()), (CommonTree) attributes.values().iterator().next().getValue().getChild(0));
             }
             return new NarySpiderDiagram(operator, operands);
         }
@@ -395,8 +392,8 @@ public final class SpiderDiagramsReader {
 
         @Override
         @SuppressWarnings("unchecked")
-        PrimarySpiderDiagram createSD(Map<String, Object> attributes) throws ReadingException {
-            return new PrimarySpiderDiagram((Collection<String>) attributes.get(SDTextSpidersAttribute), (Map<String, Region>) attributes.get(SDTextHabitatsAttribute), (Collection<Zone>) attributes.get(SDTextShadedZonesAttribute));
+        PrimarySpiderDiagram createSD(Map<String, Entry<Object, CommonTree>> attributes) throws ReadingException {
+            return new PrimarySpiderDiagram((Collection<String>) attributes.get(SDTextSpidersAttribute).getKey(), (Map<String, Region>) attributes.get(SDTextHabitatsAttribute).getKey(), (Collection<Zone>) attributes.get(SDTextShadedZonesAttribute).getKey());
         }
     }
 
@@ -409,7 +406,7 @@ public final class SpiderDiagramsReader {
         }
 
         @Override
-        NullSpiderDiagram createSD(Map<String, Object> attributes) throws ReadingException {
+        NullSpiderDiagram createSD(Map<String, Entry<Object, CommonTree>> attributes) throws ReadingException {
             return NullSpiderDiagram.getInstance();
         }
     }
@@ -521,7 +518,7 @@ public final class SpiderDiagramsReader {
         }
     }
 
-    private static class GeneralMapTranslator<V> extends ElementTranslator<Map<String, V>> {
+    private static class GeneralMapTranslator<V> extends ElementTranslator<Map<String, Entry<V, CommonTree>>> {
 
         private Map<String, ElementTranslator<? extends V>> typedValueTranslators;
         private ElementTranslator<? extends V> defaultValueTranslator;
@@ -549,12 +546,12 @@ public final class SpiderDiagramsReader {
         }
 
         @Override
-        public Map<String, V> fromASTNode(CommonTree treeNode) throws ReadingException {
+        public Map<String, Entry<V, CommonTree>> fromASTNode(CommonTree treeNode) throws ReadingException {
             if (treeNode.token != null && treeNode.token.getType() == headTokenType) {
                 if (treeNode.getChildCount() < 1) {
                     return null;
                 }
-                HashMap<String, V> kVals = new HashMap<String, V>();
+                HashMap<String, Entry<V, CommonTree>> kVals = new HashMap<String, Entry<V, CommonTree>>();
                 for (Object obj : treeNode.getChildren()) {
                     CommonTree node = (CommonTree) obj;
                     if (node.token != null && node.token.getType() == SpiderDiagramsParser.PAIR && node.getChildCount() == 2) {
@@ -571,7 +568,7 @@ public final class SpiderDiagramsReader {
                             }
                         }
                         V value = translator.fromASTNode((CommonTree) node.getChild(1));
-                        kVals.put(key, value);
+                        kVals.put(key, new SimpleEntry<V, CommonTree>(value, node));
                     } else {
                         throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", i18n("TRANSLATE_KEY_VALUE_PAIR")), node);
                     }

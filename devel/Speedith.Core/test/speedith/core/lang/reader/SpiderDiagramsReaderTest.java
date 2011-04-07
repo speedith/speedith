@@ -48,8 +48,8 @@ public class SpiderDiagramsReaderTest {
     public static final String SD_EXAMPLE_3 = "UnarySD {operator = \"op not\", arg1 = BinarySD {operator = \"op &&\", arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = NullSD {} }}";
     public static final String SD_EXAMPLE_4 = "NullSD {}";
     public static final String SD_EXAMPLE_5 = "PrimarySD { spiders = [], sh_zones = [], habitats = []}";
-    public static final String SD_EXAMPLE_6 = "UnarySD {operator = \"\", arg1 = NullSD {}}";
-    public static final String SD_EXAMPLE_7 = "BinarySD {operator = \"\", arg1 = NullSD {}, arg2 = NullSD {}}";
+    public static final String SD_EXAMPLE_6 = "UnarySD {operator = \"op not\", arg1 = NullSD {}}";
+    public static final String SD_EXAMPLE_7 = "BinarySD {operator = \"op &&\", arg1 = NullSD {}, arg2 = NullSD {}}";
     public static final String SD_EXAMPLE_ERR_1 = "UnarySD {operator = \"op not\", ar1 = BinarySD {operator = \"op &&\", arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = NullSD {} }}";
     public static final String SD_EXAMPLE_ERR_2 = "";
     public static final String SD_EXAMPLE_ERR_3 = "Primary {}";
@@ -122,7 +122,7 @@ public class SpiderDiagramsReaderTest {
             sd = SpiderDiagramsReader.readSpiderDiagram(example);
             fail("An exception should have been thrown.");
         } catch (ReadingException readingException) {
-//            System.out.println(readingException);
+            System.out.println(readingException);
             assertEquals(errorLine, readingException.getLineNumber());
             assertEquals(errorCharIndex, readingException.getCharIndex());
         }
