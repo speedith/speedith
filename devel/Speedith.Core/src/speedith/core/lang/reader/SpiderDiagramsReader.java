@@ -286,8 +286,6 @@ public final class SpiderDiagramsReader {
 
         private GeneralMapTranslator<Object> keyValueMapTranslator;
 
-//        public GeneralSDTranslator() {
-//        }
         private GeneralSDTranslator(int headTokenType) {
             keyValueMapTranslator = new GeneralMapTranslator<Object>(headTokenType, new HashMap<String, ElementTranslator<? extends Object>>(), null);
         }
@@ -313,13 +311,13 @@ public final class SpiderDiagramsReader {
         public V fromASTNode(CommonTree treeNode) throws ReadingException {
             Map<String, Entry<Object, CommonTree>> attrs = keyValueMapTranslator.fromASTNode(treeNode);
             if (areMandatoryPresent(attrs)) {
-                return createSD(attrs);
+                return createSD(attrs, treeNode);
             } else {
                 throw new ReadingException(i18n("ERR_TRANSLATE_MISSING_ELEMENTS", keyValueMapTranslator.typedValueTranslators.keySet()), treeNode);
             }
         }
 
-        abstract V createSD(Map<String, Entry<Object, CommonTree>> attributes) throws ReadingException;
+        abstract V createSD(Map<String, Entry<Object, CommonTree>> attributes, CommonTree mainNode) throws ReadingException;
     }
 
     private static class SDTranslator extends ElementTranslator<SpiderDiagram> {
@@ -361,13 +359,14 @@ public final class SpiderDiagramsReader {
         }
 
         @Override
-        NarySpiderDiagram createSD(Map<String, Entry<Object, CommonTree>> attributes) throws ReadingException {
+        NarySpiderDiagram createSD(Map<String, Entry<Object, CommonTree>> attributes, CommonTree mainNode) throws ReadingException {
             String operator = (String) attributes.remove(SDTextOperatorAttribute).getKey();
             ArrayList<SpiderDiagram> operands = new ArrayList<SpiderDiagram>();
             int i = 1;
-            Entry<Object, CommonTree> curSD;
+            Entry<Object, CommonTree> curSD, lastSD = null;
             while ((curSD = attributes.remove(NarySpiderDiagram.SDTextArgAttribute + i++)) != null && curSD.getKey() instanceof SpiderDiagram) {
                 operands.add((SpiderDiagram) curSD.getKey());
+                lastSD = curSD;
             }
             if (curSD != null) {
                 throw new ReadingException(i18n("GERR_ILLEGAL_STATE"), (CommonTree) curSD.getValue().getChild(0));
@@ -375,7 +374,11 @@ public final class SpiderDiagramsReader {
             if (!attributes.isEmpty()) {
                 throw new ReadingException(i18n("ERR_TRANSLATE_UNKNOWN_ATTRIBUTES", attributes.keySet()), (CommonTree) attributes.values().iterator().next().getValue().getChild(0));
             }
-            return new NarySpiderDiagram(operator, operands);
+            try {
+                return new NarySpiderDiagram(operator, operands);
+            } catch (Exception e) {
+                throw new ReadingException(e.getLocalizedMessage(), lastSD == null ? mainNode : (CommonTree) lastSD.getValue().getChild(0));
+            }
         }
     }
 
@@ -392,7 +395,7 @@ public final class SpiderDiagramsReader {
 
         @Override
         @SuppressWarnings("unchecked")
-        PrimarySpiderDiagram createSD(Map<String, Entry<Object, CommonTree>> attributes) throws ReadingException {
+        PrimarySpiderDiagram createSD(Map<String, Entry<Object, CommonTree>> attributes, CommonTree mainNode) throws ReadingException {
             return new PrimarySpiderDiagram((Collection<String>) attributes.get(SDTextSpidersAttribute).getKey(), (Map<String, Region>) attributes.get(SDTextHabitatsAttribute).getKey(), (Collection<Zone>) attributes.get(SDTextShadedZonesAttribute).getKey());
         }
     }
@@ -406,7 +409,7 @@ public final class SpiderDiagramsReader {
         }
 
         @Override
-        NullSpiderDiagram createSD(Map<String, Entry<Object, CommonTree>> attributes) throws ReadingException {
+        NullSpiderDiagram createSD(Map<String, Entry<Object, CommonTree>> attributes, CommonTree mainNode) throws ReadingException {
             return NullSpiderDiagram.getInstance();
         }
     }

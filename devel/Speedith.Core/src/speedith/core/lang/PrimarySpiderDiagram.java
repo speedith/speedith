@@ -56,25 +56,25 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * The identifier of the primary (unitary) spider diagram in the textual representation
      * of spider diagrams.
      * <p>This value is used in the textual representation of spider diagrams
-     * (see {@link BinarySpiderDiagram#toString()}).</p>
+     * (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextPrimaryId = "PrimarySD";
     /**
      * The attribute key name for the list of habitats in the primary spider diagram.
      * <p>This value is used in the textual representation of spider diagrams
-     * (see {@link BinarySpiderDiagram#toString()}).</p>
+     * (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextHabitatsAttribute = "habitats";
     /**
      * The attribute key name for the list of shaded zones in the primary spider diagram.
      * <p>This value is used in the textual representation of spider diagrams
-     * (see {@link BinarySpiderDiagram#toString()}).</p>
+     * (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextShadedZonesAttribute = "sh_zones";
     /**
      * The attribute key name for the list of spiders in the primary spider diagram.
      * <p>This value is used in the textual representation of spider diagrams
-     * (see {@link BinarySpiderDiagram#toString()}).</p>
+     * (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextSpidersAttribute = "spiders";
     // </editor-fold>
@@ -123,11 +123,31 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     }
 
     /**
+     * Returns the number of {@link PrimarySpiderDiagram#getHabitats() habitats}
+     * specified in this primary spider diagram.
+     * @return the number of {@link PrimarySpiderDiagram#getHabitats() habitats}
+     * specified in this primary spider diagram.
+     */
+    public int getHabitatsCount() {
+        return habitats == null ? 0 : habitats.size();
+    }
+
+    /**
      * Returns a set of shaded {@link Zone zones} in this spider diagram.
      * @return a set of shaded {@link Zone zones} in this spider diagram..
      */
     public SortedSet<Zone> getShadedZones() {
         return shadedZones == null ? null : Collections.unmodifiableSortedSet(shadedZones);
+    }
+
+    /**
+     * Returns the number of {@link PrimarySpiderDiagram#getShadedZones() shaded
+     * zones} specified in this primary spider diagram.
+     * @return the number of {@link PrimarySpiderDiagram#getShadedZones() shaded
+     * zones} specified in this primary spider diagram.
+     */
+    public int getShadedZonesCount() {
+        return shadedZones == null ? 0 : shadedZones.size();
     }
 
     /**
@@ -138,6 +158,16 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      */
     public SortedSet<String> getSpiders() {
         return spiders == null ? null : Collections.unmodifiableSortedSet(spiders);
+    }
+
+    /**
+     * Returns the number of {@link PrimarySpiderDiagram#getSpiders() spiders}
+     * specified in this primary spider diagram.
+     * @return the number of {@link PrimarySpiderDiagram#getSpiders() spiders}
+     * specified in this primary spider diagram.
+     */
+    public int getSpidersCount() {
+        return spiders == null ? 0 : spiders.size();
     }
     // </editor-fold>
 

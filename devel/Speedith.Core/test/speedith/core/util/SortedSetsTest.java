@@ -78,31 +78,31 @@ public class SortedSetsTest {
     }
 
     /**
-     * Test of compare method, of class SortedSets.
+     * Test of compare method, of class Sets.
      */
     @Test
     public void testCompare() {
         SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
         SortedSet<String> s2 = null;
         int expResult = 0;
-        int result = SortedSets.compare(s1, s2);
+        int result = Sets.compare(s1, s2);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of compare method, of class SortedSets.
+     * Test of compare method, of class Sets.
      */
     @Test
     public void testCompare7() {
         SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
         SortedSet<String> s2 = null;
         int expResult = 0;
-        int result = SortedSets.compare(s1, s2);
+        int result = Sets.compare(s1, s2);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of compareNaturally method, of class SortedSets.
+     * Test of compareNaturally method, of class Sets.
      */
     @Test
     public void testCompare1() {
@@ -113,12 +113,12 @@ public class SortedSetsTest {
         s2.add("a");
         s2.add("b");
         int expResult = 0;
-        int result = SortedSets.compare(s1, s2);
+        int result = Sets.compare(s1, s2);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of compare method, of class SortedSets.
+     * Test of compare method, of class Sets.
      */
     @Test
     public void testCompare2() {
@@ -130,12 +130,12 @@ public class SortedSetsTest {
         s2.add("b");
         s2.add("b");
         int expResult = 0;
-        int result = SortedSets.compare(s1, s2);
+        int result = Sets.compare(s1, s2);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of compare method, of class SortedSets.
+     * Test of compare method, of class Sets.
      */
     @Test
     public void testCompare3() {
@@ -147,12 +147,12 @@ public class SortedSetsTest {
         s2.add("b");
         s2.add("c");
         int expResult = 1;
-        int result = SortedSets.compare(s1, s2);
+        int result = Sets.compare(s1, s2);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of compare method, of class SortedSets.
+     * Test of compare method, of class Sets.
      */
     @Test
     public void testCompare4() {
@@ -165,12 +165,12 @@ public class SortedSetsTest {
         s2.add("b");
         s2.add("c");
         int expResult = -1;
-        int result = SortedSets.compare(s1, s2);
+        int result = Sets.compare(s1, s2);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of compare method, of class SortedSets.
+     * Test of compare method, of class Sets.
      */
     @Test
     public void testCompare5() {
@@ -182,26 +182,26 @@ public class SortedSetsTest {
         s2.add("a");
         s2.add("b");
         int expResult = -1;
-        int result = SortedSets.compare(s1, s2);
+        int result = Sets.compare(s1, s2);
         assertEquals(expResult, result);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Test for 'compareNaturally'">
     /**
-     * Test of compareNaturally method, of class SortedSets.
+     * Test of compareNaturally method, of class Sets.
      */
     @Test
     public void testCompareNaturally() {
         SortedSet<String> s1 = new TreeSet<String>();
         SortedSet<String> s2 = null;
         int expResult = 0;
-        int result = SortedSets.compareNaturally(s1, s2);
+        int result = Sets.compareNaturally(s1, s2);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of compareNaturally method, of class SortedSets.
+     * Test of compareNaturally method, of class Sets.
      */
     @Test
     public void testCompareNaturally1() {
@@ -212,12 +212,12 @@ public class SortedSetsTest {
         s2.add("a");
         s2.add("b");
         int expResult = 0;
-        int result = SortedSets.compareNaturally(s1, s2);
+        int result = Sets.compareNaturally(s1, s2);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of compareNaturally method, of class SortedSets.
+     * Test of compareNaturally method, of class Sets.
      */
     @Test
     public void testCompareNaturally2() {
@@ -229,12 +229,12 @@ public class SortedSetsTest {
         s2.add("b");
         s2.add("b");
         int expResult = 0;
-        int result = SortedSets.compareNaturally(s1, s2);
+        int result = Sets.compareNaturally(s1, s2);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of compareNaturally method, of class SortedSets.
+     * Test of compareNaturally method, of class Sets.
      */
     @Test
     public void testCompareNaturally3() {
@@ -246,12 +246,12 @@ public class SortedSetsTest {
         s2.add("b");
         s2.add("c");
         int expResult = -1;
-        int result = SortedSets.compareNaturally(s1, s2);
+        int result = Sets.compareNaturally(s1, s2);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of compareNaturally method, of class SortedSets.
+     * Test of compareNaturally method, of class Sets.
      */
     @Test
     public void testCompareNaturally4() {
@@ -264,12 +264,12 @@ public class SortedSetsTest {
         s2.add("b");
         s2.add("c");
         int expResult = 1;
-        int result = SortedSets.compareNaturally(s1, s2);
+        int result = Sets.compareNaturally(s1, s2);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of compareNaturally method, of class SortedSets.
+     * Test of compareNaturally method, of class Sets.
      */
     @Test
     public void testCompareNaturally5() {
@@ -281,7 +281,7 @@ public class SortedSetsTest {
         s2.add("a");
         s2.add("b");
         int expResult = 1;
-        int result = SortedSets.compareNaturally(s1, s2);
+        int result = Sets.compareNaturally(s1, s2);
         assertEquals(expResult, result);
     }
     // </editor-fold>

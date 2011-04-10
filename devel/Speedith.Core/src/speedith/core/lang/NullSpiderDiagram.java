@@ -42,7 +42,7 @@ public class NullSpiderDiagram extends SpiderDiagram {
      * The identifier of the null spider diagram in the textual representation
      * of spider diagrams.
      * <p>This value is used in the textual representation of spider diagrams
-     * (see {@link BinarySpiderDiagram#toString()}).</p>
+     * (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextNullId = "NullSD";
     // </editor-fold>

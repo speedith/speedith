@@ -73,7 +73,7 @@ public class NarySpiderDiagram extends SpiderDiagram {
     /**
      * The attribute key name for the binary operation of the binary spider diagram.
      * <p>This value is used in the textual representation of spider diagrams
-     * (see {@link BinarySpiderDiagram#toString()}).</p>
+     * (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextOperatorAttribute = "operator";
     // </editor-fold>

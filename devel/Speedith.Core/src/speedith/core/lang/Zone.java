@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import speedith.core.util.SortedSets;
+import speedith.core.util.Sets;
 import static speedith.core.i18n.Translations.i18n;
 
 /**
@@ -61,7 +61,7 @@ public class Zone implements Comparable<Zone> {
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+    // <editor-fold defaultstate="collapsed" desc="Public Properties">
     /**
      * Returns a read-only set of contour names.
      * <p>These are the contours that contain this zone.</p>
@@ -75,6 +75,14 @@ public class Zone implements Comparable<Zone> {
     }
 
     /**
+     * Returns the number of {@link Zone#getInContours() in-contours}.
+     * @return the number of {@link Zone#getInContours() in-contours}.
+     */
+    public int getInContoursCount() {
+        return inContours == null ? 0 : inContours.size();
+    }
+
+    /**
      * Returns a read-only set of contour names.
      * <p>These are the contours that lie outside this zone.</p>
      * <p>Note: this method may return {@code null}, which indicates that this
@@ -85,6 +93,14 @@ public class Zone implements Comparable<Zone> {
     public SortedSet<String> getOutContours() {
         return outContours == null ? null : Collections.unmodifiableSortedSet(outContours);
     }
+
+    /**
+     * Returns the number of {@link Zone#getOutContours() out-contours}.
+     * @return the number of {@link Zone#getOutContours() out-contours}.
+     */
+    public int getOutContoursCount() {
+        return outContours == null ? 0 : outContours.size();
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
@@ -94,7 +110,7 @@ public class Zone implements Comparable<Zone> {
      * larger (respectively) than the other zone.
      * <p>This function should be used to order zones alphabetically.</p>
      * <p>Note: this method uses the
-     * {@link SortedSets#compareNaturally(java.util.SortedSet, java.util.SortedSet) }
+     * {@link Sets#compareNaturally(java.util.SortedSet, java.util.SortedSet) }
      * method internally (to compare the contour names with each other).</p>
      * @param other the other zone with which to compare this one.
      * @return {@code -1}, {@code 0}, or {@code 1} if this zone is
@@ -108,9 +124,9 @@ public class Zone implements Comparable<Zone> {
         if (this == other) {
             return 0;
         } else {
-            int retVal = SortedSets.compareNaturally(inContours, other.inContours);
+            int retVal = Sets.compareNaturally(inContours, other.inContours);
             if (retVal == 0) {
-                retVal = SortedSets.compareNaturally(outContours, other.outContours);
+                retVal = Sets.compareNaturally(outContours, other.outContours);
             }
             return retVal;
         }

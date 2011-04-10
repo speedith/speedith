@@ -58,6 +58,8 @@ public class SpiderDiagramsReaderTest {
     public static final String SD_EXAMPLE_ERR_6 = "UnarySD {operator = \", arg1 = NullSD }}";
     public static final String SD_EXAMPLE_ERR_7 = "BinarySD {operator = \"\", arg1 = NullSD {}, arg2 = NullSD {}";
     public static final String SD_EXAMPLE_ERR_8 = "BinarySD aq {operator = \"\", arg1 = NullSD {}, arg2 = NullSD {}";
+    public static final String SD_EXAMPLE_ERR_9 = "BinarySD {operator = \"op ||\", arg1 = NullSD {}, arg2 = NullSD {}, arg3 = NullSD {} }";
+    public static final String SD_EXAMPLE_ERR_10 = "BinarySD {operator = \"op ||\", arg1 = NullSD {}, arg2 = NullSD {}, dsaj = NullSD {} }";
 
     public SpiderDiagramsReaderTest() {
     }
@@ -114,6 +116,8 @@ public class SpiderDiagramsReaderTest {
         checkSDExample_Err(SD_EXAMPLE_ERR_6, 1, 39);
         checkSDExample_Err(SD_EXAMPLE_ERR_7, 1, 58);
         checkSDExample_Err(SD_EXAMPLE_ERR_8, 1, 9);
+        checkSDExample_Err(SD_EXAMPLE_ERR_9, 1, 66);
+        checkSDExample_Err(SD_EXAMPLE_ERR_10, 1, 66);
     }
 
     private void checkSDExample_Err(String example, int errorLine, int errorCharIndex) {
@@ -122,7 +126,7 @@ public class SpiderDiagramsReaderTest {
             sd = SpiderDiagramsReader.readSpiderDiagram(example);
             fail("An exception should have been thrown.");
         } catch (ReadingException readingException) {
-            System.out.println(readingException);
+//            System.out.println(readingException);
             assertEquals(errorLine, readingException.getLineNumber());
             assertEquals(errorCharIndex, readingException.getCharIndex());
         }

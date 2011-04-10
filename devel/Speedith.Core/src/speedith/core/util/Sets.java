@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: SortedSets.java
+ * File name: Sets.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -26,6 +26,8 @@
  */
 package speedith.core.util;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.SortedSet;
@@ -33,11 +35,11 @@ import static speedith.core.i18n.Translations.i18n;
 
 /**
  * Provides some utility functions for sorted sets (e.g.:
- * {@link SortedSets#compare(java.util.SortedSet, java.util.SortedSet)
+ * {@link Sets#compare(java.util.SortedSet, java.util.SortedSet)
  * comparison}).
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public final class SortedSets {
+public final class Sets {
 
     // <editor-fold defaultstate="collapsed" desc="Public Static Methods">
     /**
@@ -114,8 +116,9 @@ public final class SortedSets {
                 E el1 = i1.next();
                 E el2 = i2.next();
                 int retVal = comparator.compare(el1, el2);
-                if (retVal != 0)
+                if (retVal != 0) {
                     return Integer.signum(retVal);
+                }
             }
             // Okay, if we reached this point, then the two sets share the same
             // head and at least one of them has ended.
@@ -191,13 +194,15 @@ public final class SortedSets {
                 if (el1 == null) {
                     if (el2 != null) {
                         int retVal = el2.compareTo(el1);
-                        if (retVal != 0)
+                        if (retVal != 0) {
                             return Integer.signum(-retVal);
+                        }
                     }
                 } else if (el2 != null) {
                     int retVal = el1.compareTo(el2);
-                    if (retVal != 0)
+                    if (retVal != 0) {
                         return Integer.signum(retVal);
+                    }
                 }
             }
             // Okay, if we reached this point, then the two sets share the same
@@ -205,10 +210,60 @@ public final class SortedSets {
             return i1.hasNext() ? 1 : (i2.hasNext() ? -1 : 0);
         }
     }
+
+    /**
+     * Prints the contents of the given list to the writer output.
+     * <p>Note: this method calls the {@link Object#toString()} method on
+     * non-null elements, otherwise it prints an empty string.</p>
+     * @param list the list whose elements to print to the given writer.
+     * @param output the output where to write the elements to (may not be
+     * {@code null}).
+     * @param openingString the opening string (usually the opening parenthesis)
+     * of the printed list.
+     * @param closingString the closing string (usually the closing parenthesis)
+     * of the printed list.
+     * @param delimiter the string to print between separate elements (usually a
+     * a comma, followed by a blank space, i.e.: ', ').
+     * @throws IOException this exception is thrown if an error occurred while
+     * writing to the output.
+     */
+    public static void print(Iterable<? extends Object> list, Writer output, String openingString, String closingString, String delimiter) throws IOException {
+        if (output == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "output"));
+        }
+        output.append(openingString);
+        if (list != null) {
+            Iterator<? extends Object> itr = list.iterator();
+            if (itr.hasNext()) {
+                Object el = itr.next();
+                output.append(el == null ? "" : el.toString());
+                while (itr.hasNext()) {
+                    el = itr.next();
+                    output.append(delimiter).append(el == null ? "" : el.toString());
+                }
+            }
+        }
+        output.append(closingString);
+    }
+
+    /**
+     * This method is a shorthand for <span style="font-style:italic;font-family:monospace;">
+     * {@link Sets#print(java.lang.Iterable, java.io.Writer, java.lang.String,
+     * java.lang.String, java.lang.String) print}(list,
+     * output, "{", "}", ", ")</span>.
+     * @param list the list whose elements to print to the given writer.
+     * @param output the output where to write the elements to (may not be
+     * {@code null}).
+     * @throws IOException this exception is thrown if an error occurred while
+     * writing to the output.
+     */
+    public static void printSet(Iterable<? extends Object> list, Writer output) throws IOException {
+        print(list, output, "{", "}", ", ");
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Disabled Constructor">
-    private SortedSets() {
+    private Sets() {
     }
     // </editor-fold>
 }

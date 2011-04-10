@@ -127,7 +127,7 @@ public class Operator {
          * A map of all operators known by Speedith (where the key equals to the
          * {@link Operator#getName() name} of the operator.
          */
-        public static HashMap<String, Operator> KnownOperators = new HashMap<String, Operator>();
+        public static final HashMap<String, Operator> KnownOperators = new HashMap<String, Operator>();
 
         static {
             KnownOperators.put(OP_NAME_NOT, new Operator(1, OP_NAME_NOT));
