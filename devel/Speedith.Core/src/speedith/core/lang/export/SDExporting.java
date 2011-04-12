@@ -63,7 +63,7 @@ public final class SDExporting {
     // <editor-fold defaultstate="collapsed" desc="Constructors">
     static {
         // Register built-in exporters.
-        registerProvider(Isabelle2010ExportProvider.class);
+        registerProvider(Isabelle2011ExportProvider.class);
     }
 
     /**

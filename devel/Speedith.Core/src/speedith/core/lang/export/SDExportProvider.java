@@ -85,11 +85,24 @@ public abstract class SDExportProvider {
      * <p>The default implementation returns {@code null}</p>
      * @param parameter the parameter for which we want a description.
      * @param locale the locale in which the description should be given.
-     * @return the map of parameter keys and their corresponding descriptions
-     * (explanations of the purpose of the parameters).
+     * @return the description of the parameter with the given name in the
+     * given locale.
      */
     public String getParameterDescription(String parameter, Locale locale) {
         return null;
+    }
+
+    /**
+     * Gets the description for the given parameter (which is in the
+     * {@link SDExportProvider#getParameters()} set).
+     * <p>The default implementation calls {@link SDExportProvider#getParameterDescription(java.lang.String, java.util.Locale)}
+     * with the {@link Locale#getDefault() default locale}.</p>
+     * @param parameter the parameter for which we want a description.
+     * @return the description of the parameter with the given name in the
+     * default locale.
+     */
+    public String getParameterDescription(String parameter) {
+        return getParameterDescription(parameter, Locale.getDefault());
     }
 
     /**

@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: Isabelle2010ExportProvider.java
+ * File name: Isabelle2011ExportProvider.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -26,15 +26,19 @@
  */
 package speedith.core.lang.export;
 
+import java.util.Set;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import speedith.core.lang.NarySpiderDiagram;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.PrimarySpiderDiagram;
@@ -49,12 +53,13 @@ import static speedith.core.lang.Operator.*;
  * The provider for exporting spider diagrams to Isabelle 2011 formulae.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class Isabelle2010ExportProvider extends SDExportProvider {
+public class Isabelle2011ExportProvider extends SDExportProvider {
 
     /**
      * The name of the export format of this provider.
      */
-    public static final String FormatName = "Isabelle2010";
+    public static final String FormatName = "Isabelle2011";
+    public static final String Parameter_UseXSymbols = "useXSymbols";
 
     @Override
     public String getFormatName() {
@@ -63,7 +68,9 @@ public class Isabelle2010ExportProvider extends SDExportProvider {
 
     @Override
     public SDExporter getExporter(Map<String, Object> parameters) {
-        return new Exporter();
+        Object tmp = parameters == null ? null : parameters.get(Parameter_UseXSymbols);
+        boolean useXSymbols = (tmp instanceof Boolean) ? (Boolean) tmp : false;
+        return new Exporter(useXSymbols);
     }
 
     @Override
@@ -71,8 +78,97 @@ public class Isabelle2010ExportProvider extends SDExportProvider {
         return i18n(locale, "ISABELE_EXPORT_DESCRIPTION");
     }
 
+    @Override
+    public Set<String> getParameters() {
+        return Collections.unmodifiableSortedSet(Exporter.Parameters.navigableKeySet());
+    }
+
+    @Override
+    public String getParameterDescription(String parameter, Locale locale) {
+        return i18n(locale, Exporter.Parameters.get(parameter));
+    }
+
     private static class Exporter extends SDExporter {
 
+        public static final TreeMap<String, String> Parameters;
+        public static final String ISA_SYM_EX = "EX";
+        public static final String ISA_XSYM_EXISTS = "∃";
+        private boolean useXSymbols;
+
+        // <editor-fold defaultstate="collapsed" desc="Constructors">
+        public Exporter() {
+            this(false);
+        }
+
+        public Exporter(boolean useXSymbols) {
+            this.useXSymbols = useXSymbols;
+        }
+
+        static {
+            Parameters = new TreeMap<String, String>();
+            Parameters.put(Parameter_UseXSymbols, "ISABELE_EXPORT_PAR_USE_X_SYMBOLS_DESCRIPTION");
+        }
+        // </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Isabelle Symbol/Operator Print Methods">
+        private Writer printAnd(Writer output) throws IOException {
+            if (useXSymbols) {
+                return output.append(' ').append("∧").append(' ');
+            } else {
+                return output.append(' ').append("&").append(' ');
+            }
+        }
+
+        private Writer printElementOf(Writer output) throws IOException {
+            if (useXSymbols) {
+                return output.append(' ').append("∈").append(' ');
+            } else {
+                return output.append(' ').append(":").append(' ');
+            }
+        }
+
+        private Writer printUnion(Writer output) throws IOException {
+            if (useXSymbols) {
+                return output.append(' ').append("∪").append(' ');
+            } else {
+                return output.append(' ').append("Un").append(' ');
+            }
+        }
+
+        private Writer printIntersection(Writer output) throws IOException {
+            if (useXSymbols) {
+                return output.append(' ').append("∩").append(' ');
+            } else {
+                return output.append(' ').append("Int").append(' ');
+            }
+        }
+
+        private Writer printSubsetEq(Writer output) throws IOException {
+            if (useXSymbols) {
+                return output.append(' ').append("⊆").append(' ');
+            } else {
+                return output.append(' ').append("<=").append(' ');
+            }
+        }
+
+        private Writer printTrue(Writer output) throws IOException {
+            return output.append("True");
+        }
+
+        private Writer printExists(Writer output) throws IOException {
+            if (useXSymbols) {
+                return output.append(ISA_XSYM_EXISTS);
+            } else {
+                return output.append(ISA_SYM_EX).append(' ');
+            }
+        }
+
+        private Writer printUniversalSet(Writer output) throws IOException {
+            return output.append("UNIV");
+        }
+        // </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Export Methods">
         @Override
         public void exportTo(SpiderDiagram sd, Writer output) throws IOException {
             if (output == null) {
@@ -82,7 +178,7 @@ public class Isabelle2010ExportProvider extends SDExportProvider {
         }
 
         private void exportNullDiagram(Writer output) throws IOException {
-            output.append("True");
+            printTrue(output);
         }
 
         private void exportNaryDiagram(NarySpiderDiagram nsd, Writer output) throws IOException {
@@ -100,14 +196,14 @@ public class Isabelle2010ExportProvider extends SDExportProvider {
             SortedSet<String> spiders = psd.getSpiders();
             if (psd.getSpidersCount() > 0) {
                 Iterator<String> itr = spiders.iterator();
-                output.append("\\<exists>").append(itr.next());
+                printExists(output).append(itr.next());
                 while (itr.hasNext()) {
                     output.append(' ').append(itr.next());
                 }
                 output.append(". ");
             }
             if (psd.getHabitatsCount() < 1 && psd.getShadedZonesCount() < 1) {
-                output.append("True");
+                printTrue(output);
             } else {
                 if (psd.getHabitatsCount() > 0) {
                     SortedMap<String, Region> habitats = psd.getHabitats();
@@ -116,11 +212,11 @@ public class Isabelle2010ExportProvider extends SDExportProvider {
                     exportHabitat(spider, habitats.get(spider), output);
                     while (itr.hasNext()) {
                         spider = itr.next();
-                        output.append(" \\<and> ");
+                        printAnd(output);
                         exportHabitat(spider, habitats.get(spider), output);
                     }
                     if (psd.getShadedZonesCount() > 0) {
-                        output.append(" \\<and> ");
+                        printAnd(output);
                     }
                 }
                 if (psd.getShadedZonesCount() > 0) {
@@ -128,7 +224,7 @@ public class Isabelle2010ExportProvider extends SDExportProvider {
                     Iterator<Zone> itr = shadedZones.iterator();
                     Zone zone = itr.next();
                     exportZone(zone, output);
-                    output.append(" \\<subseteq> ");
+                    printSubsetEq(output);
                     Sets.printSet(spiders, output);
                 }
             }
@@ -148,14 +244,15 @@ public class Isabelle2010ExportProvider extends SDExportProvider {
         }
 
         private void exportHabitat(String spider, Region region, Writer output) throws IOException {
-            output.append(spider).append(" \\<in> ");
+            output.append(spider);
+            printElementOf(output);
             exportRegion(region, output);
         }
 
         private void exportRegion(Region region, Writer output) throws IOException {
             SortedSet<Zone> zones = region.getZones();
             if (zones.isEmpty()) {
-                output.append("UNIV");
+                printUniversalSet(output);
             } else {
                 Iterator<Zone> itr = zones.iterator();
                 Zone zone = itr.next();
@@ -169,7 +266,7 @@ public class Isabelle2010ExportProvider extends SDExportProvider {
                 }
                 while (itr.hasNext()) {
                     zone = itr.next();
-                    output.append(" \\<union> ");
+                    printUnion(output);
                     if (needsParens) {
                         output.append('(');
                     }
@@ -195,7 +292,7 @@ public class Isabelle2010ExportProvider extends SDExportProvider {
                 }
                 output.append(itr.next());
                 while (itr.hasNext()) {
-                    output.append(" \\<inter> ").append(itr.next());
+                    printIntersection(output).append(itr.next());
                 }
                 if (needsParens) {
                     output.append(')');
@@ -212,32 +309,20 @@ public class Isabelle2010ExportProvider extends SDExportProvider {
                 }
                 output.append(itr.next());
                 while (itr.hasNext()) {
-                    output.append(" \\<union> ").append(itr.next());
+                    printUnion(output).append(itr.next());
                 }
                 if (needsParens) {
                     output.append(")");
                 }
             }
         }
+        // </editor-fold>
     }
-//    private static class OperatorInfo {
-//        public static final int Infix = 1;
-//        public static final int Prefix = 2;
-//        public static final int Suffix = 3;
-//
-//        public final int type;
-//        public final String xSymbolName;
-//        public final String name;
-//
-//        public OperatorInfo(int type, String xSymbolName, String name) {
-//            this.type = type;
-//            this.xSymbolName = xSymbolName;
-//            this.name = name;
-//        }
-//    }
 
     public static void main(String[] args) throws ReadingException {
-        SDExporter exporter = SDExporting.getExporter(Isabelle2010ExportProvider.FormatName);
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put(Isabelle2011ExportProvider.Parameter_UseXSymbols, true);
+        SDExporter exporter = SDExporting.getExporter(Isabelle2011ExportProvider.FormatName, params);
         SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }");
         String sdStr = exporter.export(sd);
         System.out.println(sdStr);

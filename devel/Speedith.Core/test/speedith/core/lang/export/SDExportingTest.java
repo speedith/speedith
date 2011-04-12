@@ -70,7 +70,7 @@ public class SDExportingTest {
      */
     @Test
     public void testGetExporter_String() throws ReadingException {
-        SDExporter exporter = SDExporting.getExporter(Isabelle2010ExportProvider.FormatName);
+        SDExporter exporter = SDExporting.getExporter(Isabelle2011ExportProvider.FormatName);
         SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
         String sdStr = exporter.export(sd);
         System.out.println(sdStr);
@@ -84,7 +84,7 @@ public class SDExportingTest {
         Set<String> supportedFormats = SDExporting.getSupportedFormats();
         assertNotNull(supportedFormats);
         assertFalse(supportedFormats.isEmpty());
-        supportedFormats.contains(Isabelle2010ExportProvider.FormatName);
+        supportedFormats.contains(Isabelle2011ExportProvider.FormatName);
     }
 
     /**
