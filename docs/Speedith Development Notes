@@ -1,4 +1,4 @@
-*** Building & Developing
+# Building & Developing
 
 The easiest way to build and develop Speedith is to install either
 Eclipse or the NetBeans IDEs:
@@ -15,7 +15,7 @@ Download one of the following:
 
 
 
-*** Dependencies
+# Dependencies
 
 Right now Speedith depends on the following libraries:
 
@@ -28,5 +28,5 @@ Right now Speedith depends on the following libraries:
         http://commons.apache.org/cli/
 
     * ANTLRv3, found here:
-    
+
         http://www.antlr.org/
