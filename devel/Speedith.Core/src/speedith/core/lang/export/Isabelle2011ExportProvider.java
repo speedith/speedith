@@ -229,35 +229,14 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         private void exportNaryDiagram(NarySpiderDiagram nsd, Writer output) throws IOException {
             final Operator op = nsd.getOperator();
-            // IMPLICATION
             if (op.equals(OP_NAME_IMP)) {
-                exportInfixOperator(nsd, output, new PrintCallback() {
-
-                    public void print(Writer output) throws IOException {
-                        printImp(output);
-                    }
-                });
+                exportInfixOperator(nsd, output, new ImpOperatorPrinter());
             } else if (op.equals(OP_NAME_AND)) {
-                exportInfixOperator(nsd, output, new PrintCallback() {
-
-                    public void print(Writer output) throws IOException {
-                        printAnd(output);
-                    }
-                });
+                exportInfixOperator(nsd, output, new AndOperatorPrinter());
             } else if (op.equals(OP_NAME_OR)) {
-                exportInfixOperator(nsd, output, new PrintCallback() {
-
-                    public void print(Writer output) throws IOException {
-                        printOr(output);
-                    }
-                });
+                exportInfixOperator(nsd, output, new OrOperatorPrinter());
             } else if (op.equals(OP_NAME_EQ)) {
-                exportInfixOperator(nsd, output, new PrintCallback() {
-
-                    public void print(Writer output) throws IOException {
-                        printEquiv(output);
-                    }
-                });
+                exportInfixOperator(nsd, output, new EqOperatorPrinter());
             }
         }
 
@@ -384,6 +363,36 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
                 if (needsParens) {
                     output.append(")");
                 }
+            }
+        }
+        // </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Helper Classes">
+        private class EqOperatorPrinter implements PrintCallback {
+
+            public void print(Writer output) throws IOException {
+                printEquiv(output);
+            }
+        }
+
+        private class OrOperatorPrinter implements PrintCallback {
+
+            public void print(Writer output) throws IOException {
+                printOr(output);
+            }
+        }
+
+        private class AndOperatorPrinter implements PrintCallback {
+
+            public void print(Writer output) throws IOException {
+                printAnd(output);
+            }
+        }
+
+        private class ImpOperatorPrinter implements PrintCallback {
+
+            public void print(Writer output) throws IOException {
+                printImp(output);
             }
         }
         // </editor-fold>
