@@ -13,6 +13,7 @@
             </test-roots>
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>Isabelle</word>
             <word>Speedith</word>
         </spellchecker-wordlist>
     </configuration>

@@ -24,17 +24,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package speedith.cli;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.cli.AlreadySelectedException;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
-import speedith.Main;
 import static speedith.i18n.Translations.i18n;
 
 /**
@@ -73,7 +69,7 @@ public class CliOptions {
         try {
             batchMode.setSelected(batchFlag);
         } catch (AlreadySelectedException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(i18n("ERR_CLI_SETUP_FAILED"), ex);
         }
         ///
         /// END: Batch mode options
@@ -85,8 +81,7 @@ public class CliOptions {
         opts.addOption(helpFlag);
 
         // ---- Spider diagram formula
-        Option spiderDiagram = new Option("sd", "spider-diagram", true,
-                i18n("CLI_ARG_DESCRIPTION_SD"));
+        Option spiderDiagram = new Option("sd", "spider-diagram", true, i18n("CLI_ARG_DESCRIPTION_SD"));
         spiderDiagram.setArgName(i18n("CLI_ARG_SD_VALUE_NAME"));
         opts.addOption(spiderDiagram);
 

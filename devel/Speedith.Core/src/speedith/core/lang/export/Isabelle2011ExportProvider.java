@@ -88,12 +88,22 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         return i18n(locale, Exporter.Parameters.get(parameter));
     }
 
+    /**
+     * The actual exporter class. This class does the actual translation from
+     * spider diagrams to Isabelle's formulas.
+     */
     private static class Exporter extends SDExporter {
+        
+        // TODO: Finish the export (maybe I should write a generic pretty
+        // printer, which takes into account precedence order of operators in
+        // Isabelle automatically).
 
+        // <editor-fold defaultstate="collapsed" desc="Fields">
         public static final TreeMap<String, String> Parameters;
         public static final String ISA_SYM_EX = "EX";
         public static final String ISA_XSYM_EXISTS = "∃";
         private boolean useXSymbols;
+        // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Constructors">
         public Exporter() {

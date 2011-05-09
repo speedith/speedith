@@ -70,6 +70,8 @@ public class SDExportingTest {
      */
     @Test
     public void testGetExporter_String() throws ReadingException {
+        // TODO: Finish the test (compare it with the expected result -- a
+        // manually written Isabelle formula string).
         SDExporter exporter = SDExporting.getExporter(Isabelle2011ExportProvider.FormatName);
         SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
         String sdStr = exporter.export(sd);
@@ -92,10 +94,18 @@ public class SDExportingTest {
      */
     @Test
     public void testScanForExporters() {
-        SDExporting.scanForExporters();
+        // First test that the 'TestExportProvider' is not in the list of supported formats.
         Set<String> supportedFormats = SDExporting.getSupportedFormats();
         assertNotNull(supportedFormats);
+        assertFalse(supportedFormats.contains(TestExportProvider.FormatName));
+        
+        // Now load the exporters specified in the MANIFEST...
+        SDExporting.scanForExporters();
+        supportedFormats = SDExporting.getSupportedFormats();
+        assertNotNull(supportedFormats);
         assertTrue(supportedFormats.contains(TestExportProvider.FormatName));
+        
+        // And finally try to export something with it...
         SDExporter exporter = SDExporting.getExporter(TestExportProvider.FormatName);
         assertEquals(exporter.export(null), TestExportProvider.ExportContent);
         SDExportProvider provider = SDExporting.getProvider(TestExportProvider.FormatName);
