@@ -88,10 +88,20 @@ public class Operator {
     }
 
     /**
-     * Returns a set of known operator names.
+     * Returns an unmodifiable set of known operator names.
      * <p>Use {@link Operator#fromString(java.lang.String)} to get an operator
      * by name.</p>
-     * @return a set of known operator names.
+     * <p>All the names of known operators are specified in the following
+     * fields:
+     *  <ul>
+     *      <li>{@link Operator#OP_NAME_AND},</li>
+     *      <li>{@link Operator#OP_NAME_EQ},</li>
+     *      <li>{@link Operator#OP_NAME_IMP},</li>
+     *      <li>{@link Operator#OP_NAME_NOT} and</li>
+     *      <li>{@link Operator#OP_NAME_OR}.</li>
+     *  </ul>
+     * </p>
+     * @return an unmodifiable set of known operator names.
      */
     public static Set<String> knownOperatorNames() {
         return Collections.unmodifiableSet(OperatorRegistry.KnownOperators.keySet());
@@ -113,6 +123,31 @@ public class Operator {
      */
     public String getName() {
         return name;
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+    /**
+     * Operators have unique names (regardless of their arity). Thus one can
+     * determine which operator they are dealing with just its name.
+     * <p>This function checks whether this operator has the given name and
+     * returns {@code true} iff the name of this parameter equals to the one
+     * given through the {@code name} argument.</p>
+     * <p>Here is a list of known operators:
+     *  <ul>
+     *      <li>{@link Operator#OP_NAME_AND},</li>
+     *      <li>{@link Operator#OP_NAME_EQ},</li>
+     *      <li>{@link Operator#OP_NAME_IMP},</li>
+     *      <li>{@link Operator#OP_NAME_NOT} and</li>
+     *      <li>{@link Operator#OP_NAME_OR}.</li>
+     *  </ul>
+     * </p>
+     * @param name does this operator have this name?
+     * @return {@code true} iff the name of this parameter equals to the one
+     * given through the {@code name} argument.
+     */
+    public boolean equals(String name) {
+        return getName().equals(name);
     }
     // </editor-fold>
 

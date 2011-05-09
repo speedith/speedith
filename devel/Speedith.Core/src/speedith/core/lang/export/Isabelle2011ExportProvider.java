@@ -43,11 +43,12 @@ import speedith.core.lang.NarySpiderDiagram;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.PrimarySpiderDiagram;
 import static speedith.core.i18n.Translations.i18n;
+import speedith.core.lang.Operator;
+import static speedith.core.lang.Operator.*;
 import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Zone;
 import speedith.core.util.Sets;
-import static speedith.core.lang.Operator.*;
 
 /**
  * The provider for exporting spider diagrams to Isabelle 2011 formulae.
@@ -129,6 +130,22 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
             }
         }
 
+        private Writer printOr(Writer output) throws IOException {
+            if (useXSymbols) {
+                return output.append(' ').append("∨").append(' ');
+            } else {
+                return output.append(' ').append("|").append(' ');
+            }
+        }
+
+        private Writer printNeg(Writer output) throws IOException {
+            if (useXSymbols) {
+                return output.append(' ').append("∨").append(' ');
+            } else {
+                return output.append(' ').append("~").append(' ');
+            }
+        }
+
         private Writer printElementOf(Writer output) throws IOException {
             if (useXSymbols) {
                 return output.append(' ').append("∈").append(' ');
@@ -158,6 +175,22 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
                 return output.append(' ').append("⊆").append(' ');
             } else {
                 return output.append(' ').append("<=").append(' ');
+            }
+        }
+
+        private Writer printImp(Writer output) throws IOException {
+            if (useXSymbols) {
+                return output.append(' ').append("⟶").append(' ');
+            } else {
+                return output.append(' ').append("-->").append(' ');
+            }
+        }
+
+        private Writer printEquiv(Writer output) throws IOException {
+            if (useXSymbols) {
+                return output.append(' ').append("⟷").append(' ');
+            } else {
+                return output.append(' ').append("<-->").append(' ');
             }
         }
 
@@ -191,13 +224,29 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
             printTrue(output);
         }
 
-        private void exportNaryDiagram(NarySpiderDiagram nsd, Writer output) throws IOException {
-            final String opName = nsd.getOperator().getName();
-            if (OP_NAME_IMP.equals(opName)) {
-                for (SpiderDiagram sd : nsd.getOperands()) {
-                    exportDiagram(sd, output);
-                    output.append('\n');
+        private void exportInfixOperator(NarySpiderDiagram nsd, Writer output, PrintCallback operatorSymbolPrinter) throws IOException, RuntimeException {
+            // We have to print an infix operator application.
+            if (nsd.getOperandCount() < 2) {
+                throw new RuntimeException(i18n("ERR_ISAEXPORT_ARG_COUNT_INVALID", nsd.getOperandCount()));
+            } else {
+                exportDiagram(nsd.getOperand(0), output);
+                for (int i = 1; i < nsd.getOperandCount(); i++) {
+                    operatorSymbolPrinter.print(output);
+                    exportDiagram(nsd.getOperand(i), output);
                 }
+            }
+        }
+
+        private void exportNaryDiagram(NarySpiderDiagram nsd, Writer output) throws IOException {
+            final Operator op = nsd.getOperator();
+            if (op.equals(OP_NAME_IMP)) {
+                exportInfixOperator(nsd, output, new ImpOperatorPrinter());
+            } else if (op.equals(OP_NAME_AND)) {
+                exportInfixOperator(nsd, output, new AndOperatorPrinter());
+            } else if (op.equals(OP_NAME_OR)) {
+                exportInfixOperator(nsd, output, new OrOperatorPrinter());
+            } else if (op.equals(OP_NAME_EQ)) {
+                exportInfixOperator(nsd, output, new EqOperatorPrinter());
             }
         }
 
@@ -327,7 +376,44 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
             }
         }
         // </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Helper Classes">
+        private class EqOperatorPrinter implements PrintCallback {
+
+            public void print(Writer output) throws IOException {
+                printEquiv(output);
+            }
+        }
+
+        private class OrOperatorPrinter implements PrintCallback {
+
+            public void print(Writer output) throws IOException {
+                printOr(output);
+            }
+        }
+
+        private class AndOperatorPrinter implements PrintCallback {
+
+            public void print(Writer output) throws IOException {
+                printAnd(output);
+            }
+        }
+
+        private class ImpOperatorPrinter implements PrintCallback {
+
+            public void print(Writer output) throws IOException {
+                printImp(output);
+            }
+        }
+        // </editor-fold>
     }
+
+    // <editor-fold defaultstate="collapsed" desc="Callback Interfaces">
+    private static interface PrintCallback {
+
+        void print(Writer output) throws IOException;
+    }
+    // </editor-fold>
 
     public static void main(String[] args) throws ReadingException {
         HashMap<String, Object> params = new HashMap<String, Object>();
