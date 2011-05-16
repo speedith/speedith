@@ -26,7 +26,9 @@
  */
 package speedith;
 
+import org.apache.commons.cli.ParseException;
 import speedith.cli.CliOptions;
+import static speedith.i18n.Translations.*;
 
 /**
  * This is the main entry point to Speedith.
@@ -58,14 +60,23 @@ public class Main {
      * @param args the Command line arguments to Speedith.
      */
     public static void main(String[] args) {
-        // Did the user provide any command line arguments to Speedith?
-        if (args.length > 0) {
-            // If there are some arguments, do corresponding things.
-        } else {
-            // No CLI arguments specified... Just run Speedith in interactive
-            // mode.
-            CliOptions.printCliHelp();
-
+        CliOptions cliParser = new CliOptions();
+        try {
+            cliParser.parse(args);
+            // Did the user specify the '-?' option? If so, just print and exit
+            // Otherwise startup Speedith.
+            if (cliParser.isHelp()) {
+                cliParser.printHelp();
+            } else {
+                // ---- Starting up Speedith
+                System.out.println("Starting up Speedith...");
+            }
+        } catch (ParseException ex) {
+            // Report why the parsing failed and print the help message (both to
+            // the error output)
+            System.err.println(i18n("ERR_CLI_PARSE_FAILED", ex.getLocalizedMessage()));
+            // Print help too.
+            cliParser.printHelp(System.err);
         }
     }
     // </editor-fold>
