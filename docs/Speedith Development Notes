@@ -1,18 +1,94 @@
-# Building & Developing
+# Building & Developing Speedith
 
-The easiest way to build and develop Speedith is to install either
-[Eclipse](http://www.eclipse.org/downloads/) or the
-[NetBeans](http://netbeans.org/downloads/) IDEs:
+## Requirements
+
+These requirements have to be checked only once. After you make sure you have
+these, you can build Speedith at any time.
+
+*   __Speedith sources__: You can get the sources of Speedith from
+    [Gitorious](http://gitorious.org/speedith).
+
+    You may simply want to execute this in the command line:
+
+            git clone git://gitorious.org/speedith/speedith.git speedith
+            cd speedith
+
+*   __iCircles sources__: You can get the sources of iCircles from
+    [Gitorious](http://gitorious.org/speedith/inductive_circles).
+
+    You may simply want to execute this in the command line:
+
+            git clone git://gitorious.org/speedith/inductive_circles.git inductive_circles
+            cd inductive_circles
+
+*   __Apache Ant__: Speedith can be built with [Ant](http://ant.apache.org/)
+    (which is a Java-based build automation tool, similar to `make`). The
+    minimum required version of Ant can be determined by running:
+
+            grep 'antversion atleast=' devel/Speedith/nbproject/build-impl.xml
+
+    You can install Ant via your operating system's package management system,
+    or by downloading it from [http://ant.apache.org/bindownload.cgi](http://ant.apache.org/bindownload.cgi).
+
+    Make sure that the `ant` executable is available from the command line in
+    the root folder of Speedith (or make sure that you know where the `ant`
+    executable is located).
+
+*   __ANTLRv3__: Speedith uses the
+    _[ANTLRv3 Java Runtime](http://www.antlr.org/download.html)_ for parsing the
+    textual representation of spider diagrams.
+
+    One way of getting ANTLRv3:
+
+            wget 'http://www.antlr.org/download/antlr-3.3.tar.gz'
+            tar -xzf antlr-3.3.tar.gz
+
+    There should be the `./antlr-3.3/lib/antlr-3.3-complete.jar` file, which is
+    required by Speedith.
+
+## The build process
+
+__Note__: the instructions below assume the following:
+
+*   the _current working directory_ is the __root of the Speedith repository__.
+*   the `ant` executable is in your `PATH` environment variable.
+*   the _iCircles_ sources are reachable via the `../inductive_circles` path
+    from the root of the Speedith repository.
+*   the `antlr-3.3-complete.jar` file is in the `CLASSPATH` environment
+    variable.
+
+Follow these steps:
+
+1.  Being in the repository's root folder, run:
+
+            ../apache-ant-1.8.2/bin/ant \
+                -Dlibs.ANTLRv3.classpath=/home/test/Downloads/antlr-3.3/lib/antlr-3.3-complete.jar \
+                -f devel/Speedith/build.xml
+
+## Building and Developing Using IDEs
+
+Another way to build and develop Speedith is to install either
+[NetBeans](http://netbeans.org/downloads/) or the
+[Eclipse](http://www.eclipse.org/downloads/) IDEs.
 
 Download one of the following:
 
-* the Eclipse IDE for Java Developers, or
-* the Java SE version of NetBeans.
+*   the Java SE version of NetBeans.
+*   the Eclipse IDE for Java Developers, or
+
+> Development of Speedith is done in __NetBeans__, which is the easiest way to get
+> started with development of Speedith. Eclipse is currently not supported out of
+> the box, but there is no technical reason why it would not work (importing the
+> Speedith's source folder should do the trick).
 
 # Dependencies
 
 Right now Speedith depends on the following libraries:
 
-* iCircles (Inductive Circles), found [here](http://git.gitorious.org/speedith/inductive_circles.git).
-* Apache Commons CLI (Jakarta CLI), found [here](http://commons.apache.org/cli/).
-* ANTLRv3, found [here](http://www.antlr.org/).
+*   [iCircles](http://git.gitorious.org/speedith/inductive_circles.git)
+    (Inductive Circles).
+*   [Apache Commons CLI](http://commons.apache.org/cli/) (library for parsing
+    Command Line Interface arguments).
+*   [ANTLRv3](http://www.antlr.org/download.html) -
+    [Java Runtime](http://www.antlr.org/download/antlr-3.3-complete.jar) (a
+    parser generator tool - used for parsing spider diagram textual formulae).
