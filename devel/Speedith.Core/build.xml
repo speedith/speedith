@@ -92,9 +92,9 @@
 
     <target name="-compile-speedith-grammar" depends="-check-grammar-uptodate,-clean-antlrworks-output" unless="speedith.grammar.isUptodate">
         <echo message="Compiling the speedith grammar: ${speedith.grammar}.g"/>
-        <exec executable="${antlr3.executable}">
+        <java jar="${antlr3.tool}">
             <arg value="${speedith.grammar}.g"/>
-        </exec>
+        </java>
         <basename file="${speedith.grammar}.tokens" property="speedith.grammar.tokensFile" />
         <delete file="${speedith.grammar.tokensFile}"/>
     </target>
