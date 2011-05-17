@@ -91,10 +91,25 @@
     </target>
 
     <target name="-compile-speedith-grammar" depends="-check-grammar-uptodate,-clean-antlrworks-output" unless="speedith.grammar.isUptodate">
-        <echo message="Compiling the speedith grammar: ${speedith.grammar}.g"/>
-        <java jar="${antlr3.tool}">
+        <echo message="Compiling the speedith grammar: ${speedith.grammar}.g" level="info" />
+        <antcall target="-compile-speedith-grammar-with-jar" />
+        <antcall target="-compile-speedith-grammar-with-executable" />
+        <antcall target="-clean-generated-token-files" />
+    </target>
+    
+    <target name="-compile-speedith-grammar-with-jar" unless="antlr3.tool.executable">
+        <java jar="${antlr3.tool.jar}">
             <arg value="${speedith.grammar}.g"/>
         </java>
+    </target>
+    
+    <target name="-compile-speedith-grammar-with-executable" unless="antlr3.tool.jar">
+        <exec executable="${antlr3.tool.executable}">
+            <arg value="${speedith.grammar}.g"/>
+        </exec>
+    </target>
+    
+    <target name="-clean-generated-token-files">
         <basename file="${speedith.grammar}.tokens" property="speedith.grammar.tokensFile" />
         <delete file="${speedith.grammar.tokensFile}"/>
     </target>
