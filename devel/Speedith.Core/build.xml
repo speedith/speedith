@@ -110,7 +110,7 @@
     </target>
     
     <target name="-compile-speedith-grammar-with-jar" unless="antlr3.tool.executable">
-        <java jar="${antlr3.tool.jar}">
+        <java jar="${antlr3.tool.jar}" fork="true">
             <arg value="${speedith.grammar}.g"/>
         </java>
     </target>
