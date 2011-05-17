@@ -1,5 +1,21 @@
 # Building & Developing Speedith
 
+## Building and developing using IDEs
+
+Another way to build and develop Speedith is to install either
+[NetBeans](http://netbeans.org/downloads/) or the
+[Eclipse](http://www.eclipse.org/downloads/) IDEs.
+
+Download one of the following:
+
+*   the Java SE version of NetBeans.
+*   the Eclipse IDE for Java Developers, or
+
+> Development of Speedith is done in __NetBeans__, which is the easiest way to get
+> started with development of Speedith. Eclipse is currently not supported out of
+> the box, but there is no technical reason why it would not work (importing the
+> Speedith's source folder should do the trick).
+
 ## Requirements
 
 These requirements have to be checked only once. After you make sure you have
@@ -34,6 +50,10 @@ these, you can build Speedith at any time.
     the root folder of Speedith (or make sure that you know where the `ant`
     executable is located).
 
+    You can check your version of Ant by running:
+
+            ant -version
+
 *   __ANTLRv3__: Speedith uses the
     _[ANTLRv3 Java Runtime](http://www.antlr.org/download.html)_ for parsing the
     textual representation of spider diagrams.
@@ -43,10 +63,22 @@ these, you can build Speedith at any time.
             wget 'http://www.antlr.org/download/antlr-3.3.tar.gz'
             tar -xzf antlr-3.3.tar.gz
 
-    There should be the `./antlr-3.3/lib/antlr-3.3-complete.jar` file, which is
-    required by Speedith.
+    There should be the `./antlr-3.3/runtime/Java/target/antlr-runtime-3.3.jar` 
+    file, which is the runtime library dependency required by Speedith. Also
+    needed by Speedith is the `antlr-3.3/lib/antlr-3.3-complete.jar` file, which
+    is needed only during the compilation stage (not a runtime dependency).
 
-## The build process
+*   __Apache Commons CLI__: Speedith uses [Apache Commons CLI](http://commons.apache.org/cli/)
+    for command line parsing. You can download the library from [here](http://commons.apache.org/cli/download_cli.cgi).
+
+    An example of how to get it with `wget`:
+
+            wget 'http://mirror.lividpenguin.com/pub/apache//commons/cli/binaries/commons-cli-1.2-bin.tar.gz'
+            tar -xzf commons-cli-1.2-bin.tar.gz
+
+    The `./commons-cli-1.2/commons-cli-1.2.jar` is the file we're after.
+
+## Manual build process
 
 __Note__: the instructions below assume the following:
 
@@ -54,41 +86,15 @@ __Note__: the instructions below assume the following:
 *   the `ant` executable is in your `PATH` environment variable.
 *   the _iCircles_ sources are reachable via the `../inductive_circles` path
     from the root of the Speedith repository.
-*   the `antlr-3.3-complete.jar` file is in the `CLASSPATH` environment
-    variable.
+*   you know the paths of `antlr-3.3-complete.jar`, `antlr-runtime-3.3.jar` and
+    `commons-cli-1.2.jar` files (the instructions will use dummy paths).
 
 Follow these steps:
 
 1.  Being in the repository's root folder, run:
 
-            ../apache-ant-1.8.2/bin/ant \
-                -Dlibs.ANTLRv3.classpath=/home/test/Downloads/antlr-3.3/lib/antlr-3.3-complete.jar \
+            ../apache-ant-1.8.2/bin/ant --noconfig \
+                -Dlibs.ANTLRv3.classpath=/home/test/Downloads/antlr-3.3/runtime/Java/target/antlr-runtime-3.3.jar \
+                -Dantlr3.tool.jar=/home/test/Downloads/antlr-3.3/lib/antlr-3.3-complete.jar \
+                -Dlibs.JakartaCLI.classpath=/home/test/Downloads/commons-cli-1.2/commons-cli-1.2.jar \
                 -f devel/Speedith/build.xml
-
-## Building and Developing Using IDEs
-
-Another way to build and develop Speedith is to install either
-[NetBeans](http://netbeans.org/downloads/) or the
-[Eclipse](http://www.eclipse.org/downloads/) IDEs.
-
-Download one of the following:
-
-*   the Java SE version of NetBeans.
-*   the Eclipse IDE for Java Developers, or
-
-> Development of Speedith is done in __NetBeans__, which is the easiest way to get
-> started with development of Speedith. Eclipse is currently not supported out of
-> the box, but there is no technical reason why it would not work (importing the
-> Speedith's source folder should do the trick).
-
-# Dependencies
-
-Right now Speedith depends on the following libraries:
-
-*   [iCircles](http://git.gitorious.org/speedith/inductive_circles.git)
-    (Inductive Circles).
-*   [Apache Commons CLI](http://commons.apache.org/cli/) (library for parsing
-    Command Line Interface arguments).
-*   [ANTLRv3](http://www.antlr.org/download.html) -
-    [Java Runtime](http://www.antlr.org/download/antlr-3.3-complete.jar) (a
-    parser generator tool - used for parsing spider diagram textual formulae).
