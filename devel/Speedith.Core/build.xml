@@ -92,6 +92,18 @@
 
     <target name="-compile-speedith-grammar" depends="-check-grammar-uptodate,-clean-antlrworks-output" unless="speedith.grammar.isUptodate">
         <echo message="Compiling the speedith grammar: ${speedith.grammar}.g" level="info" />
+        <fail message="You have to set at least one of these properties: 'antlr3.tool.executable' or 'antlr3.tool.jar'">
+            <condition>
+                <and>
+                    <not>
+                        <isset property="antlr3.tool.executable"/>
+                    </not>
+                    <not>
+                        <isset property="antlr3.tool.jar"/>
+                    </not>
+                </and>
+            </condition>
+        </fail>
         <antcall target="-compile-speedith-grammar-with-jar" />
         <antcall target="-compile-speedith-grammar-with-executable" />
         <antcall target="-clean-generated-token-files" />
