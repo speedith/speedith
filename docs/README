@@ -1,20 +1,22 @@
-# Building & Developing Speedith
+# Developer's Guide to _Speedith_
+
+--------------------------------------------------------------------------------
 
 ## Building and developing using IDEs
 
-Another way to build and develop Speedith is to install either
+An easy way to build and develop Speedith is to install either
 [NetBeans](http://netbeans.org/downloads/) or the
 [Eclipse](http://www.eclipse.org/downloads/) IDEs.
 
-Download one of the following:
+In any case, you have to make sure that all of Speedith's dependencies are
+installed (and configured in your IDE). You can find a list of dependencies in
+the _Requirements_ section below.
 
-*   the Java SE version of NetBeans.
-*   the Eclipse IDE for Java Developers, or
+Main development of Speedith is done in __NetBeans__. Eclipse is currently not
+supported out of the box, but there is no technical reason why it would not work
+(importing the Speedith's source folder should do the trick).
 
-Development of Speedith is done in __NetBeans__, which is the easiest way to get
-started with development of Speedith. Eclipse is currently not supported out of
-the box, but there is no technical reason why it would not work (importing the
-Speedith's source folder should do the trick).
+--------------------------------------------------------------------------------
 
 ## Requirements
 
@@ -77,6 +79,8 @@ these, you can build Speedith at any time.
             tar -xzf commons-cli-1.2-bin.tar.gz
 
     The `./commons-cli-1.2/commons-cli-1.2.jar` is the file we're after.
+
+--------------------------------------------------------------------------------
 
 ## Manual build process
 
