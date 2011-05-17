@@ -28,6 +28,8 @@ package speedith;
 
 import org.apache.commons.cli.ParseException;
 import speedith.cli.CliOptions;
+import speedith.core.lang.reader.ReadingException;
+import speedith.core.lang.reader.SpiderDiagramsReader;
 import static speedith.i18n.Translations.*;
 
 /**
@@ -60,15 +62,20 @@ public class Main {
      * @param args the Command line arguments to Speedith.
      */
     public static void main(String[] args) {
-        CliOptions cliParser = new CliOptions();
+        CliOptions clargs = new CliOptions();
         try {
-            cliParser.parse(args);
+            clargs.parse(args);
             // Did the user specify the '-?' option? If so, just print and exit
             // Otherwise startup Speedith.
-            if (cliParser.isHelp()) {
-                cliParser.printHelp();
+            if (clargs.isHelp()) {
+                clargs.printHelp();
             } else {
                 // ---- Starting up Speedith
+                // Did the user provide a spider diagram to Speedith?
+                String formula = clargs.getSpiderDiagram();
+                if (formula != null) {
+                    SpiderDiagramsReader.readSpiderDiagram(formula);
+                }
                 System.out.println("Starting up Speedith...");
             }
         } catch (ParseException ex) {
@@ -76,7 +83,10 @@ public class Main {
             // the error output)
             System.err.println(i18n("ERR_CLI_PARSE_FAILED", ex.getLocalizedMessage()));
             // Print help too.
-            cliParser.printHelp(System.err);
+            clargs.printHelp(System.err);
+        } catch (ReadingException rex) {
+            // A reading error occurred. Give the user a detailed error message.
+            System.err.println(i18n("ERR_READING_FORMULA", rex.getLocalizedMessage()));
         }
     }
     // </editor-fold>
