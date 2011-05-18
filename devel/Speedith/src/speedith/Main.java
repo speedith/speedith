@@ -26,8 +26,16 @@
  */
 package speedith;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.cli.ParseException;
 import speedith.cli.CliOptions;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.lang.export.Isabelle2011ExportProvider;
+import speedith.core.lang.export.SDExportProvider;
+import speedith.core.lang.export.SDExporting;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import static speedith.i18n.Translations.*;
@@ -65,28 +73,68 @@ public class Main {
         CliOptions clargs = new CliOptions();
         try {
             clargs.parse(args);
-            // Did the user specify the '-?' option? If so, just print and exit
+            // Did the user specify any of the 'print help' options? If so, just
+            // print the info and exit.
             // Otherwise startup Speedith.
             if (clargs.isHelp()) {
                 clargs.printHelp();
+            } else if (clargs.isListOutputFormats()) {
+                printKnownFormats();
             } else {
                 // ---- Starting up Speedith
                 // Did the user provide a spider diagram to Speedith?
                 String formula = clargs.getSpiderDiagram();
-                if (formula != null) {
-                    SpiderDiagramsReader.readSpiderDiagram(formula);
+                SpiderDiagram readSpiderDiagram = (formula == null) ? null : SpiderDiagramsReader.readSpiderDiagram(formula);
+                // Did the user specify an output format?
+                String outputFormat = clargs.getOutputFormat();
+                // Check that the format is supported (if any was given,
+                // otherwise use a default one).
+                if (outputFormat == null) {
+                    // Use the default output format
+                    outputFormat = Isabelle2011ExportProvider.FormatName;
+                } else if (SDExporting.getProvider(outputFormat) == null) {
+                    throw new RuntimeException(i18n("ERR_CLI_UNKNOWN_EXPORT_FORMAT", outputFormat));
                 }
+
                 System.out.println("Starting up Speedith...");
             }
         } catch (ParseException ex) {
+            // TODO: Get some proper error logging going on.
             // Report why the parsing failed and print the help message (both to
             // the error output)
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, i18n("ERR_CLI_PARSE_FAILED", ex.getLocalizedMessage()), ex);
             System.err.println(i18n("ERR_CLI_PARSE_FAILED", ex.getLocalizedMessage()));
             // Print help too.
             clargs.printHelp(System.err);
+            System.exit(1);
         } catch (ReadingException rex) {
             // A reading error occurred. Give the user a detailed error message.
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, i18n("ERR_READING_FORMULA", rex.getLocalizedMessage()), rex);
             System.err.println(i18n("ERR_READING_FORMULA", rex.getLocalizedMessage()));
+            System.exit(1);
+        } catch (Exception ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex);
+            System.err.println(ex.getLocalizedMessage());
+            System.exit(1);
+        }
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Help Printing Methods">
+    private static void printKnownFormats() {
+        // TODO: Maybe also print the particular exporter parameters with their descriptions...
+        System.out.println(i18n("MSG_KNOWN_FORMATS_LIST"));
+        System.out.println();
+        Set<String> formatsSet = SDExporting.getSupportedFormats();
+        final String[] formats = formatsSet.toArray(new String[0]);
+        Arrays.sort(formats);
+        for (int i = 0; i < formats.length; i++) {
+            String formatName = formats[i];
+            SDExportProvider formatInfo = SDExporting.getProvider(formatName);
+            System.out.print("   ");
+            System.out.print(formatName);
+            System.out.print("  - ");
+            System.out.println(formatInfo.getDescription());
         }
     }
     // </editor-fold>

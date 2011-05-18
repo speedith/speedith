@@ -37,6 +37,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import speedith.core.lang.export.SDExporting;
 import static speedith.i18n.Translations.i18n;
 
 /**
@@ -46,7 +47,6 @@ import static speedith.i18n.Translations.i18n;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class CliOptions extends Options {
-    public static final String OPTION_HELP = "?";
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     /**
@@ -67,6 +67,23 @@ public class CliOptions extends Options {
      * interface).
      */
     public static final String OPTION_BATCH_MODE = "b";
+    /**
+     * This option tells Speedith to print out the 'usage help', with a list of
+     * all command line options with their descriptions.
+     */
+    public static final String OPTION_HELP = "?";
+    /**
+     * The output (export) format to use when printing spider diagrams (e.g.: to
+     * the standard output).
+     * <p>The list of all available export formats can be obtained with the
+     * '{@link CliOptions#OPTION_LOF list output formats}' option.</p>
+     */
+    public static final String OPTION_OF = "of";
+    /**
+     * This option makes Speedith to print a list of all available spider
+     * diagram formula export formats.
+     */
+    public static final String OPTION_LOF = "lof";
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Private Fields">
     /**
@@ -148,8 +165,18 @@ public class CliOptions extends Options {
      * information).
      */
     public String getSpiderDiagram() {
-        areOptionsParsed();
-        return parsedArguments.getOptionValue(OPTION_SD);
+        return getParsedOptions().getOptionValue(OPTION_SD);
+    }
+    
+    /**
+     * Returns the spider diagram formula output format that should be used
+     * when exporting spider diagrams (to the standard output) in the batch
+     * mode.
+     * @return the output format name (see {@link SDExporting} for more
+     * information).
+     */
+    public String getOutputFormat() {
+        return getParsedOptions().getOptionValue(OPTION_OF);
     }
     
     /**
@@ -161,8 +188,7 @@ public class CliOptions extends Options {
      * in the command line arguments.
      */
     public boolean isBatchMode() {
-        areOptionsParsed();
-        return parsedArguments.hasOption(OPTION_BATCH_MODE);
+        return getParsedOptions().hasOption(OPTION_BATCH_MODE);
     }
     
     /**
@@ -172,8 +198,19 @@ public class CliOptions extends Options {
      * @return a flag that tells whether to print the usage help text.
      */
     public boolean isHelp() {
-        areOptionsParsed();
-        return parsedArguments.hasOption(OPTION_HELP);
+        return getParsedOptions().hasOption(OPTION_HELP);
+    }
+    
+    /**
+     * Indicates whether the user provided the 'list output formats' option in
+     * the command line arguments.
+     * <p>This flag tells Speedith whether to print the list of all known spider
+     * diagram formula export formats.</p>
+     * @return a flag that tells whether to print the list of all known spider
+     * diagram formula export formats.
+     */
+    public boolean isListOutputFormats() {
+        return getParsedOptions().hasOption(OPTION_LOF);
     }
     // </editor-fold>
 
@@ -184,10 +221,10 @@ public class CliOptions extends Options {
         ///
         // ---- Batch mode flag
         OptionGroup batchMode = new OptionGroup();
-        Option batchFlag = new Option(OPTION_BATCH_MODE, "batch", false, i18n("CLI_ARG_DESCRIPTION_BATCH"));
-        batchMode.addOption(batchFlag);
+        Option opt = new Option(OPTION_BATCH_MODE, "batch", false, i18n("CLI_ARG_DESCRIPTION_BATCH"));
+        batchMode.addOption(opt);
         try {
-            batchMode.setSelected(batchFlag);
+            batchMode.setSelected(opt);
         } catch (AlreadySelectedException ex) {
             throw new RuntimeException(i18n("ERR_CLI_SETUP_FAILED"), ex);
         }
@@ -197,29 +234,41 @@ public class CliOptions extends Options {
         addOptionGroup(batchMode);
 
         // ---- Help option
-        Option helpFlag = new Option(OPTION_HELP, "help", false, i18n("CLI_ARG_DESCRIPTION_HELP"));
-        addOption(helpFlag);
+        opt = new Option(OPTION_HELP, "help", false, i18n("CLI_ARG_DESCRIPTION_HELP"));
+        addOption(opt);
 
         // ---- Spider diagram formula
-        Option spiderDiagram = new Option(OPTION_SD, "spider-diagram", true, i18n("CLI_ARG_DESCRIPTION_SD"));
-        spiderDiagram.setArgName(i18n("CLI_ARG_SD_VALUE_NAME"));
-        addOption(spiderDiagram);
+        opt = new Option(OPTION_SD, "spider-diagram", true, i18n("CLI_ARG_DESCRIPTION_SD"));
+        opt.setArgName(i18n("CLI_ARG_SD_VALUE_NAME"));
+        addOption(opt);
+
+        // ---- Output formula format
+        opt = new Option(OPTION_OF, "output-format", true, i18n("CLI_ARG_DESCRIPTION_OF"));
+        opt.setArgName(i18n("CLI_ARG_OF_VALUE_NAME"));
+        addOption(opt);
+
+        // ---- List known export formats
+        opt = new Option(OPTION_LOF, "lst-output-formats", false, i18n("CLI_ARG_DESCRIPTION_LOF"));
+        addOption(opt);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Private Methods">
     /**
-     * Checks if the command line options have been parsed and are available for
-     * querying.
+     * Returns a non-{@code null} reference to parsed options (as read from the
+     * command line arguments).
      * <p>This method throws an exception iff the {@link CliOptions#parsedArguments}
      * field is {@code null}.</p>
      * @throws RuntimeException thrown iff the {@link CliOptions#parsedArguments}
      * field is {@code null}.
+     * @return a non-{@code null} reference to parsed options (as read from the
+     * command line arguments).
      */
-    private void areOptionsParsed() throws RuntimeException {
+    private CommandLine getParsedOptions() throws RuntimeException {
         if (parsedArguments == null) {
             throw new RuntimeException(i18n("ERR_CLI_ARGS_NOT_PARSED_YET"));
         }
+        return parsedArguments;
     }
     // </editor-fold>
 }

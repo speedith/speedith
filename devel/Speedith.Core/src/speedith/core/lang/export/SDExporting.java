@@ -118,8 +118,9 @@ public final class SDExporting {
     }
 
     /**
-     * Returns the provider for the given format.
+     * Returns the {@link SDExportProvider provider} for the given format.
      * <p>Returns {@code null} if no such provider exists.</p>
+     * <p>The provider also provides more information about the format.</p>
      * @param format the format for which to fetch the export provider.
      * @return the provider for the given format.
      */
@@ -129,6 +130,9 @@ public final class SDExporting {
 
     /**
      * Returns a set of all currently supported export formats.
+     * <p>To get information about a particular format, use the
+     * {@link SDExporting#getProvider(java.lang.String)} method with the format
+     * name from the set which this method returns.</p>
      * @return a set of all currently supported export formats.
      */
     public static Set<String> getSupportedFormats() {
