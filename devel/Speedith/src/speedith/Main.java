@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import org.apache.commons.cli.ParseException;
 import speedith.cli.CliOptions;
 import speedith.core.lang.SpiderDiagram;
@@ -38,6 +39,7 @@ import speedith.core.lang.export.SDExportProvider;
 import speedith.core.lang.export.SDExporting;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
+import speedith.preferences.PreferencesKey;
 import static speedith.i18n.Translations.*;
 
 /**
@@ -62,6 +64,14 @@ import static speedith.i18n.Translations.*;
  */
 public class Main {
 
+    // <editor-fold defaultstate="collapsed" desc="Preferences Keys">
+    /**
+     * The key of the 'default output format' preference.
+     */
+    @PreferencesKey(description = "The default output format to be used by Speedith when exporting spider diagram formulae.")
+    public static final String PREF_DEFAULT_OUTPUT_FORMAT = "DefaultOutputFormat";
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Main Entry Method">
     /**
      * The main entry point to Speedith.
@@ -84,16 +94,18 @@ public class Main {
                 // ---- Starting up Speedith
                 // Did the user provide a spider diagram to Speedith?
                 String formula = clargs.getSpiderDiagram();
+                System.out.println("Input format: " + formula);
                 SpiderDiagram readSpiderDiagram = (formula == null) ? null : SpiderDiagramsReader.readSpiderDiagram(formula);
                 // Did the user specify an output format?
-                String outputFormat = clargs.getOutputFormat();
-                // Check that the format is supported (if any was given,
-                // otherwise use a default one).
-                if (outputFormat == null) {
-                    // Use the default output format
-                    outputFormat = Isabelle2011ExportProvider.FormatName;
-                } else if (SDExporting.getProvider(outputFormat) == null) {
-                    throw new RuntimeException(i18n("ERR_CLI_UNKNOWN_EXPORT_FORMAT", outputFormat));
+                String outputFormat = getOutputFormat(clargs);
+                // Now print out the formula in the specified format
+                if (readSpiderDiagram != null) {
+                    System.out.print("Isabelle format: ");
+                    SDExporting.getExporter(outputFormat).exportTo(readSpiderDiagram, System.out);
+                    System.out.println();
+                    System.out.print("Raw format: ");
+                    System.out.println(readSpiderDiagram.toString());
+                    System.out.println();
                 }
 
                 System.out.println("Starting up Speedith...");
@@ -117,6 +129,31 @@ public class Main {
             System.err.println(ex.getLocalizedMessage());
             System.exit(1);
         }
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Options Handling">
+    /**
+     * Looks up the command line arguments for the output format specification
+     * and returns the selected output format.
+     * <p>If the user did not provide an output format, a default is used.</p>
+     * <p>If the user <span style="font-weight:bold">did</span> provide an
+     * output format, it is stored in the preferences and will be the default
+     * henceforth (in all successive application invocations).</p>
+     */
+    private static String getOutputFormat(CliOptions clargs) throws RuntimeException {
+        String outputFormat = clargs.getOutputFormat();
+        // Check that the format is supported (if any was given,
+        // otherwise use a default one).
+        if (outputFormat == null) {
+            // Use the default output format
+            outputFormat = Preferences.userNodeForPackage(Main.class).get(PREF_DEFAULT_OUTPUT_FORMAT, Isabelle2011ExportProvider.FormatName);
+        } else if (SDExporting.getProvider(outputFormat) == null) {
+            throw new RuntimeException(i18n("ERR_CLI_UNKNOWN_EXPORT_FORMAT", outputFormat));
+        } else {
+            Preferences.userNodeForPackage(Main.class).put(PREF_DEFAULT_OUTPUT_FORMAT, outputFormat);
+        }
+        return outputFormat;
     }
     // </editor-fold>
 

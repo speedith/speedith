@@ -77,7 +77,9 @@ public abstract class SDExporter {
      * writing to the output.
      */
     public void exportTo(SpiderDiagram spiderDiagram, OutputStream output) throws IOException {
-        exportTo(spiderDiagram, new OutputStreamWriter(output));
+        final OutputStreamWriter w = new OutputStreamWriter(output);
+        exportTo(spiderDiagram, w);
+        w.flush();
     }
 
     /**
@@ -93,7 +95,9 @@ public abstract class SDExporter {
      * writing to the output.
      */
     public void exportTo(SpiderDiagram spiderDiagram, OutputStream output, String encoding) throws UnsupportedEncodingException, IOException {
-        exportTo(spiderDiagram, new OutputStreamWriter(output, encoding));
+        final OutputStreamWriter w = new OutputStreamWriter(output, encoding);
+        exportTo(spiderDiagram, w);
+        w.flush();
     }
 
     /**
@@ -107,7 +111,9 @@ public abstract class SDExporter {
      * writing to the output.
      */
     public void exportTo(SpiderDiagram spiderDiagram, OutputStream output, Charset encoding) throws IOException {
-        exportTo(spiderDiagram, new OutputStreamWriter(output, encoding));
+        final OutputStreamWriter w = new OutputStreamWriter(output, encoding);
+        exportTo(spiderDiagram, w);
+        w.flush();
     }
 
     /**
@@ -121,7 +127,9 @@ public abstract class SDExporter {
      * writing to the output.
      */
     public void exportTo(SpiderDiagram spiderDiagram, OutputStream output, CharsetEncoder encoding) throws IOException {
-        exportTo(spiderDiagram, new OutputStreamWriter(output, encoding));
+        final OutputStreamWriter w = new OutputStreamWriter(output, encoding);
+        exportTo(spiderDiagram, w);
+        w.flush();
     }
 
     /**
