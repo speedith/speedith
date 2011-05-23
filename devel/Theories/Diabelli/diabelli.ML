@@ -16,8 +16,9 @@ sig
   val from_term_to_sd: term -> sd
   val traverse_term: term -> string
   val print_props_tac: Proof.context -> tactic
+  val bash_escape: string -> string
 
-  val random_tests: string -> string
+  val random_tests: string -> (string * int)
 end;
 
 
@@ -159,13 +160,23 @@ fun print_props_tac ctxt st =
       all_tac st
   end;
 
+local
+   fun escape_char chr = case chr of
+                             #"\"" => "\\\""
+                           | #"\\" => "\\\\"
+                           | chr   => Char.toString chr
+in
+    fun bash_escape str = String.translate escape_char str
+end
+
+
 
 
 fun random_tests str =
   let
       val (out, ret) = Secure.bash_output ("echo " ^ str)
   in
-      out
+      (out, ret)
   end;
 
 end;

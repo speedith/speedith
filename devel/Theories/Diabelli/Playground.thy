@@ -1,9 +1,6 @@
 theory Playground
 imports DiabelliIR
-uses "diabelli.ML"
 begin
-
-ML {* Diabelli.random_tests "Tralalala" *}
 
 lemma inj_noteq: "\<lbrakk> x \<noteq> y; inj f \<rbrakk> \<Longrightarrow> f x \<noteq> f y"
   by (auto simp add: inj_on_def)

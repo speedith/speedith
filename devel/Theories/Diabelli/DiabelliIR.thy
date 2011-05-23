@@ -13,6 +13,7 @@ DiabelliIR: provides a formalisation of the data structure used as the
 
 theory DiabelliIR
 imports Main
+uses ("diabelli.ML")
 begin
 
 (* sd_zone and sd_region are the types used to encode zones and regions as
@@ -150,5 +151,9 @@ lemma "\<forall>sd. sd_sem3 sd = sd_sem2 sd"
 (* TODO: Formalise the SD inference rules with one of the above
    interpretations. *)
 
+use "diabelli.ML"
+
+
+ML {* Diabelli.random_tests (Diabelli.bash_escape "Moj\"e\\ ime je matej") *}
 
 end

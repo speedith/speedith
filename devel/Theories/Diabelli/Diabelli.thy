@@ -1,6 +1,5 @@
 theory Diabelli
 imports DiabelliIR
-uses "diabelli.ML"
 begin
 
 
