@@ -115,7 +115,8 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         // <editor-fold defaultstate="collapsed" desc="Isabelle Symbol/Operator Print Methods">
         private Writer printAnd(Writer output) throws IOException {
             if (useXSymbols) {
-                return output.append(' ').append("∧").append(' ');
+                return output.append(' ').append("\\<and>").append(' ');
+//                return output.append(' ').append("∧").append(' ');
             } else {
                 return output.append(' ').append("&").append(' ');
             }
@@ -123,7 +124,8 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         private Writer printOr(Writer output) throws IOException {
             if (useXSymbols) {
-                return output.append(' ').append("∨").append(' ');
+                return output.append(' ').append("\\<or>").append(' ');
+//                return output.append(' ').append("∨").append(' ');
             } else {
                 return output.append(' ').append("|").append(' ');
             }
@@ -131,7 +133,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         private Writer printNeg(Writer output) throws IOException {
             if (useXSymbols) {
-                return output.append(' ').append("∨").append(' ');
+                return output.append(' ').append("\\<not>").append(' ');
             } else {
                 return output.append(' ').append("~").append(' ');
             }
@@ -139,7 +141,8 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         private Writer printElementOf(Writer output) throws IOException {
             if (useXSymbols) {
-                return output.append(' ').append("∈").append(' ');
+                return output.append(' ').append("\\<in>").append(' ');
+//                return output.append(' ').append("∈").append(' ');
             } else {
                 return output.append(' ').append(":").append(' ');
             }
@@ -147,7 +150,8 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         private Writer printUnion(Writer output) throws IOException {
             if (useXSymbols) {
-                return output.append(' ').append("∪").append(' ');
+                return output.append(' ').append("\\<union>").append(' ');
+//                return output.append(' ').append("∪").append(' ');
             } else {
                 return output.append(' ').append("Un").append(' ');
             }
@@ -155,7 +159,8 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         private Writer printIntersection(Writer output) throws IOException {
             if (useXSymbols) {
-                return output.append(' ').append("∩").append(' ');
+                return output.append(' ').append("\\<inter>").append(' ');
+//                return output.append(' ').append("∩").append(' ');
             } else {
                 return output.append(' ').append("Int").append(' ');
             }
@@ -163,7 +168,8 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         private Writer printSubsetEq(Writer output) throws IOException {
             if (useXSymbols) {
-                return output.append(' ').append("⊆").append(' ');
+                return output.append(' ').append("\\<subseteq>").append(' ');
+//                return output.append(' ').append("⊆").append(' ');
             } else {
                 return output.append(' ').append("<=").append(' ');
             }
@@ -171,7 +177,8 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         private Writer printImp(Writer output) throws IOException {
             if (useXSymbols) {
-                return output.append(' ').append("⟶").append(' ');
+                return output.append(' ').append("\\<longrightarrow>").append(' ');
+//                return output.append(' ').append("⟶").append(' ');
             } else {
                 return output.append(' ').append("-->").append(' ');
             }
@@ -179,7 +186,8 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         private Writer printEquiv(Writer output) throws IOException {
             if (useXSymbols) {
-                return output.append(' ').append("⟷").append(' ');
+                return output.append(' ').append("\\<longleftrightarrow>").append(' ');
+//                return output.append(' ').append("⟷").append(' ');
             } else {
                 return output.append(' ').append("<-->").append(' ');
             }
@@ -191,7 +199,8 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         private Writer printExists(Writer output) throws IOException {
             if (useXSymbols) {
-                return output.append(ISA_XSYM_EXISTS);
+//                return output.append(ISA_XSYM_EXISTS);
+                return output.append("\\<exists>");
             } else {
                 return output.append(ISA_SYM_EX).append(' ');
             }
