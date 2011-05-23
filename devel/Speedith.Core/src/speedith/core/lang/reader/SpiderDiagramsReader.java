@@ -482,7 +482,6 @@ public final class SpiderDiagramsReader {
 
     private static class TupleTranslator<V> extends CollectionTranslator<V> {
 
-        // TODO: A tuple should have exactly as many values as there are translators. Implement this.
         List<ElementTranslator<? extends V>> valueTranslators = null;
 
         public TupleTranslator(List<ElementTranslator<? extends V>> valueTranslators) {

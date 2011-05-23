@@ -93,9 +93,9 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
      */
     private static class Exporter extends SDExporter {
 
-        // TODO: Finish the export (maybe I should write a generic pretty
+        // TODO: Maybe I should write a generic pretty
         // printer, which takes into account precedence order of operators in
-        // Isabelle automatically).
+        // Isabelle automatically?
         // <editor-fold defaultstate="collapsed" desc="Fields">
         public static final String ISA_SYM_EX = "EX";
         public static final String ISA_XSYM_EXISTS = "∃";

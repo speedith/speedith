@@ -94,7 +94,6 @@ public class Main {
                 }
             }
         } catch (ParseException ex) {
-            // TODO: Get some proper error logging going on.
             // Report why the parsing failed and print the help message (both to
             // the error output)
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, i18n("ERR_CLI_PARSE_FAILED", ex.getLocalizedMessage()), ex);

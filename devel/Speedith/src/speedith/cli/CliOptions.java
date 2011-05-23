@@ -182,7 +182,8 @@ public class CliOptions extends Options {
     /**
      * Parses the given command line arguments and stores the extracted options.
      * <p>These options are available through the {@code get} methods of this
-     * class (e.g.: TODO).</p>
+     * class (e.g.: {@link CliOptions#getOutputFormat()}, {@link
+     * CliOptions#isBatchMode()} etc.).</p>
      * @param args the command line arguments as passed to Speedith.
      * @throws ParseException this exception is thrown if the arguments could
      * not have been parsed (this is mainly due to ill-formatted input).
