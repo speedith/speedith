@@ -109,7 +109,7 @@ public final class SDExporting {
      * @return a {@link SDExporter text exporter} of spider
      * diagrams for the specified text format.
      */
-    public static SDExporter getExporter(String format, Map<String, Object> parameters) {
+    public static SDExporter getExporter(String format, Map<String, String> parameters) {
         SDExportProvider provider = providers.get(format);
         if (format == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "format"));

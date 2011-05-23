@@ -29,7 +29,7 @@ package speedith.core.lang.export;
 
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedSet;
 import speedith.core.lang.SpiderDiagram;
 
 /**
@@ -65,7 +65,7 @@ public abstract class SDExportProvider {
      * diagrams to the format as indicated by
      * {@link SDExportProvider#getFormatName()}.
      */
-    public abstract SDExporter getExporter(Map<String, Object> parameters);
+    public abstract SDExporter getExporter(Map<String, String> parameters);
 
     /**
      * Returns a set of parameter names that are meaningful to {@link SDExportProvider#getExporter(java.util.Map)}.
@@ -74,7 +74,7 @@ public abstract class SDExportProvider {
      * <p>Note: the default implementation returns {@code null}.</p>
      * @return a set of parameter names that are meaningful to {@link SDExportProvider#getExporter(java.util.Map)}.
      */
-    public Set<String> getParameters() {
+    public SortedSet<String> getParameters() {
         return null;
     }
 

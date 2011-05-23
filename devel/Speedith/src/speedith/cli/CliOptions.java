@@ -26,8 +26,17 @@
  */
 package speedith.cli;
 
+import java.util.Map;
+import java.util.prefs.Preferences;
+import speedith.Main;
+import speedith.core.lang.export.Isabelle2011ExportProvider;
+import speedith.preferences.PreferencesKey;
+import java.util.HashMap;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 import org.apache.commons.cli.AlreadySelectedException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -48,6 +57,18 @@ import static speedith.i18n.Translations.i18n;
  */
 public class CliOptions extends Options {
 
+    // <editor-fold defaultstate="collapsed" desc="Preferences Keys">
+    /**
+     * The key of the 'default output format' preference.
+     */
+    @PreferencesKey(description = "The default output format to be used by Speedith when exporting spider diagram formulae.", inPackage = Main.class)
+    public static final String PREF_DEFAULT_OUTPUT_FORMAT = "DefaultOutputFormat";
+    /**
+     * The key of the 'output format arguments' preference.
+     */
+    @PreferencesKey(description = "The arguments to the chosen output format exporter (a comma separated list of 'key=value' pairs).", inPackage = Main.class)
+    public static final String PREF_OUTPUT_FORMAT_ARGS = "OutputFormatArguments";
+    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Constants">
     /**
      * The usage description string (displayed in command line help).
@@ -80,6 +101,14 @@ public class CliOptions extends Options {
      */
     public static final String OPTION_OF = "of";
     /**
+     * The output (export) format arguments to pass to the exporter chosen by
+     * the {@link CliOptions#OPTION_OF} option.
+     * <p>The list of all arguments understood by each export format can be
+     * obtained with the '{@link CliOptions#OPTION_LOF list output formats}'
+     * option.</p>
+     */
+    public static final String OPTION_OFA = "ofa";
+    /**
      * This option makes Speedith to print a list of all available spider
      * diagram formula export formats.
      */
@@ -89,7 +118,15 @@ public class CliOptions extends Options {
     /**
      * Contains the parsed command line arguments.
      */
-    private CommandLine parsedArguments;
+    private CommandLine m_parsedArguments;
+    /**
+     * Cached 'of' CLI argument (as it was read and parsed from the CLI).
+     */
+    private String m_cachedOf;
+    /**
+     * Cached 'ofa' CLI argument (as it was read and parsed from the CLI).
+     */
+    private HashMap<String, String> m_cachedOfa;
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -152,7 +189,7 @@ public class CliOptions extends Options {
      */
     public void parse(String args[]) throws ParseException {
         CommandLineParser parser = new GnuParser();
-        parsedArguments = parser.parse(this, args);
+        m_parsedArguments = parser.parse(this, args);
     }
     // </editor-fold>
 
@@ -167,18 +204,58 @@ public class CliOptions extends Options {
     public String getSpiderDiagram() {
         return getParsedOptions().getOptionValue(OPTION_SD);
     }
-    
+
     /**
      * Returns the spider diagram formula output format that should be used
      * when exporting spider diagrams (to the standard output) in the batch
      * mode.
+     * <p>If the user did not provide an output format, a default is used.</p>
+     * <p>If the user <span style="font-weight:bold">did</span> provide an
+     * output format, it is stored in the preferences and will be the default
+     * henceforth (in all successive application invocations).</p>
+     * <p>This method also checks whether the export format actually exists. If
+     * the exporter does not exist, this method throws a {@link
+     * RuntimeException} with an explanation.</p>
      * @return the output format name (see {@link SDExporting} for more
      * information).
      */
     public String getOutputFormat() {
-        return getParsedOptions().getOptionValue(OPTION_OF);
+        if (m_cachedOf == null) {
+            String outputFormat = getParsedOptions().getOptionValue(OPTION_OF);
+            // Check that the format is supported (if any was given,
+            // otherwise use a default one).
+            if (outputFormat == null) {
+                // Use the default output format
+                outputFormat = Preferences.userNodeForPackage(Main.class).get(PREF_DEFAULT_OUTPUT_FORMAT, Isabelle2011ExportProvider.FormatName);
+            } else {
+                Preferences.userNodeForPackage(Main.class).put(PREF_DEFAULT_OUTPUT_FORMAT, outputFormat);
+            }
+            // Check if the provider is actually supported
+            if (SDExporting.getProvider(outputFormat) == null) {
+                throw new RuntimeException(i18n("ERR_CLI_UNKNOWN_EXPORT_FORMAT", outputFormat));
+            }
+            m_cachedOf = outputFormat;
+        }
+        return m_cachedOf;
     }
     
+    /**
+     * Returns a key-value map of arguments to the chosen export format.
+     * @return a key-value map of arguments to the chosen export format.
+     */
+    public Map<String, String> getOutputFormatArguments() {
+        if (m_cachedOfa == null) {
+            String keyValuesStr = getParsedOptions().getOptionValue(OPTION_OFA);
+            if (keyValuesStr == null) {
+                keyValuesStr = Preferences.userNodeForPackage(Main.class).get(PREF_OUTPUT_FORMAT_ARGS, null);
+            } else {
+                Preferences.userNodeForPackage(Main.class).put(PREF_OUTPUT_FORMAT_ARGS, keyValuesStr);
+            }
+            m_cachedOfa = parseKeyValues(keyValuesStr);
+        }
+        return m_cachedOfa == null ? null : Collections.unmodifiableMap(m_cachedOfa);
+    }
+
     /**
      * Indicates whether the user provided the 'batch mode' option in the
      * command line arguments.
@@ -190,7 +267,7 @@ public class CliOptions extends Options {
     public boolean isBatchMode() {
         return getParsedOptions().hasOption(OPTION_BATCH_MODE);
     }
-    
+
     /**
      * Indicates whether the user provided the 'help' option in the command line
      * arguments.
@@ -200,7 +277,7 @@ public class CliOptions extends Options {
     public boolean isHelp() {
         return getParsedOptions().hasOption(OPTION_HELP);
     }
-    
+
     /**
      * Indicates whether the user provided the 'list output formats' option in
      * the command line arguments.
@@ -247,28 +324,52 @@ public class CliOptions extends Options {
         opt.setArgName(i18n("CLI_ARG_OF_VALUE_NAME"));
         addOption(opt);
 
+        // ---- Output formula format arguments
+        opt = new Option(OPTION_OFA, "output-format-args", true, i18n("CLI_ARG_DESCRIPTION_OFA"));
+        opt.setArgName(i18n("CLI_ARG_OFA_VALUE_NAME"));
+        addOption(opt);
+
         // ---- List known export formats
         opt = new Option(OPTION_LOF, "lst-output-formats", false, i18n("CLI_ARG_DESCRIPTION_LOF"));
         addOption(opt);
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Key/value parsing">
+    private HashMap<String, String> parseKeyValues(String value) {
+        if (value == null) {
+            return null;
+        }
+        HashMap<String, String> keyValues = new HashMap<String, String>();
+        StringTokenizer st = new StringTokenizer(value, PAIRS_DELIMITER);
+        while (st.hasMoreTokens()) {
+            String[] splitPair = KEY_VALUE_DELIMITER.split(st.nextToken(), 2);
+            if (splitPair != null && splitPair.length > 0) {
+                keyValues.put(splitPair[0], splitPair.length > 1 ? splitPair[1] : null);
+            }
+        }
+        return keyValues;
+    }
+    private static final Pattern KEY_VALUE_DELIMITER = Pattern.compile("=");
+    private static final String PAIRS_DELIMITER = ",";
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Private Methods">
     /**
      * Returns a non-{@code null} reference to parsed options (as read from the
      * command line arguments).
-     * <p>This method throws an exception iff the {@link CliOptions#parsedArguments}
+     * <p>This method throws an exception iff the {@link CliOptions#m_parsedArguments}
      * field is {@code null}.</p>
-     * @throws RuntimeException thrown iff the {@link CliOptions#parsedArguments}
+     * @throws RuntimeException thrown iff the {@link CliOptions#m_parsedArguments}
      * field is {@code null}.
      * @return a non-{@code null} reference to parsed options (as read from the
      * command line arguments).
      */
     private CommandLine getParsedOptions() throws RuntimeException {
-        if (parsedArguments == null) {
+        if (m_parsedArguments == null) {
             throw new RuntimeException(i18n("ERR_CLI_ARGS_NOT_PARSED_YET"));
         }
-        return parsedArguments;
+        return m_parsedArguments;
     }
     // </editor-fold>
 }

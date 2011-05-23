@@ -26,20 +26,18 @@
  */
 package speedith;
 
+import java.util.SortedSet;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import org.apache.commons.cli.ParseException;
 import speedith.cli.CliOptions;
 import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.export.Isabelle2011ExportProvider;
 import speedith.core.lang.export.SDExportProvider;
 import speedith.core.lang.export.SDExporting;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
-import speedith.preferences.PreferencesKey;
 import static speedith.i18n.Translations.*;
 
 /**
@@ -64,14 +62,6 @@ import static speedith.i18n.Translations.*;
  */
 public class Main {
 
-    // <editor-fold defaultstate="collapsed" desc="Preferences Keys">
-    /**
-     * The key of the 'default output format' preference.
-     */
-    @PreferencesKey(description = "The default output format to be used by Speedith when exporting spider diagram formulae.")
-    public static final String PREF_DEFAULT_OUTPUT_FORMAT = "DefaultOutputFormat";
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Main Entry Method">
     /**
      * The main entry point to Speedith.
@@ -94,21 +84,14 @@ public class Main {
                 // ---- Starting up Speedith
                 // Did the user provide a spider diagram to Speedith?
                 String formula = clargs.getSpiderDiagram();
-                System.out.println("Input format: " + formula);
                 SpiderDiagram readSpiderDiagram = (formula == null) ? null : SpiderDiagramsReader.readSpiderDiagram(formula);
                 // Did the user specify an output format?
-                String outputFormat = getOutputFormat(clargs);
+                String outputFormat = clargs.getOutputFormat();
                 // Now print out the formula in the specified format
                 if (readSpiderDiagram != null) {
-                    System.out.print("Isabelle format: ");
-                    SDExporting.getExporter(outputFormat).exportTo(readSpiderDiagram, System.out);
-                    System.out.println();
-                    System.out.print("Raw format: ");
-                    System.out.println(readSpiderDiagram.toString());
+                    SDExporting.getExporter(outputFormat, clargs.getOutputFormatArguments()).exportTo(readSpiderDiagram, System.out);
                     System.out.println();
                 }
-
-                System.out.println("Starting up Speedith...");
             }
         } catch (ParseException ex) {
             // TODO: Get some proper error logging going on.
@@ -132,31 +115,6 @@ public class Main {
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Options Handling">
-    /**
-     * Looks up the command line arguments for the output format specification
-     * and returns the selected output format.
-     * <p>If the user did not provide an output format, a default is used.</p>
-     * <p>If the user <span style="font-weight:bold">did</span> provide an
-     * output format, it is stored in the preferences and will be the default
-     * henceforth (in all successive application invocations).</p>
-     */
-    private static String getOutputFormat(CliOptions clargs) throws RuntimeException {
-        String outputFormat = clargs.getOutputFormat();
-        // Check that the format is supported (if any was given,
-        // otherwise use a default one).
-        if (outputFormat == null) {
-            // Use the default output format
-            outputFormat = Preferences.userNodeForPackage(Main.class).get(PREF_DEFAULT_OUTPUT_FORMAT, Isabelle2011ExportProvider.FormatName);
-        } else if (SDExporting.getProvider(outputFormat) == null) {
-            throw new RuntimeException(i18n("ERR_CLI_UNKNOWN_EXPORT_FORMAT", outputFormat));
-        } else {
-            Preferences.userNodeForPackage(Main.class).put(PREF_DEFAULT_OUTPUT_FORMAT, outputFormat);
-        }
-        return outputFormat;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Help Printing Methods">
     private static void printKnownFormats() {
         // TODO: Maybe also print the particular exporter parameters with their descriptions...
@@ -172,6 +130,16 @@ public class Main {
             System.out.print(formatName);
             System.out.print("  - ");
             System.out.println(formatInfo.getDescription());
+            SortedSet<String> parameters = formatInfo.getParameters();
+            if (parameters != null) {
+                System.out.println();
+                System.out.print("      Arguments to " + formatName + ":");
+                for (String par : parameters) {
+                    System.out.println();
+                    System.out.println();
+                    System.out.print("        " + par + " - " + formatInfo.getParameterDescription(par));
+                }
+            }
         }
     }
     // </editor-fold>

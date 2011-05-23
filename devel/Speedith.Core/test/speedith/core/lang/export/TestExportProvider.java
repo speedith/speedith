@@ -51,7 +51,7 @@ public class TestExportProvider extends SDExportProvider {
     }
 
     @Override
-    public SDExporter getExporter(Map<String, Object> parameters) {
+    public SDExporter getExporter(Map<String, String> parameters) {
         return new Exporter();
     }
 

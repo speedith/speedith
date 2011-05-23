@@ -26,7 +26,6 @@
  */
 package speedith.core.lang.export;
 
-import java.util.Set;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import java.io.IOException;
@@ -68,9 +67,8 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
     }
 
     @Override
-    public SDExporter getExporter(Map<String, Object> parameters) {
-        Object tmp = parameters == null ? null : parameters.get(Parameter_UseXSymbols);
-        boolean useXSymbols = (tmp instanceof Boolean) ? (Boolean) tmp : false;
+    public SDExporter getExporter(Map<String, String> parameters) {
+        boolean useXSymbols = "true".equalsIgnoreCase(parameters == null ? null : parameters.get(Parameter_UseXSymbols));
         return new Exporter(useXSymbols);
     }
 
@@ -80,13 +78,13 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
     }
 
     @Override
-    public Set<String> getParameters() {
-        return Collections.unmodifiableSortedSet(Exporter.Parameters.navigableKeySet());
+    public SortedSet<String> getParameters() {
+        return Collections.unmodifiableSortedSet(ParameterDescriptions.Parameters.navigableKeySet());
     }
 
     @Override
     public String getParameterDescription(String parameter, Locale locale) {
-        return i18n(locale, Exporter.Parameters.get(parameter));
+        return i18n(locale, ParameterDescriptions.Parameters.get(parameter));
     }
 
     /**
@@ -94,13 +92,11 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
      * spider diagrams to Isabelle's formulas.
      */
     private static class Exporter extends SDExporter {
-        
+
         // TODO: Finish the export (maybe I should write a generic pretty
         // printer, which takes into account precedence order of operators in
         // Isabelle automatically).
-
         // <editor-fold defaultstate="collapsed" desc="Fields">
-        public static final TreeMap<String, String> Parameters;
         public static final String ISA_SYM_EX = "EX";
         public static final String ISA_XSYM_EXISTS = "∃";
         private boolean useXSymbols;
@@ -113,11 +109,6 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         public Exporter(boolean useXSymbols) {
             this.useXSymbols = useXSymbols;
-        }
-
-        static {
-            Parameters = new TreeMap<String, String>();
-            Parameters.put(Parameter_UseXSymbols, "ISABELE_EXPORT_PAR_USE_X_SYMBOLS_DESCRIPTION");
         }
         // </editor-fold>
 
@@ -218,6 +209,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
                 throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "output"));
             }
             exportDiagram(sd, output);
+            output.flush();
         }
 
         private void exportNullDiagram(Writer output) throws IOException {
@@ -408,6 +400,18 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         // </editor-fold>
     }
 
+    // <editor-fold defaultstate="collapsed" desc="Parameter Descriptions">
+    private static final class ParameterDescriptions {
+
+        public static final TreeMap<String, String> Parameters;
+
+        static {
+            Parameters = new TreeMap<String, String>();
+            Parameters.put(Parameter_UseXSymbols, "ISABELE_EXPORT_PAR_USE_X_SYMBOLS_DESCRIPTION");
+        }
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Callback Interfaces">
     private static interface PrintCallback {
 
@@ -416,8 +420,8 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
     // </editor-fold>
 
     public static void main(String[] args) throws ReadingException {
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put(Isabelle2011ExportProvider.Parameter_UseXSymbols, true);
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put(Isabelle2011ExportProvider.Parameter_UseXSymbols, "true");
         SDExporter exporter = SDExporting.getExporter(Isabelle2011ExportProvider.FormatName, params);
         SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }");
         String sdStr = exporter.export(sd);
