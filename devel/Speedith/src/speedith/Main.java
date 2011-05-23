@@ -117,7 +117,6 @@ public class Main {
 
     // <editor-fold defaultstate="collapsed" desc="Help Printing Methods">
     private static void printKnownFormats() {
-        // TODO: Maybe also print the particular exporter parameters with their descriptions...
         System.out.println(i18n("MSG_KNOWN_FORMATS_LIST"));
         System.out.println();
         Set<String> formatsSet = SDExporting.getSupportedFormats();
