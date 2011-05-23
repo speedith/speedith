@@ -124,18 +124,19 @@ public class Main {
         for (int i = 0; i < formats.length; i++) {
             String formatName = formats[i];
             SDExportProvider formatInfo = SDExporting.getProvider(formatName);
-            System.out.print("   ");
+            System.out.print("   * ");
             System.out.print(formatName);
             System.out.print("  - ");
             System.out.println(formatInfo.getDescription());
             SortedSet<String> parameters = formatInfo.getParameters();
             if (parameters != null) {
                 System.out.println();
-                System.out.print("      Arguments to " + formatName + ":");
+                System.out.print("     ");
+                System.out.print(i18n("MSG_KNOWN_FORMATS_ARGS_LIST", formatName));
                 for (String par : parameters) {
                     System.out.println();
                     System.out.println();
-                    System.out.print("        " + par + " - " + formatInfo.getParameterDescription(par));
+                    System.out.print("        ¤ " + par + " - " + formatInfo.getParameterDescription(par));
                 }
             }
         }

@@ -105,6 +105,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * @param shadedZones a set of shaded {@link Zone zones}.
      */
     public PrimarySpiderDiagram(Collection<String> spiders, Map<String, Region> habitats, Collection<Zone> shadedZones) {
+        // TODO: Check that the 'habitats' don't talk about spiders that are not in 'spiders' list.
         this.spiders = spiders == null ? null : new TreeSet<String>(spiders);
         this.habitats = habitats == null ? null : new TreeMap<String, Region>(habitats);
         this.shadedZones = shadedZones == null ? null : new TreeSet<Zone>(shadedZones);

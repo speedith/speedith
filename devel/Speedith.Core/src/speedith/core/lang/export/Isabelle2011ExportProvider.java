@@ -253,33 +253,50 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
                 }
                 output.append(". ");
             }
+            exportSpidersDistinct(psd, output);
             if (psd.getHabitatsCount() < 1 && psd.getShadedZonesCount() < 1) {
                 printTrue(output);
             } else {
-                if (psd.getHabitatsCount() > 0) {
-                    SortedMap<String, Region> habitats = psd.getHabitats();
-                    Iterator<String> itr = habitats.keySet().iterator();
-                    String spider = itr.next();
-                    exportHabitat(spider, habitats.get(spider), output);
-                    while (itr.hasNext()) {
-                        spider = itr.next();
-                        printAnd(output);
-                        exportHabitat(spider, habitats.get(spider), output);
-                    }
-                    if (psd.getShadedZonesCount() > 0) {
-                        printAnd(output);
-                    }
-                }
-                if (psd.getShadedZonesCount() > 0) {
-                    SortedSet<Zone> shadedZones = psd.getShadedZones();
-                    Iterator<Zone> itr = shadedZones.iterator();
-                    Zone zone = itr.next();
-                    exportZone(zone, output);
-                    printSubsetEq(output);
-                    Sets.printSet(spiders, output);
-                }
+                exportHabitats(psd, output);
+                exportShadedZones(psd, output, spiders);
             }
             output.append(')');
+        }
+
+        private void exportShadedZones(PrimarySpiderDiagram psd, Writer output, SortedSet<String> spiders) throws IOException {
+            if (psd.getShadedZonesCount() > 0) {
+                SortedSet<Zone> shadedZones = psd.getShadedZones();
+                Iterator<Zone> itr = shadedZones.iterator();
+                Zone zone = itr.next();
+                exportZone(zone, output);
+                printSubsetEq(output);
+                Sets.printSet(spiders, output);
+            }
+        }
+
+        private void exportHabitats(PrimarySpiderDiagram psd, Writer output) throws IOException {
+            if (psd.getHabitatsCount() > 0) {
+                SortedMap<String, Region> habitats = psd.getHabitats();
+                Iterator<String> itr = habitats.keySet().iterator();
+                String spider = itr.next();
+                exportHabitat(spider, habitats.get(spider), output);
+                while (itr.hasNext()) {
+                    spider = itr.next();
+                    printAnd(output);
+                    exportHabitat(spider, habitats.get(spider), output);
+                }
+                if (psd.getShadedZonesCount() > 0) {
+                    printAnd(output);
+                }
+            }
+        }
+
+        private void exportSpidersDistinct(PrimarySpiderDiagram psd, Writer output) throws IOException {
+            if (psd.getSpidersCount() > 1) {
+                output.append("distinct");
+                Sets.print(psd.getSpiders(), output, "[", "]", ", ");
+                printAnd(output);
+            }
         }
 
         private void exportDiagram(SpiderDiagram sd, Writer output) throws IOException {
