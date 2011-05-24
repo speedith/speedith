@@ -89,19 +89,19 @@ exception SD_TRANSLATE_ERROR of (string * term);
 
 
 
-(* This function translates an Isabelle HOL term into spider diagram notation
-   suitable for input to the external diagrammatic reasoner.
+(* This function translates an Isabelle HOL term of the 'MFOL spider normal'
+   form into a spider diagram record suitable for input to Speedith.
 
-   Parameter 1: A term. Here is an example of a valid term:
+   @param  1  A term. Here is an example of a valid term:
 
-                  @{term "(∃f. sd [s, s'] f (f s ∈ A ∩ B ∧ f s' ∈ (A - B) ∪ (B - A)))"}
+                  @{term "(∃s1 s2. distinct[s1, s2] ∧ s1 ∈ A ∩ B ∧ s2 ∈ (A - B) ∪ (B - A)) ⟶ (∃s1 s2. distinct[s1, s2] ∧ s1 ∈ A ∧ s2 ∈ B)"}
 
-   Returns: A record of type 'Diabelli.sd'. Containing the term translated to
-            a spider diagram notation suitable for export to the external
-            reasoner.
+   @returns  A record of type 'Diabelli.sd'. Containing the term translated to
+             a spider diagram notation suitable for export to the external
+             reasoner.
 
-   Exception SD_TRANSLATE_ERROR: If the input term could not have been
-            translated to a spider diagram. *)
+   @exception  SD_TRANSLATE_ERROR: If the input term could not have been
+               translated to a spider diagram. *)
 local
   (* 'collect_ex_spiders' gets a list of all existentially quantified spiders.
 
