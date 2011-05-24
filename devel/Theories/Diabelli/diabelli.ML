@@ -132,8 +132,27 @@ local
      @param  2  the term that should contain the whole primary spider diagram.
 
      @returns   a primary spider diagram (see PrimarySD {...}). *)
-  fun inner (sp::spiders) (@{term "op & :: bool => bool => bool"} $ t1 $ t2) = NullSD
-    | inner spiders t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. The .", t))
+  fun (*inner (sp::spiders) (@{term "op & :: bool => bool => bool"} $ t1 $ t2) =
+    let
+        val _ = check_distinct (sp::spiders)
+    in
+    end
+    | *)inner spiders t =
+    (case spiders of
+        (sp::sps) =>
+          let
+              (* Extract all conjunctively connected terms. *)
+              (* Check that amongst those terms is one 'distinct' term which
+                 satisfies the condition, and remove this term. *)
+              (* From the remaining terms extract the habitats of spiders and
+                 remove all corresponding terms. *)
+              (* Now find all 'shaded zone' terms and remove those too. *)
+              (* If any terms remain, raise an error. *)
+              val _ = writeln "Extracting a primary diagram."
+          in
+              NullSD
+          end
+        | _ => raise (SD_TRANSLATE_ERROR ("Primary spider diagram extraction failed. The term is not of expected SNF form.", t)))
 
   fun outer (@{term "op --> :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op -->", arg1 = outer t1, arg2 = outer t2 }
     | outer (@{term "Ex :: ('a::HOL.type => bool) => bool"} $ Abs (spName, _, t)) =
@@ -143,6 +162,7 @@ local
     in
         inner spiders tInner
     end
+    | outer (@{term "True"}) = NullSD
     | outer t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Unexpected outer term.", t))
 in
   fun from_sdnorm_to_sd t = outer t
