@@ -215,6 +215,11 @@ lemma example1_a: "(\<exists>e e'. e \<noteq> e' \<and> e \<in> A \<inter> B \<a
   by (auto, iprover)
 
 
+(* Using plain form. This is the actual formula we want to x *)
+lemma example1_b: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
+  by (auto, iprover)
+
+
 ML {* show_types := true *}
 ML {* show_sorts := false *}
 ML {* show_all_types := false *}

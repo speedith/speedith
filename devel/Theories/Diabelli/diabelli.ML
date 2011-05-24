@@ -5,14 +5,15 @@ Diabelli: provides the necessary infrastructure for heterogeneous reasoning
           with Spider diagrams in Isabelle.
 *)
 
-(* NOTE: Documentation on each of the members of the DIABELLI structure is
+(* NOTE: Documentation on each of the members of the DIABELLI signature is
          provided below (in comments, just above their respective
-         implementations). *)
+         implementations in the Diabelli structure). *)
 signature DIABELLI =
 sig
   type sd
   
   val make_subgoal_tac: term -> int -> thm -> thm Seq.seq
+  val from_sdnorm_to_sd: term -> sd
   val from_term_to_sd: term -> sd
   val traverse_term: term -> string
   val print_props_tac: Proof.context -> tactic
@@ -102,6 +103,67 @@ exception SD_TRANSLATE_ERROR of (string * term);
    Exception SD_TRANSLATE_ERROR: If the input term could not have been
             translated to a spider diagram. *)
 local
+  (* 'collect_ex_spiders' gets a list of all existentially quantified spiders.
+
+  @param   1  a list of spiders to which to append the found spiders
+
+  @param   2  the term where to look for existentially quantified spiders.
+
+  @returns (spNames : string list, t : term)
+
+           where 'spNames' is a list of the collected names of quantified
+           spiders, and 't' is the term over which all the collected spiders
+           quantify. *)
+  fun collect_ex_spiders spNames (@{term "Ex :: ('a::HOL.type => bool) => bool"} $ Abs (spName, _, t)) = (collect_ex_spiders (spNames @ [spName]) t)
+    | collect_ex_spiders spNames t = (spNames, t)
+
+  (* 'inner' expects a list of terms connected with conjunctions. Each of the
+     conjunctions can be either the 'distinct spiders' term, a habitat
+     statement or a shaded zone statement.
+
+     There must be exactly one 'distinct spiders' term and 'spiders' should be
+     the same as the first parameter to this function.
+
+     This function produces a primary spider diagram (see 'PrimarySD').
+
+     @param  1  the list of spiders that participate in this primary spider
+                diagram.
+
+     @param  2  the term that should contain the whole primary spider diagram.
+
+     @returns   a primary spider diagram (see PrimarySD {...}). *)
+  fun inner (sp::spiders) (@{term "op & :: bool => bool => bool"} $ t1 $ t2) = NullSD
+    | inner spiders t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. The .", t))
+
+  fun outer (@{term "op --> :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op -->", arg1 = outer t1, arg2 = outer t2 }
+    | outer (@{term "Ex :: ('a::HOL.type => bool) => bool"} $ Abs (spName, _, t)) =
+    let
+        val (spiders, tInner) = collect_ex_spiders [spName] t
+        (*val _ = writeln ("Found spiders: " ^ (PolyML.makestring spiders))*)
+    in
+        inner spiders tInner
+    end
+    | outer t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Unexpected outer term.", t))
+in
+  fun from_sdnorm_to_sd t = outer t
+end;
+
+
+
+(* This function translates an Isabelle HOL term into spider diagram notation
+   suitable for input to the external diagrammatic reasoner.
+
+   Parameter 1: A term. Here is an example of a valid term:
+
+                  @{term "(∃f. sd [s, s'] f (f s ∈ A ∩ B ∧ f s' ∈ (A - B) ∪ (B - A)))"}
+
+   Returns: A record of type 'Diabelli.sd'. Containing the term translated to
+            a spider diagram notation suitable for export to the external
+            reasoner.
+
+   Exception SD_TRANSLATE_ERROR: If the input term could not have been
+            translated to a spider diagram. *)
+local
   fun get_spiders (@{term "Cons :: 'a => 'a list => 'a list"} $ Free (spider, @{typ "'a"}) $ xs) = (spider :: get_spiders xs)
     | get_spiders (@{term "Nil :: 'a list"}) = []
     | get_spiders t = raise (SD_TRANSLATE_ERROR ("Could not determine the set of spiders. The list of spiders contains an invalid term.", t))
@@ -161,12 +223,15 @@ fun print_props_tac ctxt st =
   end;
 
 local
-   fun escape_char chr = case chr of
+  fun bash_escape_for_dq chr = case chr of
                              #"\"" => "\\\""
                            | #"\\" => "\\\\"
-                           | chr   => Char.toString chr
+                           | #"$" => "\\$"
+                           | #"!" => "\\!"
+                           | chr   => Char.toString chr;
+  fun bash_quote_dq str = "\"" ^ (String.translate bash_escape_for_dq str) ^ "\""
 in
-    fun bash_escape str = String.translate escape_char str
+  fun bash_escape str = bash_quote_dq str
 end
 
 
