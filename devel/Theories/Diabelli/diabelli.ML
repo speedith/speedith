@@ -13,7 +13,7 @@ sig
   type sd
   
   val make_subgoal_tac: term -> int -> thm -> thm Seq.seq
-  val from_sdnorm_to_sd: term -> sd
+  val from_snf_to_sd: term -> sd
   val from_term_to_sd: term -> sd
   val traverse_term: term -> string
   val print_props_tac: Proof.context -> tactic
@@ -117,7 +117,29 @@ local
   fun collect_ex_spiders spNames (@{term "Ex :: ('a::HOL.type => bool) => bool"} $ Abs (spName, _, t)) = (collect_ex_spiders (spNames @ [spName]) t)
     | collect_ex_spiders spNames t = (spNames, t)
 
-  (* 'inner' expects a list of terms connected with conjunctions. Each of the
+  fun collect_conjuncts (@{term "op & :: bool => bool => bool"} $ t1 $ t2) = (collect_conjuncts t1) @  (collect_conjuncts t2)
+    | collect_conjuncts t = [t]
+
+  fun find_distinct conjuncts (s1::[]) = conjuncts (* No distinct needed for one spider. *)
+    | find_distinct conjuncts [] = conjuncts (* Same for zero spiders. *)
+    | find_distinct ((@{term "List.distinct :: 'a::HOL.type List.list => bool"} $ spHOLlst)::conjuncts) (spiders : string list) = 
+      (* We have a distinct predicate here. It must have exactly the same elements as the existentially quantified spiders. *)
+      let
+          (* I can make a list comparison that works in O(n * log n) -- with the
+             heap. *)
+          val spidersInDistinct = map (fn (Bound i) => nth spiders i) (HOLogic.dest_list spHOLlst)
+          val spiderIndices = map (fn (Bound i) => i) (HOLogic.dest_list spHOLlst)
+          (* Now make sure the two lists are the same. *)
+          val allSpiders =
+          val _ = writeln ("Found 'distinct' with spiders: " ^ (PolyML.makestring spidersInDistinct))
+      in
+          conjuncts
+          (*raise (SD_TRANSLATE_ERROR ("Primary spider diagram extraction failed. Could not find the 'distinct' term for spiders '" ^ (PolyML.makestring spiders) ^ "'.", spHOLlst))*)
+      end
+    | find_distinct (c::conjuncts) spiders = c::(find_distinct conjuncts spiders)
+    | find_distinct (c::[]) (s1::s2::spiders) = raise (SD_TRANSLATE_ERROR ("Primary spider diagram extraction failed. Could not find the 'distinct' term for spiders '" ^ PolyML.makestring(s1::s2::spiders) ^ "'.", c))
+
+  (* 'from_snf_to_sd_inner' expects a list of terms connected with conjunctions. Each of the
      conjunctions can be either the 'distinct spiders' term, a habitat
      statement or a shaded zone statement.
 
@@ -132,40 +154,34 @@ local
      @param  2  the term that should contain the whole primary spider diagram.
 
      @returns   a primary spider diagram (see PrimarySD {...}). *)
-  fun (*inner (sp::spiders) (@{term "op & :: bool => bool => bool"} $ t1 $ t2) =
-    let
-        val _ = check_distinct (sp::spiders)
-    in
-    end
-    | *)inner spiders t =
-    (case spiders of
-        (sp::sps) =>
-          let
-              (* Extract all conjunctively connected terms. *)
-              (* Check that amongst those terms is one 'distinct' term which
-                 satisfies the condition, and remove this term. *)
-              (* From the remaining terms extract the habitats of spiders and
-                 remove all corresponding terms. *)
-              (* Now find all 'shaded zone' terms and remove those too. *)
-              (* If any terms remain, raise an error. *)
-              val _ = writeln "Extracting a primary diagram."
-          in
-              NullSD
-          end
-        | _ => raise (SD_TRANSLATE_ERROR ("Primary spider diagram extraction failed. The term is not of expected SNF form.", t)))
+  fun from_snf_to_sd_inner (spiders : string list) (t : term) =
+      let
+          (* Extract all conjunctively connected terms. *)
+          (* Check that amongst those terms is one 'distinct' term which
+             satisfies the condition, and remove this term and return the
+             new list of conjuncts. Otherwise raise an exception. *)
+           val conjuncts = (collect_conjuncts t, spiders) |-> find_distinct
+           (* From the remaining terms extract the habitats of spiders and
+             remove all corresponding terms. *)
+           (* Now find all 'shaded zone' terms and remove those too. *)
+           (* If any terms remain, raise an error. *)
+           (*val _ = writeln ("Extracting a primary diagram: " ^ PolyML.makestring conjuncts)*)
+      in
+          NullSD
+      end
 
-  fun outer (@{term "op --> :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op -->", arg1 = outer t1, arg2 = outer t2 }
-    | outer (@{term "Ex :: ('a::HOL.type => bool) => bool"} $ Abs (spName, _, t)) =
-    let
-        val (spiders, tInner) = collect_ex_spiders [spName] t
-        (*val _ = writeln ("Found spiders: " ^ (PolyML.makestring spiders))*)
-    in
-        inner spiders tInner
-    end
-    | outer (@{term "True"}) = NullSD
-    | outer t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Unexpected outer term.", t))
+  fun from_snf_to_sd_outer (@{term "op --> :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op -->", arg1 = from_snf_to_sd_outer t1, arg2 = from_snf_to_sd_outer t2 }
+    | from_snf_to_sd_outer (@{term "Ex :: ('a::HOL.type => bool) => bool"} $ Abs (spName, _, t)) =
+      let
+          val (spiders, inner_term) = collect_ex_spiders [spName] t
+          (*val _ = raise (SD_TRANSLATE_ERROR (PolyML.makestring spiders, t))*)
+      in
+        (from_snf_to_sd_inner spiders inner_term)
+      end
+    | from_snf_to_sd_outer (@{term "True"}) = NullSD
+    | from_snf_to_sd_outer t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Unexpected from_snf_to_sd_outer term.", t))
 in
-  fun from_sdnorm_to_sd t = outer t
+  fun from_snf_to_sd t = from_snf_to_sd_outer t
 end;
 
 
