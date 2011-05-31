@@ -59,7 +59,7 @@ datatype sd =
   | NullSD;
 
 (* Some private helper functions: *)
-fun string_of_term t = Pretty.string_of (Syntax.pretty_term @{context} t)
+(* fun string_of_term t = Pretty.string_of (Syntax.pretty_term @{context} t) *)
 
 
 
@@ -86,6 +86,7 @@ fun make_subgoal_tac prop i st = SUBGOAL (fn (subgoal, _) =>
 
 
 exception SD_TRANSLATE_ERROR of (string * term);
+exception SD_ERROR of string;
 
 
 
@@ -117,27 +118,81 @@ local
   fun collect_ex_spiders spNames (@{term "Ex :: ('a::HOL.type => bool) => bool"} $ Abs (spName, _, t)) = (collect_ex_spiders (spNames @ [spName]) t)
     | collect_ex_spiders spNames t = (spNames, t)
 
+  (* Makes a list of all conjunctively connected terms in a primary expression
+     (i.e., an expression that will get converted into a primary spider
+     diagram). These conjunctions are inside the scope of the existentially
+     quantified spiders.
+
+     @returns a list of terms. *)
   fun collect_conjuncts (@{term "op & :: bool => bool => bool"} $ t1 $ t2) = (collect_conjuncts t1) @  (collect_conjuncts t2)
     | collect_conjuncts t = [t]
 
-  fun find_distinct conjuncts (s1::[]) = conjuncts (* No distinct needed for one spider. *)
+  fun get_zone_outs (Free (s, @{typ "'a set"}))  = [s]
+    | get_zone_outs (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) = (get_zone_outs t1) @ (get_zone_outs t2)
+    | get_zone_outs t = raise (SD_TRANSLATE_ERROR ("Could not determine the 'out' part of the zone. Expected a union of sets.", t))
+
+  fun get_zone_ins (Free (s, @{typ "'a set"}))  = [s]
+    | get_zone_ins (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) = (get_zone_ins t1) @ (get_zone_ins t2)
+    | get_zone_ins t = raise (SD_TRANSLATE_ERROR ("Could not determine the 'in' part of the zone. Expected an intersetion of sets.", t))
+
+  fun get_zone (Free (s, @{typ "'a set"})) = ([s], [])
+    | get_zone (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) = ((get_zone_ins t1) @ (get_zone_ins t2), [])
+    | get_zone (@{term "minus :: 'a set => 'a set => 'a set"} $ t1 $ t2) = ( get_zone_ins t1, get_zone_outs t2 )
+    | get_zone t = raise (SD_TRANSLATE_ERROR ("Could not extract the zone. The zone is of an unknown format.", t))
+
+  fun get_region (Free (s, @{typ "'a set"})) = [([s], [])]
+    | get_region (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) = [ get_zone t1, get_zone t2 ]
+    | get_region t = [ get_zone t ]
+
+  (* Extracts (from the list of inner conjunct terms) a list of habitats (see the
+     'habitats' attribute of the PrimarySD constructor).
+
+     @param   conjuncts    a list of terms that are in the scope of the
+                           existenatially quantified spiders (the latter are
+                           provided in the second parameter).
+
+     @param   spiders      a list of spider names (which are existentially
+                           quantified).
+
+     @returns a pair (conjs, habs) where 'conjs' are those terms that do not
+              contain a habitat definition, and 'habs' is the list of extracted
+              habitats.
+  *)
+  fun get_habitats ((@{term "op : :: 'a => 'a set => bool"} $ (Bound spiderIndex) $ region)::conjuncts) spiders =
+      let
+          val hab = (nth (rev spiders) spiderIndex, get_region region)
+          val (retConjs, habs) = get_habitats conjuncts spiders
+      in
+          (retConjs, hab::habs)
+      end
+    | get_habitats (t::conjuncts) spiders =
+      let
+          val (retConjs, habs) = get_habitats conjuncts spiders
+      in
+          (t::retConjs, habs)
+      end
+    | get_habitats [] _ = ([], [])
+
+  (* Looks for the conjunctive term that consists of the 'distinct' predicate
+     (where the argument to the 'distinct' predicate is a list with all the
+     spiders that are existentially quantified in the conjunct scope).
+
+     @returns a list of term (without the one containing the 'distinct'
+              predicate.*)
+  fun find_distinct conjuncts (_::[]) = conjuncts (* No 'distinct' needed for one spider. *)
     | find_distinct conjuncts [] = conjuncts (* Same for zero spiders. *)
     | find_distinct ((@{term "List.distinct :: 'a::HOL.type List.list => bool"} $ spHOLlst)::conjuncts) (spiders : string list) = 
       (* We have a distinct predicate here. It must have exactly the same elements as the existentially quantified spiders. *)
       let
-          (* I can make a list comparison that works in O(n * log n) -- with the
-             heap. *)
-          val spidersInDistinct = map (fn (Bound i) => nth spiders i) (HOLogic.dest_list spHOLlst)
-          val spiderIndices = map (fn (Bound i) => i) (HOLogic.dest_list spHOLlst)
+          val spidersInDistinct = map (fn (Bound i) => nth spiders i | _ => raise SD_ERROR ("The list in the 'distinct' term should consist only of spiders.")) (HOLogic.dest_list spHOLlst)
           (* Now make sure the two lists are the same. *)
-          val allSpiders =
+          val listsEqual = eq_list op= ((sort_distinct string_ord spidersInDistinct), (sort_distinct string_ord spiders))
           val _ = writeln ("Found 'distinct' with spiders: " ^ (PolyML.makestring spidersInDistinct))
       in
-          conjuncts
-          (*raise (SD_TRANSLATE_ERROR ("Primary spider diagram extraction failed. Could not find the 'distinct' term for spiders '" ^ (PolyML.makestring spiders) ^ "'.", spHOLlst))*)
+          if listsEqual then conjuncts else raise (SD_TRANSLATE_ERROR ("Primary spider diagram extraction failed. Could not find the 'distinct' term for spiders '" ^ (PolyML.makestring spiders) ^ "'.", spHOLlst))
       end
     | find_distinct (c::conjuncts) spiders = c::(find_distinct conjuncts spiders)
-    | find_distinct (c::[]) (s1::s2::spiders) = raise (SD_TRANSLATE_ERROR ("Primary spider diagram extraction failed. Could not find the 'distinct' term for spiders '" ^ PolyML.makestring(s1::s2::spiders) ^ "'.", c))
+    | find_distinct _ spiders = raise (SD_ERROR ("Primary spider diagram extraction failed. Could not find the 'distinct' term for spiders '" ^ (PolyML.makestring spiders) ^ "'."))
 
   (* 'from_snf_to_sd_inner' expects a list of terms connected with conjunctions. Each of the
      conjunctions can be either the 'distinct spiders' term, a habitat
@@ -160,14 +215,14 @@ local
           (* Check that amongst those terms is one 'distinct' term which
              satisfies the condition, and remove this term and return the
              new list of conjuncts. Otherwise raise an exception. *)
-           val conjuncts = (collect_conjuncts t, spiders) |-> find_distinct
+           val (_, habitats) = spiders |> (((collect_conjuncts t, spiders) |-> find_distinct) |> get_habitats)
            (* From the remaining terms extract the habitats of spiders and
              remove all corresponding terms. *)
            (* Now find all 'shaded zone' terms and remove those too. *)
            (* If any terms remain, raise an error. *)
-           (*val _ = writeln ("Extracting a primary diagram: " ^ PolyML.makestring conjuncts)*)
+           val _ = writeln ("Extracting a primary diagram: " ^ PolyML.makestring habitats)
       in
-          NullSD
+          PrimarySD { spiders = spiders, habitats = habitats, sh_zones = [] }
       end
 
   fun from_snf_to_sd_outer (@{term "op --> :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op -->", arg1 = from_snf_to_sd_outer t1, arg2 = from_snf_to_sd_outer t2 }

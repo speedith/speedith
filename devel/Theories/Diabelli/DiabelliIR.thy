@@ -154,6 +154,7 @@ lemma "\<forall>sd. sd_sem3 sd = sd_sem2 sd"
 ML {* @{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"} *}
 ML {* @{term "True"} *}
 ML {* #3 ("dsa", 5, SOME 1) *}
+ML {* eq_list op= ((sort_distinct string_ord [ "c", "a", "a", "k", "b" ]), (sort_distinct string_ord [ "k", "c", "a", "b" ])) *}
 
 ML {* print_depth 100 *}
 ML {* show_types := true *}
