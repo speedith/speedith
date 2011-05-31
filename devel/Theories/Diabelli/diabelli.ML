@@ -187,7 +187,7 @@ local
           val spidersInDistinct = map (fn (Bound i) => nth spiders i | _ => raise SD_ERROR ("The list in the 'distinct' term should consist only of spiders.")) (HOLogic.dest_list spHOLlst)
           (* Now make sure the two lists are the same. *)
           val listsEqual = eq_list op= ((sort_distinct string_ord spidersInDistinct), (sort_distinct string_ord spiders))
-          val _ = writeln ("Found 'distinct' with spiders: " ^ (PolyML.makestring spidersInDistinct))
+          (*val _ = writeln ("Found 'distinct' with spiders: " ^ (PolyML.makestring spidersInDistinct))*)
       in
           if listsEqual then conjuncts else raise (SD_TRANSLATE_ERROR ("Primary spider diagram extraction failed. Could not find the 'distinct' term for spiders '" ^ (PolyML.makestring spiders) ^ "'.", spHOLlst))
       end
@@ -219,8 +219,9 @@ local
            (* From the remaining terms extract the habitats of spiders and
              remove all corresponding terms. *)
            (* Now find all 'shaded zone' terms and remove those too. *)
+           (* TODO: Implement! *)
            (* If any terms remain, raise an error. *)
-           val _ = writeln ("Extracting a primary diagram: " ^ PolyML.makestring habitats)
+           (*val _ = writeln ("Extracting a primary diagram: " ^ PolyML.makestring habitats)*)
       in
           PrimarySD { spiders = spiders, habitats = habitats, sh_zones = [] }
       end
