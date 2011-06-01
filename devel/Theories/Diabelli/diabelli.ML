@@ -77,7 +77,9 @@ end;
 structure Diabelli: DIABELLI =
 struct
 
-
+(*==============================================================================
+  = Auxilliary types
+  ============================================================================*)
 
 (* Some auxilliary types used in the record that contains all information about
    a spider diagram statement. *)
@@ -87,7 +89,9 @@ type zone = (contour_name list * contour_name list);
 type region = zone list;
 type operator_name = string
 
-
+(*==============================================================================
+  = sd - the main datatype for spider diagrams representation.
+  ============================================================================*)
 
 (* The following type is used as the intermediate representation of a spider
    diagram statement. It contains all data needed to draw a spider diagram. *)
@@ -108,10 +112,16 @@ datatype sd =
     }
   | NullSD;
 
-(* Some private helper functions: *)
-(* fun string_of_term t = Pretty.string_of (Syntax.pretty_term @{context} t) *)
+(*==============================================================================
+  = Exceptions
+  ============================================================================*)
 
+exception SD_TRANSLATE_ERROR of (string * term);
+exception SD_ERROR of string;
 
+(*==============================================================================
+  = make_subgoal_tac
+  ============================================================================*)
 
 fun make_subgoal_tac prop i st = SUBGOAL (fn (subgoal, _) =>
    let
@@ -121,13 +131,9 @@ fun make_subgoal_tac prop i st = SUBGOAL (fn (subgoal, _) =>
      compose_tac (false, adhoc_rule, 1) i
    end) i st;
 
-
-
-exception SD_TRANSLATE_ERROR of (string * term);
-exception SD_ERROR of string;
-
-
-
+(*==============================================================================
+  = from_snf_to_sd
+  ============================================================================*)
 
 local
   (* 'collect_ex_spiders' gets a list of all existentially quantified spiders.
@@ -266,7 +272,9 @@ in
   fun from_snf_to_sd t = from_snf_to_sd_outer t
 end;
 
-
+(*==============================================================================
+  = from_hosnf_to_sd
+  ============================================================================*)
 
 local
   fun get_spiders (@{term "Cons :: 'a => 'a list => 'a list"} $ Free (spider, @{typ "'a"}) $ xs) = (spider :: get_spiders xs)
@@ -304,7 +312,9 @@ in
     | from_hosnf_to_sd t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Unexpected outer term.", t))
 end;
 
-
+(*==============================================================================
+  = traverse_term
+  ============================================================================*)
 
 (* Just having some fun traversing terms and making a string out of them. *)
 fun traverse_term (t1 $ t2) = "[ " ^ (traverse_term t1) ^ " $ " ^ (traverse_term t2) ^ " ]"
@@ -314,8 +324,10 @@ fun traverse_term (t1 $ t2) = "[ " ^ (traverse_term t1) ^ " $ " ^ (traverse_term
   | traverse_term (Bound i) = "Bound = " ^ Int.toString i
   | traverse_term (Abs (s, _, t)) = "[ Abs '" ^ s ^ "': " ^ (traverse_term t) ^ " ]";
 
-
-
+(*==============================================================================
+  = print_props_tac
+  ============================================================================*)
+  
 fun print_props_tac ctxt st =
   let
       val _ = writeln (traverse_term (hd (Thm.prems_of st)))
@@ -326,6 +338,10 @@ fun print_props_tac ctxt st =
   in
       all_tac st
   end;
+
+(*==============================================================================
+  = bash_escape
+  ============================================================================*)
 
 local
   fun bash_escape_for_dq chr = case chr of
@@ -339,6 +355,9 @@ in
   fun bash_escape str = bash_quote_dq str
 end
 
+(*==============================================================================
+  = exec_args
+  ============================================================================*)
 fun exec_args cmd args =
   let
       val qArgs = List.foldl (fn (s2, s1) => s1 ^ " " ^ s2) "" (map bash_escape args)
@@ -347,8 +366,9 @@ fun exec_args cmd args =
       Secure.bash_output (cmd ^ qArgs)
   end
 
-
-
+(*==============================================================================
+  = Random Test Stuff
+  ============================================================================*)
 
 fun random_tests str =
   let
