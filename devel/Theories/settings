@@ -1,0 +1,8 @@
+# -*- shell-script -*- :mode=shellscript:
+#
+# Isabelle user settings sample -- for use in ~/.isabelle/etc/settings
+
+# The path to Speedith's JAR package (as extracted from the distribution package)
+DIABELLI_SPEEDITH_PATH=$HOME/Documents/speedith/devel/Speedith/dist/Speedith.jar
+# The path to the Java program (which will execute the above JAR)
+DIABELLI_JAVA_PATH=java

@@ -5,19 +5,69 @@ Diabelli: provides the necessary infrastructure for heterogeneous reasoning
           with Spider diagrams in Isabelle.
 *)
 
-(* NOTE: Documentation on each of the members of the DIABELLI signature is
-         provided below (in comments, just above their respective
-         implementations in the Diabelli structure). *)
 signature DIABELLI =
 sig
   type sd
-  
+
+  (* Replaces a subgoal with an arbitrary term.
+
+     Parameter 1 (prop): the arbitrary term with which to replace sugoal 'i'.
+
+     Parameter 2 (i): the number of the subgoal which we want to replace.
+
+     Parameter 3 (st): the theorem. This argument is provided by the 'apply'
+                       mechanism (omit it when using apply), e.g.:
+
+         apply (tactic {* Diabelli.make_subgoal_tac @{term "Trueprop True"} 1 *})
+  *)
   val make_subgoal_tac: term -> int -> thm -> thm Seq.seq
+  (* This function translates an Isabelle/HOL term of the 'MFOL spider normal'
+   form into a spider diagram record suitable for input to Speedith.
+
+   @param  1  A term. Here is an example of a valid term:
+
+                  @{term "(∃s1 s2. distinct[s1, s2] ∧ s1 ∈ A ∩ B ∧ s2 ∈ (A - B) ∪ (B - A)) ⟶ (∃s1 s2. distinct[s1, s2] ∧ s1 ∈ A ∧ s2 ∈ B)"}
+
+   @returns  A record of type 'Diabelli.sd'. Containing the term translated to
+             a spider diagram notation suitable for export to the external
+             reasoner.
+
+   @exception  SD_TRANSLATE_ERROR: If the input term could not have been
+               translated to a spider diagram. *)
   val from_snf_to_sd: term -> sd
-  val from_term_to_sd: term -> sd
+  (* This function translates an Isabelle/HOL term of the higher-order spider
+     normal form (HO-SNF) into spider diagram notation suitable for input to the
+     external diagrammatic reasoner.
+
+     @param  1  A term. Here is an example of a valid term:
+
+                    @{term "(∃f. sd [s, s'] f (f s ∈ A ∩ B ∧ f s' ∈ (A - B) ∪ (B - A)))"}
+
+     @returns  A record of type 'Diabelli.sd'. Containing the term translated to
+               a spider diagram notation suitable for export to the external
+               reasoner.
+
+     @throws  SD_TRANSLATE_ERROR  If the input term could not have been
+              translated to a spider diagram. *)
+  val from_hosnf_to_sd: term -> sd
   val traverse_term: term -> string
   val print_props_tac: Proof.context -> tactic
+  (* Escapes the given string for double-quoting in bash.
+     Note: This function also puts the string into double-quotes.
+
+     @returns  the escaped string. *)
   val bash_escape: string -> string
+  (* Exectues the program (given in the first parameter) with the given command-
+     line arguments (second parameter).
+
+     @param  1  the command to execute in bash.
+
+     @param  2  the list of arguments to the command (which will be escaped and
+                double-quoted).
+
+     @returns  a pair of a string (the output of the program) and an integer
+               (the exit code of execution). *)
+  val exec_args: string -> string list -> (string * int)
 
   val random_tests: string -> (string * int)
 end;
@@ -63,18 +113,6 @@ datatype sd =
 
 
 
-(* Replaces a subgoal with an arbitrary term.
-
-Parameter 1 (prop): the arbitrary term with which to replace sugoal 'i'.
-
-Parameter 2 (i): the number of the subgoal which we want to replace.
-
-Parameter 3 (st): the theorem. This argument is provided by the 'apply'
-                  mechanism (omit it when using apply), e.g.:
-     
-         apply (tactic {* Diabelli.make_subgoal_tac @{term "Trueprop True"} 1 *})
-
-*)
 fun make_subgoal_tac prop i st = SUBGOAL (fn (subgoal, _) =>
    let
      val thy = Thm.theory_of_thm st;
@@ -90,19 +128,7 @@ exception SD_ERROR of string;
 
 
 
-(* This function translates an Isabelle HOL term of the 'MFOL spider normal'
-   form into a spider diagram record suitable for input to Speedith.
 
-   @param  1  A term. Here is an example of a valid term:
-
-                  @{term "(∃s1 s2. distinct[s1, s2] ∧ s1 ∈ A ∩ B ∧ s2 ∈ (A - B) ∪ (B - A)) ⟶ (∃s1 s2. distinct[s1, s2] ∧ s1 ∈ A ∧ s2 ∈ B)"}
-
-   @returns  A record of type 'Diabelli.sd'. Containing the term translated to
-             a spider diagram notation suitable for export to the external
-             reasoner.
-
-   @exception  SD_TRANSLATE_ERROR: If the input term could not have been
-               translated to a spider diagram. *)
 local
   (* 'collect_ex_spiders' gets a list of all existentially quantified spiders.
 
@@ -242,19 +268,6 @@ end;
 
 
 
-(* This function translates an Isabelle HOL term into spider diagram notation
-   suitable for input to the external diagrammatic reasoner.
-
-   Parameter 1: A term. Here is an example of a valid term:
-
-                  @{term "(∃f. sd [s, s'] f (f s ∈ A ∩ B ∧ f s' ∈ (A - B) ∪ (B - A)))"}
-
-   Returns: A record of type 'Diabelli.sd'. Containing the term translated to
-            a spider diagram notation suitable for export to the external
-            reasoner.
-
-   Exception SD_TRANSLATE_ERROR: If the input term could not have been
-            translated to a spider diagram. *)
 local
   fun get_spiders (@{term "Cons :: 'a => 'a list => 'a list"} $ Free (spider, @{typ "'a"}) $ xs) = (spider :: get_spiders xs)
     | get_spiders (@{term "Nil :: 'a list"}) = []
@@ -284,11 +297,11 @@ local
   fun inner_term_to_sd (Const ("Playground.sd", @{typ "'a List.list => ('a => 'b) => bool => bool"}) $ spiders $ _ $ predicate) = PrimarySD {spiders = get_spiders spiders, habitats = get_habitats predicate, sh_zones = []}
     | inner_term_to_sd t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Unexpected term.", t))
 in
-  fun from_term_to_sd (@{term "op --> :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op -->", arg1 = from_term_to_sd t1, arg2 = from_term_to_sd t2 }
-    (*| from_term_to_sd (@{term "op | :: (('a => 'b) => bool) => bool"} $ Abs (_, _, t)) = inner_term_to_sd t*)
-    | from_term_to_sd (@{term "Ex :: (('a => 'b) => bool) => bool"} $ Abs (_, _, t)) = inner_term_to_sd t
-    (*| from_term_to_sd (@{term "Ex :: ('a => bool) => bool"} $ Abs (s, _, t)) = inner_term_to_sd t*)
-    | from_term_to_sd t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Unexpected outer term.", t))
+  fun from_hosnf_to_sd (@{term "op --> :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op -->", arg1 = from_hosnf_to_sd t1, arg2 = from_hosnf_to_sd t2 }
+    (*| from_hosnf_to_sd (@{term "op | :: (('a => 'b) => bool) => bool"} $ Abs (_, _, t)) = inner_term_to_sd t*)
+    | from_hosnf_to_sd (@{term "Ex :: (('a => 'b) => bool) => bool"} $ Abs (_, _, t)) = inner_term_to_sd t
+    (*| from_hosnf_to_sd (@{term "Ex :: ('a => bool) => bool"} $ Abs (s, _, t)) = inner_term_to_sd t*)
+    | from_hosnf_to_sd t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Unexpected outer term.", t))
 end;
 
 
@@ -325,6 +338,14 @@ local
 in
   fun bash_escape str = bash_quote_dq str
 end
+
+fun exec_args cmd args =
+  let
+      val qArgs = List.foldl (fn (s2, s1) => s1 ^ " " ^ s2) "" (map bash_escape args)
+      val _ = writeln qArgs
+  in
+      Secure.bash_output (cmd ^ qArgs)
+  end
 
 
 

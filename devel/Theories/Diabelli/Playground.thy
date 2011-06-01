@@ -165,9 +165,9 @@ ML {* @{term "(\<exists>s s' s2 s3. sp [s, s'] (s \<in> A \<inter> B \<and> s' \
 ML {* @{term "(f s1 \<in> A \<inter> B \<and> f s2 \<in> (A - B) \<union> (B - A)) \<and> f s' \<in> B"} *}
 ML {* @{term "(\<exists>f. spider_diagram [s, s'] f (f s \<in> A \<inter> B \<and> f s' \<in> (A - B) \<union> (B - A))) \<longrightarrow> (\<exists>f. spider_diagram [s, s'] f (f s \<in> A \<and> f s' \<in> B))"} *}
 
-ML {* PolyML.makestring (Diabelli.from_term_to_sd (@{term "(\<exists>f. sd [s, s'] f (f s \<in> A \<inter> B \<and> f s' \<in> (A - B) \<union> (B - A))) \<longrightarrow> (\<exists>f. sd [s, s'] f (f s \<in> A \<and> f s' \<in> B))"})); *}
-ML {* Diabelli.from_term_to_sd (@{term "(\<exists>f. sd [s, s'] f (f s \<in> A \<inter> B \<and> f s' \<in> (A - B) \<union> (B - A))) \<longrightarrow> (\<exists>f. sd [s, s'] f (f s \<in> A \<and> f s' \<in> B))"}); *}
-ML {* Diabelli.from_term_to_sd (@{term "(\<exists>f. sd [s, s'] f (f s \<in> A \<inter> B \<and> f s'' \<in> (A - B) \<union> (B - A)))"}); *}
+ML {* PolyML.makestring (Diabelli.from_hosnf_to_sd (@{term "(\<exists>f. sd [s, s'] f (f s \<in> A \<inter> B \<and> f s' \<in> (A - B) \<union> (B - A))) \<longrightarrow> (\<exists>f. sd [s, s'] f (f s \<in> A \<and> f s' \<in> B))"})); *}
+ML {* Diabelli.from_hosnf_to_sd (@{term "(\<exists>f. sd [s, s'] f (f s \<in> A \<inter> B \<and> f s' \<in> (A - B) \<union> (B - A))) \<longrightarrow> (\<exists>f. sd [s, s'] f (f s \<in> A \<and> f s' \<in> B))"}); *}
+ML {* Diabelli.from_hosnf_to_sd (@{term "(\<exists>f. sd [s, s'] f (f s \<in> A \<inter> B \<and> f s'' \<in> (A - B) \<union> (B - A)))"}); *}
 
 (* The proof of the main example using only one second-order existential
   quantification. *)
@@ -175,7 +175,7 @@ lemma example_1_b: "(\<exists>f. sd [s, s'] f (f s \<in> A \<inter> B \<and> f s
   apply (auto simp add: sd_def)
   apply (rule_tac x = "\<lambda>x.(if x = s then f s' else (if x = s' then f s else f x))" in exI)
   by (auto simp add: inj_on_def)
-ML {* Diabelli.from_term_to_sd (@{term "(\<exists>f. sd [s, s'] f (f s \<in> A \<inter> B \<and> f s' \<in> (A - B) \<union> (B - A)))"}); *}
+ML {* Diabelli.from_hosnf_to_sd (@{term "(\<exists>f. sd [s, s'] f (f s \<in> A \<inter> B \<and> f s' \<in> (A - B) \<union> (B - A)))"}); *}
 
 (* The proof of the main example using many first-order existential
   quantifiers. *)
