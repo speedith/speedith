@@ -9,18 +9,34 @@ signature DIABELLI =
 sig
   type sd
 
+  (* Indicates a translation error.
+
+     The string describes the error in english.
+
+     The term indicates the location where the translation failed. *)
+  exception SD_TRANSLATE_ERROR of string * term
+
+  (* Indicates a general error.
+
+     The string describes the error in english. *)
+  exception SD_ERROR of string
+
+  (* This exception indicates that Speedith exited with a non-zero error code. *)
+  exception SD_SPEEDITH_ERROR of string * int
+
   (* Replaces a subgoal with an arbitrary term.
 
-     Parameter 1 (prop): the arbitrary term with which to replace sugoal 'i'.
+     @param  1 the arbitrary term with which to replace sugoal 'i'.
 
-     Parameter 2 (i): the number of the subgoal which we want to replace.
+     @param  2 the subgoal (its number) we would like to replace.
 
-     Parameter 3 (st): the theorem. This argument is provided by the 'apply'
-                       mechanism (omit it when using apply), e.g.:
+     @param  3 the theorem. This argument is provided by the 'apply'
+               mechanism (omit it when using apply), e.g.:
 
          apply (tactic {* Diabelli.make_subgoal_tac @{term "Trueprop True"} 1 *})
   *)
   val make_subgoal_tac: term -> int -> thm -> thm Seq.seq
+
   (* This function translates an Isabelle/HOL term of the 'MFOL spider normal'
    form into a spider diagram record suitable for input to Speedith.
 
@@ -32,9 +48,12 @@ sig
              a spider diagram notation suitable for export to the external
              reasoner.
 
-   @exception  SD_TRANSLATE_ERROR: If the input term could not have been
-               translated to a spider diagram. *)
+   @throws  SD_TRANSLATE_ERROR  If the input term could not have been
+            translated to a spider diagram.
+
+   @throws  SD_ERROR *)
   val from_snf_to_sd: term -> sd
+
   (* This function translates an Isabelle/HOL term of the higher-order spider
      normal form (HO-SNF) into spider diagram notation suitable for input to the
      external diagrammatic reasoner.
@@ -50,13 +69,17 @@ sig
      @throws  SD_TRANSLATE_ERROR  If the input term could not have been
               translated to a spider diagram. *)
   val from_hosnf_to_sd: term -> sd
+
   val traverse_term: term -> string
+
   val print_props_tac: Proof.context -> tactic
+
   (* Escapes the given string for double-quoting in bash.
      Note: This function also puts the string into double-quotes.
 
      @returns  the escaped string. *)
   val bash_escape: string -> string
+
   (* Exectues the program (given in the first parameter) with the given command-
      line arguments (second parameter).
 
@@ -68,6 +91,20 @@ sig
      @returns  a pair of a string (the output of the program) and an integer
                (the exit code of execution). *)
   val exec_args: string -> string list -> (string * int)
+  
+  (* Starts speedith in batch mode. Passes to it the given term (converted to a
+     spider diagram first), and instructs it to apply the inference rules given
+     by a list of rule description strings.
+
+     @param  1  the term to convert to a spider diagram and pass to Speedith.
+
+     @param  2  the descriptions of inference rules to apply (in the given
+                order) on the spider diagram (given in parameter 1).
+
+     @returns  the transformed term.
+
+     @throws  SD_SPEEDITH  if Speedith exited with a non-zero error code. *)
+  val speedith_batch_apply: term -> string list -> term
 
   val random_tests: string -> (string * int)
 end;
@@ -118,6 +155,7 @@ datatype sd =
 
 exception SD_TRANSLATE_ERROR of (string * term);
 exception SD_ERROR of string;
+exception SD_SPEEDITH_ERROR of (string * int);
 
 (*==============================================================================
   = make_subgoal_tac
@@ -134,6 +172,10 @@ fun make_subgoal_tac prop i st = SUBGOAL (fn (subgoal, _) =>
 (*==============================================================================
   = from_snf_to_sd
   ============================================================================*)
+
+(* TODO: To make the translation spider type-independent, I could use the
+'const_name' antiquotation (e.g.: @{const_name "Ex"}) and store the type of the
+first spider. Then check other constructed types based on this. *)
 
 local
   (* 'collect_ex_spiders' gets a list of all existentially quantified spiders.
@@ -210,7 +252,10 @@ local
      spiders that are existentially quantified in the conjunct scope).
 
      @returns a list of term (without the one containing the 'distinct'
-              predicate.*)
+              predicate.
+
+     @throws  SD_TRANSLATE_ERROR
+     @throws  SD_ERROR *)
   fun find_distinct conjuncts (_::[]) = conjuncts (* No 'distinct' needed for one spider. *)
     | find_distinct conjuncts [] = conjuncts (* Same for zero spiders. *)
     | find_distinct ((@{term "List.distinct :: 'a::HOL.type List.list => bool"} $ spHOLlst)::conjuncts) (spiders : string list) = 
@@ -358,12 +403,31 @@ end
 (*==============================================================================
   = exec_args
   ============================================================================*)
+
 fun exec_args cmd args =
   let
       val qArgs = List.foldl (fn (s2, s1) => s1 ^ " " ^ s2) "" (map bash_escape args)
-      val _ = writeln qArgs
   in
       Secure.bash_output (cmd ^ qArgs)
+  end
+
+(*==============================================================================
+  = speedith_batch_apply
+  ============================================================================*)
+
+fun speedith_batch_apply t _ =
+  let
+      val retVal as (sout, ecode) = exec_args
+                            (getenv "DIABELLI_JAVA_PATH")
+                            [
+                              "-jar", getenv "DIABELLI_SPEEDITH_PATH",
+                              "-of", getenv "DIABELLI_SPEEDITH_OUTPUT_FORMAT",
+                              "-sd", PolyML.makestring (from_snf_to_sd t)
+                            ]
+      fun read_term (Context.Theory ctxt) formula = (writeln "Theory"; Syntax.read_term_global ctxt formula)
+        | read_term (Context.Proof ctxt) formula = (writeln "Proof"; Syntax.read_term ctxt formula)
+  in
+      if ecode = 0 then (read_term (Context.the_thread_data ()) sout) else raise (SD_SPEEDITH_ERROR retVal)
   end
 
 (*==============================================================================
