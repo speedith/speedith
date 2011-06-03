@@ -98,15 +98,25 @@ sig
 
      @param  1  the term to convert to a spider diagram and pass to Speedith.
 
-     @param  2  the descriptions of inference rules to apply (in the given
+     @param  2  [optional] the context theory to use when converting Speedith's
+                output formula back to Isabelle/HOL. Use 'NONE' if you do not
+                want to provide a theory or if you know that the theory can be
+                obtained via 'Context.the_thread_data ()'.
+
+     @param  3  the descriptions of inference rules to apply (in the given
                 order) on the spider diagram (given in parameter 1).
 
      @returns  the transformed term.
 
      @throws  SD_SPEEDITH  if Speedith exited with a non-zero error code. *)
-  val speedith_batch_apply: term -> string list -> term
+  val speedith_batch_apply: term -> theory option -> string list -> term
 
   val random_tests: string -> (string * int)
+
+(*==============================================================================
+  = Diabelli Reasoning Tactics
+  ============================================================================*)
+  val sd_tac: int -> tactic
 end;
 
 
@@ -311,6 +321,7 @@ local
       in
         (from_snf_to_sd_inner spiders inner_term)
       end
+    | from_snf_to_sd_outer (@{term "Trueprop :: bool => prop"} $ t) = from_snf_to_sd_outer t
     | from_snf_to_sd_outer (@{term "True"}) = NullSD
     | from_snf_to_sd_outer t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Unexpected from_snf_to_sd_outer term.", t))
 in
@@ -415,8 +426,9 @@ fun exec_args cmd args =
   = speedith_batch_apply
   ============================================================================*)
 
-fun speedith_batch_apply t _ =
+fun speedith_batch_apply t othy _ =
   let
+      val _ = tracing "Invoking Speedith."
       val retVal as (sout, ecode) = exec_args
                             (getenv "DIABELLI_JAVA_PATH")
                             [
@@ -424,10 +436,17 @@ fun speedith_batch_apply t _ =
                               "-of", getenv "DIABELLI_SPEEDITH_OUTPUT_FORMAT",
                               "-sd", PolyML.makestring (from_snf_to_sd t)
                             ]
+      val _ = tracing ("Speedith returned: " ^ sout)
       fun read_term (Context.Theory ctxt) formula = (writeln "Theory"; Syntax.read_term_global ctxt formula)
         | read_term (Context.Proof ctxt) formula = (writeln "Proof"; Syntax.read_term ctxt formula)
   in
-      if ecode = 0 then (read_term (Context.the_thread_data ()) sout) else raise (SD_SPEEDITH_ERROR retVal)
+      if ecode = 0
+      then
+          (case othy of
+              SOME thy => Syntax.read_term_global thy sout
+            | NONE => (read_term (Context.the_thread_data ()) sout))
+      else
+        raise (SD_SPEEDITH_ERROR retVal)
   end
 
 (*==============================================================================
@@ -440,5 +459,21 @@ fun random_tests str =
   in
       (out, ret)
   end;
+
+(*==============================================================================
+  = sd_tac
+  ============================================================================*)
+
+fun sd_tac i st = SUBGOAL (fn (subgoal, j) =>
+   let
+       val thy = Thm.theory_of_thm st;
+       val speedithTerm = speedith_batch_apply subgoal (SOME thy) []
+       val _ = writeln ("Speedith's term: " ^ (PolyML.makestring speedithTerm))
+   in
+       (* TODO: Prove that Speedith's returned term implies the current subgoal.
+          Afterwards, with 'compose_tac', exchange what Speedith returned with
+          the current subgoal. *)
+       all_tac
+   end) i st
 
 end;

@@ -157,13 +157,18 @@ ML {* #3 ("dsa", 5, SOME 1) *}
 ML {* eq_list op= ((sort_distinct string_ord [ "c", "a", "a", "k", "b" ]), (sort_distinct string_ord [ "k", "c", "a", "b" ])) *}
 
 ML {* print_depth 100 *}
-ML {* show_types := true *}
-ML {* show_sorts := true *}
-ML {* show_all_types := true *}
+ML {* show_types := false *}
+ML {* show_sorts := false *}
+ML {* show_all_types := false *}
 
 use "diabelli.ML"
 
-lemma testA: "True"
+method_setup sd_tac = {*
+Scan.succeed (K (Method.SIMPLE_METHOD' Diabelli.sd_tac))
+*} "Shit happens"
+
+lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
+apply sd_tac
 proof -
 ML_prf {* Diabelli.speedith_batch_apply @{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"} [] *}
   show ?thesis by
