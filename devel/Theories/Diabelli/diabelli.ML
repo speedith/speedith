@@ -468,12 +468,16 @@ fun sd_tac i st = SUBGOAL (fn (subgoal, j) =>
    let
        val thy = Thm.theory_of_thm st;
        val speedithTerm = speedith_batch_apply subgoal (SOME thy) []
-       val _ = writeln ("Speedith's term: " ^ (PolyML.makestring speedithTerm))
+       val _ = tracing ("Parsed Speedith's term: " ^ (PolyML.makestring speedithTerm))
+       val inter1 = Logic.mk_implies (@{term "Trueprop :: bool => prop"} $ speedithTerm, subgoal)
+       val _ = tracing ("Intermediate goal: " ^ (PolyML.makestring inter1))
+       val inter1Thm = (Goal.prove (ProofContext.init_global thy) [] [] inter1 (K (atac 1)))
+       val _ = tracing ("Intermediate theorem: " ^ (PolyML.makestring inter1Thm))
    in
        (* TODO: Prove that Speedith's returned term implies the current subgoal.
           Afterwards, with 'compose_tac', exchange what Speedith returned with
           the current subgoal. *)
-       all_tac
+       compose_tac (false, inter1Thm, 1) i
    end) i st
 
 end;
