@@ -39,6 +39,7 @@ import speedith.core.lang.export.SDExporting;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import static speedith.i18n.Translations.*;
+import static speedith.logging.Logger.*;
 
 /**
  * This is the main entry point to Speedith.
@@ -96,18 +97,18 @@ public class Main {
         } catch (ParseException ex) {
             // Report why the parsing failed and print the help message (both to
             // the error output)
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, i18n("ERR_CLI_PARSE_FAILED", ex.getLocalizedMessage()), ex);
+            log(Level.SEVERE, i18n("ERR_CLI_PARSE_FAILED", ex.getLocalizedMessage()), ex);
             System.err.println(i18n("ERR_CLI_PARSE_FAILED", ex.getLocalizedMessage()));
             // Print help too.
             clargs.printHelp(System.err);
             System.exit(1);
         } catch (ReadingException rex) {
             // A reading error occurred. Give the user a detailed error message.
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, i18n("ERR_READING_FORMULA", rex.getLocalizedMessage()), rex);
+            log(Level.SEVERE, i18n("ERR_READING_FORMULA", rex.getLocalizedMessage()), rex);
             System.err.println(i18n("ERR_READING_FORMULA", rex.getLocalizedMessage()));
             System.exit(1);
         } catch (Exception ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex);
+            log(Level.SEVERE, ex.getLocalizedMessage(), ex);
             System.err.println(ex.getLocalizedMessage());
             System.exit(1);
         }
