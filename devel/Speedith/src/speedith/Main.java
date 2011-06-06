@@ -115,6 +115,10 @@ public class Main {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Help Printing Methods">
+    /**
+     * Prints a list of known spider diagram formula export formats (see {@link 
+     * SDExporting} for more info.
+     */
     private static void printKnownFormats() {
         System.out.println(i18n("MSG_KNOWN_FORMATS_LIST"));
         System.out.println();

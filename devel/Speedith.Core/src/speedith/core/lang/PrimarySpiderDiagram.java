@@ -30,7 +30,6 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
@@ -198,6 +197,13 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         printZoneList(sb, shadedZones);
     }
 
+    /**
+     * Prints a list of habitats to the given {@link StringBuilder}.
+     * <p>The output format is '{@code [ habitat, habitat, ... ]}'. See {@link
+     * PrimarySpiderDiagram#printHabitat(java.lang.StringBuilder, java.lang.String, speedith.core.lang.Region)}
+     * for a description of the habitat output format (for each habitat).</p>
+     * @param sb 
+     */
     private void printHabitats(StringBuilder sb) {
         sb.append(SDTextHabitatsAttribute).append(" = ");
         sb.append('[');
@@ -215,11 +221,19 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         sb.append(']');
     }
 
-    private void printHabitat(StringBuilder sb, String key, Region value) {
+    /**
+     * Outputs a single habitat into the {@link StringBuilder}.
+     * <p>The format of the habitat is '{@code (spider, region)}' (it is a
+     * simple pair tuple).</p>
+     * @param sb
+     * @param spider
+     * @param region 
+     */
+    private static void printHabitat(StringBuilder sb, String spider, Region region) {
         sb.append('(');
-        printString(sb, key);
+        printString(sb, spider);
         sb.append(", ");
-        value.toString(sb);
+        region.toString(sb);
         sb.append(')');
     }
 
