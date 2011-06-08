@@ -64,7 +64,7 @@ public final class Sets {
      * <p>Note: if one of the sets is {@code null}, it will be treated as
      * an empty set (a {@code null} set thus equals to the empty set, and it is
      * in effect smaller than any non-empty set).</p>
-     * <p>Important: this method uses the comparators of the given sets. If the
+     * <p><span style="font-weight:bold">Important</span>: this method uses the comparators of the given sets. If the
      * comparators of the two given sets are not the same, or if none of the
      * sets provide any comparators, an {@link IllegalArgumentException}
      * exception will be thrown.</p>
@@ -130,7 +130,7 @@ public final class Sets {
      * <p>Note: if one of the sets is {@code null}, it will be treated as
      * an empty set (a {@code null} set thus equals to the empty set, and it is
      * in effect smaller than any non-empty set).</p>
-     * <p>Important: this method uses the {@link Comparable} interface, which
+     * <p><span style="font-weight:bold">Important</span>: this method uses the {@link Comparable} interface, which
      * should be implemented by the elements of the two given sets.</p>
      * @param <E> the type of the elements in the set.
      * @param s1 the first set.
@@ -159,8 +159,9 @@ public final class Sets {
             // Start the comparison
             while (i1.hasNext() && i2.hasNext()) {
                 retVal = compare(i1.next(), i2.next());
-                if (retVal != 0)
+                if (retVal != 0) {
                     return retVal;
+                }
             }
             // Okay, if we reached this point, then the two sets share the same
             // head and at least one of them has ended.
@@ -171,13 +172,24 @@ public final class Sets {
     }
 
     /**
-     * TODO: Document
+     * Returns {@code true} iff the first set does not contain any elements that
+     * are not in the second set.
+     * <p><span style="font-weight:bold">Note</span>: this method uses the
+     * natural order of the elements in the sets (i.e.: this method uses the
+     * methods of the {@link Comparable} interface on the elements). You can
+     * contrast this with the
+     * {@link Sets#isDifferenceEmpty(java.util.SortedSet, java.util.SortedSet)}
+     * method.</p>
+     * <p><span style="font-weight:bold">Note 2</span>: this method will throw
+     * an exception if the any of the two sets have a {@link SortedSet#comparator()
+     * comparator}.</p>
      * @param <E>
-     * @param s1
-     * @param s2
-     * @return
+     * @param s1 the first set.
+     * @param s2 the second set.
+     * @return {@code true} iff the first set does not contain any elements that
+     * are not in the second set.
      */
-    public static <E extends Comparable<? super E>> boolean isNaturalDifferenceEmpty(SortedSet<E> s1, SortedSet<? extends E> s2) {
+    public static <E extends Comparable<? super E>> boolean isDifferenceEmptyN(SortedSet<E> s1, SortedSet<? extends E> s2) {
         // First check if at least one of them is null or empty.
         int retVal = nullOrEmptyCompare(s1, s2);
         if (retVal <= 0) {
@@ -189,6 +201,9 @@ public final class Sets {
             // that the difference will not be empty.
             return false;
         } else {
+            // The sets must not have a comparator! Because then the order could
+            // be different and this method would not work.
+            checkSetsOrderedNaturally(s1, s2);
             // None of the sets is null or empty.
             // The difference will be empty if for each element in s1 we can
             // find one in s2.
@@ -227,12 +242,20 @@ public final class Sets {
     }
 
     /**
-     * TODO: Document
-     * 
+     * Returns {@code true} iff the first set does not contain any elements that
+     * are not in the second set.
+     * <p><span style="font-weight:bold">Note</span>: this method uses the
+     * {@link SortedSet#comparator() comparator} provided with the two sets. You
+     * can contrast this with the
+     * {@link Sets#isDifferenceEmptyN(java.util.SortedSet, java.util.SortedSet)}
+     * method.</p>
+     * <p><span style="font-weight:bold">Note 2</span>: this method will throw
+     * an exception if the two sets do not share the same comparator.</p>
      * @param <E>
-     * @param s1
-     * @param s2
-     * @return
+     * @param s1 the first set.
+     * @param s2 the second set.
+     * @return {@code true} iff the first set does not contain any elements that
+     * are not in the second set.
      */
     public static <E> boolean isDifferenceEmpty(SortedSet<E> s1, SortedSet<? extends E> s2) {
         // First check if at least one of them is null or empty.
@@ -388,7 +411,7 @@ public final class Sets {
      */
     private static <E> Comparator<? super E> getElementComparator(SortedSet<E> s1, SortedSet<? extends E> s2) throws IllegalArgumentException {
         Comparator<? super E> comparator = s1.comparator();
-        if (s2.comparator() != comparator) {
+        if (!s2.comparator().equals(comparator)) {
             // Both of the sets provide comparators, but the two comparators
             // are not the same. This is an illegal situation.
             throw new IllegalArgumentException(i18n("ERR_SORTED_SETS_COMPARATORS_DIFFER"));
@@ -423,6 +446,21 @@ public final class Sets {
             }
         } else {
             return Integer.signum(el1.compareTo(el2));
+        }
+    }
+
+    /**
+     * Checks whether the given sets are ordered naturally and throws an
+     * exception if they are not.
+     * <p>Note: This method expects that both sets are not {@code null}.</p>
+     * @param <E>
+     * @param s1
+     * @param s2
+     * @throws IllegalArgumentException 
+     */
+    private static <E> void checkSetsOrderedNaturally(SortedSet<E> s1, SortedSet<? extends E> s2) throws IllegalArgumentException {
+        if (s1.comparator() != null || s2.comparator() != null) {
+            throw new IllegalArgumentException(i18n("ERR_SETS_NOT_NATURALLY_ORDERED"));
         }
     }
     // </editor-fold>

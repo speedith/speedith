@@ -26,13 +26,6 @@
  */
 
 /**
- * This package contains internationalisation tools for Speedith.
- * <p>To use internationalised strings in Speedith, import the
- * {@link speedith.i18n.Translations#i18n(String) i18n} method like this:</p>
- * {@code import static speedith.i18n.Translations.i18n; }
- * <p>and use it anywhere in your code, like this:</p>
- * {@code i18n("STRING_RESOURCE_KEY"); }
- * <p>Additional strings can be added to the {@code "speedith/i18n/strings"}
- * bundle (see {@link speedith.i18n.Translations#StringsBundle}).</p>
+ * Provides functionality for managing persistent application-wide settings.
  */
-package speedith.i18n;
+package speedith.preferences;

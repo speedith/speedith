@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import speedith.core.util.Sets;
 import static speedith.core.i18n.Translations.i18n;
 
 /**
@@ -121,11 +122,10 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * @param shadedZones a set of shaded {@link Zone zones}. 
      */
     private PrimarySpiderDiagram(TreeSet<String> spiders, TreeMap<String, Region> habitats, TreeSet<Zone> shadedZones) {
-        // TODO: Check for correctness:
-        //          - that habitats don't talk about spiders not present in
-        //            'spiders'
-        //          - other stuff?
-        // If there aren't any spider, then there should not be any habitats too.
+        // Check that habitats don't talk about spiders not present in
+        // 'spiders'.
+        // If there aren't any spiders, then there should not be any habitats
+        // too.
         if (spiders == null || spiders.size() < 1) {
             if (habitats != null && habitats.size() > 0) {
                 throw new IllegalArgumentException(i18n("ERR_SD_HABITATS_WITHOUT_SPIDERS"));
@@ -133,7 +133,9 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         } else if (habitats != null) {
             // But if there are some spiders, then we have to check that the
             // habitats don't talk about non-existent spiders.
-            // TODO: Implement
+            if (!Sets.isDifferenceEmptyN(habitats.navigableKeySet(), spiders)) {
+                throw new IllegalArgumentException(i18n("ERR_SD_HABITATS_WITHOUT_SPIDERS"));
+            }
         }
         this.spiders = spiders;
         this.habitats = habitats;
@@ -203,7 +205,9 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     public int getSpidersCount() {
         return spiders == null ? 0 : spiders.size();
     }
-
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Equality">
     @Override
     public boolean equals(SpiderDiagram other) {
         throw new UnsupportedOperationException("Not supported yet.");

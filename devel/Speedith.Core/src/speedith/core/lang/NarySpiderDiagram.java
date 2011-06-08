@@ -111,7 +111,7 @@ public class NarySpiderDiagram extends SpiderDiagram {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "operands"));
         }
         if (operands.size() != this.operator.getArity()) {
-            throw new IllegalArgumentException(i18n("ERR_WRONG_NUMBER_OF_OPERANDS", operator, this.operator.getArity(), operands.size()));
+            throw new IllegalArgumentException(i18n("ERR_WRONG_NUMBER_OF_OPERANDS", this.operator.getName(), this.operator.getArity(), operands.size()));
         }
         for (SpiderDiagram spiderDiagram : operands) {
             if (spiderDiagram == null) {
@@ -119,6 +119,30 @@ public class NarySpiderDiagram extends SpiderDiagram {
             }
         }
         this.operands = new ArrayList<SpiderDiagram>(operands);
+    }
+    
+    /**
+     * Initialises the nary-spider diagram with the given operator and operands.
+     * <p><span style="font-weight:bold">Note</span>: this constructor does not
+     * make a copy of the given array list. Take heed on how you use it.</p>
+     * @param operator the {@link NarySpiderDiagram#getOperator() n-ary
+     * operator} that operates over {@link NarySpiderDiagram#getOperands()
+     * operands} of this n-ary spider diagram.
+     * @param operands the {@link NarySpiderDiagram#getOperands() operands}
+     * to the {@link NarySpiderDiagram#getOperator() operator}.
+     */
+    private NarySpiderDiagram(Operator operator, ArrayList<SpiderDiagram> operands) {
+        if (operator == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "operator"));
+        }
+        if (operands == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "operands"));
+        }
+        if (operands.size() != operator.getArity()) {
+            throw new IllegalArgumentException(i18n("ERR_WRONG_NUMBER_OF_OPERANDS", operator, operator.getArity(), operands.size()));
+        }
+        this.operator = operator;
+        this.operands = operands;
     }
     // </editor-fold>
 
@@ -159,10 +183,27 @@ public class NarySpiderDiagram extends SpiderDiagram {
     public SpiderDiagram getOperand(int index) {
         return operands.get(index);
     }
-
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Equality">
     @Override
     public boolean equals(SpiderDiagram other) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (other == this)
+            return true;
+        else if (other instanceof NarySpiderDiagram) {
+            return __isNsdEqual((NarySpiderDiagram)other);
+        } else
+            return false;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        } else if (other instanceof NarySpiderDiagram) {
+            return __isNsdEqual((NarySpiderDiagram)other);
+        } else
+            return false;
     }
     // </editor-fold>
 
@@ -218,6 +259,20 @@ public class NarySpiderDiagram extends SpiderDiagram {
         final StringBuilder sb = new StringBuilder();
         toString(sb);
         return sb.toString();
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Private Methods">
+    /**
+     * Compares the other non-{@ null} {@link NarySpiderDiagram} to this one and
+     * returns {@code true} iff they share the same operand and the same
+     * operators.
+     * @param other
+     * @return 
+     */
+    private boolean __isNsdEqual(NarySpiderDiagram other) {
+        return getOperator().equals(other.getOperator()) &&
+                operands.equals(other.operands);
     }
     // </editor-fold>
 }

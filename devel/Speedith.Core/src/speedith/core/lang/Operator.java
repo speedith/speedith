@@ -149,6 +149,17 @@ public class Operator {
     public boolean equals(String name) {
         return getName().equals(name);
     }
+    
+    /**
+     * Returns {@code true} iff this operator equals to the given one (by
+     * reference).
+     * @param other the operator to compare this one against.
+     * @return {@code true} iff this operator equals to the given one (by
+     * reference).
+     */
+    public boolean equals(Operator other) {
+        return this == other;
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Helper Classes">

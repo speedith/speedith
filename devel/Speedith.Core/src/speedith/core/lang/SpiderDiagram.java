@@ -37,7 +37,7 @@ import java.util.Iterator;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public abstract class SpiderDiagram {
-    
+
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
      * Compares this spider diagram with another and returns {@code true} iff
@@ -69,13 +69,14 @@ public abstract class SpiderDiagram {
      *              <li>they have the same {@link PrimarySpiderDiagram#getHabitats()
      *                  habitats}.</li>
      *          </ul>
-     *          Note that the above <span style="font-style:italic;">collection
-     *          comparisons</span> are element-wise equality comparisons.
+     *          @exception <span style="font-weight:bold"></span>: the above <span style="font-style:italic;">collection
+     *          comparisons</span> are all element-wise equality comparisons.
      *      </li>
      *  </ul>
      * </p>
-     * @param other
-     * @return
+     * @param other the other spider diagram to compare this one againts.
+     * @return {@code true} iff the two spider diagrams are syntactically the
+     * same.
      */
     public abstract boolean equals(SpiderDiagram other);
     // </editor-fold>

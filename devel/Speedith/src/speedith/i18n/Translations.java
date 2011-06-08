@@ -36,7 +36,7 @@ import java.util.Locale;
  * <p>and use it anywhere in your code, like this:</p>
  * {@code i18n("STRING_RESOURCE_KEY"); }
  * <p>Additional strings can be added to the {@code "speedith/i18n/strings"}
- * bundle (see {@link speedith.i18n.Translations#I18N_STRINGS_BUNDLE}).</p>
+ * bundle (see {@link speedith.i18n.Translations#StringsBundle}).</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public final class Translations {

@@ -403,7 +403,7 @@ public class SetsTest {
         assertEquals(expResult, result);
     }
     /**
-     * Test of isNaturalDifferenceEmpty method, of class Sets.
+     * Test of isDifferenceEmptyN method, of class Sets.
      */
     @Test
     public void test_isNaturalDifferenceEmpty1() {
@@ -415,12 +415,12 @@ public class SetsTest {
         s2.add("a");
         s2.add("b");
         boolean expResult = false;
-        boolean result = Sets.isNaturalDifferenceEmpty(s1, s2);
+        boolean result = Sets.isDifferenceEmptyN(s1, s2);
         assertEquals(expResult, result);
     }
     
     /**
-     * Test of isNaturalDifferenceEmpty method, of class Sets.
+     * Test of isDifferenceEmptyN method, of class Sets.
      */
     @Test
     public void test_isNaturalDifferenceEmpty2() {
@@ -433,60 +433,60 @@ public class SetsTest {
         s2.add("a");
         s2.add("b");
         boolean expResult = true;
-        boolean result = Sets.isNaturalDifferenceEmpty(s1, s2);
+        boolean result = Sets.isDifferenceEmptyN(s1, s2);
         assertEquals(expResult, result);
     }
     
     /**
-     * Test of isNaturalDifferenceEmpty method, of class Sets.
+     * Test of isDifferenceEmptyN method, of class Sets.
      */
     @Test
     public void test_isNaturalDifferenceEmpty3() {
         SortedSet<String> s1 = new TreeSet<String>();
         SortedSet<String> s2 = null;
         boolean expResult = true;
-        boolean result = Sets.isNaturalDifferenceEmpty(s1, s2);
+        boolean result = Sets.isDifferenceEmptyN(s1, s2);
         assertEquals(expResult, result);
     }
     
     /**
-     * Test of isNaturalDifferenceEmpty method, of class Sets.
+     * Test of isDifferenceEmptyN method, of class Sets.
      */
     @Test
     public void test_isNaturalDifferenceEmpty4() {
         SortedSet<String> s1 = new TreeSet<String>();
         SortedSet<String> s2 = new TreeSet<String>();
         boolean expResult = true;
-        boolean result = Sets.isNaturalDifferenceEmpty(s1, s2);
+        boolean result = Sets.isDifferenceEmptyN(s1, s2);
         assertEquals(expResult, result);
     }
     
     /**
-     * Test of isNaturalDifferenceEmpty method, of class Sets.
+     * Test of isDifferenceEmptyN method, of class Sets.
      */
     @Test
     public void test_isNaturalDifferenceEmpty5() {
         SortedSet<String> s1 = null;
         SortedSet<String> s2 = new TreeSet<String>();
         boolean expResult = true;
-        boolean result = Sets.isNaturalDifferenceEmpty(s1, s2);
+        boolean result = Sets.isDifferenceEmptyN(s1, s2);
         assertEquals(expResult, result);
     }
     
     /**
-     * Test of isNaturalDifferenceEmpty method, of class Sets.
+     * Test of isDifferenceEmptyN method, of class Sets.
      */
     @Test
     public void test_isNaturalDifferenceEmpty6() {
         SortedSet<String> s1 = null;
         SortedSet<String> s2 = null;
         boolean expResult = true;
-        boolean result = Sets.isNaturalDifferenceEmpty(s1, s2);
+        boolean result = Sets.isDifferenceEmptyN(s1, s2);
         assertEquals(expResult, result);
     }
     
     /**
-     * Test of isNaturalDifferenceEmpty method, of class Sets.
+     * Test of isDifferenceEmptyN method, of class Sets.
      */
     @Test
     public void test_isNaturalDifferenceEmpty7() {
@@ -498,12 +498,12 @@ public class SetsTest {
         s2.add("a");
         s2.add("b");
         boolean expResult = true;
-        boolean result = Sets.isNaturalDifferenceEmpty(s1, s2);
+        boolean result = Sets.isDifferenceEmptyN(s1, s2);
         assertEquals(expResult, result);
     }
     
     /**
-     * Test of isNaturalDifferenceEmpty method, of class Sets.
+     * Test of isDifferenceEmptyN method, of class Sets.
      */
     @Test
     public void test_isNaturalDifferenceEmpty8() {
@@ -514,7 +514,7 @@ public class SetsTest {
         s2.add("b");
         s2.add("a");
         boolean expResult = false;
-        boolean result = Sets.isNaturalDifferenceEmpty(s1, s2);
+        boolean result = Sets.isDifferenceEmptyN(s1, s2);
         assertEquals(expResult, result);
     }
     // </editor-fold>
