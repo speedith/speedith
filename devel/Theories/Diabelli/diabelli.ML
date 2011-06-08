@@ -116,7 +116,7 @@ sig
 (*==============================================================================
   = Diabelli Reasoning Tactics
   ============================================================================*)
-  val sd_tac: int -> tactic
+  val sd_tac: Proof.context -> int -> tactic
 end;
 
 
@@ -464,14 +464,14 @@ fun random_tests str =
   = sd_tac
   ============================================================================*)
 
-fun sd_tac i st = SUBGOAL (fn (subgoal, j) =>
+fun sd_tac ctxt i st = SUBGOAL (fn (subgoal, j) =>
    let
        val thy = Thm.theory_of_thm st;
        val speedithTerm = speedith_batch_apply subgoal (SOME thy) []
        val _ = tracing ("Parsed Speedith's term: " ^ (PolyML.makestring speedithTerm))
        val inter1 = Logic.mk_implies (@{term "Trueprop :: bool => prop"} $ speedithTerm, subgoal)
        val _ = tracing ("Intermediate goal: " ^ (PolyML.makestring inter1))
-       val inter1Thm = (Goal.prove (ProofContext.init_global thy) [] [] inter1 (K (atac 1)))
+       val inter1Thm = (Goal.prove ctxt [] [] inter1 (K (atac 1)))
        val _ = tracing ("Intermediate theorem: " ^ (PolyML.makestring inter1Thm))
    in
        (* TODO: Prove that Speedith's returned term implies the current subgoal.

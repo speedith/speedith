@@ -164,7 +164,7 @@ ML {* show_all_types := false *}
 use "diabelli.ML"
 
 method_setup sd_tac = {*
-Scan.succeed (K (Method.SIMPLE_METHOD' Diabelli.sd_tac))
+Scan.succeed (fn ctxt => (Method.SIMPLE_METHOD' (Diabelli.sd_tac ctxt)))
 *} "A no-op tactic for testing the translation from SNF to spider diagrams and communication with Speedith."
 
 lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
