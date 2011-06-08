@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: SortedSetsTest.java
+ * File name: SetsTest.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -41,9 +41,9 @@ import static org.junit.Assert.*;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SortedSetsTest {
+public class SetsTest {
 
-    public SortedSetsTest() {
+    public SetsTest() {
     }
 
     @BeforeClass
@@ -282,6 +282,239 @@ public class SortedSetsTest {
         s2.add("b");
         int expResult = 1;
         int result = Sets.compareNaturally(s1, s2);
+        assertEquals(expResult, result);
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="isDifferenceEmpty Tests">
+    /**
+     * Test of isDifferenceEmpty method, of class Sets.
+     */
+    @Test
+    public void test_isDifferenceEmpty1() {
+        SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
+        s1.add("a");
+        s1.add("b");
+        s1.add("d");
+        SortedSet<String> s2 = new TreeSet<String>(MyStringComparator.Instance);
+        s2.add("a");
+        s2.add("b");
+        boolean expResult = false;
+        boolean result = Sets.isDifferenceEmpty(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of isDifferenceEmpty method, of class Sets.
+     */
+    @Test
+    public void test_isDifferenceEmpty2() {
+        SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
+        s1.add("a");
+        s1.add("b");
+        s1.add("d");
+        SortedSet<String> s2 = new TreeSet<String>(MyStringComparator.Instance);
+        s2.add("d");
+        s2.add("a");
+        s2.add("b");
+        boolean expResult = true;
+        boolean result = Sets.isDifferenceEmpty(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of isDifferenceEmpty method, of class Sets.
+     */
+    @Test
+    public void test_isDifferenceEmpty3() {
+        SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
+        SortedSet<String> s2 = null;
+        boolean expResult = true;
+        boolean result = Sets.isDifferenceEmpty(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of isDifferenceEmpty method, of class Sets.
+     */
+    @Test
+    public void test_isDifferenceEmpty4() {
+        SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
+        SortedSet<String> s2 = new TreeSet<String>(MyStringComparator.Instance);
+        boolean expResult = true;
+        boolean result = Sets.isDifferenceEmpty(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of isDifferenceEmpty method, of class Sets.
+     */
+    @Test
+    public void test_isDifferenceEmpty5() {
+        SortedSet<String> s1 = null;
+        SortedSet<String> s2 = new TreeSet<String>(MyStringComparator.Instance);
+        boolean expResult = true;
+        boolean result = Sets.isDifferenceEmpty(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of isDifferenceEmpty method, of class Sets.
+     */
+    @Test
+    public void test_isDifferenceEmpty6() {
+        SortedSet<String> s1 = null;
+        SortedSet<String> s2 = null;
+        boolean expResult = true;
+        boolean result = Sets.isDifferenceEmpty(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of isDifferenceEmpty method, of class Sets.
+     */
+    @Test
+    public void test_isDifferenceEmpty7() {
+        SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
+        s1.add("a");
+        s1.add("b");
+        SortedSet<String> s2 = new TreeSet<String>(MyStringComparator.Instance);
+        s2.add("d");
+        s2.add("a");
+        s2.add("b");
+        boolean expResult = true;
+        boolean result = Sets.isDifferenceEmpty(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of isDifferenceEmpty method, of class Sets.
+     */
+    @Test
+    public void test_isDifferenceEmpty8() {
+        SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
+        s1.add("c");
+        s1.add("b");
+        SortedSet<String> s2 = new TreeSet<String>(MyStringComparator.Instance);
+        s2.add("b");
+        s2.add("a");
+        boolean expResult = false;
+        boolean result = Sets.isDifferenceEmpty(s1, s2);
+        assertEquals(expResult, result);
+    }
+    /**
+     * Test of isNaturalDifferenceEmpty method, of class Sets.
+     */
+    @Test
+    public void test_isNaturalDifferenceEmpty1() {
+        SortedSet<String> s1 = new TreeSet<String>();
+        s1.add("a");
+        s1.add("b");
+        s1.add("d");
+        SortedSet<String> s2 = new TreeSet<String>();
+        s2.add("a");
+        s2.add("b");
+        boolean expResult = false;
+        boolean result = Sets.isNaturalDifferenceEmpty(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of isNaturalDifferenceEmpty method, of class Sets.
+     */
+    @Test
+    public void test_isNaturalDifferenceEmpty2() {
+        SortedSet<String> s1 = new TreeSet<String>();
+        s1.add("a");
+        s1.add("b");
+        s1.add("d");
+        SortedSet<String> s2 = new TreeSet<String>();
+        s2.add("d");
+        s2.add("a");
+        s2.add("b");
+        boolean expResult = true;
+        boolean result = Sets.isNaturalDifferenceEmpty(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of isNaturalDifferenceEmpty method, of class Sets.
+     */
+    @Test
+    public void test_isNaturalDifferenceEmpty3() {
+        SortedSet<String> s1 = new TreeSet<String>();
+        SortedSet<String> s2 = null;
+        boolean expResult = true;
+        boolean result = Sets.isNaturalDifferenceEmpty(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of isNaturalDifferenceEmpty method, of class Sets.
+     */
+    @Test
+    public void test_isNaturalDifferenceEmpty4() {
+        SortedSet<String> s1 = new TreeSet<String>();
+        SortedSet<String> s2 = new TreeSet<String>();
+        boolean expResult = true;
+        boolean result = Sets.isNaturalDifferenceEmpty(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of isNaturalDifferenceEmpty method, of class Sets.
+     */
+    @Test
+    public void test_isNaturalDifferenceEmpty5() {
+        SortedSet<String> s1 = null;
+        SortedSet<String> s2 = new TreeSet<String>();
+        boolean expResult = true;
+        boolean result = Sets.isNaturalDifferenceEmpty(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of isNaturalDifferenceEmpty method, of class Sets.
+     */
+    @Test
+    public void test_isNaturalDifferenceEmpty6() {
+        SortedSet<String> s1 = null;
+        SortedSet<String> s2 = null;
+        boolean expResult = true;
+        boolean result = Sets.isNaturalDifferenceEmpty(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of isNaturalDifferenceEmpty method, of class Sets.
+     */
+    @Test
+    public void test_isNaturalDifferenceEmpty7() {
+        SortedSet<String> s1 = new TreeSet<String>();
+        s1.add("a");
+        s1.add("b");
+        SortedSet<String> s2 = new TreeSet<String>();
+        s2.add("d");
+        s2.add("a");
+        s2.add("b");
+        boolean expResult = true;
+        boolean result = Sets.isNaturalDifferenceEmpty(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of isNaturalDifferenceEmpty method, of class Sets.
+     */
+    @Test
+    public void test_isNaturalDifferenceEmpty8() {
+        SortedSet<String> s1 = new TreeSet<String>();
+        s1.add("c");
+        s1.add("b");
+        SortedSet<String> s2 = new TreeSet<String>();
+        s2.add("b");
+        s2.add("a");
+        boolean expResult = false;
+        boolean result = Sets.isNaturalDifferenceEmpty(s1, s2);
         assertEquals(expResult, result);
     }
     // </editor-fold>

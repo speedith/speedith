@@ -77,11 +77,10 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      */
     public static final String SDTextSpidersAttribute = "spiders";
     // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
-    private SortedSet<String> spiders;
+    private TreeSet<String> spiders;
     private TreeMap<String, Region> habitats;
-    private SortedSet<Zone> shadedZones;
+    private TreeSet<Zone> shadedZones;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -97,6 +96,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     /**
      * Creates an instance of a primary spider diagram with the given spiders,
      * their habitats and shaded zones.
+     * <p>This method makes copies of the given parameters.</p>
      * @param spiders a set of spiders (their names) that appear in this
      * spider diagram.
      * @param habitats a key-value map of spiders and their corresponding
@@ -104,10 +104,40 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * @param shadedZones a set of shaded {@link Zone zones}.
      */
     public PrimarySpiderDiagram(Collection<String> spiders, Map<String, Region> habitats, Collection<Zone> shadedZones) {
-        // TODO: Check that the 'habitats' don't talk about spiders that are not in 'spiders' list.
-        this.spiders = spiders == null ? null : new TreeSet<String>(spiders);
-        this.habitats = habitats == null ? null : new TreeMap<String, Region>(habitats);
-        this.shadedZones = shadedZones == null ? null : new TreeSet<Zone>(shadedZones);
+        this(spiders == null ? null : new TreeSet<String>(spiders),
+                habitats == null ? null : new TreeMap<String, Region>(habitats),
+                shadedZones == null ? null : new TreeSet<Zone>(shadedZones));
+    }
+
+    /**
+     * Initialises a new primary spider diagram with the given set of spiders,
+     * habitats and shaded zones.
+     * <p>Note that this method does <span style="font-weight:bold">not</span>
+     * make copies of the input parameters.</p>
+     * @param spiders a set of spiders (their names) that appear in this
+     * spider diagram.
+     * @param habitats a key-value map of spiders and their corresponding
+     * {@link Region habitats}.
+     * @param shadedZones a set of shaded {@link Zone zones}. 
+     */
+    private PrimarySpiderDiagram(TreeSet<String> spiders, TreeMap<String, Region> habitats, TreeSet<Zone> shadedZones) {
+        // TODO: Check for correctness:
+        //          - that habitats don't talk about spiders not present in
+        //            'spiders'
+        //          - other stuff?
+        // If there aren't any spider, then there should not be any habitats too.
+        if (spiders == null || spiders.size() < 1) {
+            if (habitats != null && habitats.size() > 0) {
+                throw new IllegalArgumentException(i18n("ERR_SD_HABITATS_WITHOUT_SPIDERS"));
+            }
+        } else if (habitats != null) {
+            // But if there are some spiders, then we have to check that the
+            // habitats don't talk about non-existent spiders.
+            // TODO: Implement
+        }
+        this.spiders = spiders;
+        this.habitats = habitats;
+        this.shadedZones = shadedZones;
     }
     // </editor-fold>
 
@@ -115,6 +145,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     /**
      * Returns an unmodifiable key-value map of spiders with their corresponding
      * {@link Region habitats}.
+     * <p>Note: this method may return {@code null}.</p>
      * @return an unmodifiable key-value map of spiders with their corresponding
      * {@link Region habitats}.
      */
@@ -133,7 +164,9 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     }
 
     /**
-     * Returns a set of shaded {@link Zone zones} in this spider diagram.
+     * Returns an unmodifiable set of shaded {@link Zone zones} in this spider
+     * diagram.
+     * <p>Note: this method may return {@code null}.</p>
      * @return a set of shaded {@link Zone zones} in this spider diagram..
      */
     public SortedSet<Zone> getShadedZones() {
@@ -151,8 +184,9 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     }
 
     /**
-     * Returns a set of spiders (their names) that appear in this spider
-     * diagram.
+     * Returns an unmodifiable set of spiders (their names) that appear in this
+     * spider diagram.
+     * <p>Note: this method may return {@code null}.</p>
      * @return a set of spiders (their names) that appear in this spider
      * diagram.
      */
@@ -168,6 +202,11 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      */
     public int getSpidersCount() {
         return spiders == null ? 0 : spiders.size();
+    }
+
+    @Override
+    public boolean equals(SpiderDiagram other) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     // </editor-fold>
 

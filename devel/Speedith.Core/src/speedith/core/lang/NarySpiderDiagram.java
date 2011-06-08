@@ -159,6 +159,11 @@ public class NarySpiderDiagram extends SpiderDiagram {
     public SpiderDiagram getOperand(int index) {
         return operands.get(index);
     }
+
+    @Override
+    public boolean equals(SpiderDiagram other) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">

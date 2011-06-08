@@ -55,6 +55,11 @@ public class NullSpiderDiagram extends SpiderDiagram {
     public static NullSpiderDiagram getInstance() {
         return SingletonHolder.Instance;
     }
+
+    @Override
+    public boolean equals(SpiderDiagram other) {
+        return this == other;
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="The Singleton Holder Class">

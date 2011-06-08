@@ -41,7 +41,7 @@ import static speedith.core.i18n.Translations.i18n;
  */
 public final class Sets {
 
-    // <editor-fold defaultstate="collapsed" desc="Public Static Methods">
+    // <editor-fold defaultstate="collapsed" desc="Comparison">
     /**
      * Compares the elements in the two sorted sets lexicographically (pair by
      * pair in the order they appear in the set via the sets' iterators). It
@@ -86,36 +86,16 @@ public final class Sets {
      *   <li> {@code 1} otherwise.</li>
      * </ul>
      */
-    public static <E> int compare(SortedSet<E> s1, SortedSet<E> s2) {
-        if (s1 == s2) {
-            // The sets are the same.
-            return 0;
-        } else if (s1 == null || s1.isEmpty()) {
-            // If the first set is empty, then just check whether the second one
-            // is too, otherwise the second one will be invariably greater then.
-            return (s2 == null || s2.isEmpty()) ? 0 : -1;
-        } else if (s2 == null || s2.isEmpty()) {
-            // If the second set is empty then it should compare lower to the
-            // first set (which we know is not empty)
-            return 1;
-        } else {
+    public static <E> int compare(SortedSet<E> s1, SortedSet<? extends E> s2) {
+        int retVal = nullOrEmptyCompare(s1, s2);
+        if (retVal == 2) {
             // Neither of the sets is either null or empty. Compare them.
-            Comparator<? super E> comparator = s1.comparator();
-            if (s2.comparator() != comparator) {
-                // Both of the sets provide comparators, but the two comparators
-                // are not the same. This is an illegal situation.
-                throw new IllegalArgumentException(i18n("ERR_SORTED_SETS_COMPARATORS_DIFFER"));
-            } else if (comparator == null) {
-                throw new IllegalArgumentException(i18n("ERR_SORTED_SETS_NO_COMPARATOR"));
-            }
-            // Use natural ordering
-            Iterator<E> i1 = s1.iterator(),
-                    i2 = s2.iterator();
+            Comparator<? super E> comparator = getElementComparator(s1, s2);
+            Iterator<E> i1 = s1.iterator();
+            Iterator<? extends E> i2 = s2.iterator();
             // Start the comparison
             while (i1.hasNext() && i2.hasNext()) {
-                E el1 = i1.next();
-                E el2 = i2.next();
-                int retVal = comparator.compare(el1, el2);
+                retVal = comparator.compare(i1.next(), i2.next());
                 if (retVal != 0) {
                     return Integer.signum(retVal);
                 }
@@ -123,6 +103,8 @@ public final class Sets {
             // Okay, if we reached this point, then the two sets share the same
             // head and at least one of them has ended.
             return i1.hasNext() ? 1 : (i2.hasNext() ? -1 : 0);
+        } else {
+            return retVal;
         }
     }
 
@@ -168,49 +150,142 @@ public final class Sets {
      *   <li> {@code 1} otherwise.</li>
      * </ul>
      */
-    public static <E extends Comparable<E>> int compareNaturally(SortedSet<E> s1, SortedSet<E> s2) {
-        if (s1 == s2) {
-            // The sets are the same.
-            return 0;
-        } else if (s1 == null || s1.isEmpty()) {
-            // If the first set is empty, then just check whether the second one
-            // is too, otherwise the second one will be invariably greater then.
-            return (s2 == null || s2.isEmpty()) ? 0 : -1;
-        } else if (s2 == null || s2.isEmpty()) {
-            // If the second set is empty then it should compare lower to the
-            // first set (which we know is not empty)
-            return 1;
-        } else {
+    public static <E extends Comparable<? super E>> int compareNaturally(SortedSet<E> s1, SortedSet<? extends E> s2) {
+        int retVal = nullOrEmptyCompare(s1, s2);
+        if (retVal == 2) {
             // Use natural ordering
-            Iterator<E> i1 = s1.iterator(),
-                    i2 = s2.iterator();
+            Iterator<E> i1 = s1.iterator();
+            Iterator<? extends E> i2 = s2.iterator();
             // Start the comparison
             while (i1.hasNext() && i2.hasNext()) {
-                E el1 = i1.next();
-                E el2 = i2.next();
-                // Compare the current two elements. If exactly one of them is
-                // null, then use the other to compare them. If both are null,
-                // consider them the same.
-                if (el1 == null) {
-                    if (el2 != null) {
-                        int retVal = el2.compareTo(el1);
-                        if (retVal != 0) {
-                            return Integer.signum(-retVal);
-                        }
-                    }
-                } else if (el2 != null) {
-                    int retVal = el1.compareTo(el2);
-                    if (retVal != 0) {
-                        return Integer.signum(retVal);
-                    }
-                }
+                retVal = compare(i1.next(), i2.next());
+                if (retVal != 0)
+                    return retVal;
             }
             // Okay, if we reached this point, then the two sets share the same
             // head and at least one of them has ended.
             return i1.hasNext() ? 1 : (i2.hasNext() ? -1 : 0);
+        } else {
+            return retVal;
         }
     }
 
+    /**
+     * TODO: Document
+     * @param <E>
+     * @param s1
+     * @param s2
+     * @return
+     */
+    public static <E extends Comparable<? super E>> boolean isNaturalDifferenceEmpty(SortedSet<E> s1, SortedSet<? extends E> s2) {
+        // First check if at least one of them is null or empty.
+        int retVal = nullOrEmptyCompare(s1, s2);
+        if (retVal <= 0) {
+            // The first set is empty. Thus the difference 's1 \ s2' will be
+            // empty too.
+            return true;
+        } else if (retVal == 1) {
+            // The first set is not empty, but the second set is. This means
+            // that the difference will not be empty.
+            return false;
+        } else {
+            // None of the sets is null or empty.
+            // The difference will be empty if for each element in s1 we can
+            // find one in s2.
+            // Since the elements are ordered, we can simply iterate over them.
+            Iterator<E> it1 = s1.iterator();
+            Iterator<? extends E> it2 = s2.iterator();
+            while (it1.hasNext()) {
+                E curEl1 = it1.next();
+                // Now find (in the second set) the same element. We know that
+                // it will be some larger element in the second set.
+                while (true) {
+                    if (it2.hasNext()) {
+                        retVal = compare(curEl1, it2.next());
+                        if (retVal == 0) {
+                            // We have found the same element in the second set.
+                            // Continue with the next element in the first set.
+                            break;
+                        } else if (retVal < 0) {
+                            // The element in the first set is smaller than the
+                            // current element in the second set. There is no
+                            // way we will be able to find an element in the
+                            // second set that would equal the current one from
+                            // the first set (that's because all successive
+                            // elements in the second set will just get larger).
+                            return false;
+                        }
+                        // We haven't yet found the equal element in the second
+                        // set. Continue searching.
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+    /**
+     * TODO: Document
+     * 
+     * @param <E>
+     * @param s1
+     * @param s2
+     * @return
+     */
+    public static <E> boolean isDifferenceEmpty(SortedSet<E> s1, SortedSet<? extends E> s2) {
+        // First check if at least one of them is null or empty.
+        int retVal = nullOrEmptyCompare(s1, s2);
+        if (retVal <= 0) {
+            // The first set is empty. Thus the difference 's1 \ s2' will be
+            // empty too.
+            return true;
+        } else if (retVal == 1) {
+            // The first set is not empty, but the second set is. This means
+            // that the difference will not be empty.
+            return false;
+        } else {
+            Comparator<? super E> comparator = getElementComparator(s1, s2);
+            // None of the sets is null or empty.
+            // The difference will be empty if for each element in s1 we can
+            // find one in s2.
+            // Since the elements are ordered, we can simply iterate over them.
+            Iterator<E> it1 = s1.iterator();
+            Iterator<? extends E> it2 = s2.iterator();
+            while (it1.hasNext()) {
+                E curEl1 = it1.next();
+                // Now find (in the second set) the same element. We know that
+                // it will be some larger element in the second set.
+                while (true) {
+                    if (it2.hasNext()) {
+                        retVal = comparator.compare(curEl1, it2.next());
+                        if (retVal == 0) {
+                            // We have found the same element in the second set.
+                            // Continue with the next element in the first set.
+                            break;
+                        } else if (retVal < 0) {
+                            // The element in the first set is smaller than the
+                            // current element in the second set. There is no
+                            // way we will be able to find an element in the
+                            // second set that would equal the current one from
+                            // the first set (that's because all successive
+                            // elements in the second set will just get larger).
+                            return false;
+                        }
+                        // We haven't yet found the equal element in the second
+                        // set. Continue searching.
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Printing">
     /**
      * Prints the contents of the given list to the writer output.
      * <p>Note: this method calls the {@link Object#toString()} method on
@@ -239,7 +314,10 @@ public final class Sets {
                 output.append(el == null ? "" : el.toString());
                 while (itr.hasNext()) {
                     el = itr.next();
-                    output.append(delimiter).append(el == null ? "" : el.toString());
+                    output.append(delimiter);
+                    if (el != null) {
+                        output.append(el.toString());
+                    }
                 }
             }
         }
@@ -264,6 +342,88 @@ public final class Sets {
 
     // <editor-fold defaultstate="collapsed" desc="Disabled Constructor">
     private Sets() {
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Private Helper Methods">
+    /**
+     * This method works only if at least one of the given two sets is either
+     * null or empty. It returns:
+     *  <ul>
+     *      <li>{@code -1} if the first set is null or empty but the second one
+     *          isn't,</li>
+     *      <li>{@code 0} if both sets are null or empty,</li>
+     *      <li>{@code 1} if the second set is null or empty but the first one
+     *          isn't, and</li>
+     *      <li>{@code 2} if both sets are neither null nor empty.</li>
+     *  </ul>
+     * @param <E>
+     * @param s1
+     * @param s2
+     * @return  
+     */
+    private static <E> int nullOrEmptyCompare(SortedSet<E> s1, SortedSet<? extends E> s2) {
+        if (s1 == s2) {
+            // The sets are the same.
+            return 0;
+        } else if (s1 == null || s1.isEmpty()) {
+            // If the first set is empty, then just check whether the second one
+            // is too, otherwise the second one will be invariably greater then.
+            return (s2 == null || s2.isEmpty()) ? 0 : -1;
+        } else if (s2 == null || s2.isEmpty()) {
+            // If the first set is not empty, but the second is then the latter
+            // should compare lower to the first set
+            return 1;
+        } else {
+            // Both sets are not empty. We have to compare them element-wise.
+            // Return a code that indicates so.
+            return 2;
+        }
+    }
+
+    /**
+     * Returns the element comparator for the two sets. This method makes sure
+     * that the comparators of the two sets are the same and that they are not
+     * null (otherwise it throws an exception).
+     */
+    private static <E> Comparator<? super E> getElementComparator(SortedSet<E> s1, SortedSet<? extends E> s2) throws IllegalArgumentException {
+        Comparator<? super E> comparator = s1.comparator();
+        if (s2.comparator() != comparator) {
+            // Both of the sets provide comparators, but the two comparators
+            // are not the same. This is an illegal situation.
+            throw new IllegalArgumentException(i18n("ERR_SORTED_SETS_COMPARATORS_DIFFER"));
+        } else if (comparator == null) {
+            throw new IllegalArgumentException(i18n("ERR_SORTED_SETS_NO_COMPARATOR"));
+        }
+        return comparator;
+    }
+
+    /**
+     * This method returns one of the following:
+     *  <ul>
+     *      <li>{@code 0} if both parameters are {@code null} or if they
+     *          compare equal,</li>
+     *      <li>{@code 1} if el1 is larger than el2, and</li>
+     *      <li>{@code -1} if el1 is smaller than el2.</li>
+     *  </ul>
+     * @param <E>
+     * @param el1
+     * @param el2
+     * @return 
+     */
+    private static <E extends Comparable<? super E>> int compare(E el1, E el2) {
+        // Compare the current two elements. If exactly one of them is
+        // null, then use the other to compare them. If both are null,
+        // consider them the same.
+        if (el1 == null) {
+            if (el2 == null) {
+                return 0;
+            } else {
+                return Integer.signum(-el2.compareTo(el1));
+            }
+        } else {
+            return Integer.signum(el1.compareTo(el2));
+        }
     }
     // </editor-fold>
 }
