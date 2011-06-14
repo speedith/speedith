@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
-import speedith.core.lang.NarySpiderDiagram;
+import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.PrimarySpiderDiagram;
 import static speedith.core.i18n.Translations.i18n;
@@ -225,7 +225,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
             printTrue(output);
         }
 
-        private void exportInfixOperator(NarySpiderDiagram nsd, Writer output, PrintCallback operatorSymbolPrinter) throws IOException, RuntimeException {
+        private void exportInfixOperator(CompoundSpiderDiagram nsd, Writer output, PrintCallback operatorSymbolPrinter) throws IOException, RuntimeException {
             // We have to print an infix operator application.
             if (nsd.getOperandCount() < 2) {
                 throw new RuntimeException(i18n("ERR_ISAEXPORT_ARG_COUNT_INVALID", nsd.getOperandCount()));
@@ -238,7 +238,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
             }
         }
 
-        private void exportNaryDiagram(NarySpiderDiagram nsd, Writer output) throws IOException {
+        private void exportCompoundDiagram(CompoundSpiderDiagram nsd, Writer output) throws IOException {
             final Operator op = nsd.getOperator();
             if (op.equals(OP_NAME_IMP)) {
                 exportInfixOperator(nsd, output, new ImpOperatorPrinter());
@@ -311,8 +311,8 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         private void exportDiagram(SpiderDiagram sd, Writer output) throws IOException {
             if (sd instanceof NullSpiderDiagram) {
                 exportNullDiagram(output);
-            } else if (sd instanceof NarySpiderDiagram) {
-                exportNaryDiagram((NarySpiderDiagram) sd, output);
+            } else if (sd instanceof CompoundSpiderDiagram) {
+                exportCompoundDiagram((CompoundSpiderDiagram) sd, output);
             } else if (sd instanceof PrimarySpiderDiagram) {
                 exportPrimaryDiagram((PrimarySpiderDiagram) sd, output);
             } else {

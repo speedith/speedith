@@ -49,13 +49,13 @@ import org.antlr.runtime.tree.CommonTree;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.NarySpiderDiagram;
+import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.Zone;
 import speedith.core.lang.Region;
 import speedith.core.lang.reader.SpiderDiagramsParser.spiderDiagram_return;
 import static speedith.core.i18n.Translations.i18n;
 import static speedith.core.lang.PrimarySpiderDiagram.*;
-import static speedith.core.lang.NarySpiderDiagram.*;
+import static speedith.core.lang.CompoundSpiderDiagram.*;
 
 /**
  * This class provides static methods for reading spider diagrams (in a textual
@@ -331,11 +331,11 @@ public final class SpiderDiagramsReader {
         public SpiderDiagram fromASTNode(CommonTree treeNode) throws ReadingException {
             switch (treeNode.token.getType()) {
                 case SpiderDiagramsParser.SD_BINARY:
-                    return NarySDTranslator.BinaryTranslator.fromASTNode(treeNode);
+                    return CompoundSDTranslator.BinaryTranslator.fromASTNode(treeNode);
                 case SpiderDiagramsParser.SD_UNARY:
-                    return NarySDTranslator.UnaryTranslator.fromASTNode(treeNode);
-                case SpiderDiagramsParser.SD_NARY:
-                    return NarySDTranslator.NaryTranslator.fromASTNode(treeNode);
+                    return CompoundSDTranslator.UnaryTranslator.fromASTNode(treeNode);
+                case SpiderDiagramsParser.SD_COMPOUND:
+                    return CompoundSDTranslator.CompoundTranslator.fromASTNode(treeNode);
                 case SpiderDiagramsParser.SD_PRIMARY:
                     return PrimarySDTranslator.Instance.fromASTNode(treeNode);
                 case SpiderDiagramsParser.SD_NULL:
@@ -346,25 +346,25 @@ public final class SpiderDiagramsReader {
         }
     }
 
-    private static class NarySDTranslator extends GeneralSDTranslator<NarySpiderDiagram> {
+    private static class CompoundSDTranslator extends GeneralSDTranslator<CompoundSpiderDiagram> {
 
-        public static final NarySDTranslator NaryTranslator = new NarySDTranslator(SpiderDiagramsParser.SD_NARY);
-        public static final NarySDTranslator BinaryTranslator = new NarySDTranslator(SpiderDiagramsParser.SD_BINARY);
-        public static final NarySDTranslator UnaryTranslator = new NarySDTranslator(SpiderDiagramsParser.SD_UNARY);
+        public static final CompoundSDTranslator CompoundTranslator = new CompoundSDTranslator(SpiderDiagramsParser.SD_COMPOUND);
+        public static final CompoundSDTranslator BinaryTranslator = new CompoundSDTranslator(SpiderDiagramsParser.SD_BINARY);
+        public static final CompoundSDTranslator UnaryTranslator = new CompoundSDTranslator(SpiderDiagramsParser.SD_UNARY);
 
-        public NarySDTranslator(int headTokenType) {
+        public CompoundSDTranslator(int headTokenType) {
             super(headTokenType);
             addMandatoryAttribute(SDTextOperatorAttribute, StringTranslator.Instance);
             addDefaultAttribute(SDTranslator.Instance);
         }
 
         @Override
-        NarySpiderDiagram createSD(Map<String, Entry<Object, CommonTree>> attributes, CommonTree mainNode) throws ReadingException {
+        CompoundSpiderDiagram createSD(Map<String, Entry<Object, CommonTree>> attributes, CommonTree mainNode) throws ReadingException {
             String operator = (String) attributes.remove(SDTextOperatorAttribute).getKey();
             ArrayList<SpiderDiagram> operands = new ArrayList<SpiderDiagram>();
             int i = 1;
             Entry<Object, CommonTree> curSD, lastSD = null;
-            while ((curSD = attributes.remove(NarySpiderDiagram.SDTextArgAttribute + i++)) != null && curSD.getKey() instanceof SpiderDiagram) {
+            while ((curSD = attributes.remove(CompoundSpiderDiagram.SDTextArgAttribute + i++)) != null && curSD.getKey() instanceof SpiderDiagram) {
                 operands.add((SpiderDiagram) curSD.getKey());
                 lastSD = curSD;
             }
@@ -375,7 +375,7 @@ public final class SpiderDiagramsReader {
                 throw new ReadingException(i18n("ERR_TRANSLATE_UNKNOWN_ATTRIBUTES", attributes.keySet()), (CommonTree) attributes.values().iterator().next().getValue().getChild(0));
             }
             try {
-                return new NarySpiderDiagram(operator, operands);
+                return new CompoundSpiderDiagram(operator, operands);
             } catch (Exception e) {
                 throw new ReadingException(e.getLocalizedMessage(), lastSD == null ? mainNode : (CommonTree) lastSD.getValue().getChild(0));
             }

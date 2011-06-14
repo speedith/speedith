@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: NarySpiderDiagram.java
+ * File name: CompoundSpiderDiagram.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -39,7 +39,7 @@ import static speedith.core.i18n.Translations.i18n;
  * disjunction '∨', implication '⇒', equivalence '⇔', and negation '¬'.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class NarySpiderDiagram extends SpiderDiagram {
+public class CompoundSpiderDiagram extends SpiderDiagram {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     /**
@@ -80,14 +80,14 @@ public class NarySpiderDiagram extends SpiderDiagram {
     
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
-     * The operator which to apply on the {@link NarySpiderDiagram#getOperands()
+     * The operator which to apply on the {@link CompoundSpiderDiagram#getOperands()
      * operands}.
      * <p>See {@link Operator#knownOperatorNames()} for a list of all known
      * operators.</p>
      */
     private Operator operator;
     /**
-     * A list of operands taken by the {@link NarySpiderDiagram#getOperator()
+     * A list of operands taken by the {@link CompoundSpiderDiagram#getOperator()
      * operator}.
      */
     private ArrayList<SpiderDiagram> operands;
@@ -96,13 +96,13 @@ public class NarySpiderDiagram extends SpiderDiagram {
     // <editor-fold defaultstate="collapsed" desc="Constructors">
     /**
      * Initialises a new n-ary spider diagram.
-     * @param operator the {@link NarySpiderDiagram#getOperator() n-ary
-     * operator} that operates over {@link NarySpiderDiagram#getOperands()
+     * @param operator the {@link CompoundSpiderDiagram#getOperator() n-ary
+     * operator} that operates over {@link CompoundSpiderDiagram#getOperands()
      * operands} of this n-ary spider diagram.
-     * @param operands the {@link NarySpiderDiagram#getOperands() operands}
-     * to the {@link NarySpiderDiagram#getOperator() operator}.
+     * @param operands the {@link CompoundSpiderDiagram#getOperands() operands}
+     * to the {@link CompoundSpiderDiagram#getOperator() operator}.
      */
-    public NarySpiderDiagram(String operator, Collection<SpiderDiagram> operands) {
+    public CompoundSpiderDiagram(String operator, Collection<SpiderDiagram> operands) {
         this.operator = Operator.fromString(operator);
         if (this.operator == null) {
             throw new IllegalArgumentException(i18n("ERR_OPERATOR_NOT_KNOWN", operator));
@@ -125,13 +125,13 @@ public class NarySpiderDiagram extends SpiderDiagram {
      * Initialises the nary-spider diagram with the given operator and operands.
      * <p><span style="font-weight:bold">Note</span>: this constructor does not
      * make a copy of the given array list. Take heed on how you use it.</p>
-     * @param operator the {@link NarySpiderDiagram#getOperator() n-ary
-     * operator} that operates over {@link NarySpiderDiagram#getOperands()
+     * @param operator the {@link CompoundSpiderDiagram#getOperator() n-ary
+     * operator} that operates over {@link CompoundSpiderDiagram#getOperands()
      * operands} of this n-ary spider diagram.
-     * @param operands the {@link NarySpiderDiagram#getOperands() operands}
-     * to the {@link NarySpiderDiagram#getOperator() operator}.
+     * @param operands the {@link CompoundSpiderDiagram#getOperands() operands}
+     * to the {@link CompoundSpiderDiagram#getOperator() operator}.
      */
-    private NarySpiderDiagram(Operator operator, ArrayList<SpiderDiagram> operands) {
+    private CompoundSpiderDiagram(Operator operator, ArrayList<SpiderDiagram> operands) {
         if (operator == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "operator"));
         }
@@ -148,9 +148,9 @@ public class NarySpiderDiagram extends SpiderDiagram {
 
     // <editor-fold defaultstate="collapsed" desc="Public Properties">
     /**
-     * Returns the n-ary operator that binds the {@link NarySpiderDiagram#getOperands() operands}
+     * Returns the n-ary operator that binds the {@link CompoundSpiderDiagram#getOperands() operands}
      * in this n-ary spider diagram.
-     * @return the n-ary operator that binds the {@link NarySpiderDiagram#getOperands() operands}
+     * @return the n-ary operator that binds the {@link CompoundSpiderDiagram#getOperands() operands}
      * in this n-ary spider diagram.
      */
     public Operator getOperator() {
@@ -158,9 +158,9 @@ public class NarySpiderDiagram extends SpiderDiagram {
     }
 
     /**
-     * Returns the operands of the {@link NarySpiderDiagram#getOperator()
+     * Returns the operands of the {@link CompoundSpiderDiagram#getOperator()
      * operator} in this n-ary spider diagram.
-     * @return the operands of the {@link NarySpiderDiagram#getOperator()
+     * @return the operands of the {@link CompoundSpiderDiagram#getOperator()
      * operator} in this n-ary spider diagram.
      */
     public List<SpiderDiagram> getOperands() {
@@ -190,8 +190,8 @@ public class NarySpiderDiagram extends SpiderDiagram {
     public boolean equals(SpiderDiagram other) {
         if (other == this)
             return true;
-        else if (other instanceof NarySpiderDiagram) {
-            return __isNsdEqual((NarySpiderDiagram)other);
+        else if (other instanceof CompoundSpiderDiagram) {
+            return __isNsdEqual((CompoundSpiderDiagram)other);
         } else
             return false;
     }
@@ -200,8 +200,8 @@ public class NarySpiderDiagram extends SpiderDiagram {
     public boolean equals(Object other) {
         if (other == this) {
             return true;
-        } else if (other instanceof NarySpiderDiagram) {
-            return __isNsdEqual((NarySpiderDiagram)other);
+        } else if (other instanceof CompoundSpiderDiagram) {
+            return __isNsdEqual((CompoundSpiderDiagram)other);
         } else
             return false;
     }
@@ -264,13 +264,13 @@ public class NarySpiderDiagram extends SpiderDiagram {
     
     // <editor-fold defaultstate="collapsed" desc="Private Methods">
     /**
-     * Compares the other non-{@ null} {@link NarySpiderDiagram} to this one and
+     * Compares the other non-{@ null} {@link CompoundSpiderDiagram} to this one and
      * returns {@code true} iff they share the same operand and the same
      * operators.
      * @param other
      * @return 
      */
-    private boolean __isNsdEqual(NarySpiderDiagram other) {
+    private boolean __isNsdEqual(CompoundSpiderDiagram other) {
         return getOperator().equals(other.getOperator()) &&
                 operands.equals(other.operands);
     }

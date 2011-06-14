@@ -8,15 +8,15 @@ options {
 /* These tokens are used simply as indicator 'head' nodes in the generated AST
 tree. */
 tokens {
-	DICT       =         '{';	// The 'dictionary' node in the generated AST (contains KEY_VALUE nodes).
-	PAIR       =         '=';		// The 'key value' node in the AST.
-	LIST       =         '[';		// The 'list' node (contains comma separated elements enclosed in block braces '[' and ']').
-	SLIST      =         '(';		// The 'sorted list' node (contains comma separated elements enclosed in parentheses '(' and ')').
-	SD_PRIMARY = 'PrimarySD';	// The 'primary spider diagram'.
-	SD_BINARY  =  'BinarySD';	// The 'binar spider diagram'.
-	SD_UNARY   =   'UnarySD';	// The 'unary spider diagram'.
-	SD_NARY    =    'NarySD';	// The 'nary spider diagram' (arbitrary arity).
-	SD_NULL    =    'NullSD';	// The 'null spider diagram'.
+	DICT        =         '{';	// The 'dictionary' node in the generated AST (contains KEY_VALUE nodes).
+	PAIR        =         '=';		// The 'key value' node in the AST.
+	LIST        =         '[';		// The 'list' node (contains comma separated elements enclosed in block braces '[' and ']').
+	SLIST       =         '(';		// The 'sorted list' node (contains comma separated elements enclosed in parentheses '(' and ')').
+	SD_PRIMARY  = 'PrimarySD';	// The 'primary spider diagram'.
+	SD_BINARY   =  'BinarySD';	// The 'binar spider diagram'.
+	SD_UNARY    =   'UnarySD';	// The 'unary spider diagram'.
+	SD_COMPOUND =    'CompoundSD';	// The 'nary spider diagram' (arbitrary arity).
+	SD_NULL     =    'NullSD';	// The 'null spider diagram'.
 }
 
 @parser::header {
@@ -72,7 +72,7 @@ spiderDiagram
 	:	'PrimarySD'^ '{'! (keyValue (','! keyValue)*)? '}'!
 	|	'UnarySD'^ '{'! (keyValue (','! keyValue)*)? '}'!
 	|	'BinarySD'^ '{'! (keyValue (','! keyValue)*)? '}'!
-	|	'NarySD'^ '{'! (keyValue (','! keyValue)*)? '}'!
+	|	'CompoundSD'^ '{'! (keyValue (','! keyValue)*)? '}'!
 	|	'NullSD'^ ('{'! (keyValue (','! keyValue)*)? '}'!)?
 	;
 
