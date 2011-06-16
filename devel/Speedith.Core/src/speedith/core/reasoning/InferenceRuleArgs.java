@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: InferenceRule.java
+ * File name: InferenceRuleArgs.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -27,10 +27,10 @@
 package speedith.core.reasoning;
 
 /**
- * TODO: Comment.
+ * The base class of all arguments (concrete parameters) to the inference rules.
  * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface InferenceRule {
-    // TODO: Specify the interface.
+public class InferenceRuleArgs {
+    
 }

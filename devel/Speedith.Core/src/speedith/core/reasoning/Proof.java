@@ -26,6 +26,7 @@
  */
 package speedith.core.reasoning;
 
+import java.util.Collection;
 import speedith.core.lang.SpiderDiagram;
 
 /**
@@ -36,5 +37,33 @@ import speedith.core.lang.SpiderDiagram;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class Proof {
-    // TODO: Implement.
+
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    private ProofTrace m_trace;
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Constructor">
+    /**
+     * Initialises a new proof with the given initial goal.
+     * @param initialGoals the initial goal (may be {@code null} or empty to
+     * indicate a proof without proof obligations -- an empty proof).
+     */
+    public Proof(Collection<SpiderDiagram> initialGoals) {
+        m_trace = new ProofTrace(initialGoals);
+    }
+
+    /**
+     * Initialises a new proof with the given initial goal.
+     * <p><span style="font-weight:bold">Note</span>: this constructor is <span style="font-weight:bold">unsafe</span>
+     * as it does not make a copy of the given {@code initialGoals} array. It
+     * simply stores it as is.</p>
+     * @param initialGoals the initial goal (may be {@code null} or empty to
+     * indicate a proof without proof obligations -- an empty proof).
+     */
+    Proof(SpiderDiagram[] initialGoals) {
+        m_trace = new ProofTrace(initialGoals);
+    }
+    // </editor-fold>
+    
+    // TODO: Specify the interface.
 }
