@@ -26,6 +26,9 @@
  */
 package speedith.core.reasoning;
 
+import java.util.List;
+import speedith.core.lang.SpiderDiagram;
+
 /**
  * TODO: Comment.
  * <p>Instances of this class (and its derived classes) are immutable.</p>
@@ -33,4 +36,5 @@ package speedith.core.reasoning;
  */
 public interface InferenceRule {
     // TODO: Specify the interface.
+    SpiderDiagram[] apply(InferenceRuleArgs args, List<SpiderDiagram> goals);
 }

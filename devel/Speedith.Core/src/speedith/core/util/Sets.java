@@ -26,6 +26,7 @@
  */
 package speedith.core.util;
 
+import java.util.Collection;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Comparator;
@@ -304,6 +305,26 @@ public final class Sets {
                 }
             }
             return true;
+        }
+    }
+    
+    /**
+     * Tests whether the given collections are both {@code null}, empty or
+     * equal.
+     * <p>It returns {@code true} if both collections are empty or {@code null},
+     * otherwise it returns the value returned by {@code a.equals(b);}.</p>
+     * @param a the first collection.
+     * @param b the second collection.
+     * @return {@code true} if both collections are empty or {@code null},
+     * otherwise it returns the value returned by {@code a.equals(b);}.
+     */
+    public static boolean equal(Collection<?> a, Collection<?> b) {
+        if (a == null) {
+            return b == null || b.isEmpty();
+        } else if (b == null) {
+            return a.isEmpty();
+        } else {
+            return a.equals(b);
         }
     }
     // </editor-fold>

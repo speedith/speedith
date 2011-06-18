@@ -45,6 +45,7 @@ import static speedith.core.i18n.Translations.i18n;
  * Spider Diagrams (2005)</a>.
  * <p>It contains all necessary information about the habitats of spiders,
  * shaded zones, contour names, zones etc.</p>
+ * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class PrimarySpiderDiagram extends SpiderDiagram {
@@ -121,7 +122,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * {@link Region habitats}.
      * @param shadedZones a set of shaded {@link Zone zones}. 
      */
-    private PrimarySpiderDiagram(TreeSet<String> spiders, TreeMap<String, Region> habitats, TreeSet<Zone> shadedZones) {
+    PrimarySpiderDiagram(TreeSet<String> spiders, TreeMap<String, Region> habitats, TreeSet<Zone> shadedZones) {
         // Check that habitats don't talk about spiders not present in
         // 'spiders'.
         // If there aren't any spiders, then there should not be any habitats

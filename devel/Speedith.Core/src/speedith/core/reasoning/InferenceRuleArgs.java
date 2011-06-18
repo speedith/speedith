@@ -27,10 +27,13 @@
 package speedith.core.reasoning;
 
 /**
- * The base class of all arguments (concrete parameters) to the inference rules.
+ * The base interface of all arguments (concrete parameters) to Speedith's
+ * inference rules.
+ * <p>Different inference rules require different arguments for applying them to
+ * a given set of goals.</p>
  * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class InferenceRuleArgs {
+public interface InferenceRuleArgs {
     
 }

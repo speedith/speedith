@@ -29,6 +29,7 @@ package speedith.core.lang;
 import java.util.Collections;
 import java.util.Set;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 /**
  * Represents the logical connectives in {@link NarySpiderDiagram}s.
@@ -36,6 +37,7 @@ import java.util.HashMap;
  * for querying the available operators (the ones supported in Isabelle) and
  * functionality for creating operators from strings (see methods {@link
  * Operator#fromString(java.lang.String)}).</p>
+ * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class Operator {
@@ -160,6 +162,29 @@ public class Operator {
     public boolean equals(Operator other) {
         return this == other;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Operator other = (Operator) obj;
+        if (this.arity != other.arity) {
+            return false;
+        }
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode() + arity;
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Helper Classes">
@@ -167,7 +192,7 @@ public class Operator {
      * This class serves as a container of known operators for lazy loading and
      * thread-safety reasons.
      */
-    private static final class OperatorRegistry {
+    private static class OperatorRegistry {
 
         /**
          * A map of all operators known by Speedith (where the key equals to the
@@ -181,6 +206,9 @@ public class Operator {
             KnownOperators.put(OP_NAME_OR, new Operator(2, OP_NAME_OR));
             KnownOperators.put(OP_NAME_IMP, new Operator(2, OP_NAME_IMP));
             KnownOperators.put(OP_NAME_OR, new Operator(2, OP_NAME_EQ));
+        }
+
+        private OperatorRegistry() {
         }
     }
     // </editor-fold>

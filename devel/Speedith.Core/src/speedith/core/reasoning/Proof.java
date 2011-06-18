@@ -36,11 +36,7 @@ import speedith.core.lang.SpiderDiagram;
  * of whether the proof is complete or trusted etc.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class Proof {
-
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private ProofTrace m_trace;
-    // </editor-fold>
+public class Proof extends ProofTrace {
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
     /**
@@ -49,7 +45,7 @@ public class Proof {
      * indicate a proof without proof obligations -- an empty proof).
      */
     public Proof(Collection<SpiderDiagram> initialGoals) {
-        m_trace = new ProofTrace(initialGoals);
+        super(initialGoals);
     }
 
     /**
@@ -61,9 +57,11 @@ public class Proof {
      * indicate a proof without proof obligations -- an empty proof).
      */
     Proof(SpiderDiagram[] initialGoals) {
-        m_trace = new ProofTrace(initialGoals);
+        super(initialGoals);
     }
     // </editor-fold>
     
+    // <editor-fold defaultstate="collapsed" desc="Public Methods">
     // TODO: Specify the interface.
+    // </editor-fold>
 }

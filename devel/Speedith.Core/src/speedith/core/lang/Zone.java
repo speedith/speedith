@@ -32,9 +32,14 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import speedith.core.util.Sets;
 import static speedith.core.i18n.Translations.i18n;
+import static speedith.core.util.Sets.equal;
 
 /**
- *
+ * Represents a zone from the theory of spider diagrams.
+ * <p>For more information see 
+ * <a href="http://journals.cambridge.org/action/displayAbstract?fromPage=online&aid=6564924" title="10.1112/S1461157000000942">
+ * Spider Diagrams (2005)</a>.</p>
+ * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class Zone implements Comparable<Zone> {
@@ -42,6 +47,8 @@ public class Zone implements Comparable<Zone> {
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
     private TreeSet<String> inContours;
     private TreeSet<String> outContours;
+    private boolean hashInvalid = true;
+    private int hash;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -130,6 +137,38 @@ public class Zone implements Comparable<Zone> {
             }
             return retVal;
         }
+    }
+
+    /**
+     * Two zones are equal if they have exactly the same {@link
+     * Zone#getInContours() in countours} and {@link Zone#getOutContours() out
+     * countours}.
+     * @param obj the object with which to compare this zone.
+     * @return {@code true} if and only if {@code obj} is a region and it has
+     * exactly the same {@link Zone#getInContours() in countours} and {@link
+     * Zone#getOutContours() out countours}.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Zone other = (Zone) obj;
+        return equal(inContours, other.inContours) && equal(outContours, other.outContours);
+    }
+
+    @Override
+    public int hashCode() {
+        if (hashInvalid) {
+            hash = (this.inContours != null ? this.inContours.hashCode() : 0)
+                    + (this.outContours != null ? this.outContours.hashCode() : 0);
+            hashInvalid = false;
+        }
+        return hash;
     }
     // </editor-fold>
 

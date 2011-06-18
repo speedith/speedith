@@ -30,18 +30,22 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import speedith.core.util.Sets;
 import static speedith.core.i18n.Translations.i18n;
 
 /**
  * This class represents a region in spider diagrams.
  * <p>A region is a union of zones. Thus the {@link Region} class contains 
  * {@link Region#getZones() a set of zones} which constitute it.</p>
+ * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class Region {
 
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
     private TreeSet<Zone> zones;
+    private boolean hashInvalid = true;
+    private int hash;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -86,24 +90,20 @@ public class Region {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj instanceof Region) {
-            Region r = (Region) obj;
-            if (zones == null) {
-                return r.zones == null || r.zones.isEmpty();
-            } else if (r.zones == null) {
-                return zones.isEmpty();
-            } else {
-                return zones.equals(r.zones);
-            }
-        } else {
+        } else if (obj == null) {
+            return false;
+        } else if (getClass() != obj.getClass()) {
             return false;
         }
+        return Sets.equal(zones, ((Region) obj).zones);
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 37 * hash + (this.zones != null ? this.zones.hashCode() : 0);
+        if (hashInvalid) {
+            hash = (this.zones != null ? this.zones.hashCode() : 0);
+            hashInvalid = false;
+        }
         return hash;
     }
     // </editor-fold>

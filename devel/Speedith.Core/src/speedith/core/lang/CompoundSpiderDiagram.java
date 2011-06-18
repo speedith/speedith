@@ -36,7 +36,8 @@ import static speedith.core.i18n.Translations.i18n;
  * A compound spider diagram connects two applies an operator to one or more
  * spider diagrams.
  * <p>Some of the operators one can use in Speedith: conjunction '∧',
- * disjunction '∨', implication '⇒', equivalence '⇔', and negation '¬'.
+ * disjunction '∨', implication '⇒', equivalence '⇔', and negation '¬'.</p>
+ * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class CompoundSpiderDiagram extends SpiderDiagram {
@@ -77,7 +78,6 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      */
     public static final String SDTextOperatorAttribute = "operator";
     // </editor-fold>
-    
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
      * The operator which to apply on the {@link CompoundSpiderDiagram#getOperands()
@@ -120,7 +120,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         }
         this.operands = new ArrayList<SpiderDiagram>(operands);
     }
-    
+
     /**
      * Initialises the nary-spider diagram with the given operator and operands.
      * <p><span style="font-weight:bold">Note</span>: this constructor does not
@@ -131,7 +131,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * @param operands the {@link CompoundSpiderDiagram#getOperands() operands}
      * to the {@link CompoundSpiderDiagram#getOperator() operator}.
      */
-    private CompoundSpiderDiagram(Operator operator, ArrayList<SpiderDiagram> operands) {
+    CompoundSpiderDiagram(Operator operator, ArrayList<SpiderDiagram> operands) {
         if (operator == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "operator"));
         }
@@ -184,16 +184,17 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         return operands.get(index);
     }
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Equality">
     @Override
     public boolean equals(SpiderDiagram other) {
-        if (other == this)
+        if (other == this) {
             return true;
-        else if (other instanceof CompoundSpiderDiagram) {
-            return __isNsdEqual((CompoundSpiderDiagram)other);
-        } else
+        } else if (other instanceof CompoundSpiderDiagram) {
+            return __isNsdEqual((CompoundSpiderDiagram) other);
+        } else {
             return false;
+        }
     }
 
     @Override
@@ -201,9 +202,10 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         if (other == this) {
             return true;
         } else if (other instanceof CompoundSpiderDiagram) {
-            return __isNsdEqual((CompoundSpiderDiagram)other);
-        } else
+            return __isNsdEqual((CompoundSpiderDiagram) other);
+        } else {
             return false;
+        }
     }
     // </editor-fold>
 
@@ -261,7 +263,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         return sb.toString();
     }
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Private Methods">
     /**
      * Compares the other non-{@ null} {@link CompoundSpiderDiagram} to this one and
@@ -271,8 +273,8 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * @return 
      */
     private boolean __isNsdEqual(CompoundSpiderDiagram other) {
-        return getOperator().equals(other.getOperator()) &&
-                operands.equals(other.operands);
+        return getOperator().equals(other.getOperator())
+                && operands.equals(other.operands);
     }
     // </editor-fold>
 }
