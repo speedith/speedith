@@ -187,7 +187,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
 
     // <editor-fold defaultstate="collapsed" desc="Equality">
     @Override
-    public boolean equals(SpiderDiagram other) {
+    public boolean equals(Object other) {
         if (other == this) {
             return true;
         } else if (other instanceof CompoundSpiderDiagram) {
@@ -198,14 +198,8 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        } else if (other instanceof CompoundSpiderDiagram) {
-            return __isNsdEqual((CompoundSpiderDiagram) other);
-        } else {
-            return false;
-        }
+    public int hashCode() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     // </editor-fold>
 

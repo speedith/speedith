@@ -56,10 +56,17 @@ public class NullSpiderDiagram extends SpiderDiagram {
     public static NullSpiderDiagram getInstance() {
         return SingletonHolder.Instance;
     }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Equality">
+    @Override
+    public boolean equals(Object other) {
+        return this == other;
+    }
 
     @Override
-    public boolean equals(SpiderDiagram other) {
-        return this == other;
+    public int hashCode() {
+        return ((Object)this).hashCode();
     }
     // </editor-fold>
 

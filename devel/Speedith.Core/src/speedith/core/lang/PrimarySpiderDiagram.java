@@ -210,7 +210,12 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     
     // <editor-fold defaultstate="collapsed" desc="Equality">
     @Override
-    public boolean equals(SpiderDiagram other) {
+    public boolean equals(Object other) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int hashCode() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     // </editor-fold>

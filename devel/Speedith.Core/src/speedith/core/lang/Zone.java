@@ -154,11 +154,11 @@ public class Zone implements Comparable<Zone> {
             return true;
         } else if (obj == null) {
             return false;
-        } else if (getClass() != obj.getClass()) {
-            return false;
+        } else if (obj instanceof Zone) {
+            Zone other = (Zone) obj;
+            return equal(inContours, other.inContours) && equal(outContours, other.outContours);
         }
-        Zone other = (Zone) obj;
-        return equal(inContours, other.inContours) && equal(outContours, other.outContours);
+        return false;
     }
 
     @Override

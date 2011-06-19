@@ -27,7 +27,11 @@
 
 package speedith.core.util;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.junit.After;
@@ -282,6 +286,149 @@ public class SetsTest {
         s2.add("b");
         int expResult = 1;
         int result = Sets.compareNaturally(s1, s2);
+        assertEquals(expResult, result);
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Tests for 'equal'">
+    /**
+     * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
+     * method.
+     */
+    @Test
+    public void test_equal_1() {
+        Collection<String> s1 = new LinkedList<String>();
+        s1.add("foo");
+        s1.add("bar");
+        s1.add("zar");
+        Collection<String> s2 = new ArrayList<String>();
+        s2.add("foo");
+        s2.add("bar");
+        s2.add("zar");
+        boolean expResult = true;
+        boolean result = Sets.equal(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
+     * method.
+     */
+    @Test
+    public void test_equal_2() {
+        Collection<String> s1 = null;
+        Collection<String> s2 = new ArrayList<String>();
+        boolean expResult = true;
+        boolean result = Sets.equal(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
+     * method.
+     */
+    @Test
+    public void test_equal_3() {
+        Collection<String> s1 = null;
+        Collection<String> s2 = null;
+        boolean expResult = true;
+        boolean result = Sets.equal(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
+     * method.
+     */
+    @Test
+    public void test_equal_4() {
+        Collection<String> s1 = new TreeSet<String>();
+        Collection<String> s2 = null;
+        boolean expResult = true;
+        boolean result = Sets.equal(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
+     * method.
+     */
+    @Test
+    public void test_equal_5() {
+        Collection<String> s1 = new LinkedList<String>();
+        s1.add("foo");
+        s1.add("bar");
+        s1.add("bar");
+        s1.add("zar");
+        Collection<String> s2 = new ArrayList<String>();
+        s2.add("foo");
+        s2.add("bar");
+        s2.add("zar");
+        boolean expResult = false;
+        boolean result = Sets.equal(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
+     * method.
+     */
+    @Test
+    public void test_equal_6() {
+        Collection<Integer> s1 = new LinkedList<Integer>();
+        s1.add(1);
+        s1.add(3);
+        s1.add(3);
+        s1.add(7);
+        Collection<Double> s2 = new ArrayList<Double>();
+        s2.add(1.0);
+        s2.add(3.0);
+        s2.add(3.0);
+        s2.add(7.0);
+        boolean expResult = false;
+        boolean result = Sets.equal(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
+     * method.
+     */
+    @Test
+    public void test_equal_7() {
+        Collection<Integer> s1 = new LinkedList<Integer>();
+        s1.add(1);
+        s1.add(3);
+        s1.add(3);
+        s1.add(7);
+        Collection<Short> s2 = new ArrayList<Short>();
+        s2.add((short)1);
+        s2.add((short)3);
+        s2.add((short)3);
+        s2.add((short)7);
+        boolean expResult = false;
+        boolean result = Sets.equal(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
+     * method.
+     */
+    @Test
+    public void test_equal_8() {
+        Collection<Integer> s1 = new ArrayList<Integer>();
+        s1.add(1);
+        s1.add(3);
+        s1.add(3);
+        s1.add(7);
+        List<Integer> s2 = new ArrayList<Integer>();
+        s2.add(1);
+        s2.add(7);
+        s2.add(1, 3);
+        s2.add(1, 3);
+        boolean expResult = true;
+        boolean result = Sets.equal(s1, s2);
         assertEquals(expResult, result);
     }
     // </editor-fold>

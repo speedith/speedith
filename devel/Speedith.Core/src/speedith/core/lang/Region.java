@@ -92,10 +92,10 @@ public class Region {
             return true;
         } else if (obj == null) {
             return false;
-        } else if (getClass() != obj.getClass()) {
-            return false;
+        } else if (obj instanceof Region) {
+            return Sets.equal(zones, ((Region) obj).zones);
         }
-        return Sets.equal(zones, ((Region) obj).zones);
+        return false;
     }
 
     @Override

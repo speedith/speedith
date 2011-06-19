@@ -85,7 +85,19 @@ public abstract class SpiderDiagram {
      * @return {@code true} iff the two spider diagrams are syntactically the
      * same.
      */
-    public abstract boolean equals(SpiderDiagram other);
+    @Override
+    public abstract boolean equals(Object other);
+
+    /**
+     * All spider diagrams should produce a hash code that conforms the
+     * following semantics: let <span style="font-style:italic;">A</span> and
+     * <span style="font-style:italic;">B</span> be two spider diagrams, then if
+     * <span style="font-style:italic;">A</span>{@code .equals(}<span style="font-style:italic;">B</span>{@code )},
+     * then <span style="font-style:italic;">A</span>{@code .hashCode() == }<span style="font-style:italic;">B</span>{@code .hashCode()}.
+     * @return 
+     */
+    @Override
+    public abstract int hashCode();
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
