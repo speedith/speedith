@@ -94,7 +94,7 @@ public abstract class SpiderDiagram {
      * <span style="font-style:italic;">B</span> be two spider diagrams, then if
      * <span style="font-style:italic;">A</span>{@code .equals(}<span style="font-style:italic;">B</span>{@code )},
      * then <span style="font-style:italic;">A</span>{@code .hashCode() == }<span style="font-style:italic;">B</span>{@code .hashCode()}.
-     * @return 
+     * @return an integer satisfying the <span style="font-style:italic;">hash property</span>.
      */
     @Override
     public abstract int hashCode();

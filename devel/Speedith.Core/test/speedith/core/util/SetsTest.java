@@ -27,12 +27,17 @@
 
 package speedith.core.util;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -429,6 +434,106 @@ public class SetsTest {
         s2.add(1, 3);
         boolean expResult = true;
         boolean result = Sets.equal(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
+     * method.
+     */
+    @Test
+    public void test_equal_9() {
+        Collection<String> s1 = new TreeSet<String>();
+        s1.add("foo");
+        s1.add("zar");
+        s1.add("bar");
+        Set<String> s2 = new TreeSet<String>();
+        s2.add("bar");
+        s2.add("foo");
+        s2.add("zar");
+        boolean expResult = true;
+        boolean result = Sets.equal(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
+     * method.
+     */
+    @Test
+    public void test_equal_10() {
+        Collection<String> s1 = new TreeSet<String>();
+        s1.add("foo");
+        s1.add("zar");
+        s1.add("bar");
+        Set<String> s2 = new TreeSet<String>();
+        s2.add("bar");
+        s2.add("fooo");
+        s2.add("zar");
+        boolean expResult = false;
+        boolean result = Sets.equal(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
+     * method.
+     */
+    @Test
+    public void test_equal_11() {
+        Collection<String> s1 = new TreeSet<String>();
+        s1.add("foo");
+        s1.add("zar");
+        s1.add("bar");
+        Set<String> s2 = new HashSet<String>();
+        s2.add("bar");
+        s2.add("zar");
+        s2.add("foo");
+        boolean expResult = true;
+        boolean result = Sets.equal(s1, s2);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
+     * method.
+     */
+    @Test
+    public void test_equal_12() {
+        HashMap<String, Integer> s1 = new HashMap<String, Integer>();
+        s1.put("foo", 2);
+        s1.put("kre", 8);
+        s1.put("zar", 1);
+        s1.put("bar", 5);
+        TreeMap<String, Integer> s2 = new TreeMap<String, Integer>();
+        s2.put("foo", 2);
+        s2.put("bar", 5);
+        s2.put("zar", 1);
+        s2.put("kre", 8);
+        s2.put("kre1", 8);
+        boolean expResult = false;
+        boolean result = Sets.equal(s1.entrySet(), s2.entrySet());
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
+     * method.
+     */
+    @Test
+    public void test_equal_13() {
+        Map<String, Integer> s1 = new HashMap<String, Integer>();
+        s1.put("foo", 2);
+        s1.put("kre", 8);
+        s1.put("zar", 1);
+        s1.put("bar", 5);
+        Map<String, Integer> s2 = new TreeMap<String, Integer>();
+        s2.put("foo", 2);
+        s2.put("bar", 5);
+        s2.put("zar", 1);
+        s2.put("kre", 8);
+        boolean expResult = true;
+        boolean result = Sets.equal(s1.entrySet(), s2.entrySet());
         assertEquals(expResult, result);
     }
     // </editor-fold>

@@ -45,8 +45,8 @@ import static speedith.core.util.Sets.equal;
 public class Zone implements Comparable<Zone> {
 
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
-    private TreeSet<String> inContours;
-    private TreeSet<String> outContours;
+    private TreeSet<String> m_inContours;
+    private TreeSet<String> m_outContours;
     private boolean hashInvalid = true;
     private int hash;
     // </editor-fold>
@@ -63,8 +63,29 @@ public class Zone implements Comparable<Zone> {
      * <p>Note that duplicated contour names will be ignored.</p>
      */
     public Zone(Collection<String> inContours, Collection<String> outContours) {
-        this.inContours = inContours == null ? null : new TreeSet<String>(inContours);
-        this.outContours = outContours == null ? null : new TreeSet<String>(outContours);
+        this(inContours == null ? null : new TreeSet<String>(inContours),
+                outContours == null ? null : new TreeSet<String>(outContours));
+    }
+
+    /**
+     * Creates a new zone and initialises it with the two given collections of
+     * contour names.
+     * <p><span style="font-weight:bold">Important</span>: this method does
+     * not make a copy of the given in- and out- contour sets. With this, one
+     * can violate the immutability property of this class (which means that the
+     * contract for the {@link Zone#hashCode()} method might be broken). So,
+     * make sure that you do not change the given sets after creating this zone
+     * with them.</p>
+     * @param inContours the collection of names of contours which contain this
+     * new zone.
+     * <p>Note that duplicated contour names will be ignored.</p>
+     * @param outContours the collection of names of contours which lie entirely
+     * outside this new zone.
+     * <p>Note that duplicated contour names will be ignored.</p>
+     */
+    Zone(TreeSet<String> inContours, TreeSet<String> outContours) {
+        this.m_inContours = inContours;
+        this.m_outContours = outContours;
     }
     // </editor-fold>
 
@@ -78,7 +99,7 @@ public class Zone implements Comparable<Zone> {
      * <p>These are the contours that contain this zone.</p>
      */
     public SortedSet<String> getInContours() {
-        return inContours == null ? null : Collections.unmodifiableSortedSet(inContours);
+        return m_inContours == null ? null : Collections.unmodifiableSortedSet(m_inContours);
     }
 
     /**
@@ -86,7 +107,7 @@ public class Zone implements Comparable<Zone> {
      * @return the number of {@link Zone#getInContours() in-contours}.
      */
     public int getInContoursCount() {
-        return inContours == null ? 0 : inContours.size();
+        return m_inContours == null ? 0 : m_inContours.size();
     }
 
     /**
@@ -98,7 +119,7 @@ public class Zone implements Comparable<Zone> {
      * <p>These are the contours that lie outside this zone.</p>
      */
     public SortedSet<String> getOutContours() {
-        return outContours == null ? null : Collections.unmodifiableSortedSet(outContours);
+        return m_outContours == null ? null : Collections.unmodifiableSortedSet(m_outContours);
     }
 
     /**
@@ -106,7 +127,7 @@ public class Zone implements Comparable<Zone> {
      * @return the number of {@link Zone#getOutContours() out-contours}.
      */
     public int getOutContoursCount() {
-        return outContours == null ? 0 : outContours.size();
+        return m_outContours == null ? 0 : m_outContours.size();
     }
     // </editor-fold>
 
@@ -131,9 +152,9 @@ public class Zone implements Comparable<Zone> {
         if (this == other) {
             return 0;
         } else {
-            int retVal = Sets.compareNaturally(inContours, other.inContours);
+            int retVal = Sets.compareNaturally(m_inContours, other.m_inContours);
             if (retVal == 0) {
-                retVal = Sets.compareNaturally(outContours, other.outContours);
+                retVal = Sets.compareNaturally(m_outContours, other.m_outContours);
             }
             return retVal;
         }
@@ -156,7 +177,7 @@ public class Zone implements Comparable<Zone> {
             return false;
         } else if (obj instanceof Zone) {
             Zone other = (Zone) obj;
-            return equal(inContours, other.inContours) && equal(outContours, other.outContours);
+            return equal(m_inContours, other.m_inContours) && equal(m_outContours, other.m_outContours);
         }
         return false;
     }
@@ -164,8 +185,8 @@ public class Zone implements Comparable<Zone> {
     @Override
     public int hashCode() {
         if (hashInvalid) {
-            hash = (this.inContours != null ? this.inContours.hashCode() : 0)
-                    + (this.outContours != null ? this.outContours.hashCode() : 0);
+            hash = (this.m_inContours != null ? this.m_inContours.hashCode() : 0)
+                    + (this.m_outContours != null ? this.m_outContours.hashCode() : 0);
             hashInvalid = false;
         }
         return hash;
@@ -178,9 +199,9 @@ public class Zone implements Comparable<Zone> {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
         }
         sb.append('(');
-        SpiderDiagram.printStringList(sb, inContours);
+        SpiderDiagram.printStringList(sb, m_inContours);
         sb.append(", ");
-        SpiderDiagram.printStringList(sb, outContours);
+        SpiderDiagram.printStringList(sb, m_outContours);
         sb.append(')');
     }
     // </editor-fold>

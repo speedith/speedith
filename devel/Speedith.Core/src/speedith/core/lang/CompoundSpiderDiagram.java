@@ -85,12 +85,14 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * <p>See {@link Operator#knownOperatorNames()} for a list of all known
      * operators.</p>
      */
-    private Operator operator;
+    private Operator m_operator;
     /**
      * A list of operands taken by the {@link CompoundSpiderDiagram#getOperator()
      * operator}.
      */
-    private ArrayList<SpiderDiagram> operands;
+    private ArrayList<SpiderDiagram> m_operands;
+    private boolean m_hashInvalid = true;
+    private int m_hash;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -103,22 +105,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * to the {@link CompoundSpiderDiagram#getOperator() operator}.
      */
     public CompoundSpiderDiagram(String operator, Collection<SpiderDiagram> operands) {
-        this.operator = Operator.fromString(operator);
-        if (this.operator == null) {
-            throw new IllegalArgumentException(i18n("ERR_OPERATOR_NOT_KNOWN", operator));
-        }
-        if (operands == null) {
-            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "operands"));
-        }
-        if (operands.size() != this.operator.getArity()) {
-            throw new IllegalArgumentException(i18n("ERR_WRONG_NUMBER_OF_OPERANDS", this.operator.getName(), this.operator.getArity(), operands.size()));
-        }
-        for (SpiderDiagram spiderDiagram : operands) {
-            if (spiderDiagram == null) {
-                throw new IllegalArgumentException(i18n("ERR_OPERAND_NULL"));
-            }
-        }
-        this.operands = new ArrayList<SpiderDiagram>(operands);
+        this(Operator.fromString(operator), operands == null ? null : new ArrayList<SpiderDiagram>(operands));
     }
 
     /**
@@ -141,8 +128,13 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         if (operands.size() != operator.getArity()) {
             throw new IllegalArgumentException(i18n("ERR_WRONG_NUMBER_OF_OPERANDS", operator, operator.getArity(), operands.size()));
         }
-        this.operator = operator;
-        this.operands = operands;
+        for (SpiderDiagram spiderDiagram : operands) {
+            if (spiderDiagram == null) {
+                throw new IllegalArgumentException(i18n("ERR_OPERAND_NULL"));
+            }
+        }
+        this.m_operator = operator;
+        this.m_operands = operands;
     }
     // </editor-fold>
 
@@ -154,7 +146,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * in this n-ary spider diagram.
      */
     public Operator getOperator() {
-        return operator;
+        return m_operator;
     }
 
     /**
@@ -164,7 +156,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * operator} in this n-ary spider diagram.
      */
     public List<SpiderDiagram> getOperands() {
-        return Collections.unmodifiableList(operands);
+        return Collections.unmodifiableList(m_operands);
     }
 
     /**
@@ -172,7 +164,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * @return the number of operand in this n-ary spider diagram.
      */
     public int getOperandCount() {
-        return operands.size();
+        return m_operands.size();
     }
 
     /**
@@ -181,7 +173,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * @return the operand at the given index.
      */
     public SpiderDiagram getOperand(int index) {
-        return operands.get(index);
+        return m_operands.get(index);
     }
     // </editor-fold>
 
@@ -191,7 +183,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         if (other == this) {
             return true;
         } else if (other instanceof CompoundSpiderDiagram) {
-            return __isNsdEqual((CompoundSpiderDiagram) other);
+            return __isCsdEqual((CompoundSpiderDiagram) other);
         } else {
             return false;
         }
@@ -199,7 +191,14 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
 
     @Override
     public int hashCode() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (m_hashInvalid) {
+            m_hash = m_operator.hashCode();
+            for (SpiderDiagram sd : m_operands) {
+                m_hash += sd.hashCode();
+            }
+            m_hashInvalid = false;
+        }
+        return m_hash;
     }
     // </editor-fold>
 
@@ -233,18 +232,18 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
 
     private void printArg(StringBuilder sb, int i) {
         sb.append(SDTextArgAttribute).append(i).append(" = ");
-        operands.get(i - 1).toString(sb);
+        m_operands.get(i - 1).toString(sb);
     }
 
     private void printOperator(StringBuilder sb) {
         sb.append(SDTextOperatorAttribute).append(" = ");
-        printString(sb, operator.getName());
+        printString(sb, m_operator.getName());
     }
 
     private void printArgs(StringBuilder sb) {
-        if (operands.size() > 0) {
+        if (m_operands.size() > 0) {
             printArg(sb, 1);
-            for (int i = 2; i <= operands.size(); i++) {
+            for (int i = 2; i <= m_operands.size(); i++) {
                 printArg(sb.append(", "), i);
             }
         }
@@ -266,9 +265,9 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * @param other
      * @return 
      */
-    private boolean __isNsdEqual(CompoundSpiderDiagram other) {
+    private boolean __isCsdEqual(CompoundSpiderDiagram other) {
         return getOperator().equals(other.getOperator())
-                && operands.equals(other.operands);
+                && m_operands.equals(other.m_operands);
     }
     // </editor-fold>
 }

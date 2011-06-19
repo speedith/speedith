@@ -1,0 +1,409 @@
+/*
+ *   Project: Speedith.Core
+ * 
+ * File name: ZoneTest.java
+ *    Author: Matej Urbas [matej.urbas@gmail.com]
+ * 
+ *  Copyright © 2011 Matej Urbas
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+package speedith.core.lang;
+
+import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+/**
+ *
+ * @author Matej Urbas [matej.urbas@gmail.com]
+ */
+public class ZoneTest {
+
+    static LinkedList<String> m_inContours1;
+    static ArrayList<String> m_outContours1;
+    static Zone m_zone1;
+    static Collection<String> m_inContours2;
+    static Collection<String> m_outContours2;
+    static Zone m_zone2;
+    static TreeSet<String> m_inContours3;
+    static TreeSet<String> m_outContours3;
+    static Zone m_zone3;
+    static TreeSet<String> m_inContours4;
+    static TreeSet<String> m_outContours4;
+    static Zone m_zone4;
+    static TreeSet<String> m_inContours5;
+    static TreeSet<String> m_outContours5;
+    static Zone m_zone5;
+    static TreeSet<String> m_outContours6;
+    static Zone m_zone6;
+    static TreeSet<String> m_inContours7;
+    static Zone m_zone7;
+    private static Zone m_zone8;
+    private static Zone m_zone9;
+    private static Zone m_zone10;
+
+    public ZoneTest() {
+    }
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
+
+    static {
+        m_inContours1 = new LinkedList<String>();
+        m_inContours1.add("A");
+        m_inContours1.add("C");
+        m_inContours1.add("C");
+        m_inContours1.add("U");
+        m_inContours1.add("foo");
+        m_inContours1.add("foo");
+        m_outContours1 = new ArrayList<String>();
+        m_outContours1.add("B");
+        m_outContours1.add("F");
+        m_outContours1.add("F");
+        m_outContours1.add("bar");
+        m_outContours1.add("bar");
+        m_outContours1.add("bar");
+        m_zone1 = new Zone(m_inContours1, m_outContours1);
+
+        m_inContours2 = new TreeSet<String>();
+        m_inContours2.add("A");
+        m_inContours2.add("C");
+        m_inContours2.add("U");
+        m_inContours2.add("foo");
+        m_outContours2 = new HashSet<String>();
+        m_outContours2.add("B");
+        m_outContours2.add("F");
+        m_outContours2.add("bar");
+        m_zone2 = new Zone(m_inContours2, m_outContours2);
+
+        m_inContours3 = new TreeSet<String>();
+        m_inContours3.add("A");
+        m_inContours3.add("B");
+        m_outContours3 = new TreeSet<String>();
+        m_outContours3.add("C");
+        m_outContours3.add("D");
+        m_outContours3.add("E");
+        m_outContours3.add("F");
+        m_zone3 = new Zone(m_inContours3, m_outContours3);
+
+        m_inContours4 = new TreeSet<String>();
+        m_inContours4.add("A");
+        m_inContours4.add("C");
+        m_inContours4.add("U");
+        m_inContours4.add("foo");
+        m_outContours4 = new TreeSet<String>();
+        m_outContours4.add("B");
+        m_outContours4.add("F");
+        m_outContours4.add("bar");
+        m_zone4 = new Zone(m_inContours4, m_outContours4);
+
+        m_inContours5 = new TreeSet<String>();
+        m_inContours5.add("01s");
+        m_inContours5.add("dsaknj");
+        m_inContours5.add("dsanksaj");
+        m_inContours5.add("otj332_");
+        m_inContours5.add("_sadsakjn dsasa");
+        m_outContours5 = new TreeSet<String>();
+        m_outContours5.add("po3nns");
+        m_outContours5.add("sdfajkdni3329");
+        m_outContours5.add("oifned32903");
+        m_zone5 = new Zone(m_inContours5, m_outContours5);
+
+        m_outContours6 = new TreeSet<String>();
+        m_outContours6.add("po3nns");
+        m_outContours6.add("sdfajkdni3329");
+        m_outContours6.add("oifned32903");
+        m_zone6 = new Zone(null, m_outContours6);
+
+        m_inContours7 = new TreeSet<String>();
+        m_inContours7.add("01s");
+        m_inContours7.add("dsaknj");
+        m_inContours7.add("dsanksaj");
+        m_inContours7.add("otj332_");
+        m_inContours7.add("_sadsakjn dsasa");
+        m_zone7 = new Zone(m_inContours7, null);
+        
+        m_zone8 = new Zone(null, null);
+        m_zone9 = new Zone((TreeSet<String>)null, (TreeSet<String>)null);
+        m_zone10 = new Zone((Collection<String>)null, (Collection<String>)null);
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
+
+    @Before
+    public void setUp() {
+    }
+
+    @After
+    public void tearDown() {
+    }
+
+    /**
+     * Test of getInContours method, of class Zone.
+     */
+    @Test
+    public void testGetInContours() {
+        assertEquals(m_zone1.getInContours(), m_inContours2);
+        assertEquals(m_zone2.getInContours(), m_inContours2);
+        assertEquals(m_zone3.getInContours(), m_inContours3);
+        assertEquals(m_zone4.getInContours(), m_inContours4);
+        assertEquals(m_zone2.getInContours(), m_inContours4);
+        assertEquals(m_zone1.getInContours(), m_inContours4);
+        assertEquals(m_zone5.getInContours(), m_inContours5);
+        assertEquals(m_zone6.getInContours(), null);
+        assertEquals(m_zone7.getInContours(), m_inContours7);
+        assertEquals(m_zone8.getInContours(), null);
+        assertEquals(m_zone9.getInContours(), null);
+        assertEquals(m_zone10.getInContours(), null);
+    }
+
+    /**
+     * Test of getInContoursCount method, of class Zone.
+     */
+    @Test
+    public void testGetInContoursCount() {
+        assertEquals(m_zone1.getInContoursCount(), m_inContours2.size());
+        assertEquals(m_zone2.getInContoursCount(), m_inContours2.size());
+        assertEquals(m_zone3.getInContoursCount(), m_inContours3.size());
+        assertEquals(m_zone4.getInContoursCount(), m_inContours4.size());
+        assertEquals(m_zone2.getInContoursCount(), m_inContours4.size());
+        assertEquals(m_zone1.getInContoursCount(), m_inContours4.size());
+        assertEquals(m_zone6.getInContoursCount(), 0);
+        assertEquals(m_zone7.getInContoursCount(), m_inContours7.size());
+        assertEquals(m_zone8.getInContoursCount(), 0);
+        assertEquals(m_zone9.getInContoursCount(), 0);
+        assertEquals(m_zone10.getInContoursCount(), 0);
+    }
+
+    /**
+     * Test of getOutContours method, of class Zone.
+     */
+    @Test
+    public void testGetOutContours() {
+        assertEquals(m_zone1.getOutContours(), m_outContours2);
+        assertEquals(m_zone2.getOutContours(), m_outContours2);
+        assertEquals(m_zone3.getOutContours(), m_outContours3);
+        assertEquals(m_zone4.getOutContours(), m_outContours4);
+        assertEquals(m_zone2.getOutContours(), m_outContours4);
+        assertEquals(m_zone1.getOutContours(), m_outContours4);
+        assertEquals(m_zone6.getOutContours(), m_outContours6);
+        assertEquals(m_zone7.getOutContours(), null);
+        assertEquals(m_zone8.getOutContours(), null);
+        assertEquals(m_zone9.getOutContours(), null);
+        assertEquals(m_zone10.getOutContours(), null);
+    }
+
+    /**
+     * Test of getOutContoursCount method, of class Zone.
+     */
+    @Test
+    public void testGetOutContoursCount() {
+        assertEquals(m_zone1.getOutContoursCount(), m_outContours2.size());
+        assertEquals(m_zone2.getOutContoursCount(), m_outContours2.size());
+        assertEquals(m_zone3.getOutContoursCount(), m_outContours3.size());
+        assertEquals(m_zone4.getOutContoursCount(), m_outContours4.size());
+        assertEquals(m_zone2.getOutContoursCount(), m_outContours4.size());
+        assertEquals(m_zone1.getOutContoursCount(), m_outContours4.size());
+        assertEquals(m_zone6.getOutContoursCount(), m_outContours6.size());
+        assertEquals(m_zone7.getOutContoursCount(), 0);
+        assertEquals(m_zone8.getOutContoursCount(), 0);
+        assertEquals(m_zone9.getOutContoursCount(), 0);
+        assertEquals(m_zone10.getOutContoursCount(), 0);
+    }
+
+    /**
+     * Test of compareTo method, of class Zone.
+     */
+    @Test
+    public void testCompareTo() {
+        assertEquals(m_zone1.compareTo(m_zone2), 0);
+        assertEquals(m_zone2.compareTo(m_zone1), 0);
+        assertEquals(m_zone2.compareTo(m_zone4), 0);
+        assertEquals(m_zone4.compareTo(m_zone2), 0);
+        assertEquals(m_zone1.compareTo(m_zone4), 0);
+        assertEquals(m_zone4.compareTo(m_zone1), 0);
+        assertEquals(m_zone1.compareTo(m_zone3), 1);
+        assertEquals(m_zone3.compareTo(m_zone1), -1);
+        assertEquals(m_zone2.compareTo(m_zone3), 1);
+        assertEquals(m_zone3.compareTo(m_zone2), -1);
+        assertEquals(m_zone4.compareTo(m_zone3), 1);
+        assertEquals(m_zone3.compareTo(m_zone4), -1);
+        assertEquals(m_zone1.compareTo(m_zone1), 0);
+        assertEquals(m_zone2.compareTo(m_zone2), 0);
+        assertEquals(m_zone3.compareTo(m_zone3), 0);
+        assertEquals(m_zone4.compareTo(m_zone4), 0);
+        assertEquals(m_zone1.compareTo(m_zone6), 1);
+        assertEquals(m_zone5.compareTo(m_zone1), -1);
+        assertEquals(m_zone5.compareTo(m_zone3), -1);
+        assertEquals(m_zone5.compareTo(m_zone5), 0);
+        assertEquals(m_zone5.compareTo(m_zone6), 1);
+        assertEquals(m_zone5.compareTo(m_zone7), 1);
+        assertEquals(m_zone5.compareTo(m_zone8), 1);
+        assertEquals(m_zone5.compareTo(m_zone9), 1);
+        assertEquals(m_zone5.compareTo(m_zone10), 1);
+        assertEquals(m_zone6.compareTo(m_zone1), -1);
+        assertEquals(m_zone6.compareTo(m_zone3), -1);
+        assertEquals(m_zone6.compareTo(m_zone6), 0);
+        assertEquals(m_zone6.compareTo(m_zone7), -1);
+        assertEquals(m_zone6.compareTo(m_zone8), 1);
+        assertEquals(m_zone6.compareTo(m_zone9), 1);
+        assertEquals(m_zone6.compareTo(m_zone10), 1);
+        assertEquals(m_zone7.compareTo(m_zone6), 1);
+        assertEquals(m_zone7.compareTo(m_zone1), -1);
+        assertEquals(m_zone7.compareTo(m_zone3), -1);
+        assertEquals(m_zone7.compareTo(m_zone8), 1);
+        assertEquals(m_zone7.compareTo(m_zone9), 1);
+        assertEquals(m_zone7.compareTo(m_zone10), 1);
+        assertEquals(m_zone8.compareTo(m_zone1), -1);
+        assertEquals(m_zone8.compareTo(m_zone3), -1);
+        assertEquals(m_zone8.compareTo(m_zone6), -1);
+        assertEquals(m_zone8.compareTo(m_zone7), -1);
+        assertEquals(m_zone8.compareTo(m_zone9), 0);
+        assertEquals(m_zone8.compareTo(m_zone10), 0);
+    }
+
+    /**
+     * Test of equals method, of class Zone.
+     */
+    @Test
+    @SuppressWarnings({"IncompatibleEquals", "ObjectEqualsNull"})
+    public void testEquals() {
+        assertTrue(m_zone1.equals(m_zone2));
+        assertTrue(m_zone2.equals(m_zone1));
+        assertTrue(m_zone2.equals(m_zone4));
+        assertTrue(m_zone4.equals(m_zone2));
+        assertTrue(m_zone1.equals(m_zone4));
+        assertTrue(m_zone4.equals(m_zone1));
+        assertTrue(m_zone1.equals(m_zone1));
+        assertTrue(m_zone2.equals(m_zone2));
+        assertTrue(m_zone3.equals(m_zone3));
+        assertTrue(m_zone4.equals(m_zone4));
+        assertFalse(m_zone3.equals(m_zone1));
+        assertFalse(m_zone2.equals(m_zone3));
+        assertFalse(m_zone3.equals(m_zone2));
+        assertFalse(m_zone4.equals(m_zone3));
+        assertFalse(m_zone3.equals(m_zone4));
+        assertFalse(m_zone1.equals(NullSpiderDiagram.getInstance()));
+        assertFalse(m_zone2.equals(NullSpiderDiagram.getInstance()));
+        assertFalse(m_zone3.equals(NullSpiderDiagram.getInstance()));
+        assertFalse(m_zone4.equals(NullSpiderDiagram.getInstance()));
+        assertFalse(m_zone1.equals(null));
+        assertFalse(m_zone2.equals(null));
+        assertFalse(m_zone3.equals(null));
+        assertFalse(m_zone4.equals(null));
+        assertFalse(m_zone3.equals(m_zone5));
+        assertFalse(m_zone5.equals(m_zone1));
+        assertFalse(m_zone5.equals(m_zone3));
+        assertTrue(m_zone5.equals(m_zone5));
+        assertFalse(m_zone5.equals(m_zone6));
+        assertFalse(m_zone5.equals(m_zone7));
+        assertFalse(m_zone5.equals(m_zone8));
+        assertFalse(m_zone5.equals(m_zone9));
+        assertFalse(m_zone5.equals(m_zone10));
+        assertFalse(m_zone6.equals(m_zone1));
+        assertFalse(m_zone6.equals(m_zone3));
+        assertTrue(m_zone6.equals(m_zone6));
+        assertFalse(m_zone6.equals(m_zone7));
+        assertFalse(m_zone6.equals(m_zone8));
+        assertFalse(m_zone6.equals(m_zone9));
+        assertFalse(m_zone6.equals(m_zone10));
+        assertFalse(m_zone7.equals(m_zone6));
+        assertFalse(m_zone7.equals(m_zone1));
+        assertFalse(m_zone7.equals(m_zone3));
+        assertFalse(m_zone7.equals(m_zone8));
+        assertFalse(m_zone7.equals(m_zone9));
+        assertFalse(m_zone7.equals(m_zone10));
+        assertFalse(m_zone8.equals(m_zone1));
+        assertFalse(m_zone8.equals(m_zone3));
+        assertFalse(m_zone8.equals(m_zone6));
+        assertFalse(m_zone8.equals(m_zone7));
+        assertTrue(m_zone8.equals(m_zone9));
+        assertTrue(m_zone8.equals(m_zone10));
+    }
+
+    /**
+     * Test of hashCode method, of class Zone.
+     */
+    @Test
+    public void testHashCode() {
+        assertEquals(m_zone1.hashCode(), m_zone2.hashCode());
+        assertEquals(m_zone2.hashCode(), m_zone1.hashCode());
+        assertEquals(m_zone2.hashCode(), m_zone4.hashCode());
+        assertEquals(m_zone4.hashCode(), m_zone2.hashCode());
+        assertEquals(m_zone1.hashCode(), m_zone4.hashCode());
+        assertEquals(m_zone4.hashCode(), m_zone1.hashCode());
+        assertEquals(m_zone1.hashCode(), m_zone1.hashCode());
+        assertEquals(m_zone2.hashCode(), m_zone2.hashCode());
+        assertEquals(m_zone3.hashCode(), m_zone3.hashCode());
+        assertEquals(m_zone4.hashCode(), m_zone4.hashCode());
+        assertEquals(m_zone8.hashCode(), m_zone9.hashCode());
+        assertEquals(m_zone8.hashCode(), m_zone10.hashCode());
+    }
+
+    /**
+     * Test of hashCode method, of class Zone.
+     */
+    @Test
+    public void testHashMap() {
+        HashSet<Zone> sds = new HashSet<Zone>();
+        sds.add(m_zone1);
+        sds.add(m_zone2);
+        sds.add(m_zone3);
+        sds.add(m_zone4);
+        sds.add(m_zone5);
+        sds.add(m_zone6);
+        sds.add(m_zone7);
+        sds.add(m_zone8);
+        sds.add(m_zone9);
+        sds.add(m_zone10);
+        assertEquals(6, sds.size());
+        assertTrue(sds.contains(m_zone1));
+        assertTrue(sds.contains(m_zone2));
+        assertTrue(sds.contains(m_zone3));
+        assertTrue(sds.contains(m_zone4));
+        assertTrue(sds.contains(m_zone5));
+        assertTrue(sds.contains(m_zone6));
+        assertTrue(sds.contains(m_zone7));
+        assertTrue(sds.contains(m_zone8));
+        assertTrue(sds.contains(m_zone9));
+        assertTrue(sds.contains(m_zone10));
+        assertFalse(sds.contains(null));
+        assertFalse(sds.contains(new Zone(Arrays.asList(new String[]{ "a" }), null)));
+        assertTrue(sds.contains(new Zone(Arrays.asList(new String[]{ "B", "A" }), Arrays.asList(new String[]{ "E", "C", "F", "D" }))));
+        assertTrue(sds.contains(new Zone(Arrays.asList(new String[]{ "B", "A", "A" }), Arrays.asList(new String[]{ "E", "C", "F", "F", "D" }))));
+        assertFalse(sds.contains(new Zone(Arrays.asList(new String[]{ "B", "A", "A" }), null)));
+        assertFalse(sds.contains(new Zone(null, Arrays.asList(new String[]{ "E", "C", "F", "F", "D" }))));
+        assertFalse(sds.contains(new Zone(Arrays.asList(new String[]{ "B" }), Arrays.asList(new String[]{ "E", "C", "F", "F", "D" }))));
+        assertFalse(sds.contains(new Zone(Arrays.asList(new String[]{ "B" }), null)));
+        assertFalse(sds.contains(new Zone(null, Arrays.asList(new String[]{ "E", "C", "F", "F", "D" }))));
+    }
+}

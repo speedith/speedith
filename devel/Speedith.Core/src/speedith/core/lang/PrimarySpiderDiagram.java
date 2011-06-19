@@ -37,6 +37,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import speedith.core.util.Sets;
 import static speedith.core.i18n.Translations.i18n;
+import static speedith.core.util.Sets.equal;
 
 /**
  * Represents a unitary spider diagram. For a complete and formal description of
@@ -80,9 +81,11 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     public static final String SDTextSpidersAttribute = "spiders";
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
-    private TreeSet<String> spiders;
-    private TreeMap<String, Region> habitats;
-    private TreeSet<Zone> shadedZones;
+    private TreeSet<String> m_spiders;
+    private TreeMap<String, Region> m_habitats;
+    private TreeSet<Zone> m_shadedZones;
+    private boolean m_hashInvalid = true;
+    private int m_hash;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -90,9 +93,9 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * Creates an empty primary (unitary) spider diagram.
      */
     public PrimarySpiderDiagram() {
-        spiders = null;
-        habitats = null;
-        shadedZones = null;
+        m_spiders = null;
+        m_habitats = null;
+        m_shadedZones = null;
     }
 
     /**
@@ -138,9 +141,9 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
                 throw new IllegalArgumentException(i18n("ERR_SD_HABITATS_WITHOUT_SPIDERS"));
             }
         }
-        this.spiders = spiders;
-        this.habitats = habitats;
-        this.shadedZones = shadedZones;
+        this.m_spiders = spiders;
+        this.m_habitats = habitats;
+        this.m_shadedZones = shadedZones;
     }
     // </editor-fold>
 
@@ -153,7 +156,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * {@link Region habitats}.
      */
     public SortedMap<String, Region> getHabitats() {
-        return habitats == null ? null : Collections.unmodifiableSortedMap(habitats);
+        return m_habitats == null ? null : Collections.unmodifiableSortedMap(m_habitats);
     }
 
     /**
@@ -163,7 +166,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * specified in this primary spider diagram.
      */
     public int getHabitatsCount() {
-        return habitats == null ? 0 : habitats.size();
+        return m_habitats == null ? 0 : m_habitats.size();
     }
 
     /**
@@ -173,7 +176,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * @return a set of shaded {@link Zone zones} in this spider diagram..
      */
     public SortedSet<Zone> getShadedZones() {
-        return shadedZones == null ? null : Collections.unmodifiableSortedSet(shadedZones);
+        return m_shadedZones == null ? null : Collections.unmodifiableSortedSet(m_shadedZones);
     }
 
     /**
@@ -183,7 +186,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * zones} specified in this primary spider diagram.
      */
     public int getShadedZonesCount() {
-        return shadedZones == null ? 0 : shadedZones.size();
+        return m_shadedZones == null ? 0 : m_shadedZones.size();
     }
 
     /**
@@ -194,7 +197,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * diagram.
      */
     public SortedSet<String> getSpiders() {
-        return spiders == null ? null : Collections.unmodifiableSortedSet(spiders);
+        return m_spiders == null ? null : Collections.unmodifiableSortedSet(m_spiders);
     }
 
     /**
@@ -204,19 +207,29 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * specified in this primary spider diagram.
      */
     public int getSpidersCount() {
-        return spiders == null ? 0 : spiders.size();
+        return m_spiders == null ? 0 : m_spiders.size();
     }
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Equality">
     @Override
     public boolean equals(Object other) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (other == this) {
+            return true;
+        } else if (other instanceof PrimarySpiderDiagram) {
+            return __isPsdEqual((PrimarySpiderDiagram) other);
+        } else {
+            return false;
+        }
     }
 
     @Override
     public int hashCode() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (m_hashInvalid) {
+            m_hash = m_spiders.hashCode() + m_habitats.hashCode() + m_shadedZones.hashCode();
+            m_hashInvalid = false;
+        }
+        return m_hash;
     }
     // </editor-fold>
 
@@ -238,12 +251,12 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     private void printSpiders(StringBuilder sb) {
         sb.append(SDTextSpidersAttribute).append(" = ");
-        printStringList(sb, spiders);
+        printStringList(sb, m_spiders);
     }
 
     private void printShadedZones(StringBuilder sb) {
         sb.append(SDTextShadedZonesAttribute).append(" = ");
-        printZoneList(sb, shadedZones);
+        printZoneList(sb, m_shadedZones);
     }
 
     /**
@@ -256,8 +269,8 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     private void printHabitats(StringBuilder sb) {
         sb.append(SDTextHabitatsAttribute).append(" = ");
         sb.append('[');
-        if (habitats != null && !habitats.isEmpty()) {
-            Iterator<Entry<String, Region>> spIterator = habitats.entrySet().iterator();
+        if (m_habitats != null && !m_habitats.isEmpty()) {
+            Iterator<Entry<String, Region>> spIterator = m_habitats.entrySet().iterator();
             if (spIterator.hasNext()) {
                 Entry<String, Region> habitat = spIterator.next();
                 printHabitat(sb, habitat.getKey(), habitat.getValue());
@@ -291,6 +304,14 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         final StringBuilder sb = new StringBuilder();
         toString(sb);
         return sb.toString();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Private Methods">
+    private boolean __isPsdEqual(PrimarySpiderDiagram psd) {
+        return equal(this.m_spiders, psd.m_spiders)
+                && equal(this.m_habitats.entrySet(), psd.m_habitats.entrySet())
+                && equal(this.m_shadedZones, psd.m_shadedZones);
     }
     // </editor-fold>
 }

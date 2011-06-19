@@ -66,7 +66,7 @@ public class NullSpiderDiagram extends SpiderDiagram {
 
     @Override
     public int hashCode() {
-        return ((Object)this).hashCode();
+        return 0xb8e9561a;
     }
     // </editor-fold>
 

@@ -63,6 +63,23 @@ public class Region {
             this.zones = new TreeSet<Zone>(zones);
         }
     }
+
+    /**
+     * Creates a new region from the given collection of zones. The resulting
+     * region will constitute of these zones.
+     * <p><span style="font-weight:bold">Important</span>: this method does
+     * not make a copy of the given zone set. Hence, it is possible to violate
+     * the immutability property of this class (which means that the
+     * contract for the {@link Zone#hashCode()} method might be broken). So,
+     * make sure that you do not change the given set after creating this region
+     * with it.</p>
+     * <p>Note that duplicate zones in the given collection will be ignored.</p>
+     * @param zones the collection of zones from which to construct this region.
+     * <p>This argument may be {@code null}. This indicates an empty region.</p>
+     */
+    public Region(TreeSet<Zone> zones) {
+        this.zones = zones;
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public Properties">
