@@ -37,8 +37,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import speedith.core.lang.NullSpiderDiagram;
-import speedith.core.lang.Zone;
 import static org.junit.Assert.*;
 
 /**

@@ -29,7 +29,6 @@ package speedith.core.lang;
 import java.util.Collections;
 import java.util.Set;
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 /**
  * Represents the logical connectives in {@link NarySpiderDiagram}s.
