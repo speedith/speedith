@@ -99,7 +99,7 @@ public class Zone implements Comparable<Zone> {
      * <p>These are the contours that contain this zone.</p>
      */
     public SortedSet<String> getInContours() {
-        return m_inContours == null ? null : Collections.unmodifiableSortedSet(m_inContours);
+        return m_inContours == null || m_inContours.isEmpty() ? null : Collections.unmodifiableSortedSet(m_inContours);
     }
 
     /**
@@ -119,7 +119,7 @@ public class Zone implements Comparable<Zone> {
      * <p>These are the contours that lie outside this zone.</p>
      */
     public SortedSet<String> getOutContours() {
-        return m_outContours == null ? null : Collections.unmodifiableSortedSet(m_outContours);
+        return m_outContours == null || m_outContours.isEmpty() ? null : Collections.unmodifiableSortedSet(m_outContours);
     }
 
     /**
@@ -185,8 +185,8 @@ public class Zone implements Comparable<Zone> {
     @Override
     public int hashCode() {
         if (hashInvalid) {
-            hash = (this.m_inContours != null ? this.m_inContours.hashCode() : 0)
-                    + (this.m_outContours != null ? this.m_outContours.hashCode() : 0);
+            hash = (m_inContours == null || m_inContours.isEmpty() ? 0 : m_inContours.hashCode())
+                    + (m_outContours == null || m_outContours.isEmpty() ? 0 : m_outContours.hashCode());
             hashInvalid = false;
         }
         return hash;

@@ -64,9 +64,11 @@ public class ZoneTest {
     static Zone m_zone6;
     static TreeSet<String> m_inContours7;
     static Zone m_zone7;
-    private static Zone m_zone8;
-    private static Zone m_zone9;
-    private static Zone m_zone10;
+    static Zone m_zone8;
+    static Zone m_zone9;
+    static Zone m_zone10;
+    static Zone m_zone11;
+    static Zone m_zone12;
 
     public ZoneTest() {
     }
@@ -153,6 +155,9 @@ public class ZoneTest {
         m_zone8 = new Zone(null, null);
         m_zone9 = new Zone((TreeSet<String>)null, (TreeSet<String>)null);
         m_zone10 = new Zone((Collection<String>)null, (Collection<String>)null);
+        
+        m_zone11 = new Zone(new ArrayList<String>(), new TreeSet<String>());
+        m_zone12 = new Zone(new TreeSet<String>(), new TreeSet<String>());
     }
 
     @AfterClass
@@ -184,6 +189,8 @@ public class ZoneTest {
         assertEquals(m_zone8.getInContours(), null);
         assertEquals(m_zone9.getInContours(), null);
         assertEquals(m_zone10.getInContours(), null);
+        assertEquals(m_zone11.getInContours(), null);
+        assertEquals(m_zone12.getInContours(), null);
     }
 
     /**
@@ -202,6 +209,8 @@ public class ZoneTest {
         assertEquals(m_zone8.getInContoursCount(), 0);
         assertEquals(m_zone9.getInContoursCount(), 0);
         assertEquals(m_zone10.getInContoursCount(), 0);
+        assertEquals(m_zone11.getInContoursCount(), 0);
+        assertEquals(m_zone12.getInContoursCount(), 0);
     }
 
     /**
@@ -220,6 +229,8 @@ public class ZoneTest {
         assertEquals(m_zone8.getOutContours(), null);
         assertEquals(m_zone9.getOutContours(), null);
         assertEquals(m_zone10.getOutContours(), null);
+        assertEquals(m_zone11.getOutContours(), null);
+        assertEquals(m_zone12.getOutContours(), null);
     }
 
     /**
@@ -238,6 +249,8 @@ public class ZoneTest {
         assertEquals(m_zone8.getOutContoursCount(), 0);
         assertEquals(m_zone9.getOutContoursCount(), 0);
         assertEquals(m_zone10.getOutContoursCount(), 0);
+        assertEquals(m_zone11.getOutContoursCount(), 0);
+        assertEquals(m_zone12.getOutContoursCount(), 0);
     }
 
     /**
@@ -289,6 +302,8 @@ public class ZoneTest {
         assertEquals(m_zone8.compareTo(m_zone7), -1);
         assertEquals(m_zone8.compareTo(m_zone9), 0);
         assertEquals(m_zone8.compareTo(m_zone10), 0);
+        assertEquals(m_zone8.compareTo(m_zone11), 0);
+        assertEquals(m_zone8.compareTo(m_zone12), 0);
     }
 
     /**
@@ -348,6 +363,8 @@ public class ZoneTest {
         assertFalse(m_zone8.equals(m_zone7));
         assertTrue(m_zone8.equals(m_zone9));
         assertTrue(m_zone8.equals(m_zone10));
+        assertTrue(m_zone8.equals(m_zone11));
+        assertTrue(m_zone8.equals(m_zone12));
     }
 
     /**
@@ -367,6 +384,8 @@ public class ZoneTest {
         assertEquals(m_zone4.hashCode(), m_zone4.hashCode());
         assertEquals(m_zone8.hashCode(), m_zone9.hashCode());
         assertEquals(m_zone8.hashCode(), m_zone10.hashCode());
+        assertEquals(m_zone8.hashCode(), m_zone11.hashCode());
+        assertEquals(m_zone8.hashCode(), m_zone12.hashCode());
     }
 
     /**
@@ -385,6 +404,8 @@ public class ZoneTest {
         sds.add(m_zone8);
         sds.add(m_zone9);
         sds.add(m_zone10);
+        sds.add(m_zone11);
+        sds.add(m_zone12);
         assertEquals(6, sds.size());
         assertTrue(sds.contains(m_zone1));
         assertTrue(sds.contains(m_zone2));

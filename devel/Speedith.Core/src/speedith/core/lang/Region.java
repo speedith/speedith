@@ -43,7 +43,7 @@ import static speedith.core.i18n.Translations.i18n;
 public class Region {
 
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
-    private TreeSet<Zone> zones;
+    private TreeSet<Zone> m_zones;
     private boolean hashInvalid = true;
     private int hash;
     // </editor-fold>
@@ -58,9 +58,9 @@ public class Region {
      */
     public Region(Collection<Zone> zones) {
         if (zones == null) {
-            this.zones = null;
+            this.m_zones = null;
         } else {
-            this.zones = new TreeSet<Zone>(zones);
+            this.m_zones = new TreeSet<Zone>(zones);
         }
     }
 
@@ -78,7 +78,7 @@ public class Region {
      * <p>This argument may be {@code null}. This indicates an empty region.</p>
      */
     public Region(TreeSet<Zone> zones) {
-        this.zones = zones;
+        this.m_zones = zones;
     }
     // </editor-fold>
 
@@ -92,11 +92,19 @@ public class Region {
      * region.</p>
      */
     public SortedSet<Zone> getZones() {
-        return zones == null ? null : Collections.unmodifiableSortedSet(zones);
+        return m_zones == null || m_zones.isEmpty() ? null : Collections.unmodifiableSortedSet(m_zones);
+    }
+    
+    /**
+     * Returns the number of {@link Region#getZones() zones} in this region.
+     * @return the number of {@link Region#getZones() zones} in this region.
+     */
+    public int getZonesCount() {
+        return m_zones == null ? 0 : m_zones.size();
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+    // <editor-fold defaultstate="collapsed" desc="Equality">
     /**
      * Two regions equal if they constitute of the same zones.
      * @param obj the object with which to compare this region.
@@ -110,7 +118,7 @@ public class Region {
         } else if (obj == null) {
             return false;
         } else if (obj instanceof Region) {
-            return Sets.equal(zones, ((Region) obj).zones);
+            return Sets.equal(m_zones, ((Region) obj).m_zones);
         }
         return false;
     }
@@ -118,7 +126,7 @@ public class Region {
     @Override
     public int hashCode() {
         if (hashInvalid) {
-            hash = (this.zones != null ? this.zones.hashCode() : 0);
+            hash = (m_zones == null || m_zones.isEmpty() ? 0 : m_zones.hashCode());
             hashInvalid = false;
         }
         return hash;
@@ -130,7 +138,7 @@ public class Region {
         if (sb == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
         }
-        SpiderDiagram.printZoneList(sb, zones);
+        SpiderDiagram.printZoneList(sb, m_zones);
     }
     // </editor-fold>
 }
