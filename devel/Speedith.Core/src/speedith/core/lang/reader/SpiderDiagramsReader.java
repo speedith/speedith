@@ -233,7 +233,7 @@ public final class SpiderDiagramsReader {
 
         @SuppressWarnings("unchecked")
         private HabitatTranslator() {
-            regionListTranslator = new ListTranslator<ArrayList<Object>>(new TupleTranslator<Object>(new ElementTranslator[]{StringTranslator.Instance, ZoneTranslator.ZoneListTranslator}));
+            regionListTranslator = new ListTranslator<ArrayList<Object>>(new TupleTranslator<Object>(new ElementTranslator<?>[]{StringTranslator.Instance, ZoneTranslator.ZoneListTranslator}));
         }
 
         @Override
@@ -557,7 +557,7 @@ public final class SpiderDiagramsReader {
                 for (Object obj : treeNode.getChildren()) {
                     CommonTree node = (CommonTree) obj;
                     if (node.token != null && node.token.getType() == SpiderDiagramsParser.PAIR && node.getChildCount() == 2) {
-                        String key = (String) IDTranslator.Instance.fromASTNode((CommonTree) node.getChild(0));
+                        String key = IDTranslator.Instance.fromASTNode((CommonTree) node.getChild(0));
                         ElementTranslator<? extends V> translator = null;
                         if (typedValueTranslators != null) {
                             translator = typedValueTranslators.get(key);

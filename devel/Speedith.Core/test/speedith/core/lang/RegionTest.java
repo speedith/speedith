@@ -275,5 +275,24 @@ public class RegionTest {
         rgns.add(m_region11);
         rgns.add(m_region12);
         assertEquals(5, rgns.size());
+        assertEquals(5, rgns.size());
+        assertTrue(rgns.contains(m_region1));
+        assertTrue(rgns.contains(m_region2));
+        assertTrue(rgns.contains(m_region3));
+        assertTrue(rgns.contains(m_region4));
+        assertTrue(rgns.contains(m_region5));
+        assertTrue(rgns.contains(m_region6));
+        assertTrue(rgns.contains(m_region7));
+        assertTrue(rgns.contains(m_region8));
+        assertTrue(rgns.contains(m_region9));
+        assertTrue(rgns.contains(m_region10));
+        assertFalse(rgns.contains(null));
+        assertFalse(rgns.contains(new Region(Arrays.asList(new Zone[]{ ZoneTest.m_zone8 }))));
+        assertFalse(rgns.contains(new Region(Arrays.asList(new Zone[]{ ZoneTest.m_zone8, ZoneTest.m_zone5 }))));
+        assertFalse(rgns.contains(new Region(Arrays.asList(new Zone[]{ ZoneTest.m_zone8, ZoneTest.m_zone5, ZoneTest.m_zone1 }))));
+        assertTrue(rgns.contains(new Region(Arrays.asList(new Zone[]{ ZoneTest.m_zone8, ZoneTest.m_zone5, ZoneTest.m_zone1, ZoneTest.m_zone6 }))));
+        assertFalse(rgns.contains(new Region(Arrays.asList(new Zone[]{ ZoneTest.m_zone8, ZoneTest.m_zone5, ZoneTest.m_zone1, ZoneTest.m_zone6, ZoneTest.m_zone3 }))));
+        assertTrue(rgns.contains(new Region(Arrays.asList(new Zone[]{ ZoneTest.m_zone8, ZoneTest.m_zone5, ZoneTest.m_zone1, ZoneTest.m_zone6, ZoneTest.m_zone3, ZoneTest.m_zone7 }))));
+        assertTrue(rgns.contains(new Region(Arrays.asList(new Zone[]{ }))));
     }
 }

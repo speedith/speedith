@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: InferenceRuleArgs.java
+ * File name: SubgoalIndexRuleArg.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -24,16 +24,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.core.reasoning;
+package speedith.core.reasoning.args;
 
 /**
- * The base interface of all arguments (concrete parameters) to Speedith's
- * inference rules.
- * <p>Different inference rules require different arguments for applying them to
- * a given set of goals.</p>
- * <p>Instances of this class (and its derived classes) are immutable.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface InferenceRuleArgs {
-    
+public class SubgoalIndexRuleArg implements RuleArg {
+
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    private int subgoalIndex;
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Constructor">
+    public SubgoalIndexRuleArg(int subgoalIndex) {
+        this.subgoalIndex = subgoalIndex;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Public Properties">
+    public int getSubgoalIndex() {
+        return subgoalIndex;
+    }
+    // </editor-fold>
 }

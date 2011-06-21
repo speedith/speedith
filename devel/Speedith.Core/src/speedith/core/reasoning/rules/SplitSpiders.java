@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: InferenceRule.java
+ * File name: SplitSpiders.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -24,18 +24,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.core.reasoning;
+package speedith.core.reasoning.rules;
 
-import speedith.core.reasoning.args.RuleArg;
+import static speedith.core.i18n.Translations.*;
 import java.util.List;
 import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.BasicInferenceRule;
+import speedith.core.reasoning.InferenceRule;
+import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.RuleApplicationException;
+import speedith.core.reasoning.args.PrimarySDIndexArg;
+import speedith.core.reasoning.args.SubgoalIndexRuleArg;
 
 /**
- * TODO: Comment.
- * <p>Instances of this class (and its derived classes) are immutable.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface InferenceRule {
-    // TODO: Specify the interface.
-    SpiderDiagram[] apply(RuleArg args, List<SpiderDiagram> goals) throws RuleApplicationException;
+public class SplitSpiders implements InferenceRule, BasicInferenceRule {
+
+    public SpiderDiagram[] apply(RuleArg args, List<SpiderDiagram> goals) throws RuleApplicationException {
+        if (goals == null || goals.isEmpty()) {
+            throw new RuleApplicationException(i18n("RULE_NO_SUBGOALS"));
+        }
+        if (args instanceof PrimarySDIndexArg) {
+            int sugoalIndex = ((PrimarySDIndexArg)args).getSubgoalIndex();
+            int primarySDIndex = ((PrimarySDIndexArg)args).getPrimarySDIndex();
+            // TODO: Finish the rule.
+            return goals.toArray(new SpiderDiagram[goals.size()]);
+        } else {
+            throw new RuleApplicationException(i18n("RULE_INVALID_ARGS"));
+        }
+    }
 }

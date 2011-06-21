@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: InferenceRule.java
+ * File name: RuleArg.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -24,18 +24,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.core.reasoning;
-
-import speedith.core.reasoning.args.RuleArg;
-import java.util.List;
-import speedith.core.lang.SpiderDiagram;
+package speedith.core.reasoning.args;
 
 /**
- * TODO: Comment.
+ * The base interface of all arguments (concrete parameters) to Speedith's
+ * inference rules.
+ * <p>Different inference rules require different arguments for applying them to
+ * a given set of goals.</p>
  * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface InferenceRule {
-    // TODO: Specify the interface.
-    SpiderDiagram[] apply(RuleArg args, List<SpiderDiagram> goals) throws RuleApplicationException;
+public interface RuleArg {
+    
 }

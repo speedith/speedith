@@ -173,8 +173,6 @@ public class Zone implements Comparable<Zone> {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj == null) {
-            return false;
         } else if (obj instanceof Zone) {
             Zone other = (Zone) obj;
             return equal(m_inContours, other.m_inContours) && equal(m_outContours, other.m_outContours);

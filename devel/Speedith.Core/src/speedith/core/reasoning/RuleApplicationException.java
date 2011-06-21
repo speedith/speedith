@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: InferenceRule.java
+ * File name: RuleApplicationException.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -26,16 +26,24 @@
  */
 package speedith.core.reasoning;
 
-import speedith.core.reasoning.args.RuleArg;
-import java.util.List;
-import speedith.core.lang.SpiderDiagram;
-
 /**
- * TODO: Comment.
- * <p>Instances of this class (and its derived classes) are immutable.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface InferenceRule {
-    // TODO: Specify the interface.
-    SpiderDiagram[] apply(RuleArg args, List<SpiderDiagram> goals) throws RuleApplicationException;
+public class RuleApplicationException extends Exception {
+    private static final long serialVersionUID = 0x2d9444064275ba88L;
+
+    /**
+     * Creates a new instance of <code>RuleApplicationException</code> without detail message.
+     */
+    public RuleApplicationException() {
+    }
+
+    /**
+     * Constructs an instance of <code>RuleApplicationException</code> with the specified detail message.
+     * @param msg the detail message.
+     */
+    public RuleApplicationException(String msg) {
+        super(msg);
+    }
 }

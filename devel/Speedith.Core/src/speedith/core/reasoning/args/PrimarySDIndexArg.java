@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: InferenceRule.java
+ * File name: PrimarySDIndexArg.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -24,18 +24,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.core.reasoning;
-
-import speedith.core.reasoning.args.RuleArg;
-import java.util.List;
-import speedith.core.lang.SpiderDiagram;
+package speedith.core.reasoning.args;
 
 /**
- * TODO: Comment.
- * <p>Instances of this class (and its derived classes) are immutable.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface InferenceRule {
-    // TODO: Specify the interface.
-    SpiderDiagram[] apply(RuleArg args, List<SpiderDiagram> goals) throws RuleApplicationException;
+public class PrimarySDIndexArg extends SubgoalIndexRuleArg implements RuleArg {
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    private int primarySDIndex;
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Constructor">
+    public PrimarySDIndexArg(int subgoalIndex, int primarySDIndex) {
+        super(subgoalIndex);
+        this.primarySDIndex = primarySDIndex;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Public Properties">
+    public int getPrimarySDIndex() {
+        return primarySDIndex;
+    }
+    // </editor-fold>
 }

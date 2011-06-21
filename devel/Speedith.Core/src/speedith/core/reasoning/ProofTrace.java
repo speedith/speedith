@@ -26,6 +26,7 @@
  */
 package speedith.core.reasoning;
 
+import speedith.core.reasoning.args.RuleArg;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -108,7 +109,7 @@ public class ProofTrace {
         throw new UnsupportedOperationException();
     }
     
-    public ProofTrace applyRule(InferenceRule rule, InferenceRuleArgs args) {
+    public ProofTrace applyRule(InferenceRule rule, RuleArg args) {
         throw new UnsupportedOperationException();
     }
     

@@ -57,11 +57,7 @@ public class Region {
      * <p>This argument may be {@code null}. This indicates an empty region.</p>
      */
     public Region(Collection<Zone> zones) {
-        if (zones == null) {
-            this.m_zones = null;
-        } else {
-            this.m_zones = new TreeSet<Zone>(zones);
-        }
+        this(zones == null ? null : new TreeSet<Zone>(zones));
     }
 
     /**
@@ -78,6 +74,9 @@ public class Region {
      * <p>This argument may be {@code null}. This indicates an empty region.</p>
      */
     public Region(TreeSet<Zone> zones) {
+//        if (zones != null && zones.contains(null)) {
+//            throw new RuntimeException(i18n("ERR_NULL_ZONE_IN_REGION"));
+//        }
         this.m_zones = zones;
     }
     // </editor-fold>
@@ -94,7 +93,7 @@ public class Region {
     public SortedSet<Zone> getZones() {
         return m_zones == null || m_zones.isEmpty() ? null : Collections.unmodifiableSortedSet(m_zones);
     }
-    
+
     /**
      * Returns the number of {@link Region#getZones() zones} in this region.
      * @return the number of {@link Region#getZones() zones} in this region.
@@ -115,8 +114,6 @@ public class Region {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj == null) {
-            return false;
         } else if (obj instanceof Region) {
             return Sets.equal(m_zones, ((Region) obj).m_zones);
         }

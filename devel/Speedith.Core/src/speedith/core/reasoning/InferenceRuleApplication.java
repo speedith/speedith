@@ -26,15 +26,17 @@
  */
 package speedith.core.reasoning;
 
+import speedith.core.reasoning.args.RuleArg;
+
 /**
  * A pair of the applied {@link InferenceRule inference rule} and {@link
- * InferenceRuleArgs arguments} given to the former.
+ * RuleArg arguments} given to the former.
  * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class InferenceRuleApplication {
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private InferenceRule m_inferenceRule;
-    private InferenceRuleArgs m_ruleArguments;
+    private RuleArg m_ruleArguments;
     // </editor-fold>
 }
