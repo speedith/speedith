@@ -34,7 +34,6 @@ import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.PrimarySDIndexArg;
-import speedith.core.reasoning.args.SubgoalIndexRuleArg;
 
 /**
  *

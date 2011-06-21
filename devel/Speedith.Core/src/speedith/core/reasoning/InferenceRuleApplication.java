@@ -27,6 +27,7 @@
 package speedith.core.reasoning;
 
 import speedith.core.reasoning.args.RuleArg;
+import static speedith.core.i18n.Translations.*;
 
 /**
  * A pair of the applied {@link InferenceRule inference rule} and {@link
@@ -36,7 +37,23 @@ import speedith.core.reasoning.args.RuleArg;
  */
 public class InferenceRuleApplication {
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private InferenceRule m_inferenceRule;
-    private RuleArg m_ruleArguments;
+    private InferenceRule inferenceRule;
+    private RuleArg ruleArguments;
     // </editor-fold>
+
+    public InferenceRuleApplication(InferenceRule inferenceRule, RuleArg ruleArguments) {
+        if (inferenceRule == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "inferenceRule"));
+        }
+        this.inferenceRule = inferenceRule;
+        this.ruleArguments = ruleArguments;
+    }
+
+    public InferenceRule getInferenceRule() {
+        return inferenceRule;
+    }
+
+    public RuleArg getRuleArguments() {
+        return ruleArguments;
+    }
 }

@@ -46,4 +46,21 @@ public class RuleApplicationException extends Exception {
     public RuleApplicationException(String msg) {
         super(msg);
     }
+
+    /**
+     * Constructs an instance of <code>RuleApplicationException</code> with the specified detail message.
+     * @param msg the detail message.
+     * @param cause  
+     */
+    public RuleApplicationException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
+
+    /**
+     * Constructs an instance of <code>RuleApplicationException</code> with the specified detail message.
+     * @param cause  
+     */
+    public RuleApplicationException(Throwable cause) {
+        super(cause);
+    }
 }

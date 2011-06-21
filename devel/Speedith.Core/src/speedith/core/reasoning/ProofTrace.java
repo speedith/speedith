@@ -105,16 +105,19 @@ public class ProofTrace {
         return __isSubgoalsListEmpty() ? null : __getSubgoalAt(m_subgoals.size() - 1);
     }
     
-    public ProofTrace applyRule(InferenceRule rule) {
-        throw new UnsupportedOperationException();
+    public ProofTrace applyRule(InferenceRule rule) throws RuleApplicationException {
+        return applyRule(rule, null);
     }
     
-    public ProofTrace applyRule(InferenceRule rule, RuleArg args) {
-        throw new UnsupportedOperationException();
+    public ProofTrace applyRule(InferenceRule rule, RuleArg args) throws RuleApplicationException {
+        return applyRule(new InferenceRuleApplication(rule, args));
     }
     
-    public ProofTrace applyRule(InferenceRuleApplication ruleApplication) {
-        throw new UnsupportedOperationException();
+    public ProofTrace applyRule(InferenceRuleApplication ruleApplication) throws RuleApplicationException {
+        SpiderDiagram[] subgoals = ruleApplication.getInferenceRule().apply(ruleApplication.getRuleArguments(), getLastGoals());
+        m_inferenceRules.add(ruleApplication);
+        m_subgoals.add(subgoals);
+        return this;
     }
     // </editor-fold>
     
