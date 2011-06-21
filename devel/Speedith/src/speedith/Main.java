@@ -30,9 +30,10 @@ import java.util.SortedSet;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.cli.ParseException;
 import speedith.cli.CliOptions;
+import speedith.core.lang.CompoundSpiderDiagram;
+import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.export.SDExportProvider;
 import speedith.core.lang.export.SDExporting;
@@ -90,6 +91,7 @@ public class Main {
                 String outputFormat = clargs.getOutputFormat();
                 // Now print out the formula in the specified format
                 if (readSpiderDiagram != null) {
+                    testis((CompoundSpiderDiagram) readSpiderDiagram, clargs);
                     SDExporting.getExporter(outputFormat, clargs.getOutputFormatArguments()).exportTo(readSpiderDiagram, System.out);
                     System.out.println();
                 }
@@ -145,6 +147,22 @@ public class Main {
                 }
             }
         }
+    }
+    // </editor-fold>
+
+    private static void testis(CompoundSpiderDiagram compoundSpiderDiagram, CliOptions clargs) {
+        PrimarySpiderDiagram psd = compoundSpiderDiagram.getPrimarySpiderDiagramAt(0);
+        System.out.println(psd.toString());
+        psd = compoundSpiderDiagram.getPrimarySpiderDiagramAt(1);
+        System.out.println(psd.toString());
+        psd = compoundSpiderDiagram.getPrimarySpiderDiagramAt(2);
+        System.out.println(psd.toString());
+        psd = compoundSpiderDiagram.getPrimarySpiderDiagramAt(3);
+        System.out.println(psd.toString());
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Disabled Constructor">
+    private Main() {
     }
     // </editor-fold>
 }

@@ -177,6 +177,20 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+    /**
+     * Returns the primary spider diagram at the given index (as it appears in
+     * this compound diagram from left to right).
+     * @param index
+     * @return
+     */
+    public PrimarySpiderDiagram getPrimarySpiderDiagramAt(int index) {
+        DiagramSeeker diagramSeeker = new DiagramSeeker();
+        diagramSeeker.findPSDAt(this, index);
+        return diagramSeeker.foundPSD;
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Equality">
     @Override
     public boolean equals(Object other) {
@@ -268,6 +282,29 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     private boolean __isCsdEqual(CompoundSpiderDiagram other) {
         return getOperator().equals(other.getOperator())
                 && m_operands.equals(other.m_operands);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Helper Classes">
+    private static class DiagramSeeker {
+
+        int lastPSDIndex = -1;
+        PrimarySpiderDiagram foundPSD = null;
+
+        final void findPSDAt(CompoundSpiderDiagram topSD, int index) {
+            for (SpiderDiagram spiderDiagram : topSD.m_operands) {
+                if (spiderDiagram instanceof PrimarySpiderDiagram) {
+                    if (++lastPSDIndex == index) {
+                        foundPSD = (PrimarySpiderDiagram) spiderDiagram;
+                    }
+                } else if (spiderDiagram instanceof CompoundSpiderDiagram) {
+                    findPSDAt((CompoundSpiderDiagram) spiderDiagram, index);
+                }
+                if (lastPSDIndex >= index) {
+                    break;
+                }
+            }
+        }
     }
     // </editor-fold>
 }
