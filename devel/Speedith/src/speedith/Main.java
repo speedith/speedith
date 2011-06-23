@@ -91,7 +91,7 @@ public class Main {
                 String outputFormat = clargs.getOutputFormat();
                 // Now print out the formula in the specified format
                 if (readSpiderDiagram != null) {
-                    testis((CompoundSpiderDiagram) readSpiderDiagram, clargs);
+                    test((CompoundSpiderDiagram) readSpiderDiagram, clargs);
                     SDExporting.getExporter(outputFormat, clargs.getOutputFormatArguments()).exportTo(readSpiderDiagram, System.out);
                     System.out.println();
                 }
@@ -150,15 +150,15 @@ public class Main {
     }
     // </editor-fold>
 
-    private static void testis(CompoundSpiderDiagram compoundSpiderDiagram, CliOptions clargs) {
-        PrimarySpiderDiagram psd = compoundSpiderDiagram.getPrimarySpiderDiagramAt(0);
-        System.out.println(psd.toString());
-        psd = compoundSpiderDiagram.getPrimarySpiderDiagramAt(1);
-        System.out.println(psd.toString());
-        psd = compoundSpiderDiagram.getPrimarySpiderDiagramAt(2);
-        System.out.println(psd.toString());
-        psd = compoundSpiderDiagram.getPrimarySpiderDiagramAt(3);
-        System.out.println(psd.toString());
+    private static void test(CompoundSpiderDiagram compoundSpiderDiagram, CliOptions clargs) {
+//        PrimarySpiderDiagram psd = compoundSpiderDiagram.getPrimarySpiderDiagramAt(0);
+//        System.out.println(psd.toString());
+//        psd = compoundSpiderDiagram.getPrimarySpiderDiagramAt(1);
+//        System.out.println(psd.toString());
+//        psd = compoundSpiderDiagram.getPrimarySpiderDiagramAt(2);
+//        System.out.println(psd.toString());
+//        psd = compoundSpiderDiagram.getPrimarySpiderDiagramAt(3);
+//        System.out.println(psd.toString());
     }
 
     // <editor-fold defaultstate="collapsed" desc="Disabled Constructor">
