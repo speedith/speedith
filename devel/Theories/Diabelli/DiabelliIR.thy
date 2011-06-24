@@ -13,7 +13,7 @@ DiabelliIR: provides a formalisation of the data structure used as the
 
 theory DiabelliIR
 imports Main
-uses ("diabelli.ML")
+uses ("diabelli.ML") "$ISABELLE_HOME/src/Pure/Concurrent/bash_sequential.ML"
 begin
 
 (* sd_zone and sd_region are the types used to encode zones and regions as
@@ -157,9 +157,6 @@ ML {* #3 ("dsa", 5, SOME 1) *}
 ML {* eq_list op= ((sort_distinct string_ord [ "c", "a", "a", "k", "b" ]), (sort_distinct string_ord [ "k", "c", "a", "b" ])) *}
 
 ML {* print_depth 100 *}
-ML {* show_types := false *}
-ML {* show_sorts := false *}
-ML {* show_all_types := false *}
 
 use "diabelli.ML"
 

@@ -10,7 +10,7 @@ distribution's '`settings`' file.
 
 You can either edit your existing Isabelle settings, or copy the included
 '`settings`' file to Isabelle's user settings folder (i.e.
-'`~/.isabelle/etc/`').
+'`~/.isabelle/Isabelle2011/etc/`').
 
 --------------------------------------------------------------------------------
 

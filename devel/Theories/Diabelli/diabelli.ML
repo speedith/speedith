@@ -418,8 +418,9 @@ end
 fun exec_args cmd args =
   let
       val qArgs = List.foldl (fn (s2, s1) => s1 ^ " " ^ s2) "" (map bash_escape args)
+      val _ = tracing (cmd ^ qArgs)
   in
-      Secure.bash_output (cmd ^ qArgs)
+      bash_output (cmd ^ qArgs)
   end
 
 (*==============================================================================
@@ -455,7 +456,7 @@ fun speedith_batch_apply t othy _ =
 
 fun random_tests str =
   let
-      val (out, ret) = Secure.bash_output ("echo " ^ str)
+      val (out, ret) = bash_output ("echo " ^ str)
   in
       (out, ret)
   end;
