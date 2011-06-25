@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import speedith.core.lang.SpiderDiagram;
+import static speedith.core.i18n.Translations.*;
 
 /**
  * This class represents a sequence of applied inference rules with intermediate
@@ -43,38 +44,26 @@ import speedith.core.lang.SpiderDiagram;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class ProofTrace {
-    
+
     // TODO: Provide an 'unmodifiable' wrapper for proof traces (so that proofs
     // can return their proof traces without the fear of them being modified).
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private ArrayList<SpiderDiagram[]> m_subgoals;
-    private ArrayList<InferenceRuleApplication> m_inferenceRules;
+    private Goals initialGoals;
+    private ArrayList<RuleApplication> inferenceRules;
+    private ArrayList<RuleApplicationResult> applicationResults;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
     /**
      * Initialises a new proof trace with the given initial goal.
-     * @param initialGoals the initial goal (may be {@code null} or empty to
-     * indicate a proof trace without proof obligations -- an empty proof
-     * trace).
+     * @param initialGoals the initial goals (proof obligations). This parameter
+     * may be {@code null} or empty to indicate a proof trace without proof
+     * obligations -- an empty proof trace.
      */
-    public ProofTrace(Collection<SpiderDiagram> initialGoals) {
-        this(initialGoals == null || initialGoals.isEmpty() ? null : initialGoals.toArray(new SpiderDiagram[initialGoals.size()]));
-    }
-
-    /**
-     * Initialises a new proof trace with the given initial goal.
-     * <p><span style="font-weight:bold">Note</span>: this constructor is <span style="font-weight:bold">unsafe</span>
-     * as it does not make a copy of the given {@code initialGoals} array. It
-     * simply stores it to list of subgoals.</p>
-     * @param initialGoals the initial goal (may be {@code null} or empty to
-     * indicate a proof trace without proof obligations -- an empty proof
-     * trace).
-     */
-    ProofTrace(SpiderDiagram[] initialGoals) {
-        m_subgoals = new ArrayList<SpiderDiagram[]>();
-        m_subgoals.add(initialGoals);
+    public ProofTrace(Goals initialGoals) {
+        this.initialGoals = initialGoals;
+        inferenceRules = new ArrayList<RuleApplication>();
+        applicationResults = new ArrayList<RuleApplicationResult>();
     }
     // </editor-fold>
 
@@ -89,49 +78,71 @@ public class ProofTrace {
         throw new UnsupportedOperationException();
     }
 
-    public List<SpiderDiagram> getInitialGoals() {
-        return getSubgoalAt(0);
+    /**
+     * Returns the number of goals (this includes the initial goals).
+     * @return the number of goals (this includes the initial goals).
+     */
+    public int getGoalsCount() {
+        return 1 + applicationResults.size();
     }
 
-    public List<SpiderDiagram> getSubgoalAt(int index) {
-        if (__isSubgoalsListEmpty()) {
+    /**
+     * Returns the initial goal of this proof trace.
+     * @return the initial goal of this proof trace.
+     */
+    public Goals getInitialGoals() {
+        return initialGoals;
+    }
+
+    /**
+     * Returns the subgoals at the given index. At index 0 are the initial
+     * goals. At indices <span style="font-style:italic;">i</span>, where
+     * <span style="font-style:italic;">i</span> &gt; 0, we have goals that were
+     * the results of applying the <span style="font-style:italic;">i</span>-th
+     * inference rule.
+     * @param index the index of the subgoal to return.
+     * @return the subgoal at the given index.
+     */
+    public Goals getGoalsAt(int index) {
+        if (index == 0) {
+            return initialGoals;
+        } else if (__isAppResultsListEmpty()) {
             return null;
         } else {
-            return __getSubgoalAt(index);
+            RuleApplicationResult appResult = applicationResults.get(index - 1);
+            if (appResult == null) {
+                return null;
+            }
+            return appResult.getGoals();
         }
     }
 
-    public List<SpiderDiagram> getLastGoals() {
-        return __isSubgoalsListEmpty() ? null : __getSubgoalAt(m_subgoals.size() - 1);
+    public Goals getLastGoals() {
+        return getGoalsAt(getGoalsCount() - 1);
     }
-    
+
     public ProofTrace applyRule(InferenceRule rule) throws RuleApplicationException {
         return applyRule(rule, null);
     }
-    
+
     public ProofTrace applyRule(InferenceRule rule, RuleArg args) throws RuleApplicationException {
-        return applyRule(new InferenceRuleApplication(rule, args));
+        return applyRule(new RuleApplication(rule, args));
     }
-    
-    public ProofTrace applyRule(InferenceRuleApplication ruleApplication) throws RuleApplicationException {
-        SpiderDiagram[] subgoals = ruleApplication.getInferenceRule().apply(ruleApplication.getRuleArguments(), getLastGoals());
-        m_inferenceRules.add(ruleApplication);
-        m_subgoals.add(subgoals);
+
+    public ProofTrace applyRule(RuleApplication ruleApplication) throws RuleApplicationException {
+        if (ruleApplication == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "ruleApplication"));
+        }
+        RuleApplicationResult appResult = ruleApplication.applyTo(getLastGoals());
+        inferenceRules.add(ruleApplication);
+        applicationResults.add(appResult);
         return this;
     }
     // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Private Helper Methods">
-    private List<SpiderDiagram> __getSubgoalAt(int index) {
-        final SpiderDiagram[] initialGoal = m_subgoals.get(index);
-        if (initialGoal == null || initialGoal.length < 1) {
-            return null;
-        }
-        return Collections.unmodifiableList(Arrays.asList(initialGoal));
-    }
 
-    private boolean __isSubgoalsListEmpty() {
-        return m_subgoals == null || m_subgoals.isEmpty();
+    // <editor-fold defaultstate="collapsed" desc="Private Helper Methods">
+    private boolean __isAppResultsListEmpty() {
+        return applicationResults == null || applicationResults.isEmpty();
     }
     // </editor-fold>
 }

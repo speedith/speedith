@@ -44,19 +44,7 @@ public class Proof extends ProofTrace {
      * @param initialGoals the initial goal (may be {@code null} or empty to
      * indicate a proof without proof obligations -- an empty proof).
      */
-    public Proof(Collection<SpiderDiagram> initialGoals) {
-        super(initialGoals);
-    }
-
-    /**
-     * Initialises a new proof with the given initial goal.
-     * <p><span style="font-weight:bold">Note</span>: this constructor is <span style="font-weight:bold">unsafe</span>
-     * as it does not make a copy of the given {@code initialGoals} array. It
-     * simply stores it as is.</p>
-     * @param initialGoals the initial goal (may be {@code null} or empty to
-     * indicate a proof without proof obligations -- an empty proof).
-     */
-    Proof(SpiderDiagram[] initialGoals) {
+    public Proof(Goals initialGoals) {
         super(initialGoals);
     }
     // </editor-fold>
