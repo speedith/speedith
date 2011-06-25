@@ -67,7 +67,7 @@ public class RuleApplication {
      * Returns the inference rule stored in this object.
      * <p>If you want to apply this rule with the accompanying {@link
      * RuleApplication#getRuleArguments() arguments} to a list of
-     * spider diagrams, you can use the {@link RuleApplication#applyTo(java.util.List)}
+     * spider diagrams, you can use the {@link RuleApplication#applyTo(speedith.core.reasoning.Goals)}
      * method.</p>
      * @return the inference rule stored in this object.
      */
@@ -77,10 +77,10 @@ public class RuleApplication {
     
     /**
      * Returns the arguments that will be passed to the {@link RuleApplication#getInferenceRule()
-     * inference rule} when calling the {@link RuleApplication#applyTo(java.util.List)}
+     * inference rule} when calling the {@link RuleApplication#applyTo(speedith.core.reasoning.Goals)}
      * method.
      * @return the arguments that will be passed to the {@link RuleApplication#getInferenceRule()
-     * inference rule} when calling the {@link RuleApplication#applyTo(java.util.List)}
+     * inference rule} when calling the {@link RuleApplication#applyTo(speedith.core.reasoning.Goals)}
      * method.
      */
     public RuleArg getRuleArguments() {

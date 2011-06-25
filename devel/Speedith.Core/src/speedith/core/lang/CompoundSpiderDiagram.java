@@ -181,8 +181,10 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     /**
      * Returns the primary spider diagram at the given index (as it appears in
      * this compound diagram from left to right).
-     * @param index
-     * @return
+     * @param index the index of the primary spider diagram in this compound
+     * diagram to return.
+     * @return the primary spider diagram at the given index (as it appears in
+     * this compound diagram from left to right).
      */
     public PrimarySpiderDiagram getPrimarySpiderDiagramAt(int index) {
         DiagramSeeker diagramSeeker = new DiagramSeeker();

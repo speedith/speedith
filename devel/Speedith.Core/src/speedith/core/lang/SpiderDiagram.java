@@ -57,13 +57,13 @@ public abstract class SpiderDiagram {
      *      <li>any {@link NullSpiderDiagram} instance equals to another {@link
      *          NullSpiderDiagram} instance (in fact, the {@link
      *          NullSpiderDiagram} is a singleton),</li>
-     *      <li>an instance of an {@link NarySpiderDiagram} equals to another
+     *      <li>an instance of an {@link CompoundSpiderDiagram} equals to another
      *          if:
      *          <ul>
      *              <li>both have the same operator (an equality comparison
-     *              on {@link NarySpiderDiagram#getOperator()}) and</li>
+     *              on {@link CompoundSpiderDiagram#getOperator()}) and</li>
      *              <li>both have the same operands (an equality comparison
-     *              on all {@link NarySpiderDiagram#getOperands()}).</li>
+     *              on all {@link CompoundSpiderDiagram#getOperands()}).</li>
      *          </ul>
      *      </li>
      *      <li>a {@link PrimarySpiderDiagram} equals (syntactically) to another

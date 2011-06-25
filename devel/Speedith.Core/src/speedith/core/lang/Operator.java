@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.HashMap;
 
 /**
- * Represents the logical connectives in {@link NarySpiderDiagram}s.
+ * Represents the logical connectives in {@link CompoundSpiderDiagram}s.
  * <p>This class is the base of all operators in Speedith, and provides methods
  * for querying the available operators (the ones supported in Isabelle) and
  * functionality for creating operators from strings (see methods {@link

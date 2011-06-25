@@ -32,9 +32,10 @@ package speedith.core.reasoning;
  * <p>Instances of classes that implement interface provide the following
  * information:
  *  <ul>
- *      <li>an explanation of what the inference rule does (for the user),</li>
+ *      <li>an explanation of what the {@link InferenceRule inference rule} does
+ *          (for the user),</li>
  *      <li>a description of parameters it takes (for the user as well as for
- *          the {@link speedith.core.reasoning SRK}),</li>
+ *          the SRK),</li>
  *      <li>TODO (others?).</li>
  *  </ul>
  * </p>

@@ -26,15 +26,12 @@
  */
 package speedith.core.reasoning;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import speedith.core.lang.SpiderDiagram;
 
 /**
  * Contains the result data of an application of an inference rule (see {@link
- * InferenceRule#apply(speedith.core.reasoning.args.RuleArg, java.util.List) the
- * apply method}).
+ * InferenceRule#apply(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.Goals)
+ * the apply method}).
  * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
@@ -57,12 +54,12 @@ public class RuleApplicationResult {
 
     //<editor-fold defaultstate="collapsed" desc="Public Properties">
     /**
-     * Returns the goals that have been the result of an {@link InferenceRule#apply(speedith.core.reasoning.args.RuleArg, java.util.List) 
+     * Returns the goals that have been the result of an {@link InferenceRule#apply(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.Goals) 
      * inference rule application}.
      * <p>May return {@code null}, which indicates that the application of the
      * inference rule yielded no subgoals. The same hold for an empty {@link Goals}
      * instance.</p>
-     * @return the goals that have been the result of an {@link InferenceRule#apply(speedith.core.reasoning.args.RuleArg, java.util.List) 
+     * @return the goals that have been the result of an {@link InferenceRule#apply(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.Goals)  
      * inference rule application}.
      * <p>May return {@code null}, which indicates that the application of the
      * inference rule yielded no subgoals. The same hold for an empty {@link Goals}

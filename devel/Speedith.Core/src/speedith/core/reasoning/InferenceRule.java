@@ -77,7 +77,7 @@ public interface InferenceRule {
      * invoked on an empty proof state.</p>
      * @return results of the application of the inference rule (e.g.: new
      * subgoals).
-     * <p><span style="font-weight:bold">Note</span>: can be {@link null} to
+     * <p><span style="font-weight:bold">Note</span>: can be {@code null} to
      * indicate that the rule managed to discharge all the goals (i.e.: prove
      * them to be true in the current context).</p>
      * @throws RuleApplicationException thrown if the inference rule could not
