@@ -37,6 +37,8 @@ import static speedith.core.i18n.Translations.i18n;
  * spider diagrams.
  * <p>Some of the operators one can use in Speedith: conjunction '∧',
  * disjunction '∨', implication '⇒', equivalence '⇔', and negation '¬'.</p>
+ * <p>You can construct new compound spider diagrams via the static methods in
+ * {@link SpiderDiagrams}.</p>
  * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */

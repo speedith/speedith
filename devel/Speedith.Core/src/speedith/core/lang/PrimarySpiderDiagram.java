@@ -46,6 +46,8 @@ import static speedith.core.util.Sets.equal;
  * Spider Diagrams (2005)</a>.
  * <p>It contains all necessary information about the habitats of spiders,
  * shaded zones, contour names, zones etc.</p>
+ * <p>You can construct new primary spider diagrams via the static methods in
+ * {@link SpiderDiagrams}.</p>
  * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */

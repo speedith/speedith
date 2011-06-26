@@ -34,16 +34,12 @@ import java.util.Iterator;
  * particular spider diagrams.
  * <p><span style="font-weight:bold">Note</span>: all spider diagram instances
  * and their sub-components are immutable.</p>
+ * <p>You can construct new spider diagrams via the static methods in {@link
+ * SpiderDiagrams}.</p>
  * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public abstract class SpiderDiagram {
-    
-    // TODO: Make spider diagrams costructable only from some static methods and
-    // maintain a WeakHashMap of all currently living instances. If an equal
-    // spider diagram already exists in this weak map return that existing one
-    // (instead of creating a new instance). This will allow the reference
-    // equality to work faster.
 
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
