@@ -52,6 +52,7 @@ import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.Zone;
 import speedith.core.lang.Region;
+import speedith.core.lang.SpiderDiagrams;
 import speedith.core.lang.reader.SpiderDiagramsParser.spiderDiagram_return;
 import static speedith.core.i18n.Translations.i18n;
 import static speedith.core.lang.PrimarySpiderDiagram.*;
@@ -375,7 +376,7 @@ public final class SpiderDiagramsReader {
                 throw new ReadingException(i18n("ERR_TRANSLATE_UNKNOWN_ATTRIBUTES", attributes.keySet()), (CommonTree) attributes.values().iterator().next().getValue().getChild(0));
             }
             try {
-                return new CompoundSpiderDiagram(operator, operands);
+                return SpiderDiagrams.createCompoundSD(operator, operands, false);
             } catch (Exception e) {
                 throw new ReadingException(e.getLocalizedMessage(), lastSD == null ? mainNode : (CommonTree) lastSD.getValue().getChild(0));
             }
@@ -396,7 +397,7 @@ public final class SpiderDiagramsReader {
         @Override
         @SuppressWarnings("unchecked")
         PrimarySpiderDiagram createSD(Map<String, Entry<Object, CommonTree>> attributes, CommonTree mainNode) throws ReadingException {
-            return new PrimarySpiderDiagram((Collection<String>) attributes.get(SDTextSpidersAttribute).getKey(), (Map<String, Region>) attributes.get(SDTextHabitatsAttribute).getKey(), (Collection<Zone>) attributes.get(SDTextShadedZonesAttribute).getKey());
+            return SpiderDiagrams.createPrimarySDNoCopy((Collection<String>) attributes.get(SDTextSpidersAttribute).getKey(), (Map<String, Region>) attributes.get(SDTextHabitatsAttribute).getKey(), (Collection<Zone>) attributes.get(SDTextShadedZonesAttribute).getKey());
         }
     }
 

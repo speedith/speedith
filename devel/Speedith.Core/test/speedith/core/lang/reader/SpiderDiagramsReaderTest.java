@@ -100,6 +100,8 @@ public class SpiderDiagramsReaderTest {
         String str1 = sd.toString();
         SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(str1);
         assertEquals(str1, sd2.toString());
+        assertEquals(sd, sd2);
+        assertTrue(sd == sd2);
     }
 
     /**
@@ -142,6 +144,8 @@ public class SpiderDiagramsReaderTest {
         String str1 = sd.toString();
         SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(str1);
         assertEquals(str1, sd2.toString());
+        assertEquals(sd, sd2);
+        assertTrue(sd == sd2);
     }
 
     /**
@@ -168,6 +172,8 @@ public class SpiderDiagramsReaderTest {
         String str1 = sd.toString();
         SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(str1);
         assertEquals(str1, sd2.toString());
+        assertEquals(sd, sd2);
+        assertTrue(sd == sd2);
     }
 
     /**
@@ -194,6 +200,8 @@ public class SpiderDiagramsReaderTest {
         String str1 = sd.toString();
         SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(str1);
         assertEquals(str1, sd2.toString());
+        assertEquals(sd, sd2);
+        assertTrue(sd == sd2);
     }
 
     /**

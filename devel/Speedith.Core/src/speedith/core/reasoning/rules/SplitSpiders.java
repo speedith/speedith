@@ -27,7 +27,6 @@
 package speedith.core.reasoning.rules;
 
 import static speedith.core.i18n.Translations.*;
-import java.util.List;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
@@ -37,7 +36,6 @@ import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.RuleApplicationResult;
-import speedith.core.reasoning.args.SpiderArg;
 import speedith.core.reasoning.args.SpiderZoneArg;
 
 /**

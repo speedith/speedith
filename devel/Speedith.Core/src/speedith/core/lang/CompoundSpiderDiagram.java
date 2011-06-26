@@ -90,9 +90,9 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * A list of operands taken by the {@link CompoundSpiderDiagram#getOperator()
      * operator}.
      */
-    private ArrayList<SpiderDiagram> m_operands;
-    private boolean m_hashInvalid = true;
-    private int m_hash;
+    private ArrayList<SpiderDiagram> operands;
+    private boolean hashInvalid = true;
+    private int hash;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -104,7 +104,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * @param operands the {@link CompoundSpiderDiagram#getOperands() operands}
      * to the {@link CompoundSpiderDiagram#getOperator() operator}.
      */
-    public CompoundSpiderDiagram(String operator, Collection<SpiderDiagram> operands) {
+    CompoundSpiderDiagram(String operator, Collection<SpiderDiagram> operands) {
         this(Operator.fromString(operator), operands == null ? null : new ArrayList<SpiderDiagram>(operands));
     }
 
@@ -134,7 +134,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
             }
         }
         this.m_operator = operator;
-        this.m_operands = operands;
+        this.operands = operands;
     }
     // </editor-fold>
 
@@ -156,7 +156,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * operator} in this n-ary spider diagram.
      */
     public List<SpiderDiagram> getOperands() {
-        return Collections.unmodifiableList(m_operands);
+        return Collections.unmodifiableList(operands);
     }
 
     /**
@@ -164,7 +164,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * @return the number of operand in this n-ary spider diagram.
      */
     public int getOperandCount() {
-        return m_operands.size();
+        return operands.size();
     }
 
     /**
@@ -173,7 +173,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * @return the operand at the given index.
      */
     public SpiderDiagram getOperand(int index) {
-        return m_operands.get(index);
+        return operands.get(index);
     }
     // </editor-fold>
 
@@ -207,14 +207,16 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
 
     @Override
     public int hashCode() {
-        if (m_hashInvalid) {
-            m_hash = m_operator.hashCode();
-            for (SpiderDiagram sd : m_operands) {
-                m_hash += sd.hashCode();
+        if (hashInvalid) {
+            hash = m_operator.hashCode();
+            if (operands != null) {
+                for (SpiderDiagram sd : operands) {
+                    hash += sd.hashCode();
+                }
             }
-            m_hashInvalid = false;
+            hashInvalid = false;
         }
-        return m_hash;
+        return hash;
     }
     // </editor-fold>
 
@@ -248,7 +250,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
 
     private void printArg(StringBuilder sb, int i) {
         sb.append(SDTextArgAttribute).append(i).append(" = ");
-        m_operands.get(i - 1).toString(sb);
+        operands.get(i - 1).toString(sb);
     }
 
     private void printOperator(StringBuilder sb) {
@@ -257,9 +259,9 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     }
 
     private void printArgs(StringBuilder sb) {
-        if (m_operands.size() > 0) {
+        if (operands.size() > 0) {
             printArg(sb, 1);
-            for (int i = 2; i <= m_operands.size(); i++) {
+            for (int i = 2; i <= operands.size(); i++) {
                 printArg(sb.append(", "), i);
             }
         }
@@ -283,7 +285,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      */
     private boolean __isCsdEqual(CompoundSpiderDiagram other) {
         return getOperator().equals(other.getOperator())
-                && m_operands.equals(other.m_operands);
+                && operands.equals(other.operands);
     }
     // </editor-fold>
 
@@ -294,7 +296,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         PrimarySpiderDiagram foundPSD = null;
 
         final void findPSDAt(CompoundSpiderDiagram topSD, int index) {
-            for (SpiderDiagram spiderDiagram : topSD.m_operands) {
+            for (SpiderDiagram spiderDiagram : topSD.operands) {
                 if (spiderDiagram instanceof PrimarySpiderDiagram) {
                     if (++lastPSDIndex == index) {
                         foundPSD = (PrimarySpiderDiagram) spiderDiagram;

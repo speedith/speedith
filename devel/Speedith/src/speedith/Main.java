@@ -33,7 +33,6 @@ import java.util.logging.Level;
 import org.apache.commons.cli.ParseException;
 import speedith.cli.CliOptions;
 import speedith.core.lang.CompoundSpiderDiagram;
-import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.export.SDExportProvider;
 import speedith.core.lang.export.SDExporting;
