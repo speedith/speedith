@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: PrimarySDIndexArg.java
+ * File name: TransformingVisitor.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -24,27 +24,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.core.reasoning.args;
+package speedith.core.lang;
+
+import java.util.LinkedList;
 
 /**
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class PrimarySDIndexArg extends SubgoalIndexRuleArg implements RuleArg {
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private int primarySDIndex;
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public PrimarySDIndexArg(int subgoalIndex, int primarySDIndex) {
-        super(subgoalIndex);
-        this.primarySDIndex = primarySDIndex;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Public Properties">
-    public int getPrimarySDIndex() {
-        return primarySDIndex;
-    }
-    // </editor-fold>
+public interface TransformingVisitor {
+    public SpiderDiagram visit(SpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents);
+    public SpiderDiagram visit(NullSpiderDiagram nsd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents);
+    public SpiderDiagram visit(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents);
+    public boolean isDone();
 }

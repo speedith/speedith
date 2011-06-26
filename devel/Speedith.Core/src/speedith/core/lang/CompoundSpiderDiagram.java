@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
+import java.util.LinkedList;
+import speedith.core.reasoning.args.DiagramIndexArg;
 import static speedith.core.i18n.Translations.i18n;
 
 /**
@@ -181,17 +184,37 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
 
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
-     * Returns the primary spider diagram at the given index (as it appears in
-     * this compound diagram from left to right).
-     * @param index the index of the primary spider diagram in this compound
+     * Returns the spider diagram at the given index.
+     * <p>This index indicates the number of appearance (from left to right) of
+     * a sub-diagram within this compound diagram.</p>
+     * <p>See {@link DiagramIndexArg} for more info on the
+     * <span style="font-style:italic;">diagram indices</span>.</p>
+     * @param index the index of the spider sub-diagram in this compound
      * diagram to return.
-     * @return the primary spider diagram at the given index (as it appears in
+     * @return the spider sub-diagram at the given index (as it appears in
      * this compound diagram from left to right).
      */
-    public PrimarySpiderDiagram getPrimarySpiderDiagramAt(int index) {
+    public SpiderDiagram getSubDiagramAt(int index) {
         DiagramSeeker diagramSeeker = new DiagramSeeker();
-        diagramSeeker.findPSDAt(this, index);
-        return diagramSeeker.foundPSD;
+        diagramSeeker.findDiagramAt(this, index);
+        return diagramSeeker.foundDiagram;
+    }
+
+    @Override
+    public SpiderDiagram transform(TransformingVisitor visitor) {
+        if (visitor == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "visitor"));
+        }
+        LinkedList<CompoundSpiderDiagram> parents = new LinkedList<CompoundSpiderDiagram>();
+        int subDiagramIndex = 0;
+        int childIndex = 0;
+        SpiderDiagram curTransform = visitor.visit(this, subDiagramIndex, childIndex, parents);
+        if (curTransform == null) {
+            parents.push(this);
+        } else {
+            return curTransform;
+        }
+        return this;
     }
     // </editor-fold>
 
@@ -294,20 +317,26 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     // <editor-fold defaultstate="collapsed" desc="Helper Classes">
     private static class DiagramSeeker {
 
-        int lastPSDIndex = -1;
-        PrimarySpiderDiagram foundPSD = null;
+        int curIndex = 0;
+        SpiderDiagram foundDiagram = null;
 
-        final void findPSDAt(CompoundSpiderDiagram topSD, int index) {
-            for (SpiderDiagram spiderDiagram : topSD.operands) {
-                if (spiderDiagram instanceof PrimarySpiderDiagram) {
-                    if (++lastPSDIndex == index) {
-                        foundPSD = (PrimarySpiderDiagram) spiderDiagram;
+        @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
+        final void findDiagramAt(CompoundSpiderDiagram topSD, int index) {
+            if (index < 0) {
+                throw new IllegalArgumentException(i18n("GERR_ILLEGAL_ARGUMENT_EXPLANATION", "index", i18n("ARGUMENT_MUST_BE_NON_NEGATIVE")));
+            } else if (index == curIndex) {
+                foundDiagram = topSD;
+            } else if (index > curIndex) {
+                for (SpiderDiagram spiderDiagram : topSD.operands) {
+                    ++curIndex;
+                    if (curIndex == index) {
+                        foundDiagram = spiderDiagram;
+                    } else if (spiderDiagram instanceof CompoundSpiderDiagram) {
+                        findDiagramAt((CompoundSpiderDiagram) spiderDiagram, index);
                     }
-                } else if (spiderDiagram instanceof CompoundSpiderDiagram) {
-                    findPSDAt((CompoundSpiderDiagram) spiderDiagram, index);
-                }
-                if (lastPSDIndex >= index) {
-                    break;
+                    if (foundDiagram != null || curIndex >= index) {
+                        break;
+                    }
                 }
             }
         }

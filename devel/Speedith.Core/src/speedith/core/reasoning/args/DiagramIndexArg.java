@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: SpiderArg.java
+ * File name: DiagramIndexArg.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -27,25 +27,30 @@
 package speedith.core.reasoning.args;
 
 /**
- *
+ * Along with the {@link SubgoalIndexArg subgoal index} this class also
+ * provides the <span style="font-style:italic;">diagram index</span>.
+ * <p>The diagram index is the number assigned to every sub-diagram and
+ * indicates its order of appearance (from left to right) in the whole spider
+ * diagram.</p>
+ * <p>Note: the containing (parent) diagram takes a lower index than its
+ * children.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SpiderArg extends DiagramIndexArg {
-
+public class DiagramIndexArg extends SubgoalIndexArg implements RuleArg {
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private String spider;
+    private int primarySDIndex;
     // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Constructor">
-    public SpiderArg(int subgoalIndex, int primarySDIndex, String spider) {
-        super(subgoalIndex, primarySDIndex);
-        this.spider = spider;
+    // <editor-fold defaultstate="collapsed" desc="Constructor">
+    public DiagramIndexArg(int subgoalIndex, int primarySDIndex) {
+        super(subgoalIndex);
+        this.primarySDIndex = primarySDIndex;
     }
-    //</editor-fold>
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public Properties">
-    public String getSpider() {
-        return spider;
+    public int getPrimarySDIndex() {
+        return primarySDIndex;
     }
     // </editor-fold>
 }

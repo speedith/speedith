@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: SubgoalIndexRuleArg.java
+ * File name: SubgoalIndexArg.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -30,14 +30,14 @@ package speedith.core.reasoning.args;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SubgoalIndexRuleArg implements RuleArg {
+public class SubgoalIndexArg implements RuleArg {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private int subgoalIndex;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public SubgoalIndexRuleArg(int subgoalIndex) {
+    public SubgoalIndexArg(int subgoalIndex) {
         this.subgoalIndex = subgoalIndex;
     }
     // </editor-fold>

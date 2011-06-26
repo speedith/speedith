@@ -48,13 +48,20 @@ public class NullSpiderDiagram extends SpiderDiagram {
     public static final String SDTextNullId = "NullSD";
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+    // <editor-fold defaultstate="collapsed" desc="The Singleton Instance Method">
     /**
      * Returns the only instance of the null spider diagram.
      * @return the only instance of the null spider diagram.
      */
     public static NullSpiderDiagram getInstance() {
         return SingletonHolder.Instance;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+    @Override
+    public SpiderDiagram transform(TransformingVisitor visitor) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     // </editor-fold>
     

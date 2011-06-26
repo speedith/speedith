@@ -29,10 +29,10 @@ package speedith.core.reasoning;
 import speedith.core.reasoning.args.RuleArg;
 import java.util.List;
 import speedith.core.lang.SpiderDiagram;
-import speedith.core.reasoning.args.PrimarySDIndexArg;
+import speedith.core.reasoning.args.DiagramIndexArg;
 import speedith.core.reasoning.args.SpiderArg;
 import speedith.core.reasoning.args.SpiderZoneArg;
-import speedith.core.reasoning.args.SubgoalIndexRuleArg;
+import speedith.core.reasoning.args.SubgoalIndexArg;
 import speedith.core.reasoning.rules.SplitSpiders;
 
 /**
@@ -61,8 +61,8 @@ public interface InferenceRule {
      * spiders rule is of type {@link SpiderZoneArg}, which contains the
      * following parameters:
      *  <ul>
-     *      <li>the {@link SubgoalIndexRuleArg subgoal index},</li>
-     *      <li>the {@link PrimarySDIndexArg primary diagram index},</li>
+     *      <li>the {@link SubgoalIndexArg subgoal index},</li>
+     *      <li>the {@link DiagramIndexArg primary diagram index},</li>
      *      <li>the {@link SpiderArg spider}, and also the {@link SpiderZoneArg
      *          zone} of one of the feet of the spider where to split it.</li>
      *  </ul>

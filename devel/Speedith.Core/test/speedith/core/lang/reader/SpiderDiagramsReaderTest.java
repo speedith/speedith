@@ -34,6 +34,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import speedith.core.lang.CompoundSpiderDiagram;
 import static org.junit.Assert.*;
 import speedith.core.lang.SpiderDiagram;
 
@@ -86,22 +87,28 @@ public class SpiderDiagramsReaderTest {
      */
     @Test
     public void testReadSpiderDiagram_String() throws Exception {
-        checkSDExample(SD_EXAMPLE_1);
-        checkSDExample(SD_EXAMPLE_2);
-        checkSDExample(SD_EXAMPLE_3);
-        checkSDExample(SD_EXAMPLE_4);
-        checkSDExample(SD_EXAMPLE_5);
-        checkSDExample(SD_EXAMPLE_6);
-        checkSDExample(SD_EXAMPLE_7);
+        SpiderDiagram sd1 = checkSDExample(SD_EXAMPLE_1);
+        testGetSubDiagramAt_sd1((CompoundSpiderDiagram)sd1);
+        SpiderDiagram sd2 = checkSDExample(SD_EXAMPLE_2);
+        testGetSubDiagramAt_sd2((CompoundSpiderDiagram)sd2);
+        SpiderDiagram sd3 = checkSDExample(SD_EXAMPLE_3);
+        testGetSubDiagramAt_sd2((CompoundSpiderDiagram)sd3);
+        SpiderDiagram sd4 = checkSDExample(SD_EXAMPLE_4);
+        SpiderDiagram sd5 = checkSDExample(SD_EXAMPLE_5);
+        SpiderDiagram sd6 = checkSDExample(SD_EXAMPLE_6);
+        testGetSubDiagramAt_sd6((CompoundSpiderDiagram)sd6);
+        SpiderDiagram sd7 = checkSDExample(SD_EXAMPLE_7);
+        testGetSubDiagramAt_sd1((CompoundSpiderDiagram)sd7);
     }
 
-    private void checkSDExample(String example) throws ReadingException {
+    private SpiderDiagram checkSDExample(String example) throws ReadingException {
         SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(example);
         String str1 = sd.toString();
         SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(str1);
         assertEquals(str1, sd2.toString());
         assertEquals(sd, sd2);
         assertTrue(sd == sd2);
+        return sd;
     }
 
     /**
@@ -216,5 +223,41 @@ public class SpiderDiagramsReaderTest {
             assertEquals(readingException.getLineNumber(), 6);
             assertEquals(readingException.getCharIndex(), 8);
         }
+    }
+
+    private void testGetSubDiagramAt_sd1(CompoundSpiderDiagram csd) {
+        assertTrue(csd.getOperands().get(1).equals(csd.getSubDiagramAt(2)));
+        assertTrue(csd.getOperands().get(1) == csd.getSubDiagramAt(2));
+        assertTrue(csd.getOperands().get(0).equals(csd.getSubDiagramAt(1)));
+        assertTrue(csd.getOperands().get(0) == csd.getSubDiagramAt(1));
+        assertTrue(csd.equals(csd.getSubDiagramAt(0)));
+        assertTrue(csd == csd.getSubDiagramAt(0));
+        assertTrue(null == csd.getSubDiagramAt(3));
+    }
+
+    private void testGetSubDiagramAt_sd2(CompoundSpiderDiagram csd) {
+        assertTrue(((CompoundSpiderDiagram)csd.getOperand(0)).getOperand(1).equals(csd.getSubDiagramAt(3)));
+        assertTrue(((CompoundSpiderDiagram)csd.getOperand(0)).getOperand(1) == (csd.getSubDiagramAt(3)));
+        
+        assertTrue(((CompoundSpiderDiagram)csd.getOperand(0)).getOperand(0).equals(csd.getSubDiagramAt(2)));
+        assertTrue(((CompoundSpiderDiagram)csd.getOperand(0)).getOperand(0) == (csd.getSubDiagramAt(2)));
+        
+        assertTrue(csd.getOperand(0).equals(csd.getSubDiagramAt(1)));
+        assertTrue(csd.getOperand(0) == csd.getSubDiagramAt(1));
+        
+        assertTrue(csd.equals(csd.getSubDiagramAt(0)));
+        assertTrue(csd == csd.getSubDiagramAt(0));
+        
+        assertTrue(null == csd.getSubDiagramAt(4));
+    }
+
+    private void testGetSubDiagramAt_sd6(CompoundSpiderDiagram csd) {
+        assertTrue(csd.getOperand(0).equals(csd.getSubDiagramAt(1)));
+        assertTrue(csd.getOperand(0) == csd.getSubDiagramAt(1));
+        
+        assertTrue(csd.equals(csd.getSubDiagramAt(0)));
+        assertTrue(csd == csd.getSubDiagramAt(0));
+        
+        assertTrue(null == csd.getSubDiagramAt(2));
     }
 }

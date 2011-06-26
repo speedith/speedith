@@ -213,6 +213,13 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+    @Override
+    public SpiderDiagram transform(TransformingVisitor visitor) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Equality">
     @Override
     public boolean equals(Object other) {

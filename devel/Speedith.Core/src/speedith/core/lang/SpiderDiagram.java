@@ -94,6 +94,15 @@ public abstract class SpiderDiagram {
      */
     @Override
     public abstract int hashCode();
+    /**
+     * Visits the given spider diagram and its children in a parent-first left-
+     * to-right order.
+     * <p>Note: this function does not descend into spider diagrams that the
+     * visitor returns.</p>
+     * @param visitor the object that transforms particular sub-diagrams.
+     * @return the transformed spider diagram.
+     */
+    public abstract SpiderDiagram transform(TransformingVisitor visitor);
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
