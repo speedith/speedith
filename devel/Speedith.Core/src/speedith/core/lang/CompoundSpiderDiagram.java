@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.LinkedList;
 import speedith.core.reasoning.args.DiagramIndexArg;
 import static speedith.core.i18n.Translations.i18n;
@@ -98,6 +97,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     private ArrayList<SpiderDiagram> operands;
     private boolean hashInvalid = true;
     private int hash;
+    private int subDiagramCount = -1;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -201,20 +201,85 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     }
 
     @Override
+    public int getSubDiagramCount() {
+        if (subDiagramCount < 0) {
+            subDiagramCount = 1;
+            for (SpiderDiagram childSD : operands) {
+                subDiagramCount += childSD.getSubDiagramCount();
+            }
+        }
+        return subDiagramCount;
+    }
+
+    @Override
     public SpiderDiagram transform(Transformer t) {
         if (t == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "t"));
         }
-        LinkedList<CompoundSpiderDiagram> parents = new LinkedList<CompoundSpiderDiagram>();
-        int subDiagramIndex = 0;
-        int childIndex = 0;
-        SpiderDiagram curTransform = t.transform(this, subDiagramIndex, childIndex, parents);
-        if (curTransform == null) {
-            parents.push(this);
+        return transform(t, this, 0, 0, new LinkedList<CompoundSpiderDiagram>());
+    }
+
+    @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
+    private static SpiderDiagram transform(Transformer t, CompoundSpiderDiagram curSD, int childIndex, int subDiagramIndex, LinkedList<CompoundSpiderDiagram> parents) {
+        // Try to transform this sub-diagram.
+        SpiderDiagram transformedSD = t.transform(curSD, subDiagramIndex, childIndex, parents);
+        // What did the transformer return? Is it done yet?
+        if (transformedSD != null) {
+            // The transformer either changed the diagram, or it indicated that
+            // we should not descend into it. In this case the transformed
+            // diagram has to be returned.
+            return transformedSD;
+        } else if (t.isDone()) {
+            // The transformer doesn't want to do anything anymore and the
+            // transformed diagram is null. So, we have to return the unchanged
+            // spider diagram.
+            return curSD;
         } else {
-            return curTransform;
+            // The transformer didn't change the current diagram AND it wants us
+            // to descend down it.
+            // So, let's do it. Call the transformer on the children of this
+            // compound diagram. If at least one child changed, create a new
+            // compound spider diagram and return it.
+
+            // If we want to process the children of the current SD, make it the
+            // last parent.
+            parents.push(curSD);
+            // This array will hold the children (if at least one of them was
+            // transformed).
+            ArrayList<SpiderDiagram> transformedChildren = null;
+            // Now traverse all the children:
+            for (childIndex = 0; childIndex < curSD.operands.size(); ++childIndex) {
+                SpiderDiagram childSD = curSD.operands.get(childIndex);
+                int subDiagramCount = childSD.getSubDiagramCount();
+                // Transform the child
+                transformedSD = __applyTransform(childSD, t, subDiagramIndex + 1, childIndex, parents);
+                // If the child was actually transformed, put it into the list
+                // of transformed children.
+                if (transformedSD != null && !transformedSD.equals(childSD)) {
+                    if (transformedChildren == null) {
+                        transformedChildren = new ArrayList<SpiderDiagram>(curSD.operands);
+                    }
+                    transformedChildren.set(childIndex, transformedSD);
+                }
+                // If the transformed indicates it's finished. Stop the
+                // traversal.
+                if (t.isDone()) {
+                    break;
+                }
+                // When continuing to the next child, we have to increase its
+                // sub diagram index by the number of sub-diagrams in the
+                // previous child. The child index, however, is incremented by
+                // one only (naturally).
+                subDiagramIndex += subDiagramCount;
+            }
+            // We have finished traversing the children of the current compound
+            // diagram. Remove it from the stack of parents.
+            parents.pop();
+            // Did any of the children change? If none changed, we must return
+            // the unchanged diagram. But if at least one changed, we have to
+            // create a new one.
+            return transformedChildren == null ? curSD : SpiderDiagrams.createCompoundSD(curSD.getOperator(), transformedChildren, false);
         }
-        return this;
     }
     // </editor-fold>
 
@@ -308,9 +373,30 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * @param other
      * @return 
      */
+    @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
     private boolean __isCsdEqual(CompoundSpiderDiagram other) {
         return getOperator().equals(other.getOperator())
                 && operands.equals(other.operands);
+    }
+
+    /**
+     * Applies the transformer on the given spider diagram based on the type of
+     * the spider diagram.
+     * @param sd
+     * @param t
+     * @param subDiagramIndex
+     * @param childIndex
+     * @param parents
+     * @return 
+     */
+    private static SpiderDiagram __applyTransform(SpiderDiagram sd, Transformer t, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+        if (sd instanceof CompoundSpiderDiagram) {
+            return transform(t, (CompoundSpiderDiagram) sd, subDiagramIndex, childIndex, parents);
+        } else if (sd instanceof PrimarySpiderDiagram) {
+            return t.transform((PrimarySpiderDiagram) sd, subDiagramIndex, childIndex, parents);
+        } else {
+            return t.transform((NullSpiderDiagram) sd, subDiagramIndex, childIndex, parents);
+        }
     }
     // </editor-fold>
 

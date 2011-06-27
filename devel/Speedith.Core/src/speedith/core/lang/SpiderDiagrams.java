@@ -190,6 +190,37 @@ public class SpiderDiagrams {
     public static CompoundSpiderDiagram createCompoundSD(String operator, ArrayList<SpiderDiagram> operands, boolean copyCollection) {
         return __createCompoundSD(new CompoundSpiderDiagram(Operator.fromString(operator), operands), copyCollection, operator, operands);
     }
+
+    /**
+     * <p>Creates a new compound spider diagram with the given parameters.</p>
+     * <p><span style="font-weight:bold">Note</span>: setting the {@code
+     * copyCollection} flag to {@code false} makes this operation a bit faster,
+     * as this method will not create a copy of the given operands collection.
+     * However, you <span style="font-weight:bold">must not</span> change this
+     * collection afterwards, or it will lead to unexpected behaviour.</p>
+     * <p>How it works? It creates a compound spider diagram from the given
+     * operator and operands without making a copy of the operands. Afterwards
+     * it checks whether the created spider diagram is in the pool already. If
+     * it is, it returns the one which is in the pool and finishes. If it is
+     * not, then it puts the newly created spider diagram into the pool.
+     * <span style="font-weight:bold">Note</span>: If the {@code
+     * copyCollections} flag is set then, before putting the newly
+     * created spider diagram into the pool, it first creates a new compound
+     * spider diagram that actually copies the operands collection and puts this
+     * new instance into the pool instead.</p>
+     * @param operator the {@link CompoundSpiderDiagram#getOperator() n-ary
+     * operator} that operates over {@link CompoundSpiderDiagram#getOperands()
+     * operands} of this n-ary spider diagram.
+     * @param operands the {@link CompoundSpiderDiagram#getOperands() operands}
+     * to the {@link CompoundSpiderDiagram#getOperator() operator}.
+     * @param copyCollection indicates whether a copy of the above collection
+     * of spider diagrams should be made to construct the new compound spider
+     * diagram.
+     * @return the compound spider diagram.
+     */
+    public static CompoundSpiderDiagram createCompoundSD(Operator operator, ArrayList<SpiderDiagram> operands, boolean copyCollection) {
+        return __createCompoundSD(new CompoundSpiderDiagram(operator, operands), copyCollection, copyCollection ? operator.getName() : null, operands);
+    }
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Private Helper Methods">

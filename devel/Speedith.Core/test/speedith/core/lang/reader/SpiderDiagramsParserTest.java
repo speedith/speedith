@@ -29,7 +29,6 @@ package speedith.core.lang.reader;
 
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

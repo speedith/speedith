@@ -103,6 +103,13 @@ public abstract class SpiderDiagram {
      * @return the transformed spider diagram.
      */
     public abstract SpiderDiagram transform(Transformer t);
+    /**
+     * Returns the number of all sub-diagrams in this diagram (counting all the
+     * children of the children and also counting the diagram itself).
+     * @return the number of all sub-diagrams in this diagram (counting all the
+     * children of the children and also counting the diagram itself).
+     */
+    public abstract int getSubDiagramCount();
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">

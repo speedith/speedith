@@ -67,6 +67,11 @@ public class NullSpiderDiagram extends SpiderDiagram {
         SpiderDiagram curTransform = t.transform(this, 0, 0, null);
         return curTransform == null ? this : curTransform;
     }
+
+    @Override
+    public int getSubDiagramCount() {
+        return 1;
+    }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Equality">
