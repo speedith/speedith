@@ -60,8 +60,12 @@ public class NullSpiderDiagram extends SpiderDiagram {
 
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
     @Override
-    public SpiderDiagram transform(TransformingVisitor visitor) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public SpiderDiagram transform(Transformer t) {
+        if (t == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "t"));
+        }
+        SpiderDiagram curTransform = t.transform(this, 0, 0, null);
+        return curTransform == null ? this : curTransform;
     }
     // </editor-fold>
     

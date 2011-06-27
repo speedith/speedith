@@ -99,10 +99,10 @@ public abstract class SpiderDiagram {
      * to-right order.
      * <p>Note: this function does not descend into spider diagrams that the
      * visitor returns.</p>
-     * @param visitor the object that transforms particular sub-diagrams.
+     * @param t the object that transforms particular sub-diagrams.
      * @return the transformed spider diagram.
      */
-    public abstract SpiderDiagram transform(TransformingVisitor visitor);
+    public abstract SpiderDiagram transform(Transformer t);
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">

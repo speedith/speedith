@@ -201,14 +201,14 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     }
 
     @Override
-    public SpiderDiagram transform(TransformingVisitor visitor) {
-        if (visitor == null) {
-            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "visitor"));
+    public SpiderDiagram transform(Transformer t) {
+        if (t == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "t"));
         }
         LinkedList<CompoundSpiderDiagram> parents = new LinkedList<CompoundSpiderDiagram>();
         int subDiagramIndex = 0;
         int childIndex = 0;
-        SpiderDiagram curTransform = visitor.visit(this, subDiagramIndex, childIndex, parents);
+        SpiderDiagram curTransform = t.transform(this, subDiagramIndex, childIndex, parents);
         if (curTransform == null) {
             parents.push(this);
         } else {
