@@ -51,6 +51,9 @@ public class SpiderDiagramsReaderTest {
     public static final String SD_EXAMPLE_5 = "PrimarySD { spiders = [], sh_zones = [], habitats = []}";
     public static final String SD_EXAMPLE_6 = "UnarySD {operator = \"op not\", arg1 = NullSD {}}";
     public static final String SD_EXAMPLE_7 = "BinarySD {operator = \"op &&\", arg1 = NullSD {}, arg2 = NullSD {}}";
+    public static final String SD_EXAMPLE_8 = "BinarySD {operator = \"op -->\", arg1 = NullSD {}, arg2 = NullSD {}}";
+    public static final String SD_EXAMPLE_9 = "BinarySD {arg1 = NullSD {}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }";
+    public static final String SD_EXAMPLE_10 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = NullSD {}, operator = \"op -->\" }";
     public static final String SD_EXAMPLE_ERR_1 = "UnarySD {operator = \"op not\", ar1 = BinarySD {operator = \"op &&\", arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = NullSD {} }}";
     public static final String SD_EXAMPLE_ERR_2 = "";
     public static final String SD_EXAMPLE_ERR_3 = "Primary {}";

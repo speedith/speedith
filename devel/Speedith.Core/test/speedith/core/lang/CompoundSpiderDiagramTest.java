@@ -86,38 +86,39 @@ public class CompoundSpiderDiagramTest {
     }
 
     /**
-     * Test of getOperands method, of class CompoundSpiderDiagram.
-     */
-    @Test
-    public void testGetOperands() throws ReadingException {
-    }
-
-    /**
-     * Test of getOperandCount method, of class CompoundSpiderDiagram.
-     */
-    @Test
-    public void testGetOperandCount() {
-    }
-
-    /**
-     * Test of getOperand method, of class CompoundSpiderDiagram.
-     */
-    @Test
-    public void testGetOperand() {
-    }
-
-    /**
-     * Test of getSubDiagramAt method, of class CompoundSpiderDiagram.
-     */
-    @Test
-    public void testGetSubDiagramAt() {
-    }
-
-    /**
      * Test of getSubDiagramCount method, of class CompoundSpiderDiagram.
      */
     @Test
-    public void testGetSubDiagramCount() {
+    public void testGetSubDiagramCount() throws ReadingException {
+        SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
+        assertEquals(3, sd.getSubDiagramCount());
+        
+        sd = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_2);
+        assertEquals(4, sd.getSubDiagramCount());
+        
+        sd = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_3);
+        assertEquals(4, sd.getSubDiagramCount());
+        
+        sd = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_4);
+        assertEquals(1, sd.getSubDiagramCount());
+        
+        sd = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_5);
+        assertEquals(1, sd.getSubDiagramCount());
+        
+        sd = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_6);
+        assertEquals(2, sd.getSubDiagramCount());
+        
+        sd = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_7);
+        assertEquals(3, sd.getSubDiagramCount());
+        
+        sd = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_8);
+        assertEquals(3, sd.getSubDiagramCount());
+        
+        sd = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_9);
+        assertEquals(3, sd.getSubDiagramCount());
+        
+        sd = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_10);
+        assertEquals(3, sd.getSubDiagramCount());
     }
 
     /**
@@ -146,6 +147,13 @@ public class CompoundSpiderDiagramTest {
         });
         assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), SpiderDiagrams.createNullSD()})).equals(transformedSD));
         assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), SpiderDiagrams.createNullSD()})) == transformedSD);
+        assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), SpiderDiagrams.createNullSD()})).hashCode() == transformedSD.hashCode());
+        assertFalse(sd.equals(transformedSD));
+        assertFalse(sd == transformedSD);
+
+        CompoundSpiderDiagram sd1 = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_8);
+        assertTrue(sd1.equals(transformedSD));
+        assertTrue(sd1 == transformedSD);
     }
 
     /**
@@ -177,6 +185,13 @@ public class CompoundSpiderDiagramTest {
         });
         assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), sd.getOperand(1)})).equals(transformedSD));
         assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), sd.getOperand(1)})) == transformedSD);
+        assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), sd.getOperand(1)})).hashCode() == transformedSD.hashCode());
+        assertFalse(sd.equals(transformedSD));
+        assertFalse(sd == transformedSD);
+
+        CompoundSpiderDiagram sd1 = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_9);
+        assertTrue(sd1.equals(transformedSD));
+        assertTrue(sd1 == transformedSD);
     }
 
     /**
@@ -209,6 +224,13 @@ public class CompoundSpiderDiagramTest {
         });
         assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})).equals(transformedSD));
         assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})) == transformedSD);
+        assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})).hashCode() == transformedSD.hashCode());
+        assertFalse(sd.equals(transformedSD));
+        assertFalse(sd == transformedSD);
+
+        CompoundSpiderDiagram sd1 = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_10);
+        assertTrue(sd1.equals(transformedSD));
+        assertTrue(sd1 == transformedSD);
     }
 
     /**
@@ -241,33 +263,96 @@ public class CompoundSpiderDiagramTest {
         });
         assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})).equals(transformedSD));
         assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})) == transformedSD);
+        assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})).hashCode() == transformedSD.hashCode());
+        assertFalse(sd.equals(transformedSD));
+        assertFalse(sd == transformedSD);
+
+        CompoundSpiderDiagram sd1 = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_10);
+        assertTrue(sd1.equals(transformedSD));
+        assertTrue(sd1 == transformedSD);
     }
 
     /**
-     * Test of equals method, of class CompoundSpiderDiagram.
+     * Test of transform method, of class CompoundSpiderDiagram.
      */
     @Test
-    public void testEquals() {
+    public void testTransform5() throws ReadingException {
+        CompoundSpiderDiagram sd = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
+        SpiderDiagram transformedSD = sd.transform(new Transformer() {
+
+            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+                return psd;
+            }
+
+            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+                return nsd;
+            }
+
+            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+                return null;
+            }
+
+            public boolean isDone() {
+                return false;
+            }
+        });
+        assertTrue(sd.equals(transformedSD));
+        assertTrue(sd == transformedSD);
     }
 
     /**
-     * Test of hashCode method, of class CompoundSpiderDiagram.
+     * Test of transform method, of class CompoundSpiderDiagram.
      */
     @Test
-    public void testHashCode() {
+    public void testTransform6() throws ReadingException {
+        CompoundSpiderDiagram sd = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
+        SpiderDiagram transformedSD = sd.transform(new Transformer() {
+
+            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+                return null;
+            }
+
+            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+                return nsd;
+            }
+
+            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+                return null;
+            }
+
+            public boolean isDone() {
+                return false;
+            }
+        });
+        assertTrue(sd.equals(transformedSD));
+        assertTrue(sd == transformedSD);
     }
 
     /**
-     * Test of toString method, of class CompoundSpiderDiagram.
+     * Test of transform method, of class CompoundSpiderDiagram.
      */
     @Test
-    public void testToString_StringBuilder() {
-    }
+    public void testTransform7() throws ReadingException {
+        CompoundSpiderDiagram sd = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
+        SpiderDiagram transformedSD = sd.transform(new Transformer() {
 
-    /**
-     * Test of toString method, of class CompoundSpiderDiagram.
-     */
-    @Test
-    public void testToString_0args() {
+            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+                return SpiderDiagrams.createNullSD();
+            }
+
+            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+                return nsd;
+            }
+
+            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+                return csd;
+            }
+
+            public boolean isDone() {
+                return false;
+            }
+        });
+        assertTrue(sd.equals(transformedSD));
+        assertTrue(sd == transformedSD);
     }
 }
