@@ -38,6 +38,9 @@ import speedith.core.lang.export.SDExportProvider;
 import speedith.core.lang.export.SDExporting;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
+import speedith.core.reasoning.Goals;
+import speedith.core.reasoning.args.SpiderZoneArg;
+import speedith.core.reasoning.rules.SplitSpiders;
 import static speedith.i18n.Translations.*;
 import static speedith.logging.Logger.*;
 
@@ -90,7 +93,7 @@ public class Main {
                 String outputFormat = clargs.getOutputFormat();
                 // Now print out the formula in the specified format
                 if (readSpiderDiagram != null) {
-                    test((CompoundSpiderDiagram) readSpiderDiagram, clargs);
+                    readSpiderDiagram = new SplitSpiders().apply(new SpiderZoneArg(0, 1, "s1", null), new Goals(Arrays.asList(readSpiderDiagram))).getGoals().getGoalAt(0);
                     SDExporting.getExporter(outputFormat, clargs.getOutputFormatArguments()).exportTo(readSpiderDiagram, System.out);
                     System.out.println();
                 }
@@ -148,17 +151,6 @@ public class Main {
         }
     }
     // </editor-fold>
-
-    private static void test(CompoundSpiderDiagram compoundSpiderDiagram, CliOptions clargs) {
-//        PrimarySpiderDiagram psd = compoundSpiderDiagram.getPrimarySpiderDiagramAt(0);
-//        System.out.println(psd.toString());
-//        psd = compoundSpiderDiagram.getPrimarySpiderDiagramAt(1);
-//        System.out.println(psd.toString());
-//        psd = compoundSpiderDiagram.getPrimarySpiderDiagramAt(2);
-//        System.out.println(psd.toString());
-//        psd = compoundSpiderDiagram.getPrimarySpiderDiagramAt(3);
-//        System.out.println(psd.toString());
-    }
 
     // <editor-fold defaultstate="collapsed" desc="Disabled Constructor">
     private Main() {

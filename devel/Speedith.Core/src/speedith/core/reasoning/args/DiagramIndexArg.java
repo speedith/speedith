@@ -49,7 +49,7 @@ public class DiagramIndexArg extends SubgoalIndexArg implements RuleArg {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public Properties">
-    public int getPrimarySDIndex() {
+    public int getSubDiagramIndex() {
         return primarySDIndex;
     }
     // </editor-fold>
