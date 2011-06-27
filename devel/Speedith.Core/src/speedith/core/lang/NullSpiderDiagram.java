@@ -72,8 +72,17 @@ public class NullSpiderDiagram extends SpiderDiagram {
     public int getSubDiagramCount() {
         return 1;
     }
+
+    @Override
+    public SpiderDiagram getSubDiagramAt(int index) {
+        if (index == 0) {
+            return this;
+        } else {
+            throw new IndexOutOfBoundsException(i18n("GERR_INDEX_OUT_OF_BOUNDS"));
+        }
+    }
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Equality">
     @Override
     public boolean equals(Object other) {
@@ -88,6 +97,7 @@ public class NullSpiderDiagram extends SpiderDiagram {
 
     // <editor-fold defaultstate="collapsed" desc="The Singleton Holder Class">
     private static class SingletonHolder {
+
         public static final NullSpiderDiagram Instance = new NullSpiderDiagram();
     }
     // </editor-fold>

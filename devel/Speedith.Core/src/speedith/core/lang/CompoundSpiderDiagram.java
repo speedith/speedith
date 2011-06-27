@@ -194,18 +194,30 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * @return the spider sub-diagram at the given index (as it appears in
      * this compound diagram from left to right).
      */
+    @Override
     public SpiderDiagram getSubDiagramAt(int index) {
-        DiagramSeeker diagramSeeker = new DiagramSeeker();
-        diagramSeeker.findDiagramAt(this, index);
-        return diagramSeeker.foundDiagram;
+        if (index == 0) {
+            return this;
+        } else if (index > 0) {
+            --index;
+            for (int i = 0; i < operands.size(); i++) {
+                SpiderDiagram sub = operands.get(i);
+                int subCount = sub.getSubDiagramCount();
+                if (subCount > index) {
+                    return sub.getSubDiagramAt(index);
+                }
+                index -= subCount;
+            }
+        }
+        return null;
     }
 
     @Override
     public int getSubDiagramCount() {
         if (subDiagramCount < 0) {
             subDiagramCount = 1;
-            for (SpiderDiagram childSD : operands) {
-                subDiagramCount += childSD.getSubDiagramCount();
+            for (int i = 0; i < operands.size(); i++) {
+                subDiagramCount += operands.get(i).getSubDiagramCount();
             }
         }
         return subDiagramCount;
@@ -396,35 +408,6 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
             return t.transform((PrimarySpiderDiagram) sd, subDiagramIndex, childIndex, parents);
         } else {
             return t.transform((NullSpiderDiagram) sd, subDiagramIndex, childIndex, parents);
-        }
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Helper Classes">
-    private static class DiagramSeeker {
-
-        int curIndex = 0;
-        SpiderDiagram foundDiagram = null;
-
-        @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
-        final void findDiagramAt(CompoundSpiderDiagram topSD, int index) {
-            if (index < 0) {
-                throw new IllegalArgumentException(i18n("GERR_ILLEGAL_ARGUMENT_EXPLANATION", "index", i18n("ARGUMENT_MUST_BE_NON_NEGATIVE")));
-            } else if (index == curIndex) {
-                foundDiagram = topSD;
-            } else if (index > curIndex) {
-                for (SpiderDiagram spiderDiagram : topSD.operands) {
-                    ++curIndex;
-                    if (curIndex == index) {
-                        foundDiagram = spiderDiagram;
-                    } else if (spiderDiagram instanceof CompoundSpiderDiagram) {
-                        findDiagramAt((CompoundSpiderDiagram) spiderDiagram, index);
-                    }
-                    if (foundDiagram != null || curIndex >= index) {
-                        break;
-                    }
-                }
-            }
         }
     }
     // </editor-fold>

@@ -94,6 +94,7 @@ public abstract class SpiderDiagram {
      */
     @Override
     public abstract int hashCode();
+
     /**
      * Visits the given spider diagram and its children in a parent-first left-
      * to-right order.
@@ -103,6 +104,23 @@ public abstract class SpiderDiagram {
      * @return the transformed spider diagram.
      */
     public abstract SpiderDiagram transform(Transformer t);
+
+    /**
+     * Returns the spider sub-diagram at the given index within this spider
+     * diagram.
+     * <p>This index indicates the number of appearance (from left to right) of
+     * a sub-diagram within this compound diagram.</p>
+     * <p>See {@link DiagramIndexArg} for more info on the
+     * <span style="font-style:italic;">diagram indices</span>.</p>
+     * <p>Note that the {@link PrimarySpiderDiagram primary} and {@link
+     * NullSpiderDiagram null} spider diagrams do not have any sub-diagrams.</p>
+     * @param index the index of the spider sub-diagram in this spider
+     * diagram to return.
+     * @return the spider sub-diagram at the given index (as it appears in
+     * this spider diagram from left to right).
+     */
+    public abstract SpiderDiagram getSubDiagramAt(int index);
+
     /**
      * Returns the number of all sub-diagrams in this diagram (counting all the
      * children of the children and also counting the diagram itself).

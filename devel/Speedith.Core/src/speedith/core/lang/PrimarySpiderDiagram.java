@@ -227,6 +227,15 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     public int getSubDiagramCount() {
         return 1;
     }
+
+    @Override
+    public SpiderDiagram getSubDiagramAt(int index) {
+        if (index == 0) {
+            return this;
+        } else {
+            throw new IndexOutOfBoundsException(i18n("GERR_INDEX_OUT_OF_BOUNDS"));
+        }
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Equality">
