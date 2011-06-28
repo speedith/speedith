@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: SpiderZoneArg.java
+ * File name: Randomisation.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -24,26 +24,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.core.reasoning.args;
+package speedith.core.util;
 
-import speedith.core.lang.Zone;
+import java.util.Random;
 
 /**
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SpiderZoneArg extends SpiderArg {
-
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private Zone zone;
-    // </editor-fold>
-
-    public SpiderZoneArg(int subgoalIndex, int primarySDIndex, String spider, Zone zone) {
-        super(subgoalIndex, primarySDIndex, spider);
-        this.zone = zone;
-    }
-
-    public Zone getZone() {
-        return zone;
+public class Randomisation {
+    public static String getRandomString(Random rng, int minLen, int maxLen) {
+        StringBuilder sb = new StringBuilder();
+        minLen = Math.abs(rng.nextInt()) % (maxLen - minLen + 1) + minLen;
+        for (int i = 0; i < minLen; ++i) {
+            sb.append((char)(Math.abs(rng.nextInt()) % 0x5e + 0x21));
+        }
+        return sb.toString();
     }
 }

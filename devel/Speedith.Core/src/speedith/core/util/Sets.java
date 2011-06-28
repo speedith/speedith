@@ -173,141 +173,140 @@ public final class Sets {
     }
 
     /**
-     * Returns {@code true} iff the first set does not contain any elements that
-     * are not in the second set.
+     * Returns {@code true} iff the set <span style="font-style:italic;">A</span>
+     * is a subset of <span style="font-style:italic;">B</span>.
      * <p><span style="font-weight:bold">Note</span>: this method uses the
-     * natural order of the elements in the sets (i.e.: this method uses the
-     * methods of the {@link Comparable} interface on the elements). You can
-     * contrast this with the
-     * {@link Sets#isDifferenceEmpty(java.util.SortedSet, java.util.SortedSet)}
-     * method.</p>
+     * natural order of the elements in the two sets (i.e.: it uses the
+     * elements' {@link Comparable#compareTo(java.lang.Object)} methods). You
+     * can contrast this method with the
+     * {@link Sets#isSubset(java.util.SortedSet, java.util.SortedSet)}
+     * method (which uses the two sets' comparators).</p>
      * <p><span style="font-weight:bold">Note 2</span>: this method will throw
      * an exception if the any of the two sets have a {@link SortedSet#comparator()
      * comparator}.</p>
      * @param <E>
-     * @param s1 the first set.
-     * @param s2 the second set.
-     * @return {@code true} iff the first set does not contain any elements that
-     * are not in the second set.
+     * @param A the first set.
+     * @param B the second set.
+     * @return {@code true} iff the set <span style="font-style:italic;">A</span>
+     * is a subset of <span style="font-style:italic;">B</span>.
      */
-    public static <E extends Comparable<? super E>> boolean isDifferenceEmptyN(SortedSet<E> s1, SortedSet<? extends E> s2) {
-        // First check if at least one of them is null or empty.
-        int retVal = nullOrEmptyCompare(s1, s2);
-        if (retVal <= 0) {
-            // The first set is empty. Thus the difference 's1 \ s2' will be
-            // empty too.
+    public static <E extends Comparable<? super E>> boolean isNaturalSubset(SortedSet<E> A, SortedSet<E> B) {
+        if (A == null || A.isEmpty()) {
             return true;
-        } else if (retVal == 1) {
-            // The first set is not empty, but the second set is. This means
-            // that the difference will not be empty.
+        } else if (B == null || B.isEmpty() || A.size() > B.size()) {
             return false;
         } else {
             // The sets must not have a comparator! Because then the order could
             // be different and this method would not work.
-            checkSetsOrderedNaturally(s1, s2);
+            checkSetsOrderedNaturally(A, B);
             // None of the sets is null or empty.
-            // The difference will be empty if for each element in s1 we can
-            // find one in s2.
+            // The A will be a subset of B iff for every element in A we can
+            // find one in B
             // Since the elements are ordered, we can simply iterate over them.
-            Iterator<E> it1 = s1.iterator();
-            Iterator<? extends E> it2 = s2.iterator();
+            Iterator<E> it1 = A.iterator();
+            Iterator<E> it2 = B.tailSet(A.first()).iterator();
             while (it1.hasNext()) {
                 E curEl1 = it1.next();
-                // Now find (in the second set) the same element. We know that
-                // it will be some larger element in the second set.
+                // Now find in B the same element. We know that it will be one
+                // of the 'next' elements.
                 while (true) {
                     if (it2.hasNext()) {
-                        retVal = compare(curEl1, it2.next());
+                        int retVal = compare(curEl1, it2.next());
                         if (retVal == 0) {
                             // We have found the same element in the second set.
                             // Continue with the next element in the first set.
                             break;
                         } else if (retVal < 0) {
-                            // The element in the first set is smaller than the
-                            // current element in the second set. There is no
-                            // way we will be able to find an element in the
-                            // second set that would equal the current one from
-                            // the first set (that's because all successive
-                            // elements in the second set will just get larger).
+                            // The current element in A is smaller than the
+                            // current element in B. There is no way we will be
+                            // able to find the same element in B. This would
+                            // mean that the next element in B should be
+                            // smaller, which is an imposibility because of the
+                            // increasing order.
                             return false;
                         }
                         // We haven't yet found the equal element in the second
                         // set. Continue searching.
                     } else {
+                        // There are no elements in B anymore. B does not
+                        // contain the current element from A.
                         return false;
                     }
                 }
             }
+            // We have gone through all elements in A and have found
+            // corresponding ones in B. This means that A is indeed a subset of
+            // B.
             return true;
         }
     }
 
     /**
-     * Returns {@code true} iff the first set does not contain any elements that
-     * are not in the second set.
+     * Returns {@code true} iff the set <span style="font-style:italic;">A</span>
+     * is a subset of <span style="font-style:italic;">B</span>.
      * <p><span style="font-weight:bold">Note</span>: this method uses the
-     * {@link SortedSet#comparator() comparator} provided with the two sets. You
-     * can contrast this with the
-     * {@link Sets#isDifferenceEmptyN(java.util.SortedSet, java.util.SortedSet)}
-     * method.</p>
+     * {@link SortedSet#comparator() comparator} provided in the two sets. You
+     * can contrast this method with the
+     * {@link Sets#isNaturalSubset(java.util.SortedSet, java.util.SortedSet)}
+     * method (which uses the elements' {@link
+     * Comparable#compareTo(java.lang.Object)} methods).</p>
      * <p><span style="font-weight:bold">Note 2</span>: this method will throw
      * an exception if the two sets do not share the same comparator.</p>
      * @param <E>
-     * @param s1 the first set.
-     * @param s2 the second set.
-     * @return {@code true} iff the first set does not contain any elements that
-     * are not in the second set.
+     * @param A the first set.
+     * @param B the second set.
+     * @return {@code true} iff the set <span style="font-style:italic;">A</span>
+     * is a subset of <span style="font-style:italic;">B</span>.
      */
-    public static <E> boolean isDifferenceEmpty(SortedSet<E> s1, SortedSet<? extends E> s2) {
-        // First check if at least one of them is null or empty.
-        int retVal = nullOrEmptyCompare(s1, s2);
-        if (retVal <= 0) {
-            // The first set is empty. Thus the difference 's1 \ s2' will be
-            // empty too.
+    public static <E> boolean isSubset(SortedSet<E> A, SortedSet<E> B) {
+        if (A == null || A.isEmpty()) {
             return true;
-        } else if (retVal == 1) {
-            // The first set is not empty, but the second set is. This means
-            // that the difference will not be empty.
+        } else if (B == null || B.isEmpty() || A.size() > B.size()) {
             return false;
         } else {
-            Comparator<? super E> comparator = getElementComparator(s1, s2);
+            Comparator<? super E> comparator = getElementComparator(A, B);
             // None of the sets is null or empty.
-            // The difference will be empty if for each element in s1 we can
-            // find one in s2.
+            // The A will be a subset of B iff for every element in A we can
+            // find one in B
             // Since the elements are ordered, we can simply iterate over them.
-            Iterator<E> it1 = s1.iterator();
-            Iterator<? extends E> it2 = s2.iterator();
+            Iterator<E> it1 = A.iterator();
+            Iterator<E> it2 = B.tailSet(A.first()).iterator();
             while (it1.hasNext()) {
                 E curEl1 = it1.next();
-                // Now find (in the second set) the same element. We know that
-                // it will be some larger element in the second set.
+                // Now find in B the same element. We know that it will be one
+                // of the 'next' elements.
                 while (true) {
                     if (it2.hasNext()) {
-                        retVal = comparator.compare(curEl1, it2.next());
+                        int retVal = comparator.compare(curEl1, it2.next());
                         if (retVal == 0) {
                             // We have found the same element in the second set.
                             // Continue with the next element in the first set.
                             break;
                         } else if (retVal < 0) {
-                            // The element in the first set is smaller than the
-                            // current element in the second set. There is no
-                            // way we will be able to find an element in the
-                            // second set that would equal the current one from
-                            // the first set (that's because all successive
-                            // elements in the second set will just get larger).
+                            // The current element in A is smaller than the
+                            // current element in B. There is no way we will be
+                            // able to find the same element in B. This would
+                            // mean that the next element in B should be
+                            // smaller, which is an imposibility because of the
+                            // increasing order.
                             return false;
                         }
                         // We haven't yet found the equal element in the second
                         // set. Continue searching.
                     } else {
+                        // There are no elements in B anymore. B does not
+                        // contain the current element from A.
                         return false;
                     }
                 }
             }
+            // We have gone through all elements in A and have found
+            // corresponding ones in B. This means that A is indeed a subset of
+            // B.
             return true;
         }
     }
-    
+
     /**
      * Tests whether the given collections are both {@code null}, empty or
      * equal.

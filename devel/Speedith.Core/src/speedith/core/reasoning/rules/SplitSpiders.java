@@ -26,11 +26,14 @@
  */
 package speedith.core.reasoning.rules;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import static speedith.core.i18n.Translations.*;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.IdTransformer;
+import speedith.core.lang.Operator;
 import speedith.core.lang.PrimarySpiderDiagram;
+import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.SpiderDiagrams;
 import speedith.core.reasoning.BasicInferenceRule;
@@ -39,37 +42,27 @@ import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.RuleApplicationResult;
-import speedith.core.reasoning.args.SpiderZoneArg;
+import speedith.core.reasoning.args.SpiderRegionArg;
 
 /**
  * The implementation of the 'split spiders' diagrammatic inference rule.
- * <p></p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SplitSpiders implements InferenceRule, BasicInferenceRule {
 
+    //<editor-fold defaultstate="collapsed" desc="Inference Rule Implementation">
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
         if (goals == null) {
             throw new RuleApplicationException(i18n("RULE_NO_SUBGOALS"));
-        } else if (args instanceof SpiderZoneArg) {
-            final SpiderZoneArg arg = (SpiderZoneArg) args;
+        } else if (args instanceof SpiderRegionArg) {
+            final SpiderRegionArg arg = (SpiderRegionArg) args;
             // Check that the subgoal actually exists:
             if (arg.getSubgoalIndex() >= goals.getGoalsCount() || arg.getSubgoalIndex() < 0) {
                 throw new RuleApplicationException("The chosen subgoal does not exist. Subgoal index out of range.");
             }
             SpiderDiagram sd = goals.getGoalAt(arg.getSubgoalIndex());
             // Get the primary spider diagram at the given index:
-            SpiderDiagram newSd = sd.transform(new IdTransformer() {
-
-                @Override
-                public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
-                    if (diagramIndex == arg.getSubDiagramIndex()) {
-                        done = true;
-                        return SpiderDiagrams.createNullSD();
-                    }
-                    return null;
-                }
-            });
+            SpiderDiagram newSd = sd.transform(new SplitSpiderTransformer(arg));
             SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
             newSubgoals[arg.getSubgoalIndex()] = newSd;
             return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
@@ -77,4 +70,49 @@ public class SplitSpiders implements InferenceRule, BasicInferenceRule {
             throw new RuleApplicationException(i18n("RULE_INVALID_ARGS"));
         }
     }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Helper Classes">
+    private class SplitSpiderTransformer extends IdTransformer {
+        
+        private final SpiderRegionArg arg;
+        
+        public SplitSpiderTransformer(SpiderRegionArg arg) {
+            this.arg = arg;
+        }
+        
+        @Override
+        public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            // Transform only the target diagram
+            if (diagramIndex == arg.getSubDiagramIndex()) {
+                // Okay, we are at the diagram we want to change. Now make some
+                // checks: that the arguments are correct and make sense.
+                Region splitRegion = arg.getRegion();
+                if (splitRegion == null) {
+                    throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "arg.getRegion()"));
+                }
+                if (arg.getSpider() == null) {
+                    throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "arg.getSpider()"));
+                }
+                if (!psd.containsSpider(arg.getSpider())) {
+                    throw new IllegalArgumentException(i18n("ERR_SPIDER_NOT_IN_DIAGRAM", arg.getSpider()));
+                }
+                Region habitat = psd.getSpiderHabitat(arg.getSpider());
+                // Check that the splitRegion is a proper subregion of the
+                // spider's habitat.
+                if (splitRegion.isSubregionOf(habitat) && splitRegion.getZonesCount() < habitat.getZonesCount() && splitRegion.getZonesCount() > 0) {
+                    // The checking of arguments is done. We may apply the rule.
+                    done = true;
+                    ArrayList<SpiderDiagram> sds = new ArrayList<SpiderDiagram>();
+                    sds.add(psd.changeSpiderHabitat(arg.getSpider(), splitRegion));
+                    sds.add(psd.changeSpiderHabitat(arg.getSpider(), habitat.subtract(splitRegion)));
+                    return SpiderDiagrams.createCompoundSD(Operator.OP_NAME_OR, sds, false);
+                } else {
+                    throw new IllegalArgumentException(i18n("ERR_SPLIT_SPIDERS_INVALID_REGION"));
+                }
+            }
+            return null;
+        }
+    }
+    //</editor-fold>
 }

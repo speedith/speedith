@@ -78,6 +78,7 @@ public class ZoneTest {
     }
 
     static {
+        // 1
         m_inContours1 = new LinkedList<String>();
         m_inContours1.add("A");
         m_inContours1.add("C");
@@ -105,16 +106,6 @@ public class ZoneTest {
         m_outContours2.add("bar");
         m_zone2 = new Zone(m_inContours2, m_outContours2);
 
-        m_inContours3 = new TreeSet<String>();
-        m_inContours3.add("A");
-        m_inContours3.add("B");
-        m_outContours3 = new TreeSet<String>();
-        m_outContours3.add("C");
-        m_outContours3.add("D");
-        m_outContours3.add("E");
-        m_outContours3.add("F");
-        m_zone3 = new Zone(m_inContours3, m_outContours3);
-
         m_inContours4 = new TreeSet<String>();
         m_inContours4.add("A");
         m_inContours4.add("C");
@@ -126,6 +117,18 @@ public class ZoneTest {
         m_outContours4.add("bar");
         m_zone4 = new Zone(m_inContours4, m_outContours4);
 
+        // 2
+        m_inContours3 = new TreeSet<String>();
+        m_inContours3.add("A");
+        m_inContours3.add("B");
+        m_outContours3 = new TreeSet<String>();
+        m_outContours3.add("C");
+        m_outContours3.add("D");
+        m_outContours3.add("E");
+        m_outContours3.add("F");
+        m_zone3 = new Zone(m_inContours3, m_outContours3);
+
+        // 3
         m_inContours5 = new TreeSet<String>();
         m_inContours5.add("01s");
         m_inContours5.add("dsaknj");
@@ -138,12 +141,14 @@ public class ZoneTest {
         m_outContours5.add("oifned32903");
         m_zone5 = new Zone(m_inContours5, m_outContours5);
 
+        // 4
         m_outContours6 = new TreeSet<String>();
         m_outContours6.add("po3nns");
         m_outContours6.add("sdfajkdni3329");
         m_outContours6.add("oifned32903");
         m_zone6 = new Zone(null, m_outContours6);
 
+        // 5
         m_inContours7 = new TreeSet<String>();
         m_inContours7.add("01s");
         m_inContours7.add("dsaknj");
@@ -152,6 +157,7 @@ public class ZoneTest {
         m_inContours7.add("_sadsakjn dsasa");
         m_zone7 = new Zone(m_inContours7, null);
         
+        // 6
         m_zone8 = new Zone(null, null);
         m_zone9 = new Zone((TreeSet<String>)null, (TreeSet<String>)null);
         m_zone10 = new Zone((Collection<String>)null, (Collection<String>)null);

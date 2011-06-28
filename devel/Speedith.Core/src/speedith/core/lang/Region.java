@@ -26,6 +26,7 @@
  */
 package speedith.core.lang;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
@@ -43,7 +44,7 @@ import static speedith.core.i18n.Translations.i18n;
 public class Region {
 
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
-    private TreeSet<Zone> m_zones;
+    private TreeSet<Zone> zones;
     private boolean hashInvalid = true;
     private int hash;
     // </editor-fold>
@@ -58,6 +59,17 @@ public class Region {
      */
     public Region(Collection<Zone> zones) {
         this(zones == null ? null : new TreeSet<Zone>(zones));
+    }
+    
+    /**
+     * Creates a new region from the given collection of zones. The resulting
+     * region will constitute of these zones.
+     * <p>Note that duplicate zones in the given collection will be ignored.</p>
+     * @param zones the collection of zones from which to construct this region.
+     * <p>This argument may be {@code null}. This indicates an empty region.</p>
+     */
+    public Region(Zone... zones) {
+        this(zones == null ? null : new TreeSet<Zone>(Arrays.asList(zones)));
     }
 
     /**
@@ -74,14 +86,16 @@ public class Region {
      * <p>This argument may be {@code null}. This indicates an empty region.</p>
      */
     public Region(TreeSet<Zone> zones) {
+        // TODO: Is there a way to quickly check if there are any null elements
+        // in a set?
 //        if (zones != null && zones.contains(null)) {
 //            throw new RuntimeException(i18n("ERR_NULL_ZONE_IN_REGION"));
 //        }
-        this.m_zones = zones;
+        this.zones = zones;
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Public Properties">
+    // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
      * Returns a set of {@link Zone zones} which make up this region.
      * <p>Note: this method may return {@code null}, which indicates an empty
@@ -91,7 +105,7 @@ public class Region {
      * region.</p>
      */
     public SortedSet<Zone> getZones() {
-        return m_zones == null || m_zones.isEmpty() ? null : Collections.unmodifiableSortedSet(m_zones);
+        return zones == null || zones.isEmpty() ? null : Collections.unmodifiableSortedSet(zones);
     }
 
     /**
@@ -99,7 +113,31 @@ public class Region {
      * @return the number of {@link Region#getZones() zones} in this region.
      */
     public int getZonesCount() {
-        return m_zones == null ? 0 : m_zones.size();
+        return zones == null ? 0 : zones.size();
+    }
+    
+    /**
+     * Returns {@code true} iff this region is contained within the other
+     * region.
+     * @param other the other region.
+     * @return {@code true} iff this region is contained within the other
+     * region.
+     */
+    public boolean isSubregionOf(Region other) {
+        return Sets.isNaturalSubset(zones, other.zones);
+    }
+
+    /**
+     * Creates a new region made only of zones that are contained by this one
+     * and not by the other.
+     * @param other the other region to subtract from this one.
+     * @return a new region made only of zones that are contained by this one
+     * and not by the other.
+     */
+    public Region subtract(Region other) {
+        TreeSet<Zone> newZones = new TreeSet<Zone>(zones);
+        newZones.removeAll(other.zones);
+        return new Region(newZones);
     }
     // </editor-fold>
 
@@ -115,7 +153,7 @@ public class Region {
         if (this == obj) {
             return true;
         } else if (obj instanceof Region) {
-            return Sets.equal(m_zones, ((Region) obj).m_zones);
+            return Sets.equal(zones, ((Region) obj).zones);
         }
         return false;
     }
@@ -123,7 +161,7 @@ public class Region {
     @Override
     public int hashCode() {
         if (hashInvalid) {
-            hash = (m_zones == null || m_zones.isEmpty() ? 0 : m_zones.hashCode());
+            hash = (zones == null || zones.isEmpty() ? 0 : zones.hashCode());
             hashInvalid = false;
         }
         return hash;
@@ -135,7 +173,7 @@ public class Region {
         if (sb == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
         }
-        SpiderDiagram.printZoneList(sb, m_zones);
+        SpiderDiagram.printZoneList(sb, zones);
     }
     // </editor-fold>
 }

@@ -140,7 +140,7 @@ public class RegionTest {
         m_region4 = new Region(m_zones4);
 
         // 3
-        m_region5 = new Region(null);
+        m_region5 = new Region((Collection<Zone>)null);
         m_region6 = new Region((TreeSet<Zone>)null);
         m_region7 = new Region((Collection<Zone>)null);
         m_zones11 = new TreeSet<Zone>(Arrays.asList(new Zone[]{}));
@@ -256,9 +256,6 @@ public class RegionTest {
         assertEquals(m_region7.hashCode(), m_region6.hashCode());
     }
 
-    /**
-     * Test of hashCode method, of class Region.
-     */
     @Test
     public void testHashSet() {
         HashSet<Region> rgns = new HashSet<Region>();
@@ -294,5 +291,86 @@ public class RegionTest {
         assertFalse(rgns.contains(new Region(Arrays.asList(new Zone[]{ ZoneTest.m_zone8, ZoneTest.m_zone5, ZoneTest.m_zone1, ZoneTest.m_zone6, ZoneTest.m_zone3 }))));
         assertTrue(rgns.contains(new Region(Arrays.asList(new Zone[]{ ZoneTest.m_zone8, ZoneTest.m_zone5, ZoneTest.m_zone1, ZoneTest.m_zone6, ZoneTest.m_zone3, ZoneTest.m_zone7 }))));
         assertTrue(rgns.contains(new Region(Arrays.asList(new Zone[]{ }))));
+    }
+
+    /**
+     * Test of isSubregionOf method, of class Region.
+     */
+    @Test
+    public void testIsSubregionOf() {
+        assertTrue(m_region1.isSubregionOf(m_region1));
+        assertTrue(m_region2.isSubregionOf(m_region2));
+        assertTrue(m_region3.isSubregionOf(m_region3));
+        assertTrue(m_region4.isSubregionOf(m_region4));
+        assertTrue(m_region5.isSubregionOf(m_region5));
+        assertTrue(m_region6.isSubregionOf(m_region6));
+        assertTrue(m_region7.isSubregionOf(m_region7));
+        assertTrue(m_region8.isSubregionOf(m_region8));
+        assertTrue(m_region9.isSubregionOf(m_region9));
+        assertTrue(m_region10.isSubregionOf(m_region10));
+        assertTrue(m_region11.isSubregionOf(m_region11));
+        assertTrue(m_region12.isSubregionOf(m_region12));
+        
+        assertTrue(m_region2.isSubregionOf(m_region1));
+        assertTrue(m_region3.isSubregionOf(m_region1));
+        assertTrue(m_region4.isSubregionOf(m_region1));
+        assertTrue(m_region5.isSubregionOf(m_region1));
+        assertTrue(m_region6.isSubregionOf(m_region1));
+        assertTrue(m_region7.isSubregionOf(m_region1));
+        assertTrue(m_region8.isSubregionOf(m_region1));
+        assertTrue(m_region9.isSubregionOf(m_region1));
+        assertTrue(m_region10.isSubregionOf(m_region1));
+        assertTrue(m_region11.isSubregionOf(m_region1));
+        assertTrue(m_region12.isSubregionOf(m_region1));
+        
+        assertTrue(m_region2.isSubregionOf(m_region2));
+        assertTrue(m_region3.isSubregionOf(m_region2));
+        assertTrue(m_region4.isSubregionOf(m_region2));
+        assertTrue(m_region5.isSubregionOf(m_region2));
+        assertTrue(m_region6.isSubregionOf(m_region2));
+        assertTrue(m_region7.isSubregionOf(m_region2));
+        assertTrue(m_region8.isSubregionOf(m_region2));
+        assertTrue(m_region9.isSubregionOf(m_region2));
+        assertTrue(m_region10.isSubregionOf(m_region2));
+        assertTrue(m_region11.isSubregionOf(m_region2));
+        assertTrue(m_region12.isSubregionOf(m_region2));
+        
+        assertTrue(m_region5.isSubregionOf(m_region1));
+        assertTrue(m_region5.isSubregionOf(m_region2));
+        assertTrue(m_region5.isSubregionOf(m_region3));
+        assertTrue(m_region5.isSubregionOf(m_region4));
+        assertTrue(m_region6.isSubregionOf(m_region5));
+        assertTrue(m_region5.isSubregionOf(m_region6));
+        assertTrue(m_region5.isSubregionOf(m_region7));
+        assertTrue(m_region5.isSubregionOf(m_region8));
+        assertTrue(m_region5.isSubregionOf(m_region9));
+        assertTrue(m_region5.isSubregionOf(m_region10));
+        assertTrue(m_region5.isSubregionOf(m_region11));
+        assertTrue(m_region5.isSubregionOf(m_region12));
+        
+        assertTrue(m_region10.isSubregionOf(m_region1));
+        assertTrue(m_region10.isSubregionOf(m_region2));
+        assertTrue(m_region10.isSubregionOf(m_region3));
+        assertTrue(m_region10.isSubregionOf(m_region4));
+        assertTrue(m_region10.isSubregionOf(m_region8));
+        assertTrue(m_region10.isSubregionOf(m_region9));
+        assertFalse(m_region10.isSubregionOf(m_region5));
+        assertFalse(m_region10.isSubregionOf(m_region6));
+        assertFalse(m_region10.isSubregionOf(m_region7));
+        assertFalse(m_region10.isSubregionOf(m_region11));
+        assertFalse(m_region10.isSubregionOf(m_region12));
+        
+        assertTrue(m_region4.isSubregionOf(m_region1));
+        assertTrue(m_region4.isSubregionOf(m_region2));
+        assertTrue(m_region4.isSubregionOf(m_region3));
+        assertTrue(m_region4.isSubregionOf(m_region4));
+        assertFalse(m_region4.isSubregionOf(m_region5));
+        assertFalse(m_region4.isSubregionOf(m_region6));
+        assertFalse(m_region4.isSubregionOf(m_region7));
+        assertTrue(m_region4.isSubregionOf(m_region8));
+        assertFalse(m_region4.isSubregionOf(m_region9));
+        assertFalse(m_region4.isSubregionOf(m_region10));
+        assertFalse(m_region4.isSubregionOf(m_region11));
+        assertFalse(m_region4.isSubregionOf(m_region12));
     }
 }

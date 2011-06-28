@@ -26,6 +26,7 @@
  */
 package speedith.core.lang;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
@@ -45,8 +46,8 @@ import static speedith.core.util.Sets.equal;
 public class Zone implements Comparable<Zone> {
 
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
-    private TreeSet<String> m_inContours;
-    private TreeSet<String> m_outContours;
+    private TreeSet<String> inContours;
+    private TreeSet<String> outContours;
     private boolean hashInvalid = true;
     private int hash;
     // </editor-fold>
@@ -84,8 +85,8 @@ public class Zone implements Comparable<Zone> {
      * <p>Note that duplicated contour names will be ignored.</p>
      */
     Zone(TreeSet<String> inContours, TreeSet<String> outContours) {
-        this.m_inContours = inContours;
-        this.m_outContours = outContours;
+        this.inContours = inContours;
+        this.outContours = outContours;
     }
     // </editor-fold>
 
@@ -99,7 +100,7 @@ public class Zone implements Comparable<Zone> {
      * <p>These are the contours that contain this zone.</p>
      */
     public SortedSet<String> getInContours() {
-        return m_inContours == null || m_inContours.isEmpty() ? null : Collections.unmodifiableSortedSet(m_inContours);
+        return inContours == null || inContours.isEmpty() ? null : Collections.unmodifiableSortedSet(inContours);
     }
 
     /**
@@ -107,7 +108,7 @@ public class Zone implements Comparable<Zone> {
      * @return the number of {@link Zone#getInContours() in-contours}.
      */
     public int getInContoursCount() {
-        return m_inContours == null ? 0 : m_inContours.size();
+        return inContours == null ? 0 : inContours.size();
     }
 
     /**
@@ -119,7 +120,7 @@ public class Zone implements Comparable<Zone> {
      * <p>These are the contours that lie outside this zone.</p>
      */
     public SortedSet<String> getOutContours() {
-        return m_outContours == null || m_outContours.isEmpty() ? null : Collections.unmodifiableSortedSet(m_outContours);
+        return outContours == null || outContours.isEmpty() ? null : Collections.unmodifiableSortedSet(outContours);
     }
 
     /**
@@ -127,7 +128,7 @@ public class Zone implements Comparable<Zone> {
      * @return the number of {@link Zone#getOutContours() out-contours}.
      */
     public int getOutContoursCount() {
-        return m_outContours == null ? 0 : m_outContours.size();
+        return outContours == null ? 0 : outContours.size();
     }
     // </editor-fold>
 
@@ -152,9 +153,9 @@ public class Zone implements Comparable<Zone> {
         if (this == other) {
             return 0;
         } else {
-            int retVal = Sets.compareNaturally(m_inContours, other.m_inContours);
+            int retVal = Sets.compareNaturally(inContours, other.inContours);
             if (retVal == 0) {
-                retVal = Sets.compareNaturally(m_outContours, other.m_outContours);
+                retVal = Sets.compareNaturally(outContours, other.outContours);
             }
             return retVal;
         }
@@ -175,7 +176,7 @@ public class Zone implements Comparable<Zone> {
             return true;
         } else if (obj instanceof Zone) {
             Zone other = (Zone) obj;
-            return equal(m_inContours, other.m_inContours) && equal(m_outContours, other.m_outContours);
+            return equal(inContours, other.inContours) && equal(outContours, other.outContours);
         }
         return false;
     }
@@ -183,11 +184,51 @@ public class Zone implements Comparable<Zone> {
     @Override
     public int hashCode() {
         if (hashInvalid) {
-            hash = (m_inContours == null || m_inContours.isEmpty() ? 0 : m_inContours.hashCode())
-                    + (m_outContours == null || m_outContours.isEmpty() ? 0 : m_outContours.hashCode());
+            hash = (inContours == null || inContours.isEmpty() ? 0 : inContours.hashCode())
+                    + (outContours == null || outContours.isEmpty() ? 0 : outContours.hashCode());
             hashInvalid = false;
         }
         return hash;
+    }
+
+    /**
+     * Takes this zone and creates a copy of it with in-contours replaced with
+     * the given ones.
+     * @param inContours the in-contours to put into the new zone.
+     * @return a copy of this zone with in-contours replaced with the given
+     * ones.
+     */
+    public Zone withInContours(String... inContours) {
+        return new Zone(inContours == null ? null : new TreeSet<String>(Arrays.asList(inContours)), this.outContours);
+    }
+
+    /**
+     * Takes this zone and creates a copy of it with out-contours replaced with
+     * the given ones.
+     * @param outContours the out-contours to put into the new zone.
+     * @return a copy of this zone with out-contours replaced with the given
+     * ones.
+     */
+    public Zone withOutContours(String... outContours) {
+        return new Zone(this.inContours, outContours == null ? null : new TreeSet<String>(Arrays.asList(outContours)));
+    }
+
+    /**
+     * Creates a new zone with the given in-contours only (no out-contours).
+     * @param inContours the in-contours to put into the new zone.
+     * @return a new zone with the given in-contours only (no out-contours).
+     */
+    public static Zone fromInContours(String... inContours) {
+        return new Zone(Arrays.asList(inContours), null);
+    }
+
+    /**
+     * Creates a new zone with the given out-contours only (no in-contours).
+     * @param outContours the in-contours to put into the new zone.
+     * @return a new zone with the given out-contours only (no in-contours).
+     */
+    public static Zone fromOutContours(String... outContours) {
+        return new Zone(null, Arrays.asList(outContours));
     }
     // </editor-fold>
 
@@ -197,9 +238,9 @@ public class Zone implements Comparable<Zone> {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
         }
         sb.append('(');
-        SpiderDiagram.printStringList(sb, m_inContours);
+        SpiderDiagram.printStringList(sb, inContours);
         sb.append(", ");
-        SpiderDiagram.printStringList(sb, m_outContours);
+        SpiderDiagram.printStringList(sb, outContours);
         sb.append(')');
     }
     // </editor-fold>

@@ -24,7 +24,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package speedith.core.util;
 
 import java.util.Map;
@@ -36,6 +35,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -77,13 +77,11 @@ public class SetsTest {
 
         private MyStringComparator() {
         }
-
         public static MyStringComparator Instance = new MyStringComparator();
 
         public int compare(String o1, String o2) {
             return o1 == o2 ? 0 : (o1 == null ? o2.compareTo(o1) : -o1.compareTo(o2));
         }
-
     }
 
     /**
@@ -294,7 +292,7 @@ public class SetsTest {
         assertEquals(expResult, result);
     }
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Tests for 'equal'">
     /**
      * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
@@ -314,7 +312,7 @@ public class SetsTest {
         boolean result = Sets.equal(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
      * method.
@@ -327,7 +325,7 @@ public class SetsTest {
         boolean result = Sets.equal(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
      * method.
@@ -340,7 +338,7 @@ public class SetsTest {
         boolean result = Sets.equal(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
      * method.
@@ -353,7 +351,7 @@ public class SetsTest {
         boolean result = Sets.equal(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
      * method.
@@ -373,7 +371,7 @@ public class SetsTest {
         boolean result = Sets.equal(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
      * method.
@@ -394,7 +392,7 @@ public class SetsTest {
         boolean result = Sets.equal(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
      * method.
@@ -407,15 +405,15 @@ public class SetsTest {
         s1.add(3);
         s1.add(7);
         Collection<Short> s2 = new ArrayList<Short>();
-        s2.add((short)1);
-        s2.add((short)3);
-        s2.add((short)3);
-        s2.add((short)7);
+        s2.add((short) 1);
+        s2.add((short) 3);
+        s2.add((short) 3);
+        s2.add((short) 7);
         boolean expResult = false;
         boolean result = Sets.equal(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
      * method.
@@ -436,7 +434,7 @@ public class SetsTest {
         boolean result = Sets.equal(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
      * method.
@@ -455,7 +453,7 @@ public class SetsTest {
         boolean result = Sets.equal(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
      * method.
@@ -474,7 +472,7 @@ public class SetsTest {
         boolean result = Sets.equal(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
      * method.
@@ -493,7 +491,7 @@ public class SetsTest {
         boolean result = Sets.equal(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
      * method.
@@ -515,7 +513,7 @@ public class SetsTest {
         boolean result = Sets.equal(s1.entrySet(), s2.entrySet());
         assertEquals(expResult, result);
     }
-    
+
     /**
      * Test of the {@link Sets#equal(java.util.Collection, java.util.Collection)}
      * method.
@@ -537,13 +535,13 @@ public class SetsTest {
         assertEquals(expResult, result);
     }
     // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="isDifferenceEmpty Tests">
+
+    // <editor-fold defaultstate="collapsed" desc="isSubset Tests">
     /**
-     * Test of isDifferenceEmpty method, of class Sets.
+     * Test of isSubset method, of class Sets.
      */
     @Test
-    public void test_isDifferenceEmpty1() {
+    public void test_isSubset1() {
         SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
         s1.add("a");
         s1.add("b");
@@ -552,15 +550,15 @@ public class SetsTest {
         s2.add("a");
         s2.add("b");
         boolean expResult = false;
-        boolean result = Sets.isDifferenceEmpty(s1, s2);
+        boolean result = Sets.isSubset(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
-     * Test of isDifferenceEmpty method, of class Sets.
+     * Test of isSubset method, of class Sets.
      */
     @Test
-    public void test_isDifferenceEmpty2() {
+    public void test_isSubset2() {
         SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
         s1.add("a");
         s1.add("b");
@@ -570,63 +568,63 @@ public class SetsTest {
         s2.add("a");
         s2.add("b");
         boolean expResult = true;
-        boolean result = Sets.isDifferenceEmpty(s1, s2);
+        boolean result = Sets.isSubset(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
-     * Test of isDifferenceEmpty method, of class Sets.
+     * Test of isSubset method, of class Sets.
      */
     @Test
-    public void test_isDifferenceEmpty3() {
+    public void test_isSubset3() {
         SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
         SortedSet<String> s2 = null;
         boolean expResult = true;
-        boolean result = Sets.isDifferenceEmpty(s1, s2);
+        boolean result = Sets.isSubset(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
-     * Test of isDifferenceEmpty method, of class Sets.
+     * Test of isSubset method, of class Sets.
      */
     @Test
-    public void test_isDifferenceEmpty4() {
+    public void test_isSubset4() {
         SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
         SortedSet<String> s2 = new TreeSet<String>(MyStringComparator.Instance);
         boolean expResult = true;
-        boolean result = Sets.isDifferenceEmpty(s1, s2);
+        boolean result = Sets.isSubset(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
-     * Test of isDifferenceEmpty method, of class Sets.
+     * Test of isSubset method, of class Sets.
      */
     @Test
-    public void test_isDifferenceEmpty5() {
+    public void test_isSubset5() {
         SortedSet<String> s1 = null;
         SortedSet<String> s2 = new TreeSet<String>(MyStringComparator.Instance);
         boolean expResult = true;
-        boolean result = Sets.isDifferenceEmpty(s1, s2);
+        boolean result = Sets.isSubset(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
-     * Test of isDifferenceEmpty method, of class Sets.
+     * Test of isSubset method, of class Sets.
      */
     @Test
-    public void test_isDifferenceEmpty6() {
+    public void test_isSubset6() {
         SortedSet<String> s1 = null;
         SortedSet<String> s2 = null;
         boolean expResult = true;
-        boolean result = Sets.isDifferenceEmpty(s1, s2);
+        boolean result = Sets.isSubset(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
-     * Test of isDifferenceEmpty method, of class Sets.
+     * Test of isSubset method, of class Sets.
      */
     @Test
-    public void test_isDifferenceEmpty7() {
+    public void test_isSubset7() {
         SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
         s1.add("a");
         s1.add("b");
@@ -635,15 +633,15 @@ public class SetsTest {
         s2.add("a");
         s2.add("b");
         boolean expResult = true;
-        boolean result = Sets.isDifferenceEmpty(s1, s2);
+        boolean result = Sets.isSubset(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
-     * Test of isDifferenceEmpty method, of class Sets.
+     * Test of isSubset method, of class Sets.
      */
     @Test
-    public void test_isDifferenceEmpty8() {
+    public void test_isSubset8() {
         SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
         s1.add("c");
         s1.add("b");
@@ -651,14 +649,15 @@ public class SetsTest {
         s2.add("b");
         s2.add("a");
         boolean expResult = false;
-        boolean result = Sets.isDifferenceEmpty(s1, s2);
+        boolean result = Sets.isSubset(s1, s2);
         assertEquals(expResult, result);
     }
+
     /**
-     * Test of isDifferenceEmptyN method, of class Sets.
+     * Test of isNaturalSubset method, of class Sets.
      */
     @Test
-    public void test_isNaturalDifferenceEmpty1() {
+    public void test_isNaturalSubset1() {
         SortedSet<String> s1 = new TreeSet<String>();
         s1.add("a");
         s1.add("b");
@@ -667,15 +666,15 @@ public class SetsTest {
         s2.add("a");
         s2.add("b");
         boolean expResult = false;
-        boolean result = Sets.isDifferenceEmptyN(s1, s2);
+        boolean result = Sets.isNaturalSubset(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
-     * Test of isDifferenceEmptyN method, of class Sets.
+     * Test of isNaturalSubset method, of class Sets.
      */
     @Test
-    public void test_isNaturalDifferenceEmpty2() {
+    public void test_isNaturalSubset2() {
         SortedSet<String> s1 = new TreeSet<String>();
         s1.add("a");
         s1.add("b");
@@ -685,63 +684,63 @@ public class SetsTest {
         s2.add("a");
         s2.add("b");
         boolean expResult = true;
-        boolean result = Sets.isDifferenceEmptyN(s1, s2);
+        boolean result = Sets.isNaturalSubset(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
-     * Test of isDifferenceEmptyN method, of class Sets.
+     * Test of isNaturalSubset method, of class Sets.
      */
     @Test
-    public void test_isNaturalDifferenceEmpty3() {
+    public void test_isNaturalSubset3() {
         SortedSet<String> s1 = new TreeSet<String>();
         SortedSet<String> s2 = null;
         boolean expResult = true;
-        boolean result = Sets.isDifferenceEmptyN(s1, s2);
+        boolean result = Sets.isNaturalSubset(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
-     * Test of isDifferenceEmptyN method, of class Sets.
+     * Test of isNaturalSubset method, of class Sets.
      */
     @Test
-    public void test_isNaturalDifferenceEmpty4() {
+    public void test_isNaturalSubset4() {
         SortedSet<String> s1 = new TreeSet<String>();
         SortedSet<String> s2 = new TreeSet<String>();
         boolean expResult = true;
-        boolean result = Sets.isDifferenceEmptyN(s1, s2);
+        boolean result = Sets.isNaturalSubset(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
-     * Test of isDifferenceEmptyN method, of class Sets.
+     * Test of isNaturalSubset method, of class Sets.
      */
     @Test
-    public void test_isNaturalDifferenceEmpty5() {
+    public void test_isNaturalSubset5() {
         SortedSet<String> s1 = null;
         SortedSet<String> s2 = new TreeSet<String>();
         boolean expResult = true;
-        boolean result = Sets.isDifferenceEmptyN(s1, s2);
+        boolean result = Sets.isNaturalSubset(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
-     * Test of isDifferenceEmptyN method, of class Sets.
+     * Test of isNaturalSubset method, of class Sets.
      */
     @Test
-    public void test_isNaturalDifferenceEmpty6() {
+    public void test_isNaturalSubset6() {
         SortedSet<String> s1 = null;
         SortedSet<String> s2 = null;
         boolean expResult = true;
-        boolean result = Sets.isDifferenceEmptyN(s1, s2);
+        boolean result = Sets.isNaturalSubset(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
-     * Test of isDifferenceEmptyN method, of class Sets.
+     * Test of isNaturalSubset method, of class Sets.
      */
     @Test
-    public void test_isNaturalDifferenceEmpty7() {
+    public void test_isNaturalSubset7() {
         SortedSet<String> s1 = new TreeSet<String>();
         s1.add("a");
         s1.add("b");
@@ -750,15 +749,15 @@ public class SetsTest {
         s2.add("a");
         s2.add("b");
         boolean expResult = true;
-        boolean result = Sets.isDifferenceEmptyN(s1, s2);
+        boolean result = Sets.isNaturalSubset(s1, s2);
         assertEquals(expResult, result);
     }
-    
+
     /**
-     * Test of isDifferenceEmptyN method, of class Sets.
+     * Test of isNaturalSubset method, of class Sets.
      */
     @Test
-    public void test_isNaturalDifferenceEmpty8() {
+    public void test_isNaturalSubset8() {
         SortedSet<String> s1 = new TreeSet<String>();
         s1.add("c");
         s1.add("b");
@@ -766,9 +765,8 @@ public class SetsTest {
         s2.add("b");
         s2.add("a");
         boolean expResult = false;
-        boolean result = Sets.isDifferenceEmptyN(s1, s2);
+        boolean result = Sets.isNaturalSubset(s1, s2);
         assertEquals(expResult, result);
     }
     // </editor-fold>
-
 }

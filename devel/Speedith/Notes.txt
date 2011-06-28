@@ -1,0 +1,7 @@
+Possible arguments to Speedith:
+
+     -of "Isabelle2011" -sd 'BinarySD {arg1 = PrimarySD {spiders = ["s1", "s2"], habitats = [("s1", [(["A", "B"], [])]), ("s2", [(["A"], ["B"]), (["B"], ["A"])])], sh_zones = []}, arg2 = PrimarySD {spiders = ["s1", "s2"], habitats = [("s1", [(["A"], [])]), ("s2", [(["B"], [])])], sh_zones = []}, operator = "op -->"}'
+
+or:
+
+     -sd -sd 'BinarySD {arg1 = PrimarySD { spiders = ["s", "s1"], sh_zones = [(["A", "B"],["C", "D"])], habitats = [("s", [(["A", "B"], [])]), ("s1", [(["A"], ["B"]), (["B"], ["A"])])]}, arg2 = PrimarySD {spiders = ["s", "s1"], habitats = [("s", [(["A"], [])]), ("s1", [(["B"], [])])], sh_zones = []}, operator = "op -->" }'

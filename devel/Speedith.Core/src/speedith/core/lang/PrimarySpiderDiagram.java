@@ -139,7 +139,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         } else if (habitats != null) {
             // But if there are some spiders, then we have to check that the
             // habitats don't talk about non-existent spiders.
-            if (!Sets.isDifferenceEmptyN(habitats.navigableKeySet(), spiders)) {
+            if (!Sets.isNaturalSubset(habitats.navigableKeySet(), spiders)) {
                 throw new IllegalArgumentException(i18n("ERR_SD_HABITATS_WITHOUT_SPIDERS"));
             }
         }
@@ -149,7 +149,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Public Properties">
+    // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
      * Returns an unmodifiable key-value map of spiders with their corresponding
      * {@link Region habitats}.
@@ -211,9 +211,17 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     public int getSpidersCount() {
         return spiders == null ? 0 : spiders.size();
     }
+
+    public Region getSpiderHabitat(String spider) {
+        return habitats == null ? null : habitats.get(spider);
+    }
+
+    public boolean containsSpider(String spider) {
+        return spiders == null ? false : spiders.contains(spider);
+    }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+    // <editor-fold defaultstate="collapsed" desc="SpiderDiagram Implementation">
     @Override
     public SpiderDiagram transform(Transformer t) {
         if (t == null) {
@@ -261,6 +269,26 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         return hash;
     }
     // </editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Transformation Methods">
+    /**
+     * A new primary spider diagram that is almost a copy of this one, except
+     * the spider will have a new habitat.
+     * @param spider the spider for which to change the habitat.
+     * @param newHabitat the new habitat of the spider.
+     * @return a new primary spider diagram that is almost a copy of this one,
+     * except the given spider will have the new habitat.
+     */
+    public PrimarySpiderDiagram changeSpiderHabitat(String spider, Region newHabitat) {
+        if (spiders.contains(spider)) {
+            TreeMap<String, Region> newHabitats = new TreeMap<String, Region>(this.habitats);
+            newHabitats.put(spider, newHabitat);
+            return SpiderDiagrams.createPrimarySD(this.spiders, newHabitats, shadedZones, false);
+        } else {
+            throw new IllegalArgumentException(i18n("ERR_SPIDER_NOT_IN_DIAGRAM", spider));
+        }
+    }
+    //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
     @Override

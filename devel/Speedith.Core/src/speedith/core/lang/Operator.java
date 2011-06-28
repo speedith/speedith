@@ -204,7 +204,7 @@ public class Operator {
             KnownOperators.put(OP_NAME_AND, new Operator(2, OP_NAME_AND));
             KnownOperators.put(OP_NAME_OR, new Operator(2, OP_NAME_OR));
             KnownOperators.put(OP_NAME_IMP, new Operator(2, OP_NAME_IMP));
-            KnownOperators.put(OP_NAME_OR, new Operator(2, OP_NAME_EQ));
+            KnownOperators.put(OP_NAME_EQ, new Operator(2, OP_NAME_EQ));
         }
 
         private OperatorRegistry() {

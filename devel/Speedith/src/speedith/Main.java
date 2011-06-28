@@ -33,13 +33,15 @@ import java.util.logging.Level;
 import org.apache.commons.cli.ParseException;
 import speedith.cli.CliOptions;
 import speedith.core.lang.CompoundSpiderDiagram;
+import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagram;
+import speedith.core.lang.Zone;
 import speedith.core.lang.export.SDExportProvider;
 import speedith.core.lang.export.SDExporting;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.reasoning.Goals;
-import speedith.core.reasoning.args.SpiderZoneArg;
+import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.rules.SplitSpiders;
 import static speedith.i18n.Translations.*;
 import static speedith.logging.Logger.*;
@@ -93,7 +95,7 @@ public class Main {
                 String outputFormat = clargs.getOutputFormat();
                 // Now print out the formula in the specified format
                 if (readSpiderDiagram != null) {
-                    readSpiderDiagram = new SplitSpiders().apply(new SpiderZoneArg(0, 1, "s1", null), new Goals(Arrays.asList(readSpiderDiagram))).getGoals().getGoalAt(0);
+                    readSpiderDiagram = new SplitSpiders().apply(new SpiderRegionArg(0, 1, "s2", new Region(Zone.fromInContours("A").withOutContours("B"))), new Goals(Arrays.asList(readSpiderDiagram))).getGoals().getGoalAt(0);
                     SDExporting.getExporter(outputFormat, clargs.getOutputFormatArguments()).exportTo(readSpiderDiagram, System.out);
                     System.out.println();
                 }
@@ -113,7 +115,7 @@ public class Main {
             System.exit(1);
         } catch (Exception ex) {
             log(Level.SEVERE, ex.getLocalizedMessage(), ex);
-            System.err.println(ex.getLocalizedMessage());
+            System.err.println(ex.toString());
             System.exit(1);
         }
     }
