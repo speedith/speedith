@@ -32,7 +32,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import org.apache.commons.cli.ParseException;
 import speedith.cli.CliOptions;
-import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Zone;

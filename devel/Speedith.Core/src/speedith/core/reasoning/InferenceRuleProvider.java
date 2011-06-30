@@ -42,5 +42,25 @@ package speedith.core.reasoning;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public interface InferenceRuleProvider {
-    // TODO: Specify interface.
+    /**
+     * Returns an instance of the {@link InferenceRule inference rule} this
+     * class provides.
+     * <p>Note that the main purpose of this class is to give more
+     * information on the inference rule, without having to create an actual
+     * instance of the inference rule itself. For example, this class provides
+     * information on what arguments the inference rule accepts, a description
+     * on how it can be used, and what its effects are.</p>
+     * <p><span style="font-weight:bold">Note</span>: this method may return the
+     * same instance of the inference rule for many invocations.</p>
+     * @return 
+     */
+    public InferenceRule getInferenceRule();
+
+    /**
+     * Returns the name of the {@link InferenceRule} this provider provides.
+     * <p><span style="font-weight:bold">Note</span>: this name is not
+     * internationalised.</p>
+     * @return the name of the {@link InferenceRule} this provider provides.
+     */
+    public String getInferenceRuleName();
 }
