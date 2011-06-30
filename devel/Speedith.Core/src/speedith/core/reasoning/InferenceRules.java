@@ -86,7 +86,7 @@ public class InferenceRules {
      * @return an {@link InferenceRule inference rule} that operates on spider
      * diagrams.
      */
-    public static InferenceRule getExporter(String inferenceRule) {
+    public static InferenceRule getInferenceRule(String inferenceRule) {
         InferenceRuleProvider provider = providers.get(inferenceRule);
         if (inferenceRule == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "inferenceRule"));
