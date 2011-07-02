@@ -84,6 +84,15 @@ public class CliOptions extends Options {
      */
     public static final String OPTION_SD = "sd";
     /**
+     * <p>Specifies the inference rule to apply on the given spider diagram
+     * formula.</p>
+     * <p>This option is ignored if no spider diagram is provided.</p>
+     * <p>Also, depending on the chosen inference rule, additional arguments
+     * might have to be provided. To get more information about all available
+     * inference rules, use the option {@link CliOptions#OPTION_LIR}.</p>
+     */
+    public static final String OPTION_IR = "ir";
+    /**
      * This option tells Speedith to run in batch mode (without a user
      * interface).
      */
@@ -113,6 +122,12 @@ public class CliOptions extends Options {
      * diagram formula export formats.
      */
     public static final String OPTION_LOF = "lof";
+    // TODO: Add 'lir' functionality.
+    /**
+     * This option is used to print a list of all available spider-diagrammatic
+     * inference rules.
+     */
+    public static final String OPTION_LIR = "lir";
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Private Fields">
     /**
@@ -205,6 +220,18 @@ public class CliOptions extends Options {
     public String getSpiderDiagram() {
         return getParsedOptions().getOptionValue(OPTION_SD);
     }
+    
+    /**
+     * Returns the name of the inference rule to use on the given spider
+     * diagram.
+     * <p>This is the value of the arguments to the {@link CliOptions#OPTION_IR
+     * inference rule} option.</p>
+     * @return the name of the inference rule to use on the given spider
+     * diagram.
+     */
+    public String getInferenceRule() {
+        return getParsedOptions().getOptionValue(OPTION_IR);
+    }
 
     /**
      * Returns the spider diagram formula output format that should be used
@@ -290,6 +317,18 @@ public class CliOptions extends Options {
     public boolean isListOutputFormats() {
         return getParsedOptions().hasOption(OPTION_LOF);
     }
+
+    /**
+     * Indicates whether the user provided the 'list inference rules' option in
+     * the command line arguments.
+     * <p>This flag tells Speedith whether to print the list of all known spider
+     * diagram inference rules.</p>
+     * @return a flag that tells whether to print the list of all known spider
+     * diagram inference rules.
+     */
+    public boolean isListInferenceRules() {
+        return getParsedOptions().hasOption(OPTION_LIR);
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Initialisation">
@@ -316,22 +355,31 @@ public class CliOptions extends Options {
         addOption(opt);
 
         // ---- Spider diagram formula
-        opt = new Option(OPTION_SD, "spider-diagram", true, i18n("CLI_ARG_DESCRIPTION_SD"));
+        opt = new Option(OPTION_SD, null, true, i18n("CLI_ARG_DESCRIPTION_SD"));
         opt.setArgName(i18n("CLI_ARG_SD_VALUE_NAME"));
         addOption(opt);
 
+        // ---- Inference Rule Name
+        opt = new Option(OPTION_IR, null, true, i18n("CLI_ARG_DESCRIPTION_IR"));
+        opt.setArgName(i18n("CLI_ARG_IR_VALUE_NAME"));
+        addOption(opt);
+
         // ---- Output formula format
-        opt = new Option(OPTION_OF, "output-format", true, i18n("CLI_ARG_DESCRIPTION_OF"));
+        opt = new Option(OPTION_OF, null, true, i18n("CLI_ARG_DESCRIPTION_OF"));
         opt.setArgName(i18n("CLI_ARG_OF_VALUE_NAME"));
         addOption(opt);
 
         // ---- Output formula format arguments
-        opt = new Option(OPTION_OFA, "output-format-args", true, i18n("CLI_ARG_DESCRIPTION_OFA"));
+        opt = new Option(OPTION_OFA, null, true, i18n("CLI_ARG_DESCRIPTION_OFA"));
         opt.setArgName(i18n("CLI_ARG_OFA_VALUE_NAME"));
         addOption(opt);
 
         // ---- List known export formats
-        opt = new Option(OPTION_LOF, "lst-output-formats", false, i18n("CLI_ARG_DESCRIPTION_LOF"));
+        opt = new Option(OPTION_LOF, null, false, i18n("CLI_ARG_DESCRIPTION_LOF"));
+        addOption(opt);
+
+        // ---- List known inference rules
+        opt = new Option(OPTION_LIR, null, false, i18n("CLI_ARG_DESCRIPTION_LIR"));
         addOption(opt);
     }
     // </editor-fold>

@@ -40,6 +40,9 @@ import speedith.core.lang.export.SDExporting;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.reasoning.Goals;
+import speedith.core.reasoning.InferenceRuleProvider;
+import speedith.core.reasoning.InferenceRules;
+import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.rules.SplitSpiders;
 import static speedith.i18n.Translations.*;
@@ -85,6 +88,8 @@ public class Main {
                 clargs.printHelp();
             } else if (clargs.isListOutputFormats()) {
                 printKnownFormats();
+            } else if (clargs.isListInferenceRules()) {
+                printKnownInferenceRules();
             } else {
                 // ---- Starting up Speedith
                 // Did the user provide a spider diagram to Speedith?
@@ -148,6 +153,29 @@ public class Main {
                     System.out.println();
                     System.out.print("        ¤ " + par + " - " + formatInfo.getParameterDescription(par));
                 }
+            }
+        }
+    }
+
+    private static void printKnownInferenceRules() {
+        System.out.println(i18n("MSG_KNOWN_INFERENCE_RULES_LIST"));
+        System.out.println();
+        final String[] infRules = InferenceRules.getKnownInferenceRules().toArray(new String[0]);
+        Arrays.sort(infRules);
+        for (int i = 0; i < infRules.length; i++) {
+            String infRule = infRules[i];
+            InferenceRuleProvider infRuleProvider = InferenceRules.getProvider(infRule);
+            System.out.print("   * ");
+            System.out.print(infRule);
+            System.out.print("   - ");
+            System.out.println(infRuleProvider.getDescription());
+            Class<? extends RuleArg> argType = infRuleProvider.getRequiredArgument();
+            System.out.println();
+            System.out.print("     ¤ ");
+            if (argType == null) {
+                System.out.println(i18n("MSG_LIR_RULE_NO_ARG", infRule));
+            } else {
+                System.out.println(i18n("MSG_LIR_RULE_ARG_TYPE", infRule, argType.getName()));
             }
         }
     }

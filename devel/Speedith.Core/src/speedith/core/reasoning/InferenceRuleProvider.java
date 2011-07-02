@@ -100,5 +100,5 @@ public abstract class InferenceRuleProvider {
      * inference rule's {@link InferenceRule#apply(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.Goals)
      * apply method}.
      */
-    public abstract List<Class<? extends RuleArg>> getAcceptedArguments();
+    public abstract Class<? extends RuleArg> getRequiredArgument();
 }

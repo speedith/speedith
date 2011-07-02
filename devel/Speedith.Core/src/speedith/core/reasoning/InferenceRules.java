@@ -26,6 +26,8 @@
  */
 package speedith.core.reasoning;
 
+import speedith.core.lang.export.SDExporting;
+import speedith.core.reasoning.rules.SplitSpiders;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
@@ -33,7 +35,6 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.Set;
 import java.util.HashMap;
-import speedith.core.reasoning.rules.SplitSpidersProvider;
 import static speedith.core.i18n.Translations.*;
 
 /**
@@ -55,7 +56,7 @@ public class InferenceRules {
     // <editor-fold defaultstate="collapsed" desc="Constructors">
     static {
         // Register built-in inference rules.
-        registerProvider(SplitSpidersProvider.class);
+        registerProvider(SplitSpiders.class);
     }
 
     /**

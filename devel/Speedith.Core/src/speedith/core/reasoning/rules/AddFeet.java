@@ -41,5 +41,4 @@ public class AddFeet implements InferenceRule {
     public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
 }

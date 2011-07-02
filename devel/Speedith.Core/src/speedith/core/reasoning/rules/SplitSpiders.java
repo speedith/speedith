@@ -28,6 +28,7 @@ package speedith.core.reasoning.rules;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Locale;
 import static speedith.core.i18n.Translations.*;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.IdTransformer;
@@ -39,6 +40,7 @@ import speedith.core.lang.SpiderDiagrams;
 import speedith.core.reasoning.BasicInferenceRule;
 import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.InferenceRule;
+import speedith.core.reasoning.InferenceRuleProvider;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.RuleApplicationResult;
@@ -48,9 +50,18 @@ import speedith.core.reasoning.args.SpiderRegionArg;
  * The implementation of the 'split spiders' diagrammatic inference rule.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SplitSpiders implements InferenceRule, BasicInferenceRule {
+public class SplitSpiders extends InferenceRuleProvider implements InferenceRule, BasicInferenceRule {
 
-    //<editor-fold defaultstate="collapsed" desc="Inference Rule Implementation">
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    /**
+     * The name of the inference rule this provider provides.
+     * <p>This value is returned by the {@link SplitSpidersProvider#getInferenceRuleName()}
+     * method.</p>
+     */
+    public static final String InferenceRuleName = "split_spiders";
+    // </editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
         if (goals == null) {
             throw new RuleApplicationException(i18n("RULE_NO_SUBGOALS"));
@@ -71,6 +82,24 @@ public class SplitSpiders implements InferenceRule, BasicInferenceRule {
         }
     }
     //</editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="InferenceRuleProvider Implementation">
+    public SplitSpiders getInferenceRule() {
+        return this;
+    }
+
+    public String getInferenceRuleName() {
+        return InferenceRuleName;
+    }
+
+    public String getDescription(Locale locale) {
+        return i18n(locale, "SPLIT_SPIDERS_DESCRIPTION");
+    }
+
+    public Class<? extends RuleArg> getRequiredArgument() {
+        return SpiderRegionArg.class;
+    }
+    // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
     private class SplitSpiderTransformer extends IdTransformer {
