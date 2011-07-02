@@ -26,8 +26,6 @@
  */
 package speedith.core.reasoning;
 
-import java.util.List;
-
 /**
  * Contains the result data of an application of an inference rule (see {@link
  * InferenceRule#apply(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.Goals)

@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.Set;
 import java.util.HashMap;
+import speedith.core.reasoning.rules.SplitSpidersProvider;
 import static speedith.core.i18n.Translations.*;
 
 /**
@@ -54,7 +55,7 @@ public class InferenceRules {
     // <editor-fold defaultstate="collapsed" desc="Constructors">
     static {
         // Register built-in inference rules.
-//        registerProvider(Isabelle2011ExportProvider.class);
+        registerProvider(SplitSpidersProvider.class);
     }
 
     /**
@@ -117,7 +118,7 @@ public class InferenceRules {
      * {@link InferenceRules#getProvider(java.lang.String)} method.</p>
      * @return a set of names of all currently supported inference rules.
      */
-    public static Set<String> getSupportedFormats() {
+    public static Set<String> getKnownInferenceRules() {
         return Collections.unmodifiableSet(providers.keySet());
     }
 
@@ -128,11 +129,11 @@ public class InferenceRules {
      * <p>This method throws an exception if the scan failed for some
      * reason.</p>
      */
-    public static void scanForExporters() {
+    public static void scanForInferenceRules() {
         InputStream registryStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(InferenceRuleProvidersRegistry);
         if (registryStream != null) {
             BufferedReader registryReader = new BufferedReader(new InputStreamReader(registryStream));
-            scanForExporters(registryReader);
+            scanForInferenceRules(registryReader);
         }
     }
 
@@ -149,7 +150,7 @@ public class InferenceRules {
      * @throws RuntimeException thrown if the classes read from the given reader
      * could not have been loaded for some reason.
      */
-    public static void scanForExporters(BufferedReader classNames) throws RuntimeException {
+    public static void scanForInferenceRules(BufferedReader classNames) throws RuntimeException {
         try {
             String line = classNames.readLine();
             while (line != null) {

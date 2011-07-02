@@ -26,8 +26,17 @@
  */
 package speedith.core.reasoning.args;
 
+import speedith.core.reasoning.Goals;
+import speedith.core.reasoning.InferenceRule;
+
 /**
- *
+ * Instances of this class provide the <span style="font-style:italic;">subgoal
+ * index</span> argument to inference rules.
+ * <p>The subgoal index indicates which subgoal, specifically, the inference
+ * rule should tackle (see the {@link Goals goals} parameter of the {@link
+ * InferenceRule inference rule's} {@link
+ * InferenceRule#apply(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.Goals)
+ * apply method}).</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SubgoalIndexArg implements RuleArg {
@@ -43,6 +52,14 @@ public class SubgoalIndexArg implements RuleArg {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public Properties">
+    /**
+     * Returns the index of the subgoal on which the {@link InferenceRule
+     * inference rule} should act (in its {@link InferenceRule#apply(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.Goals)
+     * apply method}).
+     * @return the index of the subgoal on which the {@link InferenceRule
+     * inference rule} should act (in its {@link InferenceRule#apply(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.Goals)
+     * apply method}).
+     */
     public int getSubgoalIndex() {
         return subgoalIndex;
     }

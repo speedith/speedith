@@ -29,7 +29,7 @@ package speedith.core.reasoning;
 import speedith.core.reasoning.args.RuleArg;
 import java.util.List;
 import speedith.core.lang.SpiderDiagram;
-import speedith.core.reasoning.args.DiagramIndexArg;
+import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.args.SpiderArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
@@ -62,7 +62,7 @@ public interface InferenceRule {
      * following parameters:
      *  <ul>
      *      <li>the {@link SubgoalIndexArg subgoal index},</li>
-     *      <li>the {@link DiagramIndexArg primary diagram index},</li>
+     *      <li>the {@link SubDiagramIndexArg primary diagram index},</li>
      *      <li>the {@link SpiderArg spider}, and also the {@link SpiderRegionArg
      *          zone} of one of the feet of the spider where to split it.</li>
      *  </ul>

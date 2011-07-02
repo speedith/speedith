@@ -26,7 +26,6 @@
  */
 package speedith.core.reasoning;
 
-import java.util.Collection;
 import speedith.core.lang.SpiderDiagram;
 
 /**

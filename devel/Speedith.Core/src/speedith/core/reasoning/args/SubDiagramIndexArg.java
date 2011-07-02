@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: DiagramIndexArg.java
+ * File name: SubDiagramIndexArg.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -26,29 +26,44 @@
  */
 package speedith.core.reasoning.args;
 
+import speedith.core.lang.CompoundSpiderDiagram;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.InferenceRule;
+
 /**
  * Along with the {@link SubgoalIndexArg subgoal index} this class also
- * provides the <span style="font-style:italic;">diagram index</span>.
+ * provides the <span style="font-style:italic;">sub-diagram index</span> as an
+ * additional argument to {@link InferenceRule inference rules}.
  * <p>The diagram index is the number assigned to every sub-diagram and
  * indicates its order of appearance (from left to right) in the whole spider
- * diagram.</p>
- * <p>Note: the containing (parent) diagram takes a lower index than its
+ * diagram (see {@link SpiderDiagram#getSubDiagramAt(int)}).</p>
+ * <p>Note: the containing (parent) diagram takes a lower index than any of its
  * children.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class DiagramIndexArg extends SubgoalIndexArg implements RuleArg {
+public class SubDiagramIndexArg extends SubgoalIndexArg implements RuleArg {
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private int primarySDIndex;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public DiagramIndexArg(int subgoalIndex, int primarySDIndex) {
+    public SubDiagramIndexArg(int subgoalIndex, int primarySDIndex) {
         super(subgoalIndex);
         this.primarySDIndex = primarySDIndex;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public Properties">
+    /**
+     * Returns a value which indicates the index of a sub-diagram within a
+     * spider diagram.
+     * <p>The method {@link SpiderDiagram#getSubDiagramAt(int)} uses this index
+     * to return a select part of a spider diagram.</p>
+     * <p>Note that only {@link CompoundSpiderDiagram compound spider diagrams}
+     * have sub-diagrams.</p>
+     * @return a value which indicates the index of a sub-diagram within a
+     * spider diagram.
+     */
     public int getSubDiagramIndex() {
         return primarySDIndex;
     }

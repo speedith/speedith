@@ -28,11 +28,6 @@ package speedith.core.reasoning;
 
 import speedith.core.reasoning.args.RuleArg;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import speedith.core.lang.SpiderDiagram;
 import static speedith.core.i18n.Translations.*;
 
 /**

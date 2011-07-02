@@ -30,7 +30,7 @@ package speedith.core.reasoning.args;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SpiderArg extends DiagramIndexArg {
+public class SpiderArg extends SubDiagramIndexArg {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private String spider;

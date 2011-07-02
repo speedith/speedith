@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
-import speedith.core.reasoning.args.DiagramIndexArg;
+import speedith.core.reasoning.args.SubDiagramIndexArg;
 import static speedith.core.i18n.Translations.i18n;
 
 /**
@@ -187,7 +187,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * Returns the spider diagram at the given index.
      * <p>This index indicates the number of appearance (from left to right) of
      * a sub-diagram within this compound diagram.</p>
-     * <p>See {@link DiagramIndexArg} for more info on the
+     * <p>See {@link SubDiagramIndexArg} for more info on the
      * <span style="font-style:italic;">diagram indices</span>.</p>
      * @param index the index of the spider sub-diagram in this compound
      * diagram to return.
