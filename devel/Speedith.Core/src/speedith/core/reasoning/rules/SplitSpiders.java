@@ -62,7 +62,7 @@ public class SplitSpiders implements InferenceRule, BasicInferenceRule {
             }
             SpiderDiagram sd = goals.getGoalAt(arg.getSubgoalIndex());
             // Get the primary spider diagram at the given index:
-            SpiderDiagram newSd = sd.transform(new SplitSpiderTransformer(arg));
+            SpiderDiagram newSd = sd.transform(new SplitSpiderTransformer(arg), false);
             SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
             newSubgoals[arg.getSubgoalIndex()] = newSd;
             return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));

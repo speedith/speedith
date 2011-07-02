@@ -98,12 +98,37 @@ public abstract class SpiderDiagram {
     /**
      * Visits the given spider diagram and its children in a parent-first left-
      * to-right order.
-     * <p>Note: this function does not descend into spider diagrams that the
-     * visitor returns.</p>
+     * <p>If the diagram does not have any parents, then the transformer will
+     * get an empty or a {@code null} stack of parents.</p>
+     * <p>By default, this method calls the overloaded {@link
+     * SpiderDiagram#transform(speedith.core.lang.Transformer, boolean)} method
+     * with parent tracking enabled. This means that the parents of sub-diagrams
+     * will be available to the transformer.</p>
+     * <p>Note: this function does not descend into spider diagrams returned by
+     * the given {@link Transformer transformer}.</p>
      * @param t the object that transforms particular sub-diagrams.
      * @return the transformed spider diagram.
      */
-    public abstract SpiderDiagram transform(Transformer t);
+    public SpiderDiagram transform(Transformer t) {
+        return transform(t, true);
+    }
+
+    /**
+     * Visits the given spider diagram and its children in a parent-first left-
+     * to-right order.
+     * <p>If the diagram does not have any parents, then the transformer will
+     * get an empty or a {@code null} stack of parents.</p>
+     * <p>Note: this function does not descend into spider diagrams returned by
+     * the given {@link Transformer transformer}.</p>
+     * @param t the object that transforms particular sub-diagrams.
+     * @param trackParents indicates whether the parents of the visited
+     * sub-diagrams should be tracked. If this parameter is set to {@code false}
+     * then the transformer's {@link Transformer#transform(speedith.core.lang.CompoundSpiderDiagram, int, int, java.util.LinkedList)
+     * transform methods} will be called with the parent stack set to {@code
+     * null}.
+     * @return the transformed spider diagram.
+     */
+    public abstract SpiderDiagram transform(Transformer t, boolean trackParents);
 
     /**
      * Returns the spider sub-diagram at the given index within this spider

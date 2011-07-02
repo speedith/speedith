@@ -224,11 +224,11 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     }
 
     @Override
-    public SpiderDiagram transform(Transformer t) {
+    public SpiderDiagram transform(Transformer t, boolean trackParents) {
         if (t == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "t"));
         }
-        return transform(t, this, 0, 0, new LinkedList<CompoundSpiderDiagram>());
+        return transform(t, this, 0, 0, trackParents ? new LinkedList<CompoundSpiderDiagram>() : null);
     }
 
     @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
@@ -255,7 +255,9 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
 
             // If we want to process the children of the current SD, make it the
             // last parent.
-            parents.push(curSD);
+            if (parents != null) {
+                parents.push(curSD);
+            }
             // This array will hold the children (if at least one of them was
             // transformed).
             ArrayList<SpiderDiagram> transformedChildren = null;
@@ -286,7 +288,9 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
             }
             // We have finished traversing the children of the current compound
             // diagram. Remove it from the stack of parents.
-            parents.pop();
+            if (parents != null) {
+                parents.pop();
+            }
             // Did any of the children change? If none changed, we must return
             // the unchanged diagram. But if at least one changed, we have to
             // create a new one.

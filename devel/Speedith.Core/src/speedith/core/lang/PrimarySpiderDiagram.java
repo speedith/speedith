@@ -223,7 +223,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     // <editor-fold defaultstate="collapsed" desc="SpiderDiagram Implementation">
     @Override
-    public SpiderDiagram transform(Transformer t) {
+    public SpiderDiagram transform(Transformer t, boolean trackParents) {
         if (t == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "t"));
         }

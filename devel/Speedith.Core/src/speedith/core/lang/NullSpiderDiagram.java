@@ -60,7 +60,7 @@ public class NullSpiderDiagram extends SpiderDiagram {
 
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
     @Override
-    public SpiderDiagram transform(Transformer t) {
+    public SpiderDiagram transform(Transformer t, boolean trackParents) {
         if (t == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "t"));
         }
