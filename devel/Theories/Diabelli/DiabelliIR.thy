@@ -160,12 +160,22 @@ ML {* print_depth 100 *}
 
 use "diabelli.ML"
 
+ML {* Diabelli.from_snf_to_sd @{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"} *}
+ML {* Diabelli.random_tests "tralala" *}
+ML {* Outer_Syntax.scan Position.none "split_spiders sdi: 0 sp: sp1 r: \"[([\\\"A\\\"],[\\\"B\\\"])]\"" *}
+ML {* Method.print_methods @{theory} *}
+
 method_setup sd_tac = {*
-Scan.succeed (fn ctxt => (Method.SIMPLE_METHOD' (Diabelli.sd_tac ctxt)))
+(fn xs => let
+              val _ = tracing (PolyML.makestring xs)
+          in
+              ((Scan.lift (fn tok::toks => (tok, toks))) >> (fn fuck => (fn ctxt => (Method.SIMPLE_METHOD' (Diabelli.sd_tac (PolyML.makestring fuck) ctxt))))) xs
+              (*Scan.succeed (fn ctxt => (Method.SIMPLE_METHOD' (Diabelli.sd_tac "fuck you" ctxt))) xs*)
+          end)
 *} "A no-op tactic for testing the translation from SNF to spider diagrams and communication with Speedith."
 
 lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
-  apply sd_tac
+  apply (sd_tac sdi) (* split_spiders sdi: 1 sp: s2 r: "[([\"A\"],[\"B\"])]") *)
   apply auto
   by iprover
 

@@ -447,46 +447,46 @@ public class CliOptions extends Options {
         addOption(opt);
 
         // ---- Spider diagram formula
-        opt = new Option(OPTION_SD, null, true, i18n("CLI_ARG_DESCRIPTION_SD"));
+        opt = new Option(OPTION_SD, true, i18n("CLI_ARG_DESCRIPTION_SD"));
         opt.setArgName(i18n("CLI_ARG_SD_VALUE_NAME"));
         addOption(opt);
 
         // ---- Inference Rule Name
-        opt = new Option(OPTION_IR, null, true, i18n("CLI_ARG_DESCRIPTION_IR"));
+        opt = new Option(OPTION_IR, true, i18n("CLI_ARG_DESCRIPTION_IR"));
         opt.setArgName(i18n("CLI_ARG_IR_VALUE_NAME"));
         addOption(opt);
 
         // ---- Sub-diagram index
-        opt = new Option(OPTION_SDI, null, true, i18n("CLI_ARG_DESCRIPTION_SDI"));
+        opt = new Option(OPTION_SDI, true, i18n("CLI_ARG_DESCRIPTION_SDI"));
         opt.setArgName(i18n("CLI_ARG_SDI_VALUE_NAME"));
         addOption(opt);
 
         // ---- Spider's name
-        opt = new Option(OPTION_SP, null, true, i18n("CLI_ARG_DESCRIPTION_SP"));
+        opt = new Option(OPTION_SP, true, i18n("CLI_ARG_DESCRIPTION_SP"));
         opt.setArgName(i18n("CLI_ARG_SP_VALUE_NAME"));
         addOption(opt);
 
         // ---- Region
-        opt = new Option(OPTION_R, null, true, i18n("CLI_ARG_DESCRIPTION_R"));
+        opt = new Option(OPTION_R, true, i18n("CLI_ARG_DESCRIPTION_R"));
         opt.setArgName(i18n("CLI_ARG_R_VALUE_NAME"));
         addOption(opt);
 
         // ---- Output formula format
-        opt = new Option(OPTION_OF, null, true, i18n("CLI_ARG_DESCRIPTION_OF"));
+        opt = new Option(OPTION_OF, true, i18n("CLI_ARG_DESCRIPTION_OF"));
         opt.setArgName(i18n("CLI_ARG_OF_VALUE_NAME"));
         addOption(opt);
 
         // ---- Output formula format arguments
-        opt = new Option(OPTION_OFA, null, true, i18n("CLI_ARG_DESCRIPTION_OFA"));
+        opt = new Option(OPTION_OFA, true, i18n("CLI_ARG_DESCRIPTION_OFA"));
         opt.setArgName(i18n("CLI_ARG_OFA_VALUE_NAME"));
         addOption(opt);
 
         // ---- List known export formats
-        opt = new Option(OPTION_LOF, null, false, i18n("CLI_ARG_DESCRIPTION_LOF"));
+        opt = new Option(OPTION_LOF, false, i18n("CLI_ARG_DESCRIPTION_LOF"));
         addOption(opt);
 
         // ---- List known inference rules
-        opt = new Option(OPTION_LIR, null, false, i18n("CLI_ARG_DESCRIPTION_LIR"));
+        opt = new Option(OPTION_LIR, false, i18n("CLI_ARG_DESCRIPTION_LIR"));
         addOption(opt);
     }
     // </editor-fold>

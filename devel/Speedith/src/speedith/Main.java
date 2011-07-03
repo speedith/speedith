@@ -108,9 +108,9 @@ public class Main {
 
                     readSpiderDiagram = inferenceRule.apply(new SpiderRegionArg(0, subDiagramIndex, spider, region), new Goals(Arrays.asList(readSpiderDiagram))).getGoals().getGoalAt(0);
 
-                    inferenceRule = InferenceRules.getInferenceRule("add_feet");
+//                    inferenceRule = InferenceRules.getInferenceRule("add_feet");
 
-                    readSpiderDiagram = inferenceRule.apply(new SpiderRegionArg(0, 3, "s2", new Region(Zone.fromInContours("A", "B"))), new Goals(Arrays.asList(readSpiderDiagram))).getGoals().getGoalAt(0);
+//                    readSpiderDiagram = inferenceRule.apply(new SpiderRegionArg(0, 3, "s2", new Region(Zone.fromInContours("A", "B"))), new Goals(Arrays.asList(readSpiderDiagram))).getGoals().getGoalAt(0);
 
 //                    readSpiderDiagram = new SplitSpiders().apply(new SpiderRegionArg(0, 1, "s2", new Region(Zone.fromInContours("A").withOutContours("B"))), new Goals(Arrays.asList(readSpiderDiagram))).getGoals().getGoalAt(0);
                     SDExporting.getExporter(outputFormat, clargs.getOutputFormatArguments()).exportTo(readSpiderDiagram, System.out);

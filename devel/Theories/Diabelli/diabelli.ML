@@ -116,7 +116,7 @@ sig
 (*==============================================================================
   = Diabelli Reasoning Tactics
   ============================================================================*)
-  val sd_tac: Proof.context -> int -> tactic
+  val sd_tac: string -> Proof.context -> int -> tactic
 end;
 
 
@@ -435,7 +435,11 @@ fun speedith_batch_apply t othy _ =
                             [
                               "-jar", getenv "DIABELLI_SPEEDITH_PATH",
                               "-of", getenv "DIABELLI_SPEEDITH_OUTPUT_FORMAT",
-                              "-sd", PolyML.makestring (from_snf_to_sd t)
+                              "-sd", PolyML.makestring (from_snf_to_sd t),
+                              "-ir", "split_spiders",
+                              "-sdi", "1",
+                              "-sp", "s2",
+                              "-r", "[([\"A\"],[\"B\"])]"
                             ]
       val _ = tracing ("Speedith returned: " ^ sout)
       fun read_term (Context.Theory ctxt) formula = (writeln "Theory"; Syntax.read_term_global ctxt formula)
@@ -457,6 +461,7 @@ fun speedith_batch_apply t othy _ =
 fun random_tests str =
   let
       val (out, ret) = bash_output ("echo " ^ str)
+      val _ = tracing (PolyML.makestring ([ ("A","B"), ("C","D") ]))
   in
       (out, ret)
   end;
@@ -465,8 +470,9 @@ fun random_tests str =
   = sd_tac
   ============================================================================*)
 
-fun sd_tac ctxt i st = SUBGOAL (fn (subgoal, j) =>
+fun sd_tac args ctxt i st = SUBGOAL (fn (subgoal, _) =>
    let
+       val _ = tracing ("Arguments: " ^ (PolyML.makestring args))
        val thy = Thm.theory_of_thm st;
        val speedithTerm = speedith_batch_apply subgoal (SOME thy) []
        val _ = tracing ("Parsed Speedith's term: " ^ (PolyML.makestring speedithTerm))
@@ -475,9 +481,6 @@ fun sd_tac ctxt i st = SUBGOAL (fn (subgoal, j) =>
        val inter1Thm = (Goal.prove ctxt [] [] inter1 (K (auto_tac (clasimpset_of ctxt))))
        val _ = tracing ("Intermediate theorem: " ^ (PolyML.makestring inter1Thm))
    in
-       (* TODO: Prove that Speedith's returned term implies the current subgoal.
-          Afterwards, with 'compose_tac', exchange what Speedith returned with
-          the current subgoal. *)
        compose_tac (false, inter1Thm, 1) i
    end) i st
 
