@@ -40,6 +40,7 @@ import speedith.core.lang.export.SDExporting;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.reasoning.Goals;
+import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.InferenceRuleProvider;
 import speedith.core.reasoning.InferenceRules;
 import speedith.core.reasoning.args.RuleArg;
@@ -99,7 +100,16 @@ public class Main {
                 String outputFormat = clargs.getOutputFormat();
                 // Now print out the formula in the specified format
                 if (readSpiderDiagram != null) {
-                    readSpiderDiagram = new SplitSpiders().apply(new SpiderRegionArg(0, 1, "s2", new Region(Zone.fromInContours("A").withOutContours("B"))), new Goals(Arrays.asList(readSpiderDiagram))).getGoals().getGoalAt(0);
+                    // Get the inference rule (and all of its possible arguments):
+                    String ir = clargs.getInferenceRule();
+                    String spider = clargs.getSpider();
+                    int subDiagramIndex = clargs.getSubDiagramIndex();
+                    Region region = clargs.getRegion();
+                    InferenceRule inferenceRule = InferenceRules.getInferenceRule(ir);
+                    
+                    readSpiderDiagram = inferenceRule.apply(new SpiderRegionArg(0, subDiagramIndex, spider, region), new Goals(Arrays.asList(readSpiderDiagram))).getGoals().getGoalAt(0);
+                    
+//                    readSpiderDiagram = new SplitSpiders().apply(new SpiderRegionArg(0, 1, "s2", new Region(Zone.fromInContours("A").withOutContours("B"))), new Goals(Arrays.asList(readSpiderDiagram))).getGoals().getGoalAt(0);
                     SDExporting.getExporter(outputFormat, clargs.getOutputFormatArguments()).exportTo(readSpiderDiagram, System.out);
                     System.out.println();
                 }
@@ -169,7 +179,7 @@ public class Main {
             System.out.print(infRule);
             System.out.print("   - ");
             System.out.println(infRuleProvider.getDescription());
-            Class<? extends RuleArg> argType = infRuleProvider.getRequiredArgument();
+            Class<? extends RuleArg> argType = infRuleProvider.getArgumentType();
             System.out.println();
             System.out.print("     ¤ ");
             if (argType == null) {

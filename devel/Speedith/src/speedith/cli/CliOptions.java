@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.prefs.Preferences;
 import speedith.Main;
 import speedith.core.lang.export.Isabelle2011ExportProvider;
+import speedith.core.lang.reader.ReadingException;
 import speedith.preferences.PreferencesKey;
 import java.util.HashMap;
 import java.io.OutputStream;
@@ -46,7 +47,11 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import speedith.core.lang.Region;
+import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.export.SDExporting;
+import speedith.core.lang.reader.SpiderDiagramsReader;
+import speedith.core.reasoning.rules.SplitSpiders;
 import static speedith.i18n.Translations.i18n;
 
 /**
@@ -93,6 +98,44 @@ public class CliOptions extends Options {
      */
     public static final String OPTION_IR = "ir";
     /**
+     * <p>This option tells the {@link CliOptions#OPTION_IR selected inference
+     * rule} which sub-diagram to target.</p>
+     * <p>This option is needed if the {@link CliOptions#OPTION_IR selected
+     * inference rule} requires the index of a sub-diagram for its
+     * operation. An example of such an inference rule is the {@link
+     * SplitSpiders split spiders} inference rule.</p>
+     * <p>For more information about sub-diagram indices see {@link
+     * SpiderDiagram#getSubDiagramAt(int)}.</p>
+     * <p>This option is ignored if no inference rule is provided.</p>
+     */
+    public static final String OPTION_SDI = "sdi";
+    /**
+     * <p>This option tells the {@link CliOptions#OPTION_IR selected inference
+     * rule} which spider to target.</p>
+     * <p>This option is needed if the {@link CliOptions#OPTION_IR selected
+     * inference rule} requires the name of the spider on which it should
+     * operate. An example of such an inference rule is the {@link
+     * SplitSpiders split spiders} inference rule.</p>
+     * <p>Spiders reside in particular sub-diagrams and are local to them.
+     * Hence, one will have to specify a {@link CliOptions#OPTION_SDI
+     * sub-diagram index} too if the spider name is needed.</p>
+     * <p>This option is ignored if no inference rule is provided.</p>
+     */
+    public static final String OPTION_SP = "sp";
+    /**
+     * <p>This option tells the {@link CliOptions#OPTION_IR selected inference
+     * rule} which region to use.</p>
+     * <p>This option is needed if the {@link CliOptions#OPTION_IR selected
+     * inference rule} requires the name of the spider on which it should
+     * operate. An example of such an inference rule is the {@link
+     * SplitSpiders split spiders} inference rule.</p>
+     * <p>Spiders reside in particular sub-diagrams and are local to them.
+     * Hence, one will have to specify a {@link CliOptions#OPTION_SDI
+     * sub-diagram index} too if the spider name is needed.</p>
+     * <p>This option is ignored if no inference rule is provided.</p>
+     */
+    public static final String OPTION_R = "r";
+    /**
      * This option tells Speedith to run in batch mode (without a user
      * interface).
      */
@@ -122,12 +165,12 @@ public class CliOptions extends Options {
      * diagram formula export formats.
      */
     public static final String OPTION_LOF = "lof";
-    // TODO: Add 'lir' functionality.
     /**
      * This option is used to print a list of all available spider-diagrammatic
      * inference rules.
      */
     public static final String OPTION_LIR = "lir";
+    private static final long serialVersionUID = 0xda37a6808b7a1245L;
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Private Fields">
     /**
@@ -220,7 +263,7 @@ public class CliOptions extends Options {
     public String getSpiderDiagram() {
         return getParsedOptions().getOptionValue(OPTION_SD);
     }
-    
+
     /**
      * Returns the name of the inference rule to use on the given spider
      * diagram.
@@ -231,6 +274,55 @@ public class CliOptions extends Options {
      */
     public String getInferenceRule() {
         return getParsedOptions().getOptionValue(OPTION_IR);
+    }
+
+    /**
+     * Returns the sub-diagram index (or -1 if none was given).
+     * <p>This is the value of the arguments to the {@link CliOptions#OPTION_SDI
+     * sub-diagram index} option.</p>
+     * @return the sub-diagram index (or -1 if none was given).
+     * @throws RuntimeException if the given index is not formatted correctly.
+     */
+    public int getSubDiagramIndex() {
+        String sdi = getParsedOptions().getOptionValue(OPTION_SDI);
+        if (sdi != null) {
+            try {
+                int retVal = Integer.parseInt(sdi);
+                if (retVal < 0) {
+                    throw new NumberFormatException(i18n("GERR_NEGATIVE_INTEGER"));
+                }
+                return retVal;
+            } catch (NumberFormatException nfe) {
+                throw new RuntimeException(i18n("ERR_CLI_SDI_INVALID", sdi), nfe);
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Returns the name of the spider.
+     * <p>This is the value of the arguments to the {@link CliOptions#OPTION_SP
+     * spider} option.</p>
+     * @return the name of the spider.
+     */
+    public String getSpider() {
+        return getParsedOptions().getOptionValue(OPTION_SP);
+    }
+
+    /**
+     * Returns the region (or {@code null}, if no region was specified).
+     * <p>This is the value of the arguments to the {@link CliOptions#OPTION_R
+     * region} option.</p>
+     * @return he region (or {@code null}, if no region was specified).
+     * @throws ReadingException this exception is thrown if the region could not
+     * have been read (this can be due to invalid formatting).
+     */
+    public Region getRegion() throws ReadingException {
+        String r = getParsedOptions().getOptionValue(OPTION_R);
+        if (r != null) {
+            return SpiderDiagramsReader.readRegion(r);
+        }
+        return null;
     }
 
     /**
@@ -266,7 +358,7 @@ public class CliOptions extends Options {
         }
         return m_cachedOf;
     }
-    
+
     /**
      * Returns a key-value map of arguments to the chosen export format.
      * @return a key-value map of arguments to the chosen export format.
@@ -362,6 +454,21 @@ public class CliOptions extends Options {
         // ---- Inference Rule Name
         opt = new Option(OPTION_IR, null, true, i18n("CLI_ARG_DESCRIPTION_IR"));
         opt.setArgName(i18n("CLI_ARG_IR_VALUE_NAME"));
+        addOption(opt);
+
+        // ---- Sub-diagram index
+        opt = new Option(OPTION_SDI, null, true, i18n("CLI_ARG_DESCRIPTION_SDI"));
+        opt.setArgName(i18n("CLI_ARG_SDI_VALUE_NAME"));
+        addOption(opt);
+
+        // ---- Spider's name
+        opt = new Option(OPTION_SP, null, true, i18n("CLI_ARG_DESCRIPTION_SP"));
+        opt.setArgName(i18n("CLI_ARG_SP_VALUE_NAME"));
+        addOption(opt);
+
+        // ---- Region
+        opt = new Option(OPTION_R, null, true, i18n("CLI_ARG_DESCRIPTION_R"));
+        opt.setArgName(i18n("CLI_ARG_R_VALUE_NAME"));
         addOption(opt);
 
         // ---- Output formula format

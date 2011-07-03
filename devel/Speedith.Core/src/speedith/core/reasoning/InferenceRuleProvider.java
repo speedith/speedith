@@ -26,7 +26,6 @@
  */
 package speedith.core.reasoning;
 
-import java.util.List;
 import java.util.Locale;
 import speedith.core.reasoning.args.RuleArg;
 
@@ -89,16 +88,13 @@ public abstract class InferenceRuleProvider {
     public abstract String getDescription(Locale locale);
     
     /**
-     * Returns a read-only list of acceptable argument types to the provided
-     * inference rule's {@link InferenceRule#apply(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.Goals)
+     * Returns the type of the argument the provided inference rule requires.
+     * The argument of this type is required in the inference rules' {@link
+     * InferenceRule#apply(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.Goals)
      * apply method}.
-     * <p>Arguments that are instances of the returned type may be provided to
-     * the inference rule.</p>
      * <p>Also, see the {@link InferenceRuleProvider#getDescription()
      * description} for more information on how to use the inference rule.</p>
-     * @return a read-only list of acceptable argument types to the provided
-     * inference rule's {@link InferenceRule#apply(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.Goals)
-     * apply method}.
+     * @return the type of the argument the provided inference rule requires.
      */
-    public abstract Class<? extends RuleArg> getRequiredArgument();
+    public abstract Class<? extends RuleArg> getArgumentType();
 }

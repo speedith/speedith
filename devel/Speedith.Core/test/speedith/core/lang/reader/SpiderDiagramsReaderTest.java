@@ -29,14 +29,19 @@ package speedith.core.lang.reader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.StringReader;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.TreeSet;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import speedith.core.lang.CompoundSpiderDiagram;
+import speedith.core.lang.Region;
 import static org.junit.Assert.*;
 import speedith.core.lang.SpiderDiagram;
+import speedith.core.lang.Zone;
 
 /**
  *
@@ -64,6 +69,11 @@ public class SpiderDiagramsReaderTest {
     public static final String SD_EXAMPLE_ERR_8 = "BinarySD aq {operator = \"\", arg1 = NullSD {}, arg2 = NullSD {}";
     public static final String SD_EXAMPLE_ERR_9 = "BinarySD {operator = \"op ||\", arg1 = NullSD {}, arg2 = NullSD {}, arg3 = NullSD {} }";
     public static final String SD_EXAMPLE_ERR_10 = "BinarySD {operator = \"op ||\", arg1 = NullSD {}, arg2 = NullSD {}, dsaj = NullSD {} }";
+    
+    public static final String REGION_EXAMPLE_1 = "[([\"A\"], [\"B\"]), ([\"C\"], [\"D\"])]";
+    public static final String REGION_EXAMPLE_2 = "[]";
+    public static final String REGION_EXAMPLE_3 = "[([], [\"B\"]), ([\"C\"], [])]";
+    public static final String REGION_EXAMPLE_4 = "[([], [\"B\", \"A\"]), ([\"C\", \"D\"], [])]";
 
     public SpiderDiagramsReaderTest() {
     }
@@ -278,5 +288,52 @@ public class SpiderDiagramsReaderTest {
         assertTrue(csd == csd.getSubDiagramAt(0));
 
         assertTrue(null == csd.getSubDiagramAt(2));
+    }
+
+    @Test
+    public void testReadRegion_1() throws ReadingException {
+        Region r = checkRegionExample(REGION_EXAMPLE_1);
+        Region expected = new Region(Zone.fromInContours("A").withOutContours("B"), Zone.fromInContours("C").withOutContours("D"));
+        assertEquals(expected, r);
+        expected = new Region(Zone.fromInContours("A"), Zone.fromInContours("C").withOutContours("D"));
+        assertFalse(expected.equals(r));
+    }
+
+    @Test
+    public void testReadRegion_2() throws ReadingException {
+        Region r = checkRegionExample(REGION_EXAMPLE_2);
+        Region expected = new Region();
+        assertEquals(expected, r);
+        expected = new Region(new TreeSet<Zone>());
+        assertEquals(expected, r);
+        expected = new Region(Arrays.asList(new Zone[]{}));
+        assertEquals(expected, r);
+        expected = new Region((Collection<Zone>)null);
+        assertEquals(expected, r);
+        expected = new Region(Zone.fromInContours("A"), Zone.fromInContours("C").withOutContours("D"));
+        assertFalse(expected.equals(r));
+    }
+
+    @Test
+    public void testReadRegion_3() throws ReadingException {
+        Region r = checkRegionExample(REGION_EXAMPLE_3);
+        Region expected = new Region(Zone.fromOutContours("B"), Zone.fromInContours("C"));
+        assertEquals(expected, r);
+        expected = new Region(Zone.fromInContours("A"), Zone.fromInContours("C").withOutContours("D"));
+        assertFalse(expected.equals(r));
+    }
+
+    @Test
+    public void testReadRegion_4() throws ReadingException {
+        Region r = checkRegionExample(REGION_EXAMPLE_4);
+        Region expected = new Region(Zone.fromOutContours("A","B"), Zone.fromInContours("D", "C"));
+        assertEquals(expected, r);
+        expected = new Region(Zone.fromInContours("A"), Zone.fromInContours("C").withOutContours("D"));
+        assertFalse(expected.equals(r));
+    }
+
+    private Region checkRegionExample(String example) throws ReadingException {
+        Region region = SpiderDiagramsReader.readRegion(example);
+        return region;
     }
 }

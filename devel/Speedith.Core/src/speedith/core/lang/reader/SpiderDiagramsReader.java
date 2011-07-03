@@ -26,6 +26,7 @@
  */
 package speedith.core.lang.reader;
 
+import org.antlr.runtime.ParserRuleReturnScope;
 import java.util.Map.Entry;
 import java.io.File;
 import java.io.IOException;
@@ -53,6 +54,7 @@ import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.Zone;
 import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagrams;
+import speedith.core.lang.reader.SpiderDiagramsParser.list_return;
 import speedith.core.lang.reader.SpiderDiagramsParser.spiderDiagram_return;
 import static speedith.core.i18n.Translations.i18n;
 import static speedith.core.lang.PrimarySpiderDiagram.*;
@@ -180,6 +182,28 @@ public final class SpiderDiagramsReader {
     public static SpiderDiagram readSpiderDiagram(File inputFile, String encoding) throws ReadingException, IOException {
         return readSpiderDiagram(new ANTLRFileStream(inputFile.getPath(), encoding));
     }
+
+    /**
+     * Reads a region from the string.
+     * <p>An example of a region:
+     * <pre>[(["A", "B"], []), (["C"], ["D", "E"])]</pre>
+     * </p>
+     * @param input a region string.
+     * @return the parsed and translated {@link Region region object}.
+     * @throws ReadingException thrown if the input could not have been read.
+     */
+    public static Region readRegion(String input) throws ReadingException {
+        return readElement(new ANTLRStringStream(input), new ElementReader<Region>() {
+
+            public Region readElement(SpiderDiagramsParser parser) throws ReadingException, RecognitionException {
+                list_return list = parser.list();
+                if (list == null || list.tree == null) {
+                    throw new ReadingException(i18n("ERR_READING_INVALID_REGION"));
+                }
+                return new Region(ZoneTranslator.ZoneListTranslator.fromASTNode(list.tree));
+            }
+        });
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Translation Methods (from the AST to SpiderDiagrams)">
@@ -188,6 +212,22 @@ public final class SpiderDiagramsReader {
         SpiderDiagramsParser parser = new SpiderDiagramsParser(new CommonTokenStream(lexer));
         try {
             return toSpiderDiagram(parser.spiderDiagram());
+        } catch (RecognitionException re) {
+            throw new ReadingException(i18n("ERR_PARSE_INVALID_SYNTAX"), re);
+        } catch (ParseException pe) {
+            throw new ReadingException(pe.getMessage(), pe);
+        }
+    }
+
+    private static interface ElementReader<T> {
+        public T readElement(SpiderDiagramsParser parser) throws ReadingException, RecognitionException;
+    }
+    
+    private static <T> T readElement(CharStream chrStream, ElementReader<T> elReader) throws ReadingException {
+        SpiderDiagramsLexer lexer = new SpiderDiagramsLexer(chrStream);
+        SpiderDiagramsParser parser = new SpiderDiagramsParser(new CommonTokenStream(lexer));
+        try {
+            return elReader.readElement(parser);
         } catch (RecognitionException re) {
             throw new ReadingException(i18n("ERR_PARSE_INVALID_SYNTAX"), re);
         } catch (ParseException pe) {

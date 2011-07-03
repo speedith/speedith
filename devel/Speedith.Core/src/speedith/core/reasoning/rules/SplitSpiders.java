@@ -96,7 +96,7 @@ public class SplitSpiders extends InferenceRuleProvider implements InferenceRule
         return i18n(locale, "SPLIT_SPIDERS_DESCRIPTION");
     }
 
-    public Class<? extends RuleArg> getRequiredArgument() {
+    public Class<? extends RuleArg> getArgumentType() {
         return SpiderRegionArg.class;
     }
     // </editor-fold>
