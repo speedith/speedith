@@ -39,8 +39,6 @@ import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.SpiderDiagrams;
 import speedith.core.reasoning.BasicInferenceRule;
 import speedith.core.reasoning.Goals;
-import speedith.core.reasoning.InferenceRule;
-import speedith.core.reasoning.InferenceRuleProvider;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.RuleApplicationResult;
@@ -50,12 +48,12 @@ import speedith.core.reasoning.args.SpiderRegionArg;
  * The implementation of the 'split spiders' diagrammatic inference rule.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SplitSpiders extends InferenceRuleProvider implements InferenceRule, BasicInferenceRule {
+public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
-     * The name of the inference rule this provider provides.
-     * <p>This value is returned by the {@link SplitSpidersProvider#getInferenceRuleName()}
+     * The name of this inference rule.
+     * <p>This value is returned by the {@link SplitSpiders#getInferenceRuleName()}
      * method.</p>
      */
     public static final String InferenceRuleName = "split_spiders";
@@ -63,23 +61,10 @@ public class SplitSpiders extends InferenceRuleProvider implements InferenceRule
 
     //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
-        if (goals == null) {
-            throw new RuleApplicationException(i18n("RULE_NO_SUBGOALS"));
-        } else if (args instanceof SpiderRegionArg) {
-            final SpiderRegionArg arg = (SpiderRegionArg) args;
-            // Check that the subgoal actually exists:
-            if (arg.getSubgoalIndex() >= goals.getGoalsCount() || arg.getSubgoalIndex() < 0) {
-                throw new RuleApplicationException("The chosen subgoal does not exist. Subgoal index out of range.");
-            }
-            SpiderDiagram sd = goals.getGoalAt(arg.getSubgoalIndex());
-            // Get the primary spider diagram at the given index:
-            SpiderDiagram newSd = sd.transform(new SplitSpiderTransformer(arg), false);
-            SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
-            newSubgoals[arg.getSubgoalIndex()] = newSd;
-            return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
-        } else {
-            throw new RuleApplicationException(i18n("RULE_INVALID_ARGS"));
-        }
+        SpiderRegionArg arg = getTypedRuleArgs(args);
+        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
+        newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(new SplitSpiderTransformer(arg), false);
+        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
     }
     //</editor-fold>
 
@@ -96,20 +81,20 @@ public class SplitSpiders extends InferenceRuleProvider implements InferenceRule
         return i18n(locale, "SPLIT_SPIDERS_DESCRIPTION");
     }
 
-    public Class<? extends RuleArg> getArgumentType() {
+    public Class<SpiderRegionArg> getArgumentType() {
         return SpiderRegionArg.class;
     }
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
     private class SplitSpiderTransformer extends IdTransformer {
-        
+
         private final SpiderRegionArg arg;
-        
+
         public SplitSpiderTransformer(SpiderRegionArg arg) {
             this.arg = arg;
         }
-        
+
         @Override
         public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
             // Transform only the target diagram

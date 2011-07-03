@@ -45,9 +45,12 @@ import speedith.core.reasoning.rules.SplitSpiders;
  * <a href="http://journals.cambridge.org/action/displayAbstract?fromPage=online&aid=6564924" title="10.1112/S1461157000000942">
  * Spider Diagrams (2005)</a>.</p>
  * <p>Instances of this class (and its derived classes) are immutable.</p>
+ * @param <TArgs> the type of arguments the provided inference rule expects. Use
+ * the type {@link RuleArg} to specify that the inference rule does not expect
+ * any specific arguments.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface InferenceRule {
+public interface InferenceRule<TArgs extends RuleArg> {
     /**
      * An inference rule in spider diagrams takes a set of goals and returns new
      * goals where the latter logically entail the former.

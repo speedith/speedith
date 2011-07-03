@@ -42,9 +42,12 @@ import speedith.core.reasoning.args.RuleArg;
  *      <li>TODO (others?).</li>
  *  </ul>
  * </p>
+ * @param <TArgs> the type of arguments the provided inference rule expects. Use
+ * the type {@link RuleArg} to specify that the inference rule does not expect
+ * any specific arguments.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public abstract class InferenceRuleProvider {
+public interface InferenceRuleProvider<TArgs extends RuleArg> {
     /**
      * Returns an instance of the {@link InferenceRule inference rule} this
      * class provides.
@@ -69,14 +72,12 @@ public abstract class InferenceRuleProvider {
 
     /**
      * Returns the description of the provided inference rule.
-     * <p>By default, this method calls the {@link
+     * <p>By default, this method should call the {@link
      * InferenceRuleProvider#getDescription(java.util.Locale)} method with the
      * {@link Locale#getDefault() default locale}.</p>
      * @return the description of the provided inference rule.
      */
-    public String getDescription() {
-        return getDescription(Locale.getDefault());
-    }
+    public String getDescription();
 
     /**
      * Returns the description of the provided inference rule in the given
@@ -96,5 +97,5 @@ public abstract class InferenceRuleProvider {
      * description} for more information on how to use the inference rule.</p>
      * @return the type of the argument the provided inference rule requires.
      */
-    public abstract Class<? extends RuleArg> getArgumentType();
+    public abstract Class<TArgs> getArgumentType();
 }
