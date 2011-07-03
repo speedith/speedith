@@ -232,7 +232,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     }
 
     @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
-    private static SpiderDiagram transform(Transformer t, CompoundSpiderDiagram curSD, int childIndex, int subDiagramIndex, LinkedList<CompoundSpiderDiagram> parents) {
+    private static SpiderDiagram transform(Transformer t, CompoundSpiderDiagram curSD, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
         // Try to transform this sub-diagram.
         SpiderDiagram transformedSD = t.transform(curSD, subDiagramIndex, childIndex, parents);
         // What did the transformer return? Is it done yet?

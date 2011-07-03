@@ -60,7 +60,7 @@ public interface InferenceRuleProvider<TArgs extends RuleArg> {
      * same instance of the inference rule for many invocations.</p>
      * @return 
      */
-    public abstract InferenceRule getInferenceRule();
+    public abstract InferenceRule<TArgs> getInferenceRule();
 
     /**
      * Returns the name of the {@link InferenceRule} this provider provides.

@@ -26,16 +26,16 @@
  */
 package speedith.core.reasoning.rules;
 
+import java.util.Iterator;
 import java.util.Locale;
-import speedith.core.lang.SpiderDiagrams;
 import speedith.core.lang.Operator;
-import java.util.ArrayList;
 import speedith.core.lang.Region;
 import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.CompoundSpiderDiagram;
 import java.util.LinkedList;
 import speedith.core.lang.IdTransformer;
 import speedith.core.lang.SpiderDiagram;
+import speedith.core.lang.TransformationException;
 import speedith.core.reasoning.BasicInferenceRule;
 import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.RuleApplicationException;
@@ -63,7 +63,7 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
         SpiderRegionArg arg = getTypedRuleArgs(args);
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
-        newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(new AddFeetTransformer(arg), false);
+        newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(new AddFeetTransformer(arg));
         return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
     }
     //</editor-fold>
@@ -101,8 +101,8 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
             if (diagramIndex == arg.getSubDiagramIndex()) {
                 // Okay, we are at the diagram we want to change. Now make some
                 // checks: that the arguments are correct and make sense.
-                Region splitRegion = arg.getRegion();
-                if (splitRegion == null) {
+                Region feetToAdd = arg.getRegion();
+                if (feetToAdd == null) {
                     throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "arg.getRegion()"));
                 }
                 if (arg.getSpider() == null) {
@@ -111,19 +111,29 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
                 if (!psd.containsSpider(arg.getSpider())) {
                     throw new IllegalArgumentException(i18n("ERR_SPIDER_NOT_IN_DIAGRAM", arg.getSpider()));
                 }
-                Region habitat = psd.getSpiderHabitat(arg.getSpider());
-                // Check that the splitRegion is a proper subregion of the
-                // spider's habitat.
-                if (splitRegion.isSubregionOf(habitat) && splitRegion.getZonesCount() < habitat.getZonesCount() && splitRegion.getZonesCount() > 0) {
-                    // The checking of arguments is done. We may apply the rule.
-                    done = true;
-                    ArrayList<SpiderDiagram> sds = new ArrayList<SpiderDiagram>();
-                    sds.add(psd.changeSpiderHabitat(arg.getSpider(), splitRegion));
-                    sds.add(psd.changeSpiderHabitat(arg.getSpider(), habitat.subtract(splitRegion)));
-                    return SpiderDiagrams.createCompoundSD(Operator.OP_NAME_OR, sds, false);
-                } else {
-                    throw new IllegalArgumentException(i18n("ERR_SPLIT_SPIDERS_INVALID_REGION"));
+                // This diagram must be in a conjunctive or disjunctive parent,
+                // which in turn is a child of the root implication compound
+                // diagram.
+                if (parents.size() != 2) {
+                    throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
                 }
+                Iterator<CompoundSpiderDiagram> dit = parents.iterator();
+                CompoundSpiderDiagram parent = dit.next();
+                if (!parent.getOperator().equals(Operator.OP_NAME_AND) && !parent.getOperator().equals(Operator.OP_NAME_OR)) {
+                    throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
+                }
+                parent = dit.next();
+                if (!parent.getOperator().equals(Operator.OP_NAME_IMP)) {
+                    throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
+                }
+                Region existingFeet = psd.getSpiderHabitat(arg.getSpider());
+                if (existingFeet == null || existingFeet.getZonesCount() < 1) {
+                    throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
+                }
+                // Now make a union of the two regions
+                Region withAddedFeet = existingFeet.union(feetToAdd);
+                done = true;
+                return psd.changeSpiderHabitat(arg.getSpider(), withAddedFeet);
             }
             return null;
         }

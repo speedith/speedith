@@ -143,6 +143,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
                 throw new IllegalArgumentException(i18n("ERR_SD_HABITATS_WITHOUT_SPIDERS"));
             }
         }
+        // TODO: Check that no habitat is an empty or null region.
         this.spiders = spiders;
         this.habitats = habitats;
         this.shadedZones = shadedZones;

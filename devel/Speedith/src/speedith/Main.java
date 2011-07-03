@@ -45,7 +45,6 @@ import speedith.core.reasoning.InferenceRuleProvider;
 import speedith.core.reasoning.InferenceRules;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
-import speedith.core.reasoning.rules.SplitSpiders;
 import static speedith.i18n.Translations.*;
 import static speedith.logging.Logger.*;
 
@@ -105,10 +104,14 @@ public class Main {
                     String spider = clargs.getSpider();
                     int subDiagramIndex = clargs.getSubDiagramIndex();
                     Region region = clargs.getRegion();
-                    InferenceRule inferenceRule = InferenceRules.getInferenceRule(ir);
-                    
+                    InferenceRule<? extends RuleArg> inferenceRule = InferenceRules.getInferenceRule(ir);
+
                     readSpiderDiagram = inferenceRule.apply(new SpiderRegionArg(0, subDiagramIndex, spider, region), new Goals(Arrays.asList(readSpiderDiagram))).getGoals().getGoalAt(0);
-                    
+
+                    inferenceRule = InferenceRules.getInferenceRule("add_feet");
+
+                    readSpiderDiagram = inferenceRule.apply(new SpiderRegionArg(0, 3, "s2", new Region(Zone.fromInContours("A", "B"))), new Goals(Arrays.asList(readSpiderDiagram))).getGoals().getGoalAt(0);
+
 //                    readSpiderDiagram = new SplitSpiders().apply(new SpiderRegionArg(0, 1, "s2", new Region(Zone.fromInContours("A").withOutContours("B"))), new Goals(Arrays.asList(readSpiderDiagram))).getGoals().getGoalAt(0);
                     SDExporting.getExporter(outputFormat, clargs.getOutputFormatArguments()).exportTo(readSpiderDiagram, System.out);
                     System.out.println();
@@ -174,7 +177,7 @@ public class Main {
         Arrays.sort(infRules);
         for (int i = 0; i < infRules.length; i++) {
             String infRule = infRules[i];
-            InferenceRuleProvider infRuleProvider = InferenceRules.getProvider(infRule);
+            InferenceRuleProvider<? extends RuleArg> infRuleProvider = InferenceRules.getProvider(infRule);
             System.out.print("   * ");
             System.out.print(infRule);
             System.out.print("   - ");

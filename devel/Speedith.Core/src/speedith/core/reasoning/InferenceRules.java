@@ -26,6 +26,7 @@
  */
 package speedith.core.reasoning;
 
+import speedith.core.reasoning.args.RuleArg;
 import speedith.core.lang.export.SDExporting;
 import speedith.core.reasoning.rules.SplitSpiders;
 import java.io.IOException;
@@ -35,6 +36,8 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.Set;
 import java.util.HashMap;
+import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.rules.AddFeet;
 import static speedith.core.i18n.Translations.*;
 
 /**
@@ -50,13 +53,14 @@ public class InferenceRules {
     /**
      * The map containing all currently registered inference rule providers.
      */
-    private static final HashMap<String, InferenceRuleProvider> providers = new HashMap<String, InferenceRuleProvider>();
+    private static final HashMap<String, InferenceRuleProvider<? extends RuleArg>> providers = new HashMap<String, InferenceRuleProvider<? extends RuleArg>>();
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
     static {
         // Register built-in inference rules.
         registerProvider(SplitSpiders.class);
+        registerProvider(AddFeet.class);
     }
 
     /**
@@ -88,8 +92,8 @@ public class InferenceRules {
      * @return an {@link InferenceRule inference rule} that operates on spider
      * diagrams.
      */
-    public static InferenceRule getInferenceRule(String inferenceRule) {
-        InferenceRuleProvider provider = providers.get(inferenceRule);
+    public static InferenceRule<? extends RuleArg> getInferenceRule(String inferenceRule) {
+        InferenceRuleProvider<? extends RuleArg> provider = providers.get(inferenceRule);
         if (inferenceRule == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "inferenceRule"));
         }
@@ -109,7 +113,7 @@ public class InferenceRules {
      * @return the provider for the desired inference rule.
      * <p>Returns {@code null} if no such provider exists.</p>
      */
-    public static InferenceRuleProvider getProvider(String inferenceRule) {
+    public static InferenceRuleProvider<? extends RuleArg> getProvider(String inferenceRule) {
         return providers.get(inferenceRule);
     }
 
@@ -182,7 +186,8 @@ public class InferenceRules {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "providerClass"));
         }
         try {
-            InferenceRuleProvider theProvider = providerClass.asSubclass(InferenceRuleProvider.class).getConstructor().newInstance();
+            @SuppressWarnings("unchecked")
+            InferenceRuleProvider<? extends RuleArg> theProvider = providerClass.asSubclass(InferenceRuleProvider.class).getConstructor().newInstance();
             synchronized (providers) {
                 providers.put(theProvider.getInferenceRuleName(), theProvider);
             }
@@ -205,5 +210,4 @@ public class InferenceRules {
         registerProvider(Class.forName(className));
     }
     // </editor-fold>
-    
 }

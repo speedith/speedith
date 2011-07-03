@@ -1,7 +1,7 @@
 /*
- *   Project: Speedith
+ *   Project: Speedith.Core
  * 
- * File name: MainTest.java
+ * File name: TransformationException.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -24,47 +24,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+package speedith.core.lang;
 
 /**
- *
+ * This exception is thrown in a {@link Transformer spider diagram transformer}
+ * if the transformation failed for any reason.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class MainTest {
-    
-    private static final String CLI_ARG_SD_1 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }";
-    
-    public MainTest() {
+public class TransformationException extends RuntimeException {
+    private static final long serialVersionUID = 0x3c0996ff0df83a11L;
+
+    public TransformationException() {
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
+    public TransformationException(String msg) {
+        super(msg);
     }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
+    public TransformationException(String msg, Throwable cause) {
+        super(msg, cause);
     }
 
-    /**
-     * Test of main method, of class Main.
-     */
-    @Test
-    public void testMain() {
-        assertTrue(true);
+    public TransformationException(Throwable cause) {
+        super(cause);
     }
 }

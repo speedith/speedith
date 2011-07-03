@@ -130,6 +130,8 @@ public class Region {
     /**
      * Creates a new region made only of zones that are contained by this one
      * and not by the other.
+     * <p>This method does not change the current region. It returns a new
+     * one.</p>
      * @param other the other region to subtract from this one.
      * @return a new region made only of zones that are contained by this one
      * and not by the other.
@@ -137,6 +139,19 @@ public class Region {
     public Region subtract(Region other) {
         TreeSet<Zone> newZones = new TreeSet<Zone>(zones);
         newZones.removeAll(other.zones);
+        return new Region(newZones);
+    }
+
+    /**
+     * Extends this region with the zones from the other region.
+     * <p>This method does not change the current region. It returns a new
+     * one.</p>
+     * @param other the other region to merge with this one.
+     * @return the union of zones from this and the other regions.
+     */
+    public Region union(Region other) {
+        TreeSet<Zone> newZones = new TreeSet<Zone>(zones);
+        newZones.addAll(other.zones);
         return new Region(newZones);
     }
     // </editor-fold>
