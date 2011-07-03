@@ -45,7 +45,7 @@ public class Operator {
     /**
      * The name of the 'CONJUNCTION' operator.
      */
-    public static final String OP_NAME_AND = "op &&";
+    public static final String OP_NAME_AND = "op &";
     /**
      * The name of the 'IMPLICATION' operator.
      */
@@ -57,7 +57,7 @@ public class Operator {
     /**
      * The name of the 'DISJUNCTION' operator.
      */
-    public static final String OP_NAME_OR = "op ||";
+    public static final String OP_NAME_OR = "op |";
     /**
      * The name of the 'EQUIVALENCE' operator.
      */

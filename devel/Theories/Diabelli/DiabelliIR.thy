@@ -157,6 +157,7 @@ ML {* #3 ("dsa", 5, SOME 1) *}
 ML {* eq_list op= ((sort_distinct string_ord [ "c", "a", "a", "k", "b" ]), (sort_distinct string_ord [ "k", "c", "a", "b" ])) *}
 
 ML {* print_depth 100 *}
+ML {* Config.put show_brackets true *}
 
 use "diabelli.ML"
 
@@ -167,17 +168,26 @@ ML {* Method.print_methods @{theory} *}
 
 method_setup sd_tac = {*
 (fn xs => let
-              val _ = tracing (PolyML.makestring xs)
+              fun get_option ((oname, _), oval) = (oname, oval)
+              fun get_sdi xs = ((Args.$$$ "sdi" -- Args.colon -- Parse.number) >> get_option) xs
+              fun get_sp xs = ((Args.$$$ "sp" -- Args.colon -- Parse.string) >> get_option) xs
+              fun get_r xs = ((Args.$$$ "r" -- Args.colon -- Parse.string) >> get_option) xs
+              fun get_args xs = (Scan.repeat (Scan.first [get_sdi, get_sp, get_r])) xs
+              fun get_rule_and_args xs = (Parse.short_ident -- get_args >> (fn (rule, args) => ("ir", rule)::args)) xs
           in
-              ((Scan.lift (fn tok::toks => (tok, toks))) >> (fn fuck => (fn ctxt => (Method.SIMPLE_METHOD' (Diabelli.sd_tac (PolyML.makestring fuck) ctxt))))) xs
+              ((Scan.lift (get_rule_and_args)) >> (fn args => (fn ctxt => (Method.SIMPLE_METHOD' (Diabelli.sd_tac args ctxt))))) xs
               (*Scan.succeed (fn ctxt => (Method.SIMPLE_METHOD' (Diabelli.sd_tac "fuck you" ctxt))) xs*)
           end)
 *} "A no-op tactic for testing the translation from SNF to spider diagrams and communication with Speedith."
 
 lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
-  apply (sd_tac sdi) (* split_spiders sdi: 1 sp: s2 r: "[([\"A\"],[\"B\"])]") *)
+  apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
+  apply (sd_tac add_feet sdi: 3 sp: "s2" r: "[([\"A\", \"B\"],[])]")
+  apply (sd_tac add_feet sdi: 3 sp: "s1" r: "[([\"A\"],[\"B\"])]")
+  apply (sd_tac add_feet sdi: 2 sp: "s2" r: "[([\"A\", \"B\"],[])]")
+  apply (sd_tac add_feet sdi: 2 sp: "s1" r: "[([\"B\"],[\"A\"])]")
   apply auto
-  by iprover
+  apply iprover+
 
 ML {* Diabelli.speedith_batch_apply @{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"} [] *}
 ML {* Diabelli.exec_args "echo" [ "My name is matej.", "T\\h$is \"is\" a 'treat'.", "And a \n newline.", PolyML.makestring (Diabelli.from_snf_to_sd (@{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"}))] *}

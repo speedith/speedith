@@ -109,14 +109,14 @@ sig
      @returns  the transformed term.
 
      @throws  SD_SPEEDITH  if Speedith exited with a non-zero error code. *)
-  val speedith_batch_apply: term -> theory option -> string list -> term
+  val speedith_batch_apply: term -> theory option -> (string*string) list -> term
 
   val random_tests: string -> (string * int)
 
 (*==============================================================================
   = Diabelli Reasoning Tactics
   ============================================================================*)
-  val sd_tac: string -> Proof.context -> int -> tactic
+  val sd_tac: (string*string) list -> Proof.context -> int -> tactic
 end;
 
 
@@ -314,6 +314,7 @@ local
       end
 
   fun from_snf_to_sd_outer (@{term "op --> :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op -->", arg1 = from_snf_to_sd_outer t1, arg2 = from_snf_to_sd_outer t2 }
+    | from_snf_to_sd_outer (@{term "op | :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op |", arg1 = from_snf_to_sd_outer t1, arg2 = from_snf_to_sd_outer t2 }
     | from_snf_to_sd_outer (@{term "Ex :: ('a::HOL.type => bool) => bool"} $ Abs (spName, _, t)) =
       let
           val (spiders, inner_term) = collect_ex_spiders [spName] t
@@ -427,20 +428,18 @@ fun exec_args cmd args =
   = speedith_batch_apply
   ============================================================================*)
 
-fun speedith_batch_apply t othy _ =
+fun speedith_batch_apply t othy args =
   let
+      val args_prep = map (fn (x, y) => ("-" ^ x, y)) args
+      val args_prep2 = List.foldr (fn ((x, y), xs) => x::(y::xs)) [] args_prep
       val _ = tracing "Invoking Speedith."
       val retVal as (sout, ecode) = exec_args
                             (getenv "DIABELLI_JAVA_PATH")
-                            [
+                            ([
                               "-jar", getenv "DIABELLI_SPEEDITH_PATH",
                               "-of", getenv "DIABELLI_SPEEDITH_OUTPUT_FORMAT",
-                              "-sd", PolyML.makestring (from_snf_to_sd t),
-                              "-ir", "split_spiders",
-                              "-sdi", "1",
-                              "-sp", "s2",
-                              "-r", "[([\"A\"],[\"B\"])]"
-                            ]
+                              "-sd", PolyML.makestring (from_snf_to_sd t)
+                            ] @ args_prep2)
       val _ = tracing ("Speedith returned: " ^ sout)
       fun read_term (Context.Theory ctxt) formula = (writeln "Theory"; Syntax.read_term_global ctxt formula)
         | read_term (Context.Proof ctxt) formula = (writeln "Proof"; Syntax.read_term ctxt formula)
@@ -472,9 +471,8 @@ fun random_tests str =
 
 fun sd_tac args ctxt i st = SUBGOAL (fn (subgoal, _) =>
    let
-       val _ = tracing ("Arguments: " ^ (PolyML.makestring args))
        val thy = Thm.theory_of_thm st;
-       val speedithTerm = speedith_batch_apply subgoal (SOME thy) []
+       val speedithTerm = speedith_batch_apply subgoal (SOME thy) args
        val _ = tracing ("Parsed Speedith's term: " ^ (PolyML.makestring speedithTerm))
        val inter1 = Logic.mk_implies (@{term "Trueprop :: bool => prop"} $ speedithTerm, subgoal)
        val _ = tracing ("Intermediate goal: " ^ (PolyML.makestring inter1))
