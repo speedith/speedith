@@ -138,9 +138,6 @@ lemma "(\<forall>x. D x \<longrightarrow> M x) \<and> (\<forall>y. M y \<longrig
   by (auto)
 
 ML {* print_depth 100 *}
-ML {* show_types := true *}
-ML {* show_sorts := true *}
-ML {* show_all_types := true *}
 ML {* @{thm impI} *}
 
 (* This looks like something Thomas has suggested. It would be good to
@@ -218,11 +215,6 @@ lemma example1_a: "(\<exists>e e'. e \<noteq> e' \<and> e \<in> A \<inter> B \<a
 (* Using plain form. This is the actual formula we want to x *)
 lemma example1_b: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
   by (auto, iprover)
-
-
-ML {* show_types := true *}
-ML {* show_sorts := false *}
-ML {* show_all_types := false *}
 
 lemma hol_implies_fol: "(\<exists>f. sd [s, s'] f (P (f s) (f s'))) \<longrightarrow> (\<exists>x y. sp [x, y] (P x y))"
   apply (auto simp add: sd_def sp_def)

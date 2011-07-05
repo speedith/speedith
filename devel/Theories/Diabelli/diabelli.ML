@@ -54,6 +54,24 @@ sig
    @throws  SD_ERROR *)
   val from_snf_to_sd: term -> sd
 
+  (* This function translates an Isabelle/HOL term that is in the 'Meta-Level
+     Spider Normal Form' (or ML-SNF) into a spider diagram record, which is
+     suitable for input to Speedith.
+
+   @param  1  A term. Here is an example of a valid term:
+
+                  @{term "⋀s1 s2. ⟦s1 ≠ s2; s1 ∈ A; s1 ∈ B; s2 ∈ A; s2 ∉ B⟧ ⟹ ∃s1 s2. s1 ≠ s2 ∧ s1 ∈ A ∧ s2 ∈ B"}
+
+   @returns  A record of type 'Diabelli.sd'. Containing the term translated to
+             a spider diagram notation suitable for export to the external
+             reasoner.
+
+   @throws  SD_TRANSLATE_ERROR  If the input term could not have been
+            translated to a spider diagram.
+
+   @throws  SD_ERROR *)
+  (*val from_mlsnf_to_sd: term -> sd*)
+
   (* This function translates an Isabelle/HOL term of the higher-order spider
      normal form (HO-SNF) into spider diagram notation suitable for input to the
      external diagrammatic reasoner.
@@ -476,8 +494,8 @@ fun sd_tac args ctxt i st = SUBGOAL (fn (subgoal, _) =>
        val _ = tracing ("Parsed Speedith's term: " ^ (PolyML.makestring speedithTerm))
        val inter1 = Logic.mk_implies (@{term "Trueprop :: bool => prop"} $ speedithTerm, subgoal)
        val _ = tracing ("Intermediate goal: " ^ (PolyML.makestring inter1))
-       (*val inter1Thm = (Goal.prove ctxt [] [] inter1 (K ((auto_tac (clasimpset_of ctxt)) THEN (REPEAT_ALL_NEW (Intuitionistic.prover_tac ctxt NONE)))))*)
-       val inter1Thm = (Goal.prove ctxt [] [] inter1 (K (auto_tac (clasimpset_of ctxt))))
+       val inter1Thm = (Goal.prove ctxt [] [] inter1 (K ((auto_tac (clasimpset_of ctxt)) THEN ((ALLGOALS (Intuitionistic.prover_tac ctxt NONE))))))
+       (*val inter1Thm = (Goal.prove ctxt [] [] inter1 (K (auto_tac (clasimpset_of ctxt))))*)
        val _ = tracing ("Intermediate theorem: " ^ (PolyML.makestring inter1Thm))
    in
        compose_tac (false, inter1Thm, 1) i

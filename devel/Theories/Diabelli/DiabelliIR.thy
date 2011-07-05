@@ -186,7 +186,9 @@ lemma intermediateA: "(\<exists>s1 s2. distinct [s1, s2] \<and> s1 \<in> A - B \
                       (\<exists>s1 s2. distinct [s1, s2] \<and> s1 \<in> A - B \<union> A \<inter> B \<and> s2 \<in> A \<inter> B \<union> (B - A)) \<longrightarrow>
                       (\<exists>s1 s2. distinct [s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
   apply auto
-  by iprover+
+  apply iprover
+  apply iprover
+  by iprover
 
 lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
   apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
@@ -195,10 +197,8 @@ lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<a
   apply (sd_tac add_feet sdi: 2 sp: "s2" r: "[([\"A\", \"B\"],[])]")
   apply (sd_tac add_feet sdi: 2 sp: "s1" r: "[([\"B\"],[\"A\"])]")
   apply (sd_tac idempotency sdi: 1)
-  apply auto
-  apply iprover+
+  by auto
 
-ML {* Diabelli.speedith_batch_apply @{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"} [] *}
 ML {* Diabelli.exec_args "echo" [ "My name is matej.", "T\\h$is \"is\" a 'treat'.", "And a \n newline.", PolyML.makestring (Diabelli.from_snf_to_sd (@{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"}))] *}
 ML {* Diabelli.exec_args (getenv "DIABELLI_JAVA_PATH") [ "-jar", getenv "DIABELLI_SPEEDITH_PATH", "-sd", PolyML.makestring (Diabelli.from_snf_to_sd (@{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"})) ] *}
 ML {* getenv "DIABELLI_JAVA_PATH" *}
