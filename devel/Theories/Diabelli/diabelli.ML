@@ -476,6 +476,7 @@ fun sd_tac args ctxt i st = SUBGOAL (fn (subgoal, _) =>
        val _ = tracing ("Parsed Speedith's term: " ^ (PolyML.makestring speedithTerm))
        val inter1 = Logic.mk_implies (@{term "Trueprop :: bool => prop"} $ speedithTerm, subgoal)
        val _ = tracing ("Intermediate goal: " ^ (PolyML.makestring inter1))
+       (*val inter1Thm = (Goal.prove ctxt [] [] inter1 (K ((auto_tac (clasimpset_of ctxt)) THEN (REPEAT_ALL_NEW (Intuitionistic.prover_tac ctxt NONE)))))*)
        val inter1Thm = (Goal.prove ctxt [] [] inter1 (K (auto_tac (clasimpset_of ctxt))))
        val _ = tracing ("Intermediate theorem: " ^ (PolyML.makestring inter1Thm))
    in
