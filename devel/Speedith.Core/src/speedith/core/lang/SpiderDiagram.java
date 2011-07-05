@@ -44,6 +44,21 @@ public abstract class SpiderDiagram {
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
      * Compares this spider diagram with another and returns {@code true} iff
+     * they are semantically the same.
+     * <p>The default implementation of this method simply calls the {@link
+     * SpiderDiagram#equals(java.lang.Object) syntactical equality method}..</p>
+     * <p>If this method returns {@code true} then this spider diagram equals
+     * semantically to the other. However, if this method returns {@code false}
+     * it does not mean anything.</p>
+     * @param other the other spider diagram to compare this one against.
+     * @return {@code true} if the semantic equivalence could have been
+     * established. Otherwise it returns {@code false}.
+     */
+    public boolean equalsSemantically(SpiderDiagram other) {
+        return equals(other);
+    }
+    /**
+     * Compares this spider diagram with another and returns {@code true} iff
      * they are syntactically the same.
      * <p>If this method returns {@code true} then this spider diagram is
      * semantically equivalent to the compared one.</p>
@@ -77,7 +92,7 @@ public abstract class SpiderDiagram {
      *      </li>
      *  </ul>
      * </p>
-     * @param other the other spider diagram to compare this one againts.
+     * @param other the other spider diagram to compare this one against.
      * @return {@code true} iff the two spider diagrams are syntactically the
      * same.
      */

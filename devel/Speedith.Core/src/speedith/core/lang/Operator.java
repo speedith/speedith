@@ -129,6 +129,45 @@ public class Operator {
     
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
+     * Returns the 'And' operator.
+     * @return the 'And' operator.
+     */
+    public static Operator getAnd() {
+        return OperatorRegistry.And;
+    }
+    
+    /**
+     * Returns the 'Or' operator.
+     * @return the 'Or' operator.
+     */
+    public static Operator getOr() {
+        return OperatorRegistry.Or;
+    }
+    
+    /**
+     * Returns the 'Implies' operator.
+     * @return the 'Implies' operator.
+     */
+    public static Operator getImplies() {
+        return OperatorRegistry.Implies;
+    }
+    
+    /**
+     * Returns the 'Equivalent' operator.
+     * @return the 'Equivalent' operator.
+     */
+    public static Operator getEquivalent() {
+        return OperatorRegistry.Equivalent;
+    }
+    
+    /**
+     * Returns the 'Not' operator.
+     * @return the 'Not' operator.
+     */
+    public static Operator getNot() {
+        return OperatorRegistry.Not;
+    }
+    /**
      * Operators have unique names (regardless of their arity). Thus one can
      * determine which operator they are dealing with just its name.
      * <p>This function checks whether this operator has the given name and
@@ -198,13 +237,19 @@ public class Operator {
          * {@link Operator#getName() name} of the operator.
          */
         public static final HashMap<String, Operator> KnownOperators = new HashMap<String, Operator>();
+        
+        public static final Operator Not;
+        public static final Operator And;
+        public static final Operator Or;
+        public static final Operator Implies;
+        public static final Operator Equivalent;
 
         static {
-            KnownOperators.put(OP_NAME_NOT, new Operator(1, OP_NAME_NOT));
-            KnownOperators.put(OP_NAME_AND, new Operator(2, OP_NAME_AND));
-            KnownOperators.put(OP_NAME_OR, new Operator(2, OP_NAME_OR));
-            KnownOperators.put(OP_NAME_IMP, new Operator(2, OP_NAME_IMP));
-            KnownOperators.put(OP_NAME_EQ, new Operator(2, OP_NAME_EQ));
+            KnownOperators.put(OP_NAME_NOT, Not = new Operator(1, OP_NAME_NOT));
+            KnownOperators.put(OP_NAME_AND, And = new Operator(2, OP_NAME_AND));
+            KnownOperators.put(OP_NAME_OR, Or = new Operator(2, OP_NAME_OR));
+            KnownOperators.put(OP_NAME_IMP, Implies = new Operator(2, OP_NAME_IMP));
+            KnownOperators.put(OP_NAME_EQ, Equivalent = new Operator(2, OP_NAME_EQ));
         }
 
         private OperatorRegistry() {

@@ -26,6 +26,7 @@
  */
 package speedith.core.lang;
 
+import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.Collection;
@@ -260,6 +261,29 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     }
 
     @Override
+    public boolean equalsSemantically(SpiderDiagram other) {
+        if (equals(other)) {
+            return true;
+        }
+        // Well, firstly, the diagrams have to be of the same type:
+        if (other instanceof PrimarySpiderDiagram) {
+            PrimarySpiderDiagram psd = (PrimarySpiderDiagram) other;
+            // Let's say the primary spider diagrams have the same number of spiders:
+            if (getSpidersCount() != psd.getSpidersCount()) {
+                return false;
+            }
+            // Now they also have to have the same habitats (with possibly mixed
+            // spider names)
+            if (!__sameHabitats(psd)) {
+                return false;
+            }
+            // Also, shaded zones should be the same!
+            return equal(shadedZones, psd.shadedZones);
+        }
+        return false;
+    }
+
+    @Override
     public int hashCode() {
         if (hashInvalid) {
             hash = (spiders == null ? 0 : spiders.hashCode())
@@ -371,6 +395,32 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         return equal(spiders, psd.spiders)
                 && equal(habitats == null ? null : habitats.entrySet(), psd.habitats == null ? null : psd.habitats.entrySet())
                 && equal(shadedZones, psd.shadedZones);
+    }
+
+    /**
+     * Checks whether this and the given primary spider diagrams have the same
+     * habitats for their spiders (invariant under spider names).
+     * @param psd
+     * @return 
+     */
+    private boolean __sameHabitats(PrimarySpiderDiagram psd) {
+        if (getHabitatsCount() != psd.getHabitatsCount()) {
+            return false;
+        } else if (getHabitatsCount() <= 0) {
+            return true;
+        }
+        // There are some habitats. We have to make sure that they are exactly
+        // the same if both are sorted:
+        Object[] habitatsA = habitats.values().toArray();
+        Object[] habitatsB = psd.habitats.values().toArray();
+        Arrays.sort(habitatsA);
+        Arrays.sort(habitatsB);
+        for (int i = 0; i < habitatsA.length; i++) {
+            if (!habitatsA[i].equals(habitatsB[i])) {
+                return false;
+            }
+        }
+        return true;
     }
     // </editor-fold>
 }

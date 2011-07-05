@@ -26,6 +26,7 @@
  */
 package speedith.core.lang;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -89,7 +90,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * <p>See {@link Operator#knownOperatorNames()} for a list of all known
      * operators.</p>
      */
-    private Operator m_operator;
+    private Operator operator;
     /**
      * A list of operands taken by the {@link CompoundSpiderDiagram#getOperator()
      * operator}.
@@ -138,7 +139,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
                 throw new IllegalArgumentException(i18n("ERR_OPERAND_NULL"));
             }
         }
-        this.m_operator = operator;
+        this.operator = operator;
         this.operands = operands;
     }
     // </editor-fold>
@@ -151,7 +152,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * in this n-ary spider diagram.
      */
     public Operator getOperator() {
-        return m_operator;
+        return operator;
     }
 
     /**
@@ -312,9 +313,27 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     }
 
     @Override
+    public boolean equalsSemantically(SpiderDiagram other) {
+        if (equals(other)) {
+            return true;
+        }
+        // 1.) We know that this diagram will equal to another compound spider
+        // diagram if they have the same operator and semantically equivalent
+        // operands:
+        if (other instanceof CompoundSpiderDiagram) {
+            CompoundSpiderDiagram csd = (CompoundSpiderDiagram) other;
+            boolean operandsSame = operandsSemanticallyEquivalent(csd);
+            if (operandsSame && operator.equals(csd.operator)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public int hashCode() {
         if (hashInvalid) {
-            hash = m_operator.hashCode();
+            hash = operator.hashCode();
             if (operands != null) {
                 for (SpiderDiagram sd : operands) {
                     hash += sd.hashCode();
@@ -361,7 +380,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
 
     private void printOperator(StringBuilder sb) {
         sb.append(SDTextOperatorAttribute).append(" = ");
-        printString(sb, m_operator.getName());
+        printString(sb, operator.getName());
     }
 
     private void printArgs(StringBuilder sb) {
@@ -413,6 +432,29 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         } else {
             return t.transform((NullSpiderDiagram) sd, subDiagramIndex, childIndex, parents);
         }
+    }
+
+    /**
+     * Compares the operands of this and the other compound diagram.
+     * <p>This method returns {@code true} iff they have the same number of
+     * operands and if the operands at the same indices are semantically
+     * equivalent.</p>
+     * @param other
+     * @return 
+     */
+    private boolean operandsSemanticallyEquivalent(CompoundSpiderDiagram other) {
+        Iterator<SpiderDiagram> itThis = operands.iterator();
+        Iterator<SpiderDiagram> itOther = other.operands.iterator();
+        // Firstly, the operands have to be equally many.
+        if (operands.size() == other.operands.size()) {
+            while (itThis.hasNext()) {
+                if (!itThis.next().equalsSemantically(itOther.next())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
     // </editor-fold>
 }

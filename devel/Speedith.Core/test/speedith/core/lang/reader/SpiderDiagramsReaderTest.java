@@ -51,15 +51,19 @@ public class SpiderDiagramsReaderTest {
 
     public static final String SD_EXAMPLE_1 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }";
     public static final String SD_EXAMPLE_2 = "UnarySD {operator = \"op not\", arg1 = BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }}";
-    public static final String SD_EXAMPLE_3 = "UnarySD {operator = \"op not\", arg1 = BinarySD {operator = \"op &&\", arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = NullSD {} }}";
+    public static final String SD_EXAMPLE_3 = "UnarySD {operator = \"op not\", arg1 = BinarySD {operator = \"op &\", arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = NullSD {} }}";
     public static final String SD_EXAMPLE_4 = "NullSD {}";
     public static final String SD_EXAMPLE_5 = "PrimarySD { spiders = [], sh_zones = [], habitats = []}";
     public static final String SD_EXAMPLE_6 = "UnarySD {operator = \"op not\", arg1 = NullSD {}}";
-    public static final String SD_EXAMPLE_7 = "BinarySD {operator = \"op &&\", arg1 = NullSD {}, arg2 = NullSD {}}";
+    public static final String SD_EXAMPLE_7 = "BinarySD {operator = \"op &\", arg1 = NullSD {}, arg2 = NullSD {}}";
     public static final String SD_EXAMPLE_8 = "BinarySD {operator = \"op -->\", arg1 = NullSD {}, arg2 = NullSD {}}";
     public static final String SD_EXAMPLE_9 = "BinarySD {arg1 = NullSD {}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }";
     public static final String SD_EXAMPLE_10 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = NullSD {}, operator = \"op -->\" }";
-    public static final String SD_EXAMPLE_ERR_1 = "UnarySD {operator = \"op not\", ar1 = BinarySD {operator = \"op &&\", arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = NullSD {} }}";
+    public static final String SD_EXAMPLE_11 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op -->\" }";
+    public static final String SD_EXAMPLE_12 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op <-->\" }";
+    public static final String SD_EXAMPLE_13 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op &\" }";
+    public static final String SD_EXAMPLE_14 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op |\" }";
+    public static final String SD_EXAMPLE_ERR_1 = "UnarySD {operator = \"op not\", ar1 = BinarySD {operator = \"op &\", arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = NullSD {} }}";
     public static final String SD_EXAMPLE_ERR_2 = "";
     public static final String SD_EXAMPLE_ERR_3 = "Primary {}";
     public static final String SD_EXAMPLE_ERR_4 = "NullSD {";
@@ -67,8 +71,8 @@ public class SpiderDiagramsReaderTest {
     public static final String SD_EXAMPLE_ERR_6 = "UnarySD {operator = \", arg1 = NullSD }}";
     public static final String SD_EXAMPLE_ERR_7 = "BinarySD {operator = \"\", arg1 = NullSD {}, arg2 = NullSD {}";
     public static final String SD_EXAMPLE_ERR_8 = "BinarySD aq {operator = \"\", arg1 = NullSD {}, arg2 = NullSD {}";
-    public static final String SD_EXAMPLE_ERR_9 = "BinarySD {operator = \"op ||\", arg1 = NullSD {}, arg2 = NullSD {}, arg3 = NullSD {} }";
-    public static final String SD_EXAMPLE_ERR_10 = "BinarySD {operator = \"op ||\", arg1 = NullSD {}, arg2 = NullSD {}, dsaj = NullSD {} }";
+    public static final String SD_EXAMPLE_ERR_9 = "BinarySD {operator = \"op |\", arg1 = NullSD {}, arg2 = NullSD {}, arg3 = NullSD {} }";
+    public static final String SD_EXAMPLE_ERR_10 = "BinarySD {operator = \"op |\", arg1 = NullSD {}, arg2 = NullSD {}, dsaj = NullSD {} }";
     
     public static final String REGION_EXAMPLE_1 = "[([\"A\"], [\"B\"]), ([\"C\"], [\"D\"])]";
     public static final String REGION_EXAMPLE_2 = "[]";
@@ -125,6 +129,22 @@ public class SpiderDiagramsReaderTest {
         SpiderDiagram sd7 = checkSDExample(SD_EXAMPLE_7);
         testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd7);
         assertEquals(3, sd7.getSubDiagramCount());
+
+        SpiderDiagram sd = checkSDExample(SD_EXAMPLE_8);
+        testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd);
+        assertEquals(3, sd.getSubDiagramCount());
+
+        sd = checkSDExample(SD_EXAMPLE_9);
+        testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd);
+        assertEquals(3, sd.getSubDiagramCount());
+
+        sd = checkSDExample(SD_EXAMPLE_10);
+        testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd);
+        assertEquals(3, sd.getSubDiagramCount());
+
+        sd = checkSDExample(SD_EXAMPLE_11);
+        testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd);
+        assertEquals(3, sd.getSubDiagramCount());
     }
 
     private SpiderDiagram checkSDExample(String example) throws ReadingException {
@@ -137,6 +157,9 @@ public class SpiderDiagramsReaderTest {
         assertTrue(sd.equals(sd2));
         assertTrue(sd2.equals(sd));
         assertTrue(sd == sd2);
+        assertTrue(sd.equalsSemantically(sd2));
+        assertTrue(sd2.equalsSemantically(sd));
+        assertTrue(sd.equalsSemantically(sd));
         return sd;
     }
 
@@ -154,8 +177,8 @@ public class SpiderDiagramsReaderTest {
         checkSDExample_Err(SD_EXAMPLE_ERR_6, 1, 39);
         checkSDExample_Err(SD_EXAMPLE_ERR_7, 1, 58);
         checkSDExample_Err(SD_EXAMPLE_ERR_8, 1, 9);
-        checkSDExample_Err(SD_EXAMPLE_ERR_9, 1, 66);
-        checkSDExample_Err(SD_EXAMPLE_ERR_10, 1, 66);
+        checkSDExample_Err(SD_EXAMPLE_ERR_9, 1, 65);
+        checkSDExample_Err(SD_EXAMPLE_ERR_10, 1, 65);
     }
 
     private void checkSDExample_Err(String example, int errorLine, int errorCharIndex) {
@@ -182,6 +205,10 @@ public class SpiderDiagramsReaderTest {
         assertEquals(str1, sd2.toString());
         assertEquals(sd, sd2);
         assertTrue(sd == sd2);
+        
+        assertTrue(sd.equalsSemantically(sd2));
+        assertTrue(sd2.equalsSemantically(sd));
+        assertTrue(sd.equalsSemantically(sd));
     }
 
     /**
@@ -210,6 +237,10 @@ public class SpiderDiagramsReaderTest {
         assertEquals(str1, sd2.toString());
         assertEquals(sd, sd2);
         assertTrue(sd == sd2);
+        
+        assertTrue(sd.equalsSemantically(sd2));
+        assertTrue(sd2.equalsSemantically(sd));
+        assertTrue(sd.equalsSemantically(sd));
     }
 
     /**
@@ -238,6 +269,10 @@ public class SpiderDiagramsReaderTest {
         assertEquals(str1, sd2.toString());
         assertEquals(sd, sd2);
         assertTrue(sd == sd2);
+        
+        assertTrue(sd.equalsSemantically(sd2));
+        assertTrue(sd2.equalsSemantically(sd));
+        assertTrue(sd.equalsSemantically(sd));
     }
 
     /**

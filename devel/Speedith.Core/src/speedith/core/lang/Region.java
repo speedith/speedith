@@ -41,7 +41,7 @@ import static speedith.core.i18n.Translations.i18n;
  * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class Region {
+public class Region implements Comparable<Region> {
 
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
     private TreeSet<Zone> zones;
@@ -60,7 +60,7 @@ public class Region {
     public Region(Collection<Zone> zones) {
         this(zones == null ? null : new TreeSet<Zone>(zones));
     }
-    
+
     /**
      * Creates a new region from the given collection of zones. The resulting
      * region will constitute of these zones.
@@ -115,7 +115,7 @@ public class Region {
     public int getZonesCount() {
         return zones == null ? 0 : zones.size();
     }
-    
+
     /**
      * Returns {@code true} iff this region is contained within the other
      * region.
@@ -180,6 +180,13 @@ public class Region {
             hashInvalid = false;
         }
         return hash;
+    }
+
+    public int compareTo(Region other) {
+        if (other == null) {
+            throw new NullPointerException();
+        }
+        return (this == other) ? 0 : Sets.compareNaturally(zones, other.zones);
     }
     // </editor-fold>
 

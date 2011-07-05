@@ -162,7 +162,7 @@ public class Goals {
      * (proof obligations).
      * @return the new instance of the {@link Goals} class. 
      */
-    public static Goals createGoalsFrom(SpiderDiagram[] goals) {
+    public static Goals createGoalsFrom(SpiderDiagram... goals) {
         return new Goals(goals);
     }
 

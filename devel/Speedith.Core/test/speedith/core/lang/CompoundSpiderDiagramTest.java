@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
-import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -154,6 +153,10 @@ public class CompoundSpiderDiagramTest {
         CompoundSpiderDiagram sd1 = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_8);
         assertTrue(sd1.equals(transformedSD));
         assertTrue(sd1 == transformedSD);
+        
+        assertTrue(sd1.equalsSemantically(transformedSD));
+        assertTrue(!sd1.equalsSemantically(sd));
+        assertTrue(!sd.equalsSemantically(transformedSD));
     }
 
     /**
@@ -192,6 +195,10 @@ public class CompoundSpiderDiagramTest {
         CompoundSpiderDiagram sd1 = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_9);
         assertTrue(sd1.equals(transformedSD));
         assertTrue(sd1 == transformedSD);
+        
+        assertTrue(sd1.equalsSemantically(transformedSD));
+        assertTrue(!sd1.equalsSemantically(sd));
+        assertTrue(!sd.equalsSemantically(transformedSD));
     }
 
     /**
@@ -231,6 +238,10 @@ public class CompoundSpiderDiagramTest {
         CompoundSpiderDiagram sd1 = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_10);
         assertTrue(sd1.equals(transformedSD));
         assertTrue(sd1 == transformedSD);
+        
+        assertTrue(sd1.equalsSemantically(transformedSD));
+        assertTrue(!sd1.equalsSemantically(sd));
+        assertTrue(!sd.equalsSemantically(transformedSD));
     }
 
     /**
@@ -270,6 +281,10 @@ public class CompoundSpiderDiagramTest {
         CompoundSpiderDiagram sd1 = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_10);
         assertTrue(sd1.equals(transformedSD));
         assertTrue(sd1 == transformedSD);
+        
+        assertTrue(sd1.equalsSemantically(transformedSD));
+        assertTrue(!sd1.equalsSemantically(sd));
+        assertTrue(!sd.equalsSemantically(transformedSD));
     }
 
     /**
@@ -298,6 +313,8 @@ public class CompoundSpiderDiagramTest {
         });
         assertTrue(sd.equals(transformedSD));
         assertTrue(sd == transformedSD);
+        
+        assertTrue(sd.equalsSemantically(transformedSD));
     }
 
     /**
@@ -326,6 +343,8 @@ public class CompoundSpiderDiagramTest {
         });
         assertTrue(sd.equals(transformedSD));
         assertTrue(sd == transformedSD);
+        
+        assertTrue(sd.equalsSemantically(transformedSD));
     }
 
     /**
@@ -354,5 +373,7 @@ public class CompoundSpiderDiagramTest {
         });
         assertTrue(sd.equals(transformedSD));
         assertTrue(sd == transformedSD);
+        
+        assertTrue(sd.equalsSemantically(transformedSD));
     }
 }

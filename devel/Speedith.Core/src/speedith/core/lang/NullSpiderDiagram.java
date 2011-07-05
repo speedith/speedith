@@ -86,7 +86,7 @@ public class NullSpiderDiagram extends SpiderDiagram {
     // <editor-fold defaultstate="collapsed" desc="Equality">
     @Override
     public boolean equals(Object other) {
-        return this == other;
+        return this == other || other instanceof NullSpiderDiagram;
     }
 
     @Override

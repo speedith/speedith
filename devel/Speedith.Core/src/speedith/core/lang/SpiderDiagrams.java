@@ -36,9 +36,12 @@ import java.util.WeakHashMap;
 import static speedith.core.i18n.Translations.*;
 
 /**
- * This class must be used when constructing spider diagrams.
+ * This class provides spider diagram factory methods and other spider-diagram
+ * specific utilities.
+ * <p><span style="font-weight:bold">Note</span>: This class must be used when
+ * constructing spider diagrams.</p>
  * <p>It maintains a pool of living spider diagrams and reuses same spider
- * diagrams instead of creating new ones.</p>
+ * diagrams instead of creating new ones (for faster equality comparison).</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SpiderDiagrams {

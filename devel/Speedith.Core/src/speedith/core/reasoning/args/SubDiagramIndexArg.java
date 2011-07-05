@@ -43,13 +43,13 @@ import speedith.core.reasoning.InferenceRule;
  */
 public class SubDiagramIndexArg extends SubgoalIndexArg implements RuleArg {
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private int primarySDIndex;
+    private int subDiagramIndex;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public SubDiagramIndexArg(int subgoalIndex, int primarySDIndex) {
+    public SubDiagramIndexArg(int subgoalIndex, int subDiagramIndex) {
         super(subgoalIndex);
-        this.primarySDIndex = primarySDIndex;
+        this.subDiagramIndex = subDiagramIndex;
     }
     // </editor-fold>
 
@@ -65,7 +65,7 @@ public class SubDiagramIndexArg extends SubgoalIndexArg implements RuleArg {
      * spider diagram.
      */
     public int getSubDiagramIndex() {
-        return primarySDIndex;
+        return subDiagramIndex;
     }
     // </editor-fold>
 }

@@ -26,7 +26,6 @@
  */
 package speedith.core.reasoning;
 
-import speedith.core.reasoning.args.RuleArg;
 import speedith.core.lang.export.SDExporting;
 import speedith.core.reasoning.rules.SplitSpiders;
 import java.io.IOException;
@@ -38,6 +37,7 @@ import java.util.Set;
 import java.util.HashMap;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.rules.AddFeet;
+import speedith.core.reasoning.rules.Idempotency;
 import static speedith.core.i18n.Translations.*;
 
 /**
@@ -61,6 +61,7 @@ public class InferenceRules {
         // Register built-in inference rules.
         registerProvider(SplitSpiders.class);
         registerProvider(AddFeet.class);
+        registerProvider(Idempotency.class);
     }
 
     /**
