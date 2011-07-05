@@ -432,7 +432,7 @@ fun speedith_batch_apply t othy args =
   let
       val args_prep = map (fn (x, y) => ("-" ^ x, y)) args
       val args_prep2 = List.foldr (fn ((x, y), xs) => x::(y::xs)) [] args_prep
-      val _ = tracing "Invoking Speedith."
+      val _ = tracing "Invoking Speedith with spider diagram: "
       val retVal as (sout, ecode) = exec_args
                             (getenv "DIABELLI_JAVA_PATH")
                             ([
