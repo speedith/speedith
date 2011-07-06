@@ -70,7 +70,7 @@ sig
             translated to a spider diagram.
 
    @throws  SD_ERROR *)
-  (*val from_mlsnf_to_sd: term -> sd*)
+  val from_mlsnf_to_sd: term -> sd
 
   (* This function translates an Isabelle/HOL term of the higher-order spider
      normal form (HO-SNF) into spider diagram notation suitable for input to the
@@ -220,6 +220,9 @@ local
   fun collect_ex_spiders spNames (@{term "Ex :: ('a::HOL.type => bool) => bool"} $ Abs (spName, _, t)) = (collect_ex_spiders (spNames @ [spName]) t)
     | collect_ex_spiders spNames t = (spNames, t)
 
+  fun collect_ml_spiders spNames (@{term "all :: ('a => prop) => prop"} $ Abs (spName, _, tInner)) = collect_ml_spiders (spNames @ [spName]) tInner
+    | collect_ml_spiders spNames t = (spNames, t)
+
   (* Makes a list of all conjunctively connected terms in a primary expression
      (i.e., an expression that will get converted into a primary spider
      diagram). These conjunctions are inside the scope of the existentially
@@ -331,6 +334,9 @@ local
           PrimarySD { spiders = spiders, habitats = habitats, sh_zones = [] }
       end
 
+  fun collect_ml_imp (ts : term list) (t : term as (Const ("==>", @{typ "prop => prop => prop"}) $ (Const ("HOL.Trueprop", @{typ "HOL.bool => prop"}) $ tLeft) $ tRight)) = collect_ml_imp (tLeft :: ts) tRight
+    | collect_ml_imp ts t = (ts, t)
+
   fun from_snf_to_sd_outer (@{term "op --> :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op -->", arg1 = from_snf_to_sd_outer t1, arg2 = from_snf_to_sd_outer t2 }
     | from_snf_to_sd_outer (@{term "op | :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op |", arg1 = from_snf_to_sd_outer t1, arg2 = from_snf_to_sd_outer t2 }
     | from_snf_to_sd_outer (@{term "Ex :: ('a::HOL.type => bool) => bool"} $ Abs (spName, _, t)) =
@@ -340,11 +346,24 @@ local
       in
         (from_snf_to_sd_inner spiders inner_term)
       end
+    | from_snf_to_sd_outer (t as (@{term "all :: ('a => prop) => prop"} $ Abs _)) = from_mlsnf_to_sd_outer t
     | from_snf_to_sd_outer (@{term "Trueprop :: bool => prop"} $ t) = from_snf_to_sd_outer t
     | from_snf_to_sd_outer (@{term "True"}) = NullSD
     | from_snf_to_sd_outer t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Unexpected from_snf_to_sd_outer term.", t))
+    and
+      from_mlsnf_to_sd_outer (t as (@{term "all :: ('a => prop) => prop"} $ Abs (spName, _, tInner))) =
+      let
+          val (spiders, inner_term) = collect_ml_spiders [spName] tInner
+          val (metaImpTerms, consequentTerm) = collect_ml_imp [] inner_term
+          val nestedSD = from_snf_to_sd_outer consequentTerm
+          val withoutDistinct = find_distinct metaImpTerms spiders
+      in
+          BinarySD { operator = "op -->", arg1 = NullSD, arg2 = nestedSD }
+      end
+    | from_mlsnf_to_sd_outer t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Not an SNF Meta-Level formula.", t))
 in
   fun from_snf_to_sd t = from_snf_to_sd_outer t
+  fun from_mlsnf_to_sd t = from_mlsnf_to_sd_outer t
 end;
 
 (*==============================================================================

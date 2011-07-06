@@ -12,7 +12,10 @@ types
   region = "zone set"
   spider = "nat"
 
-
+(*lemma split_spiders: "\<forall>habs1 habs2.(list_all2 (\<lambda>r1 r2. (sd_region_sem r1 \<subseteq> sd_region_sem r2)) habs1 habs2 \<longrightarrow> (sd_sem  (PrimarySD habs1 zones) \<longrightarrow> sd_sem (PrimarySD habs2 zones)))"
+  apply (auto simp del: sd_region_sem.simps simp add: list_all2_def size.simps)
+  apply (induct_tac habs2)
+  apply auto*)
 
 text {* This record contains all necessary parameters for the SpiderDiagrams
 locale. *}
