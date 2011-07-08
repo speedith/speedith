@@ -56,8 +56,10 @@ public abstract class SDExporter {
      * with a {@link StringWriter}.</p>
      * @param spiderDiagram the spider diagram to export to a textual form.
      * @return the textual form of the given spider diagram.
+     * @throws ExportException thrown by the exporter if the exporting of the
+     * spider diagram failed for some reason.
      */
-    public String export(SpiderDiagram spiderDiagram) {
+    public String export(SpiderDiagram spiderDiagram) throws ExportException {
         StringWriter sw = new StringWriter();
         try {
             exportTo(spiderDiagram, sw);
@@ -73,10 +75,12 @@ public abstract class SDExporter {
      * @param spiderDiagram the spider diagram to export to a textual form.
      * @param output the object to which to write the textual form of the
      * spider diagram to.
+     * @throws ExportException thrown by the exporter if the exporting of the
+     * spider diagram failed for some reason.
      * @throws IOException this exception is thrown if an error occurred during
      * writing to the output.
      */
-    public void exportTo(SpiderDiagram spiderDiagram, OutputStream output) throws IOException {
+    public void exportTo(SpiderDiagram spiderDiagram, OutputStream output) throws IOException, ExportException {
         exportTo(spiderDiagram, new OutputStreamWriter(output));
     }
 
@@ -89,10 +93,12 @@ public abstract class SDExporter {
      * @param encoding the character encoding to use when outputting.
      * @throws UnsupportedEncodingException this exception is thrown if (yes,
      * you've guessed it) the encoding is not supported.
+     * @throws ExportException thrown by the exporter if the exporting of the
+     * spider diagram failed for some reason.
      * @throws IOException this exception is thrown if an error occurred during
      * writing to the output.
      */
-    public void exportTo(SpiderDiagram spiderDiagram, OutputStream output, String encoding) throws UnsupportedEncodingException, IOException {
+    public void exportTo(SpiderDiagram spiderDiagram, OutputStream output, String encoding) throws UnsupportedEncodingException, IOException, ExportException {
         exportTo(spiderDiagram, new OutputStreamWriter(output, encoding));
     }
 
@@ -103,10 +109,12 @@ public abstract class SDExporter {
      * @param output the object to which to write the textual form of the
      * spider diagram to.
      * @param encoding the character encoding to use when outputting.
+     * @throws ExportException thrown by the exporter if the exporting of the
+     * spider diagram failed for some reason.
      * @throws IOException this exception is thrown if an error occurred during
      * writing to the output.
      */
-    public void exportTo(SpiderDiagram spiderDiagram, OutputStream output, Charset encoding) throws IOException {
+    public void exportTo(SpiderDiagram spiderDiagram, OutputStream output, Charset encoding) throws IOException, ExportException {
         exportTo(spiderDiagram, new OutputStreamWriter(output, encoding));
     }
 
@@ -117,10 +125,12 @@ public abstract class SDExporter {
      * @param output the object to which to write the textual form of the
      * spider diagram to.
      * @param encoding the character encoder to use when outputting.
+     * @throws ExportException thrown by the exporter if the exporting of the
+     * spider diagram failed for some reason.
      * @throws IOException this exception is thrown if an error occurred during
      * writing to the output.
      */
-    public void exportTo(SpiderDiagram spiderDiagram, OutputStream output, CharsetEncoder encoding) throws IOException {
+    public void exportTo(SpiderDiagram spiderDiagram, OutputStream output, CharsetEncoder encoding) throws IOException, ExportException {
         exportTo(spiderDiagram, new OutputStreamWriter(output, encoding));
     }
 
@@ -130,9 +140,11 @@ public abstract class SDExporter {
      * @param spiderDiagram the spider diagram to export to a textual form.
      * @param output the object to which to write the textual form of the
      * spider diagram to.
+     * @throws ExportException thrown by the exporter if the exporting of the
+     * spider diagram failed for some reason.
      * @throws IOException this exception is thrown if an error occurred during
      * writing to the output.
      */
-    public abstract void exportTo(SpiderDiagram spiderDiagram, Writer output) throws IOException;
+    public abstract void exportTo(SpiderDiagram spiderDiagram, Writer output) throws ExportException, IOException;
     // </editor-fold>
 }

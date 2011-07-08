@@ -59,6 +59,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
      * The name of the export format of this provider.
      */
     public static final String FormatName = "Isabelle2011";
+    public static final String Parameter_ML = "ml";
     public static final String Parameter_UseXSymbols = "useXSymbols";
 
     @Override
@@ -69,7 +70,8 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
     @Override
     public SDExporter getExporter(Map<String, String> parameters) {
         boolean useXSymbols = "true".equalsIgnoreCase(parameters == null ? null : parameters.get(Parameter_UseXSymbols));
-        return new Exporter(useXSymbols);
+        boolean isML = "true".equalsIgnoreCase(parameters == null ? null : parameters.get(Parameter_ML));
+        return new Exporter(useXSymbols, isML);
     }
 
     @Override
@@ -100,15 +102,17 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         public static final String ISA_SYM_EX = "EX";
         public static final String ISA_XSYM_EXISTS = "∃";
         private boolean useXSymbols;
+        private boolean useML;
         // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Constructors">
         public Exporter() {
-            this(false);
+            this(false, false);
         }
 
-        public Exporter(boolean useXSymbols) {
+        public Exporter(boolean useXSymbols, boolean useML) {
             this.useXSymbols = useXSymbols;
+            this.useML = useML;
         }
         // </editor-fold>
 
@@ -213,9 +217,12 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         // <editor-fold defaultstate="collapsed" desc="Export Methods">
         @Override
-        public void exportTo(SpiderDiagram sd, Writer output) throws IOException {
+        public void exportTo(SpiderDiagram sd, Writer output) throws IOException, ExportException {
             if (output == null) {
                 throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "output"));
+            }
+            if (useML) {
+                throw new ExportException("Meta-Level SNF export format is not supported yet.");
             }
             exportDiagram(sd, output);
             output.flush();
@@ -434,6 +441,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         static {
             Parameters = new TreeMap<String, String>();
             Parameters.put(Parameter_UseXSymbols, "ISABELE_EXPORT_PAR_USE_X_SYMBOLS_DESCRIPTION");
+            Parameters.put(Parameter_ML, "ISABELE_EXPORT_PAR_ML_DESCRIPTION");
         }
     }
     // </editor-fold>
@@ -445,7 +453,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
     }
     // </editor-fold>
 
-    public static void main(String[] args) throws ReadingException {
+    public static void main(String[] args) throws ReadingException, ExportException {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put(Isabelle2011ExportProvider.Parameter_UseXSymbols, "true");
         SDExporter exporter = SDExporting.getExporter(Isabelle2011ExportProvider.FormatName, params);
