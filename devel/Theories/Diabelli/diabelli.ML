@@ -278,6 +278,43 @@ local
       end
     | get_habitats [] _ = ([], [])
 
+    fun get_habitats_from_cons spiders spInCons spOutCons =
+        let
+            fun get_all_contours ((_, c)::spCons) cons = get_all_contours spCons (c::cons)
+              | get_all_contours [] cons = cons
+            val all_contours = Ord_List.make string_ord (get_all_contours spOutCons (get_all_contours spInCons []))
+            fun sp_habitat_from_in_out_cons sp =
+                let
+                    fun filter_for_sp (s, c) = if s = sp then SOME c else NONE
+                    val inCons = Ord_List.make string_ord (List.mapPartial filter_for_sp spInCons)
+                    val outCons = Ord_List.make string_ord (List.mapPartial filter_for_sp spOutCons)
+                    val otherCons = Ord_List.subtract string_ord all_contours (Ord_List.union string_ord inCons outCons)
+                    fun habitat_from_in_out_other inc outc (c::others) = (habitat_from_in_out_other (c::inc) outc others) @ (habitat_from_in_out_other inc (c::outc) others)
+                      | habitat_from_in_out_other inc outc [] = [(inc, outc)]
+                in
+                    (sp, habitat_from_in_out_other inCons outCons otherCons)
+                end
+        in
+            map sp_habitat_from_in_out_cons spiders
+        end
+    
+    datatype 'a in_out = IN of 'a | OUT of 'a
+
+    fun get_sp_in_out_set spiders (@{term "HOL.Not :: bool => bool"} $ (@{term "Set.member :: 'a => 'a set => bool"} $ Bound sp $ (Free (c, @{typ "'a set"})))) = SOME (OUT (nth (rev spiders) sp, c))
+      | get_sp_in_out_set spiders (@{term "Set.member :: 'a => 'a set => bool"} $ Bound sp $ (Free (c, @{typ "'a set"}))) = SOME (IN (nth (rev spiders) sp, c))
+      | get_sp_in_out_set spiders t = NONE
+
+    fun get_sp_in_out_sets (spiders : string list) (t::ts) ins outs trest =
+        let
+            val sio = get_sp_in_out_set spiders t
+        in
+            case (sio) of
+                NONE => get_sp_in_out_sets spiders ts ins outs (t::trest)
+              | SOME (IN a) => get_sp_in_out_sets spiders ts (a::ins) outs trest
+              | SOME (OUT a) => get_sp_in_out_sets spiders ts ins (a::outs) trest
+        end
+      | get_sp_in_out_sets (spiders : string list) [] ins outs trest = (ins, outs, trest)
+
   (* Looks for the conjunctive term that consists of the 'distinct' predicate
      (where the argument to the 'distinct' predicate is a list with all the
      spiders that are existentially quantified in the conjunct scope).
@@ -357,8 +394,12 @@ local
           val (metaImpTerms, consequentTerm) = collect_ml_imp [] inner_term
           val nestedSD = from_snf_to_sd_outer consequentTerm
           val withoutDistinct = find_distinct metaImpTerms spiders
+          val (spInCons, spOutCons, otherTerms) = get_sp_in_out_sets spiders withoutDistinct [] [] []
+          (* TODO: Extract shaded zones from otherTerms. *)
+          val psd = PrimarySD {spiders = spiders, habitats = get_habitats_from_cons spiders spInCons spOutCons, sh_zones = []}
       in
-          BinarySD { operator = "op -->", arg1 = NullSD, arg2 = nestedSD }
+          if otherTerms = [] then BinarySD { operator = "op -->", arg1 = psd, arg2 = nestedSD }
+                             else raise (SD_TRANSLATE_ERROR ("Primary spider diagram extraction from a meta-level formula failed. The fomula is not of the expected format.", t))
       end
     | from_mlsnf_to_sd_outer t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Not an SNF Meta-Level formula.", t))
 in
