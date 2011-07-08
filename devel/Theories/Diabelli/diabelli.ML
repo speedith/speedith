@@ -52,7 +52,7 @@ sig
             translated to a spider diagram.
 
    @throws  SD_ERROR *)
-  val from_snf_to_sd: term -> sd
+  val from_snf_to_sd: term -> (bool * sd)
 
   (* This function translates an Isabelle/HOL term that is in the 'Meta-Level
      Spider Normal Form' (or ML-SNF) into a spider diagram record, which is
@@ -184,6 +184,7 @@ datatype sd =
 exception SD_TRANSLATE_ERROR of (string * term);
 exception SD_ERROR of string;
 exception SD_SPEEDITH_ERROR of (string * int);
+exception SD_SPEEDITH_GERROR of (string * exn list);
 
 (*==============================================================================
   = make_subgoal_tac
@@ -383,7 +384,7 @@ local
       in
         (from_snf_to_sd_inner spiders inner_term)
       end
-    | from_snf_to_sd_outer (t as (@{term "all :: ('a => prop) => prop"} $ Abs _)) = from_mlsnf_to_sd_outer t
+    (*| from_snf_to_sd_outer (t as (@{term "all :: ('a => prop) => prop"} $ Abs _)) = from_mlsnf_to_sd_outer t*)
     | from_snf_to_sd_outer (@{term "Trueprop :: bool => prop"} $ t) = from_snf_to_sd_outer t
     | from_snf_to_sd_outer (@{term "True"}) = NullSD
     | from_snf_to_sd_outer t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Unexpected from_snf_to_sd_outer term.", t))
@@ -403,7 +404,7 @@ local
       end
     | from_mlsnf_to_sd_outer t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Not an SNF Meta-Level formula.", t))
 in
-  fun from_snf_to_sd t = from_snf_to_sd_outer t
+  fun from_snf_to_sd t = (false, from_snf_to_sd_outer t) handle e => ((true, from_mlsnf_to_sd_outer t) handle e2 => raise SD_SPEEDITH_GERROR ("Translation from Isabelle/HOL to spider diagrams failed.", [e, e2]))
   fun from_mlsnf_to_sd t = from_mlsnf_to_sd_outer t
 end;
 
@@ -510,14 +511,16 @@ fun speedith_batch_apply t othy args =
   let
       val args_prep = map (fn (x, y) => ("-" ^ x, y)) args
       val args_prep2 = List.foldr (fn ((x, y), xs) => x::(y::xs)) [] args_prep
+      val (isml, sd) = from_snf_to_sd t
       val _ = tracing "Invoking Speedith with spider diagram: "
       val retVal as (sout, ecode) = exec_args
                             (getenv "DIABELLI_JAVA_PATH")
                             ([
                               "-jar", getenv "DIABELLI_SPEEDITH_PATH",
                               "-of", getenv "DIABELLI_SPEEDITH_OUTPUT_FORMAT",
-                              "-sd", PolyML.makestring (from_snf_to_sd t)
-                            ] @ args_prep2)
+                              "-sd", PolyML.makestring (sd)
+                            ] @ (if isml then ["-ofa", "ml=true"] else [])
+                              @ args_prep2)
       val _ = tracing ("Speedith returned: " ^ sout)
       fun read_term (Context.Theory ctxt) formula = (writeln "Theory"; Syntax.read_term_global ctxt formula)
         | read_term (Context.Proof ctxt) formula = (writeln "Proof"; Syntax.read_term ctxt formula)
