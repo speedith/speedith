@@ -108,7 +108,7 @@ public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> impleme
                 // Is it an implication or an equivalence?
                 if (Operator.getAnd().equals(csd.getOperator()) || Operator.getOr().equals(csd.getOperator())) {
                     if (csd.getOperand(0).equalsSemantically(csd.getOperand(1))) {
-                        return csd.getOperand(1);
+                        return csd.getOperand(0);
                     }
                 } else if (Operator.getEquivalent().equals(csd.getOperator()) || Operator.getImplies().equals(csd.getOperator())) {
                     if (csd.getOperand(0).equalsSemantically(csd.getOperand(1))) {

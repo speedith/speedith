@@ -519,7 +519,7 @@ fun speedith_batch_apply t othy args =
                               "-jar", getenv "DIABELLI_SPEEDITH_PATH",
                               "-of", getenv "DIABELLI_SPEEDITH_OUTPUT_FORMAT",
                               "-sd", PolyML.makestring (sd)
-                            ] @ (if isml then ["-ofa", "ml=true"] else [])
+                            ] @ ["-ofa", (if isml then "ml=true" else "ml=false") ^ (",useXSymbols=true")]
                               @ args_prep2)
       val _ = tracing ("Speedith returned: " ^ sout)
       fun read_term (Context.Theory ctxt) formula = (writeln "Theory"; Syntax.read_term_global ctxt formula)
@@ -552,12 +552,17 @@ fun random_tests str =
 
 fun sd_tac args ctxt i st = SUBGOAL (fn (subgoal, _) =>
    let
+       fun mk_trueprop_if (t as (Const ("HOL.Trueprop", _) $ _)) = t
+         | mk_trueprop_if (t as (Const ("==>", _) $ _ $ _)) = t
+         | mk_trueprop_if (t as (Const ("all", _) $ _)) = t
+         | mk_trueprop_if (t as (Const ("==", _) $ _ $ _)) = t
+         | mk_trueprop_if t = HOLogic.mk_Trueprop t
        val thy = Thm.theory_of_thm st;
        val speedithTerm = speedith_batch_apply subgoal (SOME thy) args
        val _ = tracing ("Parsed Speedith's term: " ^ (PolyML.makestring speedithTerm))
-       val inter1 = Logic.mk_implies (@{term "Trueprop :: bool => prop"} $ speedithTerm, subgoal)
+       val inter1 = Logic.mk_implies (mk_trueprop_if speedithTerm, subgoal)
        val _ = tracing ("Intermediate goal: " ^ (PolyML.makestring inter1))
-       val inter1Thm = (Goal.prove ctxt [] [] inter1 (K ((auto_tac (clasimpset_of ctxt)) THEN ((ALLGOALS (Intuitionistic.prover_tac ctxt NONE))))))
+       val inter1Thm = Goal.prove ctxt [] [] inter1 (K ((auto_tac (clasimpset_of ctxt)) THEN (ALLGOALS (Intuitionistic.prover_tac ctxt NONE))))
        (*val inter1Thm = (Goal.prove ctxt [] [] inter1 (K (auto_tac (clasimpset_of ctxt))))*)
        val _ = tracing ("Intermediate theorem: " ^ (PolyML.makestring inter1Thm))
    in

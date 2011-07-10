@@ -70,8 +70,8 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
     @Override
     public SDExporter getExporter(Map<String, String> parameters) {
         boolean useXSymbols = "true".equalsIgnoreCase(parameters == null ? null : parameters.get(Parameter_UseXSymbols));
-        boolean isML = "true".equalsIgnoreCase(parameters == null ? null : parameters.get(Parameter_ML));
-        return new Exporter(useXSymbols, isML);
+        boolean useML = "true".equalsIgnoreCase(parameters == null ? null : parameters.get(Parameter_ML));
+        return new Exporter(useXSymbols, useML);
     }
 
     @Override
@@ -120,7 +120,6 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         private Writer printAnd(Writer output) throws IOException {
             if (useXSymbols) {
                 return output.append(' ').append("\\<and>").append(' ');
-//                return output.append(' ').append("∧").append(' ');
             } else {
                 return output.append(' ').append("&").append(' ');
             }
@@ -129,7 +128,6 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         private Writer printOr(Writer output) throws IOException {
             if (useXSymbols) {
                 return output.append(' ').append("\\<or>").append(' ');
-//                return output.append(' ').append("∨").append(' ');
             } else {
                 return output.append(' ').append("|").append(' ');
             }
@@ -146,7 +144,6 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         private Writer printElementOf(Writer output) throws IOException {
             if (useXSymbols) {
                 return output.append(' ').append("\\<in>").append(' ');
-//                return output.append(' ').append("∈").append(' ');
             } else {
                 return output.append(' ').append(":").append(' ');
             }
@@ -155,7 +152,6 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         private Writer printUnion(Writer output) throws IOException {
             if (useXSymbols) {
                 return output.append(' ').append("\\<union>").append(' ');
-//                return output.append(' ').append("∪").append(' ');
             } else {
                 return output.append(' ').append("Un").append(' ');
             }
@@ -164,7 +160,6 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         private Writer printIntersection(Writer output) throws IOException {
             if (useXSymbols) {
                 return output.append(' ').append("\\<inter>").append(' ');
-//                return output.append(' ').append("∩").append(' ');
             } else {
                 return output.append(' ').append("Int").append(' ');
             }
@@ -173,7 +168,6 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         private Writer printSubsetEq(Writer output) throws IOException {
             if (useXSymbols) {
                 return output.append(' ').append("\\<subseteq>").append(' ');
-//                return output.append(' ').append("⊆").append(' ');
             } else {
                 return output.append(' ').append("<=").append(' ');
             }
@@ -182,7 +176,6 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         private Writer printImp(Writer output) throws IOException {
             if (useXSymbols) {
                 return output.append(' ').append("\\<longrightarrow>").append(' ');
-//                return output.append(' ').append("⟶").append(' ');
             } else {
                 return output.append(' ').append("-->").append(' ');
             }
@@ -191,7 +184,6 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         private Writer printEquiv(Writer output) throws IOException {
             if (useXSymbols) {
                 return output.append(' ').append("\\<longleftrightarrow>").append(' ');
-//                return output.append(' ').append("⟷").append(' ');
             } else {
                 return output.append(' ').append("<-->").append(' ');
             }
@@ -203,15 +195,58 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         private Writer printExists(Writer output) throws IOException {
             if (useXSymbols) {
-//                return output.append(ISA_XSYM_EXISTS);
                 return output.append("\\<exists>");
             } else {
                 return output.append(ISA_SYM_EX).append(' ');
             }
         }
 
+        private Writer printMLAll(Writer output) throws IOException {
+            if (useXSymbols) {
+                return output.append("\\<And>");
+            } else {
+                return output.append("!!");
+            }
+        }
+
+        private Writer printMLLeftBracket(Writer output) throws IOException {
+            if (useXSymbols) {
+                return output.append("\\<lbrakk>");
+            } else {
+                return output.append("[|");
+            }
+        }
+
+        private Writer printMLRightBracket(Writer output) throws IOException {
+            if (useXSymbols) {
+                return output.append("\\<rbrakk>");
+            } else {
+                return output.append("|]");
+            }
+        }
+
+        private Writer printMLSemiCollon(Writer output) throws IOException {
+            return output.append("; ");
+        }
+
+        private Writer printMLImplication(Writer output) throws IOException {
+            if (useXSymbols) {
+                return output.append(" ").append("\\<Longrightarrow>").append(' ');
+            } else {
+                return output.append(' ').append("==>").append(' ');
+            }
+        }
+
         private Writer printUniversalSet(Writer output) throws IOException {
             return output.append("UNIV");
+        }
+
+        private void printHolOrMlAnd(Writer output, boolean useML) throws IOException {
+            if (useML) {
+                printMLSemiCollon(output);
+            } else {
+                printAnd(output);
+            }
         }
         // </editor-fold>
 
@@ -222,9 +257,10 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
                 throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "output"));
             }
             if (useML) {
-                throw new ExportException("Meta-Level SNF export format is not supported yet.");
+                exportDiagramML(sd, output);
+            } else {
+                exportDiagram(sd, output);
             }
-            exportDiagram(sd, output);
             output.flush();
         }
 
@@ -269,11 +305,11 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
                 }
                 output.append(". ");
             }
-            exportSpidersDistinct(psd, output);
+            exportSpidersDistinct(psd, output, false);
             if (psd.getHabitatsCount() < 1 && psd.getShadedZonesCount() < 1) {
                 printTrue(output);
             } else {
-                exportHabitats(psd, output);
+                exportHabitats(psd, output, false);
                 exportShadedZones(psd, output, spiders);
             }
             output.append(')');
@@ -290,7 +326,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
             }
         }
 
-        private void exportHabitats(PrimarySpiderDiagram psd, Writer output) throws IOException {
+        private void exportHabitats(PrimarySpiderDiagram psd, Writer output, boolean useML) throws IOException {
             if (psd.getHabitatsCount() > 0) {
                 SortedMap<String, Region> habitats = psd.getHabitats();
                 Iterator<String> itr = habitats.keySet().iterator();
@@ -298,20 +334,20 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
                 exportHabitat(spider, habitats.get(spider), output);
                 while (itr.hasNext()) {
                     spider = itr.next();
-                    printAnd(output);
+                    printHolOrMlAnd(output, useML);
                     exportHabitat(spider, habitats.get(spider), output);
                 }
                 if (psd.getShadedZonesCount() > 0) {
-                    printAnd(output);
+                    printHolOrMlAnd(output, useML);
                 }
             }
         }
 
-        private void exportSpidersDistinct(PrimarySpiderDiagram psd, Writer output) throws IOException {
+        private void exportSpidersDistinct(PrimarySpiderDiagram psd, Writer output, boolean useML) throws IOException {
             if (psd.getSpidersCount() > 1) {
                 output.append("distinct");
                 Sets.print(psd.getSpiders(), output, "[", "]", ", ");
-                printAnd(output);
+                printHolOrMlAnd(output, useML);
             }
         }
 
@@ -325,6 +361,52 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
             } else {
                 throw new IllegalArgumentException(i18n("ERR_EXPORT_INVALID_SD"));
             }
+        }
+
+        private void exportDiagramML(SpiderDiagram sd, Writer output) throws ExportException, IOException {
+            if (sd instanceof CompoundSpiderDiagram) {
+                CompoundSpiderDiagram csd = (CompoundSpiderDiagram) sd;
+                if (csd.getOperator().equals(Operator.getImplies())) {
+                    final SpiderDiagram op1 = csd.getOperand(0);
+                    if (op1 instanceof PrimarySpiderDiagram) {
+                        printMLAntecedent((PrimarySpiderDiagram) csd.getOperand(0), output);
+                        exportDiagram(csd.getOperand(1), output);
+                        return;
+                    } else if (op1 instanceof NullSpiderDiagram) {
+                        exportNullDiagram(printMLLeftBracket(output));
+                        printMLRightBracket(output);
+                        printMLImplication(output);
+                        exportDiagram(csd.getOperand(1), output);
+                        return;
+                    }
+                }
+            }
+            throw new ExportException(i18n("ERR_EXPORT_INVALID_SD_FOR_ML"));
+        }
+
+        private void printMLAntecedent(PrimarySpiderDiagram psd, Writer output) throws IOException {
+            // Print the meta-universal quantifier part
+            SortedSet<String> spiders = psd.getSpiders();
+            if (psd.getSpidersCount() > 0) {
+                Iterator<String> itr = spiders.iterator();
+                printMLAll(output).append(itr.next());
+                while (itr.hasNext()) {
+                    output.append(' ').append(itr.next());
+                }
+                output.append(". ");
+            }
+
+            printMLLeftBracket(output);
+            // Print the stuff within the meta-square brackets
+            exportSpidersDistinct(psd, output, true);
+            if (psd.getHabitatsCount() < 1 && psd.getShadedZonesCount() < 1) {
+                printTrue(output);
+            } else {
+                exportHabitats(psd, output, true);
+                exportShadedZones(psd, output, spiders);
+            }
+            printMLRightBracket(output);
+            printMLImplication(output);
         }
 
         private void exportHabitat(String spider, Region region, Writer output) throws IOException {

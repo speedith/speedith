@@ -127,11 +127,11 @@ public class Main {
         } catch (ReadingException rex) {
             // A reading error occurred. Give the user a detailed error message.
             log(Level.SEVERE, i18n("ERR_READING_FORMULA", rex.getLocalizedMessage()), rex);
-            System.err.println(i18n("ERR_READING_FORMULA", rex.getLocalizedMessage()));
+            System.out.println(i18n("ERR_READING_FORMULA", rex.getLocalizedMessage()));
             System.exit(1);
         } catch (Exception ex) {
             log(Level.SEVERE, ex.getLocalizedMessage(), ex);
-            System.err.println(ex.toString());
+            System.out.println(ex.toString());
             System.exit(1);
         }
     }

@@ -102,6 +102,7 @@ public class IdempotencyTest {
         assertTrue(!sd.equals(transformedSD));
         assertTrue(transformedSD.equals(sd.getSubDiagramAt(1)));
         assertTrue(!transformedSD.equals(sd.getSubDiagramAt(2)));
+        assertTrue(transformedSD.equalsSemantically(sd.getSubDiagramAt(2)));
         assertTrue(transformedSD == (sd.getSubDiagramAt(1)));
         assertTrue(transformedSD != (sd.getSubDiagramAt(2)));
         
@@ -111,6 +112,7 @@ public class IdempotencyTest {
         assertTrue(!sd.equals(transformedSD));
         assertTrue(transformedSD.equals(sd.getSubDiagramAt(1)));
         assertTrue(!transformedSD.equals(sd.getSubDiagramAt(2)));
+        assertTrue(transformedSD.equalsSemantically(sd.getSubDiagramAt(2)));
         assertTrue(transformedSD == (sd.getSubDiagramAt(1)));
         assertTrue(transformedSD != (sd.getSubDiagramAt(2)));
     }

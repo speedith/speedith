@@ -69,7 +69,7 @@ public class SDExportingTest {
      * @throws ReadingException 
      */
     @Test
-    public void testGetExporter_String() throws ReadingException {
+    public void testGetExporter_String() throws ReadingException, ExportException {
         // TODO: Finish the test (compare it with the expected result -- a
         // manually written Isabelle formula string).
         SDExporter exporter = SDExporting.getExporter(Isabelle2011ExportProvider.FormatName);
@@ -93,7 +93,7 @@ public class SDExportingTest {
      * Test of scanForExporters method, of class SDExporting.
      */
     @Test
-    public void testScanForExporters() {
+    public void testScanForExporters() throws ExportException {
         // First test that the 'TestExportProvider' is not in the list of supported formats.
         Set<String> supportedFormats = SDExporting.getSupportedFormats();
         assertNotNull(supportedFormats);
