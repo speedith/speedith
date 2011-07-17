@@ -181,7 +181,7 @@ by auto
 lemma "\<lbrakk>\<And>s1 s2. \<lbrakk>distinct [s1, s2]; s1 \<in> A \<inter> B; s2 \<in> A - B\<rbrakk> \<Longrightarrow> \<exists>s1 s2. distinct [s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B; distinct [s1, s2]; s1 \<in> A; s1 \<in> B; s2 \<in> A; s2 \<notin> B\<rbrakk> \<Longrightarrow> \<exists>s1 s2. distinct [s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B"
 by auto
 
-lemma testB: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
+(*lemma testB: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
   apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
   apply (auto simp del: distinct.simps)
   apply (sd_tac add_feet sdi: 3 sp: "s2" r: "[([\"A\", \"B\"],[])]")
@@ -189,7 +189,7 @@ lemma testB: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<a
   apply (sd_tac add_feet sdi: 2 sp: "s2" r: "[([\"A\", \"B\"],[])]")
   apply (sd_tac add_feet sdi: 2 sp: "s1" r: "[([\"B\"],[\"A\"])]")
   apply (sd_tac idempotency sdi: 1)
-  by auto
+  by auto*)
 
 lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
   apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")

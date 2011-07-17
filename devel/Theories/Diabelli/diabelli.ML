@@ -557,16 +557,24 @@ fun sd_tac args ctxt i st = SUBGOAL (fn (subgoal, _) =>
          | mk_trueprop_if (t as (Const ("all", _) $ _)) = t
          | mk_trueprop_if (t as (Const ("==", _) $ _ $ _)) = t
          | mk_trueprop_if t = HOLogic.mk_Trueprop t
-       val thy = Thm.theory_of_thm st;
+       (*val thy = Thm.theory_of_thm st;
        val speedithTerm = speedith_batch_apply subgoal (SOME thy) args
        val _ = tracing ("Parsed Speedith's term: " ^ (PolyML.makestring speedithTerm))
        val inter1 = Logic.mk_implies (mk_trueprop_if speedithTerm, subgoal)
-       val _ = tracing ("Intermediate goal: " ^ (PolyML.makestring inter1))
-       val inter1Thm = Goal.prove ctxt [] [] inter1 (K ((auto_tac (clasimpset_of ctxt)) THEN (ALLGOALS (Intuitionistic.prover_tac ctxt NONE))))
+       val _ = tracing ("Intermediate goal: " ^ (PolyML.makestring inter1))*)
+       (*val inter1Thm = Goal.prove ctxt [] [] inter1 (K ((auto_tac (clasimpset_of ctxt)) THEN (ALLGOALS (Intuitionistic.prover_tac ctxt NONE))))*)
        (*val inter1Thm = (Goal.prove ctxt [] [] inter1 (K (auto_tac (clasimpset_of ctxt))))*)
-       val _ = tracing ("Intermediate theorem: " ^ (PolyML.makestring inter1Thm))
+       (*val _ = tracing ("Intermediate theorem: " ^ (PolyML.makestring inter1Thm))*)
+
+       val thy = ProofContext.theory_of ctxt;
+       val speedithTerm = speedith_batch_apply subgoal (SOME thy) args
+       val intert = Logic.mk_implies (mk_trueprop_if speedithTerm, subgoal)
+       val _ = tracing ("Have "^Syntax.string_of_term @{context} intert)
+       val intert_cterm = Thm.cterm_of thy intert
+       val interThm = Goal.prove_internal [] intert_cterm (K ((auto_tac (clasimpset_of ctxt)) THEN (ALLGOALS (Intuitionistic.prover_tac ctxt NONE))))
+       val _ = tracing ("Interm: "^Display.string_of_thm @{context} interThm)
    in
-       compose_tac (false, inter1Thm, 1) i
+       compose_tac (false, interThm, 1) i
    end) i st
 
 end;
