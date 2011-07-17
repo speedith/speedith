@@ -100,21 +100,23 @@ public class IdempotencyTest {
         subDiagramIndex = 0;
         transformedSD = applyRule(rule, subDiagramIndex, sd);
         assertTrue(!sd.equals(transformedSD));
-        assertTrue(transformedSD.equals(sd.getSubDiagramAt(1)));
-        assertTrue(!transformedSD.equals(sd.getSubDiagramAt(2)));
+        assertTrue(transformedSD.equals(sd.getSubDiagramAt(2)));
+        assertTrue(!transformedSD.equals(sd.getSubDiagramAt(1)));
         assertTrue(transformedSD.equalsSemantically(sd.getSubDiagramAt(2)));
-        assertTrue(transformedSD == (sd.getSubDiagramAt(1)));
-        assertTrue(transformedSD != (sd.getSubDiagramAt(2)));
+        assertTrue(transformedSD.equalsSemantically(sd.getSubDiagramAt(1)));
+        assertTrue(transformedSD != (sd.getSubDiagramAt(1)));
+        assertTrue(transformedSD == (sd.getSubDiagramAt(2)));
         
         sd = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_14);
         subDiagramIndex = 0;
         transformedSD = applyRule(rule, subDiagramIndex, sd);
         assertTrue(!sd.equals(transformedSD));
-        assertTrue(transformedSD.equals(sd.getSubDiagramAt(1)));
-        assertTrue(!transformedSD.equals(sd.getSubDiagramAt(2)));
+        assertTrue(transformedSD.equals(sd.getSubDiagramAt(2)));
+        assertTrue(!transformedSD.equals(sd.getSubDiagramAt(1)));
         assertTrue(transformedSD.equalsSemantically(sd.getSubDiagramAt(2)));
-        assertTrue(transformedSD == (sd.getSubDiagramAt(1)));
-        assertTrue(transformedSD != (sd.getSubDiagramAt(2)));
+        assertTrue(transformedSD.equalsSemantically(sd.getSubDiagramAt(1)));
+        assertTrue(transformedSD != (sd.getSubDiagramAt(1)));
+        assertTrue(transformedSD == (sd.getSubDiagramAt(2)));
     }
 
     private SpiderDiagram applyRule(InferenceRule<? extends RuleArg> rule, final int subDiagramIndex, SpiderDiagram sd) throws RuleApplicationException {

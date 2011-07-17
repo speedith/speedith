@@ -58,7 +58,7 @@ public interface InferenceRuleProvider<TArgs extends RuleArg> {
      * on how it can be used, and what its effects are.</p>
      * <p><span style="font-weight:bold">Note</span>: this method may return the
      * same instance of the inference rule for many invocations.</p>
-     * @return 
+     * @return the actual inference rule.
      */
     public abstract InferenceRule<TArgs> getInferenceRule();
 

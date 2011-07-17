@@ -410,7 +410,8 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      */
     @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
     private boolean __isCsdEqual(CompoundSpiderDiagram other) {
-        return getOperator().equals(other.getOperator())
+        return hashCode() == other.hashCode()
+                && getOperator().equals(other.getOperator())
                 && operands.equals(other.operands);
     }
 

@@ -31,7 +31,8 @@
  * goals}, may take some arguments, which tell the inference rule how exactly to
  * operate on the goals. For example, the {@link speedith.core.reasoning.rules.SplitSpiders
  * split spiders} inference rule takes an argument of type {@link
- * speedith.core.reasoning.args.SpiderZoneArg}, which tells the rule to split a spider in a specific zone of
+ * speedith.core.reasoning.args.SpiderRegionArg}, which tells the rule to split
+ * a spider in a specific zone of
  * a specific primary spider diagram in a specific subgoal.
  */
 package speedith.core.reasoning.args;

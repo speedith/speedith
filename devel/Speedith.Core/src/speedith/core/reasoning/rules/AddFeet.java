@@ -114,18 +114,26 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
                 // This diagram must be in a conjunctive or disjunctive parent,
                 // which in turn is a child of the root implication compound
                 // diagram.
-                if (parents.size() != 2) {
+                // TODO: It also works if this diagram is the only antecedent in
+                // the outermost implication.
+                if (parents.size() == 1) {
+                    if (!parents.getFirst().getOperator().equals(Operator.getImplies())) {
+                        throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
+                    }
+                } else if (parents.size() == 2) {
+                    Iterator<CompoundSpiderDiagram> dit = parents.iterator();
+                    CompoundSpiderDiagram parent = dit.next();
+                    if (!parent.getOperator().equals(Operator.OP_NAME_AND) && !parent.getOperator().equals(Operator.OP_NAME_OR)) {
+                        throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
+                    }
+                    parent = dit.next();
+                    if (!parent.getOperator().equals(Operator.OP_NAME_IMP)) {
+                        throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
+                    }
+                } else {
                     throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
                 }
-                Iterator<CompoundSpiderDiagram> dit = parents.iterator();
-                CompoundSpiderDiagram parent = dit.next();
-                if (!parent.getOperator().equals(Operator.OP_NAME_AND) && !parent.getOperator().equals(Operator.OP_NAME_OR)) {
-                    throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
-                }
-                parent = dit.next();
-                if (!parent.getOperator().equals(Operator.OP_NAME_IMP)) {
-                    throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
-                }
+                // Now make sure that the spider actually exists in the diagram:
                 Region existingFeet = psd.getSpiderHabitat(arg.getSpider());
                 if (existingFeet == null || existingFeet.getZonesCount() < 1) {
                     throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));

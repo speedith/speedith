@@ -27,8 +27,6 @@
 package speedith.core.reasoning;
 
 import speedith.core.reasoning.args.RuleArg;
-import java.util.List;
-import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.args.SpiderArg;
 import speedith.core.reasoning.args.SpiderRegionArg;

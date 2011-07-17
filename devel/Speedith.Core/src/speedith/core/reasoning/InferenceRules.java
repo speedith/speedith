@@ -130,7 +130,7 @@ public class InferenceRules {
 
     /**
      * Scans for class names in the manifest resource file at the path given by
-     * {@link SDExporting#InferenceRuleProvidersRegistry}. Found class names are
+     * {@link InferenceRules#InferenceRuleProvidersRegistry}. Found class names are
      * looked up, loaded, and registered as inference rule providers.
      * <p>This method throws an exception if the scan failed for some
      * reason.</p>

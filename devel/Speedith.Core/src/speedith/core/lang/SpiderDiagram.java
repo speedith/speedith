@@ -28,6 +28,8 @@ package speedith.core.lang;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
+import speedith.core.reasoning.args.SubDiagramIndexArg;
 
 /**
  * This is the base class of all data structures which contain information about
@@ -118,7 +120,10 @@ public abstract class SpiderDiagram {
      * <p>By default, this method calls the overloaded {@link
      * SpiderDiagram#transform(speedith.core.lang.Transformer, boolean)} method
      * with parent tracking enabled. This means that the parents of sub-diagrams
-     * will be available to the transformer.</p>
+     * will be available to the transformer (the immediate parent of the current
+     * spider diagram is the first element of the list - this is due to how the
+     * {@link LinkedList#push(java.lang.Object) push method} in the linked list
+     * works).</p>
      * <p>Note: this function does not descend into spider diagrams returned by
      * the given {@link Transformer transformer}.</p>
      * @param t the object that transforms particular sub-diagrams.
@@ -150,7 +155,7 @@ public abstract class SpiderDiagram {
      * diagram.
      * <p>This index indicates the number of appearance (from left to right) of
      * a sub-diagram within this compound diagram.</p>
-     * <p>See {@link DiagramIndexArg} for more info on the
+     * <p>See {@link SubDiagramIndexArg} for more info on the
      * <span style="font-style:italic;">diagram indices</span>.</p>
      * <p>Note that the {@link PrimarySpiderDiagram primary} and {@link
      * NullSpiderDiagram null} spider diagrams do not have any sub-diagrams.</p>

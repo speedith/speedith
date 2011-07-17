@@ -392,7 +392,8 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     // <editor-fold defaultstate="collapsed" desc="Private Methods">
     @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
     private boolean __isPsdEqual(PrimarySpiderDiagram psd) {
-        return equal(spiders, psd.spiders)
+        return hashCode() == psd.hashCode()
+                && equal(spiders, psd.spiders)
                 && equal(habitats == null ? null : habitats.entrySet(), psd.habitats == null ? null : psd.habitats.entrySet())
                 && equal(shadedZones, psd.shadedZones);
     }
