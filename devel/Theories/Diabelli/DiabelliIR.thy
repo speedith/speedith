@@ -47,12 +47,15 @@ fun sd_region_sem :: "'e sd_region \<Rightarrow> 'e set"
   where
   "sd_region_sem zones = (\<Union> z \<in> zones. sd_zone_sem z)"
 
+fun sd_primary_sem_impl :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> 's list \<Rightarrow> bool"
+  where
+  "sd_primary_sem_impl [] sh_zones spiders = (distinct spiders \<and> (\<forall>z \<in> sh_zones. \<forall>el \<in> sd_zone_sem z. \<exists>s \<in> set spiders. s = el))"
+  | "sd_primary_sem_impl (h#hs) sh_zones spiders = (\<exists>s. s \<in> sd_region_sem h \<and> sd_primary_sem_impl hs sh_zones (s#spiders))"
 
 (* The interpretation of the primary (unitary) spider diagram. *)
-fun sd_primary_sem :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> 's list \<Rightarrow> bool"
+fun sd_primary_sem :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> bool"
   where
-  "sd_primary_sem [] sh_zones spiders = (distinct spiders \<and> (\<forall>z \<in> sh_zones. \<forall>el \<in> sd_zone_sem z. \<exists>s \<in> set spiders. s = el))"
-  | "sd_primary_sem (h#hs) sh_zones spiders = (\<exists>s. s \<in> sd_region_sem h \<and> sd_primary_sem hs sh_zones (s#spiders))"
+  "sd_primary_sem habitats sh_zones = sd_primary_sem_impl habitats sh_zones []"
 
 
 (* sd_sem provides an interpretation of the main data structure 'sd'. In
@@ -60,10 +63,25 @@ fun sd_primary_sem :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarr
   diagrams (as encoded by the 'sd' data type). *)
 fun sd_sem :: "('s)sd \<Rightarrow> bool"
   where
-  "sd_sem (PrimarySD habitats sh_zones) = sd_primary_sem habitats sh_zones []"
+  "sd_sem (PrimarySD habitats sh_zones) = sd_primary_sem habitats sh_zones"
   | "sd_sem (UnarySD P sd) = (P (sd_sem sd))"
   | "sd_sem (BinarySD P sdl sdh) = (P (sd_sem sdl) (sd_sem sdh))"
   | "sd_sem NullSD = True"
+
+(* A formalisation of the first version of the 'add feet' inference rule (i.e.:
+  t(A) \<longrightarrow> \<psi> \<turnstile> A \<longrightarrow> \<psi> *)
+lemma sd_rule_add_feet_A: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset> h'; sd_sem (BinarySD (op -->) (PrimarySD habs' shzs) \<psi>) \<rbrakk> \<Longrightarrow> sd_sem (BinarySD (op -->) (PrimarySD habs shzs) \<psi>)"
+  by auto
+
+(* A formalisation of the first version of the 'add feet' inference rule (i.e.:
+  t(A) \<and> \<phi> \<longrightarrow> \<psi> \<turnstile> A \<and> \<phi> \<longrightarrow> \<psi> *)
+lemma sd_rule_add_feet_B: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset> h'; sd_sem (BinarySD (op -->) (BinarySD (op &) (PrimarySD habs' shzs) \<phi>) \<psi>) \<rbrakk> \<Longrightarrow> sd_sem (BinarySD (op -->) (BinarySD (op &) (PrimarySD habs shzs) \<phi>) \<psi>)"
+  by auto
+
+(* A formalisation of the first version of the 'add feet' inference rule (i.e.:
+  t(A) \<or> \<phi> \<longrightarrow> \<psi> \<turnstile> A \<or> \<phi> \<longrightarrow> \<psi> *)
+lemma sd_rule_add_feet_C: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset> h'; sd_sem (BinarySD (op -->) (BinarySD (op \<or>) (PrimarySD habs' shzs) \<phi>) \<psi>) \<rbrakk> \<Longrightarrow> sd_sem (BinarySD (op -->) (BinarySD (op \<or>) (PrimarySD habs shzs) \<phi>) \<psi>)"
+  by auto
 
 
 

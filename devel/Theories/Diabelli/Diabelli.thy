@@ -89,18 +89,6 @@ locale SpiderDiagram_base =
 
 begin
 
-(*
-text {* Playing around with translation procedures: *}
-lemma translation_ex_1: "(\<exists>s s'. s \<noteq> s' \<and> smap s \<in> rmap {{ 0, 1 }} \<and> smap s' \<in> rmap {{0}, {1}}) \<longrightarrow>
-             (\<exists>s s'. s \<noteq> s' \<and> smap s \<in> rmap {{0}, {0, 1}} \<and> smap s' \<in> rmap {{1}, {0, 1}})"
-  apply (tactic {* Diabelli.print_props_tac @{context} *})
-  apply (auto simp del: region_map.simps One_nat_def)
-  apply (tactic {* Diabelli.print_props_tac @{context} *})
-  apply (tactic {* Diabelli.make_subgoal_tac @{term "Trueprop True"} 1 *})
-  apply (tactic {* Diabelli.print_props_tac @{context} *})
-  oops
-*)
-
 text {* Definitions of useful operators and relations on Spider Diagram
 concepts. *}
 
@@ -387,7 +375,7 @@ lemma sd_rule_add_feet_2: "\<lbrakk> hab s \<subseteq> r; r \<subseteq> r' \<rbr
   by (simp)
 
 (* Spider diagram transformation rule 'swap feet'. *)
-lemma sd_rule_swap_feet: "\<lbrakk> smap s \<in> rmap r; smap s' \<in> rmap r'; r' \<subset> r; rs \<subseteq> r - r' \<rbrakk> \<Longrightarrow> \<exists>s1 s1'. smap s1 \<in> rmap (r' \<union>  rs) \<and> smap s1' \<in> rmap (r - rs)"
+lemma sd_rule_swap_feet_2: "\<lbrakk> smap s \<in> rmap r; smap s' \<in> rmap r'; r' \<subset> r; rs \<subseteq> r - r' \<rbrakk> \<Longrightarrow> \<exists>s1 s1'. smap s1 \<in> rmap (r' \<union>  rs) \<and> smap s1' \<in> rmap (r - rs)"
   by (auto)
 
 
@@ -520,6 +508,12 @@ lemma ex_1_a: "(smap 1 \<in> rmap {{ 0, 1 }} \<and> smap 2 \<in> rmap {{0}, {1}}
   apply (rule_tac x = "1" in exI)
   apply (rule_tac x = "2" in exI)
   by (auto)
+
+(* Spider diagram transformation rule 'swap feet'. *)
+lemma sd_rule_swap_feet_N: "\<exists>s1 s2. s1 \<noteq> s2 \<and> s1 \<in> r1 \<and> s2 \<in> r2 \<and> r1 \<subset> r2 \<and> rs \<subseteq> r2 - r1"
+  sorry
+lemma sd_rule_swap_feet: "\<lbrakk> s \<noteq> s'; smap s \<in> rmap r; smap s' \<in> rmap r'; r' \<subset> r; rs \<subseteq> r - r' \<rbrakk> \<Longrightarrow> \<exists>ss ss'. ss \<noteq> ss' \<and> ss \<in> rmap (r' \<union>  rs) \<and> ss' \<in> rmap (r - rs)"
+  sorry
 
 end
 
