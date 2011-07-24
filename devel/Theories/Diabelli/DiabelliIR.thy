@@ -68,19 +68,28 @@ fun sd_sem :: "('s)sd \<Rightarrow> bool"
   | "sd_sem (BinarySD P sdl sdh) = (P (sd_sem sdl) (sd_sem sdh))"
   | "sd_sem NullSD = True"
 
+(* TODO: Shows that the order of spider habitats does not matter. *)
+(* lemma sd_habitats_order: "sd_sem (PrimarySD habs shzs) = sd_sem (PrimarySD (permutation habs) shzs)" *)
+
 (* A formalisation of the first version of the 'add feet' inference rule (i.e.:
   t(A) \<longrightarrow> \<psi> \<turnstile> A \<longrightarrow> \<psi> *)
 lemma sd_rule_add_feet_A: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset> h'; sd_sem (BinarySD (op -->) (PrimarySD habs' shzs) \<psi>) \<rbrakk> \<Longrightarrow> sd_sem (BinarySD (op -->) (PrimarySD habs shzs) \<psi>)"
   by auto
 
-(* A formalisation of the first version of the 'add feet' inference rule (i.e.:
+(* A formalisation of the second version of the 'add feet' inference rule (i.e.:
   t(A) \<and> \<phi> \<longrightarrow> \<psi> \<turnstile> A \<and> \<phi> \<longrightarrow> \<psi> *)
 lemma sd_rule_add_feet_B: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset> h'; sd_sem (BinarySD (op -->) (BinarySD (op &) (PrimarySD habs' shzs) \<phi>) \<psi>) \<rbrakk> \<Longrightarrow> sd_sem (BinarySD (op -->) (BinarySD (op &) (PrimarySD habs shzs) \<phi>) \<psi>)"
   by auto
 
-(* A formalisation of the first version of the 'add feet' inference rule (i.e.:
+(* A formalisation of the third version of the 'add feet' inference rule (i.e.:
   t(A) \<or> \<phi> \<longrightarrow> \<psi> \<turnstile> A \<or> \<phi> \<longrightarrow> \<psi> *)
 lemma sd_rule_add_feet_C: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset> h'; sd_sem (BinarySD (op -->) (BinarySD (op \<or>) (PrimarySD habs' shzs) \<phi>) \<psi>) \<rbrakk> \<Longrightarrow> sd_sem (BinarySD (op -->) (BinarySD (op \<or>) (PrimarySD habs shzs) \<phi>) \<psi>)"
+  by auto
+
+(* A formalisation of the 'split spider' inference rule:
+    A \<longleftrightarrow> t_{h, habA}(A, spider) \<or> t_{h, habB}(A, spider)
+*)
+lemma sd_rule_split_spiders: "\<lbrakk> habs = (h#hs); habA = h - habB \<rbrakk> \<Longrightarrow> sd_sem (PrimarySD habs shzs) = sd_sem (PrimarySD (habA#hs) shzs) \<or> sd_sem (PrimarySD (habB#hs) shzs)"
   by auto
 
 
@@ -98,25 +107,25 @@ lemma sd_rule_add_feet_C: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset>
   Note: i-th region in the list of habitats implicitly belongs to the spider
   with the ID i+n (where n is a natural number -- the second argument to this
   function). *)
-fun sd_habs2pairs :: "'s sd_region list \<Rightarrow> nat \<Rightarrow> (nat * 's sd_region) set"
+(*fun sd_habs2pairs :: "'s sd_region list \<Rightarrow> nat \<Rightarrow> (nat * 's sd_region) set"
   where
   "sd_habs2pairs [] n = {}"
-  | "sd_habs2pairs (x#xs) n = insert (n, x) (sd_habs2pairs xs (Suc n))"
+  | "sd_habs2pairs (x#xs) n = insert (n, x) (sd_habs2pairs xs (Suc n))"*)
 
 (* Returns a set of consecutive natural numbers starting at n (where n is the
   second argument to this function). There are as many in the set as there
   are regions in the first argument.
 
   Note: the returned set is actually the set of IDs of all involved spiders. *)
-fun sd_habs2spids :: "'s sd_region list \<Rightarrow> nat \<Rightarrow> nat set"
+(*fun sd_habs2spids :: "'s sd_region list \<Rightarrow> nat \<Rightarrow> nat set"
   where
   "sd_habs2spids [] n = {}"
-  | "sd_habs2spids (x#xs) n = insert n (sd_habs2spids xs (Suc n))"
+  | "sd_habs2spids (x#xs) n = insert n (sd_habs2spids xs (Suc n))"*)
 
 (* sd_sem provides an interpretation of the main data structure 'sd'. In
   fact, this function provides the semantic of the entire language of spider
   diagrams (as encoded by the 'sd' data type). *)
-fun sd_sem2 :: "('s)sd \<Rightarrow> bool"
+(*fun sd_sem2 :: "('s)sd \<Rightarrow> bool"
   where
   "sd_sem2 (PrimarySD habitats sh_zones) =
      (\<exists>f. inj_on f (sd_habs2spids habitats 0) \<and>
@@ -124,7 +133,7 @@ fun sd_sem2 :: "('s)sd \<Rightarrow> bool"
      (\<forall>z \<in> sh_zones. \<forall>el \<in> sd_zone_sem z. \<exists>s \<in> sd_habs2spids habitats 0. f s = el))"
   | "sd_sem2 (UnarySD P sd) = (P (sd_sem2 sd))"
   | "sd_sem2 (BinarySD P sdl sdh) = (P (sd_sem2 sdl) (sd_sem2 sdh))"
-  | "sd_sem2 NullSD = True"
+  | "sd_sem2 NullSD = True"*)
 
 
 
@@ -132,26 +141,26 @@ fun sd_sem2 :: "('s)sd \<Rightarrow> bool"
    uses the same method as the first version, but it interprets the 'primary'
    diagram (unitary diagram) differently. *)
 
-definition sd_primary_sem2 :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> bool"
+(*definition sd_primary_sem2 :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> bool"
   where
   "sd_primary_sem2 habs sh_zones \<equiv> (\<exists>S. (size S) = (size habs) \<and>
             list_all (\<lambda>(s,h). s \<in> sd_region_sem h) (zip S habs) \<and>
             distinct S \<and>
-            (\<forall>z \<in> sh_zones. sd_zone_sem z \<subseteq> set S))"
+            (\<forall>z \<in> sh_zones. sd_zone_sem z \<subseteq> set S))"*)
 
-fun sd_sem3 :: "('s)sd \<Rightarrow> bool"
+(*fun sd_sem3 :: "('s)sd \<Rightarrow> bool"
   where
   "sd_sem3 (PrimarySD habitats sh_zones) = sd_primary_sem2 habitats sh_zones"
   | "sd_sem3 (UnarySD P sd) = (P (sd_sem3 sd))"
   | "sd_sem3 (BinarySD P sdl sdh) = (P (sd_sem3 sdl) (sd_sem3 sdh))"
-  | "sd_sem3 NullSD = True"
+  | "sd_sem3 NullSD = True"*)
 
 
 
 (* NOTE: An, as of yet, failed attempts to prove the equivalence of the three
    interpretations. *)
 
-lemma "\<forall>sd. sd_sem3 sd = sd_sem2 sd"
+(*lemma "\<forall>sd. sd_sem3 sd = sd_sem2 sd"
   apply (rule allI)
   apply (induct_tac sd)
   prefer 3
@@ -162,17 +171,17 @@ lemma "\<forall>sd. sd_sem3 sd = sd_sem2 sd"
   apply (simp only: sd_sem2.simps sd_sem3.simps)
   apply (unfold sd_sem3.simps sd_primary_sem2_def sd_sem2.simps)
   apply (auto simp add: sd_primary_sem2_def)
-  oops
+  oops*)
 
 
 
 (* TODO: Formalise the SD inference rules with one of the above
    interpretations. *)
 
-ML {* @{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"} *}
+(*ML {* @{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"} *}
 ML {* @{term "True"} *}
 ML {* #3 ("dsa", 5, SOME 1) *}
-ML {* eq_list op= ((sort_distinct string_ord [ "c", "a", "a", "k", "b" ]), (sort_distinct string_ord [ "k", "c", "a", "b" ])) *}
+ML {* eq_list op= ((sort_distinct string_ord [ "c", "a", "a", "k", "b" ]), (sort_distinct string_ord [ "k", "c", "a", "b" ])) *}*)
 
 ML {* print_depth 100 *}
 ML {* Config.put show_brackets true *}
@@ -193,12 +202,6 @@ method_setup sd_tac = {*
           end)
 *} "A no-op tactic for testing the translation from SNF to spider diagrams and communication with Speedith."
 
-lemma "!!x.\<lbrakk> P x; P x \<longrightarrow> Q x \<rbrakk> \<Longrightarrow> Q x"
-by auto
-
-lemma "\<lbrakk>\<And>s1 s2. \<lbrakk>distinct [s1, s2]; s1 \<in> A \<inter> B; s2 \<in> A - B\<rbrakk> \<Longrightarrow> \<exists>s1 s2. distinct [s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B; distinct [s1, s2]; s1 \<in> A; s1 \<in> B; s2 \<in> A; s2 \<notin> B\<rbrakk> \<Longrightarrow> \<exists>s1 s2. distinct [s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B"
-by auto
-
 (*lemma testB: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
   apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
   apply (auto simp del: distinct.simps)
@@ -209,21 +212,22 @@ by auto
   apply (sd_tac idempotency sdi: 1)
   by auto*)
 
-lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
+(* This lemma should land in the unit tests. *)
+(*lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
   apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
   apply (sd_tac add_feet sdi: 3 sp: "s2" r: "[([\"A\", \"B\"],[])]")
   apply (sd_tac add_feet sdi: 3 sp: "s1" r: "[([\"A\"],[\"B\"])]")
   apply (sd_tac add_feet sdi: 2 sp: "s2" r: "[([\"A\", \"B\"],[])]")
   apply (sd_tac add_feet sdi: 2 sp: "s1" r: "[([\"B\"],[\"A\"])]")
   apply (sd_tac idempotency sdi: 1)
-  by auto
+  by auto*)
 
-ML {* Diabelli.from_snf_to_sd @{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"} *}
+(*ML {* Diabelli.from_snf_to_sd @{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"} *}
 ML {* Diabelli.random_tests "tralala" *}
 ML {* Outer_Syntax.scan Position.none "split_spiders sdi: 0 sp: sp1 r: \"[([\\\"A\\\"],[\\\"B\\\"])]\"" *}
-ML {* Method.print_methods @{theory} *}
+ML {* Method.print_methods @{theory} *}*)
 
-lemma intermediateA: "(\<exists>s1 s2. distinct [s1, s2] \<and> s1 \<in> A - B \<union> A \<inter> B \<and> s2 \<in> A \<inter> B \<union> (B - A)) \<longrightarrow>
+(*lemma intermediateA: "(\<exists>s1 s2. distinct [s1, s2] \<and> s1 \<in> A - B \<union> A \<inter> B \<and> s2 \<in> A \<inter> B \<union> (B - A)) \<longrightarrow>
                       (\<exists>s1 s2. distinct [s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B) \<Longrightarrow>
                       (\<exists>s1 s2. distinct [s1, s2] \<and> s1 \<in> A \<inter> B \<union> (B - A) \<and> s2 \<in> A - B \<union> A \<inter> B) \<or>
                       (\<exists>s1 s2. distinct [s1, s2] \<and> s1 \<in> A - B \<union> A \<inter> B \<and> s2 \<in> A \<inter> B \<union> (B - A)) \<longrightarrow>
@@ -231,15 +235,15 @@ lemma intermediateA: "(\<exists>s1 s2. distinct [s1, s2] \<and> s1 \<in> A - B \
   apply auto
   apply iprover
   apply iprover
-  by iprover
+  by iprover*)
 
-ML {* Diabelli.exec_args "echo" [ "My name is matej.", "T\\h$is \"is\" a 'treat'.", "And a \n newline.", PolyML.makestring (Diabelli.from_snf_to_sd (@{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"}))] *}
+(*ML {* Diabelli.exec_args "echo" [ "My name is matej.", "T\\h$is \"is\" a 'treat'.", "And a \n newline.", PolyML.makestring (Diabelli.from_snf_to_sd (@{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"}))] *}
 ML {* Diabelli.exec_args (getenv "DIABELLI_JAVA_PATH") [ "-jar", getenv "DIABELLI_SPEEDITH_PATH", "-sd", PolyML.makestring (Diabelli.from_snf_to_sd (@{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"})) ] *}
 ML {* getenv "DIABELLI_JAVA_PATH" *}
-ML {* Diabelli.from_snf_to_sd (@{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"}); *}
+ML {* Diabelli.from_snf_to_sd (@{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"}); *}*)
 
 
 (*ML {* Diabelli.random_tests (Diabelli.bash_escape (PolyML.makestring (Diabelli.from_term_to_sd (@{term "(\<exists>f. sd [s, s'] f (f s \<in> A \<inter> B \<and> f s' \<in> (A - B) \<union> (B - A))) \<longrightarrow> (\<exists>f. sd [s, s'] f (f s \<in> A \<and> f s' \<in> B))"})))) *}*)
-ML {* Diabelli.random_tests (Diabelli.bash_escape (PolyML.makestring { one = 1, two = "some", mega = SOME 1, three = NONE})) *}
+(*ML {* Diabelli.random_tests (Diabelli.bash_escape (PolyML.makestring { one = 1, two = "some", mega = SOME 1, three = NONE})) *}*)
 
 end
