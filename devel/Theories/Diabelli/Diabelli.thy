@@ -510,10 +510,10 @@ lemma ex_1_a: "(smap 1 \<in> rmap {{ 0, 1 }} \<and> smap 2 \<in> rmap {{0}, {1}}
   by (auto)
 
 (* Spider diagram transformation rule 'swap feet'. *)
-lemma sd_rule_swap_feet_N: "\<exists>s1 s2. s1 \<noteq> s2 \<and> s1 \<in> r1 \<and> s2 \<in> r2 \<and> r1 \<subset> r2 \<and> rs \<subseteq> r2 - r1"
+(*lemma sd_rule_swap_feet_N: "\<exists>s1 s2. s1 \<noteq> s2 \<and> s1 \<in> r1 \<and> s2 \<in> r2 \<and> r1 \<subset> r2 \<and> rs \<subseteq> r2 - r1"
   sorry
 lemma sd_rule_swap_feet: "\<lbrakk> s \<noteq> s'; smap s \<in> rmap r; smap s' \<in> rmap r'; r' \<subset> r; rs \<subseteq> r - r' \<rbrakk> \<Longrightarrow> \<exists>ss ss'. ss \<noteq> ss' \<and> ss \<in> rmap (r' \<union>  rs) \<and> ss' \<in> rmap (r - rs)"
-  sorry
+  sorry*)
 
 end
 

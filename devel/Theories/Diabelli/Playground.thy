@@ -15,13 +15,6 @@ lemma test_export_xSym: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<i
 (*lemma "(\<exists>f. distinct [s, s'] \<and> inj_on f {s, s'} \<and> f s \<in> A \<inter> B \<and> f s' \<in> (A - B) \<union> (B - A)) \<longleftrightarrow> sd_sem (UnitarySD [s, s'] {(s, {({A, B},{})}), (s', {({A},{B}), ({B},{A})})} {})"
   apply (auto)*)
 
-lemma "(\<exists>s s'. s \<noteq> s' \<and> s \<in> A \<inter> B \<and> s' \<in> (A - B) \<union> (B - A)) \<longleftrightarrow> sd_sem2 (PrimarySD [ {({A, B},{})}, {({A},{B}), ({B},{A})} ] {})"
-  apply (auto)
-  apply (rule_tac x = "\<lambda>x. if x = 0 then s else (if x = 1 then s' else f x)" in exI)
-  apply (auto)
-  apply (rule_tac x = "\<lambda>x. if x = 0 then s else (if x = 1 then s' else f x)" in exI)
-  by (auto)
-
 lemma "(\<exists>s s'. s \<noteq> s' \<and> s \<in> A \<inter> B \<and> s' \<in> (A - B) \<union> (B - A)) \<longleftrightarrow> sd_sem (PrimarySD [ {({A, B},{})}, {({A},{B}), ({B},{A})} ] {})"
   apply (simp)
   by (metis)

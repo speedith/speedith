@@ -16,6 +16,9 @@ imports Main
 uses ("diabelli.ML") "$ISABELLE_HOME/src/Pure/Concurrent/bash_sequential.ML"
 begin
 
+(* We still have some outstanding proofs. *)
+ML {* quick_and_dirty := true *}
+
 (* sd_zone and sd_region are the types used to encode zones and regions as
    defined in the theory of spider diagarms. *)
 types
@@ -68,6 +71,44 @@ fun sd_sem :: "('s)sd \<Rightarrow> bool"
   | "sd_sem (BinarySD P sdl sdh) = (P (sd_sem sdl) (sd_sem sdh))"
   | "sd_sem NullSD = True"
 
+(* We can exchange the order of the first two spiders without changing the
+   meaning of the primary diagram. This is the first step to show that the order
+   of spiders in the primary diagram does not matter. *)
+lemma sd_psd_sps_swap_eq: "spiders = sp1 # sp2 # sps \<Longrightarrow>
+                           sd_primary_sem_impl [] sh_zones spiders =
+                           sd_primary_sem_impl [] sh_zones (sp2 # sp1 # sps)"
+  by auto
+
+(* We can rotate the list of spiders without changing the meaning of the primary
+   diagram. This is the second and the last step needed to show that the order
+   of spiders in the primary diagram does not matter. *)
+lemma sd_psd_sps_rotate_eq: "spiders2 = rotate n spiders1 \<Longrightarrow>
+                             sd_primary_sem_impl [] sh_zones spiders1 =
+                             sd_primary_sem_impl [] sh_zones spiders2"
+  by auto
+
+lemma sd_psd_sps_swap_eq_2: "spiders = (sp1#sp2#sps) \<Longrightarrow> sd_primary_sem_impl habs sh_zones spiders \<longleftrightarrow> sd_primary_sem_impl habs sh_zones (sp2#sp1#sps)"
+  apply (induct_tac habs)
+  apply (erule sd_psd_sps_swap_eq)
+  apply auto
+  sorry
+
+lemma sd_psd_sps_rotate_eq_2: "spiders2 = rotate n spiders1 \<Longrightarrow> sd_primary_sem_impl habs sh_zones spiders1 \<longleftrightarrow> sd_primary_sem_impl habs sh_zones spiders2"
+  apply (induct_tac habs)
+  apply (erule sd_psd_sps_rotate_eq)
+  apply auto
+  sorry
+
+lemma sd_habitats_swap_eq: "habs = (h1#h2#hs) \<Longrightarrow>
+                            sd_sem (PrimarySD habs sh_zones) =
+                            sd_sem (PrimarySD (h2#h1#hs) sh_zones)"
+  sorry
+
+lemma sd_habitats_rotate_eq: "habs2 = rotate n habs1 \<Longrightarrow>
+                              sd_sem (PrimarySD habs1 sh_zones) =
+                              sd_sem (PrimarySD habs2 sh_zones)"
+  sorry
+
 (* TODO: Shows that the order of spider habitats does not matter. *)
 (* lemma sd_habitats_order: "sd_sem (PrimarySD habs shzs) = sd_sem (PrimarySD (permutation habs) shzs)" *)
 
@@ -89,7 +130,17 @@ lemma sd_rule_add_feet_C: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset>
 (* A formalisation of the 'split spider' inference rule:
     A \<longleftrightarrow> t_{h, habA}(A, spider) \<or> t_{h, habB}(A, spider)
 *)
-lemma sd_rule_split_spiders: "\<lbrakk> habs = (h#hs); habA = h - habB \<rbrakk> \<Longrightarrow> sd_sem (PrimarySD habs shzs) = sd_sem (PrimarySD (habA#hs) shzs) \<or> sd_sem (PrimarySD (habB#hs) shzs)"
+lemma sd_rule_split_spiders: "\<lbrakk> habs = (h#hs); habA \<union> habB = h; habA \<inter> habB = {}; habB \<noteq> {}; habA \<noteq> {} \<rbrakk> \<Longrightarrow>
+                              sd_sem (PrimarySD habs shzs) =
+                              (sd_sem (PrimarySD (habA#hs) shzs) \<or>
+                              sd_sem (PrimarySD (habB#hs) shzs))"
+  by auto
+
+lemma sd_rule_split_spiders_B: "\<lbrakk> habs = (h#hs); habA \<union> habB = h; habA \<inter> habB = {}; habB \<noteq> {}; habA \<noteq> {} \<rbrakk> \<Longrightarrow>
+                                sd_sem (PrimarySD habs shzs) =
+                                sd_sem (BinarySD (op \<or>)
+                                           (PrimarySD (habA#hs) shzs)
+                                           (PrimarySD (habB#hs) shzs))"
   by auto
 
 
@@ -157,7 +208,7 @@ lemma sd_rule_split_spiders: "\<lbrakk> habs = (h#hs); habA = h - habB \<rbrakk>
 
 
 
-(* NOTE: An, as of yet, failed attempts to prove the equivalence of the three
+(* NOTE: An, as of yet, failed attempt to prove the equivalence of the three
    interpretations. *)
 
 (*lemma "\<forall>sd. sd_sem3 sd = sd_sem2 sd"
