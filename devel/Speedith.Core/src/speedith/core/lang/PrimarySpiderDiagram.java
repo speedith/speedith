@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NavigableSet;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -214,12 +215,62 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         return spiders == null ? 0 : spiders.size();
     }
 
+    /**
+     * Returns the habitat of the given spider.
+     * @param spider the name of the spider for which to return the habitat.
+     * @return the habitat of the given spider.
+     */
     public Region getSpiderHabitat(String spider) {
         return habitats == null ? null : habitats.get(spider);
     }
 
+    /**
+     * Checks whether the spider with the given name is present in this primary
+     * spider diagram.
+     * @param spider the name of the spider to check whether it is present in
+     * this primary spider diagram.
+     * @return {@code true} if and only if the spider is present in this primary
+     * spider diagram.
+     */
     public boolean containsSpider(String spider) {
         return spiders == null ? false : spiders.contains(spider);
+    }
+
+    /**
+     * Returns a set of all contours that are mentioned in this primary spider
+     * diagram.
+     * <p>Note: this method never returns {@code null}. If there are no contours
+     * then this method will return an empty set.</p>
+     * @return a set of all contours that are mentioned in this primary spider
+     * diagram.
+     */
+    public NavigableSet<String> getContours() {
+        TreeSet<String> contours = new TreeSet<String>();
+        if (habitats != null) {
+            for (Region region : this.habitats.values()) {
+                if (region.getZonesCount() > 0) {
+                    for (Zone zone : region.getZones()) {
+                        if (zone.getInContoursCount() > 0) {
+                            contours.addAll(zone.getInContours());
+                        }
+                        if (zone.getOutContoursCount() > 0) {
+                            contours.addAll(zone.getOutContours());
+                        }
+                    }
+                }
+            }
+        }
+        if (this.shadedZones != null) {
+            for (Zone zone : this.shadedZones) {
+                if (zone.getInContoursCount() > 0) {
+                    contours.addAll(zone.getInContours());
+                }
+                if (zone.getOutContoursCount() > 0) {
+                    contours.addAll(zone.getOutContours());
+                }
+            }
+        }
+        return contours;
     }
     // </editor-fold>
 
@@ -297,8 +348,8 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     //<editor-fold defaultstate="collapsed" desc="Transformation Methods">
     /**
-     * A new primary spider diagram that is almost a copy of this one, except
-     * the spider will have a new habitat.
+     * Creates a new primary spider diagram that is a copy of this one, the only
+     * difference being a different habitat for the chosen spider.
      * @param spider the spider for which to change the habitat.
      * @param newHabitat the new habitat of the spider.
      * @return a new primary spider diagram that is almost a copy of this one,
