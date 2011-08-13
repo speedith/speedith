@@ -88,10 +88,10 @@ lemma sd_psd_sps_rotate_eq: "spiders2 = rotate n spiders1 \<Longrightarrow>
                              sd_primary_sem_impl [] sh_zones spiders2"
   by auto
 
-lemma sd_psd_sps_swap_eq_2: "spiders = (sp1#sp2#sps) \<Longrightarrow>
-                             sd_primary_sem_impl habs sh_zones spiders =
-                             sd_primary_sem_impl habs sh_zones (sp2#sp1#sps)"
-  apply (induct_tac habs)
+lemma sd_psd_sps_swap_eq_2: "(sd_primary_sem_impl (h1#h2#habs) sh_zones [] \<Longrightarrow>
+                             sd_primary_sem_impl (h2#h1#habs) sh_zones [])"
+  apply (auto simp del: sd_region_sem.simps)
+  apply auto
   apply (erule sd_psd_sps_swap_eq)
   apply auto
   sorry
