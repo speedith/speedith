@@ -1,21 +1,21 @@
 /*
  *   Project: Speedith.Core
- * 
+ *
  * File name: Zone.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
- * 
+ *
  *  Copyright © 2011 Matej Urbas
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -37,7 +37,7 @@ import static speedith.core.util.Sets.equal;
 
 /**
  * Represents a zone from the theory of spider diagrams.
- * <p>For more information see 
+ * <p>For more information see
  * <a href="http://journals.cambridge.org/action/displayAbstract?fromPage=online&aid=6564924" title="10.1112/S1461157000000942">
  * Spider Diagrams (2005)</a>.</p>
  * <p>Instances of this class (and its derived classes) are immutable.</p>
@@ -233,7 +233,13 @@ public class Zone implements Comparable<Zone> {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
-    void toString(StringBuilder sb) {
+    /**
+     * Puts the string representation of this zone into the provided string
+     * builder.
+     * @param sb the string builder into which to write the string representation
+     * of this zone.
+     */
+    public void toString(StringBuilder sb) {
         if (sb == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
         }
@@ -242,6 +248,13 @@ public class Zone implements Comparable<Zone> {
         sb.append(", ");
         SpiderDiagram.printStringList(sb, outContours);
         sb.append(')');
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        toString(sb);
+        return sb.toString();
     }
     // </editor-fold>
 }

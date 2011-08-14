@@ -1,21 +1,21 @@
 /*
  *   Project: Speedith.Core
- * 
+ *
  * File name: PrimarySpiderDiagram.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
- * 
+ *
  *  Copyright © 2011 Matej Urbas
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,7 +33,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.NavigableSet;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -127,7 +126,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * spider diagram.
      * @param habitats a key-value map of spiders and their corresponding
      * {@link Region habitats}.
-     * @param shadedZones a set of shaded {@link Zone zones}. 
+     * @param shadedZones a set of shaded {@link Zone zones}.
      */
     PrimarySpiderDiagram(TreeSet<String> spiders, TreeMap<String, Region> habitats, TreeSet<Zone> shadedZones) {
         // Check that habitats don't talk about spiders not present in
@@ -244,7 +243,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * @return a set of all contours that are mentioned in this primary spider
      * diagram.
      */
-    public NavigableSet<String> getContours() {
+    public TreeSet<String> getContours() {
         TreeSet<String> contours = new TreeSet<String>();
         if (habitats != null) {
             for (Region region : this.habitats.values()) {
@@ -397,7 +396,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * <p>The output format is '{@code [ habitat, habitat, ... ]}'. See {@link
      * PrimarySpiderDiagram#printHabitat(java.lang.StringBuilder, java.lang.String, speedith.core.lang.Region)}
      * for a description of the habitat output format (for each habitat).</p>
-     * @param sb 
+     * @param sb
      */
     private void printHabitats(StringBuilder sb) {
         sb.append(SDTextHabitatsAttribute).append(" = ");
@@ -422,7 +421,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * simple pair tuple).</p>
      * @param sb
      * @param spider
-     * @param region 
+     * @param region
      */
     private static void printHabitat(StringBuilder sb, String spider, Region region) {
         sb.append('(');
@@ -453,7 +452,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * Checks whether this and the given primary spider diagrams have the same
      * habitats for their spiders (invariant under spider names).
      * @param psd
-     * @return 
+     * @return
      */
     private boolean __sameHabitats(PrimarySpiderDiagram psd) {
         if (getHabitatsCount() != psd.getHabitatsCount()) {

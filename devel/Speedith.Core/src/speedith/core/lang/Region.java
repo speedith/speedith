@@ -191,11 +191,24 @@ public class Region implements Comparable<Region> {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
-    void toString(StringBuilder sb) {
+    /**
+     * Puts the string representation of this region into the provided string
+     * builder.
+     * @param sb the string builder into which to write the string representation
+     * of this region.
+     */
+    public void toString(StringBuilder sb) {
         if (sb == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
         }
         SpiderDiagram.printZoneList(sb, zones);
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        toString(sb);
+        return sb.toString();
     }
     // </editor-fold>
 }
