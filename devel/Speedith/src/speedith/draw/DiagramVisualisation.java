@@ -38,6 +38,7 @@ import java.awt.HeadlessException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeSet;
@@ -246,10 +247,15 @@ public final class DiagramVisualisation {
         psds.add(psd1);
         
 //        AbstractDescription ad = AbstractDescription.makeForTesting("a b ab, ,a b", false);
-//        drawAD(ad);
+        AbstractDescription ad = AbstractDescription.makeForTesting("A B C AB AC BC ABC, B,A AB ABC, B, B", false);
+        Iterator<AbstractSpider> it = ad.getSpiderIterator();
+        it.next().setName("s1");
+        it.next().setName("s2");
+        it.next().setName("s3");
+        drawAD(ad);
 
         for (PrimarySpiderDiagram psd : psds) {
-            drawPSD(psd);
+//            drawPSD(psd);
         }
     }
 }

@@ -50,9 +50,13 @@ fun sd_region_sem :: "'e sd_region \<Rightarrow> 'e set"
   where
   "sd_region_sem zones = (\<Union> z \<in> zones. sd_zone_sem z)"
 
+fun sp_primary_sem_impl_base :: "'s sd_zone set \<Rightarrow> 's list \<Rightarrow> bool"
+  where
+  "sp_primary_sem_impl_base sh_zones spiders = (distinct spiders \<and> (\<forall>z \<in> sh_zones. \<forall>el \<in> sd_zone_sem z. \<exists>s \<in> set spiders. s = el))"
+
 fun sd_primary_sem_impl :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> 's list \<Rightarrow> bool"
   where
-  "sd_primary_sem_impl [] sh_zones spiders = (distinct spiders \<and> (\<forall>z \<in> sh_zones. \<forall>el \<in> sd_zone_sem z. \<exists>s \<in> set spiders. s = el))"
+  "sd_primary_sem_impl [] sh_zones spiders = sp_primary_sem_impl_base sh_zones spiders"
   | "sd_primary_sem_impl (h#hs) sh_zones spiders = (\<exists>s. s \<in> sd_region_sem h \<and> sd_primary_sem_impl hs sh_zones (s#spiders))"
 
 
@@ -80,21 +84,28 @@ lemma sd_psd_sps_swap_eq: "spiders = sp1 # sp2 # sps \<Longrightarrow>
                            sd_primary_sem_impl [] sh_zones (sp2 # sp1 # sps)"
   by auto
 
+lemma sd_psd_sps_swap2_eq: "sd_primary_sem_impl [] sh_zones [s1, s2] =
+                            sd_primary_sem_impl [] sh_zones [s2, s1]"
+  by auto
+
 (* We can rotate the list of spiders without changing the meaning of the primary
    diagram. This is the second and the last step needed to show that the order
    of spiders in the primary diagram does not matter. *)
-lemma sd_psd_sps_rotate_eq: "spiders2 = rotate n spiders1 \<Longrightarrow>
-                             sd_primary_sem_impl [] sh_zones spiders1 =
-                             sd_primary_sem_impl [] sh_zones spiders2"
+lemma sd_psd_sps_rotate_eq: "sd_primary_sem_impl [] sh_zones spiders1 =
+                             sd_primary_sem_impl [] sh_zones (rotate n spiders1)"
   by auto
+
+
 
 lemma sd_psd_sps_swap_eq_2: "(sd_primary_sem_impl (h1#h2#habs) sh_zones [] \<Longrightarrow>
                              sd_primary_sem_impl (h2#h1#habs) sh_zones [])"
-  apply (auto simp del: sd_region_sem.simps)
-  apply auto
-  apply (erule sd_psd_sps_swap_eq)
-  apply auto
-  sorry
+  apply (auto simp del: sd_zone_sem.simps sd_region_sem.simps)
+  apply (rule_tac x = "sa" in exI)
+  apply (rule conjI)
+  apply (assumption)
+  apply (rule_tac x = "s" in exI)
+  apply (simp del: sd_zone_sem.simps sd_region_sem.simps)
+
 
 lemma sd_psd_sps_rotate_eq_2: "spiders2 = rotate n spiders1 \<Longrightarrow> 
                                sd_primary_sem_impl habs sh_zones spiders1 =
@@ -138,10 +149,9 @@ lemma sd_rule_add_feet_C: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset>
    Note: this thing differs from what Gem did. I should prove it sound, present
    why is it different and why it is still sound.
 *)
-lemma sd_rule_split_spiders: "\<lbrakk> habs = (h#hs); habA \<union> habB = h \<rbrakk> \<Longrightarrow>
-                              sd_sem (PrimarySD habs shzs) =
-                              (sd_sem (PrimarySD (habA#hs) shzs) \<or>
-                              sd_sem (PrimarySD (habB#hs) shzs))"
+lemma sd_rule_split_spiders:
+  "\<lbrakk> habs = (h#hs); habA \<union> habB = h \<rbrakk> \<Longrightarrow> sd_sem (PrimarySD habs shzs) =
+   (sd_sem (PrimarySD (habA#hs) shzs) \<or> sd_sem (PrimarySD (habB#hs) shzs))"
   by auto
 
 (* A formalisation of the 'split spider' inference rule---using the BinarySD
@@ -275,7 +285,8 @@ method_setup sd_tac = {*
   by auto*)
 
 (* This lemma should land in the unit tests. *)
-lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
+lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
+              \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
   apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
   apply (sd_tac add_feet sdi: 3 sp: "s2" r: "[([\"A\", \"B\"],[])]")
   apply (sd_tac add_feet sdi: 3 sp: "s1" r: "[([\"A\"],[\"B\"])]")
