@@ -21,9 +21,8 @@ ML {* quick_and_dirty := true *}
 
 (* sd_zone and sd_region are the types used to encode zones and regions as
    defined in the theory of spider diagarms. *)
-types
-  'e sd_zone = "'e set set * 'e set set"
-  'e sd_region = "'e sd_zone set"
+type_synonym 'e sd_zone = "'e set set * 'e set set"
+type_synonym 'e sd_region = "'e sd_zone set"
 
 (* 'sd' is the main data structure. It describes any compound spider diagram.
   It serves as the formalisation of the intermediate represenatition for
@@ -92,9 +91,10 @@ lemma sd_psd_sps_swap_eq_2: "(sd_primary_sem_impl (h1#h2#habs) sh_zones [] \<Lon
                              sd_primary_sem_impl (h2#h1#habs) sh_zones [])"
   apply (auto simp del: sd_region_sem.simps)
   apply auto
-  apply (erule sd_psd_sps_swap_eq)
-  apply auto
   sorry
+(* apply (erule sd_psd_sps_swap_eq)
+  apply auto
+  sorry *)
 
 lemma sd_psd_sps_rotate_eq_2: "spiders2 = rotate n spiders1 \<Longrightarrow> 
                                sd_primary_sem_impl habs sh_zones spiders1 =

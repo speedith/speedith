@@ -507,6 +507,10 @@ fun exec_args cmd args =
   = speedith_batch_apply
   ============================================================================*)
 
+val DIABELLI_JAVA_PATH = "DIABELLI_JAVA_PATH"
+val DIABELLI_SPEEDITH_PATH = "DIABELLI_SPEEDITH_PATH"
+val DIABELLI_SPEEDITH_OUTPUT_FORMAT = "DIABELLI_SPEEDITH_OUTPUT_FORMAT"
+
 fun speedith_batch_apply t othy args =
   let
       val args_prep = map (fn (x, y) => ("-" ^ x, y)) args
@@ -514,10 +518,10 @@ fun speedith_batch_apply t othy args =
       val (isml, sd) = from_snf_to_sd t
       val _ = tracing "Invoking Speedith with spider diagram: "
       val retVal as (sout, ecode) = exec_args
-                            (getenv "DIABELLI_JAVA_PATH")
-                            ([
-                              "-jar", getenv "DIABELLI_SPEEDITH_PATH",
-                              "-of", getenv "DIABELLI_SPEEDITH_OUTPUT_FORMAT",
+                            (getenv DIABELLI_JAVA_PATH)
+                                      ([
+                              "-jar", getenv DIABELLI_SPEEDITH_PATH,
+                              "-of", getenv DIABELLI_SPEEDITH_OUTPUT_FORMAT,
                               "-sd", PolyML.makestring (sd)
                             ] @ ["-ofa", (if isml then "ml=true" else "ml=false") ^ (",useXSymbols=true")]
                               @ args_prep2)
