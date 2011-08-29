@@ -49,13 +49,13 @@ fun sd_region_sem :: "'e sd_region \<Rightarrow> 'e set"
   where
   "sd_region_sem zones = (\<Union> z \<in> zones. sd_zone_sem z)"
 
-fun sp_primary_sem_impl_base :: "'s sd_zone set \<Rightarrow> 's list \<Rightarrow> bool"
+fun sd_primary_sem_impl_base :: "'s sd_zone set \<Rightarrow> 's list \<Rightarrow> bool"
   where
-  "sp_primary_sem_impl_base sh_zones spiders = (distinct spiders \<and> (\<forall>z \<in> sh_zones. \<forall>el \<in> sd_zone_sem z. \<exists>s \<in> set spiders. s = el))"
+  "sd_primary_sem_impl_base sh_zones spiders = (distinct spiders \<and> (\<forall>z \<in> sh_zones. \<forall>el \<in> sd_zone_sem z. \<exists>s \<in> set spiders. s = el))"
 
 fun sd_primary_sem_impl :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> 's list \<Rightarrow> bool"
   where
-  "sd_primary_sem_impl [] sh_zones spiders = sp_primary_sem_impl_base sh_zones spiders"
+  "sd_primary_sem_impl [] sh_zones spiders = sd_primary_sem_impl_base sh_zones spiders"
   | "sd_primary_sem_impl (h#hs) sh_zones spiders = (\<exists>s. s \<in> sd_region_sem h \<and> sd_primary_sem_impl hs sh_zones (s#spiders))"
 
 
@@ -75,16 +75,11 @@ fun sd_sem :: "('s)sd \<Rightarrow> bool"
   | "sd_sem (BinarySD P sdl sdh) = (P (sd_sem sdl) (sd_sem sdh))"
   | "sd_sem NullSD = True"
 
-(* We can exchange the order of the first two spiders without changing the
+(* We can exchange the order of any two adjacent spiders without changing the
    meaning of the primary diagram. This is the first step to show that the order
    of spiders in the primary diagram does not matter. *)
-lemma sd_psd_sps_swap_eq: "spiders = sp1 # sp2 # sps \<Longrightarrow>
-                           sd_primary_sem_impl [] sh_zones spiders =
-                           sd_primary_sem_impl [] sh_zones (sp2 # sp1 # sps)"
-  by auto
-
-lemma sd_psd_sps_swap2_eq: "sd_primary_sem_impl [] sh_zones [s1, s2] =
-                            sd_primary_sem_impl [] sh_zones [s2, s1]"
+lemma sd_psd_sps_swap_eq: "sd_primary_sem_impl_base sh_zones (sps1 @ [sp1, sp2] @ sps2) =
+                           sd_primary_sem_impl_base sh_zones (sps1 @ [sp2, sp1] @ sps2)"
   by auto
 
 (* We can rotate the list of spiders without changing the meaning of the primary
@@ -94,16 +89,18 @@ lemma sd_psd_sps_rotate_eq: "sd_primary_sem_impl [] sh_zones spiders1 =
                              sd_primary_sem_impl [] sh_zones (rotate n spiders1)"
   by auto
 
-
-
-lemma sd_psd_sps_swap_eq_2: "(sd_primary_sem_impl (h1#h2#habs) sh_zones [] \<Longrightarrow>
-                             sd_primary_sem_impl (h2#h1#habs) sh_zones [])"
-  apply (auto simp del: sd_zone_sem.simps sd_region_sem.simps)
+(* The order in which we specify habitats also does not matter. First we show
+   that we can swap the first two habitats. *)
+lemma sd_psd_sps_swap_eq_2: "\<And>sps sh_zones.(sd_primary_sem_impl ([h1, h2] @ habs) sh_zones sps \<Longrightarrow>
+                             sd_primary_sem_impl ([h2, h1] @ habs) sh_zones sps)"
+  apply (auto simp del: sd_region_sem.simps)
   apply (rule_tac x = "sa" in exI)
   apply (rule conjI)
   apply (assumption)
   apply (rule_tac x = "s" in exI)
-  apply (simp del: sd_zone_sem.simps sd_region_sem.simps)
+  apply (simp del: sd_region_sem.simps)
+  apply (induct_tac habs)
+  sorry
 
 
 lemma sd_psd_sps_rotate_eq_2: "spiders2 = rotate n spiders1 \<Longrightarrow> 
