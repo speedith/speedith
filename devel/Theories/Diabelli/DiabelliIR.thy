@@ -1,73 +1,117 @@
-(*  Title:      DiabelliIR.ML
-    Author:     Matej Urbas
+(*
+     Title:   DiabelliIR.ML
+    Author:   Matej Urbas
 
-DiabelliIR: provides a formalisation of the data structure used as the
-            intermediate represenation.
+DiabelliIR:   provides a formalisation of the data structure used as the
+              intermediate represenation.
 
-            This record is fed the diagrammatic reasoner on the ML level. The
-            external diagrammatic reasoner returns a transformed record,
-            which can be directly translated to Isabelle formulae via the
-            provided interpretation functions (these are named
-            'sd_<name>_sem').
+              This record is fed the diagrammatic reasoner on the ML level. The
+              external diagrammatic reasoner returns a transformed record,
+              which can be directly translated to Isabelle formulae via the
+              provided interpretation functions (these are named
+              'sd_<name>_sem').
 *)
 
 theory DiabelliIR
-imports Main
-uses ("diabelli.ML") "$ISABELLE_HOME/src/Pure/Concurrent/bash_sequential.ML"
+imports
+  Main
+uses
+  ("diabelli.ML")
+  "$ISABELLE_HOME/src/Pure/Concurrent/bash_sequential.ML"
 begin
 
-(* We still have some outstanding proofs. *)
+(*  We still have some outstanding proofs. *)
 ML {* quick_and_dirty := true *}
 
-(* sd_zone and sd_region are the types used to encode zones and regions as
-   defined in the theory of spider diagarms. *)
+
+
+
+(*==============================================================================
+DATATYPE DEFINITIONS
+==============================================================================*)
+
+(*
+  sd_zone and sd_region are the types used to encode zones and regions as
+  defined in the theory of spider diagarms.
+*)
 type_synonym 'e sd_zone = "'e set set * 'e set set"
 type_synonym 'e sd_region = "'e sd_zone set"
 
-(* 'sd' is the main data structure. It describes any compound spider diagram.
+(*
+  'sd' is the main data structure. It describes any compound spider diagram.
   It serves as the formalisation of the intermediate represenatition for
   communicating formulae between the external diagrammatic reasoner and
   Isabelle.
 
   A record of this data structure is interpreted by functions
-  'sd_<name>_sem'. *)
+  'sd_<name>_sem'.
+*)
 datatype ('s)sd =
     PrimarySD "'s sd_region list" "'s sd_zone set"
   | UnarySD "bool \<Rightarrow> bool" "('s)sd"
   | BinarySD "bool \<Rightarrow> bool \<Rightarrow> bool" "('s)sd" "('s)sd"
   | NullSD
 
-(* sd_zone_sem defines the semantics of a zone (an interpretation of
-  'sd_zone'). *)
+
+
+
+(*==============================================================================
+INTERPRETATION FUNCTIONS
+==============================================================================*)
+
+(*
+  sd_zone_sem defines the semantics of a zone (an interpretation of
+  'sd_zone').
+*)
 fun sd_zone_sem :: "'e sd_zone \<Rightarrow> 'e set"
   where
   "sd_zone_sem (in_sets, out_sets) = (\<Inter> in_sets) - (\<Union> out_sets)"
 
-(* sd_region_sem defines the semantics of a region (an interpretation of
-  'sd_region'). *)
+(*
+  sd_region_sem defines the semantics of a region (an interpretation of
+  'sd_region').
+*)
 fun sd_region_sem :: "'e sd_region \<Rightarrow> 'e set"
   where
   "sd_region_sem zones = (\<Union> z \<in> zones. sd_zone_sem z)"
 
+(*
+  The following function defines the base-case of the interpretation function
+  for the primary spider diagram. It says that all the mentioned spiders are
+  distinct and that shaded zones can contain only spiders. If the shaded zones
+  actually contain spiders is determined by the spiders' habitats (defined in
+  sd_primary_sem_impl).
+*)
 fun sd_primary_sem_impl_base :: "'s sd_zone set \<Rightarrow> 's list \<Rightarrow> bool"
   where
   "sd_primary_sem_impl_base sh_zones spiders = (distinct spiders \<and> (\<forall>z \<in> sh_zones. \<forall>el \<in> sd_zone_sem z. \<exists>s \<in> set spiders. s = el))"
 
+(*
+  The helper implementation =of the primary spider diagram interpretation
+  function. The reason for this additional function (instead of having just a
+  single one) is that it accumulates spiders as it recurses down habitats. This
+  means that it has an additional parameter, which should be empty when called
+  from the user-facing main function.
+*)
 fun sd_primary_sem_impl :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> 's list \<Rightarrow> bool"
   where
   "sd_primary_sem_impl [] sh_zones spiders = sd_primary_sem_impl_base sh_zones spiders"
   | "sd_primary_sem_impl (h#hs) sh_zones spiders = (\<exists>s. s \<in> sd_region_sem h \<and> sd_primary_sem_impl hs sh_zones (s#spiders))"
 
 
-(* The interpretation of the primary (unitary) spider diagram. *)
+(*
+  The main interpretation function for the primary (unitary) spider diagram.
+*)
 fun sd_primary_sem :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> bool"
   where
   "sd_primary_sem habitats sh_zones = sd_primary_sem_impl habitats sh_zones []"
 
 
-(* sd_sem provides an interpretation of the main data structure 'sd'. In
+(*
+  sd_sem provides an interpretation of the main data structure 'sd'. In
   fact, this function provides the semantic of the entire language of spider
-  diagrams (as encoded by the 'sd' data type). *)
+  diagrams (as encoded by the 'sd' data type).
+*)
 fun sd_sem :: "('s)sd \<Rightarrow> bool"
   where
   "sd_sem (PrimarySD habitats sh_zones) = sd_primary_sem habitats sh_zones"
@@ -75,24 +119,82 @@ fun sd_sem :: "('s)sd \<Rightarrow> bool"
   | "sd_sem (BinarySD P sdl sdh) = (P (sd_sem sdl) (sd_sem sdh))"
   | "sd_sem NullSD = True"
 
-(* We can exchange the order of any two adjacent spiders without changing the
-   meaning of the primary diagram. This is the first step to show that the order
-   of spiders in the primary diagram does not matter. *)
+
+
+
+(*==============================================================================
+LEMMATA SUPPORTING THE INTERPRETATION FUNCTIONS
+==============================================================================*)
+
+(*
+  Show that the base case of the PSD interpretation function implies that shaded
+  zones are actually subsets of spiders.
+*)
+lemma sd_psd_base_sh_zones_subsets: "sd_primary_sem_impl_base sh_zones spiders \<Longrightarrow> (\<forall>z \<in> sh_zones. sd_zone_sem z \<subseteq> set spiders)"
+  by auto
+
+(*
+    Also provide an equivalent definition of the base case of the PSD
+    interpretation using the subset relation.
+*)
+lemma sd_psd_base_sh_zones_subsets_eq: "sd_primary_sem_impl_base sh_zones spiders = ((\<forall>z \<in> sh_zones. sd_zone_sem z \<subseteq> set spiders) \<and> distinct spiders)"
+  by auto
+
+(*
+    Say we are given a list of distinct spiders (with arbitrary habitats) and
+    some shaded zones. Then the corresponding primary spider diagram entails
+    a primary spider diagram with another fresh spider.
+*)
+lemma sd_psd_base_less_spiders_impl_more: "sd_primary_sem_impl_base sh_zones spiders \<Longrightarrow> sd_primary_sem_impl_base sh_zones (List.insert sp spiders)"
+  by simp
+
+(*lemma sd_psd_impl_base_case: "sd_primary_sem_impl habs sh_zones [] \<Longrightarrow> \<exists>spiders. sd_primary_sem_impl_base sh_zones spiders"
+  apply simp*)
+
+(*
+  We can exchange the order of any two adjacent spiders without changing the
+  meaning of the primary diagram. This is the first step to show that the order
+  of spiders in the primary diagram does not matter.
+*)
 lemma sd_psd_sps_swap_eq: "sd_primary_sem_impl_base sh_zones (sps1 @ [sp1, sp2] @ sps2) =
                            sd_primary_sem_impl_base sh_zones (sps1 @ [sp2, sp1] @ sps2)"
   by auto
 
-(* We can rotate the list of spiders without changing the meaning of the primary
-   diagram. This is the second and the last step needed to show that the order
-   of spiders in the primary diagram does not matter. *)
+(*
+    Swapping adjacent elements in a list is enough to express any permutation.
+    But I think proofs can be extremely difficult if I use the above approach. I
+    was thinking of first showing that the first two elements can be swapped and
+    also that the meaning does not change if we rotate the spider list.
+
+    By composition of the swap and rotate we can swap of elements at index $i$
+    and $i+1$ by first rotating the list by $i$, then swapping and rotating back
+    again (by $len(lst) - i$).
+*)
+
+(*
+    We can rotate the list of spiders without changing the meaning of the primary
+    diagram. This is the second and the last step needed to show that the order
+    of spiders in the primary diagram does not matter.
+*)
 lemma sd_psd_sps_rotate_eq: "sd_primary_sem_impl [] sh_zones spiders1 =
                              sd_primary_sem_impl [] sh_zones (rotate n spiders1)"
   by auto
 
-(* The order in which we specify habitats also does not matter. First we show
-   that we can swap the first two habitats. *)
-lemma sd_psd_sps_swap_eq_2: "\<And>sps sh_zones.(sd_primary_sem_impl ([h1, h2] @ habs) sh_zones sps \<Longrightarrow>
-                             sd_primary_sem_impl ([h2, h1] @ habs) sh_zones sps)"
+(*lemma sd_psd_decompose: "\<forall>sh_zones. sd_primary_sem_impl habs sh_zones [] \<longrightarrow> (\<exists>Q spiders. Q habs spiders \<and> sd_primary_sem_impl_base sh_zones spiders)"
+  apply simp
+  apply (induct_tac habs)
+  apply (simp)
+apply (rule_tac x = "" )
+  apply (simp del: sd_region_sem.simps)
+  sorry*)
+
+(* TODO: Shows that the order of spider habitats does not matter. *)
+(*
+    The order in which we specify habitats also does not matter. First we show
+    that we can swap the first two habitats.
+*)
+lemma sd_psd_sps_swap_eq_2: "\<And>sps. sd_primary_sem_impl ([h1, h2] @ habs) {} sps \<Longrightarrow>
+                             sd_primary_sem_impl ([h2, h1] @ habs) {} sps"
   apply (auto simp del: sd_region_sem.simps)
   apply (rule_tac x = "sa" in exI)
   apply (rule conjI)
@@ -100,50 +202,56 @@ lemma sd_psd_sps_swap_eq_2: "\<And>sps sh_zones.(sd_primary_sem_impl ([h1, h2] @
   apply (rule_tac x = "s" in exI)
   apply (simp del: sd_region_sem.simps)
   apply (induct_tac habs)
+  apply simp
   sorry
 
-
-lemma sd_psd_sps_rotate_eq_2: "spiders2 = rotate n spiders1 \<Longrightarrow> 
-                               sd_primary_sem_impl habs sh_zones spiders1 =
-                               sd_primary_sem_impl habs sh_zones spiders2"
-  apply (induct_tac habs)
-  apply (erule sd_psd_sps_rotate_eq)
-  apply auto
-  sorry
-
-lemma sd_habitats_swap_eq: "habs = (h1#h2#hs) \<Longrightarrow>
-                            sd_sem (PrimarySD habs sh_zones) =
+lemma sd_habitats_swap_eq: "sd_sem (PrimarySD (h1#h2#hs) sh_zones) =
                             sd_sem (PrimarySD (h2#h1#hs) sh_zones)"
   sorry
 
-lemma sd_habitats_rotate_eq: "habs2 = rotate n habs1 \<Longrightarrow>
-                              sd_sem (PrimarySD habs1 sh_zones) =
-                              sd_sem (PrimarySD habs2 sh_zones)"
+lemma sd_habitats_rotate_eq: "sd_sem (PrimarySD habs1 sh_zones) =
+                              sd_sem (PrimarySD (rotate n habs1) sh_zones)"
   sorry
 
-(* TODO: Shows that the order of spider habitats does not matter. *)
-(* lemma sd_habitats_order: "sd_sem (PrimarySD habs shzs) = sd_sem (PrimarySD (permutation habs) shzs)" *)
+lemma sd_psd_sps_rotate_eq_2: "sd_primary_sem_impl habs sh_zones spiders1 =
+                               sd_primary_sem_impl habs sh_zones (rotate n spiders1)"
+  sorry
 
-(* A formalisation of the first version of the 'add feet' inference rule (i.e.:
-  t(A) \<longrightarrow> \<psi> \<turnstile> A \<longrightarrow> \<psi> *)
-lemma sd_rule_add_feet_A: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset> h'; sd_sem (BinarySD (op -->) (PrimarySD habs' shzs) \<psi>) \<rbrakk> \<Longrightarrow> sd_sem (BinarySD (op -->) (PrimarySD habs shzs) \<psi>)"
+
+
+
+(*==============================================================================
+SPIDER DIAGRAMMATIC INFERENCE RULES FORMALISATION
+==============================================================================*)
+
+(*
+    A formalisation of the first version of the 'add feet' inference rule (i.e.:
+    t(A) \<longrightarrow> \<psi> \<turnstile> A \<longrightarrow> \<psi>
+*)
+lemma sd_rule_add_feet: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset> h'; sd_sem (BinarySD (op -->) (PrimarySD habs' shzs) \<psi>) \<rbrakk> \<Longrightarrow> sd_sem (BinarySD (op -->) (PrimarySD habs shzs) \<psi>)"
   by auto
 
-(* A formalisation of the second version of the 'add feet' inference rule (i.e.:
-  t(A) \<and> \<phi> \<longrightarrow> \<psi> \<turnstile> A \<and> \<phi> \<longrightarrow> \<psi> *)
-lemma sd_rule_add_feet_B: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset> h'; sd_sem (BinarySD (op -->) (BinarySD (op &) (PrimarySD habs' shzs) \<phi>) \<psi>) \<rbrakk> \<Longrightarrow> sd_sem (BinarySD (op -->) (BinarySD (op &) (PrimarySD habs shzs) \<phi>) \<psi>)"
+(*
+    A formalisation of the second version of the 'add feet' inference rule (i.e.:
+    t(A) \<and> \<phi> \<longrightarrow> \<psi> \<turnstile> A \<and> \<phi> \<longrightarrow> \<psi>
+*)
+lemma sd_rule_add_feet_con: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset> h'; sd_sem (BinarySD (op -->) (BinarySD (op &) (PrimarySD habs' shzs) \<phi>) \<psi>) \<rbrakk> \<Longrightarrow> sd_sem (BinarySD (op -->) (BinarySD (op &) (PrimarySD habs shzs) \<phi>) \<psi>)"
   by auto
 
-(* A formalisation of the third version of the 'add feet' inference rule (i.e.:
-  t(A) \<or> \<phi> \<longrightarrow> \<psi> \<turnstile> A \<or> \<phi> \<longrightarrow> \<psi> *)
-lemma sd_rule_add_feet_C: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset> h'; sd_sem (BinarySD (op -->) (BinarySD (op \<or>) (PrimarySD habs' shzs) \<phi>) \<psi>) \<rbrakk> \<Longrightarrow> sd_sem (BinarySD (op -->) (BinarySD (op \<or>) (PrimarySD habs shzs) \<phi>) \<psi>)"
+(*
+    A formalisation of the third version of the 'add feet' inference rule (i.e.:
+    t(A) \<or> \<phi> \<longrightarrow> \<psi> \<turnstile> A \<or> \<phi> \<longrightarrow> \<psi>
+*)
+lemma sd_rule_add_feet_disj: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset> h'; sd_sem (BinarySD (op -->) (BinarySD (op \<or>) (PrimarySD habs' shzs) \<phi>) \<psi>) \<rbrakk> \<Longrightarrow> sd_sem (BinarySD (op -->) (BinarySD (op \<or>) (PrimarySD habs shzs) \<phi>) \<psi>)"
   by auto
 
-(* A formalisation of the 'split spider' inference rule:
-    A \<longleftrightarrow> t_{h, habA}(A, spider) \<or> t_{h, habB}(A, spider)
+(*
+    A formalisation of the 'split spider' inference rule:
 
-   Note: this thing differs from what Gem did. I should prove it sound, present
-   why is it different and why it is still sound.
+        A \<longleftrightarrow> t_{h, habA}(A, spider) \<or> t_{h, habB}(A, spider)
+
+    Note: this thing differs from what Gem did. I should prove it sound, present
+    why is it different and why it is still sound.
 *)
 lemma sd_rule_split_spiders: "\<lbrakk> habs = (h#hs); habA \<union> habB = h \<rbrakk> \<Longrightarrow>
                               sd_sem (PrimarySD habs shzs) =
@@ -151,8 +259,9 @@ lemma sd_rule_split_spiders: "\<lbrakk> habs = (h#hs); habA \<union> habB = h \<
                               sd_sem (PrimarySD (habB#hs) shzs))"
   by auto
 
-(* A formalisation of the 'split spider' inference rule---using the BinarySD
-   data structure.
+(*
+    A formalisation of the 'split spider' inference rule---using the BinarySD
+    data structure.
 *)
 lemma sd_rule_split_spiders_B: "\<lbrakk> habs = (h#hs); habA \<union> habB = h \<rbrakk> \<Longrightarrow>
                                 sd_sem (PrimarySD habs shzs) =
@@ -254,6 +363,13 @@ ML {* eq_list op= ((sort_distinct string_ord [ "c", "a", "a", "k", "b" ]), (sort
 
 ML {* print_depth 100 *}
 ML {* Config.put show_brackets true *}
+
+
+
+
+(*==============================================================================
+DIABELLI SETUP (ML-level translation, communication, and tactics procedures)
+==============================================================================*)
 
 use "diabelli.ML"
 
