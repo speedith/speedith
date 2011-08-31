@@ -106,6 +106,43 @@ fun psd_sem :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> boo
   where
   "psd_sem habitats sh_zones = psd_sem_impl habitats sh_zones []"
 
+(*
+  Another take on the interpretation function of the primary spider diagram.
+*)
+fun psd_sem2_habs_f :: "('s \<times> 's sd_region) \<Rightarrow> bool \<Rightarrow> bool"
+  where
+  "psd_sem2_habs_f (spider, habitat) others = (spider \<in> sd_region_sem habitat \<and> others)"
+
+fun psd_sem2_habs :: "('s \<times> 's sd_region) list \<Rightarrow> bool"
+  where
+  "psd_sem2_habs sp_habs = foldr psd_sem2_habs_f sp_habs True"
+
+fun psd_sem2_habs2 :: "('s \<times> 's sd_region) list \<Rightarrow> bool"
+  where
+  "psd_sem2_habs2 [] = True"
+  | "psd_sem2_habs2 ((spider, habitat)#sp_habs) = (spider \<in> sd_region_sem habitat \<and> psd_sem2_habs2 sp_habs)"
+
+fun psd_sem2_sh_zones :: "'s list \<Rightarrow> 's sd_zone set \<Rightarrow> bool"
+  where
+  "psd_sem2_sh_zones spiders sh_zones = (\<forall>z \<in> sh_zones. \<forall>el \<in> sd_zone_sem z. \<exists>s \<in> set spiders. s = el)"
+
+fun psd_sem2 :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> bool"
+  where
+  "psd_sem2 habitats sh_zones = (\<exists>spiders.
+          distinct spiders \<and>
+          size spiders = size habitats \<and>
+          psd_sem2_habs (zip spiders habitats) \<and>
+          psd_sem2_sh_zones spiders sh_zones)"
+
+lemma "psd_sem2 [{({A, B},{})}, {({A}, {B}),({B}, {A})}] {} = (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))"
+  apply auto
+  prefer 2
+  apply (rule_tac x = "[s1, s2]" in exI)
+  apply simp
+  prefer 2
+  sorry
+
+
 
 (*
   sd_sem provides an interpretation of the main data structure 'sd'. In
@@ -131,7 +168,7 @@ LEMMATA SUPPORTING THE INTERPRETATION FUNCTIONS
   zones are actually subsets of spiders.
 *)
 lemma psd_base_sh_zones_subsets: "psd_sem_impl_base sh_zones spiders \<Longrightarrow>
-                             (\<forall>z \<in> sh_zones. sd_zone_sem z \<subseteq> set spiders)"
+                                  (\<forall>z \<in> sh_zones. sd_zone_sem z \<subseteq> set spiders)"
   by auto
 
 (*
@@ -143,7 +180,7 @@ lemma psd_base_sh_zones_subsets_eq: "psd_sem_impl_base sh_zones spiders =
   by auto
 
 (*
-    INFERENCE RULE: insert spider
+    Part of the inference rule: insert spider
 
     Say we are given a list of distinct spiders (with arbitrary habitats) and
     some shaded zones. Then the corresponding primary spider diagram entails
@@ -154,7 +191,7 @@ lemma psd_base_insert_spider: "psd_sem_impl_base sh_zones spiders \<Longrightarr
   by simp
 
 (*
-    INFERENCE RULE: remove spider
+    Part of the inference rule: remove spider
 
     If there are no shaded zones in the primary spider diagram, then we can
     remove the spiders from it and the original PSD will entail the new one.
@@ -164,7 +201,7 @@ lemma psd_base_remove_spider: "psd_sem_impl_base {} (sp#spiders) \<Longrightarro
   by simp
 
 (*
-    INFERENCE RULE: remove shaded zone
+    Part of the inference rule: remove shaded zone
 
     If we remove a shaded zone from a primary spider diagram \<phi>, we get a new
     PSD \<psi>, where \<phi> entails \<psi>.
@@ -173,17 +210,52 @@ lemma psd_base_remove_sh_zone: "psd_sem_impl_base (insert z sh_zones) spiders \<
                                 psd_sem_impl_base sh_zones spiders"
   by simp
 
-(*lemma psd_impl_base_case: "psd_sem_impl habs sh_zones [] \<Longrightarrow> \<exists>spiders. psd_sem_impl_base sh_zones spiders"
-  apply simp*)
+(*
+    An empty spider diagram is a tautology.
+*)
+lemma psd_empty: "psd_sem [] {} = True"
+  by simp
+
+lemma psd2_empty: "psd_sem2 [] {} = True"
+  by simp
 
 (*
     We can exchange the order of any two adjacent spiders without changing the
     meaning of the primary diagram. This is the first step to show that the order
     of spiders in the primary diagram does not matter.
 *)
-lemma psd_sps_swap_eq: "psd_sem_impl_base sh_zones (sps1 @ [sp1, sp2] @ sps2) =
-                        psd_sem_impl_base sh_zones (sps1 @ [sp2, sp1] @ sps2)"
+lemma psd_swap_spiders: "psd_sem_impl [] sh_zones (sps1 @ [sp1, sp2] @ sps2) =
+                         psd_sem_impl [] sh_zones (sps1 @ [sp2, sp1] @ sps2)"
   by auto
+
+lemma psd_spiders_rotate_eq: "psd_sem_impl [] sh_zones spiders1 =
+                              psd_sem_impl [] sh_zones (rotate n spiders1)"
+  by auto
+
+lemma psd_swap_habitats: "psd_sem2 (h1#h2#habs) {} \<Longrightarrow> psd_sem2 (h2#h1#habs) {}"
+  apply auto
+  sorry
+
+lemma psd_remove_habitat: "\<And>h. psd_sem (h#habs) {} \<Longrightarrow> psd_sem habs {}"
+  sorry
+
+lemma psd_spiders_rotate_eq_2: "psd_sem_impl habs sh_zones spiders1 \<Longrightarrow>
+                                psd_sem_impl habs sh_zones (rotate n spiders1)"
+  sorry
+  (*apply auto
+  apply (induct_tac habs)
+  apply simp*)
+
+lemma psd_swap_spiders_2: "psd_sem_impl habs sh_zones (s1#s2#spiders) \<Longrightarrow>
+                           psd_sem_impl habs sh_zones (s2#s1#spiders)"
+  (*apply auto
+  apply (case_tac "habs = []")
+  apply auto
+  apply (unfold psd_sem_impl_def)
+  apply (unfold psd_sem_impl_sumC_def)
+  apply (unfold psd_sem_impl_graph_def)
+  apply (auto)*)
+  sorry
 
 (*
     Swapping adjacent elements in a list is enough to express any permutation.
@@ -201,9 +273,6 @@ lemma psd_sps_swap_eq: "psd_sem_impl_base sh_zones (sps1 @ [sp1, sp2] @ sps2) =
     diagram. This is the second and the last step needed to show that the order
     of spiders in the primary diagram does not matter.
 *)
-lemma psd_sps_rotate_eq: "psd_sem_impl [] sh_zones spiders1 =
-                             psd_sem_impl [] sh_zones (rotate n spiders1)"
-  by auto
 
 (*lemma psd_decompose: "\<forall>sh_zones. psd_sem_impl habs sh_zones [] \<longrightarrow> (\<exists>Q spiders. Q habs spiders \<and> psd_sem_impl_base sh_zones spiders)"
   apply simp
@@ -218,8 +287,8 @@ apply (rule_tac x = "" )
     The order in which we specify habitats also does not matter. First we show
     that we can swap the first two habitats.
 *)
-lemma psd_sps_swap_eq_2: "\<And>sps. psd_sem_impl ([h1, h2] @ habs) {} sps \<Longrightarrow>
-                             psd_sem_impl ([h2, h1] @ habs) {} sps"
+lemma psd_habs_swap_eq_2: "\<And>sps. psd_sem_impl ([h1, h2] @ habs) {} sps \<Longrightarrow>
+                          psd_sem_impl ([h2, h1] @ habs) {} sps"
   apply (auto simp del: sd_region_sem.simps)
   apply (rule_tac x = "sa" in exI)
   apply (rule conjI)
@@ -238,10 +307,6 @@ lemma sd_habitats_rotate_eq: "sd_sem (PrimarySD habs1 sh_zones) =
                               sd_sem (PrimarySD (rotate n habs1) sh_zones)"
   sorry
 
-lemma psd_sps_rotate_eq_2: "psd_sem_impl habs sh_zones spiders1 =
-                               psd_sem_impl habs sh_zones (rotate n spiders1)"
-  sorry
-
 
 
 
@@ -253,21 +318,24 @@ SPIDER DIAGRAMMATIC INFERENCE RULES FORMALISATION
     A formalisation of the first version of the 'add feet' inference rule (i.e.:
     t(A) \<longrightarrow> \<psi> \<turnstile> A \<longrightarrow> \<psi>
 *)
-lemma sd_rule_add_feet: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset> h'; sd_sem (BinarySD (op -->) (PrimarySD habs' shzs) \<psi>) \<rbrakk> \<Longrightarrow> sd_sem (BinarySD (op -->) (PrimarySD habs shzs) \<psi>)"
+lemma sd_rule_add_feet: "\<lbrakk> h \<subset> h'; sd_sem (BinarySD (op -->) (PrimarySD (h'#hs) shzs) \<psi>) \<rbrakk> \<Longrightarrow>
+                         sd_sem (BinarySD (op -->) (PrimarySD (h#hs) shzs) \<psi>)"
   by auto
 
 (*
     A formalisation of the second version of the 'add feet' inference rule (i.e.:
     t(A) \<and> \<phi> \<longrightarrow> \<psi> \<turnstile> A \<and> \<phi> \<longrightarrow> \<psi>
 *)
-lemma sd_rule_add_feet_con: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset> h'; sd_sem (BinarySD (op -->) (BinarySD (op &) (PrimarySD habs' shzs) \<phi>) \<psi>) \<rbrakk> \<Longrightarrow> sd_sem (BinarySD (op -->) (BinarySD (op &) (PrimarySD habs shzs) \<phi>) \<psi>)"
+lemma sd_rule_add_feet_con: "\<lbrakk> h \<subset> h'; sd_sem (BinarySD (op -->) (BinarySD (op &) (PrimarySD (h'#hs) shzs) \<phi>) \<psi>) \<rbrakk> \<Longrightarrow>
+                             sd_sem (BinarySD (op -->) (BinarySD (op &) (PrimarySD (h#hs) shzs) \<phi>) \<psi>)"
   by auto
 
 (*
     A formalisation of the third version of the 'add feet' inference rule (i.e.:
     t(A) \<or> \<phi> \<longrightarrow> \<psi> \<turnstile> A \<or> \<phi> \<longrightarrow> \<psi>
 *)
-lemma sd_rule_add_feet_disj: "\<lbrakk> habs = (h#hs); habs' = (h'#hs); h \<subset> h'; sd_sem (BinarySD (op -->) (BinarySD (op \<or>) (PrimarySD habs' shzs) \<phi>) \<psi>) \<rbrakk> \<Longrightarrow> sd_sem (BinarySD (op -->) (BinarySD (op \<or>) (PrimarySD habs shzs) \<phi>) \<psi>)"
+lemma sd_rule_add_feet_disj: "\<lbrakk> h \<subset> h'; sd_sem (BinarySD (op -->) (BinarySD (op \<or>) (PrimarySD (h'#hs) shzs) \<phi>) \<psi>) \<rbrakk> \<Longrightarrow>
+                              sd_sem (BinarySD (op -->) (BinarySD (op \<or>) (PrimarySD (h#hs) shzs) \<phi>) \<psi>)"
   by auto
 
 (*
