@@ -80,11 +80,11 @@ fun sd_region_sem :: "'e sd_region \<Rightarrow> 'e set"
   for the primary spider diagram. It says that all the mentioned spiders are
   distinct and that shaded zones can contain only spiders. If the shaded zones
   actually contain spiders is determined by the spiders' habitats (defined in
-  sd_primary_sem_impl).
+  psd_sem_impl).
 *)
-fun sd_primary_sem_impl_base :: "'s sd_zone set \<Rightarrow> 's list \<Rightarrow> bool"
+fun psd_sem_impl_base :: "'s sd_zone set \<Rightarrow> 's list \<Rightarrow> bool"
   where
-  "sd_primary_sem_impl_base sh_zones spiders = (distinct spiders \<and> (\<forall>z \<in> sh_zones. \<forall>el \<in> sd_zone_sem z. \<exists>s \<in> set spiders. s = el))"
+  "psd_sem_impl_base sh_zones spiders = (distinct spiders \<and> (\<forall>z \<in> sh_zones. \<forall>el \<in> sd_zone_sem z. \<exists>s \<in> set spiders. s = el))"
 
 (*
   The helper implementation =of the primary spider diagram interpretation
@@ -93,18 +93,18 @@ fun sd_primary_sem_impl_base :: "'s sd_zone set \<Rightarrow> 's list \<Rightarr
   means that it has an additional parameter, which should be empty when called
   from the user-facing main function.
 *)
-fun sd_primary_sem_impl :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> 's list \<Rightarrow> bool"
+fun psd_sem_impl :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> 's list \<Rightarrow> bool"
   where
-  "sd_primary_sem_impl [] sh_zones spiders = sd_primary_sem_impl_base sh_zones spiders"
-  | "sd_primary_sem_impl (h#hs) sh_zones spiders = (\<exists>s. s \<in> sd_region_sem h \<and> sd_primary_sem_impl hs sh_zones (s#spiders))"
+  "psd_sem_impl [] sh_zones spiders = psd_sem_impl_base sh_zones spiders"
+  | "psd_sem_impl (h#hs) sh_zones spiders = (\<exists>s. s \<in> sd_region_sem h \<and> psd_sem_impl hs sh_zones (s#spiders))"
 
 
 (*
   The main interpretation function for the primary (unitary) spider diagram.
 *)
-fun sd_primary_sem :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> bool"
+fun psd_sem :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> bool"
   where
-  "sd_primary_sem habitats sh_zones = sd_primary_sem_impl habitats sh_zones []"
+  "psd_sem habitats sh_zones = psd_sem_impl habitats sh_zones []"
 
 
 (*
@@ -114,7 +114,7 @@ fun sd_primary_sem :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarr
 *)
 fun sd_sem :: "('s)sd \<Rightarrow> bool"
   where
-  "sd_sem (PrimarySD habitats sh_zones) = sd_primary_sem habitats sh_zones"
+  "sd_sem (PrimarySD habitats sh_zones) = psd_sem habitats sh_zones"
   | "sd_sem (UnarySD P sd) = (P (sd_sem sd))"
   | "sd_sem (BinarySD P sdl sdh) = (P (sd_sem sdl) (sd_sem sdh))"
   | "sd_sem NullSD = True"
@@ -130,34 +130,59 @@ LEMMATA SUPPORTING THE INTERPRETATION FUNCTIONS
   Show that the base case of the PSD interpretation function implies that shaded
   zones are actually subsets of spiders.
 *)
-lemma sd_psd_base_sh_zones_subsets: "sd_primary_sem_impl_base sh_zones spiders \<Longrightarrow> (\<forall>z \<in> sh_zones. sd_zone_sem z \<subseteq> set spiders)"
+lemma psd_base_sh_zones_subsets: "psd_sem_impl_base sh_zones spiders \<Longrightarrow>
+                             (\<forall>z \<in> sh_zones. sd_zone_sem z \<subseteq> set spiders)"
   by auto
 
 (*
     Also provide an equivalent definition of the base case of the PSD
     interpretation using the subset relation.
 *)
-lemma sd_psd_base_sh_zones_subsets_eq: "sd_primary_sem_impl_base sh_zones spiders = ((\<forall>z \<in> sh_zones. sd_zone_sem z \<subseteq> set spiders) \<and> distinct spiders)"
+lemma psd_base_sh_zones_subsets_eq: "psd_sem_impl_base sh_zones spiders =
+                                     ((\<forall>z \<in> sh_zones. sd_zone_sem z \<subseteq> set spiders) \<and> distinct spiders)"
   by auto
 
 (*
+    INFERENCE RULE: insert spider
+
     Say we are given a list of distinct spiders (with arbitrary habitats) and
     some shaded zones. Then the corresponding primary spider diagram entails
     a primary spider diagram with another fresh spider.
 *)
-lemma sd_psd_base_less_spiders_impl_more: "sd_primary_sem_impl_base sh_zones spiders \<Longrightarrow> sd_primary_sem_impl_base sh_zones (List.insert sp spiders)"
+lemma psd_base_insert_spider: "psd_sem_impl_base sh_zones spiders \<Longrightarrow>
+                               psd_sem_impl_base sh_zones (List.insert sp spiders)"
   by simp
 
-(*lemma sd_psd_impl_base_case: "sd_primary_sem_impl habs sh_zones [] \<Longrightarrow> \<exists>spiders. sd_primary_sem_impl_base sh_zones spiders"
+(*
+    INFERENCE RULE: remove spider
+
+    If there are no shaded zones in the primary spider diagram, then we can
+    remove the spiders from it and the original PSD will entail the new one.
+*)
+lemma psd_base_remove_spider: "psd_sem_impl_base {} (sp#spiders) \<Longrightarrow>
+                               psd_sem_impl_base {} spiders"
+  by simp
+
+(*
+    INFERENCE RULE: remove shaded zone
+
+    If we remove a shaded zone from a primary spider diagram \<phi>, we get a new
+    PSD \<psi>, where \<phi> entails \<psi>.
+*)
+lemma psd_base_remove_sh_zone: "psd_sem_impl_base (insert z sh_zones) spiders \<Longrightarrow>
+                                psd_sem_impl_base sh_zones spiders"
+  by simp
+
+(*lemma psd_impl_base_case: "psd_sem_impl habs sh_zones [] \<Longrightarrow> \<exists>spiders. psd_sem_impl_base sh_zones spiders"
   apply simp*)
 
 (*
-  We can exchange the order of any two adjacent spiders without changing the
-  meaning of the primary diagram. This is the first step to show that the order
-  of spiders in the primary diagram does not matter.
+    We can exchange the order of any two adjacent spiders without changing the
+    meaning of the primary diagram. This is the first step to show that the order
+    of spiders in the primary diagram does not matter.
 *)
-lemma sd_psd_sps_swap_eq: "sd_primary_sem_impl_base sh_zones (sps1 @ [sp1, sp2] @ sps2) =
-                           sd_primary_sem_impl_base sh_zones (sps1 @ [sp2, sp1] @ sps2)"
+lemma psd_sps_swap_eq: "psd_sem_impl_base sh_zones (sps1 @ [sp1, sp2] @ sps2) =
+                        psd_sem_impl_base sh_zones (sps1 @ [sp2, sp1] @ sps2)"
   by auto
 
 (*
@@ -176,11 +201,11 @@ lemma sd_psd_sps_swap_eq: "sd_primary_sem_impl_base sh_zones (sps1 @ [sp1, sp2] 
     diagram. This is the second and the last step needed to show that the order
     of spiders in the primary diagram does not matter.
 *)
-lemma sd_psd_sps_rotate_eq: "sd_primary_sem_impl [] sh_zones spiders1 =
-                             sd_primary_sem_impl [] sh_zones (rotate n spiders1)"
+lemma psd_sps_rotate_eq: "psd_sem_impl [] sh_zones spiders1 =
+                             psd_sem_impl [] sh_zones (rotate n spiders1)"
   by auto
 
-(*lemma sd_psd_decompose: "\<forall>sh_zones. sd_primary_sem_impl habs sh_zones [] \<longrightarrow> (\<exists>Q spiders. Q habs spiders \<and> sd_primary_sem_impl_base sh_zones spiders)"
+(*lemma psd_decompose: "\<forall>sh_zones. psd_sem_impl habs sh_zones [] \<longrightarrow> (\<exists>Q spiders. Q habs spiders \<and> psd_sem_impl_base sh_zones spiders)"
   apply simp
   apply (induct_tac habs)
   apply (simp)
@@ -193,8 +218,8 @@ apply (rule_tac x = "" )
     The order in which we specify habitats also does not matter. First we show
     that we can swap the first two habitats.
 *)
-lemma sd_psd_sps_swap_eq_2: "\<And>sps. sd_primary_sem_impl ([h1, h2] @ habs) {} sps \<Longrightarrow>
-                             sd_primary_sem_impl ([h2, h1] @ habs) {} sps"
+lemma psd_sps_swap_eq_2: "\<And>sps. psd_sem_impl ([h1, h2] @ habs) {} sps \<Longrightarrow>
+                             psd_sem_impl ([h2, h1] @ habs) {} sps"
   apply (auto simp del: sd_region_sem.simps)
   apply (rule_tac x = "sa" in exI)
   apply (rule conjI)
@@ -213,8 +238,8 @@ lemma sd_habitats_rotate_eq: "sd_sem (PrimarySD habs1 sh_zones) =
                               sd_sem (PrimarySD (rotate n habs1) sh_zones)"
   sorry
 
-lemma sd_psd_sps_rotate_eq_2: "sd_primary_sem_impl habs sh_zones spiders1 =
-                               sd_primary_sem_impl habs sh_zones (rotate n spiders1)"
+lemma psd_sps_rotate_eq_2: "psd_sem_impl habs sh_zones spiders1 =
+                               psd_sem_impl habs sh_zones (rotate n spiders1)"
   sorry
 
 
@@ -319,16 +344,16 @@ lemma sd_rule_split_spiders_B: "\<lbrakk> habs = (h#hs); habA \<union> habB = h 
    uses the same method as the first version, but it interprets the 'primary'
    diagram (unitary diagram) differently. *)
 
-(*definition sd_primary_sem2 :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> bool"
+(*definition psd_sem2 :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> bool"
   where
-  "sd_primary_sem2 habs sh_zones \<equiv> (\<exists>S. (size S) = (size habs) \<and>
+  "psd_sem2 habs sh_zones \<equiv> (\<exists>S. (size S) = (size habs) \<and>
             list_all (\<lambda>(s,h). s \<in> sd_region_sem h) (zip S habs) \<and>
             distinct S \<and>
             (\<forall>z \<in> sh_zones. sd_zone_sem z \<subseteq> set S))"*)
 
 (*fun sd_sem3 :: "('s)sd \<Rightarrow> bool"
   where
-  "sd_sem3 (PrimarySD habitats sh_zones) = sd_primary_sem2 habitats sh_zones"
+  "sd_sem3 (PrimarySD habitats sh_zones) = psd_sem2 habitats sh_zones"
   | "sd_sem3 (UnarySD P sd) = (P (sd_sem3 sd))"
   | "sd_sem3 (BinarySD P sdl sdh) = (P (sd_sem3 sdl) (sd_sem3 sdh))"
   | "sd_sem3 NullSD = True"*)
@@ -347,8 +372,8 @@ lemma sd_rule_split_spiders_B: "\<lbrakk> habs = (h#hs); habA \<union> habB = h 
   apply (simp only: sd_sem2.simps sd_sem3.simps)
   prefer 2
   apply (simp only: sd_sem2.simps sd_sem3.simps)
-  apply (unfold sd_sem3.simps sd_primary_sem2_def sd_sem2.simps)
-  apply (auto simp add: sd_primary_sem2_def)
+  apply (unfold sd_sem3.simps psd_sem2_def sd_sem2.simps)
+  apply (auto simp add: psd_sem2_def)
   oops*)
 
 
