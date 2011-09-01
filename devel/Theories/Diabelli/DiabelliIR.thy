@@ -107,11 +107,35 @@ fun psd_sem :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> boo
   "psd_sem habitats sh_zones = psd_sem_impl habitats sh_zones []"
 
 (*
+  sd_sem provides an interpretation of the main data structure 'sd'. In
+  fact, this function provides the semantic of the entire language of spider
+  diagrams (as encoded by the 'sd' data type).
+*)
+fun sd_sem :: "('s)sd \<Rightarrow> bool"
+  where
+  "sd_sem (PrimarySD habitats sh_zones) = psd_sem habitats sh_zones"
+  | "sd_sem (UnarySD P sd) = (P (sd_sem sd))"
+  | "sd_sem (BinarySD P sdl sdh) = (P (sd_sem sdl) (sd_sem sdh))"
+  | "sd_sem NullSD = True"
+
+
+
+
+(*==============================================================================
+Experimental INTERPRETATION FUNCTIONS
+==============================================================================*)
+
+(*
   Another take on the interpretation function of the primary spider diagram.
 *)
 fun psd_sem2_habs_f :: "('s \<times> 's sd_region) \<Rightarrow> bool \<Rightarrow> bool"
   where
   "psd_sem2_habs_f (spider, habitat) others = (spider \<in> sd_region_sem habitat \<and> others)"
+
+fun psd_sem2_habs_2 :: "'s list \<Rightarrow> 's sd_region list \<Rightarrow> bool"
+  where
+  "psd_sem2_habs_2 [] habitats = True"
+  | "psd_sem2_habs_2 (sp#spiders) (h#habitats) = (sp \<in> sd_region_sem h \<and> psd_sem2_habs_2 spiders habitats)"
 
 fun psd_sem2_habs :: "('s \<times> 's sd_region) list \<Rightarrow> bool"
   where
@@ -130,8 +154,8 @@ fun psd_sem2 :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> bo
   where
   "psd_sem2 habitats sh_zones = (\<exists>spiders.
           distinct spiders \<and>
-          size spiders = size habitats \<and>
-          psd_sem2_habs (zip spiders habitats) \<and>
+          length spiders = length habitats \<and>
+          psd_sem2_habs_2 spiders habitats \<and>
           psd_sem2_sh_zones spiders sh_zones)"
 
 lemma "psd_sem2 [{({A, B},{})}, {({A}, {B}),({B}, {A})}] {} = (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))"
@@ -140,21 +164,15 @@ lemma "psd_sem2 [{({A, B},{})}, {({A}, {B}),({B}, {A})}] {} = (\<exists>s1 s2. d
   apply (rule_tac x = "[s1, s2]" in exI)
   apply simp
   prefer 2
+  apply (rule_tac x = "[s1, s2]" in exI)
+  apply simp
+  apply (rule_tac x = "hd spiders" in exI)
+  apply (rule_tac x = "hd (tl spiders)" in exI)
+  apply auto
   sorry
 
-
-
-(*
-  sd_sem provides an interpretation of the main data structure 'sd'. In
-  fact, this function provides the semantic of the entire language of spider
-  diagrams (as encoded by the 'sd' data type).
-*)
-fun sd_sem :: "('s)sd \<Rightarrow> bool"
-  where
-  "sd_sem (PrimarySD habitats sh_zones) = psd_sem habitats sh_zones"
-  | "sd_sem (UnarySD P sd) = (P (sd_sem sd))"
-  | "sd_sem (BinarySD P sdl sdh) = (P (sd_sem sdl) (sd_sem sdh))"
-  | "sd_sem NullSD = True"
+lemma psd2_empty: "psd_sem2 [] {} = True"
+  by simp
 
 
 
@@ -216,8 +234,22 @@ lemma psd_base_remove_sh_zone: "psd_sem_impl_base (insert z sh_zones) spiders \<
 lemma psd_empty: "psd_sem [] {} = True"
   by simp
 
-lemma psd2_empty: "psd_sem2 [] {} = True"
-  by simp
+(*
+    Swapping adjacent elements in a list is enough to express any permutation.
+    But I think proofs can be extremely difficult if I use the above approach. I
+    was thinking of first showing that the first two elements can be swapped and
+    also that the meaning does not change if we rotate the spider list.
+
+    By composition of the swap and rotate we can swap of elements at index $i$
+    and $i+1$ by first rotating the list by $i$, then swapping and rotating back
+    again (by $len(lst) - i$).
+*)
+
+(*
+    We can rotate the list of spiders without changing the meaning of the primary
+    diagram. This is the second and the last step needed to show that the order
+    of spiders in the primary diagram does not matter.
+*)
 
 (*
     We can exchange the order of any two adjacent spiders without changing the
@@ -256,23 +288,6 @@ lemma psd_swap_spiders_2: "psd_sem_impl habs sh_zones (s1#s2#spiders) \<Longrigh
   apply (unfold psd_sem_impl_graph_def)
   apply (auto)*)
   sorry
-
-(*
-    Swapping adjacent elements in a list is enough to express any permutation.
-    But I think proofs can be extremely difficult if I use the above approach. I
-    was thinking of first showing that the first two elements can be swapped and
-    also that the meaning does not change if we rotate the spider list.
-
-    By composition of the swap and rotate we can swap of elements at index $i$
-    and $i+1$ by first rotating the list by $i$, then swapping and rotating back
-    again (by $len(lst) - i$).
-*)
-
-(*
-    We can rotate the list of spiders without changing the meaning of the primary
-    diagram. This is the second and the last step needed to show that the order
-    of spiders in the primary diagram does not matter.
-*)
 
 (*lemma psd_decompose: "\<forall>sh_zones. psd_sem_impl habs sh_zones [] \<longrightarrow> (\<exists>Q spiders. Q habs spiders \<and> psd_sem_impl_base sh_zones spiders)"
   apply simp
