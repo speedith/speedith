@@ -15,6 +15,7 @@ DiabelliIR:   provides a formalisation of the data structure used as the
 theory DiabelliIR
 imports
   Main
+  Permutation
 uses
   ("diabelli.ML")
   "$ISABELLE_HOME/src/Pure/Concurrent/bash_sequential.ML"
@@ -142,6 +143,9 @@ lemma "psd_sem2 [{({A, B},{})}, {({A}, {B}),({B}, {A})}] {} = (\<exists>s1 s2. d
   prefer 2
   sorry
 
+lemma psd2_empty: "psd_sem2 [] {} = True"
+  by simp
+
 
 
 (*
@@ -216,21 +220,66 @@ lemma psd_base_remove_sh_zone: "psd_sem_impl_base (insert z sh_zones) spiders \<
 lemma psd_empty: "psd_sem [] {} = True"
   by simp
 
-lemma psd2_empty: "psd_sem2 [] {} = True"
-  by simp
+(*
+    We can change the order of spiders without changing the meaning of the
+    primary diagram.
+*)
+lemma psd_permute_spiders: "\<lbrakk> perm spiders spiders' \<rbrakk> \<Longrightarrow> (psd_sem_impl habs sh_zones spiders =
+  psd_sem_impl habs sh_zones spiders')"
+proof (induct habs arbitrary: spiders spiders')
+  case Nil thus ?case by (simp add: perm_set_eq perm_distinct_iff)
+next
+  case (Cons h habs)
+  note ind_hyp = Cons(1)
+  note perm = Cons(2)
+
+  from perm have "\<And>s. s # spiders <~~> s # spiders'" by auto
+  with ind_hyp have "\<And>s. psd_sem_impl habs sh_zones (s # spiders) =
+            psd_sem_impl habs sh_zones (s # spiders')"
+    by blast
+  thus ?case by simp
+qed
+
+
+lemma psd_permute_habs: "\<lbrakk> perm habs habs'; psd_sem_impl habs sh_zones spiders \<rbrakk> \<Longrightarrow>
+                           psd_sem_impl habs' sh_zones spiders"
+ proof (induct arbitrary: spiders pred: perm)
+  case Nil thus ?case by simp
+next
+  case trans thus ?case by simp
+next
+  case (swap h h' habs)
+  then obtain s s' where s_in: "s \<in> sd_region_sem h"
+                     and s'_in: "s' \<in> sd_region_sem h'"
+                     and psd: "psd_sem_impl habs sh_zones (s' # s # spiders)" 
+     by auto
+
+  have "(s' # s # spiders) <~~> (s # s' # spiders)" by auto
+  with psd have psd': "psd_sem_impl habs sh_zones (s # s' # spiders)"
+    using psd_permute_spiders by fast
+
+  from s_in s'_in psd' show ?case by auto
+next
+  case (Cons habs habs' hab)
+  thus ?case by auto
+qed
+
+(* Yay! *)
+lemma "\<lbrakk> perm habs habs'; psd_sem habs sh_zones \<rbrakk> \<Longrightarrow> psd_sem habs' sh_zones"
+  by (simp add: psd_permute_habs)
 
 (*
-    We can exchange the order of any two adjacent spiders without changing the
-    meaning of the primary diagram. This is the first step to show that the order
-    of spiders in the primary diagram does not matter.
+    We can change the order of spiders without changing the meaning of the
+    primary diagram.
 *)
-lemma psd_swap_spiders: "psd_sem_impl [] sh_zones (sps1 @ [sp1, sp2] @ sps2) =
-                         psd_sem_impl [] sh_zones (sps1 @ [sp2, sp1] @ sps2)"
-  by auto
-
-lemma psd_spiders_rotate_eq: "psd_sem_impl [] sh_zones spiders1 =
-                              psd_sem_impl [] sh_zones (rotate n spiders1)"
-  by auto
+lemma psd_permute_spiders: "\<lbrakk> perm spiders spiders' \<rbrakk> \<Longrightarrow> (psd_sem_impl habs sh_zones spiders \<longrightarrow>
+                            psd_sem_impl habs sh_zones spiders')"
+  apply (induct_tac habs)
+  apply (simp add: perm_set_eq perm_distinct_iff)
+  apply (rule impI)
+  apply (rule impE)
+  apply (erule impE)
+  apply (simp)
 
 lemma psd_swap_habitats: "psd_sem2 (h1#h2#habs) {} \<Longrightarrow> psd_sem2 (h2#h1#habs) {}"
   apply auto
@@ -242,6 +291,10 @@ lemma psd_remove_habitat: "\<And>h. psd_sem (h#habs) {} \<Longrightarrow> psd_se
 lemma psd_spiders_rotate_eq_2: "psd_sem_impl habs sh_zones spiders1 \<Longrightarrow>
                                 psd_sem_impl habs sh_zones (rotate n spiders1)"
   sorry
+
+
+
+
   (*apply auto
   apply (induct_tac habs)
   apply simp*)
@@ -259,7 +312,11 @@ lemma psd_swap_spiders_2: "psd_sem_impl habs sh_zones (s1#s2#spiders) \<Longrigh
 
 (*
     Swapping adjacent elements in a list is enough to express any permutation.
-    But I think proofs can be extremely difficult if I use the above approach. I
+    But I #
+
+
+
+think proofs can be extremely difficult if I use the above approach. I
     was thinking of first showing that the first two elements can be swapped and
     also that the meaning does not change if we rotate the spider list.
 
