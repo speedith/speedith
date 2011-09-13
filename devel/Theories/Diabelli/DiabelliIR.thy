@@ -250,15 +250,19 @@ qed
 (*
     Finally, we show the above for the main psd_sem interpretation function.
 *)
-lemma "\<lbrakk> perm habs habs'; psd_sem habs sh_zones \<rbrakk> \<Longrightarrow> psd_sem habs' sh_zones"
+lemma "\<lbrakk> perm habs habs'; psd_sem habs sh_zones \<rbrakk> \<Longrightarrow>
+         psd_sem habs' sh_zones"
   by (simp add: psd_permute_habs)
 
 
-
-lemma psd_remove_habitat: "\<And>f. psd_sem_impl habs {} spiders \<Longrightarrow> psd_sem_impl (sublist habs f) {} (sublist spiders g)"
+(*
+    We can remove arbitrary habitats and/or spiders if there are no shaded zones.
+*)
+lemma psd_remove_habitat_spider: "psd_sem_impl habs {} spiders \<Longrightarrow>
+                                  psd_sem_impl (sublist habs f) {} (sublist spiders g)"
 proof (induct habs arbitrary: spiders f g)
 case Nil thus ?case by force
-next case (Cons hab habs f spiders g) note ind_hyp = Cons(1) and prem = Cons(2)
+next case (Cons hab habs spiders f g) note ind_hyp = Cons(1) and prem = Cons(2)
 thus ?case proof (case_tac "0 \<in> f")
   assume "0 \<in> f"
   hence f_sublist: "sublist (hab # habs) f = hab # sublist habs {i. Suc i \<in> f}"
@@ -293,6 +297,16 @@ qed
 (*==============================================================================
 SPIDER DIAGRAMMATIC INFERENCE RULES FORMALISATION
 ==============================================================================*)
+
+
+(*
+    Inference rule: Remove habitat
+
+    If there are no shaded zones, then we can remove arbitrary habitats.
+*)
+lemma psd_remove_habitat: "psd_sem habs {} \<Longrightarrow>
+                           psd_sem (sublist habs f) {}"
+  by (simp, drule psd_remove_habitat_spider[of habs Nil f g], auto)
 
 
 (*
