@@ -304,7 +304,7 @@ SPIDER DIAGRAMMATIC INFERENCE RULES FORMALISATION
 
     If there are no shaded zones, then we can remove arbitrary habitats.
 *)
-lemma psd_remove_habitat: "psd_sem habs {} \<Longrightarrow>
+lemma psd_remove_habitats: "psd_sem habs {} \<Longrightarrow>
                            psd_sem (sublist habs f) {}"
   by (simp, drule psd_remove_habitat_spider[of habs Nil f g], auto)
 
