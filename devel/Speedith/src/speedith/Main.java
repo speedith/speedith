@@ -117,15 +117,14 @@ public class Main {
                 }
             }
         } catch (ParseException ex) {
-            // Report why the parsing failed and print the help message (both to
-            // the error output)
+            // Report why the parsing of the command line arguments failed and 
+            // print the help message (both to the error output).
             log(Level.SEVERE, i18n("ERR_CLI_PARSE_FAILED", ex.getLocalizedMessage()), ex);
             System.err.println(i18n("ERR_CLI_PARSE_FAILED", ex.getLocalizedMessage()));
-            // Print help too.
             clargs.printHelp(System.err);
             System.exit(1);
         } catch (ReadingException rex) {
-            // A reading error occurred. Give the user a detailed error message.
+            // The spider diagram formula could not be read successfully.
             log(Level.SEVERE, i18n("ERR_READING_FORMULA", rex.getLocalizedMessage()), rex);
             System.out.println(i18n("ERR_READING_FORMULA", rex.getLocalizedMessage()));
             System.exit(1);

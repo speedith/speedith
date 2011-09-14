@@ -122,7 +122,7 @@ fun sd_sem :: "('s)sd \<Rightarrow> bool"
 
 
 (*==============================================================================
-Experimental INTERPRETATION FUNCTIONS
+Experimental INTERPRETATION FUNCTIONS (using second-order quantification)
 ==============================================================================*)
 
 (*
@@ -191,7 +191,7 @@ lemma psd_base_sh_zones_subsets: "psd_sem_impl_base sh_zones spiders \<Longright
 
 (*
     Also provide an equivalent definition of the base case of the PSD
-    interpretation using the subset relation.
+    interpretation using the built-in subset relation.
 *)
 lemma psd_base_sh_zones_subsets_eq: "psd_sem_impl_base sh_zones spiders =
                                      ((\<forall>z \<in> sh_zones. sd_zone_sem z \<subseteq> set spiders) \<and> distinct spiders)"
