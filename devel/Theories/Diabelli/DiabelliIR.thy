@@ -15,6 +15,7 @@ DiabelliIR:   provides a formalisation of the data structure used as the
 theory DiabelliIR
 imports
   Main
+  Permutation
 uses
   ("diabelli.ML")
   "$ISABELLE_HOME/src/Pure/Concurrent/bash_sequential.ML"
@@ -30,12 +31,14 @@ ML {* quick_and_dirty := true *}
 DATATYPE DEFINITIONS
 ==============================================================================*)
 
+
 (*
   sd_zone and sd_region are the types used to encode zones and regions as
   defined in the theory of spider diagarms.
 *)
 type_synonym 'e sd_zone = "'e set set * 'e set set"
 type_synonym 'e sd_region = "'e sd_zone set"
+
 
 (*
   'sd' is the main data structure. It describes any compound spider diagram.
@@ -59,6 +62,7 @@ datatype ('s)sd =
 INTERPRETATION FUNCTIONS
 ==============================================================================*)
 
+
 (*
   sd_zone_sem defines the semantics of a zone (an interpretation of
   'sd_zone').
@@ -67,6 +71,7 @@ fun sd_zone_sem :: "'e sd_zone \<Rightarrow> 'e set"
   where
   "sd_zone_sem (in_sets, out_sets) = (\<Inter> in_sets) - (\<Union> out_sets)"
 
+
 (*
   sd_region_sem defines the semantics of a region (an interpretation of
   'sd_region').
@@ -74,6 +79,7 @@ fun sd_zone_sem :: "'e sd_zone \<Rightarrow> 'e set"
 fun sd_region_sem :: "'e sd_region \<Rightarrow> 'e set"
   where
   "sd_region_sem zones = (\<Union> z \<in> zones. sd_zone_sem z)"
+
 
 (*
   The following function defines the base-case of the interpretation function
@@ -85,6 +91,7 @@ fun sd_region_sem :: "'e sd_region \<Rightarrow> 'e set"
 fun psd_sem_impl_base :: "'s sd_zone set \<Rightarrow> 's list \<Rightarrow> bool"
   where
   "psd_sem_impl_base sh_zones spiders = (distinct spiders \<and> (\<forall>z \<in> sh_zones. \<forall>el \<in> sd_zone_sem z. \<exists>s \<in> set spiders. s = el))"
+
 
 (*
   The helper implementation =of the primary spider diagram interpretation
@@ -106,6 +113,7 @@ fun psd_sem :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> boo
   where
   "psd_sem habitats sh_zones = psd_sem_impl habitats sh_zones []"
 
+
 (*
   sd_sem provides an interpretation of the main data structure 'sd'. In
   fact, this function provides the semantic of the entire language of spider
@@ -122,64 +130,9 @@ fun sd_sem :: "('s)sd \<Rightarrow> bool"
 
 
 (*==============================================================================
-Experimental INTERPRETATION FUNCTIONS (using second-order quantification)
-==============================================================================*)
-
-(*
-  Another take on the interpretation function of the primary spider diagram.
-*)
-fun psd_sem2_habs_f :: "('s \<times> 's sd_region) \<Rightarrow> bool \<Rightarrow> bool"
-  where
-  "psd_sem2_habs_f (spider, habitat) others = (spider \<in> sd_region_sem habitat \<and> others)"
-
-fun psd_sem2_habs_2 :: "'s list \<Rightarrow> 's sd_region list \<Rightarrow> bool"
-  where
-  "psd_sem2_habs_2 [] habitats = True"
-  | "psd_sem2_habs_2 (sp#spiders) (h#habitats) = (sp \<in> sd_region_sem h \<and> psd_sem2_habs_2 spiders habitats)"
-
-fun psd_sem2_habs :: "('s \<times> 's sd_region) list \<Rightarrow> bool"
-  where
-  "psd_sem2_habs sp_habs = foldr psd_sem2_habs_f sp_habs True"
-
-fun psd_sem2_habs2 :: "('s \<times> 's sd_region) list \<Rightarrow> bool"
-  where
-  "psd_sem2_habs2 [] = True"
-  | "psd_sem2_habs2 ((spider, habitat)#sp_habs) = (spider \<in> sd_region_sem habitat \<and> psd_sem2_habs2 sp_habs)"
-
-fun psd_sem2_sh_zones :: "'s list \<Rightarrow> 's sd_zone set \<Rightarrow> bool"
-  where
-  "psd_sem2_sh_zones spiders sh_zones = (\<forall>z \<in> sh_zones. \<forall>el \<in> sd_zone_sem z. \<exists>s \<in> set spiders. s = el)"
-
-fun psd_sem2 :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> bool"
-  where
-  "psd_sem2 habitats sh_zones = (\<exists>spiders.
-          distinct spiders \<and>
-          length spiders = length habitats \<and>
-          psd_sem2_habs_2 spiders habitats \<and>
-          psd_sem2_sh_zones spiders sh_zones)"
-
-lemma "psd_sem2 [{({A, B},{})}, {({A}, {B}),({B}, {A})}] {} = (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))"
-  apply auto
-  prefer 2
-  apply (rule_tac x = "[s1, s2]" in exI)
-  apply simp
-  prefer 2
-  apply (rule_tac x = "[s1, s2]" in exI)
-  apply simp
-  apply (rule_tac x = "hd spiders" in exI)
-  apply (rule_tac x = "hd (tl spiders)" in exI)
-  apply auto
-  sorry
-
-lemma psd2_empty: "psd_sem2 [] {} = True"
-  by simp
-
-
-
-
-(*==============================================================================
 LEMMATA SUPPORTING THE INTERPRETATION FUNCTIONS
 ==============================================================================*)
+
 
 (*
   Show that the base case of the PSD interpretation function implies that shaded
@@ -189,6 +142,7 @@ lemma psd_base_sh_zones_subsets: "psd_sem_impl_base sh_zones spiders \<Longright
                                   (\<forall>z \<in> sh_zones. sd_zone_sem z \<subseteq> set spiders)"
   by auto
 
+
 (*
     Also provide an equivalent definition of the base case of the PSD
     interpretation using the built-in subset relation.
@@ -197,26 +151,35 @@ lemma psd_base_sh_zones_subsets_eq: "psd_sem_impl_base sh_zones spiders =
                                      ((\<forall>z \<in> sh_zones. sd_zone_sem z \<subseteq> set spiders) \<and> distinct spiders)"
   by auto
 
-(*
-    Part of the inference rule: insert spider
 
+(*
     Say we are given a list of distinct spiders (with arbitrary habitats) and
     some shaded zones. Then the corresponding primary spider diagram entails
     a primary spider diagram with another fresh spider.
 *)
 lemma psd_base_insert_spider: "psd_sem_impl_base sh_zones spiders \<Longrightarrow>
                                psd_sem_impl_base sh_zones (List.insert sp spiders)"
-  by simp
+  by fastsimp
+
 
 (*
-    Part of the inference rule: remove spider
-
-    If there are no shaded zones in the primary spider diagram, then we can
-    remove the spiders from it and the original PSD will entail the new one.
+    We can remove spiders if there are no shaded zones in the primary diagram.
 *)
-lemma psd_base_remove_spider: "psd_sem_impl_base {} (sp#spiders) \<Longrightarrow>
-                               psd_sem_impl_base {} spiders"
-  by simp
+lemma psd_remove_spiders: "\<And>f. psd_sem_impl habs {} spiders \<Longrightarrow>
+                               psd_sem_impl habs {} (sublist spiders f)"
+proof (induct habs arbitrary: spiders f)
+case Nil thus ?case by force
+next case (Cons hab habs f spiders) note ind_hyp = Cons(1) and prem = Cons(2)
+  then obtain s f' where s_in: "s \<in> sd_region_sem hab"
+    and psd: "psd_sem_impl habs {} (s # spiders)"
+    and new_f: "f' = {j. j > 0 \<longrightarrow> (j - 1) \<in> f}"
+    by auto
+  have new_sub_lists: "s # (sublist spiders f) = sublist (s # spiders) f'" using new_f
+    by (auto simp add: sublist_Cons)
+  thus ?case using s_in psd prem ind_hyp
+    by auto
+qed
+
 
 (*
     Part of the inference rule: remove shaded zone
@@ -226,101 +189,107 @@ lemma psd_base_remove_spider: "psd_sem_impl_base {} (sp#spiders) \<Longrightarro
 *)
 lemma psd_base_remove_sh_zone: "psd_sem_impl_base (insert z sh_zones) spiders \<Longrightarrow>
                                 psd_sem_impl_base sh_zones spiders"
-  by simp
+  by fastsimp
+
 
 (*
     An empty spider diagram is a tautology.
 *)
 lemma psd_empty: "psd_sem [] {} = True"
-  by simp
+  by force
+
 
 (*
-    Swapping adjacent elements in a list is enough to express any permutation.
-    But I think proofs can be extremely difficult if I use the above approach. I
-    was thinking of first showing that the first two elements can be swapped and
-    also that the meaning does not change if we rotate the spider list.
-
-    By composition of the swap and rotate we can swap of elements at index $i$
-    and $i+1$ by first rotating the list by $i$, then swapping and rotating back
-    again (by $len(lst) - i$).
+    We can change the order of spiders without changing the meaning of the
+    primary diagram.
 *)
+lemma psd_permute_spiders: "\<lbrakk> perm spiders spiders' \<rbrakk> \<Longrightarrow>
+                            (psd_sem_impl habs sh_zones spiders =
+                            psd_sem_impl habs sh_zones spiders')"
+proof (induct habs arbitrary: spiders spiders')
+  case Nil thus ?case by (simp add: perm_set_eq perm_distinct_iff)
+next
+  case (Cons h habs)
+  note ind_hyp = Cons(1)
+  note perm = Cons(2)
+  (*from perm have "\<And>s. s # spiders <~~> s # spiders'" by fast*)
+  with ind_hyp have "\<And>s. psd_sem_impl habs sh_zones (s # spiders) =
+            psd_sem_impl habs sh_zones (s # spiders')"
+    by simp
+  thus ?case by force
+qed
+
 
 (*
-    We can rotate the list of spiders without changing the meaning of the primary
-    diagram. This is the second and the last step needed to show that the order
-    of spiders in the primary diagram does not matter.
+    The order of habitats in the list also does not matter.
 *)
+lemma psd_permute_habs: "\<lbrakk> perm habs habs'; psd_sem_impl habs sh_zones spiders \<rbrakk> \<Longrightarrow>
+                           psd_sem_impl habs' sh_zones spiders"
+proof (induct arbitrary: spiders pred: perm)
+  case Nil thus ?case by fast
+next
+  case trans thus ?case by fast
+next
+  case (swap h h' habs)
+  then obtain s s' where s_in: "s \<in> sd_region_sem h"
+                     and s'_in: "s' \<in> sd_region_sem h'"
+                     and psd: "psd_sem_impl habs sh_zones (s' # s # spiders)" 
+     by auto
+
+  have "(s' # s # spiders) <~~> (s # s' # spiders)" by fast
+  with psd have psd': "psd_sem_impl habs sh_zones (s # s' # spiders)"
+    using psd_permute_spiders by fast
+
+  from s_in s'_in psd' show ?case by auto
+next
+  case (Cons habs habs' hab)
+  thus ?case by auto
+qed
+
 
 (*
-    We can exchange the order of any two adjacent spiders without changing the
-    meaning of the primary diagram. This is the first step to show that the order
-    of spiders in the primary diagram does not matter.
+    Finally, we show the above for the main psd_sem interpretation function.
 *)
-lemma psd_swap_spiders: "psd_sem_impl [] sh_zones (sps1 @ [sp1, sp2] @ sps2) =
-                         psd_sem_impl [] sh_zones (sps1 @ [sp2, sp1] @ sps2)"
-  by auto
+lemma "\<lbrakk> perm habs habs'; psd_sem habs sh_zones \<rbrakk> \<Longrightarrow>
+         psd_sem habs' sh_zones"
+  by (simp add: psd_permute_habs)
 
-lemma psd_spiders_rotate_eq: "psd_sem_impl [] sh_zones spiders1 =
-                              psd_sem_impl [] sh_zones (rotate n spiders1)"
-  by auto
 
-lemma psd_swap_habitats: "psd_sem2 (h1#h2#habs) {} \<Longrightarrow> psd_sem2 (h2#h1#habs) {}"
-  apply auto
-  sorry
-
-lemma psd_remove_habitat: "\<And>h. psd_sem (h#habs) {} \<Longrightarrow> psd_sem habs {}"
-  sorry
-
-lemma psd_spiders_rotate_eq_2: "psd_sem_impl habs sh_zones spiders1 \<Longrightarrow>
-                                psd_sem_impl habs sh_zones (rotate n spiders1)"
-  sorry
-  (*apply auto
-  apply (induct_tac habs)
-  apply simp*)
-
-lemma psd_swap_spiders_2: "psd_sem_impl habs sh_zones (s1#s2#spiders) \<Longrightarrow>
-                           psd_sem_impl habs sh_zones (s2#s1#spiders)"
-  (*apply auto
-  apply (case_tac "habs = []")
-  apply auto
-  apply (unfold psd_sem_impl_def)
-  apply (unfold psd_sem_impl_sumC_def)
-  apply (unfold psd_sem_impl_graph_def)
-  apply (auto)*)
-  sorry
-
-(*lemma psd_decompose: "\<forall>sh_zones. psd_sem_impl habs sh_zones [] \<longrightarrow> (\<exists>Q spiders. Q habs spiders \<and> psd_sem_impl_base sh_zones spiders)"
-  apply simp
-  apply (induct_tac habs)
-  apply (simp)
-apply (rule_tac x = "" )
-  apply (simp del: sd_region_sem.simps)
-  sorry*)
-
-(* TODO: Shows that the order of spider habitats does not matter. *)
 (*
-    The order in which we specify habitats also does not matter. First we show
-    that we can swap the first two habitats.
+    We can remove arbitrary habitats and/or spiders if there are no shaded zones.
 *)
-lemma psd_habs_swap_eq_2: "\<And>sps. psd_sem_impl ([h1, h2] @ habs) {} sps \<Longrightarrow>
-                          psd_sem_impl ([h2, h1] @ habs) {} sps"
-  apply (auto simp del: sd_region_sem.simps)
-  apply (rule_tac x = "sa" in exI)
-  apply (rule conjI)
-  apply (assumption)
-  apply (rule_tac x = "s" in exI)
-  apply (simp del: sd_region_sem.simps)
-  apply (induct_tac habs)
-  apply simp
-  sorry
-
-lemma sd_habitats_swap_eq: "sd_sem (PrimarySD (h1#h2#hs) sh_zones) =
-                            sd_sem (PrimarySD (h2#h1#hs) sh_zones)"
-  sorry
-
-lemma sd_habitats_rotate_eq: "sd_sem (PrimarySD habs1 sh_zones) =
-                              sd_sem (PrimarySD (rotate n habs1) sh_zones)"
-  sorry
+lemma psd_remove_habitat_spider: "psd_sem_impl habs {} spiders \<Longrightarrow>
+                                  psd_sem_impl (sublist habs f) {} (sublist spiders g)"
+proof (induct habs arbitrary: spiders f g)
+case Nil thus ?case by force
+next case (Cons hab habs spiders f g) note ind_hyp = Cons(1) and prem = Cons(2)
+thus ?case proof (case_tac "0 \<in> f")
+  assume "0 \<in> f"
+  hence f_sublist: "sublist (hab # habs) f = hab # sublist habs {i. Suc i \<in> f}"
+    by (auto simp add: sublist_Cons)
+  then obtain s g' where s_in: "s \<in> sd_region_sem hab"
+    and psd: "psd_sem_impl habs {} (s # spiders)"
+    and new_g: "g' = {j. j > 0 \<longrightarrow> (j - 1) \<in> g}"
+    using prem ind_hyp by auto
+  have "s # (sublist spiders g) = sublist (s # spiders) g'" using new_g
+    by (auto simp add: sublist_Cons)
+  thus ?thesis using ind_hyp prem psd f_sublist new_g s_in
+    by auto
+next
+  assume "0 \<notin> f"
+(*  hence ?thesis using ind_hyp prem apply (auto simp del: sd_region_sem.simps)*)
+  hence f_sublist: "sublist (hab # habs) f = sublist habs {i. Suc i \<in> f}"
+    by (auto simp add: sublist_Cons)
+  then obtain s g' where s_in: "s \<in> sd_region_sem hab"
+    and psd: "psd_sem_impl habs {} (s # spiders)"
+    and new_g: "g' = {j. if j = 0 then False else j - 1 \<in> g}"
+    using prem ind_hyp by auto
+  hence "sublist spiders g = sublist (s # spiders) g'"
+    by (auto simp add: sublist_Cons)
+  thus ?thesis using ind_hyp prem psd f_sublist new_g s_in
+    by force
+qed
+qed
 
 
 
@@ -328,6 +297,17 @@ lemma sd_habitats_rotate_eq: "sd_sem (PrimarySD habs1 sh_zones) =
 (*==============================================================================
 SPIDER DIAGRAMMATIC INFERENCE RULES FORMALISATION
 ==============================================================================*)
+
+
+(*
+    Inference rule: Remove habitat
+
+    If there are no shaded zones, then we can remove arbitrary habitats.
+*)
+lemma psd_remove_habitats: "psd_sem habs {} \<Longrightarrow>
+                           psd_sem (sublist habs f) {}"
+  by (simp, drule psd_remove_habitat_spider[of habs Nil f g], auto)
+
 
 (*
     A formalisation of the first version of the 'add feet' inference rule (i.e.:
@@ -337,6 +317,7 @@ lemma sd_rule_add_feet: "\<lbrakk> h \<subset> h'; sd_sem (BinarySD (op -->) (Pr
                          sd_sem (BinarySD (op -->) (PrimarySD (h#hs) shzs) \<psi>)"
   by auto
 
+
 (*
     A formalisation of the second version of the 'add feet' inference rule (i.e.:
     t(A) \<and> \<phi> \<longrightarrow> \<psi> \<turnstile> A \<and> \<phi> \<longrightarrow> \<psi>
@@ -345,6 +326,7 @@ lemma sd_rule_add_feet_con: "\<lbrakk> h \<subset> h'; sd_sem (BinarySD (op -->)
                              sd_sem (BinarySD (op -->) (BinarySD (op &) (PrimarySD (h#hs) shzs) \<phi>) \<psi>)"
   by auto
 
+
 (*
     A formalisation of the third version of the 'add feet' inference rule (i.e.:
     t(A) \<or> \<phi> \<longrightarrow> \<psi> \<turnstile> A \<or> \<phi> \<longrightarrow> \<psi>
@@ -352,6 +334,7 @@ lemma sd_rule_add_feet_con: "\<lbrakk> h \<subset> h'; sd_sem (BinarySD (op -->)
 lemma sd_rule_add_feet_disj: "\<lbrakk> h \<subset> h'; sd_sem (BinarySD (op -->) (BinarySD (op \<or>) (PrimarySD (h'#hs) shzs) \<phi>) \<psi>) \<rbrakk> \<Longrightarrow>
                               sd_sem (BinarySD (op -->) (BinarySD (op \<or>) (PrimarySD (h#hs) shzs) \<phi>) \<psi>)"
   by auto
+
 
 (*
     A formalisation of the 'split spider' inference rule:
@@ -367,6 +350,7 @@ lemma sd_rule_split_spiders: "\<lbrakk> habs = (h#hs); habA \<union> habB = h \<
                               sd_sem (PrimarySD (habB#hs) shzs))"
   by auto
 
+
 (*
     A formalisation of the 'split spider' inference rule---using the BinarySD
     data structure.
@@ -378,91 +362,6 @@ lemma sd_rule_split_spiders_B: "\<lbrakk> habs = (h#hs); habA \<union> habB = h 
                                            (PrimarySD (habB#hs) shzs))"
   by auto
 
-
-
-(* NOTE: Follows a second version of the 'sd_sem' interpretation method. It
-   uses 'spider identifiers' (which are consecutive natural numbers) and
-   a single existentially quantified function, which maps spider identifiers
-   to actual elements. Just one quantification instead of N (where N is the
-   number of spiders). *)
-
-(* This function takes a list of habitats and returns a set of pairs. The
-  first element of these pairs is a natural number (the ID of the spider) and
-  the second element is the region where the spider lives (its habitat).
-
-  Note: i-th region in the list of habitats implicitly belongs to the spider
-  with the ID i+n (where n is a natural number -- the second argument to this
-  function). *)
-(*fun sd_habs2pairs :: "'s sd_region list \<Rightarrow> nat \<Rightarrow> (nat * 's sd_region) set"
-  where
-  "sd_habs2pairs [] n = {}"
-  | "sd_habs2pairs (x#xs) n = insert (n, x) (sd_habs2pairs xs (Suc n))"*)
-
-(* Returns a set of consecutive natural numbers starting at n (where n is the
-  second argument to this function). There are as many in the set as there
-  are regions in the first argument.
-
-  Note: the returned set is actually the set of IDs of all involved spiders. *)
-(*fun sd_habs2spids :: "'s sd_region list \<Rightarrow> nat \<Rightarrow> nat set"
-  where
-  "sd_habs2spids [] n = {}"
-  | "sd_habs2spids (x#xs) n = insert n (sd_habs2spids xs (Suc n))"*)
-
-(* sd_sem provides an interpretation of the main data structure 'sd'. In
-  fact, this function provides the semantic of the entire language of spider
-  diagrams (as encoded by the 'sd' data type). *)
-(*fun sd_sem2 :: "('s)sd \<Rightarrow> bool"
-  where
-  "sd_sem2 (PrimarySD habitats sh_zones) =
-     (\<exists>f. inj_on f (sd_habs2spids habitats 0) \<and>
-     (\<forall>(spider, region) \<in> sd_habs2pairs habitats 0. f spider \<in> sd_region_sem region) \<and>
-     (\<forall>z \<in> sh_zones. \<forall>el \<in> sd_zone_sem z. \<exists>s \<in> sd_habs2spids habitats 0. f s = el))"
-  | "sd_sem2 (UnarySD P sd) = (P (sd_sem2 sd))"
-  | "sd_sem2 (BinarySD P sdl sdh) = (P (sd_sem2 sdl) (sd_sem2 sdh))"
-  | "sd_sem2 NullSD = True"*)
-
-
-
-(* NOTE: Follows the third version of the 'sd_sem' interpretation method. It
-   uses the same method as the first version, but it interprets the 'primary'
-   diagram (unitary diagram) differently. *)
-
-(*definition psd_sem2 :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> bool"
-  where
-  "psd_sem2 habs sh_zones \<equiv> (\<exists>S. (size S) = (size habs) \<and>
-            list_all (\<lambda>(s,h). s \<in> sd_region_sem h) (zip S habs) \<and>
-            distinct S \<and>
-            (\<forall>z \<in> sh_zones. sd_zone_sem z \<subseteq> set S))"*)
-
-(*fun sd_sem3 :: "('s)sd \<Rightarrow> bool"
-  where
-  "sd_sem3 (PrimarySD habitats sh_zones) = psd_sem2 habitats sh_zones"
-  | "sd_sem3 (UnarySD P sd) = (P (sd_sem3 sd))"
-  | "sd_sem3 (BinarySD P sdl sdh) = (P (sd_sem3 sdl) (sd_sem3 sdh))"
-  | "sd_sem3 NullSD = True"*)
-
-
-
-(* NOTE: An, as of yet, failed attempt to prove the equivalence of the three
-   interpretations. *)
-
-(*lemma "\<forall>sd. sd_sem3 sd = sd_sem2 sd"
-  apply (rule allI)
-  apply (induct_tac sd)
-  prefer 3
-  apply(simp only: sd_sem2.simps sd_sem3.simps)
-  prefer 2
-  apply (simp only: sd_sem2.simps sd_sem3.simps)
-  prefer 2
-  apply (simp only: sd_sem2.simps sd_sem3.simps)
-  apply (unfold sd_sem3.simps psd_sem2_def sd_sem2.simps)
-  apply (auto simp add: psd_sem2_def)
-  oops*)
-
-
-
-(* TODO: Formalise the SD inference rules with one of the above
-   interpretations. *)
 
 (*ML {* @{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"} *}
 ML {* @{term "True"} *}
@@ -479,7 +378,9 @@ ML {* Config.put show_brackets true *}
 DIABELLI SETUP (ML-level translation, communication, and tactics procedures)
 ==============================================================================*)
 
+
 use "diabelli.ML"
+
 
 method_setup sd_tac = {*
 (fn xs => let
@@ -495,6 +396,7 @@ method_setup sd_tac = {*
           end)
 *} "A no-op tactic for testing the translation from SNF to spider diagrams and communication with Speedith."
 
+
 (*lemma testB: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
   apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
   apply (auto simp del: distinct.simps)
@@ -504,6 +406,7 @@ method_setup sd_tac = {*
   apply (sd_tac add_feet sdi: 2 sp: "s1" r: "[([\"B\"],[\"A\"])]")
   apply (sd_tac idempotency sdi: 1)
   by auto*)
+
 
 (* This lemma should land in the unit tests. *)
 lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
@@ -515,6 +418,7 @@ lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<a
   apply (sd_tac add_feet sdi: 2 sp: "s1" r: "[([\"B\"],[\"A\"])]")
   apply (sd_tac idempotency sdi: 1)
   by auto
+
 
 (*ML {* Diabelli.from_snf_to_sd @{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"} *}
 ML {* Diabelli.random_tests "tralala" *}
