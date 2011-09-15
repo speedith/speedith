@@ -38,7 +38,7 @@ autostore = false)
 @TopComponent.Description(preferredID = "SpeedithTopComponent",
 iconBase = "speedith/i3p/ui/SpeedithIconVennDiagram-16.png",
 persistenceType = TopComponent.PERSISTENCE_ALWAYS)
-@TopComponent.Registration(mode = "isaresult", openAtStartup = false)
+@TopComponent.Registration(mode = "isaresult", openAtStartup = true)
 @ActionID(category = "Window", id = "speedith.i3p.ui.SpeedithTopComponent")
 @ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(displayName = "#CTL_SpeedithAction",
@@ -68,10 +68,10 @@ public final class SpeedithTopComponent extends TopComponent {
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(SpeedithTopComponent.class, "SpeedithTopComponent.jLabel1.text")); // NOI18N
         add(jLabel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
+
     @Override
     public void componentOpened() {
         // TODO add custom code on component opening
