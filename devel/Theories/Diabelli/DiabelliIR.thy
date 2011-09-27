@@ -21,9 +21,6 @@ uses
   "$ISABELLE_HOME/src/Pure/Concurrent/bash_sequential.ML"
 begin
 
-(*  We still have some outstanding proofs. *)
-ML {* quick_and_dirty := true *}
-
 
 
 
