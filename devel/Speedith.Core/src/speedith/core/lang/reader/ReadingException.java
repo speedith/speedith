@@ -26,7 +26,6 @@
  */
 package speedith.core.lang.reader;
 
-import org.antlr.runtime.CommonToken;
 import org.antlr.runtime.Token;
 import org.antlr.runtime.MissingTokenException;
 import org.antlr.runtime.RecognitionException;

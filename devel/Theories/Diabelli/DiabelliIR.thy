@@ -142,7 +142,7 @@ lemma psd_base_sh_zones_subsets: "psd_sem_impl_base sh_zones spiders \<Longright
 
 (*
     Also provide an equivalent definition of the base case of the PSD
-    interpretation using the subset relation.
+    interpretation using the built-in subset relation.
 *)
 lemma psd_base_sh_zones_subsets_eq: "psd_sem_impl_base sh_zones spiders =
                                      ((\<forall>z \<in> sh_zones. sd_zone_sem z \<subseteq> set spiders) \<and> distinct spiders)"
@@ -165,8 +165,9 @@ lemma psd_base_insert_spider: "psd_sem_impl_base sh_zones spiders \<Longrightarr
 lemma psd_remove_spiders: "\<And>f. psd_sem_impl habs {} spiders \<Longrightarrow>
                                psd_sem_impl habs {} (sublist spiders f)"
 proof (induct habs arbitrary: spiders f)
-case Nil thus ?case by force
-next case (Cons hab habs f spiders) note ind_hyp = Cons(1) and prem = Cons(2)
+  case Nil thus ?case by force
+next
+  case (Cons hab habs f spiders) note ind_hyp = Cons(1) and prem = Cons(2)
   then obtain s f' where s_in: "s \<in> sd_region_sem hab"
     and psd: "psd_sem_impl habs {} (s # spiders)"
     and new_f: "f' = {j. j > 0 \<longrightarrow> (j - 1) \<in> f}"
@@ -247,7 +248,7 @@ qed
 (*
     Finally, we show the above for the main psd_sem interpretation function.
 *)
-lemma "\<lbrakk> perm habs habs'; psd_sem habs sh_zones \<rbrakk> \<Longrightarrow>
+lemma psd_permute_habitats: "\<lbrakk> perm habs habs'; psd_sem habs sh_zones \<rbrakk> \<Longrightarrow>
          psd_sem habs' sh_zones"
   by (simp add: psd_permute_habs)
 
@@ -258,34 +259,35 @@ lemma "\<lbrakk> perm habs habs'; psd_sem habs sh_zones \<rbrakk> \<Longrightarr
 lemma psd_remove_habitat_spider: "psd_sem_impl habs {} spiders \<Longrightarrow>
                                   psd_sem_impl (sublist habs f) {} (sublist spiders g)"
 proof (induct habs arbitrary: spiders f g)
-case Nil thus ?case by force
-next case (Cons hab habs spiders f g) note ind_hyp = Cons(1) and prem = Cons(2)
-thus ?case proof (case_tac "0 \<in> f")
-  assume "0 \<in> f"
-  hence f_sublist: "sublist (hab # habs) f = hab # sublist habs {i. Suc i \<in> f}"
-    by (auto simp add: sublist_Cons)
-  then obtain s g' where s_in: "s \<in> sd_region_sem hab"
-    and psd: "psd_sem_impl habs {} (s # spiders)"
-    and new_g: "g' = {j. j > 0 \<longrightarrow> (j - 1) \<in> g}"
-    using prem ind_hyp by auto
-  have "s # (sublist spiders g) = sublist (s # spiders) g'" using new_g
-    by (auto simp add: sublist_Cons)
-  thus ?thesis using ind_hyp prem psd f_sublist new_g s_in
-    by auto
+  case Nil thus ?case by force
 next
-  assume "0 \<notin> f"
-(*  hence ?thesis using ind_hyp prem apply (auto simp del: sd_region_sem.simps)*)
-  hence f_sublist: "sublist (hab # habs) f = sublist habs {i. Suc i \<in> f}"
-    by (auto simp add: sublist_Cons)
-  then obtain s g' where s_in: "s \<in> sd_region_sem hab"
-    and psd: "psd_sem_impl habs {} (s # spiders)"
-    and new_g: "g' = {j. if j = 0 then False else j - 1 \<in> g}"
-    using prem ind_hyp by auto
-  hence "sublist spiders g = sublist (s # spiders) g'"
-    by (auto simp add: sublist_Cons)
-  thus ?thesis using ind_hyp prem psd f_sublist new_g s_in
-    by force
-qed
+  case (Cons hab habs spiders f g) note ind_hyp = Cons(1) and prem = Cons(2)
+  thus ?case
+  proof (case_tac "0 \<in> f")
+    assume "0 \<in> f"
+    hence f_sublist: "sublist (hab # habs) f = hab # sublist habs {i. Suc i \<in> f}"
+      by (auto simp add: sublist_Cons)
+    then obtain s g' where s_in: "s \<in> sd_region_sem hab"
+      and psd: "psd_sem_impl habs {} (s # spiders)"
+      and new_g: "g' = {j. j > 0 \<longrightarrow> (j - 1) \<in> g}"
+      using prem ind_hyp by auto
+    have "s # (sublist spiders g) = sublist (s # spiders) g'" using new_g
+      by (auto simp add: sublist_Cons)
+    thus ?thesis using ind_hyp prem s_in psd f_sublist
+      by auto
+  next
+    assume "0 \<notin> f"
+    hence f_sublist: "sublist (hab # habs) f = sublist habs {i. Suc i \<in> f}"
+      by (auto simp add: sublist_Cons)
+    then obtain s g' where s_in: "s \<in> sd_region_sem hab"
+      and psd: "psd_sem_impl habs {} (s # spiders)"
+      and new_g: "g' = {j. if j = 0 then False else j - 1 \<in> g}"
+      using prem ind_hyp by auto
+    hence "sublist spiders g = sublist (s # spiders) g'"
+      by (auto simp add: sublist_Cons)
+    thus ?thesis using ind_hyp prem psd f_sublist new_g s_in
+      by force
+  qed
 qed
 
 
@@ -304,6 +306,13 @@ SPIDER DIAGRAMMATIC INFERENCE RULES FORMALISATION
 lemma psd_remove_habitats: "psd_sem habs {} \<Longrightarrow>
                            psd_sem (sublist habs f) {}"
   by (simp, drule psd_remove_habitat_spider[of habs Nil f g], auto)
+
+
+(*
+    Inference rule: Add feet
+*)
+lemma psd_add_feet: "\<lbrakk> psd_sem (h#habs) sh_zones; h \<subset> h' \<rbrakk> \<Longrightarrow> psd_sem (h'#habs) sh_zones"
+  by auto
 
 
 (*
