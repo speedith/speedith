@@ -26,6 +26,7 @@
  */
 package speedith.core.lang;
 
+import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,6 +70,7 @@ public class ZoneTest {
     static Zone m_zone10;
     static Zone m_zone11;
     static Zone m_zone12;
+    static Zone m_zone13;
 
     public ZoneTest() {
     }
@@ -164,6 +166,8 @@ public class ZoneTest {
         
         m_zone11 = new Zone(new ArrayList<String>(), new TreeSet<String>());
         m_zone12 = new Zone(new TreeSet<String>(), new TreeSet<String>());
+        
+        m_zone13 = new Zone(Arrays.asList("A", "C", "E"), Arrays.asList("B", "C", "D"));
     }
 
     @AfterClass
@@ -432,5 +436,69 @@ public class ZoneTest {
         assertFalse(sds.contains(new Zone(Arrays.asList(new String[]{ "B" }), Arrays.asList(new String[]{ "E", "C", "F", "F", "D" }))));
         assertFalse(sds.contains(new Zone(Arrays.asList(new String[]{ "B" }), null)));
         assertFalse(sds.contains(new Zone(null, Arrays.asList(new String[]{ "E", "C", "F", "F", "D" }))));
+    }
+
+    @Test
+    public void testWithInContours() {
+        Zone expResult = m_zone5;
+        Zone result = m_zone6.withInContours(m_zone5.getInContours().toArray(new String[0]));
+        assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testWithOutContours() {
+        Zone expResult = m_zone5;
+        Zone result = m_zone7.withOutContours(m_zone5.getOutContours().toArray(new String[0]));
+        assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testFromInContours() {
+        Zone expResult = m_zone6;
+        Zone result = Zone.fromOutContours(m_zone5.getOutContours().toArray(new String[0]));
+        assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testFromOutContours() {
+        Zone expResult = m_zone7;
+        Zone result = Zone.fromInContours(m_zone5.getInContours().toArray(new String[0]));
+        assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testIsValid() {
+        SortedSet<String> contours = new TreeSet<String>(Arrays.asList("A", "B", "C", "D", "E", "F"));
+        Zone instance = m_zone3;
+        boolean expResult = true;
+        boolean result = instance.isValid(contours);
+        assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testIsValid2() {
+        SortedSet<String> contours = new TreeSet<String>(Arrays.asList("A", "B", "C", "D", "E"));
+        Zone instance = m_zone3;
+        boolean expResult = false;
+        boolean result = instance.isValid(contours);
+        assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testIsValid3() {
+        SortedSet<String> contours = new TreeSet<String>(Arrays.asList("A", "B", "C", "D", "E", "F", "G"));
+        Zone instance = m_zone3;
+        boolean expResult = false;
+        boolean result = instance.isValid(contours);
+        assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testIsValid4() {
+        SortedSet<String> contours = new TreeSet<String>(Arrays.asList("A", "B", "C", "D", "E"));
+        Zone instance = m_zone13;
+        boolean expResult = false;
+        boolean result = instance.isValid(contours);
+        assertEquals(expResult, result);
     }
 }

@@ -67,18 +67,64 @@ public final class DiagramVisualisation {
         AbstractDescription ad = getAbstractDescription(psd1);
         drawAD(ad);
     }
-    
+
     @Deprecated
     private static void drawAD(AbstractDescription ad) throws CannotDrawException, HeadlessException {
         ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(ad, 300);
-        
+
         CirclesPanel cp = new CirclesPanel("", "No failure message", cd, 300, true);
-        
+
         JFrame viewingFrame = new JFrame("");
         viewingFrame.getContentPane().add(cp);
         viewingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         viewingFrame.pack();
         viewingFrame.setVisible(true);
+    }
+
+    @Deprecated
+    public static void main(String[] args) throws ReadingException, CannotDrawException {
+
+        ArrayList<PrimarySpiderDiagram> psds = new ArrayList<PrimarySpiderDiagram>();
+        PrimarySpiderDiagram psd1;
+        // This hangs.
+        //        PrimarySpiderDiagram psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}");
+        //        psds.add(psd1);
+        // This is okay, because it is a Venn diagram. But the outside should not be shaded.
+        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}");
+        psds.add(psd1);
+
+        // This is not okay. We do not know whether A and B are disjoint. Also,
+        // the outside of A and B must not be shaded.
+        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}");
+        psds.add(psd1);
+
+        // This is not what I want. A is not necessarily a subset of B and the outside must not be empty!
+        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"B\"], [\"A\"])])]}");
+        psds.add(psd1);
+
+        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], []), ([\"A\"],[\"B\"])]), (\"s'\", [([\"B\"], [\"A\"])])]}");
+        psds.add(psd1);
+
+        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], []), ([\"A\"],[\"B\"])]), (\"s'\", [([\"A\", \"B\"], []), ([\"B\"], [\"A\"])])]}");
+        psds.add(psd1);
+
+        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [([\"A\", \"B\"], [])], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], []), ([\"A\"],[\"B\"])]), (\"s'\", [([\"A\", \"B\"], []), ([\"B\"], [\"A\"])])]}");
+        psds.add(psd1);
+
+        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [([\"B\"], [\"A\", \"C\"])], spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], []), ([\"A\"],[\"B\",  \"C\"])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])]}");
+        psds.add(psd1);
+
+//        AbstractDescription ad = AbstractDescription.makeForTesting("a b ab, ,a b", false);
+//        AbstractDescription ad = AbstractDescription.makeForTesting("A B C AB AC BC ABC, B,A AB ABC, B, B", false);
+//        Iterator<AbstractSpider> it = ad.getSpiderIterator();
+//        it.next().setName("s1");
+//        it.next().setName("s2");
+//        it.next().setName("s3");
+//        drawAD(ad);
+
+        for (PrimarySpiderDiagram psd : psds) {
+            drawPSD(psd);
+        }
     }
     // </editor-fold>
 
@@ -101,8 +147,13 @@ public final class DiagramVisualisation {
      * contours in the diagram.
      */
     public static AbstractDescription getAbstractDescription(PrimarySpiderDiagram psd) throws CannotDrawException {
-        
-        // First we fetch all the contours that are mentioned in a primary spider
+
+        // Make sure that the primary spider diagram is valid:
+        if (psd == null || !psd.isValid()) {
+            throw new CannotDrawException(i18n("DRAW_NOT_VALID_PSD"));
+        }
+
+        // Now we fetch all the contours that are mentioned in a primary spider
         // diagram.
         SortedSet<String> contourStrings = psd.getContours();
 
@@ -177,7 +228,7 @@ public final class DiagramVisualisation {
                 for (Zone foot : habitat.getValue().getZones()) {
                     // A Speedith's zone can correspond to many zones. Hence we
                     // should add all the necessary feet:
-                    addFeetForZone(feet, allVisibleZones, allContours, contourMap, foot);
+                    addFeetForZone(feet, contourMap, foot);
                 }
                 ad.addSpider(new AbstractSpider(feet, habitat.getKey()));
             }
@@ -185,74 +236,27 @@ public final class DiagramVisualisation {
 
         return ad;
     }
-    
+
     public static CirclesPanel getCirclesPanel(AbstractDescription ad, int size) throws CannotDrawException {
         ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(ad, size);
         return new CirclesPanel("", "No failure message", cd, size, true);
     }
-
-    public static void main(String[] args) throws ReadingException, CannotDrawException {
-
-        ArrayList<PrimarySpiderDiagram> psds = new ArrayList<PrimarySpiderDiagram>();
-        PrimarySpiderDiagram psd1;
-        // This hangs.
-        //        PrimarySpiderDiagram psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}");
-        //        psds.add(psd1);
-        // This is okay, because it is a Venn diagram. But the outside should not be shaded.
-        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}");
-        psds.add(psd1);
-
-        // This is not okay. We do not know whether A and B are disjoint. Also,
-        // the outside of A and B must not be shaded.
-        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}");
-        psds.add(psd1);
-
-        // This is not what I want. A is not necessarily a subset of B and the outside must not be empty!
-        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"B\"], [\"A\"])])]}");
-        psds.add(psd1);
-
-        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], []), ([\"A\"],[\"B\"])]), (\"s'\", [([\"B\"], [\"A\"])])]}");
-        psds.add(psd1);
-
-        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], []), ([\"A\"],[\"B\"])]), (\"s'\", [([\"A\", \"B\"], []), ([\"B\"], [\"A\"])])]}");
-        psds.add(psd1);
-
-        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [([\"A\", \"B\"], [])], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], []), ([\"A\"],[\"B\"])]), (\"s'\", [([\"A\", \"B\"], []), ([\"B\"], [\"A\"])])]}");
-        psds.add(psd1);
-        
-//        AbstractDescription ad = AbstractDescription.makeForTesting("a b ab, ,a b", false);
-        AbstractDescription ad = AbstractDescription.makeForTesting("A B C AB AC BC ABC, B,A AB ABC, B, B", false);
-        Iterator<AbstractSpider> it = ad.getSpiderIterator();
-        it.next().setName("s1");
-        it.next().setName("s2");
-        it.next().setName("s3");
-        drawAD(ad);
-
-        for (PrimarySpiderDiagram psd : psds) {
-//            drawPSD(psd);
-        }
-    }
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Private Helper Methods">
     /**
-     * This method looks at the contours in the zone and 
-     * @param allZones
-     * @param allContours
-     * @param zone
-     * @param code 
+     * This method assigns the given code to the given zone in the 'allZones'
+     * array.
+     * <p>This method effectively flags the zone with the given code.</p>
      */
     private static void markZone(byte[] allZones, String[] allContours, Zone zone, byte code) {
         // We have to mark the zone with the given code. But how do we determine
         // the index of the zone?
-        // Well, say we have 'n' contours. Then a zone is specified
-        int inMask = getZoneInMask(allContours, zone);
-        int outMask = ~getZoneOutMask(allContours, zone);
-        for (int i = 0; i < allZones.length; i++) {
-            if ((i & inMask) == inMask && (i | outMask) == outMask) {
-                allZones[i] |= code;
-            }
-        }
+        // Well, say we have N contours. Then a zone is specified with N bits,
+        // where 1 means that the zone is inside that contour and 0 means that
+        // the zone is outside.
+        // The resulting number is the index of the zone.
+        allZones[getZoneInMask(allContours, zone)] |= code;
     }
 
     private static int getZoneInMask(String[] allContours, Zone zone) {
@@ -260,17 +264,6 @@ public final class DiagramVisualisation {
         if (zone.getInContoursCount() > 0) {
             for (String inContour : zone.getInContours()) {
                 int contourIndex = Arrays.binarySearch(allContours, inContour);
-                mask |= (1 << contourIndex);
-            }
-        }
-        return mask;
-    }
-
-    private static int getZoneOutMask(String[] allContours, Zone zone) {
-        int mask = 0;
-        if (zone.getOutContoursCount() > 0) {
-            for (String outContour : zone.getOutContours()) {
-                int contourIndex = Arrays.binarySearch(allContours, outContour);
                 mask |= (1 << contourIndex);
             }
         }
@@ -287,16 +280,18 @@ public final class DiagramVisualisation {
         return AbstractBasicRegion.get(inContours);
     }
 
-    private static void addFeetForZone(TreeSet<AbstractBasicRegion> feet, TreeSet<AbstractBasicRegion> allVisibleZones, String[] allContours, HashMap<String, AbstractCurve> contourMap, Zone foot) {
-        int inMask = getZoneInMask(allContours, foot);
-        int outMask = ~getZoneOutMask(allContours, foot);
-        int allZonesCount = 1 << allContours.length;
-        for (int i = 0; i < allZonesCount; i++) {
-            if ((i & inMask) == inMask && (i | outMask) == outMask) {
-                AbstractBasicRegion abr = constructABR(allContours, i, contourMap);
-                feet.add(abr);
+    private static AbstractBasicRegion constructABR(Zone foot, HashMap<String, AbstractCurve> contourMap) {
+        TreeSet<AbstractCurve> inContours = new TreeSet<AbstractCurve>();
+        if (foot.getInContoursCount() > 0) {
+            for (String inContour : foot.getInContours()) {
+                inContours.add(contourMap.get(inContour));
             }
         }
+        return AbstractBasicRegion.get(inContours);
+    }
+
+    private static void addFeetForZone(TreeSet<AbstractBasicRegion> feet, HashMap<String, AbstractCurve> contourMap, Zone foot) {
+        feet.add(constructABR(foot, contourMap));
     }
     // </editor-fold>
 }

@@ -26,6 +26,7 @@
  */
 package speedith.core.util;
 
+import java.io.Writer;
 import java.util.Map;
 import java.util.Set;
 import java.util.List;
@@ -299,7 +300,7 @@ public class SetsTest {
      * method.
      */
     @Test
-    public void test_equal_1() {
+    public void testEqual() {
         Collection<String> s1 = new LinkedList<String>();
         s1.add("foo");
         s1.add("bar");
@@ -318,7 +319,7 @@ public class SetsTest {
      * method.
      */
     @Test
-    public void test_equal_2() {
+    public void testEqual2() {
         Collection<String> s1 = null;
         Collection<String> s2 = new ArrayList<String>();
         boolean expResult = true;
@@ -331,7 +332,7 @@ public class SetsTest {
      * method.
      */
     @Test
-    public void test_equal_3() {
+    public void testEqual3() {
         Collection<String> s1 = null;
         Collection<String> s2 = null;
         boolean expResult = true;
@@ -344,7 +345,7 @@ public class SetsTest {
      * method.
      */
     @Test
-    public void test_equal_4() {
+    public void testEqual4() {
         Collection<String> s1 = new TreeSet<String>();
         Collection<String> s2 = null;
         boolean expResult = true;
@@ -357,7 +358,7 @@ public class SetsTest {
      * method.
      */
     @Test
-    public void test_equal_5() {
+    public void testEqual5() {
         Collection<String> s1 = new LinkedList<String>();
         s1.add("foo");
         s1.add("bar");
@@ -377,7 +378,7 @@ public class SetsTest {
      * method.
      */
     @Test
-    public void test_equal_6() {
+    public void testEqual6() {
         Collection<Integer> s1 = new LinkedList<Integer>();
         s1.add(1);
         s1.add(3);
@@ -398,7 +399,7 @@ public class SetsTest {
      * method.
      */
     @Test
-    public void test_equal_7() {
+    public void testEqual7() {
         Collection<Integer> s1 = new LinkedList<Integer>();
         s1.add(1);
         s1.add(3);
@@ -419,7 +420,7 @@ public class SetsTest {
      * method.
      */
     @Test
-    public void test_equal_8() {
+    public void testEqual8() {
         Collection<Integer> s1 = new ArrayList<Integer>();
         s1.add(1);
         s1.add(3);
@@ -440,7 +441,7 @@ public class SetsTest {
      * method.
      */
     @Test
-    public void test_equal_9() {
+    public void testEqual9() {
         Collection<String> s1 = new TreeSet<String>();
         s1.add("foo");
         s1.add("zar");
@@ -459,7 +460,7 @@ public class SetsTest {
      * method.
      */
     @Test
-    public void test_equal_10() {
+    public void testEqual10() {
         Collection<String> s1 = new TreeSet<String>();
         s1.add("foo");
         s1.add("zar");
@@ -478,7 +479,7 @@ public class SetsTest {
      * method.
      */
     @Test
-    public void test_equal_11() {
+    public void testEqual11() {
         Collection<String> s1 = new TreeSet<String>();
         s1.add("foo");
         s1.add("zar");
@@ -497,7 +498,7 @@ public class SetsTest {
      * method.
      */
     @Test
-    public void test_equal_12() {
+    public void testEqual12() {
         HashMap<String, Integer> s1 = new HashMap<String, Integer>();
         s1.put("foo", 2);
         s1.put("kre", 8);
@@ -519,7 +520,7 @@ public class SetsTest {
      * method.
      */
     @Test
-    public void test_equal_13() {
+    public void testEqual13() {
         Map<String, Integer> s1 = new HashMap<String, Integer>();
         s1.put("foo", 2);
         s1.put("kre", 8);
@@ -541,7 +542,7 @@ public class SetsTest {
      * Test of isSubset method, of class Sets.
      */
     @Test
-    public void test_isSubset1() {
+    public void testIsSubset() {
         SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
         s1.add("a");
         s1.add("b");
@@ -558,7 +559,7 @@ public class SetsTest {
      * Test of isSubset method, of class Sets.
      */
     @Test
-    public void test_isSubset2() {
+    public void testIsSubset2() {
         SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
         s1.add("a");
         s1.add("b");
@@ -576,7 +577,7 @@ public class SetsTest {
      * Test of isSubset method, of class Sets.
      */
     @Test
-    public void test_isSubset3() {
+    public void testIsSubset3() {
         SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
         SortedSet<String> s2 = null;
         boolean expResult = true;
@@ -588,7 +589,7 @@ public class SetsTest {
      * Test of isSubset method, of class Sets.
      */
     @Test
-    public void test_isSubset4() {
+    public void testIsSubset4() {
         SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
         SortedSet<String> s2 = new TreeSet<String>(MyStringComparator.Instance);
         boolean expResult = true;
@@ -600,7 +601,7 @@ public class SetsTest {
      * Test of isSubset method, of class Sets.
      */
     @Test
-    public void test_isSubset5() {
+    public void testIsSubset5() {
         SortedSet<String> s1 = null;
         SortedSet<String> s2 = new TreeSet<String>(MyStringComparator.Instance);
         boolean expResult = true;
@@ -612,7 +613,7 @@ public class SetsTest {
      * Test of isSubset method, of class Sets.
      */
     @Test
-    public void test_isSubset6() {
+    public void testIsSubset6() {
         SortedSet<String> s1 = null;
         SortedSet<String> s2 = null;
         boolean expResult = true;
@@ -624,7 +625,7 @@ public class SetsTest {
      * Test of isSubset method, of class Sets.
      */
     @Test
-    public void test_isSubset7() {
+    public void testIsSubset7() {
         SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
         s1.add("a");
         s1.add("b");
@@ -641,7 +642,7 @@ public class SetsTest {
      * Test of isSubset method, of class Sets.
      */
     @Test
-    public void test_isSubset8() {
+    public void testIsSubset8() {
         SortedSet<String> s1 = new TreeSet<String>(MyStringComparator.Instance);
         s1.add("c");
         s1.add("b");
@@ -657,7 +658,7 @@ public class SetsTest {
      * Test of isNaturalSubset method, of class Sets.
      */
     @Test
-    public void test_isNaturalSubset1() {
+    public void testIsNaturalSubset() {
         SortedSet<String> s1 = new TreeSet<String>();
         s1.add("a");
         s1.add("b");
@@ -674,7 +675,7 @@ public class SetsTest {
      * Test of isNaturalSubset method, of class Sets.
      */
     @Test
-    public void test_isNaturalSubset2() {
+    public void testIsNaturalSubset2() {
         SortedSet<String> s1 = new TreeSet<String>();
         s1.add("a");
         s1.add("b");
@@ -692,7 +693,7 @@ public class SetsTest {
      * Test of isNaturalSubset method, of class Sets.
      */
     @Test
-    public void test_isNaturalSubset3() {
+    public void testIsNaturalSubset3() {
         SortedSet<String> s1 = new TreeSet<String>();
         SortedSet<String> s2 = null;
         boolean expResult = true;
@@ -704,7 +705,7 @@ public class SetsTest {
      * Test of isNaturalSubset method, of class Sets.
      */
     @Test
-    public void test_isNaturalSubset4() {
+    public void testIsNaturalSubset4() {
         SortedSet<String> s1 = new TreeSet<String>();
         SortedSet<String> s2 = new TreeSet<String>();
         boolean expResult = true;
@@ -716,7 +717,7 @@ public class SetsTest {
      * Test of isNaturalSubset method, of class Sets.
      */
     @Test
-    public void test_isNaturalSubset5() {
+    public void testIsNaturalSubset5() {
         SortedSet<String> s1 = null;
         SortedSet<String> s2 = new TreeSet<String>();
         boolean expResult = true;
@@ -728,7 +729,7 @@ public class SetsTest {
      * Test of isNaturalSubset method, of class Sets.
      */
     @Test
-    public void test_isNaturalSubset6() {
+    public void testIsNaturalSubset6() {
         SortedSet<String> s1 = null;
         SortedSet<String> s2 = null;
         boolean expResult = true;
@@ -740,7 +741,7 @@ public class SetsTest {
      * Test of isNaturalSubset method, of class Sets.
      */
     @Test
-    public void test_isNaturalSubset7() {
+    public void testIsNaturalSubset7() {
         SortedSet<String> s1 = new TreeSet<String>();
         s1.add("a");
         s1.add("b");
@@ -757,7 +758,7 @@ public class SetsTest {
      * Test of isNaturalSubset method, of class Sets.
      */
     @Test
-    public void test_isNaturalSubset8() {
+    public void testIsNaturalSubset8() {
         SortedSet<String> s1 = new TreeSet<String>();
         s1.add("c");
         s1.add("b");
@@ -769,4 +770,238 @@ public class SetsTest {
         assertEquals(expResult, result);
     }
     // </editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="'disjoint' Tests">
+    @Test
+    public void testDisjoint() {
+        SortedSet<String> a = new TreeSet<String>(MyStringComparator.Instance);
+        a.add("a");
+        a.add("b");
+        SortedSet<String> b = new TreeSet<String>(MyStringComparator.Instance);
+        b.add("a");
+        b.add("b");
+        boolean expResult = false;
+        boolean result = Sets.disjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testDisjoint2() {
+        SortedSet<String> a = new TreeSet<String>(MyStringComparator.Instance);
+        a.add("d");
+        a.add("e");
+        SortedSet<String> b = new TreeSet<String>(MyStringComparator.Instance);
+        b.add("a");
+        b.add("b");
+        b.add("c");
+        boolean expResult = true;
+        boolean result = Sets.disjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testDisjoint3() {
+        SortedSet<String> a = new TreeSet<String>(MyStringComparator.Instance);
+        a.add("a");
+        a.add("b");
+        SortedSet<String> b = new TreeSet<String>(MyStringComparator.Instance);
+        b.add("c");
+        b.add("d");
+        b.add("e");
+        boolean expResult = true;
+        boolean result = Sets.disjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testDisjoint4() {
+        SortedSet<String> a = new TreeSet<String>(MyStringComparator.Instance);
+        SortedSet<String> b = new TreeSet<String>(MyStringComparator.Instance);
+        b.add("c");
+        b.add("d");
+        b.add("e");
+        boolean expResult = true;
+        boolean result = Sets.disjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testDisjoint5() {
+        SortedSet<String> a = new TreeSet<String>(MyStringComparator.Instance);
+        SortedSet<String> b = new TreeSet<String>(MyStringComparator.Instance);
+        boolean expResult = true;
+        boolean result = Sets.disjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testDisjoint6() {
+        SortedSet<String> a = new TreeSet<String>(MyStringComparator.Instance);
+        a.add("a");
+        a.add("b");
+        SortedSet<String> b = new TreeSet<String>(MyStringComparator.Instance);
+        boolean expResult = true;
+        boolean result = Sets.disjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testDisjoint7() {
+        SortedSet<String> a = null;
+        SortedSet<String> b = new TreeSet<String>(MyStringComparator.Instance);
+        b.add("e");
+        boolean expResult = true;
+        boolean result = Sets.disjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testDisjoint8() {
+        SortedSet<String> a = new TreeSet<String>(MyStringComparator.Instance);
+        a.add("a");
+        SortedSet<String> b = null;
+        boolean expResult = true;
+        boolean result = Sets.disjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testDisjoint9() {
+        SortedSet<String> a = null;
+        SortedSet<String> b = null;
+        boolean expResult = true;
+        boolean result = Sets.disjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testDisjoint10() {
+        SortedSet<String> a = new TreeSet<String>(MyStringComparator.Instance);
+        a.add("a");
+        a.add("b");
+        SortedSet<String> b = new TreeSet<String>(MyStringComparator.Instance);
+        b.add("c");
+        b.add("b");
+        b.add("e");
+        boolean expResult = false;
+        boolean result = Sets.disjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testNaturallyDisjoint() {
+        SortedSet<String> a = new TreeSet<String>();
+        a.add("a");
+        a.add("b");
+        SortedSet<String> b = new TreeSet<String>();
+        b.add("a");
+        b.add("b");
+        boolean expResult = false;
+        boolean result = Sets.naturallyDisjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testNaturallyDisjoint2() {
+        SortedSet<String> a = new TreeSet<String>();
+        a.add("d");
+        a.add("e");
+        SortedSet<String> b = new TreeSet<String>();
+        b.add("a");
+        b.add("b");
+        b.add("c");
+        boolean expResult = true;
+        boolean result = Sets.naturallyDisjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testNaturallyDisjoint3() {
+        SortedSet<String> a = new TreeSet<String>();
+        a.add("a");
+        a.add("b");
+        SortedSet<String> b = new TreeSet<String>();
+        b.add("c");
+        b.add("d");
+        b.add("e");
+        boolean expResult = true;
+        boolean result = Sets.naturallyDisjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testNaturallyDisjoint4() {
+        SortedSet<String> a = new TreeSet<String>();
+        SortedSet<String> b = new TreeSet<String>();
+        b.add("c");
+        b.add("d");
+        b.add("e");
+        boolean expResult = true;
+        boolean result = Sets.naturallyDisjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testNaturallyDisjoint5() {
+        SortedSet<String> a = new TreeSet<String>();
+        SortedSet<String> b = new TreeSet<String>();
+        boolean expResult = true;
+        boolean result = Sets.naturallyDisjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testNaturallyDisjoint6() {
+        SortedSet<String> a = new TreeSet<String>();
+        a.add("a");
+        a.add("b");
+        SortedSet<String> b = new TreeSet<String>();
+        boolean expResult = true;
+        boolean result = Sets.naturallyDisjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testNaturallyDisjoint7() {
+        SortedSet<String> a = null;
+        SortedSet<String> b = new TreeSet<String>();
+        b.add("e");
+        boolean expResult = true;
+        boolean result = Sets.naturallyDisjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testNaturallyDisjoint8() {
+        SortedSet<String> a = new TreeSet<String>();
+        a.add("a");
+        SortedSet<String> b = null;
+        boolean expResult = true;
+        boolean result = Sets.naturallyDisjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testNaturallyDisjoint9() {
+        SortedSet<String> a = null;
+        SortedSet<String> b = null;
+        boolean expResult = true;
+        boolean result = Sets.naturallyDisjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testNaturallyDisjoint10() {
+        SortedSet<String> a = new TreeSet<String>();
+        a.add("a");
+        a.add("b");
+        SortedSet<String> b = new TreeSet<String>();
+        b.add("c");
+        b.add("b");
+        b.add("e");
+        boolean expResult = false;
+        boolean result = Sets.naturallyDisjoint(a, b);
+        assertEquals(expResult, result);
+    }
+    //</editor-fold>
 }

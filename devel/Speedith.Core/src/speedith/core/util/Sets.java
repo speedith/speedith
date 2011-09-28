@@ -333,6 +333,14 @@ public final class Sets {
      * <p>Note: {@code null} is treated as an empty set.</p>
      * <p>Note: the complexity of this operation is O(M + N), where M and N are
      * the sizes of the sets {@code a} and {@code b}.</p>
+     * <p><span style="font-weight:bold">Note</span>: this method uses the
+     * {@link SortedSet#comparator() comparator} provided in the two sets. You
+     * can contrast this method with the
+     * {@link Sets#naturallyDisjoint(java.util.SortedSet, java.util.SortedSet)}
+     * method (which uses the elements' {@link
+     * Comparable#compareTo(java.lang.Object)} methods).</p>
+     * <p><span style="font-weight:bold">Note</span>: this method will throw
+     * an exception if the two sets do not share the same comparator.</p>
      * @param <E> the type of elements in the sets.
      * @param a the first set.
      * @param b the second set.
@@ -368,8 +376,57 @@ public final class Sets {
         }
     }
 
-    public static <E> boolean areDisjoint(SortedSet<E> a, SortedSet<E> b) {
-        throw new UnsupportedOperationException();
+    /**
+     * Returns {@code true} if and only if the intersection of {@code a} and {@code
+     * b} is an empty set.
+     * <p>Note: {@code null} is treated as an empty set.</p>
+     * <p>Note: the complexity of this operation is O(M + N), where M and N are
+     * the sizes of the sets {@code a} and {@code b}.</p>
+     * <p><span style="font-weight:bold">Note</span>: this method uses the
+     * natural order of the elements in the two sets (i.e.: it uses the
+     * elements' {@link Comparable#compareTo(java.lang.Object)} methods). You
+     * can contrast this method with the
+     * {@link Sets#disjoint(java.util.SortedSet, java.util.SortedSet)}
+     * method (which uses the two sets' comparators).</p>
+     * <p><span style="font-weight:bold">Note</span>: this method will throw
+     * an exception if the any of the two sets have a {@link SortedSet#comparator()
+     * comparator}.</p>
+     * @param <E> the type of elements in the sets.
+     * @param a the first set.
+     * @param b the second set.
+     * @return {@code true} if and only if the intersection of {@code a} and {@code
+     * b} is an empty set.
+     */
+    public static <E extends Comparable<? super E>> boolean naturallyDisjoint(SortedSet<E> a, SortedSet<E> b) {
+        if (a == null || a.isEmpty() || b == null || b.isEmpty()) {
+            return true;
+        } else {
+            // The sets must not have a comparator! Because then the order could
+            // be different and this method would not work.
+            checkSetsOrderedNaturally(a, b);
+            
+            Iterator<E> it1 = a.iterator(), it2 = b.iterator();
+            E curEl1 = it1.next(), curEl2 = it2.next();
+
+            while (true) {
+                int compare = compare(curEl1, curEl2);
+                if (compare == 0) {
+                    return false;
+                } else if (compare < 0) {
+                    if (it1.hasNext()) {
+                        curEl1 = it1.next();
+                    } else {
+                        return true;
+                    }
+                } else {
+                    if (it2.hasNext()) {
+                        curEl2 = it2.next();
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        }
     }
     // </editor-fold>
 

@@ -31,7 +31,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import javax.naming.OperationNotSupportedException;
 import speedith.core.util.Sets;
 import static speedith.core.i18n.Translations.i18n;
 import static speedith.core.util.Sets.equal;
@@ -245,7 +244,13 @@ public class Zone implements Comparable<Zone> {
      * </ul>
      */
     public boolean isValid(SortedSet<String> contours) {
-        throw new UnsupportedOperationException();
+        // NOTE: Maybe we can check whether the disjoint sum of 'inCountours'
+        // and 'outContours' equals to 'contours' in a different, more efficient
+        // way.
+        return Sets.naturallyDisjoint(this.inContours, this.outContours)
+                && Sets.isNaturalSubset(this.inContours, contours)
+                && Sets.isNaturalSubset(this.outContours, contours)
+                && contours.size() == this.getInContoursCount() + this.getOutContoursCount();
     }
     // </editor-fold>
 
@@ -266,7 +271,7 @@ public class Zone implements Comparable<Zone> {
         SpiderDiagram.printStringList(sb, outContours);
         sb.append(')');
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

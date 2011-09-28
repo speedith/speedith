@@ -63,6 +63,8 @@ public class SpiderDiagramsReaderTest {
     public static final String SD_EXAMPLE_12 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op <-->\" }";
     public static final String SD_EXAMPLE_13 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op &\" }";
     public static final String SD_EXAMPLE_14 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op |\" }";
+    public static final String SD_EXAMPLE_15 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [\"B\"])]), (\"s'\", [([\"B\"], [\"A\"])])], sh_zones = []}, operator = \"op -->\" }";
+    public static final String SD_EXAMPLE_16 = "PrimarySD { spiders = [\"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s'\", [([\"A\"], [\"C\", \"D\", \"B\"]), ([\"A\", \"D\"], [\"C\", \"B\"])])]}";
     public static final String SD_EXAMPLE_ERR_1 = "UnarySD {operator = \"op not\", ar1 = BinarySD {operator = \"op &\", arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = NullSD {} }}";
     public static final String SD_EXAMPLE_ERR_2 = "";
     public static final String SD_EXAMPLE_ERR_3 = "Primary {}";
@@ -107,44 +109,64 @@ public class SpiderDiagramsReaderTest {
         SpiderDiagram sd1 = checkSDExample(SD_EXAMPLE_1);
         testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd1);
         assertEquals(3, sd1.getSubDiagramCount());
+        assertFalse(sd1.isValid());
 
         SpiderDiagram sd2 = checkSDExample(SD_EXAMPLE_2);
         testGetSubDiagramAt_sd2((CompoundSpiderDiagram) sd2);
         assertEquals(4, sd2.getSubDiagramCount());
+        assertFalse(sd2.isValid());
 
         SpiderDiagram sd3 = checkSDExample(SD_EXAMPLE_3);
         testGetSubDiagramAt_sd2((CompoundSpiderDiagram) sd3);
         assertEquals(4, sd3.getSubDiagramCount());
+        assertFalse(sd3.isValid());
 
         SpiderDiagram sd4 = checkSDExample(SD_EXAMPLE_4);
         assertEquals(1, sd4.getSubDiagramCount());
+        assertTrue(sd4.isValid());
 
         SpiderDiagram sd5 = checkSDExample(SD_EXAMPLE_5);
         assertEquals(1, sd5.getSubDiagramCount());
+        assertTrue(sd5.isValid());
 
         SpiderDiagram sd6 = checkSDExample(SD_EXAMPLE_6);
         testGetSubDiagramAt_sd6((CompoundSpiderDiagram) sd6);
         assertEquals(2, sd6.getSubDiagramCount());
+        assertTrue(sd6.isValid());
 
         SpiderDiagram sd7 = checkSDExample(SD_EXAMPLE_7);
         testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd7);
         assertEquals(3, sd7.getSubDiagramCount());
+        assertTrue(sd7.isValid());
 
         SpiderDiagram sd = checkSDExample(SD_EXAMPLE_8);
         testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd);
         assertEquals(3, sd.getSubDiagramCount());
+        assertTrue(sd.isValid());
 
         sd = checkSDExample(SD_EXAMPLE_9);
         testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd);
         assertEquals(3, sd.getSubDiagramCount());
+        assertFalse(sd.isValid());
 
         sd = checkSDExample(SD_EXAMPLE_10);
         testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd);
         assertEquals(3, sd.getSubDiagramCount());
+        assertFalse(sd.isValid());
 
         sd = checkSDExample(SD_EXAMPLE_11);
         testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd);
         assertEquals(3, sd.getSubDiagramCount());
+        assertFalse(sd.isValid());
+
+        sd = checkSDExample(SD_EXAMPLE_15);
+        testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd);
+        assertEquals(3, sd.getSubDiagramCount());
+        assertTrue(sd.isValid());
+
+        sd = checkSDExample(SD_EXAMPLE_16);
+        assertEquals(1, sd.getSubDiagramCount());
+        assertTrue(sd.isValid());
     }
 
     private SpiderDiagram checkSDExample(String example) throws ReadingException {
