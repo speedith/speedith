@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import javax.naming.OperationNotSupportedException;
 import speedith.core.util.Sets;
 import static speedith.core.i18n.Translations.i18n;
 import static speedith.core.util.Sets.equal;
@@ -229,6 +230,22 @@ public class Zone implements Comparable<Zone> {
      */
     public static Zone fromOutContours(String... outContours) {
         return new Zone(null, Arrays.asList(outContours));
+    }
+
+    /**
+     * Checks whether this zone contains all the contours (either as in- or out-
+     * contours).
+     * <p>This method also checks whether the set of in- and out- contours are
+     * disjoint.</p>
+     * @param contours the set of contours against which to validate this zone.
+     * @return {@code true} if and only if this zone has:
+     * <ul>
+     *      <li>disjoint in- and out-contours sets, and</li>
+     *      <li>contains all the contours.</li>
+     * </ul>
+     */
+    public boolean isValid(SortedSet<String> contours) {
+        throw new UnsupportedOperationException();
     }
     // </editor-fold>
 

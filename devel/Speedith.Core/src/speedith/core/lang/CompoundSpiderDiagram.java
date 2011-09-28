@@ -225,6 +225,16 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     }
 
     @Override
+    public boolean isValid() {
+        for (SpiderDiagram spiderDiagram : operands) {
+            if (!spiderDiagram.isValid()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public SpiderDiagram transform(Transformer t, boolean trackParents) {
         if (t == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "t"));

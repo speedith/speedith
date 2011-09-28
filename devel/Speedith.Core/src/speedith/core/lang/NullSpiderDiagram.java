@@ -81,6 +81,11 @@ public class NullSpiderDiagram extends SpiderDiagram {
             throw new IndexOutOfBoundsException(i18n("GERR_INDEX_OUT_OF_BOUNDS"));
         }
     }
+
+    @Override
+    public boolean isValid() {
+        return true;
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Equality">

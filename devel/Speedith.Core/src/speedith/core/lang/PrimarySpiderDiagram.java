@@ -87,6 +87,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     private TreeSet<String> spiders;
     private TreeMap<String, Region> habitats;
     private TreeSet<Zone> shadedZones;
+    private TreeSet<String> allContours;
     private boolean hashInvalid = true;
     private int hash;
     // </editor-fold>
@@ -243,17 +244,20 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * @return a set of all contours that are mentioned in this primary spider
      * diagram.
      */
-    public TreeSet<String> getContours() {
-        TreeSet<String> contours = new TreeSet<String>();
+    public SortedSet<String> getContours() {
+        extractContours();
+        return Collections.unmodifiableSortedSet(allContours);
+    }
+
+    @Override
+    public boolean isValid() {
+        SortedSet<String> contours = getContours();
         if (habitats != null) {
             for (Region region : this.habitats.values()) {
                 if (region.getZonesCount() > 0) {
                     for (Zone zone : region.getZones()) {
-                        if (zone.getInContoursCount() > 0) {
-                            contours.addAll(zone.getInContours());
-                        }
-                        if (zone.getOutContoursCount() > 0) {
-                            contours.addAll(zone.getOutContours());
+                        if (!zone.isValid(contours)) {
+                            return false;
                         }
                     }
                 }
@@ -261,15 +265,12 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         }
         if (this.shadedZones != null) {
             for (Zone zone : this.shadedZones) {
-                if (zone.getInContoursCount() > 0) {
-                    contours.addAll(zone.getInContours());
-                }
-                if (zone.getOutContoursCount() > 0) {
-                    contours.addAll(zone.getOutContours());
+                if (!zone.isValid(contours)) {
+                    return false;
                 }
             }
         }
-        return contours;
+        return true;
     }
     // </editor-fold>
 
@@ -472,6 +473,40 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
             }
         }
         return true;
+    }
+
+    /**
+     * Traverses all zones mentioned in this primary spider diagram and collects
+     * all names of contours mentioned in these zones.
+     */
+    private void extractContours() {
+        if (allContours == null) {
+            allContours = new TreeSet<String>();
+            if (habitats != null) {
+                for (Region region : this.habitats.values()) {
+                    if (region.getZonesCount() > 0) {
+                        for (Zone zone : region.getZones()) {
+                            if (zone.getInContoursCount() > 0) {
+                                allContours.addAll(zone.getInContours());
+                            }
+                            if (zone.getOutContoursCount() > 0) {
+                                allContours.addAll(zone.getOutContours());
+                            }
+                        }
+                    }
+                }
+            }
+            if (this.shadedZones != null) {
+                for (Zone zone : this.shadedZones) {
+                    if (zone.getInContoursCount() > 0) {
+                        allContours.addAll(zone.getInContours());
+                    }
+                    if (zone.getOutContoursCount() > 0) {
+                        allContours.addAll(zone.getOutContours());
+                    }
+                }
+            }
+        }
     }
     // </editor-fold>
 }

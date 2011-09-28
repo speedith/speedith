@@ -26,6 +26,7 @@
  */
 package speedith.draw;
 
+import java.util.SortedSet;
 import icircles.abstractDescription.AbstractBasicRegion;
 import icircles.abstractDescription.AbstractCurve;
 import icircles.abstractDescription.AbstractDescription;
@@ -50,6 +51,7 @@ import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Zone;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
+import static speedith.i18n.Translations.*;
 
 /**
  * This is a utility class providing the functionality to visualise {@link
@@ -95,27 +97,33 @@ public final class DiagramVisualisation {
      * @param psd the primary spider diagram for which to create an abstract description.
      * @return an abstract description of the spider diagram that corresponds to
      * the given primary spider diagram.
+     * @throws CannotDrawException This exception is thrown if there are too many
+     * contours in the diagram.
      */
-    public static AbstractDescription getAbstractDescription(PrimarySpiderDiagram psd) {
-        // Look at AbstractDescription.makeForTesting for details on how to
-        // build an AbstractDescription.
-
-        TreeSet<String> contourStrings = psd.getContours();
+    public static AbstractDescription getAbstractDescription(PrimarySpiderDiagram psd) throws CannotDrawException {
+        
+        // First we fetch all the contours that are mentioned in a primary spider
+        // diagram.
+        SortedSet<String> contourStrings = psd.getContours();
 
         if (contourStrings.size() > 10) {
-            throw new RuntimeException("Too many different contours. Unpractical for drawing.");
+            throw new CannotDrawException(i18n("TOO_MANY_CONTOURS"));
         }
 
         HashMap<String, AbstractCurve> contourMap = new HashMap<String, AbstractCurve>();
         TreeSet<AbstractCurve> contours = new TreeSet<AbstractCurve>();
-//        TreeSet<AbstractBasicRegion> nonShadedZones = new TreeSet<AbstractBasicRegion>();
         TreeSet<AbstractBasicRegion> shadedHabitatZones = new TreeSet<AbstractBasicRegion>();
         TreeSet<AbstractBasicRegion> allVisibleZones = new TreeSet<AbstractBasicRegion>();
 
         String[] allContours = contourStrings.toArray(new String[contourStrings.size()]);
 
-        // Now construct a list of all possible contours that are not shaded.
+        // Now construct a list of all possible zones. There are 2^size(contours)
+        // zones. This is why we don't want more than say 10 contours... Things
+        // just blow up otherwise.
         int allZonesCount = 1 << contourStrings.size();
+        // This array contains bit flags for each zone. The flags indicate whether
+        // a particular zone is shaded or whether is part of a spider's habitat
+        // (or both).
         byte[] allZones = new byte[allZonesCount];
         final byte IsShaded = 1;
         final byte IsInHabitat = 2;
@@ -131,6 +139,7 @@ public final class DiagramVisualisation {
         if (psd.getHabitatsCount() > 0) {
             for (Region region : psd.getHabitats().values()) {
                 for (Zone zone : region.getZones()) {
+                    // Mark this zone as being part of a spider's habitat.
                     markZone(allZones, allContours, zone, IsInHabitat);
                 }
             }
@@ -161,7 +170,6 @@ public final class DiagramVisualisation {
         }
         AbstractDescription ad = new AbstractDescription(contours, allVisibleZones, shadedHabitatZones);
 
-        // TODO: Add spiders.
         if (psd.getHabitatsCount() > 0) {
             SortedMap<String, Region> habitats = psd.getHabitats();
             for (Entry<String, Region> habitat : habitats.entrySet()) {
@@ -235,6 +243,9 @@ public final class DiagramVisualisation {
      * @param code 
      */
     private static void markZone(byte[] allZones, String[] allContours, Zone zone, byte code) {
+        // We have to mark the zone with the given code. But how do we determine
+        // the index of the zone?
+        // Well, say we have 'n' contours. Then a zone is specified
         int inMask = getZoneInMask(allContours, zone);
         int outMask = ~getZoneOutMask(allContours, zone);
         for (int i = 0; i < allZones.length; i++) {

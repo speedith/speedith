@@ -326,6 +326,51 @@ public final class Sets {
             return a.equals(b);
         }
     }
+
+    /**
+     * Returns {@code true} if and only if the intersection of {@code a} and {@code
+     * b} is an empty set.
+     * <p>Note: {@code null} is treated as an empty set.</p>
+     * <p>Note: the complexity of this operation is O(M + N), where M and N are
+     * the sizes of the sets {@code a} and {@code b}.</p>
+     * @param <E> the type of elements in the sets.
+     * @param a the first set.
+     * @param b the second set.
+     * @return {@code true} if and only if the intersection of {@code a} and {@code
+     * b} is an empty set.
+     */
+    public static <E> boolean disjoint(SortedSet<E> a, SortedSet<E> b) {
+        if (a == null || a.isEmpty() || b == null || b.isEmpty()) {
+            return true;
+        } else {
+            Comparator<? super E> comparator = getElementComparator(a, b);
+            Iterator<E> it1 = a.iterator(), it2 = b.iterator();
+            E curEl1 = it1.next(), curEl2 = it2.next();
+
+            while (true) {
+                int compare = comparator.compare(curEl1, curEl2);
+                if (compare == 0) {
+                    return false;
+                } else if (compare < 0) {
+                    if (it1.hasNext()) {
+                        curEl1 = it1.next();
+                    } else {
+                        return true;
+                    }
+                } else {
+                    if (it2.hasNext()) {
+                        curEl2 = it2.next();
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    public static <E> boolean areDisjoint(SortedSet<E> a, SortedSet<E> b) {
+        throw new UnsupportedOperationException();
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Printing">

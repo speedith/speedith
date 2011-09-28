@@ -173,6 +173,21 @@ public abstract class SpiderDiagram {
      * children of the children and also counting the diagram itself).
      */
     public abstract int getSubDiagramCount();
+    
+    /**
+     * Checks whether this spider diagram is valid (whether it conforms to all
+     * constraints of a well-defined spider diagram).
+     * <p>A spider diagram is valid if:
+     * <ul>
+     *      <li>the sets of in- and out-contours are disjoint,</li>
+     *      <li>all zones are fully specified (they contain all the contours
+     *          that are mentioned in the primary spider diagram), and</li>
+     *      <li>all operands in a compound spider diagram are valid.</li>
+     * </ul>
+     * </p>
+     * @return
+     */
+    public abstract boolean isValid();
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
