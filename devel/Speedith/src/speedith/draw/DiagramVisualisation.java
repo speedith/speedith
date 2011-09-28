@@ -43,6 +43,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeSet;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagram;
@@ -58,76 +59,26 @@ import speedith.core.lang.reader.SpiderDiagramsReader;
  */
 public final class DiagramVisualisation {
 
+    // <editor-fold defaultstate="collapsed" desc="Deprecated Methods">
+    @Deprecated
     private static void drawPSD(PrimarySpiderDiagram psd1) throws HeadlessException, CannotDrawException {
         AbstractDescription ad = getAbstractDescription(psd1);
         drawAD(ad);
     }
-
+    
+    @Deprecated
     private static void drawAD(AbstractDescription ad) throws CannotDrawException, HeadlessException {
         ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(ad, 300);
-
-        CirclesPanel cp = new CirclesPanel("a sample CirclesPanel", "No failure message", cd, 300, true);
-
-        JFrame viewingFrame = new JFrame("frame to hold a CirclesPanel");
+        
+        CirclesPanel cp = new CirclesPanel("", "No failure message", cd, 300, true);
+        
+        JFrame viewingFrame = new JFrame("");
         viewingFrame.getContentPane().add(cp);
         viewingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         viewingFrame.pack();
         viewingFrame.setVisible(true);
     }
-
-    private static void markZone(byte[] allZones, String[] allContours, Zone zone, byte code) {
-        int inMask = getZoneInMask(allContours, zone);
-        int outMask = ~getZoneOutMask(allContours, zone);
-        for (int i = 0; i < allZones.length; i++) {
-            if ((i & inMask) == inMask && (i | outMask) == outMask) {
-                allZones[i] |= code;
-            }
-        }
-    }
-
-    private static int getZoneInMask(String[] allContours, Zone zone) {
-        int mask = 0;
-        if (zone.getInContoursCount() > 0) {
-            for (String inContour : zone.getInContours()) {
-                int contourIndex = Arrays.binarySearch(allContours, inContour);
-                mask |= (1 << contourIndex);
-            }
-        }
-        return mask;
-    }
-
-    private static int getZoneOutMask(String[] allContours, Zone zone) {
-        int mask = 0;
-        if (zone.getOutContoursCount() > 0) {
-            for (String outContour : zone.getOutContours()) {
-                int contourIndex = Arrays.binarySearch(allContours, outContour);
-                mask |= (1 << contourIndex);
-            }
-        }
-        return mask;
-    }
-
-    private static AbstractBasicRegion constructABR(String[] allContours, int zoneIndex, HashMap<String, AbstractCurve> contourMap) {
-        TreeSet<AbstractCurve> inContours = new TreeSet<AbstractCurve>();
-        for (int i = 0; i < allContours.length; i++) {
-            if ((zoneIndex & (1 << i)) != 0) {
-                inContours.add(contourMap.get(allContours[i]));
-            }
-        }
-        return AbstractBasicRegion.get(inContours);
-    }
-
-    private static void addFeetForZone(TreeSet<AbstractBasicRegion> feet, TreeSet<AbstractBasicRegion> allVisibleZones, String[] allContours, HashMap<String, AbstractCurve> contourMap, Zone foot) {
-        int inMask = getZoneInMask(allContours, foot);
-        int outMask = ~getZoneOutMask(allContours, foot);
-        int allZonesCount = 1 << allContours.length;
-        for (int i = 0; i < allZonesCount; i++) {
-            if ((i & inMask) == inMask && (i | outMask) == outMask) {
-                AbstractBasicRegion abr = constructABR(allContours, i, contourMap);
-                feet.add(abr);
-            }
-        }
-    }
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
     private DiagramVisualisation() {
@@ -135,7 +86,17 @@ public final class DiagramVisualisation {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
-    static AbstractDescription getAbstractDescription(PrimarySpiderDiagram psd) {
+    /**
+     * Creates an {@link AbstractDescription abstract description} from the given
+     * {@link PrimarySpiderDiagram primary spider diagram}. This abstract description
+     * can be used with the {@link DiagramVisualisation#getCirclesPanel(icircles.abstractDescription.AbstractDescription, int)}
+     * method, which returns a {@link JPanel panel} that actually draws the given
+     * diagram.
+     * @param psd the primary spider diagram for which to create an abstract description.
+     * @return an abstract description of the spider diagram that corresponds to
+     * the given primary spider diagram.
+     */
+    public static AbstractDescription getAbstractDescription(PrimarySpiderDiagram psd) {
         // Look at AbstractDescription.makeForTesting for details on how to
         // build an AbstractDescription.
 
@@ -216,6 +177,11 @@ public final class DiagramVisualisation {
 
         return ad;
     }
+    
+    public static CirclesPanel getCirclesPanel(AbstractDescription ad, int size) throws CannotDrawException {
+        ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(ad, size);
+        return new CirclesPanel("", "No failure message", cd, size, true);
+    }
 
     public static void main(String[] args) throws ReadingException, CannotDrawException {
 
@@ -258,4 +224,68 @@ public final class DiagramVisualisation {
 //            drawPSD(psd);
         }
     }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Private Helper Methods">
+    /**
+     * This method looks at the contours in the zone and 
+     * @param allZones
+     * @param allContours
+     * @param zone
+     * @param code 
+     */
+    private static void markZone(byte[] allZones, String[] allContours, Zone zone, byte code) {
+        int inMask = getZoneInMask(allContours, zone);
+        int outMask = ~getZoneOutMask(allContours, zone);
+        for (int i = 0; i < allZones.length; i++) {
+            if ((i & inMask) == inMask && (i | outMask) == outMask) {
+                allZones[i] |= code;
+            }
+        }
+    }
+
+    private static int getZoneInMask(String[] allContours, Zone zone) {
+        int mask = 0;
+        if (zone.getInContoursCount() > 0) {
+            for (String inContour : zone.getInContours()) {
+                int contourIndex = Arrays.binarySearch(allContours, inContour);
+                mask |= (1 << contourIndex);
+            }
+        }
+        return mask;
+    }
+
+    private static int getZoneOutMask(String[] allContours, Zone zone) {
+        int mask = 0;
+        if (zone.getOutContoursCount() > 0) {
+            for (String outContour : zone.getOutContours()) {
+                int contourIndex = Arrays.binarySearch(allContours, outContour);
+                mask |= (1 << contourIndex);
+            }
+        }
+        return mask;
+    }
+
+    private static AbstractBasicRegion constructABR(String[] allContours, int zoneIndex, HashMap<String, AbstractCurve> contourMap) {
+        TreeSet<AbstractCurve> inContours = new TreeSet<AbstractCurve>();
+        for (int i = 0; i < allContours.length; i++) {
+            if ((zoneIndex & (1 << i)) != 0) {
+                inContours.add(contourMap.get(allContours[i]));
+            }
+        }
+        return AbstractBasicRegion.get(inContours);
+    }
+
+    private static void addFeetForZone(TreeSet<AbstractBasicRegion> feet, TreeSet<AbstractBasicRegion> allVisibleZones, String[] allContours, HashMap<String, AbstractCurve> contourMap, Zone foot) {
+        int inMask = getZoneInMask(allContours, foot);
+        int outMask = ~getZoneOutMask(allContours, foot);
+        int allZonesCount = 1 << allContours.length;
+        for (int i = 0; i < allZonesCount; i++) {
+            if ((i & inMask) == inMask && (i | outMask) == outMask) {
+                AbstractBasicRegion abr = constructABR(allContours, i, contourMap);
+                feet.add(abr);
+            }
+        }
+    }
+    // </editor-fold>
 }

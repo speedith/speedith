@@ -37,7 +37,7 @@ import org.openide.awt.ActionReference;
 @TopComponent.Description(preferredID = "SpeedithTopComponent", iconBase = "speedith/i3p/ui/SpeedithIconVennDiagram-16.png")
 @TopComponent.Registration(mode = "explorer", openAtStartup = true, position=60)
 @ActionID(category = "Window", id = "speedith.i3p.ui.SpeedithTopComponent")
-@ActionReference(path = "Menu/Window", position = 333)
+@ActionReference(path = "Menu/Window", position = 300)
 @TopComponent.OpenActionRegistration(displayName = "#CTL_SpeedithAction", preferredID = "SpeedithTopComponent")
 public class SpeedithTopComponent extends TopComponent {
 

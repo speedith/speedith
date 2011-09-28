@@ -368,6 +368,9 @@ lemma sd_rule_split_spiders_B: "\<lbrakk> habs = (h#hs); habA \<union> habB = h 
                                            (PrimarySD (habB#hs) shzs))"
   by auto
 
+(*lemma sd_rule_excluded_middle: "\<lbrakk> h \<inter> shzs = {}; psd_sem habs shzs \<rbrakk> \<Longrightarrow> (psd_sem habs (h \<union> shzs)) \<or> psd_sem (h#habs) shzs"
+apply (auto simp del: sd_region_sem.simps)*)
+
 
 (*ML {* @{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"} *}
 ML {* @{term "True"} *}
