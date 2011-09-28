@@ -33,23 +33,19 @@ import org.openide.awt.ActionReference;
 /**
  * Top component which displays something.
  */
-@ConvertAsProperties(dtd = "-//speedith.i3p.ui//Speedith//EN",
-autostore = false)
-@TopComponent.Description(preferredID = "SpeedithTopComponent",
-iconBase = "speedith/i3p/ui/SpeedithIconVennDiagram-16.png",
-persistenceType = TopComponent.PERSISTENCE_ALWAYS)
-@TopComponent.Registration(mode = "isaresult", openAtStartup = true)
+@ConvertAsProperties(dtd = "-//speedith.i3p.ui//Speedith//EN", autostore = false)
+@TopComponent.Description(preferredID = "SpeedithTopComponent", iconBase = "speedith/i3p/ui/SpeedithIconVennDiagram-16.png")
+@TopComponent.Registration(mode = "explorer", openAtStartup = true, position=60)
 @ActionID(category = "Window", id = "speedith.i3p.ui.SpeedithTopComponent")
-@ActionReference(path = "Menu/Window" /*, position = 333 */)
-@TopComponent.OpenActionRegistration(displayName = "#CTL_SpeedithAction",
-preferredID = "SpeedithTopComponent")
-public final class SpeedithTopComponent extends TopComponent {
+@ActionReference(path = "Menu/Window", position = 333)
+@TopComponent.OpenActionRegistration(displayName = "#CTL_SpeedithAction", preferredID = "SpeedithTopComponent")
+public class SpeedithTopComponent extends TopComponent {
 
     public SpeedithTopComponent() {
         initComponents();
         setName(NbBundle.getMessage(SpeedithTopComponent.class, "CTL_SpeedithTopComponent"));
         setToolTipText(NbBundle.getMessage(SpeedithTopComponent.class, "HINT_SpeedithTopComponent"));
-
+        putClientProperty(TopComponent.PROP_UNDOCKING_DISABLED, Boolean.TRUE);
     }
 
     /** This method is called from within the constructor to
