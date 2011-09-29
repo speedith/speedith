@@ -70,8 +70,6 @@ public class SDExportingTest {
      */
     @Test
     public void testGetExporter_String() throws ReadingException, ExportException {
-        // TODO: Finish the test (compare it with the expected result -- a
-        // manually written Isabelle formula string).
         SDExporter exporter = SDExporting.getExporter(Isabelle2011ExportProvider.FormatName);
         SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
         String sdStr = exporter.export(sd);

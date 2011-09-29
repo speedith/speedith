@@ -26,7 +26,6 @@
  */
 package speedith.core.util;
 
-import java.io.Writer;
 import java.util.Map;
 import java.util.Set;
 import java.util.List;
@@ -784,7 +783,7 @@ public class SetsTest {
         boolean result = Sets.disjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testDisjoint2() {
         SortedSet<String> a = new TreeSet<String>(MyStringComparator.Instance);
@@ -798,7 +797,7 @@ public class SetsTest {
         boolean result = Sets.disjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testDisjoint3() {
         SortedSet<String> a = new TreeSet<String>(MyStringComparator.Instance);
@@ -812,7 +811,7 @@ public class SetsTest {
         boolean result = Sets.disjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testDisjoint4() {
         SortedSet<String> a = new TreeSet<String>(MyStringComparator.Instance);
@@ -824,7 +823,7 @@ public class SetsTest {
         boolean result = Sets.disjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testDisjoint5() {
         SortedSet<String> a = new TreeSet<String>(MyStringComparator.Instance);
@@ -833,7 +832,7 @@ public class SetsTest {
         boolean result = Sets.disjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testDisjoint6() {
         SortedSet<String> a = new TreeSet<String>(MyStringComparator.Instance);
@@ -844,7 +843,7 @@ public class SetsTest {
         boolean result = Sets.disjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testDisjoint7() {
         SortedSet<String> a = null;
@@ -854,7 +853,7 @@ public class SetsTest {
         boolean result = Sets.disjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testDisjoint8() {
         SortedSet<String> a = new TreeSet<String>(MyStringComparator.Instance);
@@ -864,7 +863,7 @@ public class SetsTest {
         boolean result = Sets.disjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testDisjoint9() {
         SortedSet<String> a = null;
@@ -873,7 +872,7 @@ public class SetsTest {
         boolean result = Sets.disjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testDisjoint10() {
         SortedSet<String> a = new TreeSet<String>(MyStringComparator.Instance);
@@ -887,7 +886,7 @@ public class SetsTest {
         boolean result = Sets.disjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testNaturallyDisjoint() {
         SortedSet<String> a = new TreeSet<String>();
@@ -900,7 +899,7 @@ public class SetsTest {
         boolean result = Sets.naturallyDisjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testNaturallyDisjoint2() {
         SortedSet<String> a = new TreeSet<String>();
@@ -914,7 +913,7 @@ public class SetsTest {
         boolean result = Sets.naturallyDisjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testNaturallyDisjoint3() {
         SortedSet<String> a = new TreeSet<String>();
@@ -928,7 +927,7 @@ public class SetsTest {
         boolean result = Sets.naturallyDisjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testNaturallyDisjoint4() {
         SortedSet<String> a = new TreeSet<String>();
@@ -940,7 +939,7 @@ public class SetsTest {
         boolean result = Sets.naturallyDisjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testNaturallyDisjoint5() {
         SortedSet<String> a = new TreeSet<String>();
@@ -949,7 +948,7 @@ public class SetsTest {
         boolean result = Sets.naturallyDisjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testNaturallyDisjoint6() {
         SortedSet<String> a = new TreeSet<String>();
@@ -960,7 +959,7 @@ public class SetsTest {
         boolean result = Sets.naturallyDisjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testNaturallyDisjoint7() {
         SortedSet<String> a = null;
@@ -970,7 +969,7 @@ public class SetsTest {
         boolean result = Sets.naturallyDisjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testNaturallyDisjoint8() {
         SortedSet<String> a = new TreeSet<String>();
@@ -980,7 +979,7 @@ public class SetsTest {
         boolean result = Sets.naturallyDisjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testNaturallyDisjoint9() {
         SortedSet<String> a = null;
@@ -989,7 +988,7 @@ public class SetsTest {
         boolean result = Sets.naturallyDisjoint(a, b);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testNaturallyDisjoint10() {
         SortedSet<String> a = new TreeSet<String>();
@@ -1002,6 +1001,42 @@ public class SetsTest {
         boolean expResult = false;
         boolean result = Sets.naturallyDisjoint(a, b);
         assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testNaturallyDisjoint11() {
+        Random rng = new Random();
+        final int repCount = 100;
+        boolean retVals[] = new boolean[repCount];
+        for (int i = 0; i < repCount; i++) {
+            SortedSet<Integer> a = randomSet(rng, 0, 10, rng.nextInt(10));
+            SortedSet<Integer> b = randomSet(rng, 0, 10, rng.nextInt(10));
+            boolean expResult = disjointImpl(a, b);
+            boolean result = Sets.naturallyDisjoint(a, b);
+            assertEquals(expResult, result);
+            retVals[i] = result;
+        }
+    }
+
+    public static TreeSet<Integer> randomSet(Random rng, int min, int max, int size) {
+        TreeSet<Integer> treeSet = new TreeSet<Integer>();
+        if (rng == null) {
+            rng = new Random();
+        }
+        for (int i = 0; i < size; i++) {
+            treeSet.add(rng.nextInt(Math.abs(max - min) + 1) + min);
+        }
+        return treeSet;
+    }
+
+    public static <E> boolean disjointImpl(SortedSet<E> a, SortedSet<E> b) {
+        if (a == null || b == null) {
+            return true;
+        } else {
+            a = new TreeSet<E>(a);
+            a.retainAll(b);
+            return a.isEmpty();
+        }
     }
     //</editor-fold>
 }
