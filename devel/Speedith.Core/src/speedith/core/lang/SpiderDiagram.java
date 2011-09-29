@@ -185,7 +185,8 @@ public abstract class SpiderDiagram {
      *      <li>all operands in a compound spider diagram are valid.</li>
      * </ul>
      * </p>
-     * @return
+     * @return {@code true} if and only if the diagram is valid according to the
+     * above rules.
      */
     public abstract boolean isValid();
     // </editor-fold>

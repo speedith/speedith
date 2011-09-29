@@ -238,7 +238,7 @@ public final class DiagramVisualisation {
     }
 
     /**
-     * 
+     * TODO: Document.
      * @param ad
      * @param size
      * @return
@@ -246,6 +246,18 @@ public final class DiagramVisualisation {
      */
     public static CirclesPanel getCirclesPanel(AbstractDescription ad, int size) throws CannotDrawException {
         ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(ad, size);
+        return new CirclesPanel("", "No failure message", cd, size, true);
+    }
+
+    /**
+     * TODO: Document.
+     * @param diagram
+     * @param size
+     * @return
+     * @throws CannotDrawException
+     */
+    public static CirclesPanel getCirclesPanel(PrimarySpiderDiagram diagram, int size) throws CannotDrawException {
+        ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(getAbstractDescription(diagram), size);
         return new CirclesPanel("", "No failure message", cd, size, true);
     }
     // </editor-fold>

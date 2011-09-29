@@ -140,11 +140,11 @@ public enum Operator {
      * given through the {@code name} argument.</p>
      * <p>Here is a list of known operators:
      *  <ul>
-     *      <li>{@link Operator#OP_NAME_AND},</li>
-     *      <li>{@link Operator#OP_NAME_EQ},</li>
-     *      <li>{@link Operator#OP_NAME_IMP},</li>
-     *      <li>{@link Operator#OP_NAME_NOT} and</li>
-     *      <li>{@link Operator#OP_NAME_OR}.</li>
+     *      <li>{@link Operator#Conjunction},</li>
+     *      <li>{@link Operator#Equivalence},</li>
+     *      <li>{@link Operator#Implication},</li>
+     *      <li>{@link Operator#Negation} and</li>
+     *      <li>{@link Operator#Disjunction}.</li>
      *  </ul>
      * </p>
      * @param name does this operator have this name?

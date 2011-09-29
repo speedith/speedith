@@ -47,9 +47,9 @@ import static speedith.core.i18n.Translations.*;
  * The implementation of the idempotency inference rule.
  * <p>This inference rule checks whether a {@link CompoundSpiderDiagram binary
  * compound spider diagram} can be reduced to either one of its operands (in case
- * of the {@link Operator#OP_NAME_AND and} or {@link Operator#OP_NAME_OR or}
+ * of the {@link Operator#Conjunction and} or {@link Operator#Disjunction or}
  * operators), or to the {@link NullSpiderDiagram null diagram} (in case of the
- * {@link Operator#OP_NAME_IMP implies} or {@link Operator#OP_NAME_EQ
+ * {@link Operator#Implication implies} or {@link Operator#Equivalence
  * equivalence} operators).</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
