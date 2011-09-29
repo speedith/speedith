@@ -117,17 +117,17 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
                 // TODO: It also works if this diagram is the only antecedent in
                 // the outermost implication.
                 if (parents.size() == 1) {
-                    if (!parents.getFirst().getOperator().equals(Operator.getImplies())) {
+                    if (!parents.getFirst().getOperator().equals(Operator.Implication)) {
                         throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
                     }
                 } else if (parents.size() == 2) {
                     Iterator<CompoundSpiderDiagram> dit = parents.iterator();
                     CompoundSpiderDiagram parent = dit.next();
-                    if (!parent.getOperator().equals(Operator.OP_NAME_AND) && !parent.getOperator().equals(Operator.OP_NAME_OR)) {
+                    if (!parent.getOperator().equals(Operator.Conjunction) && !parent.getOperator().equals(Operator.Disjunction)) {
                         throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
                     }
                     parent = dit.next();
-                    if (!parent.getOperator().equals(Operator.OP_NAME_IMP)) {
+                    if (!parent.getOperator().equals(Operator.Implication)) {
                         throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
                     }
                 } else {

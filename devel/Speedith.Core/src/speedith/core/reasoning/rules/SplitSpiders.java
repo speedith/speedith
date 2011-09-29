@@ -120,7 +120,7 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
                     ArrayList<SpiderDiagram> sds = new ArrayList<SpiderDiagram>();
                     sds.add(psd.changeSpiderHabitat(arg.getSpider(), splitRegion));
                     sds.add(psd.changeSpiderHabitat(arg.getSpider(), habitat.subtract(splitRegion)));
-                    return SpiderDiagrams.createCompoundSD(Operator.OP_NAME_OR, sds, false);
+                    return SpiderDiagrams.createCompoundSD(Operator.Disjunction, sds, false);
                 } else {
                     throw new IllegalArgumentException(i18n("ERR_SPLIT_SPIDERS_INVALID_REGION"));
                 }

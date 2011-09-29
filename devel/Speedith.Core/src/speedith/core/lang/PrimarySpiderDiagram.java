@@ -90,6 +90,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     private TreeSet<String> allContours;
     private boolean hashInvalid = true;
     private int hash;
+    private Boolean valid;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -251,26 +252,10 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     @Override
     public boolean isValid() {
-        SortedSet<String> contours = getContours();
-        if (habitats != null) {
-            for (Region region : this.habitats.values()) {
-                if (region.getZonesCount() > 0) {
-                    for (Zone zone : region.getZones()) {
-                        if (!zone.isValid(contours)) {
-                            return false;
-                        }
-                    }
-                }
-            }
+        if (valid == null) {
+            valid = checkValid();
         }
-        if (this.shadedZones != null) {
-            for (Zone zone : this.shadedZones) {
-                if (!zone.isValid(contours)) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return valid;
     }
     // </editor-fold>
 
@@ -507,6 +492,34 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
                 }
             }
         }
+    }
+
+    /**
+     * Checks whether this primary spider diagram is valid according to the rules
+     * described in {@link PrimarySpiderDiagram#isValid()}.
+     * @return see {@link PrimarySpiderDiagram#isValid()}.
+     */
+    private boolean checkValid() {
+        SortedSet<String> contours = getContours();
+        if (habitats != null) {
+            for (Region region : this.habitats.values()) {
+                if (region.getZonesCount() > 0) {
+                    for (Zone zone : region.getZones()) {
+                        if (!zone.isValid(contours)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        if (this.shadedZones != null) {
+            for (Zone zone : this.shadedZones) {
+                if (!zone.isValid(contours)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     // </editor-fold>
 }

@@ -237,6 +237,13 @@ public final class DiagramVisualisation {
         return ad;
     }
 
+    /**
+     * 
+     * @param ad
+     * @param size
+     * @return
+     * @throws CannotDrawException
+     */
     public static CirclesPanel getCirclesPanel(AbstractDescription ad, int size) throws CannotDrawException {
         ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(ad, size);
         return new CirclesPanel("", "No failure message", cd, size, true);

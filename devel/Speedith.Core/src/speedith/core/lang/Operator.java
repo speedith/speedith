@@ -39,39 +39,120 @@ import java.util.HashMap;
  * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class Operator {
+public enum Operator {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    //<editor-fold defaultstate="collapsed" desc="Enumeration Constants">
     /**
-     * The name of the 'CONJUNCTION' operator.
+     * The 'negation' operator.
      */
-    public static final String OP_NAME_AND = "op &";
+    Negation("op not", 1),
     /**
-     * The name of the 'IMPLICATION' operator.
+     * The 'conjunction' operator.
      */
-    public static final String OP_NAME_IMP = "op -->";
+    Conjunction("op &", 2),
     /**
-     * The name of the 'NEGATION' operator.
+     * The 'disjunction' operator.
      */
-    public static final String OP_NAME_NOT = "op not";
+    Disjunction("op |", 2),
     /**
-     * The name of the 'DISJUNCTION' operator.
+     * The 'implication' operator.
      */
-    public static final String OP_NAME_OR = "op |";
+    Implication("op -->", 2),
     /**
-     * The name of the 'EQUIVALENCE' operator.
+     * The 'equivalence' operator.
      */
-    public static final String OP_NAME_EQ = "op <-->";
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="Private Fields">
-    private int arity;
-    private String name;
-    // </editor-fold>
+    Equivalence("op <-->", 2);
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Private Fields">
+    private final String name;
+    private final int arity;
+    //</editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Constructors">
-    private Operator(int arity, String name) {
-        this.arity = arity;
+    // <editor-fold defaultstate="collapsed" desc="Constructor">
+    private Operator(String name, int arity) {
         this.name = name;
+        this.arity = arity;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+    /**
+     * Returns the name of the operator.
+     * @return the name of the operator.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Returns the 'negation' operator.
+     * @return the 'negation' operator.
+     */
+    public static Operator getNegation() {
+        return Negation;
+    }
+
+    /**
+     * Returns the 'implication' operator.
+     * @return the 'implication' operator.
+     */
+    public static Operator getImplication() {
+        return Implication;
+    }
+
+    /**
+     * Returns the 'equivalence' operator.
+     * @return the 'equivalence' operator.
+     */
+    public static Operator getEquivalence() {
+        return Equivalence;
+    }
+
+    /**
+     * Returns the 'disjunction' operator.
+     * @return the 'disjunction' operator.
+     */
+    public static Operator getDisjunction() {
+        return Disjunction;
+    }
+
+    /**
+     * Returns the 'conjunction' operator.
+     * @return the 'conjunction' operator.
+     */
+    public static Operator getConjunction() {
+        return Conjunction;
+    }
+
+    /**
+     * The number of operands this operator takes.
+     * @return the number of operands this operator takes.
+     */
+    public int getArity() {
+        return arity;
+    }
+
+    /**
+     * Operators have unique names (regardless of their arity). Thus one can
+     * determine which operator they are dealing with just its name.
+     * <p>This function checks whether this operator has the given name and
+     * returns {@code true} iff the name of this parameter equals to the one
+     * given through the {@code name} argument.</p>
+     * <p>Here is a list of known operators:
+     *  <ul>
+     *      <li>{@link Operator#OP_NAME_AND},</li>
+     *      <li>{@link Operator#OP_NAME_EQ},</li>
+     *      <li>{@link Operator#OP_NAME_IMP},</li>
+     *      <li>{@link Operator#OP_NAME_NOT} and</li>
+     *      <li>{@link Operator#OP_NAME_OR}.</li>
+     *  </ul>
+     * </p>
+     * @param name does this operator have this name?
+     * @return {@code true} iff the name of this parameter equals to the one
+     * given through the {@code name} argument.
+     */
+    public boolean equals(String name) {
+        return getName().equals(name);
     }
     // </editor-fold>
 
@@ -95,133 +176,17 @@ public class Operator {
      * <p>All the names of known operators are specified in the following
      * fields:
      *  <ul>
-     *      <li>{@link Operator#OP_NAME_AND},</li>
-     *      <li>{@link Operator#OP_NAME_EQ},</li>
-     *      <li>{@link Operator#OP_NAME_IMP},</li>
-     *      <li>{@link Operator#OP_NAME_NOT} and</li>
-     *      <li>{@link Operator#OP_NAME_OR}.</li>
+     *      <li>{@link Operator#Conjunction},</li>
+     *      <li>{@link Operator#Disjunction},</li>
+     *      <li>{@link Operator#Equivalence},</li>
+     *      <li>{@link Operator#Implication} and</li>
+     *      <li>{@link Operator#Negation}.</li>
      *  </ul>
      * </p>
      * @return an unmodifiable set of known operator names.
      */
     public static Set<String> knownOperatorNames() {
         return Collections.unmodifiableSet(OperatorRegistry.KnownOperators.keySet());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Public Properties">
-    /**
-     * The number of operands this operator takes.
-     * @return the number of operands this operator takes.
-     */
-    public int getArity() {
-        return arity;
-    }
-
-    /**
-     * The internal name of this operator.
-     * @return the internal name of this operator.
-     */
-    public String getName() {
-        return name;
-    }
-    // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Public Methods">
-    /**
-     * Returns the 'And' operator.
-     * @return the 'And' operator.
-     */
-    public static Operator getAnd() {
-        return OperatorRegistry.And;
-    }
-    
-    /**
-     * Returns the 'Or' operator.
-     * @return the 'Or' operator.
-     */
-    public static Operator getOr() {
-        return OperatorRegistry.Or;
-    }
-    
-    /**
-     * Returns the 'Implies' operator.
-     * @return the 'Implies' operator.
-     */
-    public static Operator getImplies() {
-        return OperatorRegistry.Implies;
-    }
-    
-    /**
-     * Returns the 'Equivalent' operator.
-     * @return the 'Equivalent' operator.
-     */
-    public static Operator getEquivalent() {
-        return OperatorRegistry.Equivalent;
-    }
-    
-    /**
-     * Returns the 'Not' operator.
-     * @return the 'Not' operator.
-     */
-    public static Operator getNot() {
-        return OperatorRegistry.Not;
-    }
-    /**
-     * Operators have unique names (regardless of their arity). Thus one can
-     * determine which operator they are dealing with just its name.
-     * <p>This function checks whether this operator has the given name and
-     * returns {@code true} iff the name of this parameter equals to the one
-     * given through the {@code name} argument.</p>
-     * <p>Here is a list of known operators:
-     *  <ul>
-     *      <li>{@link Operator#OP_NAME_AND},</li>
-     *      <li>{@link Operator#OP_NAME_EQ},</li>
-     *      <li>{@link Operator#OP_NAME_IMP},</li>
-     *      <li>{@link Operator#OP_NAME_NOT} and</li>
-     *      <li>{@link Operator#OP_NAME_OR}.</li>
-     *  </ul>
-     * </p>
-     * @param name does this operator have this name?
-     * @return {@code true} iff the name of this parameter equals to the one
-     * given through the {@code name} argument.
-     */
-    public boolean equals(String name) {
-        return getName().equals(name);
-    }
-    
-    /**
-     * Returns {@code true} iff this operator equals to the given one (by
-     * reference).
-     * @param other the operator to compare this one against.
-     * @return {@code true} iff this operator equals to the given one (by
-     * reference).
-     */
-    public boolean equals(Operator other) {
-        return this == other;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Operator other = (Operator) obj;
-        if (this.arity != other.arity) {
-            return false;
-        }
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode() + arity;
     }
     // </editor-fold>
 
@@ -237,19 +202,11 @@ public class Operator {
          * {@link Operator#getName() name} of the operator.
          */
         public static final HashMap<String, Operator> KnownOperators = new HashMap<String, Operator>();
-        
-        public static final Operator Not;
-        public static final Operator And;
-        public static final Operator Or;
-        public static final Operator Implies;
-        public static final Operator Equivalent;
 
         static {
-            KnownOperators.put(OP_NAME_NOT, Not = new Operator(1, OP_NAME_NOT));
-            KnownOperators.put(OP_NAME_AND, And = new Operator(2, OP_NAME_AND));
-            KnownOperators.put(OP_NAME_OR, Or = new Operator(2, OP_NAME_OR));
-            KnownOperators.put(OP_NAME_IMP, Implies = new Operator(2, OP_NAME_IMP));
-            KnownOperators.put(OP_NAME_EQ, Equivalent = new Operator(2, OP_NAME_EQ));
+            for (Operator operator : Operator.values()) {
+                KnownOperators.put(operator.getName(), operator);
+            }
         }
 
         private OperatorRegistry() {

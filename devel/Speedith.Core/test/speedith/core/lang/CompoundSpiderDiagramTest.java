@@ -69,17 +69,17 @@ public class CompoundSpiderDiagramTest {
     @Test
     public void testGetOperator() throws ReadingException {
         CompoundSpiderDiagram sd = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
-        Operator expResult = Operator.fromString(Operator.OP_NAME_IMP);
+        Operator expResult = Operator.fromString(Operator.Implication.getName());
         Operator result = sd.getOperator();
         assertEquals(expResult, result);
 
         CompoundSpiderDiagram sd1 = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_2);
-        Operator expResult1 = Operator.fromString(Operator.OP_NAME_NOT);
+        Operator expResult1 = Operator.fromString(Operator.Negation.getName());
         Operator result1 = sd1.getOperator();
         assertEquals(expResult1, result1);
 
         CompoundSpiderDiagram sd2 = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_7);
-        Operator expResult2 = Operator.fromString(Operator.OP_NAME_AND);
+        Operator expResult2 = Operator.fromString(Operator.Conjunction.getName());
         Operator result2 = sd2.getOperator();
         assertEquals(expResult2, result2);
     }
@@ -144,9 +144,9 @@ public class CompoundSpiderDiagramTest {
                 return false;
             }
         });
-        assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), SpiderDiagrams.createNullSD()})).equals(transformedSD));
-        assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), SpiderDiagrams.createNullSD()})) == transformedSD);
-        assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), SpiderDiagrams.createNullSD()})).hashCode() == transformedSD.hashCode());
+        assertTrue(SpiderDiagrams.createCompoundSD(Operator.Implication.getName(), Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), SpiderDiagrams.createNullSD()})).equals(transformedSD));
+        assertTrue(SpiderDiagrams.createCompoundSD(Operator.Implication.getName(), Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), SpiderDiagrams.createNullSD()})) == transformedSD);
+        assertTrue(SpiderDiagrams.createCompoundSD(Operator.Implication.getName(), Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), SpiderDiagrams.createNullSD()})).hashCode() == transformedSD.hashCode());
         assertFalse(sd.equals(transformedSD));
         assertFalse(sd == transformedSD);
 
@@ -186,9 +186,9 @@ public class CompoundSpiderDiagramTest {
                 return done;
             }
         });
-        assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), sd.getOperand(1)})).equals(transformedSD));
-        assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), sd.getOperand(1)})) == transformedSD);
-        assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), sd.getOperand(1)})).hashCode() == transformedSD.hashCode());
+        assertTrue(SpiderDiagrams.createCompoundSD(Operator.Implication.getName(), Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), sd.getOperand(1)})).equals(transformedSD));
+        assertTrue(SpiderDiagrams.createCompoundSD(Operator.Implication.getName(), Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), sd.getOperand(1)})) == transformedSD);
+        assertTrue(SpiderDiagrams.createCompoundSD(Operator.Implication.getName(), Arrays.asList(new SpiderDiagram[]{SpiderDiagrams.createNullSD(), sd.getOperand(1)})).hashCode() == transformedSD.hashCode());
         assertFalse(sd.equals(transformedSD));
         assertFalse(sd == transformedSD);
 
@@ -229,9 +229,9 @@ public class CompoundSpiderDiagramTest {
                 return false;
             }
         });
-        assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})).equals(transformedSD));
-        assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})) == transformedSD);
-        assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})).hashCode() == transformedSD.hashCode());
+        assertTrue(SpiderDiagrams.createCompoundSD(Operator.Implication.getName(), Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})).equals(transformedSD));
+        assertTrue(SpiderDiagrams.createCompoundSD(Operator.Implication.getName(), Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})) == transformedSD);
+        assertTrue(SpiderDiagrams.createCompoundSD(Operator.Implication.getName(), Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})).hashCode() == transformedSD.hashCode());
         assertFalse(sd.equals(transformedSD));
         assertFalse(sd == transformedSD);
 
@@ -272,9 +272,9 @@ public class CompoundSpiderDiagramTest {
                 return false;
             }
         });
-        assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})).equals(transformedSD));
-        assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})) == transformedSD);
-        assertTrue(SpiderDiagrams.createCompoundSD(Operator.OP_NAME_IMP, Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})).hashCode() == transformedSD.hashCode());
+        assertTrue(SpiderDiagrams.createCompoundSD(Operator.Implication.getName(), Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})).equals(transformedSD));
+        assertTrue(SpiderDiagrams.createCompoundSD(Operator.Implication.getName(), Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})) == transformedSD);
+        assertTrue(SpiderDiagrams.createCompoundSD(Operator.Implication.getName(), Arrays.asList(new SpiderDiagram[]{sd.getOperand(0), SpiderDiagrams.createNullSD()})).hashCode() == transformedSD.hashCode());
         assertFalse(sd.equals(transformedSD));
         assertFalse(sd == transformedSD);
 

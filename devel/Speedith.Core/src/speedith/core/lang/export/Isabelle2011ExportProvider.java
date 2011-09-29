@@ -283,14 +283,16 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         private void exportCompoundDiagram(CompoundSpiderDiagram nsd, Writer output) throws IOException {
             final Operator op = nsd.getOperator();
-            if (op.equals(OP_NAME_IMP)) {
+            if (op.equals(Operator.Implication.getName())) {
                 exportInfixOperator(nsd, output, new ImpOperatorPrinter());
-            } else if (op.equals(OP_NAME_AND)) {
+            } else if (op.equals(Operator.Conjunction.getName())) {
                 exportInfixOperator(nsd, output, new AndOperatorPrinter());
-            } else if (op.equals(OP_NAME_OR)) {
+            } else if (op.equals(Operator.Disjunction.getName())) {
                 exportInfixOperator(nsd, output, new OrOperatorPrinter());
-            } else if (op.equals(OP_NAME_EQ)) {
+            } else if (op.equals(Operator.Equivalence.getName())) {
                 exportInfixOperator(nsd, output, new EqOperatorPrinter());
+            } else {
+                throw new RuntimeException(i18n("GERR_ILLEGAL_STATE"));
             }
         }
 
@@ -366,7 +368,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         private void exportDiagramML(SpiderDiagram sd, Writer output) throws ExportException, IOException {
             if (sd instanceof CompoundSpiderDiagram) {
                 CompoundSpiderDiagram csd = (CompoundSpiderDiagram) sd;
-                if (csd.getOperator().equals(Operator.getImplies())) {
+                if (csd.getOperator().equals(Operator.Implication)) {
                     final SpiderDiagram op1 = csd.getOperand(0);
                     if (op1 instanceof PrimarySpiderDiagram) {
                         printMLAntecedent((PrimarySpiderDiagram) csd.getOperand(0), output);
