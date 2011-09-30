@@ -60,24 +60,24 @@ public class OperatorLabelTest {
     }
 
     /**
-     * Test of getOperator method, of class OperatorLabel.
+     * Test of getOperator method, of class OperatorPanel.
      */
     @Test
     public void testGetOperator() {
-        OperatorLabel instance = new OperatorLabel();
+        OperatorPanel instance = new OperatorPanel();
         Operator expResult = null;
         Operator result = instance.getOperator();
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of setOperator method, of class OperatorLabel.
+     * Test of setOperator method, of class OperatorPanel.
      */
     @Test
     public void testSetOperator() {
         System.out.println("setOperator");
         Operator operator = Operator.Equivalence;
-        OperatorLabel instance = new OperatorLabel();
+        OperatorPanel instance = new OperatorPanel();
         instance.setOperator(operator);
         Operator expResult = operator;
         Operator result = instance.getOperator();

@@ -189,7 +189,7 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
             Iterator<SpiderDiagram> it = diagram.getOperands().iterator();
             add(DiagramVisualisation.getSpiderDiagramPanel(it.next()));
             while (it.hasNext()) {
-                add(new OperatorLabel(diagram.getOperator()));
+                add(new OperatorPanel(diagram.getOperator()));
                 add(DiagramVisualisation.getSpiderDiagramPanel(it.next()));
             }
         } else {
@@ -199,7 +199,7 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
 
     private void drawPrefixDiagram() throws CannotDrawException {
         if (diagram != null && diagram.getOperandCount() == 1) {
-            add(new OperatorLabel(diagram.getOperator()));
+            add(new OperatorPanel(diagram.getOperator()));
             add(DiagramVisualisation.getSpiderDiagramPanel(diagram.getOperands().get(0)));
         } else {
             throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));

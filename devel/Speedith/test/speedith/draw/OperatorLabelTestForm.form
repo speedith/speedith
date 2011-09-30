@@ -48,7 +48,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="speedith.draw.OperatorLabel" name="operatorLabel1">
+    <Component class="speedith.draw.OperatorPanel" name="operatorLabel1">
       <Properties>
         <Property name="operator" type="speedith.core.lang.Operator" editor="org.netbeans.modules.form.editors.EnumEditor">
           <Value id="Equivalence"/>

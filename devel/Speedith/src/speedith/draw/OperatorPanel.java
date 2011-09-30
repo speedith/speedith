@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith
  * 
- * File name: OperatorLabel.java
+ * File name: OperatorPanel.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -26,7 +26,7 @@
  */
 
 /*
- * OperatorLabel.java
+ * OperatorPanel.java
  *
  * Created on 29-Sep-2011, 10:04:27
  */
@@ -39,14 +39,14 @@ import speedith.core.lang.Operator;
  * This label displays the spider-diagrammatic operators.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class OperatorLabel extends javax.swing.JPanel {
+public class OperatorPanel extends javax.swing.JPanel {
 
     /**
      * Creates an empty operator label.
-     * <p>Use {@link OperatorLabel#setOperator(speedith.core.lang.Operator)} to
+     * <p>Use {@link OperatorPanel#setOperator(speedith.core.lang.Operator)} to
      * change what this label displays.</p>
      */
-    public OperatorLabel() {
+    public OperatorPanel() {
         this(null);
     }
 
@@ -54,7 +54,7 @@ public class OperatorLabel extends javax.swing.JPanel {
      * Creates a new operator label with the given operator.
      * @param operator the operator to be displayed initially.
      */
-    public OperatorLabel(Operator operator) {
+    public OperatorPanel(Operator operator) {
         initComponents();
         setOperator(operator);
     }
@@ -69,7 +69,7 @@ public class OperatorLabel extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(40, 40));
         setLayout(new java.awt.BorderLayout());
 
-        lblOperator.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        lblOperator.setFont(new java.awt.Font("Dialog", 0, 24));
         lblOperator.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         add(lblOperator, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
