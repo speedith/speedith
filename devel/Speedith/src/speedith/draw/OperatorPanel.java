@@ -65,6 +65,7 @@ public class OperatorPanel extends javax.swing.JPanel {
 
         lblOperator = new javax.swing.JLabel();
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(40, 40));
         setPreferredSize(new java.awt.Dimension(40, 40));
         setLayout(new java.awt.BorderLayout());

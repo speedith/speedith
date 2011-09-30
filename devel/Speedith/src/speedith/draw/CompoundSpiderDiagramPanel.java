@@ -32,6 +32,7 @@
  */
 package speedith.draw;
 
+import java.awt.GridBagConstraints;
 import icircles.util.CannotDrawException;
 import java.util.Iterator;
 import javax.swing.JLabel;
@@ -55,7 +56,7 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
     public CompoundSpiderDiagramPanel() {
         this(null);
     }
-    
+
     /**
      * Creates a new compound spider diagram panel with the given compound spider
      * diagram.
@@ -72,7 +73,9 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setLayout(new java.awt.GridLayout(1, 0));
+        setBackground(new java.awt.Color(255, 255, 255));
+        setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        setLayout(new java.awt.GridBagLayout());
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
@@ -186,11 +189,15 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
 
     private void drawInfixDiagram() throws CannotDrawException {
         if (diagram != null && diagram.getOperandCount() > 0) {
+            GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.weightx = 1.0;
+            gridBagConstraints.weighty = 1.0;
+            
             Iterator<SpiderDiagram> it = diagram.getOperands().iterator();
-            add(DiagramVisualisation.getSpiderDiagramPanel(it.next()));
+            add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
             while (it.hasNext()) {
                 add(new OperatorPanel(diagram.getOperator()));
-                add(DiagramVisualisation.getSpiderDiagramPanel(it.next()));
+                add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
             }
         } else {
             throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));

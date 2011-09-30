@@ -47,34 +47,13 @@ public class OperatorLabelTestForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        operatorLabel1 = new speedith.draw.OperatorPanel();
-        primarySpiderDiagramPanel1 = new speedith.draw.PrimarySpiderDiagramPanel();
         compoundSpiderDiagramPanel2 = new speedith.draw.CompoundSpiderDiagramPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        operatorLabel1.setOperator(speedith.core.lang.Operator.Equivalence);
-
+        compoundSpiderDiagramPanel2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         try {
-            primarySpiderDiagramPanel1.setDiagramString("PrimarySD {spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\"], [\"B\", \"C\"]), ([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], [])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])], sh_zones = [([\"B\"], [\"A\", \"C\"])]}");
-        } catch (speedith.core.lang.reader.ReadingException e1) {
-            e1.printStackTrace();
-        }
-        primarySpiderDiagramPanel1.setPreferredSize(new java.awt.Dimension(200, 200));
-
-        javax.swing.GroupLayout primarySpiderDiagramPanel1Layout = new javax.swing.GroupLayout(primarySpiderDiagramPanel1);
-        primarySpiderDiagramPanel1.setLayout(primarySpiderDiagramPanel1Layout);
-        primarySpiderDiagramPanel1Layout.setHorizontalGroup(
-            primarySpiderDiagramPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 200, Short.MAX_VALUE)
-        );
-        primarySpiderDiagramPanel1Layout.setVerticalGroup(
-            primarySpiderDiagramPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 200, Short.MAX_VALUE)
-        );
-
-        try {
-            compoundSpiderDiagramPanel2.setDiagramString("BinarySD { \toperator = \"op -->\", \targ1 = PrimarySD {spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\"], [\"B\", \"C\"]), ([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], [])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])], sh_zones = [([\"B\"], [\"A\", \"C\"])]}, \targ2 = PrimarySD {spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\"], [\"B\", \"C\"]), ([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], [])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])], sh_zones = [([\"B\"], [\"A\", \"C\"])]} }");
+            compoundSpiderDiagramPanel2.setDiagramString("BinarySD {\n\toperator = \"op -->\",\n\targ1 = BinarySD {\n\t\toperator = \"op &\",\n\t\targ1 = PrimarySD {spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\"], [\"B\", \"C\"]), ([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], [])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])], sh_zones = [([\"B\"], [\"A\", \"C\"])]},\n\t\targ2 = NullSD {}\n\t},\n\targ2 = PrimarySD {spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\"], [\"B\", \"C\"]), ([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], [])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])], sh_zones = [([\"B\"], [\"A\", \"C\"])]}\n}");
         } catch (speedith.core.lang.reader.ReadingException e1) {
             e1.printStackTrace();
         }
@@ -83,23 +62,11 @@ public class OperatorLabelTestForm extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(primarySpiderDiagramPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(142, 142, 142)
-                .addComponent(operatorLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(414, Short.MAX_VALUE))
             .addComponent(compoundSpiderDiagramPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 796, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(primarySpiderDiagramPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(80, 80, 80)
-                        .addComponent(operatorLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(compoundSpiderDiagramPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE))
+            .addComponent(compoundSpiderDiagramPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE)
         );
 
         pack();
@@ -142,7 +109,5 @@ public class OperatorLabelTestForm extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private speedith.draw.CompoundSpiderDiagramPanel compoundSpiderDiagramPanel2;
-    private speedith.draw.OperatorPanel operatorLabel1;
-    private speedith.draw.PrimarySpiderDiagramPanel primarySpiderDiagramPanel1;
     // End of variables declaration//GEN-END:variables
 }

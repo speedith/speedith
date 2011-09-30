@@ -56,6 +56,7 @@ public class PrimarySpiderDiagramPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -22,63 +22,24 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
-              <Component id="primarySpiderDiagramPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="142" max="-2" attributes="0"/>
-              <Component id="operatorLabel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="414" max="32767" attributes="0"/>
-          </Group>
           <Component id="compoundSpiderDiagramPanel2" alignment="0" pref="796" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="primarySpiderDiagramPanel1" alignment="0" max="32767" attributes="1"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="80" max="-2" attributes="0"/>
-                      <Component id="operatorLabel1" min="-2" max="-2" attributes="0"/>
-                  </Group>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="compoundSpiderDiagramPanel2" pref="247" max="32767" attributes="1"/>
-          </Group>
+          <Component id="compoundSpiderDiagramPanel2" alignment="1" pref="453" max="32767" attributes="1"/>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="speedith.draw.OperatorPanel" name="operatorLabel1">
-      <Properties>
-        <Property name="operator" type="speedith.core.lang.Operator" editor="org.netbeans.modules.form.editors.EnumEditor">
-          <Value id="Equivalence"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Container class="speedith.draw.PrimarySpiderDiagramPanel" name="primarySpiderDiagramPanel1">
-      <Properties>
-        <Property name="diagramString" type="java.lang.String" value="PrimarySD {spiders = [&quot;s1&quot;, &quot;s2&quot;, &quot;s3&quot;], habitats = [(&quot;s1&quot;, [([&quot;A&quot;], [&quot;B&quot;, &quot;C&quot;]), ([&quot;A&quot;, &quot;B&quot;], [&quot;C&quot;]), ([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;], [])]), (&quot;s2&quot;, [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])]), (&quot;s3&quot;, [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])])], sh_zones = [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])]}"/>
-        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[200, 200]"/>
-        </Property>
-      </Properties>
-
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="200" max="32767" attributes="0"/>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="200" max="32767" attributes="0"/>
-          </Group>
-        </DimensionLayout>
-      </Layout>
-    </Container>
     <Component class="speedith.draw.CompoundSpiderDiagramPanel" name="compoundSpiderDiagramPanel2">
       <Properties>
-        <Property name="diagramString" type="java.lang.String" value="BinarySD { &#x9;operator = &quot;op --&gt;&quot;, &#x9;arg1 = PrimarySD {spiders = [&quot;s1&quot;, &quot;s2&quot;, &quot;s3&quot;], habitats = [(&quot;s1&quot;, [([&quot;A&quot;], [&quot;B&quot;, &quot;C&quot;]), ([&quot;A&quot;, &quot;B&quot;], [&quot;C&quot;]), ([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;], [])]), (&quot;s2&quot;, [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])]), (&quot;s3&quot;, [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])])], sh_zones = [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])]}, &#x9;arg2 = PrimarySD {spiders = [&quot;s1&quot;, &quot;s2&quot;, &quot;s3&quot;], habitats = [(&quot;s1&quot;, [([&quot;A&quot;], [&quot;B&quot;, &quot;C&quot;]), ([&quot;A&quot;, &quot;B&quot;], [&quot;C&quot;]), ([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;], [])]), (&quot;s2&quot;, [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])]), (&quot;s3&quot;, [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])])], sh_zones = [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])]} }"/>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+            <LineBorder roundedCorners="true"/>
+          </Border>
+        </Property>
+        <Property name="diagramString" type="java.lang.String" value="BinarySD {&#xa;&#x9;operator = &quot;op --&gt;&quot;,&#xa;&#x9;arg1 = BinarySD {&#xa;&#x9;&#x9;operator = &quot;op &amp;&quot;,&#xa;&#x9;&#x9;arg1 = PrimarySD {spiders = [&quot;s1&quot;, &quot;s2&quot;, &quot;s3&quot;], habitats = [(&quot;s1&quot;, [([&quot;A&quot;], [&quot;B&quot;, &quot;C&quot;]), ([&quot;A&quot;, &quot;B&quot;], [&quot;C&quot;]), ([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;], [])]), (&quot;s2&quot;, [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])]), (&quot;s3&quot;, [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])])], sh_zones = [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])]},&#xa;&#x9;&#x9;arg2 = NullSD {}&#xa;&#x9;},&#xa;&#x9;arg2 = PrimarySD {spiders = [&quot;s1&quot;, &quot;s2&quot;, &quot;s3&quot;], habitats = [(&quot;s1&quot;, [([&quot;A&quot;], [&quot;B&quot;, &quot;C&quot;]), ([&quot;A&quot;, &quot;B&quot;], [&quot;C&quot;]), ([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;], [])]), (&quot;s2&quot;, [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])]), (&quot;s3&quot;, [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])])], sh_zones = [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])]}&#xa;}"/>
       </Properties>
     </Component>
   </SubComponents>
