@@ -32,8 +32,10 @@
  */
 package speedith.draw;
 
+import speedith.core.lang.NullSpiderDiagram;
+
 /**
- *
+ * This panel displays {@link NullSpiderDiagram null spider diagrams}.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class NullSpiderDiagramPanel extends javax.swing.JPanel {

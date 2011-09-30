@@ -42,7 +42,7 @@ import speedith.core.lang.reader.SpiderDiagramsReader;
 import static speedith.i18n.Translations.*;
 
 /**
- *
+ * This panel displays {@link PrimarySpiderDiagram primary spider diagrams}.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class PrimarySpiderDiagramPanel extends javax.swing.JPanel {
