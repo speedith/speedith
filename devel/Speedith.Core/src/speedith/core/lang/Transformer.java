@@ -185,7 +185,7 @@ public interface Transformer {
     /**
      * Indicates that this transformer has done all the transformations it
      * intends to do.
-     * <p>Once this method returns {@code true}, the transformation will. All
+     * <p>Once this method returns {@code true}, the transformation will stop. All
      * the transformations done so far will be applied in the resulting
      * spider diagram.</p>
      * @return {@code true} if this transformer has no more transformations to

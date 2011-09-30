@@ -89,7 +89,7 @@ public abstract class SpiderDiagram {
      *              <li>they have the same {@link PrimarySpiderDiagram#getHabitats()
      *                  habitats}.</li>
      *          </ul>
-     *          @exception <span style="font-weight:bold"></span>: the above <span style="font-style:italic;">collection
+     *          <span style="font-weight:bold">Note</span>: the above <span style="font-style:italic;">collection
      *          comparisons</span> are all element-wise equality comparisons.
      *      </li>
      *  </ul>
