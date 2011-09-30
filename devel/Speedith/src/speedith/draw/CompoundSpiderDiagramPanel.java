@@ -32,6 +32,15 @@
  */
 package speedith.draw;
 
+import icircles.util.CannotDrawException;
+import java.util.Iterator;
+import javax.swing.JLabel;
+import speedith.core.lang.CompoundSpiderDiagram;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.lang.reader.ReadingException;
+import speedith.core.lang.reader.SpiderDiagramsReader;
+import static speedith.i18n.Translations.*;
+
 /**
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
@@ -40,7 +49,18 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
 
     /** Creates new form CompoundSpiderDiagramPanel */
     public CompoundSpiderDiagramPanel() {
+        this(null);
+    }
+
+    /**
+     * Creates a new compound spider diagram panel with the given compound spider
+     * diagram.
+     * @param diagram the diagram to display in this panel.
+     * <p>May be {@code null} in which case nothing will be displayed.</p>
+     */
+    public CompoundSpiderDiagramPanel(CompoundSpiderDiagram diagram) {
         initComponents();
+        setDiagram(diagram);
     }
 
     /** This method is called from within the constructor to
@@ -52,17 +72,140 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        jLabel1 = new javax.swing.JLabel();
+
+        setLayout(new java.awt.GridLayout());
+
+        jLabel1.setText("jLabel1");
+        add(jLabel1);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
+    // <editor-fold defaultstate="collapsed" desc="Private Fields">
+    private CompoundSpiderDiagram diagram;
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Public Properties">
+    /**
+     * Returns the currently presented diagram.
+     * <p>May be {@code null}, which indicates that the panel is empty.</p>
+     * @return the currently presented diagram, or {@code null} is no diagram
+     * is currently being shown.
+     */
+    public CompoundSpiderDiagram getDiagram() {
+        return diagram;
+    }
+
+    /**
+     * Sets the currently shown diagram.
+     * <p>May be {@code null}, which indicates that the panel should
+     * be empty.</p>
+     * @param diagram the new diagram to show, or {@code null} if no diagram is
+     * to be shown.
+     */
+    public final void setDiagram(CompoundSpiderDiagram diagram) {
+        if (this.diagram != diagram) {
+            this.diagram = diagram;
+            this.removeAll();
+            if (this.diagram != null) {
+                try {
+                    drawDiagram();
+                } catch (Exception ex) {
+                    drawErrorLabel();
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the string representation of the currently shown diagram.
+     * @return the string representation of the currently shown diagram.
+     */
+    public String getDiagramString() {
+        return this.diagram == null ? "" : this.diagram.toString();
+    }
+
+    /**
+     * Sets the currently shown diagram via its string representation.
+     * <p>This method tries to parse the string into a spider diagram and
+     * draws it.</p>
+     * <p>Here is an example of a valid string:
+     * <pre>"PrimarySD {spiders = ["s1", "s2", "s3"], habitats = [("s1", [(["A"], ["B", "C"]), (["A", "B"], ["C"]), (["A", "B", "C"], [])]), ("s2", [(["B"], ["A", "C"])]), ("s3", [(["B"], ["A", "C"])])], sh_zones = [(["B"], ["A", "C"])]}"</pre>
+     * </p>
+     * @param diagram the string representation of the diagram to present.
+     * @throws ReadingException thrown if the string does not represent a valid
+     * spider diagram.
+     * @throws IllegalArgumentException thrown if the string is a valid spider
+     * diagram but not a primary spider diagram.
+     */
+    public void setDiagramString(String diagram) throws ReadingException {
+        SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(diagram);
+        if (sd instanceof CompoundSpiderDiagram) {
+            setDiagram((CompoundSpiderDiagram) sd);
+        } else {
+            throw new IllegalArgumentException(i18n("CSD_PANEL_INVALID_DIAGRAM_STRING"));
+        }
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Private Helper Methods">
+    /**
+     * This method does not remove any components, it just adds an error label
+     * saying 'Drawing failed'.
+     */
+    private void drawErrorLabel() {
+        JLabel errorLabel = new JLabel();
+        errorLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        errorLabel.setText(i18n("PSD_LABEL_DISPLAY_ERROR"));
+        add(errorLabel);
+    }
+
+    /**
+     * This method puts the diagram panels onto this one.
+     * <p>This method does not remove any components, it just adds them to this
+     * panel.</p>
+     * <p>In case of failure, this method throws an exception and does not put
+     * any components onto this panel.</p>
+     */
+    private void drawDiagram() throws CannotDrawException {
+        if (diagram != null) {
+            switch (diagram.getOperator()) {
+                case Conjunction:
+                case Disjunction:
+                case Equivalence:
+                case Implication:
+                    drawInfixDiagram();
+                    break;
+                case Negation:
+                    drawPrefixDiagram();
+                    break;
+                default:
+                    throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
+            }
+        }
+    }
+
+    private void drawInfixDiagram() throws CannotDrawException {
+        if (diagram != null && diagram.getOperandCount() > 0) {
+            Iterator<SpiderDiagram> it = diagram.getOperands().iterator();
+            add(DiagramVisualisation.getSpiderDiagramPanel(it.next()));
+            while (it.hasNext()) {
+                add(new OperatorLabel(diagram.getOperator()));
+                add(DiagramVisualisation.getSpiderDiagramPanel(it.next()));
+            }
+        } else {
+            throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
+        }
+    }
+
+    private void drawPrefixDiagram() throws CannotDrawException {
+        if (diagram != null && diagram.getOperandCount() == 1) {
+            add(new OperatorLabel(diagram.getOperator()));
+            add(DiagramVisualisation.getSpiderDiagramPanel(diagram.getOperands().get(0)));
+        } else {
+            throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
+        }
+    }
+    // </editor-fold>
 }

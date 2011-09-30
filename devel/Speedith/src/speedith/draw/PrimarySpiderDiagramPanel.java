@@ -89,7 +89,7 @@ public class PrimarySpiderDiagramPanel extends javax.swing.JPanel {
             if (this.diagram != null) {
                 javax.swing.JComponent component;
                 try {
-                    component = DiagramVisualisation.getCirclesPanel(this.diagram, 200);
+                    component = DiagramVisualisation.getSpiderDiagramPanel(this.diagram, 200);
                     component.setSize(200, 200);
                 } catch (CannotDrawException ex) {
                     JLabel errorLabel = new JLabel();

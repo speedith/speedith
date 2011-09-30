@@ -39,12 +39,13 @@ import java.awt.HeadlessException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeSet;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import speedith.core.lang.CompoundSpiderDiagram;
+import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagram;
@@ -137,7 +138,7 @@ public final class DiagramVisualisation {
     /**
      * Creates an {@link AbstractDescription abstract description} from the given
      * {@link PrimarySpiderDiagram primary spider diagram}. This abstract description
-     * can be used with the {@link DiagramVisualisation#getCirclesPanel(icircles.abstractDescription.AbstractDescription, int)}
+     * can be used with the {@link DiagramVisualisation#getSpiderDiagramPanel(icircles.abstractDescription.AbstractDescription, int)}
      * method, which returns a {@link JPanel panel} that actually draws the given
      * diagram.
      * @param psd the primary spider diagram for which to create an abstract description.
@@ -238,27 +239,26 @@ public final class DiagramVisualisation {
     }
 
     /**
-     * TODO: Document.
-     * @param ad
-     * @param size
-     * @return
-     * @throws CannotDrawException
+     * Creates a panel which is showing the given spider diagram.
+     * @param sd the spider diagram to draw.
+     * @return the panel which displays the given spider diagram.
+     * @throws CannotDrawException this exception is thrown if the diagram cannot
+     * be drawn for any reason.
      */
-    public static CirclesPanel getCirclesPanel(AbstractDescription ad, int size) throws CannotDrawException {
-        ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(ad, size);
-        return new CirclesPanel("", "No failure message", cd, size, true);
-    }
-
-    /**
-     * TODO: Document.
-     * @param diagram
-     * @param size
-     * @return
-     * @throws CannotDrawException
-     */
-    public static CirclesPanel getCirclesPanel(PrimarySpiderDiagram diagram, int size) throws CannotDrawException {
-        ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(getAbstractDescription(diagram), size);
-        return new CirclesPanel("", "No failure message", cd, size, true);
+    public static JPanel getSpiderDiagramPanel(SpiderDiagram sd) throws CannotDrawException {
+        if (sd == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sd"));
+        } else {
+            if (sd instanceof PrimarySpiderDiagram) {
+                return getSpiderDiagramPanel((PrimarySpiderDiagram) sd, 200);
+            } else if (sd instanceof CompoundSpiderDiagram) {
+                return new CompoundSpiderDiagramPanel((CompoundSpiderDiagram) sd);
+            } else if (sd instanceof NullSpiderDiagram) {
+                return new NullSpiderDiagramPanel();
+            } else {
+                throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
+            }
+        }
     }
     // </editor-fold>
 
@@ -276,6 +276,30 @@ public final class DiagramVisualisation {
         // the zone is outside.
         // The resulting number is the index of the zone.
         allZones[getZoneInMask(allContours, zone)] |= code;
+    }
+
+    /**
+     * TODO: Document.
+     * @param ad
+     * @param size
+     * @return
+     * @throws CannotDrawException
+     */
+    static CirclesPanel getSpiderDiagramPanel(AbstractDescription ad, int size) throws CannotDrawException {
+        ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(ad, size);
+        return new CirclesPanel("", "No failure message", cd, size, true);
+    }
+
+    /**
+     * TODO: Document.
+     * @param diagram
+     * @param size
+     * @return
+     * @throws CannotDrawException
+     */
+    static CirclesPanel getSpiderDiagramPanel(PrimarySpiderDiagram diagram, int size) throws CannotDrawException {
+        ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(getAbstractDescription(diagram), size);
+        return new CirclesPanel("", "No failure message", cd, size, true);
     }
 
     private static int getZoneInMask(String[] allContours, Zone zone) {
