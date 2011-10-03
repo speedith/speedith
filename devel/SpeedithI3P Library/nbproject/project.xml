@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.apisupport.project</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/nb-module-project/3">
+            <code-name-base>speedith.i3p.library</code-name-base>
+            <suite-component/>
+            <module-dependencies/>
+            <public-packages>
+                <package>speedith</package>
+                <package>speedith.cli</package>
+                <package>speedith.core.i18n</package>
+                <package>speedith.core.lang</package>
+                <package>speedith.core.lang.export</package>
+                <package>speedith.core.lang.reader</package>
+                <package>speedith.core.reasoning</package>
+                <package>speedith.core.reasoning.args</package>
+                <package>speedith.core.reasoning.rules</package>
+                <package>speedith.core.util</package>
+                <package>speedith.draw</package>
+                <package>speedith.i18n</package>
+                <package>speedith.logging</package>
+                <package>speedith.preferences</package>
+            </public-packages>
+            <class-path-extension>
+                <runtime-relative-path>ext/Speedith.jar</runtime-relative-path>
+                <binary-origin>../Speedith/dist/Speedith.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/Speedith.Core.jar</runtime-relative-path>
+                <binary-origin>../Speedith.Core/dist/Speedith.Core.jar</binary-origin>
+            </class-path-extension>
+        </data>
+    </configuration>
+</project>

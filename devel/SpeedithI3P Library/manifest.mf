@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: speedith.i3p.library
+OpenIDE-Module-Localizing-Bundle: speedith/i3p/library/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
