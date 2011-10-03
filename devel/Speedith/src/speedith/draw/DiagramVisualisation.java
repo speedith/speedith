@@ -63,70 +63,70 @@ import static speedith.i18n.Translations.*;
 public final class DiagramVisualisation {
 
     // <editor-fold defaultstate="collapsed" desc="Deprecated Methods">
-    @Deprecated
-    private static void drawPSD(PrimarySpiderDiagram psd1) throws HeadlessException, CannotDrawException {
-        AbstractDescription ad = getAbstractDescription(psd1);
-        drawAD(ad);
-    }
-
-    @Deprecated
-    private static void drawAD(AbstractDescription ad) throws CannotDrawException, HeadlessException {
-        ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(ad, 300);
-
-        CirclesPanel cp = new CirclesPanel("", "No failure message", cd, 300, true);
-
-        JFrame viewingFrame = new JFrame("");
-        viewingFrame.getContentPane().add(cp);
-        viewingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        viewingFrame.pack();
-        viewingFrame.setVisible(true);
-    }
-
-    @Deprecated
-    public static void main(String[] args) throws ReadingException, CannotDrawException {
-
-        ArrayList<PrimarySpiderDiagram> psds = new ArrayList<PrimarySpiderDiagram>();
-        PrimarySpiderDiagram psd1;
-        // This hangs.
-        //        PrimarySpiderDiagram psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}");
-        //        psds.add(psd1);
-        // This is okay, because it is a Venn diagram. But the outside should not be shaded.
-        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}");
-        psds.add(psd1);
-
-        // This is not okay. We do not know whether A and B are disjoint. Also,
-        // the outside of A and B must not be shaded.
-        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}");
-        psds.add(psd1);
-
-        // This is not what I want. A is not necessarily a subset of B and the outside must not be empty!
-        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"B\"], [\"A\"])])]}");
-        psds.add(psd1);
-
-        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], []), ([\"A\"],[\"B\"])]), (\"s'\", [([\"B\"], [\"A\"])])]}");
-        psds.add(psd1);
-
-        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], []), ([\"A\"],[\"B\"])]), (\"s'\", [([\"A\", \"B\"], []), ([\"B\"], [\"A\"])])]}");
-        psds.add(psd1);
-
-        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [([\"A\", \"B\"], [])], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], []), ([\"A\"],[\"B\"])]), (\"s'\", [([\"A\", \"B\"], []), ([\"B\"], [\"A\"])])]}");
-        psds.add(psd1);
-
-        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [([\"B\"], [\"A\", \"C\"])], spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], []), ([\"A\"],[\"B\",  \"C\"])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])]}");
-        psds.add(psd1);
-
-//        AbstractDescription ad = AbstractDescription.makeForTesting("a b ab, ,a b", false);
-//        AbstractDescription ad = AbstractDescription.makeForTesting("A B C AB AC BC ABC, B,A AB ABC, B, B", false);
-//        Iterator<AbstractSpider> it = ad.getSpiderIterator();
-//        it.next().setName("s1");
-//        it.next().setName("s2");
-//        it.next().setName("s3");
+//    @Deprecated
+//    private static void drawPSD(PrimarySpiderDiagram psd1) throws HeadlessException, CannotDrawException {
+//        AbstractDescription ad = getAbstractDescription(psd1);
 //        drawAD(ad);
-
-        for (PrimarySpiderDiagram psd : psds) {
-            drawPSD(psd);
-        }
-    }
+//    }
+//
+//    @Deprecated
+//    private static void drawAD(AbstractDescription ad) throws CannotDrawException, HeadlessException {
+//        ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(ad, 300);
+//
+//        CirclesPanel cp = new CirclesPanel("", "No failure message", cd, 300, true);
+//
+//        JFrame viewingFrame = new JFrame("");
+//        viewingFrame.getContentPane().add(cp);
+//        viewingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        viewingFrame.pack();
+//        viewingFrame.setVisible(true);
+//    }
+//
+//    @Deprecated
+//    public static void main(String[] args) throws ReadingException, CannotDrawException {
+//
+//        ArrayList<PrimarySpiderDiagram> psds = new ArrayList<PrimarySpiderDiagram>();
+//        PrimarySpiderDiagram psd1;
+//        // This hangs.
+//        //        PrimarySpiderDiagram psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}");
+//        //        psds.add(psd1);
+//        // This is okay, because it is a Venn diagram. But the outside should not be shaded.
+//        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}");
+//        psds.add(psd1);
+//
+//        // This is not okay. We do not know whether A and B are disjoint. Also,
+//        // the outside of A and B must not be shaded.
+//        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}");
+//        psds.add(psd1);
+//
+//        // This is not what I want. A is not necessarily a subset of B and the outside must not be empty!
+//        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"B\"], [\"A\"])])]}");
+//        psds.add(psd1);
+//
+//        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], []), ([\"A\"],[\"B\"])]), (\"s'\", [([\"B\"], [\"A\"])])]}");
+//        psds.add(psd1);
+//
+//        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], []), ([\"A\"],[\"B\"])]), (\"s'\", [([\"A\", \"B\"], []), ([\"B\"], [\"A\"])])]}");
+//        psds.add(psd1);
+//
+//        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [([\"A\", \"B\"], [])], spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\", \"B\"], []), ([\"A\"],[\"B\"])]), (\"s'\", [([\"A\", \"B\"], []), ([\"B\"], [\"A\"])])]}");
+//        psds.add(psd1);
+//
+//        psd1 = (PrimarySpiderDiagram) SpiderDiagramsReader.readSpiderDiagram("PrimarySD { sh_zones = [([\"B\"], [\"A\", \"C\"])], spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], []), ([\"A\"],[\"B\",  \"C\"])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])]}");
+//        psds.add(psd1);
+//
+////        AbstractDescription ad = AbstractDescription.makeForTesting("a b ab, ,a b", false);
+////        AbstractDescription ad = AbstractDescription.makeForTesting("A B C AB AC BC ABC, B,A AB ABC, B, B", false);
+////        Iterator<AbstractSpider> it = ad.getSpiderIterator();
+////        it.next().setName("s1");
+////        it.next().setName("s2");
+////        it.next().setName("s3");
+////        drawAD(ad);
+//
+//        for (PrimarySpiderDiagram psd : psds) {
+//            drawPSD(psd);
+//        }
+//    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
