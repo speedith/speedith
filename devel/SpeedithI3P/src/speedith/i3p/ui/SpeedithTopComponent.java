@@ -80,15 +80,13 @@ public class SpeedithTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Overrides">
     @Override
     public void componentOpened() {
-        ProverManager prover = getProver();
-        unregisterMessageListener(prover);
-        messageListener = new ProverMessageListenerImpl();
-        prover.addProverMessageListener(messageListener);
+        unregisterMessageListener();
+        registerMessageListener();
     }
 
     @Override
     public void componentClosed() {
-        unregisterMessageListener(null);
+        unregisterMessageListener();
     }
     // </editor-fold>
 
@@ -130,20 +128,26 @@ public class SpeedithTopComponent extends TopComponent {
 
     /**
      * This method removes the {@link SpeedithTopComponent#messageListener message listener}
-     * from the current prover and sets it to {@code null}.
-     * @param prover the prover from which to remove the {@link SpeedithTopComponent#messageListener message listener}.
-     * <p><span style="font-weight:bold">Note</span>: if you pass {@code null}, then
-     * this method will look up the prover through {@link SpeedithTopComponent#getProver()}
-     * and remove it there.</p>
+     * from the current prover's set of message listeners.
+     * <p>This method does not set the message listener to {@code null}.</p>
      */
-    private void unregisterMessageListener(ProverManager prover) {
+    private void unregisterMessageListener() {
         if (messageListener != null) {
-            if (prover == null) {
-                prover = getProver();
-            }
-            prover.removeProverMessageListener(messageListener);
-            messageListener = null;
+            getProver().removeProverMessageListener(messageListener);
         }
+    }
+
+    /**
+     * Registers the {@link SpeedithTopComponent#messageListener message listener}
+     * as one of the current prover's message listeners.
+     * <p>This method initialises the message listener field if it has not yet been
+     * initialised.</p>
+     */
+    private void registerMessageListener() {
+        if (messageListener == null) {
+            messageListener = new ProverMessageListenerImpl();
+        }
+        getProver().addProverMessageListener(messageListener);
     }
     // </editor-fold>
 
