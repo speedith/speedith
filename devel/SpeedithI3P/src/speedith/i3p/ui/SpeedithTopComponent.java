@@ -56,16 +56,19 @@ public class SpeedithTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        compoundSpiderDiagramPanel1 = new speedith.draw.CompoundSpiderDiagramPanel();
 
         setLayout(new java.awt.BorderLayout());
 
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(SpeedithTopComponent.class, "SpeedithTopComponent.jLabel1.text")); // NOI18N
-        add(jLabel1, java.awt.BorderLayout.CENTER);
+        try {
+            compoundSpiderDiagramPanel1.setDiagramString(org.openide.util.NbBundle.getMessage(SpeedithTopComponent.class, "SpeedithTopComponent.compoundSpiderDiagramPanel1.diagramString")); // NOI18N
+        } catch (speedith.core.lang.reader.ReadingException e1) {
+            e1.printStackTrace();
+        }
+        add(compoundSpiderDiagramPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private speedith.draw.CompoundSpiderDiagramPanel compoundSpiderDiagramPanel1;
     // End of variables declaration//GEN-END:variables
 
     @Override
