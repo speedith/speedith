@@ -16,10 +16,25 @@
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
   <SubComponents>
+    <Component class="javax.swing.JButton" name="jButton1">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="speedith/i3p/ui/Bundle.properties" key="SpeedithTopComponent.jButton1.text" replaceFormat="i18n(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+      </Events>
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+          <BorderConstraints direction="South"/>
+        </Constraint>
+      </Constraints>
+    </Component>
     <Container class="speedith.draw.CompoundSpiderDiagramPanel" name="compoundSpiderDiagramPanel1">
       <Properties>
         <Property name="diagramString" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="speedith/i3p/ui/Bundle.properties" key="SpeedithTopComponent.compoundSpiderDiagramPanel1.diagramString" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="speedith/i3p/ui/Bundle.properties" key="SpeedithTopComponent.compoundSpiderDiagramPanel1.diagramString_1" replaceFormat="i18n(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Constraints>

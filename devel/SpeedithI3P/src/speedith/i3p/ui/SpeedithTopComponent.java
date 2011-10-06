@@ -24,10 +24,15 @@
  */
 package speedith.i3p.ui;
 
+import org.isabelle.iapp.process.features.InjectedCommands;
+import org.isabelle.iapp.process.features.InjectionResult;
 import org.isabelle.iapp.facade.IAPP;
 import org.isabelle.iapp.process.Message;
 import org.isabelle.iapp.process.ProverManager;
 import org.isabelle.iapp.process.ProverMessageListener;
+import org.isabelle.iapp.process.features.InjectionFinishListener;
+import org.isabelle.iapp.process.features.InjectionResultListener;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -62,19 +67,49 @@ public class SpeedithTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton1 = new javax.swing.JButton();
         compoundSpiderDiagramPanel1 = new speedith.draw.CompoundSpiderDiagramPanel();
 
         setLayout(new java.awt.BorderLayout());
 
+        org.openide.awt.Mnemonics.setLocalizedText(jButton1, i18n("SpeedithTopComponent.jButton1.text")); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        add(jButton1, java.awt.BorderLayout.SOUTH);
+
         try {
-            compoundSpiderDiagramPanel1.setDiagramString(org.openide.util.NbBundle.getMessage(SpeedithTopComponent.class, "SpeedithTopComponent.compoundSpiderDiagramPanel1.diagramString")); // NOI18N
+            compoundSpiderDiagramPanel1.setDiagramString(i18n("SpeedithTopComponent.compoundSpiderDiagramPanel1.diagramString_1")); // NOI18N
         } catch (speedith.core.lang.reader.ReadingException e1) {
             e1.printStackTrace();
         }
         add(compoundSpiderDiagramPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        InjectionResult cmd = executeCommand("writeln (getenv \"DIABELLI_JAVA_PATH\")");
+        cmd.addInjectionResultListener(new InjectionFinishListener() {
+
+            @Override
+            public void injectedFinished(InjectionResult inj) {
+                try {
+                    for (Message message : inj.getResults()) {
+                        System.out.println(message.toString());
+                    }
+                    for (Message message : inj.getErrors()) {
+                        System.out.println(message.toString());
+                    }
+                } catch (InterruptedException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        });
+    }//GEN-LAST:event_jButton1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private speedith.draw.CompoundSpiderDiagramPanel compoundSpiderDiagramPanel1;
+    private javax.swing.JButton jButton1;
     // End of variables declaration//GEN-END:variables
 
     // <editor-fold defaultstate="collapsed" desc="Overrides">
@@ -105,27 +140,6 @@ public class SpeedithTopComponent extends TopComponent {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Private Helper Methods">
-    /**
-     * Tries to fetch the current prover. It will throw an exception if the
-     * prover could not have been obtained for any reason.
-     * <p>This prover is needed to listen for messages from Isabelle to I3P.</p>
-     * @return the current prover instance. It never returns {@code null}, it
-     * rather throws exceptions.
-     * @throws IllegalStateException thrown if the prover instance could not
-     * have been obtained for some reason.
-     */
-    private ProverManager getProver() throws IllegalStateException {
-        IAPP iapp = IAPP.getInstance();
-        if (iapp == null) {
-            throw new IllegalStateException(i18n("STC_NO_IAPP"));
-        }
-        ProverManager prover = iapp.getProver();
-        if (prover == null) {
-            throw new IllegalStateException(i18n("STC_NO_PROVER"));
-        }
-        return prover;
-    }
-
     /**
      * This method removes the {@link SpeedithTopComponent#messageListener message listener}
      * from the current prover's set of message listeners.
@@ -159,8 +173,50 @@ public class SpeedithTopComponent extends TopComponent {
 
         @Override
         public void proverMessage(Message res) {
-            System.out.println(res.toString());
+//            System.out.println(res.toString());
         }
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Public Static Utility Methods">
+    /**
+     * Tries to fetch the current prover. It will throw an exception if the
+     * prover could not have been obtained for any reason.
+     * <p>This prover is needed to listen for messages from Isabelle to I3P.</p>
+     * @return the current prover instance. It never returns {@code null}, it
+     * rather throws exceptions.
+     * @throws IllegalStateException thrown if the prover instance could not
+     * have been obtained for some reason.
+     */
+    public static ProverManager getProver() throws IllegalStateException {
+        IAPP iapp = IAPP.getInstance();
+        if (iapp == null) {
+            throw new IllegalStateException(i18n("STC_NO_IAPP"));
+        }
+        ProverManager prover = iapp.getProver();
+        if (prover == null) {
+            throw new IllegalStateException(i18n("STC_NO_PROVER"));
+        }
+        return prover;
+    }
+
+    /**
+     * Issues an ML command to the prover and returns an injection result.
+     * <p>You may wish to add an {@link InjectionResultListener} to the returned
+     * {@link InjectionResult}. With this you will receive the response of the
+     * prover.</p>
+     * @param cmd the ML command to be issued to the prover.
+     * @return the <span style="font-style:italic;">future</span> result (the
+     * answer of the prover).
+     * @throws UnsupportedOperationException 
+     */
+    public static InjectionResult executeCommand(String cmd) throws UnsupportedOperationException {
+        ProverManager prover = IAPP.getInstance().getProver();
+        InjectedCommands inj = prover.getFeature(InjectedCommands.class);
+        if (inj == null) {
+            throw new UnsupportedOperationException(i18n("STC_NO_CMD_INJECTION"));
+        }
+        return inj.ML(null, cmd);
     }
     // </editor-fold>
 }

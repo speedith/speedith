@@ -34,6 +34,8 @@ package speedith.draw;
 
 import java.awt.GridBagConstraints;
 import icircles.util.CannotDrawException;
+import java.awt.GridBagLayout;
+import java.awt.LayoutManager;
 import java.util.Iterator;
 import javax.swing.JLabel;
 import speedith.core.lang.CompoundSpiderDiagram;
@@ -192,7 +194,7 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
             GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.weightx = 1.0;
             gridBagConstraints.weighty = 1.0;
-            
+
             Iterator<SpiderDiagram> it = diagram.getOperands().iterator();
             add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
             while (it.hasNext()) {
