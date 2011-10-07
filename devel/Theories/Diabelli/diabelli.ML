@@ -129,7 +129,17 @@ sig
      @throws  SD_SPEEDITH  if Speedith exited with a non-zero error code. *)
   val speedith_batch_apply: term -> theory option -> (string*string) list -> term
 
+
+
+
+(*==============================================================================
+  = Random stuff (for testing etc.)
+  ============================================================================*)
+
   val random_tests: string -> (string * int)
+  val print_subgoals: unit -> string
+
+
 
 (*==============================================================================
   = Diabelli Reasoning Tactics
@@ -520,11 +530,11 @@ fun speedith_batch_apply t othy args =
       val retVal as (sout, ecode) = exec_args
                             (getenv DIABELLI_JAVA_PATH)
                                       ([
-                              "-jar", getenv DIABELLI_SPEEDITH_PATH,
-                              "-of", getenv DIABELLI_SPEEDITH_OUTPUT_FORMAT,
-                              "-sd", PolyML.makestring (sd)
-                            ] @ ["-ofa", (if isml then "ml=true" else "ml=false") ^ (",useXSymbols=true")]
-                              @ args_prep2)
+                                         "-jar", getenv DIABELLI_SPEEDITH_PATH,
+                                         "-of", getenv DIABELLI_SPEEDITH_OUTPUT_FORMAT,
+                                         "-sd", PolyML.makestring (sd)
+                                       ] @ ["-ofa", (if isml then "ml=true" else "ml=false") ^ (",useXSymbols=true")]
+                                       @ args_prep2)
       val _ = tracing ("Speedith returned: " ^ sout)
       fun read_term (Context.Theory ctxt) formula = (writeln "Theory"; Syntax.read_term_global ctxt formula)
         | read_term (Context.Proof ctxt) formula = (writeln "Proof"; Syntax.read_term ctxt formula)
@@ -538,6 +548,9 @@ fun speedith_batch_apply t othy args =
         raise (SD_SPEEDITH_ERROR retVal)
   end
 
+
+
+
 (*==============================================================================
   = Random Test Stuff
   ============================================================================*)
@@ -549,6 +562,20 @@ fun random_tests str =
   in
       (out, ret)
   end;
+
+fun print_subgoals _ =
+  let
+      val ctxt = (case (Context.thread_data ()) of
+                     SOME (Context.Proof pctx) => pctx
+                   | _ => raise (SD_ERROR "Could not get the proof context. Are you inside a proof?"))
+      val _ = tracing "is this tracing? or is this love?"
+      val _ = tracing (PolyML.makestring (ProofContext.print_lthms ctxt))
+  in
+      "tralala"
+  end;
+  
+
+
 
 (*==============================================================================
   = sd_tac

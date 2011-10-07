@@ -391,6 +391,8 @@ DIABELLI SETUP (ML-level translation, communication, and tactics procedures)
 use "diabelli.ML"
 
 
+(* ML {* Diabelli.print_subgoals () *} *)
+
 method_setup sd_tac = {*
 (fn xs => let
               fun get_option ((oname, _), oval) = (oname, oval)
@@ -420,6 +422,7 @@ method_setup sd_tac = {*
 (* This lemma should land in the unit tests. *)
 lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
               \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
+  ML_prf {* Diabelli.print_subgoals () *}
   apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
   apply (sd_tac add_feet sdi: 3 sp: "s2" r: "[([\"A\", \"B\"],[])]")
   apply (sd_tac add_feet sdi: 3 sp: "s1" r: "[([\"A\"],[\"B\"])]")
