@@ -89,7 +89,30 @@ public class SpeedithTopComponent extends TopComponent {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        InjectionResult cmd = executeCommand("let val (out, ret) = Diabelli.random_tests \"some string\"; in writeln out end;");
+//        InjectionResult cmd = executeCommand("let val (out, ret) = Diabelli.random_tests \"some string\"; in writeln out end;");
+        InjectionResult cmd = executeCommand("(*val state = Toplevel.toplevel;*)\n" +
+           "if Toplevel.is_proof state then\n" +
+             "let\n" +
+               "val _ = tracing \"SHIIIIIT!\"\n" +
+               "val proof = Toplevel.proof_of state\n" +
+               "val ctx = Proof.context_of proof\n" +
+               "val res = Unsynchronized.ref (Free(\"NOT_SET\",dummyT))\n" +
+               "open Method\n" +
+               "(* Proof.get_goal is private in Isabelle2011 - work around this *)\n" +
+               "val _ = Seq.hd (Proof.apply (Basic (fn ctx =>\n" +
+                               "SIMPLE_METHOD (SUBGOAL (fn (t,i) => (res := t;\n" +
+                               "all_tac)) 1))) proof)\n" +
+             "in\n" +
+               "tracing (Pretty.string_of (Pretty.chunks\n" +
+                        "[ Pretty.str \"quick display of first goal\",\n" +
+                          "Pretty.str \"\",\n" +
+                          "Syntax.pretty_term ctx (!res) ]))\n" +
+             "end\n" +
+             "handle exn =>\n" +
+               "if Exn.is_interrupt exn\n" +
+               "then reraise exn\n" +
+               "else Toplevel.print_state false state\n" +
+           "else tracing \"SHIIIIIT NO PROOF!\"");
 //        InjectionResult cmd = executeCommand("writeln (getenv \"DIABELLI_JAVA_PATH\")");
         cmd.addInjectionResultListener(new InjectionFinishListener() {
 

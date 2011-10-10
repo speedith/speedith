@@ -133,6 +133,27 @@ sig
 
 
 (*==============================================================================
+  = Utility functions
+  ============================================================================*)
+  (* Returns a list of terms (corresponding to current subgoals in the current
+     proof).
+     
+     @returns (terms, state)
+     
+       terms - the list of terms that correspond to the current subgoals.
+       
+       state - the proof state from which we have obtained the terms (this one
+               itself has been obtained via `Toplevel.proof_of (Isar.state ())`).
+               You can get the context from it via `Proof.context_of state`.
+     
+     @throws SD_ERROR if we cannot obtain the list of terms for any reason
+                      (e.g.: not being in a proof etc.). *)
+  val get_goal_terms: unit -> (term list * Proof.state)
+
+
+
+
+(*==============================================================================
   = Random stuff (for testing etc.)
   ============================================================================*)
 
@@ -547,6 +568,30 @@ fun speedith_batch_apply t othy args =
       else
         raise (SD_SPEEDITH_ERROR retVal)
   end
+
+
+
+
+(*==============================================================================
+  = Utility functions
+  ============================================================================*)
+fun get_goal_terms _ =
+  let
+      val state = Isar.state ()
+      val _ = if Toplevel.is_proof state then () else raise (SD_ERROR "Not inside a proof.")
+      val proof = Toplevel.proof_of state
+      (*val ctxt = Proof.context_of proof*)
+      val terms = Unsynchronized.ref []
+      
+      val _ = Seq.hd (Proof.apply
+                         (Method.Basic
+                             (fn ctx =>
+                                (*SIMPLE_METHOD (SUBGOAL (fn (t,i) => (terms := (t::(!terms)); tracing "GOAL!"; all_tac)) 1))*)
+                                SIMPLE_METHOD (fn thm => let val _ = (terms := Thm.prems_of thm) in all_tac thm end))
+                         ) proof)
+  in
+      (!terms, proof)
+  end;
 
 
 
