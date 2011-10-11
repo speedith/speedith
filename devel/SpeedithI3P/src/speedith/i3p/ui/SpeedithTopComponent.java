@@ -38,6 +38,7 @@ import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import speedith.core.lang.reader.ReadingException;
 import static speedith.i3p.ui.Translations.*;
 
 /**
@@ -97,6 +98,14 @@ public class SpeedithTopComponent extends TopComponent {
             @Override
             public void injectedFinished(InjectionResult inj) {
                 try {
+                    Message[] results = inj.getResults();
+                    if (results != null && results.length > 1) {
+                        try {
+                            compoundSpiderDiagramPanel1.setDiagramString(results[1].getText());
+                        } catch (ReadingException ex) {
+                            Exceptions.printStackTrace(ex);
+                        }
+                    }
                     for (Message message : inj.getResults()) {
                         System.out.println(message.toString());
                     }
