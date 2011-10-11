@@ -8,6 +8,7 @@ Diabelli: provides the necessary infrastructure for heterogeneous reasoning
 signature DIABELLI =
 sig
   type sd
+  type OriginalForm
 
   (* Indicates a translation error.
 
@@ -52,7 +53,7 @@ sig
             translated to a spider diagram.
 
    @throws  SD_ERROR *)
-  val from_snf_to_sd: term -> (bool * sd)
+  val from_snf_to_sd: term -> (sd * OriginalForm)
 
   (* This function translates an Isabelle/HOL term that is in the 'Meta-Level
      Spider Normal Form' (or ML-SNF) into a spider diagram record, which is
@@ -128,6 +129,19 @@ sig
 
      @throws  SD_SPEEDITH  if Speedith exited with a non-zero error code. *)
   val speedith_batch_apply: term -> theory option -> (string*string) list -> term
+  
+  (* Converts a list of terms to a list of corresponding spider diagrams.
+  
+     If a term cannot be converted to a spider diagram, then NONE will be
+     produced for it.
+     
+     This method does not throw exceptions.
+     
+     @param  1  a list of terms to convert to spider diagrams.
+     
+     @returns  a list of spider diagrams and the forms of the original formulae
+               (boxed in an `option`). *)
+  val from_terms_to_sds: term list -> (sd * OriginalForm) option list
 
 
 
@@ -207,6 +221,15 @@ datatype sd =
       arg2: sd
     }
   | NullSD;
+
+(* This is an enumeration of known Isabelle formula formats. The problem is
+   that we can convert many types of Isabelle formulae into spider diagrams (the
+   same holds in the other direction). We want to preserve the format of the
+   formulae as much as possible across translations. This is why we try to
+   remember what the original formula form in Isabelle is. *)
+datatype OriginalForm =
+    SNF   (* Formulae similar to @{term "(∃s1 s2. distinct[s1, s2] ∧ s1 ∈ A ∩ B ∧ s2 ∈ (A - B) ∪ (B - A)) ⟶ (∃s1 s2. distinct[s1, s2] ∧ s1 ∈ A ∧ s2 ∈ B)"}. *)
+  | MLSNF (* Formulae similar to @{term "⋀s1 s2. ⟦s1 ≠ s2; s1 ∈ A; s1 ∈ B; s2 ∈ A; s2 ∉ B⟧ ⟹ ∃s1 s2. s1 ≠ s2 ∧ s1 ∈ A ∧ s2 ∈ B"}. *)
 
 (*==============================================================================
   = Exceptions
@@ -435,7 +458,7 @@ local
       end
     | from_mlsnf_to_sd_outer t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Not an SNF Meta-Level formula.", t))
 in
-  fun from_snf_to_sd t = (false, from_snf_to_sd_outer t) handle e => ((true, from_mlsnf_to_sd_outer t) handle e2 => raise SD_SPEEDITH_GERROR ("Translation from Isabelle/HOL to spider diagrams failed.", [e, e2]))
+  fun from_snf_to_sd t = (from_snf_to_sd_outer t, SNF) handle e => ((from_mlsnf_to_sd_outer t, MLSNF) handle e2 => raise SD_SPEEDITH_GERROR ("Translation from Isabelle/HOL to spider diagrams failed.", [e, e2]))
   fun from_mlsnf_to_sd t = from_mlsnf_to_sd_outer t
 end;
 
@@ -546,7 +569,7 @@ fun speedith_batch_apply t othy args =
   let
       val args_prep = map (fn (x, y) => ("-" ^ x, y)) args
       val args_prep2 = List.foldr (fn ((x, y), xs) => x::(y::xs)) [] args_prep
-      val (isml, sd) = from_snf_to_sd t
+      val (sd, originalForm) = from_snf_to_sd t
       val _ = tracing "Invoking Speedith with spider diagram: "
       val retVal as (sout, ecode) = exec_args
                             (getenv DIABELLI_JAVA_PATH)
@@ -554,7 +577,7 @@ fun speedith_batch_apply t othy args =
                                          "-jar", getenv DIABELLI_SPEEDITH_PATH,
                                          "-of", getenv DIABELLI_SPEEDITH_OUTPUT_FORMAT,
                                          "-sd", PolyML.makestring (sd)
-                                       ] @ ["-ofa", (if isml then "ml=true" else "ml=false") ^ (",useXSymbols=true")]
+                                       ] @ ["-ofa", (case originalForm of MLSNF => "ml=true" | SNF => "ml=false") ^ (",useXSymbols=true")]
                                        @ args_prep2)
       val _ = tracing ("Speedith returned: " ^ sout)
       fun read_term (Context.Theory ctxt) formula = (writeln "Theory"; Syntax.read_term_global ctxt formula)
@@ -573,6 +596,19 @@ fun speedith_batch_apply t othy args =
 
 
 (*==============================================================================
+  = from_terms_to_sds
+  ============================================================================*)
+fun from_terms_to_sds terms =
+  let
+      fun impl_terms_to_sds (t::terms) sds = []
+  in
+      []
+  end;
+
+
+
+
+(*==============================================================================
   = Utility functions
   ============================================================================*)
 fun get_goal_terms _ =
@@ -580,13 +616,11 @@ fun get_goal_terms _ =
       val state = Isar.state ()
       val _ = if Toplevel.is_proof state then () else raise (SD_ERROR "Not inside a proof.")
       val proof = Toplevel.proof_of state
-      (*val ctxt = Proof.context_of proof*)
       val terms = Unsynchronized.ref []
       
       val _ = Seq.hd (Proof.apply
                          (Method.Basic
                              (fn ctx =>
-                                (*SIMPLE_METHOD (SUBGOAL (fn (t,i) => (terms := (t::(!terms)); tracing "GOAL!"; all_tac)) 1))*)
                                 SIMPLE_METHOD (fn thm => let val _ = (terms := Thm.prems_of thm) in all_tac thm end))
                          ) proof)
   in

@@ -421,32 +421,6 @@ method_setup sd_tac = {*
 (* This lemma should land in the unit tests. *)
 lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
               \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
-  ML_prf {* Diabelli.get_goal_terms () *}
-  ML_prf {*
-           val state = Toplevel.toplevel;
-           if Toplevel.is_proof state then
-             let
-               val _ = tracing "SHIIIIIT!"
-               val proof = Toplevel.proof_of state
-               val ctx = Proof.context_of proof
-               val res = Unsynchronized.ref (Free("NOT_SET",dummyT))
-               open Method
-               (* Proof.get_goal is private in Isabelle2011 - work around this *)
-               val _ = Seq.hd (Proof.apply (Basic (fn ctx =>
-                               SIMPLE_METHOD (SUBGOAL (fn (t,i) => (res := t;
-                               all_tac)) 1))) proof)
-             in
-               tracing (Pretty.string_of (Pretty.chunks
-                        [ Pretty.str "quick display of first goal",
-                          Pretty.str "",
-                          Syntax.pretty_term ctx (!res) ]))
-             end
-             handle exn =>
-               if Exn.is_interrupt exn
-               then reraise exn
-               else Toplevel.print_state false state
-           else tracing "SHIIIIIT NO PROOF!"
-           *}
   apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
   apply (sd_tac add_feet sdi: 3 sp: "s2" r: "[([\"A\", \"B\"],[])]")
   apply (sd_tac add_feet sdi: 3 sp: "s1" r: "[([\"A\"],[\"B\"])]")
