@@ -1,13 +1,21 @@
 theory Testing
 imports
   Main
+uses
+  ("diabelli.ML")
 begin
-
 
 use "diabelli.ML"
 
+
+lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
+              \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
+  apply auto
+  ML_prf {* Diabelli.get_goal_terms () *}
+
 lemma l1: "\<lbrakk> P \<longrightarrow> Q; P \<rbrakk> \<Longrightarrow> Q \<and> P"
   apply (rule conjI)
+  ML_prf {* Diabelli.get_goal_terms () *}
   ML_prf {* Diabelli.get_goal_terms () *}
 ML_prf {* Isar_Cmd.diag_state () *}
 (*ML_prf {*

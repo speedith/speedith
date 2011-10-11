@@ -600,9 +600,12 @@ fun speedith_batch_apply t othy args =
   ============================================================================*)
 fun from_terms_to_sds terms =
   let
-      fun impl_terms_to_sds (t::terms) sds = []
+      fun impl_terms_to_sds [] sds = sds
+        | impl_terms_to_sds (t::terms) sds = impl_terms_to_sds terms (sds @ [(SOME (from_snf_to_sd t)) handle _ => NONE])
+      val sds = impl_terms_to_sds terms []
+      val _ = tracing (PolyML.makestring sds)
   in
-      []
+      sds
   end;
 
 
@@ -623,6 +626,8 @@ fun get_goal_terms _ =
                              (fn ctx =>
                                 SIMPLE_METHOD (fn thm => let val _ = (terms := Thm.prems_of thm) in all_tac thm end))
                          ) proof)
+
+      val sds = from_terms_to_sds (!terms)
   in
       (!terms, proof)
   end;
