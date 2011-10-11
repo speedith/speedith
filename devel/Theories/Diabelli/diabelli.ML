@@ -166,6 +166,13 @@ sig
 
 
 
+(*==============================================================================
+  = I3P Communication Routines
+  ============================================================================*)
+
+  val i3p_write_sds_goals: unit -> unit
+
+
 
 (*==============================================================================
   = Random stuff (for testing etc.)
@@ -179,6 +186,7 @@ sig
 (*==============================================================================
   = Diabelli Reasoning Tactics
   ============================================================================*)
+  
   val sd_tac: (string*string) list -> Proof.context -> int -> tactic
 end;
 
@@ -228,8 +236,9 @@ datatype sd =
    formulae as much as possible across translations. This is why we try to
    remember what the original formula form in Isabelle is. *)
 datatype OriginalForm =
-    SNF   (* Formulae similar to @{term "(∃s1 s2. distinct[s1, s2] ∧ s1 ∈ A ∩ B ∧ s2 ∈ (A - B) ∪ (B - A)) ⟶ (∃s1 s2. distinct[s1, s2] ∧ s1 ∈ A ∧ s2 ∈ B)"}. *)
-  | MLSNF (* Formulae similar to @{term "⋀s1 s2. ⟦s1 ≠ s2; s1 ∈ A; s1 ∈ B; s2 ∈ A; s2 ∉ B⟧ ⟹ ∃s1 s2. s1 ≠ s2 ∧ s1 ∈ A ∧ s2 ∈ B"}. *)
+    SNF     (* Formulae similar to @{term "(∃s1 s2. distinct[s1, s2] ∧ s1 ∈ A ∩ B ∧ s2 ∈ (A - B) ∪ (B - A)) ⟶ (∃s1 s2. distinct[s1, s2] ∧ s1 ∈ A ∧ s2 ∈ B)"}. *)
+  | MLSNF   (* Formulae similar to @{term "⋀s1 s2. ⟦s1 ≠ s2; s1 ∈ A; s1 ∈ B; s2 ∈ A; s2 ∉ B⟧ ⟹ ∃s1 s2. s1 ≠ s2 ∧ s1 ∈ A ∧ s2 ∈ B"}. *)
+  | INVALID (* A formula that could not have been converted to spider diagrams. *)
 
 (*==============================================================================
   = Exceptions
@@ -603,7 +612,6 @@ fun from_terms_to_sds terms =
       fun impl_terms_to_sds [] sds = sds
         | impl_terms_to_sds (t::terms) sds = impl_terms_to_sds terms (sds @ [(SOME (from_snf_to_sd t)) handle _ => NONE])
       val sds = impl_terms_to_sds terms []
-      val _ = tracing (PolyML.makestring sds)
   in
       sds
   end;
@@ -626,10 +634,25 @@ fun get_goal_terms _ =
                              (fn ctx =>
                                 SIMPLE_METHOD (fn thm => let val _ = (terms := Thm.prems_of thm) in all_tac thm end))
                          ) proof)
-
-      val sds = from_terms_to_sds (!terms)
   in
       (!terms, proof)
+  end;
+
+
+
+(*==============================================================================
+  = I3P Communication Routines
+  ============================================================================*)
+
+fun i3p_write_sds_goals _ =
+  let
+      val (terms, proof) = get_goal_terms ()
+      val sds = from_terms_to_sds terms
+      fun impl_write_sds [] = ()
+        | impl_write_sds ((SOME (sd:sd, form:OriginalForm))::sds) = let val _ = tracing (PolyML.makestring form) val _ = tracing (PolyML.makestring sd) in () end
+        | impl_write_sds (NONE::sds) = tracing (PolyML.makestring INVALID);
+  in
+      impl_write_sds sds
   end;
 
 
