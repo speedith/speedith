@@ -89,8 +89,9 @@ public class SpeedithTopComponent extends TopComponent {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        InjectionResult cmd = executeCommand("let val (out, ret) = Diabelli.random_tests \"some string\"; in writeln out end;");
+//        InjectionResult cmd = executeCommand("let val (out, ret) = Diabelli.random_tests \"some string\"; in writeln out end;");
 //        InjectionResult cmd = executeCommand("writeln (getenv \"DIABELLI_JAVA_PATH\")");
+        InjectionResult cmd = executeCommand("Diabelli.i3p_write_sds_goals ()");
         cmd.addInjectionResultListener(new InjectionFinishListener() {
 
             @Override
