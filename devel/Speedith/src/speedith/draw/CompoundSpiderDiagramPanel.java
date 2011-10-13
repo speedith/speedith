@@ -74,6 +74,7 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -192,13 +193,16 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
     private void drawInfixDiagram() throws CannotDrawException {
         if (diagram != null && diagram.getOperandCount() > 0) {
             GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
-            gridBagConstraints.weightx = 1.0;
-            gridBagConstraints.weighty = 1.0;
+//            gridBagConstraints.weightx = 1.0;
+//            gridBagConstraints.weighty = 1.0;
 
             Iterator<SpiderDiagram> it = diagram.getOperands().iterator();
+            gridBagConstraints.gridx = 1;
             add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
             while (it.hasNext()) {
-                add(new OperatorPanel(diagram.getOperator()));
+                ++gridBagConstraints.gridx;
+                add(new OperatorPanel(diagram.getOperator()), gridBagConstraints);
+                ++gridBagConstraints.gridx;
                 add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
             }
         } else {

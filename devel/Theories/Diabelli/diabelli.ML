@@ -25,18 +25,60 @@ sig
   (* This exception indicates that Speedith exited with a non-zero error code. *)
   exception SD_SPEEDITH_ERROR of string * int
 
-  (* Replaces a subgoal with an arbitrary term.
+  val traverse_term: term -> string
 
-     @param  1 the arbitrary term with which to replace sugoal 'i'.
+  val print_props_tac: Proof.context -> tactic
 
-     @param  2 the subgoal (its number) we would like to replace.
 
-     @param  3 the theorem. This argument is provided by the 'apply'
-               mechanism (omit it when using apply), e.g.:
 
-         apply (tactic {* Diabelli.make_subgoal_tac @{term "Trueprop True"} 1 *})
-  *)
-  val make_subgoal_tac: term -> int -> thm -> thm Seq.seq
+
+(*==============================================================================
+  = External tool invocation
+  ============================================================================*)
+
+  (* Escapes the given string for double-quoting in bash.
+     Note: This function also puts the string into double-quotes.
+
+     @returns  the escaped string. *)
+  val bash_escape: string -> string
+
+  (* Exectues the program (given in the first parameter) with the given command-
+     line arguments (second parameter).
+
+     @param  1  the command to execute in bash.
+
+     @param  2  the list of arguments to the command (which will be escaped and
+                double-quoted).
+
+     @returns  a pair of a string (the output of the program) and an integer
+               (the exit code of execution). *)
+  val exec_args: string -> string list -> (string * int)
+  
+  (* Starts speedith in batch mode. Passes to it the given term (converted to a
+     spider diagram first), and instructs it to apply the inference rules given
+     by a list of rule description strings.
+
+     @param  1  the term to convert to a spider diagram and pass to Speedith.
+
+     @param  2  [optional] the context theory to use when converting Speedith's
+                output formula back to Isabelle/HOL. Use 'NONE' if you do not
+                want to provide a theory or if you know that the theory can be
+                obtained via 'Context.the_thread_data ()'.
+
+     @param  3  the descriptions of inference rules to apply (in the given
+                order) on the spider diagram (given in parameter 1).
+
+     @returns  the transformed term.
+
+     @throws  SD_SPEEDITH  if Speedith exited with a non-zero error code. *)
+  val speedith_batch_apply: term -> theory option -> (string*string) list -> term
+
+
+
+
+(*==============================================================================
+  = Translation
+  ============================================================================*)
 
   (* This function translates an Isabelle/HOL term of the 'MFOL spider normal'
    form into a spider diagram record suitable for input to Speedith.
@@ -88,47 +130,6 @@ sig
      @throws  SD_TRANSLATE_ERROR  If the input term could not have been
               translated to a spider diagram. *)
   val from_hosnf_to_sd: term -> sd
-
-  val traverse_term: term -> string
-
-  val print_props_tac: Proof.context -> tactic
-
-  (* Escapes the given string for double-quoting in bash.
-     Note: This function also puts the string into double-quotes.
-
-     @returns  the escaped string. *)
-  val bash_escape: string -> string
-
-  (* Exectues the program (given in the first parameter) with the given command-
-     line arguments (second parameter).
-
-     @param  1  the command to execute in bash.
-
-     @param  2  the list of arguments to the command (which will be escaped and
-                double-quoted).
-
-     @returns  a pair of a string (the output of the program) and an integer
-               (the exit code of execution). *)
-  val exec_args: string -> string list -> (string * int)
-  
-  (* Starts speedith in batch mode. Passes to it the given term (converted to a
-     spider diagram first), and instructs it to apply the inference rules given
-     by a list of rule description strings.
-
-     @param  1  the term to convert to a spider diagram and pass to Speedith.
-
-     @param  2  [optional] the context theory to use when converting Speedith's
-                output formula back to Isabelle/HOL. Use 'NONE' if you do not
-                want to provide a theory or if you know that the theory can be
-                obtained via 'Context.the_thread_data ()'.
-
-     @param  3  the descriptions of inference rules to apply (in the given
-                order) on the spider diagram (given in parameter 1).
-
-     @returns  the transformed term.
-
-     @throws  SD_SPEEDITH  if Speedith exited with a non-zero error code. *)
-  val speedith_batch_apply: term -> theory option -> (string*string) list -> term
   
   (* Converts a list of terms to a list of corresponding spider diagrams.
   
@@ -170,6 +171,22 @@ sig
   = I3P Communication Routines
   ============================================================================*)
 
+  (* Translates the current goals into spider diagrams and writes the
+     translations to the common output via the `tracing` function.
+     
+     If a subgoal is successfully converted to a spider diagram, the following
+     two lines will be printed through the `tracing` function:
+
+        Line 1: < SNF | MLSNF >
+        Line 2: [the string representation of the spider diagram]
+
+     The first line indicates the original form of the formula. The second line
+     is the actual string representation of the spider diagram.
+
+     If the subgoal is not successfully converted, then only a single line is
+     printed and it will contain the string "INVALID".
+
+     *)
   val i3p_write_sds_goals: unit -> unit
 
 
@@ -180,6 +197,26 @@ sig
 
   val random_tests: string -> (string * int)
   val print_subgoals: unit -> string
+
+
+
+
+(*==============================================================================
+  = Proof utility functions
+  ============================================================================*)
+
+  (* Replaces a subgoal with an arbitrary term.
+
+     @param  1 the arbitrary term with which to replace sugoal 'i'.
+
+     @param  2 the subgoal (its number) we would like to replace.
+
+     @param  3 the theorem. This argument is provided by the 'apply'
+               mechanism (omit it when using apply), e.g.:
+
+         apply (tactic {* Diabelli.make_subgoal_tac @{term "Trueprop True"} 1 *})
+  *)
+  val make_subgoal_tac: term -> int -> thm -> thm Seq.seq
 
 
 
@@ -451,7 +488,9 @@ local
     | from_snf_to_sd_outer (@{term "Trueprop :: bool => prop"} $ t) = from_snf_to_sd_outer t
     | from_snf_to_sd_outer (@{term "True"}) = NullSD
     | from_snf_to_sd_outer t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Unexpected from_snf_to_sd_outer term.", t))
+
     and
+
       from_mlsnf_to_sd_outer (t as (@{term "all :: ('a => prop) => prop"} $ Abs (spName, _, tInner))) =
       let
           val (spiders, inner_term) = collect_ml_spiders [spName] tInner
@@ -460,6 +499,7 @@ local
           val withoutDistinct = find_distinct metaImpTerms spiders
           val (spInCons, spOutCons, otherTerms) = get_sp_in_out_sets spiders withoutDistinct [] [] []
           (* TODO: Extract shaded zones from otherTerms. *)
+          val _ = case otherTerms of [] => true | (t::ts) => raise (SD_TRANSLATE_ERROR ("Could not translate the meta-level formula. Some unknown terms were found.", t))
           val psd = PrimarySD {spiders = spiders, habitats = get_habitats_from_cons spiders spInCons spOutCons, sh_zones = []}
       in
           if otherTerms = [] then BinarySD { operator = "op -->", arg1 = psd, arg2 = nestedSD }
