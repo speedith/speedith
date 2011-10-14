@@ -515,17 +515,23 @@ in
   fun from_mlsnf_to_sd t = from_mlsnf_to_sd_outer t
 end;
 
-(* A `sort_distinct` sorted list of contour names: `string list` *)
+(* This function traverses through all the subterms of the given term list and
+   returns all contours it finds.
+
+   @param  1  a `term list` which to search through for all the mentioned
+              contours.
+
+   @returns  a `sort_distinct` sorted list of contour names: `string list` *)
 fun get_contours (terms : term list) =
     let
-        val contours = Unsynchronized.ref []
-        fun term_visitor (Free (cname, _)) @{typ "'a set"} _ = let val _ = contours := (cname::(!contours)) in () end
+        val contours = Unsynchronized.ref (Ord_List.make string_ord [])
+        fun term_visitor (Free (cname, _)) @{typ "'a set"} _ = let val _ = contours := (Ord_List.insert string_ord cname (!contours)) in () end
           | term_visitor _ _ _ = ()
         fun list_traverse ((t::ts) : term list) = let val _ = fold_term_types (term_visitor) t () val _ = list_traverse ts in () end
           | list_traverse [] = ()
         val _ = list_traverse terms
     in
-        sort_distinct string_ord (!contours)
+        (!contours)
     end;
 
 local
@@ -557,8 +563,11 @@ local
           new list of conjuncts. Otherwise raise an exception. *)
        val conjs_nodistinct = find_distinct conjs spiders
        (* Now find all the contours that are in one way or the other mentioned
-          in this formula (they will be free variables of type `'a set`). *)
-       val conts = get_contours conjs_nodistinct
+          in this formula (they will be free variables of type `'a set`).
+
+          This is a sorted list of contour names. *)
+       val contours = get_contours conjs_nodistinct
+       (* TODO: Get habitats. *)
        (* val (_, habitats) = spiders |> (((, spiders) |-> find_distinct) |> get_habitats) *)
        (* From the remaining terms extract the habitats of spiders and
           remove all corresponding terms. *)
