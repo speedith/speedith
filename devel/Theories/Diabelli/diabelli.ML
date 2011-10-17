@@ -524,15 +524,19 @@ end;
    @returns  a `sort_distinct` sorted list of contour names: `string list` *)
 fun get_contours (terms : term list) =
     let
-        val contours = Unsynchronized.ref (Ord_List.make string_ord [])
-        fun term_visitor (Free (cname, _)) @{typ "'a set"} _ = let val _ = contours := (Ord_List.insert string_ord cname (!contours)) in () end
+        (* TODO: Should use an efficient implementation od a `string set`
+           instead of a list which we sort. *)
+        val contours = Unsynchronized.ref []
+        fun term_visitor (Free (cname, _)) @{typ "'a set"} _ = let val _ = contours := (cname::(!contours)) in () end
           | term_visitor _ _ _ = ()
         fun list_traverse ((t::ts) : term list) = let val _ = fold_term_types (term_visitor) t () val _ = list_traverse ts in () end
           | list_traverse [] = ()
         val _ = list_traverse terms
     in
-        (!contours)
+        Ord_List.make string_ord (!contours)
     end;
+
+fun get_habitats (terms : term list) (contours : string list) (spiders : string list) = ([], [])
 
 local
 
@@ -557,18 +561,18 @@ local
  fun snf_to_sd_primary (spiders : string list) (t : term) (strict : bool) =
    let
        (* Extract all conjunctively connected terms. *)
-       val conjs = collect_conjuncts t
-       (* Check that amongst those terms is one 'distinct' term which
+       (* Check that amongst these terms there is one 'distinct' term which
           satisfies the condition, and remove this term and return the
           new list of conjuncts. Otherwise raise an exception. *)
-       val conjs_nodistinct = find_distinct conjs spiders
+       val terms = (t |> collect_conjuncts |> find_distinct) spiders
        (* Now find all the contours that are in one way or the other mentioned
           in this formula (they will be free variables of type `'a set`).
 
           This is a sorted list of contour names. *)
-       val contours = get_contours conjs_nodistinct
-       (* TODO: Get habitats. *)
-       (* val (_, habitats) = spiders |> (((, spiders) |-> find_distinct) |> get_habitats) *)
+       val contours = get_contours terms
+       val _ = tracing ("Found contours: " ^ (PolyML.makestring contours))
+       (* Get habitats. *)
+       val (_, _) = get_habitats terms contours spiders
        (* From the remaining terms extract the habitats of spiders and
           remove all corresponding terms. *)
        (* Now find all 'shaded zone' terms and remove those too. *)
