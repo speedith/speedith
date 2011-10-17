@@ -515,28 +515,60 @@ in
   fun from_mlsnf_to_sd t = from_mlsnf_to_sd_outer t
 end;
 
+structure StringTable = Table(type key = string val ord = string_ord);
+type stringtable = string StringTable.table
+
 (* This function traverses through all the subterms of the given term list and
    returns all contours it finds.
 
    @param  1  a `term list` which to search through for all the mentioned
               contours.
 
-   @returns  a `sort_distinct` sorted list of contour names: `string list` *)
+   @returns  a set of contour names: `stringtable` *)
 fun get_contours (terms : term list) =
     let
-        (* TODO: Should use an efficient implementation od a `string set`
-           instead of a list which we sort. *)
-        val contours = Unsynchronized.ref []
-        fun term_visitor (Free (cname, _)) @{typ "'a set"} _ = let val _ = contours := (cname::(!contours)) in () end
+        val contours = Unsynchronized.ref StringTable.empty
+        fun term_visitor (Free (cname, _)) @{typ "'a set"} _ = let val _ = contours := StringTable.update (cname, cname) (!contours) in () end
           | term_visitor _ _ _ = ()
         fun list_traverse ((t::ts) : term list) = let val _ = fold_term_types (term_visitor) t () val _ = list_traverse ts in () end
           | list_traverse [] = ()
         val _ = list_traverse terms
     in
-        Ord_List.make string_ord (!contours)
+        !contours
     end;
 
-fun get_habitats (terms : term list) (contours : string list) (spiders : string list) = ([], [])
+(* Extracts spiders' habitats from the given terms. This function throws an
+   exception if for any reason the habitats could not have been extracted (i.e.,
+   if an unknown spider was referenced, if the region was invalid or of an
+   unknown format, if a habitat of a spider is mentioned more than once etc.).
+
+   @param  1  the terms (that were conjunctively connected) from which to
+              extract the habitats.
+
+   @param  2  a list of all mentioned contours (this is needed to calculate the
+              in- and out-contours of a zone if it was specified in an
+              incomplete manner).
+
+   @param  3  the list of all spiders in this primary spider diagram.
+
+   @returns  a pair `(other_terms : term list, habitats : (string * region) list)`
+             where `other_terms` is a list of terms that were not habitat
+             specifications (all the remaining terms from `param 1`), and
+             `habitats` is a list of spiders with their habitat regions. *)
+fun get_habitats (((@{term "op : :: 'a => 'a set => bool"} $ (Bound spiderIndex) $ region)::terms) : term list) (contours : stringtable) (spiders : string list) =
+  let
+      (*val cur_habitat = (nth spiders spiderIndex, get_region region)
+      val (retConjs, habs) = get_habitats conjuncts spiders*)
+  in
+      ([], [])
+  end
+ |  get_habitats (t::terms) contours spiders =
+  let
+      val (other_terms, habitats) = get_habitats terms contours spiders
+  in
+      (t::other_terms, habitats)
+  end
+ |  get_habitats [] _ _ = ([], []);
 
 local
 
@@ -564,7 +596,7 @@ local
        (* Check that amongst these terms there is one 'distinct' term which
           satisfies the condition, and remove this term and return the
           new list of conjuncts. Otherwise raise an exception. *)
-       val terms = (t |> collect_conjuncts |> find_distinct) spiders
+       val terms = (t |> collect_conjuncts |> find_distinct) (rev spiders)
        (* Now find all the contours that are in one way or the other mentioned
           in this formula (they will be free variables of type `'a set`).
 
@@ -598,7 +630,7 @@ local
 
      @param  2  indicates whether a strict or a lax conversion should be done.
 
-     @returns  a sppider diagram of type `sd`.
+     @returns  a spider diagram of type `sd`.
   *)
   fun snf_to_sd_outer (@{term "op --> :: bool => bool => bool"} $ t1 $ t2) (strict : bool) = BinarySD { operator = "op -->", arg1 = snf_to_sd_outer t1 strict, arg2 = snf_to_sd_outer t2 strict }
     | snf_to_sd_outer (@{term "op | :: bool => bool => bool"} $ t1 $ t2) strict = BinarySD { operator = "op |", arg1 = snf_to_sd_outer t1 strict, arg2 = snf_to_sd_outer t2 strict }
