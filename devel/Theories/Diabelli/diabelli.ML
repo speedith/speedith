@@ -17,10 +17,15 @@ sig
      The term indicates the location where the translation failed. *)
   exception SD_TRANSLATE_ERROR of string * term
 
-  (* Indicates a general error.
+  (* Indicates an error.
 
      The string describes the error in english. *)
   exception SD_ERROR of string
+
+  (* Indicates a general error (also containing some other cause exceptions).
+
+     The string describes the error in english. *)
+  exception SD_GERROR of (string * exn list)
 
   (* This exception indicates that Speedith exited with a non-zero error code. *)
   exception SD_SPEEDITH_ERROR of string * int
@@ -286,6 +291,7 @@ datatype OriginalForm =
 
 exception SD_TRANSLATE_ERROR of (string * term);
 exception SD_ERROR of string;
+exception SD_GERROR of (string * exn list);
 exception SD_SPEEDITH_ERROR of (string * int);
 exception SD_SPEEDITH_GERROR of (string * exn list);
 
@@ -307,7 +313,8 @@ fun make_subgoal_tac prop i st = SUBGOAL (fn (subgoal, _) =>
 
 (* 'collect_ex_spiders' gets a list of all existentially quantified spiders.
 
-  @param   1  a list of spiders to which to append the found spiders
+  @param   1  a list of spiders to which to append the found spiders (should be
+              an empty list--this is just an accumulator list).
 
   @param   2  the term where to look for existentially quantified spiders.
 
@@ -316,7 +323,7 @@ fun make_subgoal_tac prop i st = SUBGOAL (fn (subgoal, _) =>
            where 'spNames' is a list of the collected names of quantified
            spiders, and 't' is the term over which all the collected spiders
            quantify. *)
-fun collect_ex_spiders spNames (@{term "Ex :: ('a::HOL.type => bool) => bool"} $ Abs (spName, _, t)) = (collect_ex_spiders (spNames @ [spName]) t)
+fun collect_ex_spiders spNames (@{term "Ex :: ('a::HOL.type => bool) => bool"} $ Abs (spName, _, t)) = (collect_ex_spiders (spName::spNames) t)
   | collect_ex_spiders spNames t = (spNames, t)
 
 (* Makes a list of all conjunctively connected terms in a primary expression
@@ -515,8 +522,39 @@ in
   fun from_mlsnf_to_sd t = from_mlsnf_to_sd_outer t
 end;
 
-structure StringTable = Table(type key = string val ord = string_ord);
-type stringtable = string StringTable.table
+
+
+
+(*==============================================================================
+  = strict_snf_to_sd
+  ============================================================================*)
+
+type StringSet = string Symtab.table
+type IntStringMap = string Inttab.table
+type StringIntMap = int Symtab.table
+
+
+(* Fetches a value from the map or throws an exception if the value was not
+   found.
+
+   @returns `'a` *)
+fun Inttab_get_one (tbl : 'a Inttab.table) (key : int) =
+  case (Inttab.lookup tbl key) of
+      SOME theval => theval
+    | NONE => raise (SD_ERROR "Could not find the entry in te map.");
+
+
+(* Turns a list into a map of indices to the elements.
+
+   @returns  `'a Inttab.table` *)
+fun to_index_map (xs : 'a list) =
+  let
+      fun impl (e::es) i themap = impl es (i + 1) (Inttab.update (i, e) themap)
+        | impl [] i themap = themap
+  in
+      impl xs 0 Inttab.empty
+  end;
+
 
 (* This function traverses through all the subterms of the given term list and
    returns all contours it finds.
@@ -524,18 +562,42 @@ type stringtable = string StringTable.table
    @param  1  a `term list` which to search through for all the mentioned
               contours.
 
-   @returns  a set of contour names: `stringtable` *)
+   @returns  `contours : StringSet * count : int`, where the keys of
+             `countours` are the names of contours and the values are the=
+             indices (starting from 0 and increasing in the order in which they
+             are mentioned). The `count` return value is to the number of all
+             mentioned contours. *)
 fun get_contours (terms : term list) =
     let
-        val contours = Unsynchronized.ref StringTable.empty
-        fun term_visitor (Free (cname, _)) @{typ "'a set"} _ = let val _ = contours := StringTable.update (cname, cname) (!contours) in () end
+        val contours = Unsynchronized.ref Symtab.empty
+        val count = Unsynchronized.ref 0
+        fun term_visitor (Free (cname, _)) @{typ "'a set"} _ =
+            let
+                val _ = contours := Symtab.update (cname, cname) (!contours)
+            in () end
           | term_visitor _ _ _ = ()
         fun list_traverse ((t::ts) : term list) = let val _ = fold_term_types (term_visitor) t () val _ = list_traverse ts in () end
           | list_traverse [] = ()
         val _ = list_traverse terms
+        (* Count all the contours. *)
+        val _ = Symtab.forall (fn _ => let val _ = count := (!count) + 1 in true end) (!contours)
+        val _ = tracing ("Number of contours: " ^ Int.toString (!count))
     in
-        !contours
+        (!contours, !count)
     end;
+
+local
+in
+    fun get_region (t as Free (s, @{typ "'a set"})) all_contours contour_count = if ((Symtab.defined all_contours s) andalso (contour_count = 1)) then [([s], [])] else raise (SD_TRANSLATE_ERROR ("The region ", t))
+      | get_region (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = [ ]
+      | get_region (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = []
+      | get_region (@{term "minus :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = []
+      | get_region t _ _ = raise (SD_TRANSLATE_ERROR ("Could not extract the region from the given term. Expected a valid region specification.", t))
+    (*fun get_region (Free (s, @{typ "'a set"})) = [([s], [])]
+      | get_region (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) = [ get_zone t1, get_zone t2 ]
+      | get_region t = [ get_zone t ]*)
+end;
+
 
 (* Extracts spiders' habitats from the given terms. This function throws an
    exception if for any reason the habitats could not have been extracted (i.e.,
@@ -545,33 +607,35 @@ fun get_contours (terms : term list) =
    @param  1  the terms (that were conjunctively connected) from which to
               extract the habitats.
 
-   @param  2  a list of all mentioned contours (this is needed to calculate the
+   @param  2  a `StringSet` of all mentioned contours (this is needed to calculate the
               in- and out-contours of a zone if it was specified in an
               incomplete manner).
 
-   @param  3  the list of all spiders in this primary spider diagram.
+   @param  3  the `IntStringMap` of all spiders in this primary spider diagram.
+              This map maps spider's names to their bound index.
 
-   @returns  a pair `(other_terms : term list, habitats : (string * region) list)`
+   @returns  a pair `(other_terms : term list, habitats : region Symtab.table)`
              where `other_terms` is a list of terms that were not habitat
              specifications (all the remaining terms from `param 1`), and
              `habitats` is a list of spiders with their habitat regions. *)
-fun get_habitats (((@{term "op : :: 'a => 'a set => bool"} $ (Bound spiderIndex) $ region)::terms) : term list) (contours : stringtable) (spiders : string list) =
+fun get_habitats (((@{term "op : :: 'a => 'a set => bool"} $ (Bound spiderIndex) $ region_term)::terms) : term list) (contours : StringSet) contours_count (spiders : IntStringMap) =
   let
-      (*val cur_habitat = (nth spiders spiderIndex, get_region region)
-      val (retConjs, habs) = get_habitats conjuncts spiders*)
+      val spider = (Inttab_get_one spiders spiderIndex) handle ex => raise (SD_GERROR ("The bound variable could not have been found in the list of spiders.", [ex]))
+      val cur_habitat = get_region region_term contours contours_count
+      val (other_terms, habs) = get_habitats terms contours contours_count spiders
   in
-      ([], [])
+      (other_terms, Symtab.update_new (spider, cur_habitat) habs) handle (ex as (Symtab.DUP key)) => raise (SD_GERROR ("Duplicate region found for spider \"" ^ key ^ "\"", [ex]))
   end
- |  get_habitats (t::terms) contours spiders =
+ |  get_habitats (t::terms) contours contours_count spiders =
   let
-      val (other_terms, habitats) = get_habitats terms contours spiders
+      val (other_terms, habitats) = get_habitats terms contours contours_count spiders
   in
       (t::other_terms, habitats)
   end
- |  get_habitats [] _ _ = ([], []);
+ |  get_habitats [] _ _ _ = ([], Symtab.empty);
+
 
 local
-
   (* 'from_snf_to_sd_inner' expects a list of terms connected with conjunctions. Each of the
      conjunctions can be either the 'distinct spiders' term, a habitat
      statement or a shaded zone statement.
@@ -601,10 +665,11 @@ local
           in this formula (they will be free variables of type `'a set`).
 
           This is a sorted list of contour names. *)
-       val contours = get_contours terms
+       val (contours, contours_count) = get_contours terms
        val _ = tracing ("Found contours: " ^ (PolyML.makestring contours))
        (* Get habitats. *)
-       val (_, _) = get_habitats terms contours spiders
+       val spidermap = to_index_map spiders
+       val (other_terms, habitats) = get_habitats terms contours contours_count spidermap
        (* From the remaining terms extract the habitats of spiders and
           remove all corresponding terms. *)
        (* Now find all 'shaded zone' terms and remove those too. *)
@@ -615,6 +680,7 @@ local
        NullSD
        (* PrimarySD { spiders = spiders, habitats = habitats, sh_zones = [] } *)
    end
+
 
   (* Expects an outer term, which may be of any of the following forms:
 
@@ -649,6 +715,9 @@ in
   fun strict_snf_to_sd t = snf_to_sd_outer t true
   fun lax_snf_to_sd t = snf_to_sd_outer t false
 end;
+
+
+
 
 (*==============================================================================
   = from_hosnf_to_sd
