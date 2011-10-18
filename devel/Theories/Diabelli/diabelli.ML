@@ -581,29 +581,30 @@ fun get_contours (terms : term list) =
         val _ = list_traverse terms
         (* Count all the contours. *)
         val _ = Symtab.forall (fn _ => let val _ = count := (!count) + 1 in true end) (!contours)
-        val _ = tracing ("Number of contours: " ^ Int.toString (!count))
     in
         (!contours, !count)
     end;
 
 local
-  fun get_zone_outs (Free (s, @{typ "'a set"}))  = [s]
-    | get_zone_outs (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) = (get_zone_outs t1) @ (get_zone_outs t2)
-    | get_zone_outs t = raise (SD_TRANSLATE_ERROR ("Could not determine the 'out' part of the zone. Expected a union of sets.", t))
+    fun get_super_region in_contours all_contours =
+      let
+          (* TODO: Write a function, which creates all the combination of zones that have `in_contours` in their in-contour sets. *)
+      in
+          []
+      end;
 
-  fun get_zone_ins (Free (s, @{typ "'a set"}))  = [s]
-    | get_zone_ins (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) = (get_zone_ins t1) @ (get_zone_ins t2)
-    | get_zone_ins t = raise (SD_TRANSLATE_ERROR ("Could not determine the 'in' part of the zone. Expected an intersetion of sets.", t))
+    fun get_zone_outs (Free (s, @{typ "'a set"})) all_contours = if (Symtab.defined all_contours s) then [s] else raise (SD_ERROR ("Hit an unknown contour '" ^ s ^ "'."))
+      | get_zone_outs (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours = (get_zone_outs t1 all_contours) @ (get_zone_outs t2 all_contours)
+      | get_zone_outs t _ = raise (SD_TRANSLATE_ERROR ("Could not determine the 'out' part of the zone. Expected a union of sets.", t))
 
-  fun get_zone (Free (s, @{typ "'a set"})) = ([s], [])
-    | get_zone (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) = ((get_zone_ins t1) @ (get_zone_ins t2), [])
-    | get_zone (@{term "minus :: 'a set => 'a set => 'a set"} $ t1 $ t2) = ( get_zone_ins t1, get_zone_outs t2 )
-    | get_zone t = raise (SD_TRANSLATE_ERROR ("Could not extract the zone. The zone is of an unknown format.", t))
+    fun get_zone_ins (Free (s, @{typ "'a set"})) all_contours = if (Symtab.defined all_contours s) then [s] else raise (SD_ERROR ("Hit an unknown contour '" ^ s ^ "'."))
+      | get_zone_ins (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours = (get_zone_ins t1 all_contours) @ (get_zone_ins t2 all_contours)
+      | get_zone_ins t _ = raise (SD_TRANSLATE_ERROR ("Could not determine the 'in' part of the zone. Expected an intersetion of sets.", t))
 
-  fun get_zones (t as Free (s, @{typ "'a set"})) all_contours contour_count = if ((Symtab.defined all_contours s) andalso (contour_count = 1)) then [([s], [])] else raise (SD_TRANSLATE_ERROR ("The region ", t)) (* TODO: Handle the single-set format. *)
-    | get_zones (@{term "minus :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = [(get_zone_ins t1, get_zone_outs t2)] (* Handle the canonical format. *)
-    | get_zones (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = []  (* TODO: Handle the intersection format. *)
-    | get_zones t all_contours contour_count = raise (SD_TRANSLATE_ERROR ("Could not extract the zone. The zone is of an unknown format.", t))
+    fun get_zones (t as Free (s, @{typ "'a set"})) all_contours contour_count = if ((Symtab.defined all_contours s) andalso (contour_count = 1)) then [([s], [])] else raise (SD_TRANSLATE_ERROR ("The region ", t)) (* TODO: Handle the single-set format. *)
+      | get_zones (@{term "minus :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = [(get_zone_ins t1 all_contours, get_zone_outs t2 all_contours)] (* Handle the canonical format. *)
+      | get_zones (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = get_super_region ((get_zone_ins t1 all_contours) @ (get_zone_ins t1 all_contours)) all_contours (* TODO: Handle the intersection format. *)
+      | get_zones t all_contours contour_count = raise (SD_TRANSLATE_ERROR ("Could not extract the zone. The zone is of an unknown format.", t))
 in
     fun get_region (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = (get_region t1 all_contours contour_count) @ (get_region t2 all_contours contour_count)  (* Handle the union format. *)
       | get_region t all_contours contour_count = get_zones t all_contours contour_count (*raise (SD_TRANSLATE_ERROR ("Could not extract the region from the given term. Expected a valid region specification.", t))*)
@@ -630,21 +631,21 @@ end;
              specifications (all the remaining terms from `param 1`), and
              `habitats` is a list of spiders with their habitat regions. *)
 fun get_habitats (((t as (@{term "op : :: 'a => 'a set => bool"} $ (Bound spiderIndex) $ region_term))::terms) : term list) (contours : StringSet) contours_count (spiders : IntStringMap) =
-  let
-      val spider = (Inttab_get_one spiders spiderIndex) handle ex => raise (SD_GERROR ("The bound variable could not have been found in the list of spiders.", [ex]))
-      val (other_terms, habs) = get_habitats terms contours contours_count spiders
+    let
+        val spider = (Inttab_get_one spiders spiderIndex) handle ex => raise (SD_GERROR ("The bound variable could not have been found in the list of spiders.", [ex]))
+        val (other_terms, habs) = get_habitats terms contours contours_count spiders
 
-      val cur_habitat = if Symtab.defined habs spider then raise (SD_TRANSLATE_ERROR ("The habitat for the spider " ^ spider ^ " has been specified more than once.", t))
-                                                      else get_region region_term contours contours_count
-  in
-      (other_terms, Symtab.update_new (spider, cur_habitat) habs) handle (ex as (Symtab.DUP key)) => raise (SD_GERROR ("Duplicate region found for spider \"" ^ key ^ "\"", [ex]))
-  end
+        val cur_habitat = if Symtab.defined habs spider then raise (SD_TRANSLATE_ERROR ("The habitat for the spider " ^ spider ^ " has been specified more than once.", t))
+                                                        else get_region region_term contours contours_count
+    in
+        (other_terms, Symtab.update_new (spider, cur_habitat) habs) handle (ex as (Symtab.DUP key)) => raise (SD_GERROR ("Duplicate region found for spider \"" ^ key ^ "\"", [ex]))
+    end
  |  get_habitats (t::terms) contours contours_count spiders =
-  let
-      val (other_terms, habitats) = get_habitats terms contours contours_count spiders
-  in
-      (t::other_terms, habitats)
-  end
+    let
+        val (other_terms, habitats) = get_habitats terms contours contours_count spiders
+    in
+        (t::other_terms, habitats)
+    end
  |  get_habitats [] _ _ _ = ([], Symtab.empty);
 
 
