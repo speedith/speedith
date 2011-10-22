@@ -588,6 +588,8 @@ fun get_contours (terms : term list) =
     end;
 
 local
+    (* Adds the in- and out-contours to the "underspecified zone", by checking
+       that no contour is both in the in- and the out-contours. *)
     fun add_to_zone in_contours out_contours underspec_zone =
       let
           val ins = List.foldl (fn (c, tbl) => Symtab.update (c, true) tbl) underspec_zone in_contours
@@ -599,17 +601,33 @@ local
           inouts
       end;
 
+    (* Constructs a pair of lists--a `zone`, from the given `Zone` table. *)
+    fun zonetbl_to_zone (zone : Zone) =
+      let
+          fun fold_ins (c, isin) cins = if isin then (c::cins) else cins
+          fun fold_outs (c, isin) couts = if isin then couts else (c::couts)
+          val incontours = Symtab.fold_rev fold_ins zone []
+          val outcontours = Symtab.fold_rev fold_outs zone []
+      in
+          (incontours, outcontours)
+      end
+
+    (* Constructs the region that corresponds to: ⋂ in_contours *)
     fun get_super_region in_contours all_contours =
       let
           val underspec_zone = add_to_zone in_contours [] Symtab.empty
+          val other_contours = List.filter (fn c => not (Symtab.defined underspec_zone c)) (Symtab.keys all_contours)
           fun impl_super_region (c::cs) curzone =
               let
               in
-                  (impl_super_region cs (Symtab underspec_zone)) @ ()
+                  (impl_super_region cs (Symtab.update_new (c, true) curzone)) @
+                  (impl_super_region cs (Symtab.update_new (c, false) curzone))
               end
-            | impl_super_region [] = []
+            | impl_super_region [] curzone = [curzone]
+          val sregiontbls = impl_super_region other_contours underspec_zone
+          val sregion = List.map (fn z => zonetbl_to_zone z) sregiontbls
       in
-          []
+          sregion
       end;
 
     fun get_zone_outs (Free (s, @{typ "'a set"})) all_contours = if (Symtab.defined all_contours s) then [s] else raise (SD_ERROR ("Hit an unknown contour '" ^ s ^ "'."))
@@ -622,14 +640,14 @@ local
 
     fun get_zones (t as Free (s, @{typ "'a set"})) all_contours contour_count =
         let
-            val zone = if ((Symtab.defined all_contours s) andalso (contour_count = 1))
-                       then get_super_region
-                       else raise (SD_TRANSLATE_ERROR ("The region ", t))
+            val region = if Symtab.defined all_contours s
+                       then get_super_region [s] all_contours
+                       else raise (SD_TRANSLATE_ERROR ("The set " ^ s ^ " is unknown.", t))
         in
-            []
+            region
         end
       | get_zones (@{term "minus :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = [(get_zone_ins t1 all_contours, get_zone_outs t2 all_contours)] (* Handle the canonical format. *)
-      | get_zones (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = get_super_region ((get_zone_ins t1 all_contours) @ (get_zone_ins t1 all_contours)) all_contours (* TODO: Handle the intersection format. *)
+      | get_zones (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = get_super_region ((get_zone_ins t1 all_contours) @ (get_zone_ins t2 all_contours)) all_contours (* TODO: Handle the intersection format. *)
       | get_zones t all_contours contour_count = raise (SD_TRANSLATE_ERROR ("Could not extract the zone. The zone is of an unknown format.", t))
 in
     fun get_region (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count =
@@ -721,7 +739,7 @@ local
        (* Now find all 'shaded zone' terms and remove those too. *)
        (* TODO: Implement! *)
        (* If any terms remain, raise an error. *)
-       (*val _ = writeln ("Extracting a primary diagram: " ^ PolyML.makestring habitats)*)
+       val _ = case other_terms of [] => () | _ => raise (SD_ERROR ("Unexpected terms found in the formula."))
    in
        PrimarySD { spiders = spiders, habitats = Symtab.dest habitats, sh_zones = [] }
    end
