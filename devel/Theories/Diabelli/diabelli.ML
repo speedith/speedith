@@ -85,6 +85,9 @@ sig
   = Translation
   ============================================================================*)
 
+  val strict_snf_to_sd: term -> sd
+  val lax_snf_to_sd: term -> sd
+
   (* This function translates an Isabelle/HOL term of the 'MFOL spider normal'
    form into a spider diagram record suitable for input to Speedith.
 
@@ -148,9 +151,6 @@ sig
      @returns  a list of spider diagrams and the forms of the original formulae
                (boxed in an `option`). *)
   val from_terms_to_sds: term list -> (sd * OriginalForm) option list
-
-  val strict_snf_to_sd: term -> sd
-  val lax_snf_to_sd: term -> sd
 
 
 
@@ -358,169 +358,6 @@ fun find_distinct conjuncts (_::[]) = conjuncts (* No 'distinct' needed for one 
       end
   | find_distinct (c::conjuncts) spiders = c::(find_distinct conjuncts spiders)
   | find_distinct [] spiders = raise (SD_ERROR ("Primary spider diagram extraction failed. Could not find the 'distinct' term for spiders '" ^ (PolyML.makestring spiders) ^ "'."))
-
-(* TODO: To make the translation spider type-independent, I could use the
-'const_name' antiquotation (e.g.: @{const_name "Ex"}) and store the type of the
-first spider. Then check other constructed types based on this. *)
-
-local
-
-  fun collect_ml_spiders spNames (@{term "all :: ('a => prop) => prop"} $ Abs (spName, _, tInner)) = collect_ml_spiders (spNames @ [spName]) tInner
-    | collect_ml_spiders spNames t = (spNames, t)
-
-  fun get_zone_outs (Free (s, @{typ "'a set"}))  = [s]
-    | get_zone_outs (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) = (get_zone_outs t1) @ (get_zone_outs t2)
-    | get_zone_outs t = raise (SD_TRANSLATE_ERROR ("Could not determine the 'out' part of the zone. Expected a union of sets.", t))
-
-  fun get_zone_ins (Free (s, @{typ "'a set"}))  = [s]
-    | get_zone_ins (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) = (get_zone_ins t1) @ (get_zone_ins t2)
-    | get_zone_ins t = raise (SD_TRANSLATE_ERROR ("Could not determine the 'in' part of the zone. Expected an intersetion of sets.", t))
-
-  fun get_zone (Free (s, @{typ "'a set"})) = ([s], [])
-    | get_zone (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) = ((get_zone_ins t1) @ (get_zone_ins t2), [])
-    | get_zone (@{term "minus :: 'a set => 'a set => 'a set"} $ t1 $ t2) = ( get_zone_ins t1, get_zone_outs t2 )
-    | get_zone t = raise (SD_TRANSLATE_ERROR ("Could not extract the zone. The zone is of an unknown format.", t))
-
-  fun get_region (Free (s, @{typ "'a set"})) = [([s], [])]
-    | get_region (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) = [ get_zone t1, get_zone t2 ]
-    | get_region t = [ get_zone t ]
-
-  (* Extracts (from the list of inner conjunct terms) a list of habitats (see the
-     'habitats' attribute of the PrimarySD constructor).
-
-     @param   conjuncts    a list of terms that are in the scope of the
-                           existenatially quantified spiders (the latter are
-                           provided in the second parameter).
-
-     @param   spiders      a list of spider names (which are existentially
-                           quantified).
-
-     @returns a pair (conjs, habs) where 'conjs' are those terms that do not
-              contain a habitat definition, and 'habs' is the list of extracted
-              habitats.
-  *)
-  fun get_habitats ((@{term "op : :: 'a => 'a set => bool"} $ (Bound spiderIndex) $ region)::conjuncts) spiders =
-      let
-          val hab = (nth (rev spiders) spiderIndex, get_region region)
-          val (retConjs, habs) = get_habitats conjuncts spiders
-      in
-          (retConjs, hab::habs)
-      end
-    | get_habitats (t::conjuncts) spiders =
-      let
-          val (retConjs, habs) = get_habitats conjuncts spiders
-      in
-          (t::retConjs, habs)
-      end
-    | get_habitats [] _ = ([], [])
-
-    fun get_habitats_from_cons spiders spInCons spOutCons =
-        let
-            fun get_all_contours ((_, c)::spCons) cons = get_all_contours spCons (c::cons)
-              | get_all_contours [] cons = cons
-            val all_contours = Ord_List.make string_ord (get_all_contours spOutCons (get_all_contours spInCons []))
-            fun sp_habitat_from_in_out_cons sp =
-                let
-                    fun filter_for_sp (s, c) = if s = sp then SOME c else NONE
-                    val inCons = Ord_List.make string_ord (List.mapPartial filter_for_sp spInCons)
-                    val outCons = Ord_List.make string_ord (List.mapPartial filter_for_sp spOutCons)
-                    val otherCons = Ord_List.subtract string_ord all_contours (Ord_List.union string_ord inCons outCons)
-                    fun habitat_from_in_out_other inc outc (c::others) = (habitat_from_in_out_other (c::inc) outc others) @ (habitat_from_in_out_other inc (c::outc) others)
-                      | habitat_from_in_out_other inc outc [] = [(inc, outc)]
-                in
-                    (sp, habitat_from_in_out_other inCons outCons otherCons)
-                end
-        in
-            map sp_habitat_from_in_out_cons spiders
-        end
-    
-    datatype 'a in_out = IN of 'a | OUT of 'a
-
-    fun get_sp_in_out_set spiders (@{term "HOL.Not :: bool => bool"} $ (@{term "Set.member :: 'a => 'a set => bool"} $ Bound sp $ (Free (c, @{typ "'a set"})))) = SOME (OUT (nth (rev spiders) sp, c))
-      | get_sp_in_out_set spiders (@{term "Set.member :: 'a => 'a set => bool"} $ Bound sp $ (Free (c, @{typ "'a set"}))) = SOME (IN (nth (rev spiders) sp, c))
-      | get_sp_in_out_set spiders t = NONE
-
-    fun get_sp_in_out_sets (spiders : string list) (t::ts) ins outs trest =
-        let
-            val sio = get_sp_in_out_set spiders t
-        in
-            case (sio) of
-                NONE => get_sp_in_out_sets spiders ts ins outs (t::trest)
-              | SOME (IN a) => get_sp_in_out_sets spiders ts (a::ins) outs trest
-              | SOME (OUT a) => get_sp_in_out_sets spiders ts ins (a::outs) trest
-        end
-      | get_sp_in_out_sets (spiders : string list) [] ins outs trest = (ins, outs, trest)
-
-  (* 'from_snf_to_sd_inner' expects a list of terms connected with conjunctions. Each of the
-     conjunctions can be either the 'distinct spiders' term, a habitat
-     statement or a shaded zone statement.
-
-     There must be exactly one 'distinct spiders' term and 'spiders' should be
-     the same as the first parameter to this function.
-
-     This function produces a primary spider diagram (see 'PrimarySD').
-
-     @param  1  the list of spiders that participate in this primary spider
-                diagram.
-
-     @param  2  the term that should contain the whole primary spider diagram.
-
-     @returns   a primary spider diagram (see PrimarySD {...}). *)
-  fun from_snf_to_sd_inner (spiders : string list) (t : term) =
-      let
-          (* Extract all conjunctively connected terms. *)
-          (* Check that amongst those terms is one 'distinct' term which
-             satisfies the condition, and remove this term and return the
-             new list of conjuncts. Otherwise raise an exception. *)
-           val (_, habitats) = spiders |> (((collect_conjuncts t, spiders) |-> find_distinct) |> get_habitats)
-           (* From the remaining terms extract the habitats of spiders and
-             remove all corresponding terms. *)
-           (* Now find all 'shaded zone' terms and remove those too. *)
-           (* TODO: Implement! *)
-           (* If any terms remain, raise an error. *)
-           (*val _ = writeln ("Extracting a primary diagram: " ^ PolyML.makestring habitats)*)
-      in
-          PrimarySD { spiders = spiders, habitats = habitats, sh_zones = [] }
-      end
-
-  fun collect_ml_imp (ts : term list) (t : term as (Const ("==>", @{typ "prop => prop => prop"}) $ (Const ("HOL.Trueprop", @{typ "HOL.bool => prop"}) $ tLeft) $ tRight)) = collect_ml_imp (tLeft :: ts) tRight
-    | collect_ml_imp ts t = (ts, t)
-
-  fun from_snf_to_sd_outer (@{term "op --> :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op -->", arg1 = from_snf_to_sd_outer t1, arg2 = from_snf_to_sd_outer t2 }
-    | from_snf_to_sd_outer (@{term "op | :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op |", arg1 = from_snf_to_sd_outer t1, arg2 = from_snf_to_sd_outer t2 }
-    | from_snf_to_sd_outer (@{term "Ex :: ('a::HOL.type => bool) => bool"} $ Abs (spName, _, t)) =
-      let
-          val (spiders, inner_term) = collect_ex_spiders [spName] t
-          (*val _ = raise (SD_TRANSLATE_ERROR (PolyML.makestring spiders, t))*)
-      in
-        (from_snf_to_sd_inner spiders inner_term)
-      end
-    (*| from_snf_to_sd_outer (t as (@{term "all :: ('a => prop) => prop"} $ Abs _)) = from_mlsnf_to_sd_outer t*)
-    | from_snf_to_sd_outer (@{term "Trueprop :: bool => prop"} $ t) = from_snf_to_sd_outer t
-    | from_snf_to_sd_outer (@{term "True"}) = NullSD
-    | from_snf_to_sd_outer t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Unexpected from_snf_to_sd_outer term.", t))
-
-    and
-
-      from_mlsnf_to_sd_outer (t as (@{term "all :: ('a => prop) => prop"} $ Abs (spName, _, tInner))) =
-      let
-          val (spiders, inner_term) = collect_ml_spiders [spName] tInner
-          val (metaImpTerms, consequentTerm) = collect_ml_imp [] inner_term
-          val nestedSD = from_snf_to_sd_outer consequentTerm
-          val withoutDistinct = find_distinct metaImpTerms spiders
-          val (spInCons, spOutCons, otherTerms) = get_sp_in_out_sets spiders withoutDistinct [] [] []
-          (* TODO: Extract shaded zones from otherTerms. *)
-          val _ = case otherTerms of [] => true | (t::ts) => raise (SD_TRANSLATE_ERROR ("Could not translate the meta-level formula. Some unknown terms were found.", t))
-          val psd = PrimarySD {spiders = spiders, habitats = get_habitats_from_cons spiders spInCons spOutCons, sh_zones = []}
-      in
-          if otherTerms = [] then BinarySD { operator = "op -->", arg1 = psd, arg2 = nestedSD }
-                             else raise (SD_TRANSLATE_ERROR ("Primary spider diagram extraction from a meta-level formula failed. The fomula is not of the expected format.", t))
-      end
-    | from_mlsnf_to_sd_outer t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Not an SNF Meta-Level formula.", t))
-in
-  fun from_snf_to_sd t = (from_snf_to_sd_outer t, SNF) handle e => ((from_mlsnf_to_sd_outer t, MLSNF) handle e2 => raise SD_SPEEDITH_GERROR ("Translation from Isabelle/HOL to spider diagrams failed.", [e, e2]))
-  fun from_mlsnf_to_sd t = from_mlsnf_to_sd_outer t
-end;
 
 
 
@@ -730,7 +567,6 @@ local
 
           This is a sorted list of contour names. *)
        val (contours, contours_count) = get_contours terms
-       val _ = tracing ("Found contours: " ^ (PolyML.makestring contours))
        (* Get habitats. *)
        val spidermap = to_index_map spiders
        val (other_terms, habitats) = get_habitats terms contours contours_count spidermap
@@ -777,6 +613,169 @@ local
 in
   fun strict_snf_to_sd t = snf_to_sd_outer t true
   fun lax_snf_to_sd t = snf_to_sd_outer t false
+end;
+
+(* TODO: To make the translation spider type-independent, I could use the
+'const_name' antiquotation (e.g.: @{const_name "Ex"}) and store the type of the
+first spider. Then check other constructed types based on this. *)
+
+local
+
+  fun collect_ml_spiders spNames (@{term "all :: ('a => prop) => prop"} $ Abs (spName, _, tInner)) = collect_ml_spiders (spNames @ [spName]) tInner
+    | collect_ml_spiders spNames t = (spNames, t)
+
+  fun get_zone_outs (Free (s, @{typ "'a set"}))  = [s]
+    | get_zone_outs (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) = (get_zone_outs t1) @ (get_zone_outs t2)
+    | get_zone_outs t = raise (SD_TRANSLATE_ERROR ("Could not determine the 'out' part of the zone. Expected a union of sets.", t))
+
+  fun get_zone_ins (Free (s, @{typ "'a set"}))  = [s]
+    | get_zone_ins (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) = (get_zone_ins t1) @ (get_zone_ins t2)
+    | get_zone_ins t = raise (SD_TRANSLATE_ERROR ("Could not determine the 'in' part of the zone. Expected an intersetion of sets.", t))
+
+  fun get_zone (Free (s, @{typ "'a set"})) = ([s], [])
+    | get_zone (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) = ((get_zone_ins t1) @ (get_zone_ins t2), [])
+    | get_zone (@{term "minus :: 'a set => 'a set => 'a set"} $ t1 $ t2) = ( get_zone_ins t1, get_zone_outs t2 )
+    | get_zone t = raise (SD_TRANSLATE_ERROR ("Could not extract the zone. The zone is of an unknown format.", t))
+
+  fun get_region (Free (s, @{typ "'a set"})) = [([s], [])]
+    | get_region (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) = [ get_zone t1, get_zone t2 ]
+    | get_region t = [ get_zone t ]
+
+  (* Extracts (from the list of inner conjunct terms) a list of habitats (see the
+     'habitats' attribute of the PrimarySD constructor).
+
+     @param   conjuncts    a list of terms that are in the scope of the
+                           existenatially quantified spiders (the latter are
+                           provided in the second parameter).
+
+     @param   spiders      a list of spider names (which are existentially
+                           quantified).
+
+     @returns a pair (conjs, habs) where 'conjs' are those terms that do not
+              contain a habitat definition, and 'habs' is the list of extracted
+              habitats.
+  *)
+  fun get_habitats ((@{term "op : :: 'a => 'a set => bool"} $ (Bound spiderIndex) $ region)::conjuncts) spiders =
+      let
+          val hab = (nth (rev spiders) spiderIndex, get_region region)
+          val (retConjs, habs) = get_habitats conjuncts spiders
+      in
+          (retConjs, hab::habs)
+      end
+    | get_habitats (t::conjuncts) spiders =
+      let
+          val (retConjs, habs) = get_habitats conjuncts spiders
+      in
+          (t::retConjs, habs)
+      end
+    | get_habitats [] _ = ([], [])
+
+    fun get_habitats_from_cons spiders spInCons spOutCons =
+        let
+            fun get_all_contours ((_, c)::spCons) cons = get_all_contours spCons (c::cons)
+              | get_all_contours [] cons = cons
+            val all_contours = Ord_List.make string_ord (get_all_contours spOutCons (get_all_contours spInCons []))
+            fun sp_habitat_from_in_out_cons sp =
+                let
+                    fun filter_for_sp (s, c) = if s = sp then SOME c else NONE
+                    val inCons = Ord_List.make string_ord (List.mapPartial filter_for_sp spInCons)
+                    val outCons = Ord_List.make string_ord (List.mapPartial filter_for_sp spOutCons)
+                    val otherCons = Ord_List.subtract string_ord all_contours (Ord_List.union string_ord inCons outCons)
+                    fun habitat_from_in_out_other inc outc (c::others) = (habitat_from_in_out_other (c::inc) outc others) @ (habitat_from_in_out_other inc (c::outc) others)
+                      | habitat_from_in_out_other inc outc [] = [(inc, outc)]
+                in
+                    (sp, habitat_from_in_out_other inCons outCons otherCons)
+                end
+        in
+            map sp_habitat_from_in_out_cons spiders
+        end
+    
+    datatype 'a in_out = IN of 'a | OUT of 'a
+
+    fun get_sp_in_out_set spiders (@{term "HOL.Not :: bool => bool"} $ (@{term "Set.member :: 'a => 'a set => bool"} $ Bound sp $ (Free (c, @{typ "'a set"})))) = SOME (OUT (nth (rev spiders) sp, c))
+      | get_sp_in_out_set spiders (@{term "Set.member :: 'a => 'a set => bool"} $ Bound sp $ (Free (c, @{typ "'a set"}))) = SOME (IN (nth (rev spiders) sp, c))
+      | get_sp_in_out_set spiders t = NONE
+
+    fun get_sp_in_out_sets (spiders : string list) (t::ts) ins outs trest =
+        let
+            val sio = get_sp_in_out_set spiders t
+        in
+            case (sio) of
+                NONE => get_sp_in_out_sets spiders ts ins outs (t::trest)
+              | SOME (IN a) => get_sp_in_out_sets spiders ts (a::ins) outs trest
+              | SOME (OUT a) => get_sp_in_out_sets spiders ts ins (a::outs) trest
+        end
+      | get_sp_in_out_sets (spiders : string list) [] ins outs trest = (ins, outs, trest)
+
+  (* 'from_snf_to_sd_inner' expects a list of terms connected with conjunctions. Each of the
+     conjunctions can be either the 'distinct spiders' term, a habitat
+     statement or a shaded zone statement.
+
+     There must be exactly one 'distinct spiders' term and 'spiders' should be
+     the same as the first parameter to this function.
+
+     This function produces a primary spider diagram (see 'PrimarySD').
+
+     @param  1  the list of spiders that participate in this primary spider
+                diagram.
+
+     @param  2  the term that should contain the whole primary spider diagram.
+
+     @returns   a primary spider diagram (see PrimarySD {...}). *)
+  fun from_snf_to_sd_inner (spiders : string list) (t : term) =
+      let
+          (* Extract all conjunctively connected terms. *)
+          (* Check that amongst those terms is one 'distinct' term which
+             satisfies the condition, and remove this term and return the
+             new list of conjuncts. Otherwise raise an exception. *)
+           val (_, habitats) = spiders |> (((collect_conjuncts t, spiders) |-> find_distinct) |> get_habitats)
+           (* From the remaining terms extract the habitats of spiders and
+             remove all corresponding terms. *)
+           (* Now find all 'shaded zone' terms and remove those too. *)
+           (* TODO: Implement! *)
+           (* If any terms remain, raise an error. *)
+           (*val _ = writeln ("Extracting a primary diagram: " ^ PolyML.makestring habitats)*)
+      in
+          PrimarySD { spiders = spiders, habitats = habitats, sh_zones = [] }
+      end
+
+  fun collect_ml_imp (ts : term list) (t : term as (Const ("==>", @{typ "prop => prop => prop"}) $ (Const ("HOL.Trueprop", @{typ "HOL.bool => prop"}) $ tLeft) $ tRight)) = collect_ml_imp (tLeft :: ts) tRight
+    | collect_ml_imp ts t = (ts, t)
+
+  fun from_snf_to_sd_outer (@{term "op --> :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op -->", arg1 = from_snf_to_sd_outer t1, arg2 = from_snf_to_sd_outer t2 }
+    | from_snf_to_sd_outer (@{term "op | :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op |", arg1 = from_snf_to_sd_outer t1, arg2 = from_snf_to_sd_outer t2 }
+    | from_snf_to_sd_outer (@{term "Ex :: ('a::HOL.type => bool) => bool"} $ Abs (spName, _, t)) =
+      let
+          val (spiders, inner_term) = collect_ex_spiders [spName] t
+          (*val _ = raise (SD_TRANSLATE_ERROR (PolyML.makestring spiders, t))*)
+      in
+        (from_snf_to_sd_inner spiders inner_term)
+      end
+    (*| from_snf_to_sd_outer (t as (@{term "all :: ('a => prop) => prop"} $ Abs _)) = from_mlsnf_to_sd_outer t*)
+    | from_snf_to_sd_outer (@{term "Trueprop :: bool => prop"} $ t) = from_snf_to_sd_outer t
+    | from_snf_to_sd_outer (@{term "True"}) = NullSD
+    | from_snf_to_sd_outer t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Unexpected from_snf_to_sd_outer term.", t))
+
+    and
+
+      from_mlsnf_to_sd_outer (t as (@{term "all :: ('a => prop) => prop"} $ Abs (spName, _, tInner))) =
+      let
+          val (spiders, inner_term) = collect_ml_spiders [spName] tInner
+          val (metaImpTerms, consequentTerm) = collect_ml_imp [] inner_term
+          val nestedSD = from_snf_to_sd_outer consequentTerm
+          val withoutDistinct = find_distinct metaImpTerms spiders
+          val (spInCons, spOutCons, otherTerms) = get_sp_in_out_sets spiders withoutDistinct [] [] []
+          (* TODO: Extract shaded zones from otherTerms. *)
+          val _ = case otherTerms of [] => true | (t::ts) => raise (SD_TRANSLATE_ERROR ("Could not translate the meta-level formula. Some unknown terms were found.", t))
+          val psd = PrimarySD {spiders = spiders, habitats = get_habitats_from_cons spiders spInCons spOutCons, sh_zones = []}
+      in
+          if otherTerms = [] then BinarySD { operator = "op -->", arg1 = psd, arg2 = nestedSD }
+                             else raise (SD_TRANSLATE_ERROR ("Primary spider diagram extraction from a meta-level formula failed. The fomula is not of the expected format.", t))
+      end
+    | from_mlsnf_to_sd_outer t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Not an SNF Meta-Level formula.", t))
+in
+  fun from_snf_to_sd t = (strict_snf_to_sd t, SNF) handle e => ((from_mlsnf_to_sd_outer t, MLSNF) handle e2 => raise SD_SPEEDITH_GERROR ("Translation from Isabelle/HOL to spider diagrams failed.", [e, e2]))
+  fun from_mlsnf_to_sd t = from_mlsnf_to_sd_outer t
 end;
 
 
