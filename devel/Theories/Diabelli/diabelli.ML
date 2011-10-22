@@ -533,6 +533,8 @@ type StringSet = string Symtab.table
 type IntStringMap = string Inttab.table
 type StringIntMap = int Symtab.table
 
+type Zone = bool Symtab.table
+
 
 (* Fetches a value from the map or throws an exception if the value was not
    found.
@@ -586,9 +588,26 @@ fun get_contours (terms : term list) =
     end;
 
 local
+    fun add_to_zone in_contours out_contours underspec_zone =
+      let
+          val ins = List.foldl (fn (c, tbl) => Symtab.update (c, true) tbl) underspec_zone in_contours
+          val inouts = List.foldl (fn (c, tbl) =>
+                                     case (Symtab.lookup tbl c) of
+                                         SOME true => raise (SD_ERROR ("The contour" ^ c ^ " has been specified as both an in- and out-contour."))
+                                       | _ => Symtab.update (c, false) tbl) ins out_contours
+      in
+          inouts
+      end;
+
     fun get_super_region in_contours all_contours =
       let
-          (* TODO: Write a function, which creates all the combination of zones that have `in_contours` in their in-contour sets. *)
+          val underspec_zone = add_to_zone in_contours [] Symtab.empty
+          fun impl_super_region (c::cs) curzone =
+              let
+              in
+                  (impl_super_region cs (Symtab underspec_zone)) @ ()
+              end
+            | impl_super_region [] = []
       in
           []
       end;
@@ -601,12 +620,25 @@ local
       | get_zone_ins (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours = (get_zone_ins t1 all_contours) @ (get_zone_ins t2 all_contours)
       | get_zone_ins t _ = raise (SD_TRANSLATE_ERROR ("Could not determine the 'in' part of the zone. Expected an intersetion of sets.", t))
 
-    fun get_zones (t as Free (s, @{typ "'a set"})) all_contours contour_count = if ((Symtab.defined all_contours s) andalso (contour_count = 1)) then [([s], [])] else raise (SD_TRANSLATE_ERROR ("The region ", t)) (* TODO: Handle the single-set format. *)
+    fun get_zones (t as Free (s, @{typ "'a set"})) all_contours contour_count =
+        let
+            val zone = if ((Symtab.defined all_contours s) andalso (contour_count = 1))
+                       then get_super_region
+                       else raise (SD_TRANSLATE_ERROR ("The region ", t))
+        in
+            []
+        end
       | get_zones (@{term "minus :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = [(get_zone_ins t1 all_contours, get_zone_outs t2 all_contours)] (* Handle the canonical format. *)
       | get_zones (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = get_super_region ((get_zone_ins t1 all_contours) @ (get_zone_ins t1 all_contours)) all_contours (* TODO: Handle the intersection format. *)
       | get_zones t all_contours contour_count = raise (SD_TRANSLATE_ERROR ("Could not extract the zone. The zone is of an unknown format.", t))
 in
-    fun get_region (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = (get_region t1 all_contours contour_count) @ (get_region t2 all_contours contour_count)  (* Handle the union format. *)
+    fun get_region (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count =
+        let
+            val lregions = (get_region t1 all_contours contour_count)
+            val rregions = (get_region t2 all_contours contour_count)  (* Handle the union format. *)
+        in
+            lregions @ rregions
+        end
       | get_region t all_contours contour_count = get_zones t all_contours contour_count (*raise (SD_TRANSLATE_ERROR ("Could not extract the region from the given term. Expected a valid region specification.", t))*)
 end;
 
