@@ -24,6 +24,7 @@
  */
 package speedith.i3p.ui;
 
+import javax.swing.SwingUtilities;
 import org.isabelle.iapp.process.features.InjectedCommands;
 import org.isabelle.iapp.process.features.InjectionResult;
 import org.isabelle.iapp.facade.IAPP;
@@ -98,14 +99,21 @@ public class SpeedithTopComponent extends TopComponent {
             @Override
             public void injectedFinished(InjectionResult inj) {
                 try {
-                    Message[] results = inj.getResults();
-                    if (results != null && results.length > 1) {
-                        try {
-                            compoundSpiderDiagramPanel1.setDiagramString(results[1].getText());
-                        } catch (ReadingException ex) {
-                            Exceptions.printStackTrace(ex);
+                    final Message[] results = inj.getResults();
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            try {
+                                if (results != null && results.length > 1) {
+                                    compoundSpiderDiagramPanel1.setDiagramString(results[1].getText());
+                                    repaint();
+                                }
+                            } catch (ReadingException ex) {
+                                Exceptions.printStackTrace(ex);
+                            }
                         }
-                    }
+                    });
                     for (Message message : inj.getResults()) {
                         System.out.println(message.toString());
                     }
