@@ -12,6 +12,7 @@ ML {* Diabelli.strict_snf_to_sd @{term "(\<exists>s1 s2. distinct[s1, s2] \<and>
 
 lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
               \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
+  apply auto
   ML_prf {* Diabelli.i3p_write_sds_goals () *}
   ML_prf {* Diabelli.get_goal_terms () *}
 

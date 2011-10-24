@@ -615,14 +615,60 @@ in
   fun lax_snf_to_sd t = snf_to_sd_outer t false
 end;
 
+(* Gets a list of all meta-universally quantified spiders.
+
+  @param   1  a list of spiders to which to append the found spiders (should be
+              an empty list--this is just an accumulator list).
+
+  @param   2  the term where to look for existentially quantified spiders.
+
+  @returns `(spNames : string list, t : term)`
+
+           where 'spNames' is a list of the collected names of quantified
+           spiders, and 't' is the term over which all the collected spiders
+           quantify. *)
+fun collect_ml_spiders spNames (@{term "all :: ('a => prop) => prop"} $ Abs (spName, _, tInner)) = collect_ml_spiders (spNames @ [spName]) tInner
+  | collect_ml_spiders spNames t = (spNames, t)
+
+(* Collects all meta-implication antecedents together with the conclusion.
+
+   Reads terms of the form "[| t1; t2; ...; tN |] ==> tC" and
+
+   @returns `(terms : term list, conclusion : term)` where terms = [ t1, t2,
+            ..., tN ] and conclusion = tC.
+
+*)
+fun collect_ml_imp (ts : term list) (t : term as (Const ("==>", @{typ "prop => prop => prop"}) $ (Const ("HOL.Trueprop", @{typ "HOL.bool => prop"}) $ tLeft) $ tRight)) = collect_ml_imp (tLeft :: ts) tRight
+  | collect_ml_imp ts (@{term "Trueprop :: bool => prop"} $ t) = (ts, t)
+  | collect_ml_imp ts t = raise (SD_TRANSLATE_ERROR ("Could not translate the ML formula. Unexpected term.", t))
+
+(* MLSNF to SD conversion methods. *)
+local
+in
+    fun mlsnf_to_sd (t as (@{term "all :: ('a => prop) => prop"} $ Abs (spName, _, tInner))) =
+        let
+            val (spiders, inner_term) = collect_ml_spiders [spName] tInner
+            val (metaImpTerms, consequentTerm) = collect_ml_imp [] inner_term
+            val nestedSD = lax_snf_to_sd consequentTerm
+            (* TODO: Also allow inequalities instead of just distinct. *)
+            val withoutDistinct = find_distinct metaImpTerms spiders
+            (*val (spInCons, spOutCons, otherTerms) = get_sp_in_out_sets spiders withoutDistinct [] [] []*)
+            (* TODO: Extract shaded zones from otherTerms. *)
+            (*val _ = case otherTerms of [] => true | (t::ts) => raise (SD_TRANSLATE_ERROR ("Could not translate the meta-level formula. Some unknown terms were found.", t))
+                        val psd = PrimarySD {spiders = spiders, habitats = get_habitats_from_cons spiders spInCons spOutCons, sh_zones = []}*)
+        in
+            NullSD
+            (*if otherTerms = [] then BinarySD { operator = "op -->", arg1 = psd, arg2 = nestedSD }
+                               else raise (SD_TRANSLATE_ERROR ("Primary spider diagram extraction from a meta-level formula failed. The fomula is not of the expected format.", t))*)
+        end
+      | mlsnf_to_sd t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Not an SNF Meta-Level formula.", t))
+end
+
 (* TODO: To make the translation spider type-independent, I could use the
 'const_name' antiquotation (e.g.: @{const_name "Ex"}) and store the type of the
 first spider. Then check other constructed types based on this. *)
 
 local
-
-  fun collect_ml_spiders spNames (@{term "all :: ('a => prop) => prop"} $ Abs (spName, _, tInner)) = collect_ml_spiders (spNames @ [spName]) tInner
-    | collect_ml_spiders spNames t = (spNames, t)
 
   fun get_zone_outs (Free (s, @{typ "'a set"}))  = [s]
     | get_zone_outs (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) = (get_zone_outs t1) @ (get_zone_outs t2)
@@ -738,9 +784,6 @@ local
       in
           PrimarySD { spiders = spiders, habitats = habitats, sh_zones = [] }
       end
-
-  fun collect_ml_imp (ts : term list) (t : term as (Const ("==>", @{typ "prop => prop => prop"}) $ (Const ("HOL.Trueprop", @{typ "HOL.bool => prop"}) $ tLeft) $ tRight)) = collect_ml_imp (tLeft :: ts) tRight
-    | collect_ml_imp ts t = (ts, t)
 
   fun from_snf_to_sd_outer (@{term "op --> :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op -->", arg1 = from_snf_to_sd_outer t1, arg2 = from_snf_to_sd_outer t2 }
     | from_snf_to_sd_outer (@{term "op | :: bool => bool => bool"} $ t1 $ t2) = BinarySD { operator = "op |", arg1 = from_snf_to_sd_outer t1, arg2 = from_snf_to_sd_outer t2 }
@@ -932,6 +975,7 @@ fun from_terms_to_sds terms =
 (*==============================================================================
   = Utility functions
   ============================================================================*)
+
 fun get_goal_terms _ =
   let
       val state = Isar.state ()
