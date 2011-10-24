@@ -87,6 +87,7 @@ sig
 
   val strict_snf_to_sd: term -> sd
   val lax_snf_to_sd: term -> sd
+  val mlsnf_to_sd: term -> sd
 
   (* This function translates an Isabelle/HOL term of the 'MFOL spider normal'
    form into a spider diagram record suitable for input to Speedith.
@@ -383,7 +384,8 @@ fun Inttab_get_one (tbl : 'a Inttab.table) (key : int) =
     | NONE => raise (SD_ERROR "Could not find the entry in te map.");
 
 
-(* Turns a list into a map of indices to the elements.
+(* Turns a list into a map of indices to the elements. The first element gets
+   the index 0.
 
    @returns  `'a Inttab.table` *)
 fun to_index_map (xs : 'a list) =
@@ -424,48 +426,51 @@ fun get_contours (terms : term list) =
         (!contours, !count)
     end;
 
+(* Adds the in- and out-contours to the "underspecified zone", by checking
+   that no contour is both in the in- and the out-contours. *)
+fun add_to_zone in_contours out_contours underspec_zone =
+    let
+        val ins = List.foldl (fn (c, tbl) => Symtab.update (c, true) tbl) underspec_zone in_contours
+        val inouts = List.foldl (fn (c, tbl) =>
+                                   case (Symtab.lookup tbl c) of
+                                       SOME true => raise (SD_ERROR ("The contour" ^ c ^ " has been specified as both an in- and out-contour."))
+                                     | _ => Symtab.update (c, false) tbl) ins out_contours
+    in
+        inouts
+    end;
+
+(* Constructs a `zone`, from the given `Zone` table. *)
+fun zonetbl_to_zone (zone : Zone) =
+    let
+        fun fold_ins (c, isin) cins = if isin then (c::cins) else cins
+        fun fold_outs (c, isin) couts = if isin then couts else (c::couts)
+        val incontours = Symtab.fold_rev fold_ins zone []
+        val outcontours = Symtab.fold_rev fold_outs zone []
+    in
+        (incontours, outcontours)
+    end
+
+(* Constructs a valid SD region 'R' such that:
+
+     `sd_region_sem R = (⋂ in_contours) - (⋃ out_contours)` *)
+fun get_super_region in_contours out_contours all_contours =
+    let
+        val underspec_zone = add_to_zone in_contours out_contours Symtab.empty
+        val other_contours = List.filter (fn c => not (Symtab.defined underspec_zone c)) (Symtab.keys all_contours)
+        fun impl_super_region (c::cs) curzone =
+            let
+            in
+                (impl_super_region cs (Symtab.update_new (c, true) curzone)) @
+                (impl_super_region cs (Symtab.update_new (c, false) curzone))
+            end
+          | impl_super_region [] curzone = [curzone]
+        val sregiontbls = impl_super_region other_contours underspec_zone
+        val sregion = List.map (fn z => zonetbl_to_zone z) sregiontbls
+    in
+        sregion
+    end;
+
 local
-    (* Adds the in- and out-contours to the "underspecified zone", by checking
-       that no contour is both in the in- and the out-contours. *)
-    fun add_to_zone in_contours out_contours underspec_zone =
-      let
-          val ins = List.foldl (fn (c, tbl) => Symtab.update (c, true) tbl) underspec_zone in_contours
-          val inouts = List.foldl (fn (c, tbl) =>
-                                     case (Symtab.lookup tbl c) of
-                                         SOME true => raise (SD_ERROR ("The contour" ^ c ^ " has been specified as both an in- and out-contour."))
-                                       | _ => Symtab.update (c, false) tbl) ins out_contours
-      in
-          inouts
-      end;
-
-    (* Constructs a pair of lists--a `zone`, from the given `Zone` table. *)
-    fun zonetbl_to_zone (zone : Zone) =
-      let
-          fun fold_ins (c, isin) cins = if isin then (c::cins) else cins
-          fun fold_outs (c, isin) couts = if isin then couts else (c::couts)
-          val incontours = Symtab.fold_rev fold_ins zone []
-          val outcontours = Symtab.fold_rev fold_outs zone []
-      in
-          (incontours, outcontours)
-      end
-
-    (* Constructs the region that corresponds to: ⋂ in_contours *)
-    fun get_super_region in_contours all_contours =
-      let
-          val underspec_zone = add_to_zone in_contours [] Symtab.empty
-          val other_contours = List.filter (fn c => not (Symtab.defined underspec_zone c)) (Symtab.keys all_contours)
-          fun impl_super_region (c::cs) curzone =
-              let
-              in
-                  (impl_super_region cs (Symtab.update_new (c, true) curzone)) @
-                  (impl_super_region cs (Symtab.update_new (c, false) curzone))
-              end
-            | impl_super_region [] curzone = [curzone]
-          val sregiontbls = impl_super_region other_contours underspec_zone
-          val sregion = List.map (fn z => zonetbl_to_zone z) sregiontbls
-      in
-          sregion
-      end;
 
     fun get_zone_outs (Free (s, @{typ "'a set"})) all_contours = if (Symtab.defined all_contours s) then [s] else raise (SD_ERROR ("Hit an unknown contour '" ^ s ^ "'."))
       | get_zone_outs (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours = (get_zone_outs t1 all_contours) @ (get_zone_outs t2 all_contours)
@@ -478,13 +483,13 @@ local
     fun get_zones (t as Free (s, @{typ "'a set"})) all_contours contour_count =
         let
             val region = if Symtab.defined all_contours s
-                       then get_super_region [s] all_contours
-                       else raise (SD_TRANSLATE_ERROR ("The set " ^ s ^ " is unknown.", t))
+                         then get_super_region [s] [] all_contours
+                         else raise (SD_TRANSLATE_ERROR ("The set " ^ s ^ " is unknown.", t))
         in
             region
         end
       | get_zones (@{term "minus :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = [(get_zone_ins t1 all_contours, get_zone_outs t2 all_contours)] (* Handle the canonical format. *)
-      | get_zones (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = get_super_region ((get_zone_ins t1 all_contours) @ (get_zone_ins t2 all_contours)) all_contours (* TODO: Handle the intersection format. *)
+      | get_zones (@{term "inf :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count = get_super_region ((get_zone_ins t1 all_contours) @ (get_zone_ins t2 all_contours)) [] all_contours
       | get_zones t all_contours contour_count = raise (SD_TRANSLATE_ERROR ("Could not extract the zone. The zone is of an unknown format.", t))
 in
     fun get_region (@{term "sup :: 'a set => 'a set => 'a set"} $ t1 $ t2) all_contours contour_count =
@@ -494,7 +499,7 @@ in
         in
             lregions @ rregions
         end
-      | get_region t all_contours contour_count = get_zones t all_contours contour_count (*raise (SD_TRANSLATE_ERROR ("Could not extract the region from the given term. Expected a valid region specification.", t))*)
+      | get_region t all_contours contour_count = get_zones t all_contours contour_count
 end;
 
 
@@ -567,13 +572,14 @@ local
 
           This is a sorted list of contour names. *)
        val (contours, contours_count) = get_contours terms
-       (* Get habitats. *)
+       (* Create a map of indices to spiders. This is for faster spider lookup. *)
        val spidermap = to_index_map spiders
+       (* Get habitats. *)
        val (other_terms, habitats) = get_habitats terms contours contours_count spidermap
        (* From the remaining terms extract the habitats of spiders and
           remove all corresponding terms. *)
        (* Now find all 'shaded zone' terms and remove those too. *)
-       (* TODO: Implement! *)
+       (* TODO: Implement the shaded zones! *)
        (* If any terms remain, raise an error. *)
        val _ = case other_terms of [] => () | _ => raise (SD_ERROR ("Unexpected terms found in the formula."))
    in
@@ -587,7 +593,7 @@ local
        A  |  B
        A --> B
        A <-> B
-       ¬A
+       ¬A (not yet implemented)
        True
        Trueprop A
 
@@ -642,24 +648,68 @@ fun collect_ml_imp (ts : term list) (t : term as (Const ("==>", @{typ "prop => p
   | collect_ml_imp ts (@{term "Trueprop :: bool => prop"} $ t) = (ts, t)
   | collect_ml_imp ts t = raise (SD_TRANSLATE_ERROR ("Could not translate the ML formula. Unexpected term.", t))
 
+local
+    datatype 'a in_out = IN of 'a | OUT of 'a
+
+    fun get_sp_in_out_set spiders (@{term "HOL.Not :: bool => bool"} $ (@{term "Set.member :: 'a => 'a set => bool"} $ Bound sp $ (Free (c, @{typ "'a set"})))) = SOME (OUT (nth (rev spiders) sp, c))
+      | get_sp_in_out_set spiders (@{term "Set.member :: 'a => 'a set => bool"} $ Bound sp $ (Free (c, @{typ "'a set"}))) = SOME (IN (nth (rev spiders) sp, c))
+      | get_sp_in_out_set spiders t = NONE
+
+in
+    fun get_sp_in_out_sets (spiders : string list) (t::ts) ins outs trest =
+        let
+            val sio = get_sp_in_out_set spiders t
+        in
+            case (sio) of
+                NONE => get_sp_in_out_sets spiders ts ins outs (t::trest)
+              | SOME (IN a) => get_sp_in_out_sets spiders ts (a::ins) outs trest
+              | SOME (OUT a) => get_sp_in_out_sets spiders ts ins (a::outs) trest
+        end
+      | get_sp_in_out_sets (spiders : string list) [] ins outs trest = (ins, outs, trest)
+end;
+
+
+
+fun get_habitats_from_cons spiders spInCons spOutCons =
+    let
+        fun get_all_contours ((_, c)::spCons) cons = get_all_contours spCons (c::cons)
+          | get_all_contours [] cons = cons
+        val all_contours = Ord_List.make string_ord (get_all_contours spOutCons (get_all_contours spInCons []))
+        fun sp_habitat_from_in_out_cons sp =
+          let
+              fun filter_for_sp (s, c) = if s = sp then SOME c else NONE
+              val inCons = Ord_List.make string_ord (List.mapPartial filter_for_sp spInCons)
+              val outCons = Ord_List.make string_ord (List.mapPartial filter_for_sp spOutCons)
+              val otherCons = Ord_List.subtract string_ord all_contours (Ord_List.union string_ord inCons outCons)
+              fun habitat_from_in_out_other inc outc (c::others) = (habitat_from_in_out_other (c::inc) outc others) @ (habitat_from_in_out_other inc (c::outc) others)
+                | habitat_from_in_out_other inc outc [] = [(inc, outc)]
+          in
+              (sp, habitat_from_in_out_other inCons outCons otherCons)
+          end
+    in
+        map sp_habitat_from_in_out_cons spiders
+    end
+
 (* MLSNF to SD conversion methods. *)
 local
 in
     fun mlsnf_to_sd (t as (@{term "all :: ('a => prop) => prop"} $ Abs (spName, _, tInner))) =
         let
             val (spiders, inner_term) = collect_ml_spiders [spName] tInner
-            val (metaImpTerms, consequentTerm) = collect_ml_imp [] inner_term
+            val (antecedentTerms, consequentTerm) = collect_ml_imp [] inner_term
+            val (contours, contours_count) = get_contours antecedentTerms
             val nestedSD = lax_snf_to_sd consequentTerm
             (* TODO: Also allow inequalities instead of just distinct. *)
-            val withoutDistinct = find_distinct metaImpTerms spiders
-            (*val (spInCons, spOutCons, otherTerms) = get_sp_in_out_sets spiders withoutDistinct [] [] []*)
+            val withoutDistinct = find_distinct antecedentTerms spiders
+            (* Create a map of indices to spiders. This is for faster spider lookup. *)
+            val spidermap = to_index_map spiders
+            val (spInCons, spOutCons, otherTerms) = get_sp_in_out_sets spiders withoutDistinct [] [] []
             (* TODO: Extract shaded zones from otherTerms. *)
-            (*val _ = case otherTerms of [] => true | (t::ts) => raise (SD_TRANSLATE_ERROR ("Could not translate the meta-level formula. Some unknown terms were found.", t))
-                        val psd = PrimarySD {spiders = spiders, habitats = get_habitats_from_cons spiders spInCons spOutCons, sh_zones = []}*)
+            val _ = case otherTerms of [] => true | (t::ts) => raise (SD_TRANSLATE_ERROR ("Could not translate the meta-level formula. Some unknown terms were found.", t))
+                        val psd = PrimarySD {spiders = spiders, habitats = get_habitats_from_cons spiders spInCons spOutCons, sh_zones = []}
         in
-            NullSD
-            (*if otherTerms = [] then BinarySD { operator = "op -->", arg1 = psd, arg2 = nestedSD }
-                               else raise (SD_TRANSLATE_ERROR ("Primary spider diagram extraction from a meta-level formula failed. The fomula is not of the expected format.", t))*)
+            if otherTerms = [] then BinarySD { operator = "op -->", arg1 = psd, arg2 = nestedSD }
+                               else raise (SD_TRANSLATE_ERROR ("Primary spider diagram extraction from a meta-level formula failed. The fomula is not of the expected format.", t))
         end
       | mlsnf_to_sd t = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Not an SNF Meta-Level formula.", t))
 end
@@ -716,43 +766,6 @@ local
       end
     | get_habitats [] _ = ([], [])
 
-    fun get_habitats_from_cons spiders spInCons spOutCons =
-        let
-            fun get_all_contours ((_, c)::spCons) cons = get_all_contours spCons (c::cons)
-              | get_all_contours [] cons = cons
-            val all_contours = Ord_List.make string_ord (get_all_contours spOutCons (get_all_contours spInCons []))
-            fun sp_habitat_from_in_out_cons sp =
-                let
-                    fun filter_for_sp (s, c) = if s = sp then SOME c else NONE
-                    val inCons = Ord_List.make string_ord (List.mapPartial filter_for_sp spInCons)
-                    val outCons = Ord_List.make string_ord (List.mapPartial filter_for_sp spOutCons)
-                    val otherCons = Ord_List.subtract string_ord all_contours (Ord_List.union string_ord inCons outCons)
-                    fun habitat_from_in_out_other inc outc (c::others) = (habitat_from_in_out_other (c::inc) outc others) @ (habitat_from_in_out_other inc (c::outc) others)
-                      | habitat_from_in_out_other inc outc [] = [(inc, outc)]
-                in
-                    (sp, habitat_from_in_out_other inCons outCons otherCons)
-                end
-        in
-            map sp_habitat_from_in_out_cons spiders
-        end
-    
-    datatype 'a in_out = IN of 'a | OUT of 'a
-
-    fun get_sp_in_out_set spiders (@{term "HOL.Not :: bool => bool"} $ (@{term "Set.member :: 'a => 'a set => bool"} $ Bound sp $ (Free (c, @{typ "'a set"})))) = SOME (OUT (nth (rev spiders) sp, c))
-      | get_sp_in_out_set spiders (@{term "Set.member :: 'a => 'a set => bool"} $ Bound sp $ (Free (c, @{typ "'a set"}))) = SOME (IN (nth (rev spiders) sp, c))
-      | get_sp_in_out_set spiders t = NONE
-
-    fun get_sp_in_out_sets (spiders : string list) (t::ts) ins outs trest =
-        let
-            val sio = get_sp_in_out_set spiders t
-        in
-            case (sio) of
-                NONE => get_sp_in_out_sets spiders ts ins outs (t::trest)
-              | SOME (IN a) => get_sp_in_out_sets spiders ts (a::ins) outs trest
-              | SOME (OUT a) => get_sp_in_out_sets spiders ts ins (a::outs) trest
-        end
-      | get_sp_in_out_sets (spiders : string list) [] ins outs trest = (ins, outs, trest)
-
   (* 'from_snf_to_sd_inner' expects a list of terms connected with conjunctions. Each of the
      conjunctions can be either the 'distinct spiders' term, a habitat
      statement or a shaded zone statement.
@@ -804,9 +817,9 @@ local
       from_mlsnf_to_sd_outer (t as (@{term "all :: ('a => prop) => prop"} $ Abs (spName, _, tInner))) =
       let
           val (spiders, inner_term) = collect_ml_spiders [spName] tInner
-          val (metaImpTerms, consequentTerm) = collect_ml_imp [] inner_term
+          val (antecedentTerms, consequentTerm) = collect_ml_imp [] inner_term
           val nestedSD = from_snf_to_sd_outer consequentTerm
-          val withoutDistinct = find_distinct metaImpTerms spiders
+          val withoutDistinct = find_distinct antecedentTerms spiders
           val (spInCons, spOutCons, otherTerms) = get_sp_in_out_sets spiders withoutDistinct [] [] []
           (* TODO: Extract shaded zones from otherTerms. *)
           val _ = case otherTerms of [] => true | (t::ts) => raise (SD_TRANSLATE_ERROR ("Could not translate the meta-level formula. Some unknown terms were found.", t))
