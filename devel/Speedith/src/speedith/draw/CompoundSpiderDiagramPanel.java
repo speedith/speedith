@@ -112,8 +112,11 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
                 } catch (Exception ex) {
                     drawErrorLabel();
                 }
+            } else {
+                drawNoDiagramLabel();
             }
             validate();
+            repaint();
         }
     }
 
@@ -162,6 +165,18 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
         errorLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         errorLabel.setText(i18n("PSD_LABEL_DISPLAY_ERROR"));
         add(errorLabel);
+        invalidate();
+    }
+
+    /**
+     * This method does not remove any components, it just adds an error label
+     * saying 'No diagram'.
+     */
+    private void drawNoDiagramLabel() {
+        JLabel noDiagramLbl = new JLabel();
+        noDiagramLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        noDiagramLbl.setText(i18n("CSD_PANEL_NO_DIAGRAM"));
+        add(noDiagramLbl);
         invalidate();
     }
 
