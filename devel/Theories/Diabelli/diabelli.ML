@@ -602,10 +602,11 @@ local
     fun get_super_region in_contours all_contours =
       let
           val underspec_zone = add_to_zone in_contours [] Symtab.empty
+          val othercontours =
           fun impl_super_region (c::cs) curzone =
               let
               in
-                  (impl_super_region cs (Symtab underspec_zone)) @ ()
+                  (impl_super_region cs (add_to_zone underspec_zone)) @ ()
               end
             | impl_super_region [] = []
       in
