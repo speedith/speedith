@@ -92,7 +92,7 @@
 
     <target name="-compile-speedith-grammar" depends="-check-grammar-uptodate,-clean-antlrworks-output" unless="speedith.grammar.isUptodate">
         <echo message="Compiling the speedith grammar: ${speedith.grammar}.g" level="info" />
-        <fail message="You have to set at least one of these properties: 'antlr3.tool.executable' or 'antlr3.tool.jar'">
+        <fail message="You have to set at least one of these properties (e.g.: in `./nbproject/private/private.properties`): 'antlr3.tool.executable' or 'antlr3.tool.jar'">
             <condition>
                 <and>
                     <not>
