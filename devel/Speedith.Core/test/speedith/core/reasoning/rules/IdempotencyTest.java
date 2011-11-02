@@ -33,7 +33,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import speedith.core.lang.CompoundSpiderDiagram;
-import speedith.core.lang.CompoundSpiderDiagramTest;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.SpiderDiagrams;
 import speedith.core.lang.reader.SpiderDiagramsReader;

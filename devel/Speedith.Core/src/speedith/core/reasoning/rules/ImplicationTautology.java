@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: Idempotency.java
+ * File name: ImplicationTautology.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas

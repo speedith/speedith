@@ -79,6 +79,7 @@ public class GoalsTest {
         assertEquals(goals, Arrays.asList(sd1));
         try {
             goals.add(sd1);
+            assertTrue("An exception should have been thrown.", false);
         } catch (UnsupportedOperationException e) {
             assertNotNull(e);
         }
@@ -113,6 +114,7 @@ public class GoalsTest {
         assertEquals(goals, Arrays.asList(sd1, sd2));
         try {
             goals.add(sd2);
+            assertTrue("An exception should have been thrown.", false);
         } catch (UnsupportedOperationException e) {
             assertNotNull(e);
         }
@@ -133,6 +135,7 @@ public class GoalsTest {
         assertEquals(goals, Arrays.asList(sd1, sd2));
         try {
             goals.add(sd2);
+            assertTrue("An exception should have been thrown.", false);
         } catch (UnsupportedOperationException e) {
             assertNotNull(e);
         }
@@ -153,6 +156,7 @@ public class GoalsTest {
         assertEquals(goals, Arrays.asList(sd1, sd2));
         try {
             goals.add(sd2);
+            assertTrue("An exception should have been thrown.", false);
         } catch (UnsupportedOperationException e) {
             assertNotNull(e);
         }
