@@ -945,7 +945,7 @@ fun speedith_batch_apply t othy args =
       val args_prep = map (fn (x, y) => ("-" ^ x, y)) args
       val args_prep2 = List.foldr (fn ((x, y), xs) => x::(y::xs)) [] args_prep
       val (sd, originalForm) = from_snf_to_sd t
-      val _ = tracing "Invoking Speedith with spider diagram: "
+      val _ = tracing ("Invoking Speedith with the spider diagram: " ^ (PolyML.makestring sd))
       val retVal as (sout, ecode) = exec_args
                             (getenv DIABELLI_JAVA_PATH)
                                       ([
