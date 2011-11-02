@@ -43,8 +43,8 @@
                 <binary-origin>../Speedith/dist/lib/iCircles.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/antlr3-runtime.jar</runtime-relative-path>
-                <binary-origin>../Speedith/dist/lib/antlr3-runtime.jar</binary-origin>
+                <runtime-relative-path>ext/antlr3.jar</runtime-relative-path>
+                <binary-origin>../Speedith/dist/lib/antlr3.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-cli.jar</runtime-relative-path>
