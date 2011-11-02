@@ -76,6 +76,8 @@ public class SpiderDiagramsReaderTest {
     public static final String SD_EXAMPLE_ERR_9 = "BinarySD {operator = \"op |\", arg1 = NullSD {}, arg2 = NullSD {}, arg3 = NullSD {} }";
     public static final String SD_EXAMPLE_ERR_10 = "BinarySD {operator = \"op |\", arg1 = NullSD {}, arg2 = NullSD {}, dsaj = NullSD {} }";
     
+    public static final String SD_IMPLICATION_1 = "BinarySD {operator = \"op |\", arg1 = NullSD {}, arg2 = NullSD {}, dsaj = NullSD {} }";
+    
     public static final String REGION_EXAMPLE_1 = "[([\"A\"], [\"B\"]), ([\"C\"], [\"D\"])]";
     public static final String REGION_EXAMPLE_2 = "[]";
     public static final String REGION_EXAMPLE_3 = "[([], [\"B\"]), ([\"C\"], [])]";

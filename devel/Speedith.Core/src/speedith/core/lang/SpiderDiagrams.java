@@ -28,6 +28,7 @@ package speedith.core.lang;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
@@ -165,6 +166,24 @@ public class SpiderDiagrams {
 
     /**
      * <p>Creates a new compound spider diagram with the given parameters.</p>
+     * @param operator the {@link CompoundSpiderDiagram#getOperator() n-ary
+     * operator} that operates over {@link CompoundSpiderDiagram#getOperands()
+     * operands} of this n-ary spider diagram.
+     * @param operands the {@link CompoundSpiderDiagram#getOperands() operands}
+     * to the {@link CompoundSpiderDiagram#getOperator() operator}.
+     * @return the primary spider diagram.
+     */
+    public static CompoundSpiderDiagram createCompoundSD(Operator operator, SpiderDiagram... operands) {
+        if (operands == null) {
+            return __createCompoundSD(new CompoundSpiderDiagram(operator, null), true, operator.getName(), null);
+        } else {
+            ArrayList<SpiderDiagram> operandsTmp = new ArrayList<SpiderDiagram>(Arrays.asList(operands));
+            return __createCompoundSD(new CompoundSpiderDiagram(operator, operandsTmp), false, operator.getName(), null);
+        }
+    }
+
+    /**
+     * <p>Creates a new compound spider diagram with the given parameters.</p>
      * <p><span style="font-weight:bold">Note</span>: setting the {@code
      * copyCollection} flag to {@code false} makes this operation a bit faster,
      * as this method will not create a copy of the given operands collection.
@@ -253,6 +272,17 @@ public class SpiderDiagrams {
         }
     }
 
+    /**
+     * 
+     * @param csd
+     * @param copyCollection
+     * @param operator
+     * @param operands specify this parameter only if you want to make a copy of
+     * it, otherwise the {@code csd} spider diagram will simply be inserted into
+     * the pool (without any changes, and only if an instance of the compound
+     * spider diagram does not already exist in the pool).
+     * @return 
+     */
     private static CompoundSpiderDiagram __createCompoundSD(CompoundSpiderDiagram csd, boolean copyCollection, String operator, Collection<SpiderDiagram> operands) {
         synchronized (pool) {
             SpiderDiagram exCsd = __getSDFromPool(csd);

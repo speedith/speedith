@@ -1,3 +1,5 @@
 SpiderDiagramsLexer.java
 SpiderDiagramsParser.java
 output/**
+SpiderDiagrams.tokens
+SpiderDiagrams__.g

@@ -15,7 +15,7 @@ DiabelliIR:   provides a formalisation of the data structure used as the
 theory DiabelliIR
 imports
   Main
-  Permutation
+  "~~/src/HOL/Library/Permutation"
 uses
   ("diabelli.ML")
   "$ISABELLE_HOME/src/Pure/Concurrent/bash_sequential.ML"
@@ -428,6 +428,7 @@ lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<a
   apply (sd_tac add_feet sdi: 3 sp: "s2" r: "[([\"A\", \"B\"],[])]")
   apply (sd_tac add_feet sdi: 3 sp: "s1" r: "[([\"A\"],[\"B\"])]")
   apply (sd_tac idempotency sdi: 1)
+  apply (sd_tac implication_tautology sdi: 0)
   by simp
 
 

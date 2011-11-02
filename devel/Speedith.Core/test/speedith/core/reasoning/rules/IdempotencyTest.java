@@ -26,11 +26,13 @@
  */
 package speedith.core.reasoning.rules;
 
+import java.io.File;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.SpiderDiagrams;
 import speedith.core.lang.reader.SpiderDiagramsReader;
@@ -117,6 +119,20 @@ public class IdempotencyTest {
         assertTrue(transformedSD.equalsSemantically(sd.getSubDiagramAt(1)));
         assertTrue(transformedSD != (sd.getSubDiagramAt(1)));
         assertTrue(transformedSD == (sd.getSubDiagramAt(2)));
+        
+        sd = SpiderDiagramsReader.readSpiderDiagram(new File("./test/speedith/core/lang/reader/SpiderDiagramExample_1.sd"));
+        subDiagramIndex = 1;
+        transformedSD = applyRule(rule, subDiagramIndex, sd);
+        assertTrue(!sd.equals(transformedSD));
+        assertEquals(sd.getSubDiagramAt(3), transformedSD.getSubDiagramAt(1));
+        assertTrue(sd.getSubDiagramAt(2).equalsSemantically(transformedSD.getSubDiagramAt(1)));
+        CompoundSpiderDiagram csd = (CompoundSpiderDiagram)sd;
+        CompoundSpiderDiagram newCsd = SpiderDiagrams.createCompoundSD(csd.getOperator(), csd.getSubDiagramAt(3), csd.getSubDiagramAt(4));
+        assertEquals(newCsd, transformedSD);
+        assertSame(newCsd, transformedSD);
+        newCsd = SpiderDiagrams.createCompoundSD(csd.getOperator(), csd.getSubDiagramAt(2), csd.getSubDiagramAt(4));
+        assertTrue(newCsd.equalsSemantically(transformedSD));
+        assertTrue(!newCsd.equals(transformedSD));
     }
 
     private SpiderDiagram applyRule(InferenceRule<? extends RuleArg> rule, final int subDiagramIndex, SpiderDiagram sd) throws RuleApplicationException {
