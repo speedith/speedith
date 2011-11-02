@@ -78,18 +78,9 @@ public class SpeedithTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
         compoundSpiderDiagramPanel1 = new speedith.draw.CompoundSpiderDiagramPanel();
 
         setLayout(new java.awt.BorderLayout());
-
-        org.openide.awt.Mnemonics.setLocalizedText(jButton1, i18n("SpeedithTopComponent.jButton1.text")); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        add(jButton1, java.awt.BorderLayout.SOUTH);
 
         try {
             compoundSpiderDiagramPanel1.setDiagramString(i18n("SpeedithTopComponent.compoundSpiderDiagramPanel1.diagramString_1")); // NOI18N
@@ -99,12 +90,8 @@ public class SpeedithTopComponent extends TopComponent {
         add(compoundSpiderDiagramPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        fireDiagramDrawing();
-    }//GEN-LAST:event_jButton1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private speedith.draw.CompoundSpiderDiagramPanel compoundSpiderDiagramPanel1;
-    private javax.swing.JButton jButton1;
     // End of variables declaration//GEN-END:variables
 
     // <editor-fold defaultstate="collapsed" desc="Overrides">
