@@ -63,7 +63,10 @@ public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg
 
     //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
+        // Check that the arguments to this rule are of the correct type.
         SubDiagramIndexArg arg = getTypedRuleArgs(args);
+        // This rule does not change the number of goals (it simply rewrites
+        // sub-formulae to null diagrams).
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
         newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(new IdempotencyTransformer(arg), false);
         return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));

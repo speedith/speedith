@@ -15,7 +15,7 @@ DiabelliIR:   provides a formalisation of the data structure used as the
 theory DiabelliIR
 imports
   Main
-  Permutation
+  "~~/src/HOL/Library/Permutation"
 uses
   ("diabelli.ML")
   "$ISABELLE_HOME/src/Pure/Concurrent/bash_sequential.ML"

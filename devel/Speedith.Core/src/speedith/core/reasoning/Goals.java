@@ -44,7 +44,7 @@ import static speedith.core.i18n.Translations.*;
 public class Goals {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private List<SpiderDiagram> goals;
+    private ArrayList<SpiderDiagram> goals;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructor">
@@ -61,7 +61,7 @@ public class Goals {
      * (proof obligations).
      */
     public Goals(Collection<SpiderDiagram> goals) {
-        this(goals == null || goals.isEmpty() ? null : new ArrayList<SpiderDiagram>(goals), false);
+        this(goals == null || goals.isEmpty() ? null : new ArrayList<SpiderDiagram>(goals));
     }
 
     /**
@@ -72,15 +72,9 @@ public class Goals {
      * list afterwards.</p>
      * @param goals the list of spider diagrams which represent the proof goals
      * (proof obligations).
-     * @param isUnmodifiable indicates whether the list is unmodifiable already
-     * or not.
      */
-    Goals(List<SpiderDiagram> goals, boolean isUnmodifiable) {
-        if (goals == null || goals.isEmpty()) {
-            this.goals = null;
-        } else {
-            this.goals = isUnmodifiable ? goals : Collections.unmodifiableList(goals);
-        }
+    Goals(ArrayList<SpiderDiagram> goals) {
+        this.goals = goals;
     }
 
     /**
@@ -93,7 +87,7 @@ public class Goals {
      * (proof obligations).
      */
     Goals(SpiderDiagram[] goals) {
-        this(goals == null || goals.length < 1 ? null : Arrays.asList(goals), false);
+        this(goals == null || goals.length < 1 ? null : Arrays.asList(goals));
     }
     //</editor-fold>
 
@@ -110,7 +104,7 @@ public class Goals {
      */
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public List<SpiderDiagram> getGoals() {
-        return goals;
+        return (goals == null || goals.isEmpty()) ? null : Collections.unmodifiableList(goals);
     }
 
     /**
@@ -176,13 +170,10 @@ public class Goals {
      * method. Use it with care.</p>
      * @param goals the list of spider diagrams which represent the proof goals
      * (proof obligations).
-     * @param isUnmodifiable indicates whether the given list of goals is
-     * unmodifiable (i.e.: has been wrapped with the {@link Collections#unmodifiableList(java.util.List)}
-     * already).
      * @return the new instance of the {@link Goals} class. 
      */
-    public static Goals createGoalsFrom(List<SpiderDiagram> goals, boolean isUnmodifiable) {
-        return new Goals(goals, isUnmodifiable);
+    public static Goals createGoalsFrom(ArrayList<SpiderDiagram> goals) {
+        return new Goals(goals);
     }
     // </editor-fold>
 }

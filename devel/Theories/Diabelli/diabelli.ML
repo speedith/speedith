@@ -929,7 +929,7 @@ fun exec_args cmd args =
       val qArgs = List.foldl (fn (s2, s1) => s1 ^ " " ^ s2) "" (map bash_escape args)
       val _ = tracing (cmd ^ qArgs)
   in
-      bash_output (cmd ^ qArgs)
+      Isabelle_System.bash_output (cmd ^ qArgs)
   end
 
 (*==============================================================================
@@ -1031,7 +1031,7 @@ fun i3p_write_sds_goals _ =
 
 fun random_tests str =
   let
-      val (out, ret) = bash_output ("echo " ^ str)
+      val (out, ret) = Isabelle_System.bash_output ("echo " ^ str)
       val _ = tracing (PolyML.makestring ([ ("A","B"), ("C","D") ]))
   in
       (out, ret)
@@ -1076,7 +1076,7 @@ fun sd_tac args ctxt i st = SUBGOAL (fn (subgoal, _) =>
        val intert = Logic.mk_implies (mk_trueprop_if speedithTerm, subgoal)
        val _ = tracing ("Have "^Syntax.string_of_term @{context} intert)
        val intert_cterm = Thm.cterm_of thy intert
-       val interThm = Goal.prove_internal [] intert_cterm (K ((auto_tac (clasimpset_of ctxt)) THEN (ALLGOALS (Intuitionistic.prover_tac ctxt NONE))))
+       val interThm = Goal.prove_internal [] intert_cterm (K ((auto_tac ctxt) THEN (ALLGOALS (Intuitionistic.prover_tac ctxt NONE))))
        val _ = tracing ("Interm: "^Display.string_of_thm @{context} interThm)
    in
        compose_tac (false, interThm, 1) i
