@@ -58,7 +58,7 @@ public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg
      * <p>This value is returned by the {@link ImplicationTautology#getInferenceRuleName()}
      * method.</p>
      */
-    public static final String InferenceRuleName = "implicationTautology";
+    public static final String InferenceRuleName = "implication_tautology";
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
@@ -68,7 +68,9 @@ public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg
         // This rule does not change the number of goals (it simply rewrites
         // sub-formulae to null diagrams).
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
+        // Now apply the rewrite on the chosen subgoal.
         newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(new IdempotencyTransformer(arg), false);
+        // Finally return the changed goals.
         return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
     }
     //</editor-fold>
@@ -102,20 +104,18 @@ public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg
 
         @Override
         public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
-            // Transform only the target diagram
+            // Transform only the target sub-diagram
             if (diagramIndex == arg.getSubDiagramIndex()) {
-                // Is the compound diagram a conjunction or a disjunction?
-                // Is it an implication or an equivalence?
-                if (Operator.Conjunction.equals(csd.getOperator()) || Operator.Disjunction.equals(csd.getOperator())) {
-                    if (csd.getOperand(0).equalsSemantically(csd.getOperand(1))) {
-                        return csd.getOperand(1);
-                    }
-                } else if (Operator.Equivalence.equals(csd.getOperator()) || Operator.Implication.equals(csd.getOperator())) {
+                // The compound diagram must be an implication:
+                if (Operator.Implication.equals(csd.getOperator())) {
                     if (csd.getOperand(0).equalsSemantically(csd.getOperand(1))) {
                         return SpiderDiagrams.createNullSD();
+                    } else {
+                        throw new TransformationException(i18n("RULE_IMPLICATION_TAUTOLOGY_NOT_APPLICABLE_SEM"));
                     }
+                } else {
+                    throw new TransformationException(i18n("RULE_IMPLICATION_TAUTOLOGY_NOT_APPLICABLE"));
                 }
-                throw new TransformationException(i18n("RULE_IDEMPOTENCY_NOT_APPLICABLE"));
             }
             return null;
         }

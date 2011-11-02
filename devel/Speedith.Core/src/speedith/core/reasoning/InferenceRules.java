@@ -38,6 +38,7 @@ import java.util.HashMap;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.Idempotency;
+import speedith.core.reasoning.rules.ImplicationTautology;
 import static speedith.core.i18n.Translations.*;
 
 /**
@@ -62,6 +63,7 @@ public class InferenceRules {
         registerProvider(SplitSpiders.class);
         registerProvider(AddFeet.class);
         registerProvider(Idempotency.class);
+        registerProvider(ImplicationTautology.class);
     }
 
     /**

@@ -10,7 +10,7 @@
     <property name="original.project.dir" value="../Speedith"/>
     <property name="original.project.jar1" value="${original.project.dir}/dist/Speedith.jar"/>
     <property name="original.project.jar2" value="${original.project.dir}/dist/lib/Speedith.Core.jar"/>
-    <property name="original.project.jar3" value="${original.project.dir}/dist/lib/antlr3-runtime.jar"/>
+    <property name="original.project.jar3" value="${original.project.dir}/dist/lib/antlr3.jar"/>
     <property name="original.project.jar4" value="${original.project.dir}/dist/lib/commons-cli.jar"/>
     <property name="original.project.jar5" value="${original.project.dir}/dist/lib/iCircles.jar"/>
 
