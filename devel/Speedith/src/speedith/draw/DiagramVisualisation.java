@@ -35,14 +35,11 @@ import icircles.abstractDescription.CurveLabel;
 import icircles.concreteDiagram.ConcreteDiagram;
 import icircles.gui.CirclesPanel;
 import icircles.util.CannotDrawException;
-import java.awt.HeadlessException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeSet;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.NullSpiderDiagram;
@@ -50,8 +47,6 @@ import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Zone;
-import speedith.core.lang.reader.ReadingException;
-import speedith.core.lang.reader.SpiderDiagramsReader;
 import static speedith.i18n.Translations.*;
 
 /**
