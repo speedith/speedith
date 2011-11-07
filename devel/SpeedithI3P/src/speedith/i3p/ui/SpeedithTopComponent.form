@@ -17,11 +17,6 @@
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
   <SubComponents>
     <Container class="speedith.draw.CompoundSpiderDiagramPanel" name="compoundSpiderDiagramPanel1">
-      <Properties>
-        <Property name="diagramString" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="speedith/i3p/ui/Bundle.properties" key="SpeedithTopComponent.compoundSpiderDiagramPanel1.diagramString_1" replaceFormat="i18n(&quot;{key}&quot;)"/>
-        </Property>
-      </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
           <BorderConstraints direction="Center"/>

@@ -146,11 +146,15 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
      * diagram but not a primary spider diagram.
      */
     public void setDiagramString(String diagram) throws ReadingException {
-        SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(diagram);
-        if (sd instanceof CompoundSpiderDiagram) {
-            setDiagram((CompoundSpiderDiagram) sd);
+        if (diagram == null || diagram.isEmpty()) {
+            setDiagram(null);
         } else {
-            throw new IllegalArgumentException(i18n("CSD_PANEL_INVALID_DIAGRAM_STRING"));
+            SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(diagram);
+            if (sd instanceof CompoundSpiderDiagram) {
+                setDiagram((CompoundSpiderDiagram) sd);
+            } else {
+                throw new IllegalArgumentException(i18n("CSD_PANEL_INVALID_DIAGRAM_STRING"));
+            }
         }
     }
     // </editor-fold>
@@ -204,11 +208,11 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
             }
         }
     }
-
+    
     private void drawInfixDiagram() throws CannotDrawException {
         if (diagram != null && diagram.getOperandCount() > 0) {
             GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
-
+            
             Iterator<SpiderDiagram> it = diagram.getOperands().iterator();
             gridBagConstraints.gridx = 1;
             add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
@@ -223,7 +227,7 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
             throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
         }
     }
-
+    
     private void drawPrefixDiagram() throws CannotDrawException {
         if (diagram != null && diagram.getOperandCount() == 1) {
             add(new OperatorPanel(diagram.getOperator()));

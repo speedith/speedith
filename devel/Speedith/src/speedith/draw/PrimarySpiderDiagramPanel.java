@@ -125,11 +125,15 @@ public class PrimarySpiderDiagramPanel extends javax.swing.JPanel {
      * diagram but not a primary spider diagram.
      */
     public void setDiagramString(String diagram) throws ReadingException {
-        SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(diagram);
-        if (sd instanceof PrimarySpiderDiagram) {
-            setDiagram((PrimarySpiderDiagram) sd);
+        if (diagram == null || diagram.isEmpty()) {
+            setDiagram(null);
         } else {
-            throw new IllegalArgumentException(i18n("PSD_PANEL_INVALID_DIAGRAM_STRING"));
+            SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(diagram);
+            if (sd instanceof PrimarySpiderDiagram) {
+                setDiagram((PrimarySpiderDiagram) sd);
+            } else {
+                throw new IllegalArgumentException(i18n("PSD_PANEL_INVALID_DIAGRAM_STRING"));
+            }
         }
     }
     // </editor-fold>

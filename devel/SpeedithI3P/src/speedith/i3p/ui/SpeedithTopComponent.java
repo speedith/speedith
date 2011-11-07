@@ -89,7 +89,6 @@ public class SpeedithTopComponent extends TopComponent {
         }
         add(compoundSpiderDiagramPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private speedith.draw.CompoundSpiderDiagramPanel compoundSpiderDiagramPanel1;
     // End of variables declaration//GEN-END:variables
@@ -189,7 +188,7 @@ public class SpeedithTopComponent extends TopComponent {
         public DiagramDrawDelayer() {
             delayTimer = new Timer(Delay, this);
         }
-        
+
         /**
          * This method starts a new delayed dispatch (by forgetting the previous
          * one).
@@ -219,12 +218,12 @@ public class SpeedithTopComponent extends TopComponent {
             try {
                 final Message[] results = inj.getResults();
                 SwingUtilities.invokeLater(new DiagramDrawDispatcher(results));
-                for (Message message : inj.getResults()) {
-                    System.out.println(message.toString());
-                }
-                for (Message message : inj.getErrors()) {
-                    System.out.println(message.toString());
-                }
+//                for (Message message : inj.getResults()) {
+//                    System.out.println(message.toString());
+//                }
+//                for (Message message : inj.getErrors()) {
+//                    System.out.println(message.toString());
+//                }
             } catch (InterruptedException ex) {
                 Exceptions.printStackTrace(ex);
             }
@@ -243,6 +242,8 @@ public class SpeedithTopComponent extends TopComponent {
                 try {
                     if (results != null && results.length > 1) {
                         compoundSpiderDiagramPanel1.setDiagramString(results[1].getText());
+                    } else {
+                        compoundSpiderDiagramPanel1.setDiagram(null);
                     }
                 } catch (ReadingException ex) {
                     Exceptions.printStackTrace(ex);
