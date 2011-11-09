@@ -35,6 +35,7 @@ import speedith.cli.CliOptions;
 import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.export.SDExportProvider;
+import speedith.core.lang.export.SDExporter;
 import speedith.core.lang.export.SDExporting;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
@@ -42,8 +43,10 @@ import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.InferenceRuleProvider;
 import speedith.core.reasoning.InferenceRules;
+import speedith.core.reasoning.RuleApplicationResult;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
+import speedith.ui.SpeedithMainForm;
 import static speedith.i18n.Translations.*;
 import static speedith.logging.Logger.*;
 
@@ -89,7 +92,7 @@ public class Main {
                 printKnownFormats();
             } else if (clargs.isListInferenceRules()) {
                 printKnownInferenceRules();
-            } else {
+            } else if (clargs.isBatchMode()) {
                 // ---- Starting up Speedith
                 // Did the user provide a spider diagram to Speedith?
                 String formula = clargs.getSpiderDiagram();
@@ -100,21 +103,36 @@ public class Main {
                 if (readSpiderDiagram != null) {
                     // Get the inference rule (and all of its possible arguments):
                     String ir = clargs.getInferenceRule();
+                    if (ir == null || ir.isEmpty()) {
+                        throw new IllegalArgumentException(i18n("APP_NO_INFERENCE_RULE"));
+                    }
+
                     String spider = clargs.getSpider();
                     int subDiagramIndex = clargs.getSubDiagramIndex();
                     Region region = clargs.getRegion();
                     InferenceRule<? extends RuleArg> inferenceRule = InferenceRules.getInferenceRule(ir);
 
-                    readSpiderDiagram = inferenceRule.apply(new SpiderRegionArg(0, subDiagramIndex, spider, region), new Goals(Arrays.asList(readSpiderDiagram))).getGoals().getGoalAt(0);
+                    if (inferenceRule == null) {
+                        throw new IllegalArgumentException(i18n("APP_UNKNOWN_INFERENCE_RULE"));
+                    }
 
-//                    inferenceRule = InferenceRules.getInferenceRule("add_feet");
+                    RuleApplicationResult subGoals = inferenceRule.apply(new SpiderRegionArg(0, subDiagramIndex, spider, region), new Goals(Arrays.asList(readSpiderDiagram)));
 
-//                    readSpiderDiagram = inferenceRule.apply(new SpiderRegionArg(0, 3, "s2", new Region(Zone.fromInContours("A", "B"))), new Goals(Arrays.asList(readSpiderDiagram))).getGoals().getGoalAt(0);
-
-//                    readSpiderDiagram = new SplitSpiders().apply(new SpiderRegionArg(0, 1, "s2", new Region(Zone.fromInContours("A").withOutContours("B"))), new Goals(Arrays.asList(readSpiderDiagram))).getGoals().getGoalAt(0);
-                    SDExporting.getExporter(outputFormat, clargs.getOutputFormatArguments()).exportTo(readSpiderDiagram, System.out);
+                    if (subGoals != null && subGoals.getGoals() != null && subGoals.getGoals().getGoalsCount() > 0) {
+                        readSpiderDiagram = subGoals.getGoals().getGoalAt(0);
+                        SDExporter exporter = SDExporting.getExporter(outputFormat, clargs.getOutputFormatArguments());
+                        if (exporter == null) {
+                            throw new IllegalArgumentException(i18n("APP_UNKNOWN_EXPORTER"));
+                        } else {
+                            exporter.exportTo(readSpiderDiagram, System.out);
+                        }
+                    }
                     System.out.println();
                 }
+            } else {
+                // We are not running in the batch mode. Ignore all arguments
+                // and show the main form.
+                SpeedithMainForm.main(args);
             }
         } catch (ParseException ex) {
             // Report why the parsing of the command line arguments failed and 
