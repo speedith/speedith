@@ -949,8 +949,8 @@ fun speedith_batch_apply t othy args =
       val retVal as (sout, ecode) = exec_args
                             (getenv DIABELLI_JAVA_PATH)
                                       ([
-                                         "-b",
                                          "-jar", getenv DIABELLI_SPEEDITH_PATH,
+                                         "-b",
                                          "-of", getenv DIABELLI_SPEEDITH_OUTPUT_FORMAT,
                                          "-sd", PolyML.makestring (sd)
                                        ] @ ["-ofa", (case originalForm of MLSNF => "ml=true" | SNF => "ml=false") ^ (",useXSymbols=true")]
