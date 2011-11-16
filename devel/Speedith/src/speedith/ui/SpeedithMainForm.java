@@ -32,15 +32,44 @@
  */
 package speedith.ui;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+
 /**
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SpeedithMainForm extends javax.swing.JFrame {
 
+    private static final String[] SpeedithIcons = {
+        "SpeedithIconVennDiagram-16.png",
+        "SpeedithIconVennDiagram-32.png",
+        "SpeedithIconVennDiagram-48.png",
+        "SpeedithIconVennDiagram-64.png",
+        "SpeedithIconVennDiagram-128.png"
+    };
+
     /** Creates new form SpeedithMainForm */
     public SpeedithMainForm() {
         initComponents();
+        try {
+            ArrayList<Image> icons = new ArrayList<Image>();
+            // Set the icon of this window:
+            for (String path : SpeedithIcons) {
+                InputStream imgStream = this.getClass().getResourceAsStream(path);
+                icons.add(ImageIO.read(imgStream));
+            }
+            setIconImages(icons);
+        } catch (IOException ex) {
+            Logger.getLogger(SpeedithMainForm.class.getName()).log(Level.WARNING, "Speedith's icons could not have been loaded.", ex);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -52,29 +81,47 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        menuBar = new javax.swing.JMenuBar();
+        fileMenu = new javax.swing.JMenu();
+        exitMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Speedith");
 
-        jLabel1.setText("To be continued...");
+        fileMenu.setMnemonic('f');
+        fileMenu.setText("File");
+
+        exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        exitMenuItem.setMnemonic('x');
+        exitMenuItem.setText("Exit");
+        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(exitMenuItem);
+
+        menuBar.add(fileMenu);
+
+        setJMenuBar(menuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
-                .addContainerGap(271, Short.MAX_VALUE))
+            .addGap(0, 617, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
-                .addContainerGap(285, Short.MAX_VALUE))
+            .addGap(0, 279, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_exitMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -112,6 +159,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JMenuItem exitMenuItem;
+    private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenuBar menuBar;
     // End of variables declaration//GEN-END:variables
 }
