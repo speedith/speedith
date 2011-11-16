@@ -81,14 +81,32 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel1 = new javax.swing.JLabel();
+        diagramVisualiser = new speedith.draw.CompoundSpiderDiagramPanel();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
+        drawMenu = new javax.swing.JMenu();
+        rulesMenu = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Speedith");
 
-        fileMenu.setMnemonic('f');
+        jLabel1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jLabel1.setText("Current sub-goal:");
+
+        javax.swing.GroupLayout diagramVisualiserLayout = new javax.swing.GroupLayout(diagramVisualiser);
+        diagramVisualiser.setLayout(diagramVisualiserLayout);
+        diagramVisualiserLayout.setHorizontalGroup(
+            diagramVisualiserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 591, Short.MAX_VALUE)
+        );
+        diagramVisualiserLayout.setVerticalGroup(
+            diagramVisualiserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 165, Short.MAX_VALUE)
+        );
+
+        fileMenu.setMnemonic('F');
         fileMenu.setText("File");
 
         exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
@@ -103,17 +121,35 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
         menuBar.add(fileMenu);
 
+        drawMenu.setMnemonic('D');
+        drawMenu.setText("Draw");
+        menuBar.add(drawMenu);
+
+        rulesMenu.setMnemonic('R');
+        rulesMenu.setText("Rules");
+        menuBar.add(rulesMenu);
+
         setJMenuBar(menuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 617, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(diagramVisualiser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 279, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(diagramVisualiser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(145, Short.MAX_VALUE))
         );
 
         pack();
@@ -159,8 +195,12 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private speedith.draw.CompoundSpiderDiagramPanel diagramVisualiser;
+    private javax.swing.JMenu drawMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenu rulesMenu;
     // End of variables declaration//GEN-END:variables
 }

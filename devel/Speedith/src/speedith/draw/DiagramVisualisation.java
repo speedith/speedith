@@ -241,11 +241,23 @@ public final class DiagramVisualisation {
      * be drawn for any reason.
      */
     public static JPanel getSpiderDiagramPanel(SpiderDiagram sd) throws CannotDrawException {
+        return getSpiderDiagramPanel(sd, 200);
+    }
+
+    /**
+     * Creates a panel which is showing the given spider diagram.
+     * @param sd the spider diagram to draw.
+     * @param size the size of the diagram panel (the drawn spider diagram).
+     * @return the panel which displays the given spider diagram.
+     * @throws CannotDrawException this exception is thrown if the diagram cannot
+     * be drawn for any reason.
+     */
+    public static JPanel getSpiderDiagramPanel(SpiderDiagram sd, int size) throws CannotDrawException {
         if (sd == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sd"));
         } else {
             if (sd instanceof PrimarySpiderDiagram) {
-                return getSpiderDiagramPanel((PrimarySpiderDiagram) sd, 200);
+                return getSpiderDiagramPanel((PrimarySpiderDiagram) sd, size);
             } else if (sd instanceof CompoundSpiderDiagram) {
                 return new CompoundSpiderDiagramPanel((CompoundSpiderDiagram) sd);
             } else if (sd instanceof NullSpiderDiagram) {
