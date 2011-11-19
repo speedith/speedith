@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith
  * 
- * File name: CompoundSpiderDiagramPanel.java
+ * File name: SpiderDiagramPanel.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2011 Matej Urbas
@@ -26,7 +26,7 @@
  */
 
 /*
- * CompoundSpiderDiagramPanel.java
+ * SpiderDiagramPanel.java
  *
  * Created on 29-Sep-2011, 13:46:10
  */
@@ -37,23 +37,25 @@ import icircles.util.CannotDrawException;
 import java.util.Iterator;
 import javax.swing.JLabel;
 import speedith.core.lang.CompoundSpiderDiagram;
+import speedith.core.lang.NullSpiderDiagram;
+import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import static speedith.i18n.Translations.*;
 
 /**
- * This panel displays {@link CompoundSpiderDiagram compound spider diagrams}.
+ * This panel displays all types of {@link SpiderDiagram spider diagrams}.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
+public class SpiderDiagramPanel extends javax.swing.JPanel {
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
      * Creates a new compound spider diagram panel with nothing displayed on it.
-     * <p>You can set a diagram to be shown through {@link CompoundSpiderDiagramPanel#setDiagram(speedith.core.lang.CompoundSpiderDiagram)}.</p>
+     * <p>You can set a diagram to be shown through {@link SpiderDiagramPanel#setDiagram(speedith.core.lang.SpiderDiagram)}.</p>
      */
-    public CompoundSpiderDiagramPanel() {
+    public SpiderDiagramPanel() {
         this(null);
     }
 
@@ -63,7 +65,7 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
      * @param diagram the diagram to display in this panel.
      * <p>May be {@code null} in which case nothing will be displayed.</p>
      */
-    public CompoundSpiderDiagramPanel(CompoundSpiderDiagram diagram) {
+    public SpiderDiagramPanel(SpiderDiagram diagram) {
         initComponents();
         setDiagram(diagram);
     }
@@ -72,7 +74,6 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -81,7 +82,7 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
-    private CompoundSpiderDiagram diagram;
+    private SpiderDiagram diagram;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public Properties">
@@ -91,7 +92,7 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
      * @return the currently presented diagram, or {@code null} is no diagram
      * is currently being shown.
      */
-    public CompoundSpiderDiagram getDiagram() {
+    public SpiderDiagram getDiagram() {
         return diagram;
     }
 
@@ -102,7 +103,7 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
      * @param diagram the new diagram to show, or {@code null} if no diagram is
      * to be shown.
      */
-    public final void setDiagram(CompoundSpiderDiagram diagram) {
+    public final void setDiagram(SpiderDiagram diagram) {
         if (this.diagram != diagram) {
             this.diagram = diagram;
             this.removeAll();
@@ -150,8 +151,8 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
             setDiagram(null);
         } else {
             SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(diagram);
-            if (sd instanceof CompoundSpiderDiagram) {
-                setDiagram((CompoundSpiderDiagram) sd);
+            if (sd instanceof SpiderDiagram) {
+                setDiagram((SpiderDiagram) sd);
             } else {
                 throw new IllegalArgumentException(i18n("CSD_PANEL_INVALID_DIAGRAM_STRING"));
             }
@@ -193,32 +194,41 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
      */
     private void drawDiagram() throws CannotDrawException {
         if (diagram != null) {
-            switch (diagram.getOperator()) {
-                case Conjunction:
-                case Disjunction:
-                case Equivalence:
-                case Implication:
-                    drawInfixDiagram();
-                    break;
-                case Negation:
-                    drawPrefixDiagram();
-                    break;
-                default:
-                    throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
+            if (diagram instanceof CompoundSpiderDiagram) {
+                CompoundSpiderDiagram csd = (CompoundSpiderDiagram) diagram;
+                switch (csd.getOperator()) {
+                    case Conjunction:
+                    case Disjunction:
+                    case Equivalence:
+                    case Implication:
+                        drawInfixDiagram(csd);
+                        break;
+                    case Negation:
+                        drawPrefixDiagram(csd);
+                        break;
+                    default:
+                        throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
+                }
+            } else if (diagram instanceof PrimarySpiderDiagram) {
+                drawPrimaryDiagram((PrimarySpiderDiagram) diagram);
+            } else if (diagram instanceof NullSpiderDiagram) {
+                drawNullSpiderDiagram();
+            } else {
+                throw new IllegalArgumentException(i18n("SD_PANEL_UNKNOWN_DIAGRAM_TYPE"));
             }
         }
     }
-    
-    private void drawInfixDiagram() throws CannotDrawException {
-        if (diagram != null && diagram.getOperandCount() > 0) {
+
+    private void drawInfixDiagram(CompoundSpiderDiagram csd) throws CannotDrawException {
+        if (csd != null && csd.getOperandCount() > 0) {
             GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
-            
-            Iterator<SpiderDiagram> it = diagram.getOperands().iterator();
+
+            Iterator<SpiderDiagram> it = csd.getOperands().iterator();
             gridBagConstraints.gridx = 1;
             add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
             while (it.hasNext()) {
                 ++gridBagConstraints.gridx;
-                add(new OperatorPanel(diagram.getOperator()), gridBagConstraints);
+                add(new OperatorPanel(csd.getOperator()), gridBagConstraints);
                 ++gridBagConstraints.gridx;
                 add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
             }
@@ -227,15 +237,29 @@ public class CompoundSpiderDiagramPanel extends javax.swing.JPanel {
             throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
         }
     }
-    
-    private void drawPrefixDiagram() throws CannotDrawException {
-        if (diagram != null && diagram.getOperandCount() == 1) {
-            add(new OperatorPanel(diagram.getOperator()));
-            add(DiagramVisualisation.getSpiderDiagramPanel(diagram.getOperands().get(0)));
+
+    private void drawPrefixDiagram(CompoundSpiderDiagram csd) throws CannotDrawException {
+        if (csd != null && csd.getOperandCount() == 1) {
+            add(new OperatorPanel(csd.getOperator()));
+            add(DiagramVisualisation.getSpiderDiagramPanel(csd.getOperands().get(0)));
             invalidate();
         } else {
             throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
         }
+    }
+
+    private void drawPrimaryDiagram(PrimarySpiderDiagram psd) {
+        if (psd == null) {
+            throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
+        } else {
+            PrimarySpiderDiagramPanel psdPanel = new PrimarySpiderDiagramPanel();
+            psdPanel.setDiagram(psd);
+            add(psdPanel);
+        }
+    }
+
+    private void drawNullSpiderDiagram() {
+        add(new NullSpiderDiagramPanel());
     }
     // </editor-fold>
 }

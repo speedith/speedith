@@ -141,7 +141,7 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
                 // Now make a union of the two regions
                 Region withAddedFeet = existingFeet.union(feetToAdd);
                 done = true;
-                return psd.changeSpiderHabitat(arg.getSpider(), withAddedFeet);
+                return psd.addSpider(arg.getSpider(), withAddedFeet);
             }
             return null;
         }

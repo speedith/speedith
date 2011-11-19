@@ -333,21 +333,37 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     //<editor-fold defaultstate="collapsed" desc="Transformation Methods">
     /**
-     * Creates a new primary spider diagram that is a copy of this one, the only
-     * difference being a different habitat for the chosen spider.
-     * @param spider the spider for which to change the habitat.
-     * @param newHabitat the new habitat of the spider.
-     * @return a new primary spider diagram that is almost a copy of this one,
-     * except the given spider will have the new habitat.
+     * Creates a copy of this primary spider diagram that contains the given
+     * spider and its habitat.
+     * <p>If the original primary spider diagram already contained this spider,
+     * then it is simply replaced.</p>
+     * @param spider the spider to be included in the new primary spider
+     * diagram.
+     * @param habitat the habitat of the spider.
+     * @return a copy of this primary spider diagram that contains the given
+     * spider and its habitat.
      */
-    public PrimarySpiderDiagram changeSpiderHabitat(String spider, Region newHabitat) {
-        if (spiders.contains(spider)) {
-            TreeMap<String, Region> newHabitats = new TreeMap<String, Region>(this.habitats);
-            newHabitats.put(spider, newHabitat);
-            return SpiderDiagrams.createPrimarySD(this.spiders, newHabitats, shadedZones, false);
+    public PrimarySpiderDiagram addSpider(String spider, Region habitat) {
+        // Add the habitat to the map of spiders and their habitats.
+        TreeMap<String, Region> newHabitats = (habitats == null) ? new TreeMap<String, Region>() : new TreeMap<String, Region>(habitats);
+        newHabitats.put(spider, habitat);
+        // Now add the spider to the set of all spiders. Maybe we can reuse the 
+        // set if it already contains the spider.
+        TreeSet<String> newSpiders;
+        if (spiders != null) {
+            if (spiders.contains(spider)) {
+                newSpiders = spiders;
+            } else {
+                newSpiders = new TreeSet<String>(spiders);
+                newSpiders.add(spider);
+            }
         } else {
-            throw new IllegalArgumentException(i18n("ERR_SPIDER_NOT_IN_DIAGRAM", spider));
+            newSpiders = new TreeSet<String>();
+            newSpiders.add(spider);
         }
+        // Finally construct the spider diagram (without making any copies of
+        // the spiders, habitats, and shaded zones collections).
+        return SpiderDiagrams.createPrimarySD(newSpiders, newHabitats, shadedZones, false);
     }
     //</editor-fold>
 

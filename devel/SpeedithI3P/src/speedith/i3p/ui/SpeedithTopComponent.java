@@ -78,7 +78,7 @@ public class SpeedithTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        compoundSpiderDiagramPanel1 = new speedith.draw.CompoundSpiderDiagramPanel();
+        compoundSpiderDiagramPanel1 = new speedith.draw.SpiderDiagramPanel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -90,7 +90,7 @@ public class SpeedithTopComponent extends TopComponent {
         add(compoundSpiderDiagramPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private speedith.draw.CompoundSpiderDiagramPanel compoundSpiderDiagramPanel1;
+    private speedith.draw.SpiderDiagramPanel compoundSpiderDiagramPanel1;
     // End of variables declaration//GEN-END:variables
 
     // <editor-fold defaultstate="collapsed" desc="Overrides">

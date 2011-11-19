@@ -143,7 +143,7 @@ public class SpiderDiagrams {
      * should be made to construct the new primary spider diagram.
      * @return the primary spider diagram.
      */
-    public static PrimarySpiderDiagram createPrimarySD(TreeSet<String> spiders, TreeMap<String, Region> habitats, TreeSet<Zone> shadedZones, boolean copyCollections) {
+    static PrimarySpiderDiagram createPrimarySD(TreeSet<String> spiders, TreeMap<String, Region> habitats, TreeSet<Zone> shadedZones, boolean copyCollections) {
         return __createPrimarySD(new PrimarySpiderDiagram(spiders, habitats, shadedZones), copyCollections, spiders, habitats, shadedZones);
     }
 

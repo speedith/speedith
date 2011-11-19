@@ -54,6 +54,13 @@ public class Zone implements Comparable<Zone> {
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
     /**
+     * Creates a new zone with the given in-contours and no out-contours.
+     * @param inContours the contours which contain this zone.
+     */
+    public Zone(String ... inContours) {
+        this(Arrays.asList(inContours), null);
+    }
+    /**
      * Creates a new zone and initialises it with the two given collections of
      * contour names.
      * @param inContours the collection of names of contours which contain this

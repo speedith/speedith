@@ -259,7 +259,7 @@ public final class DiagramVisualisation {
             if (sd instanceof PrimarySpiderDiagram) {
                 return getSpiderDiagramPanel((PrimarySpiderDiagram) sd, size);
             } else if (sd instanceof CompoundSpiderDiagram) {
-                return new CompoundSpiderDiagramPanel((CompoundSpiderDiagram) sd);
+                return new SpiderDiagramPanel((CompoundSpiderDiagram) sd);
             } else if (sd instanceof NullSpiderDiagram) {
                 return new NullSpiderDiagramPanel();
             } else {
