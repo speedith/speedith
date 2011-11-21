@@ -36,6 +36,7 @@ import java.awt.GridBagConstraints;
 import icircles.util.CannotDrawException;
 import java.util.Iterator;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.PrimarySpiderDiagram;
@@ -248,13 +249,18 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         }
     }
 
-    private void drawPrimaryDiagram(PrimarySpiderDiagram psd) {
+    private void drawPrimaryDiagram(PrimarySpiderDiagram psd) throws CannotDrawException {
         if (psd == null) {
             throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
         } else {
-            PrimarySpiderDiagramPanel psdPanel = new PrimarySpiderDiagramPanel();
-            psdPanel.setDiagram(psd);
-            add(psdPanel);
+            GridBagConstraints gbc = new java.awt.GridBagConstraints();
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.weightx = 1;
+            gbc.weighty = 1;
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            add(DiagramVisualisation.getSpiderDiagramPanel(psd), gbc);
+            invalidate();
         }
     }
 
