@@ -294,7 +294,7 @@ public final class DiagramVisualisation {
      */
     static CirclesPanel getSpiderDiagramPanel(AbstractDescription ad, int size) throws CannotDrawException {
         ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(ad, size);
-        return new CirclesPanel("", "No failure message", cd, size, true);
+        return new CirclesPanel("", "No failure message", cd, true);
     }
 
     /**
@@ -306,7 +306,7 @@ public final class DiagramVisualisation {
      */
     static CirclesPanel getSpiderDiagramPanel(PrimarySpiderDiagram diagram, int size) throws CannotDrawException {
         ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(getAbstractDescription(diagram), size);
-        return new CirclesPanel("", "No failure message", cd, size, true);
+        return new CirclesPanel("", "No failure message", cd, true);
     }
 
     private static int getZoneInMask(String[] allContours, Zone zone) {

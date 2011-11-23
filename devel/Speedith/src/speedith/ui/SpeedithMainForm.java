@@ -76,7 +76,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         }
         try {
             //        initialGoals.setDiagram(getSDExample2());
-                    initialGoals.setDiagramString("BinarySD {\n\toperator = \"op -->\",\n\targ1 = BinarySD {\n\t\toperator = \"op &\",\n\t\targ1 = PrimarySD {spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\"], [\"B\", \"C\"]), ([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], [])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])], sh_zones = [([\"B\"], [\"A\", \"C\"])]},\n\t\targ2 = NullSD {}\n\t},\n\targ2 = PrimarySD {spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\"], [\"B\", \"C\"]), ([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], [])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])], sh_zones = [([\"B\"], [\"A\", \"C\"])]}\n}");
+            initialGoals.setDiagramString("BinarySD {\n\toperator = \"op -->\",\n\targ1 = BinarySD {\n\t\toperator = \"op &\",\n\t\targ1 = PrimarySD {spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\"], [\"B\", \"C\"]), ([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], [])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])], sh_zones = [([\"B\"], [\"A\", \"C\"])]},\n\t\targ2 = NullSD {}\n\t},\n\targ2 = PrimarySD {spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\"], [\"B\", \"C\"]), ([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], [])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])], sh_zones = [([\"B\"], [\"A\", \"C\"])]}\n}");
         } catch (ReadingException ex) {
             Logger.getLogger(SpeedithMainForm.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -99,6 +99,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         initialGoals = new speedith.draw.SpiderDiagramPanel();
         currentGoals = new speedith.draw.SpiderDiagramPanel();
+        jButton1 = new javax.swing.JButton();
+        nullSpiderDiagramPanel1 = new speedith.draw.NullSpiderDiagramPanel();
+        primarySpiderDiagramPanel1 = new speedith.draw.PrimarySpiderDiagramPanel();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
@@ -110,16 +113,17 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
         goalsPanel.setLayout(new java.awt.GridBagLayout());
 
-        initialGoalLabel.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        initialGoalLabel.setFont(new java.awt.Font("Dialog", 0, 12));
         initialGoalLabel.setText("Current sub-goals:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(1, 3, 0, 0);
         goalsPanel.add(initialGoalLabel, gridBagConstraints);
 
-        subGoalLabel.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        subGoalLabel.setFont(new java.awt.Font("Dialog", 0, 12));
         subGoalLabel.setText("Initial goal:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -142,11 +146,11 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         initialGoals.setLayout(initialGoalsLayout);
         initialGoalsLayout.setHorizontalGroup(
             initialGoalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 613, Short.MAX_VALUE)
+            .addGap(0, 489, Short.MAX_VALUE)
         );
         initialGoalsLayout.setVerticalGroup(
             initialGoalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 148, Short.MAX_VALUE)
+            .addGap(0, 159, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -162,11 +166,11 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         currentGoals.setLayout(currentGoalsLayout);
         currentGoalsLayout.setHorizontalGroup(
             currentGoalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 613, Short.MAX_VALUE)
+            .addGap(0, 489, Short.MAX_VALUE)
         );
         currentGoalsLayout.setVerticalGroup(
             currentGoalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 148, Short.MAX_VALUE)
+            .addGap(0, 136, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -177,6 +181,47 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         goalsPanel.add(currentGoals, gridBagConstraints);
+
+        jButton1.setText("Apply rule...");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        goalsPanel.add(jButton1, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        goalsPanel.add(nullSpiderDiagramPanel1, gridBagConstraints);
+
+        javax.swing.GroupLayout primarySpiderDiagramPanel1Layout = new javax.swing.GroupLayout(primarySpiderDiagramPanel1);
+        primarySpiderDiagramPanel1.setLayout(primarySpiderDiagramPanel1Layout);
+        primarySpiderDiagramPanel1Layout.setHorizontalGroup(
+            primarySpiderDiagramPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 124, Short.MAX_VALUE)
+        );
+        primarySpiderDiagramPanel1Layout.setVerticalGroup(
+            primarySpiderDiagramPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 142, Short.MAX_VALUE)
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        goalsPanel.add(primarySpiderDiagramPanel1, gridBagConstraints);
 
         fileMenu.setMnemonic('F');
         fileMenu.setText("File");
@@ -221,6 +266,12 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+        this.primarySpiderDiagramPanel1.setDiagram(SpeedithMainForm.getSDExample2());
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -264,8 +315,11 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     private javax.swing.JPanel goalsPanel;
     private javax.swing.JLabel initialGoalLabel;
     private speedith.draw.SpiderDiagramPanel initialGoals;
+    private javax.swing.JButton jButton1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JMenuBar menuBar;
+    private speedith.draw.NullSpiderDiagramPanel nullSpiderDiagramPanel1;
+    private speedith.draw.PrimarySpiderDiagramPanel primarySpiderDiagramPanel1;
     private javax.swing.JMenu rulesMenu;
     private javax.swing.JLabel subGoalLabel;
     // End of variables declaration//GEN-END:variables
@@ -275,7 +329,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     public static NullSpiderDiagram getSDExample1() {
         return SpiderDiagrams.createNullSD();
     }
-    
+
     public static PrimarySpiderDiagram getSDExample2() {
         PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
         Region s1Region = new Region(Zone.fromInContours("A").withOutContours("B"), Zone.fromInContours("A").withOutContours("B"));

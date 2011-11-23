@@ -418,6 +418,9 @@ method_setup sd_tac = {*
   apply (sd_tac idempotency sdi: 1)
   by auto*)
 
+lemma example: "\<exists>s. s \<in> (A - B) \<union> (B - A) \<and> (A \<inter> B) = {}"
+  oops
+
 
 (* This lemma should land in the unit tests. *)
 lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))

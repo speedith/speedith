@@ -106,7 +106,7 @@ public class Main {
                     if (ir == null || ir.isEmpty()) {
                         throw new IllegalArgumentException(i18n("APP_NO_INFERENCE_RULE"));
                     }
-
+                    
                     String spider = clargs.getSpider();
                     int subDiagramIndex = clargs.getSubDiagramIndex();
                     Region region = clargs.getRegion();
