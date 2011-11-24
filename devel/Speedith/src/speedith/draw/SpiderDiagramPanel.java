@@ -75,10 +75,24 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setBackground(new java.awt.Color(255, 255, 255));
-        setLayout(new java.awt.GridBagLayout());
+        diagrams = new javax.swing.JPanel();
+
+        diagrams.setBackground(new java.awt.Color(255, 255, 255));
+        diagrams.setLayout(new java.awt.GridBagLayout());
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(diagrams, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(diagrams, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+        );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel diagrams;
     // End of variables declaration//GEN-END:variables
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
     private SpiderDiagram diagram;
@@ -105,7 +119,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     public final void setDiagram(SpiderDiagram diagram) {
         if (this.diagram != diagram) {
             this.diagram = diagram;
-            this.removeAll();
+            diagrams.removeAll();
             if (this.diagram != null) {
                 try {
                     drawDiagram();
@@ -163,7 +177,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         JLabel errorLabel = new JLabel();
         errorLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         errorLabel.setText(i18n("PSD_LABEL_DISPLAY_ERROR"));
-        add(errorLabel);
+        diagrams.add(errorLabel);
         invalidate();
     }
 
@@ -175,7 +189,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         JLabel noDiagramLbl = new JLabel();
         noDiagramLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         noDiagramLbl.setText(i18n("CSD_PANEL_NO_DIAGRAM"));
-        add(noDiagramLbl);
+        diagrams.add(noDiagramLbl);
         invalidate();
     }
 
@@ -222,18 +236,17 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             Iterator<SpiderDiagram> it = csd.getOperands().iterator();
 
             gridBagConstraints.gridx = gridx++;
-            add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
+            diagrams.add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
 
             while (it.hasNext()) {
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = gridx++;
-                add(new OperatorPanel(csd.getOperator()), gridBagConstraints);
+                diagrams.add(new OperatorPanel(csd.getOperator()), gridBagConstraints);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = gridx++;
-                add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
+                diagrams.add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
             }
-            invalidate();
         } else {
             throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
         }
@@ -241,9 +254,8 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
 
     private void drawPrefixDiagram(CompoundSpiderDiagram csd) throws CannotDrawException {
         if (csd != null && csd.getOperandCount() == 1) {
-            add(new OperatorPanel(csd.getOperator()));
-            add(DiagramVisualisation.getSpiderDiagramPanel(csd.getOperands().get(0)));
-            invalidate();
+            diagrams.add(new OperatorPanel(csd.getOperator()));
+            diagrams.add(DiagramVisualisation.getSpiderDiagramPanel(csd.getOperands().get(0)));
         } else {
             throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
         }
@@ -254,25 +266,17 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
         } else {
             GridBagConstraints gbc = new java.awt.GridBagConstraints();
-            gbc.fill = GridBagConstraints.BOTH;
-            gbc.weightx = 1;
-            gbc.weighty = 1;
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            add(DiagramVisualisation.getSpiderDiagramPanel(psd), gbc);
-            invalidate();
+            gbc.fill = GridBagConstraints.NONE;
+            gbc.anchor = GridBagConstraints.CENTER;
+            diagrams.add(DiagramVisualisation.getSpiderDiagramPanel(psd), gbc);
         }
     }
 
     private void drawNullSpiderDiagram() {
-        GridBagConstraints gbc = new java.awt.GridBagConstraints();
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1;
-        gbc.weighty = 1;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        add(new NullSpiderDiagramPanel(), gbc);
-        invalidate();
+//        GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        final NullSpiderDiagramPanel nullSpiderDiagramPanel = new NullSpiderDiagramPanel();
+        diagrams.add(nullSpiderDiagramPanel);
+//        nullSpiderDiagramPanel.invalidate();
     }
     // </editor-fold>
 }

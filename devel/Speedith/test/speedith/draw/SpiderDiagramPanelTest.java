@@ -33,6 +33,9 @@
 package speedith.draw;
 
 import icircles.util.CannotDrawException;
+import speedith.core.lang.CompoundSpiderDiagram;
+import speedith.core.lang.NullSpiderDiagram;
+import speedith.core.lang.Operator;
 import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagrams;
@@ -47,12 +50,6 @@ public class SpiderDiagramPanelTest extends javax.swing.JFrame {
     /** Creates new form SpiderDiagramPanelTest */
     public SpiderDiagramPanelTest() {
         initComponents();
-        try {
-            add(DiagramVisualisation.getSpiderDiagramPanel(getSDExample1()));
-            pack();
-        } catch (CannotDrawException ex) {
-            System.out.println("Could not draw the spider diagram...");
-        }
     }
 
     /** This method is called from within the constructor to
@@ -64,21 +61,48 @@ public class SpiderDiagramPanelTest extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton1 = new javax.swing.JButton();
+        spiderDiagramPanel1 = new speedith.draw.SpiderDiagramPanel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        spiderDiagramPanel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(spiderDiagramPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(spiderDiagramPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE))
+        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    @Override
-    public void doLayout() {
-        super.doLayout();
-        
-        System.out.println("Size window: " + this.getSize().toString());
-//        System.out.println("Size of the psdPanel: " + this.primarySpiderDiagramPanel1.getSize().toString());
-    }
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (getSDExample1() == spiderDiagramPanel1.getDiagram()) {
+            spiderDiagramPanel1.setDiagram(getSDExample2());
+        } else if (getSDExample2() == spiderDiagramPanel1.getDiagram()) {
+            spiderDiagramPanel1.setDiagram(getSDExample3());
+        } else {
+            spiderDiagramPanel1.setDiagram(getSDExample1());
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
-    
-    
     /**
      * @param args the command line arguments
      */
@@ -115,8 +139,9 @@ public class SpiderDiagramPanelTest extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private speedith.draw.SpiderDiagramPanel spiderDiagramPanel1;
     // End of variables declaration//GEN-END:variables
-
 
     public static PrimarySpiderDiagram getSDExample1() {
         PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
@@ -124,5 +149,16 @@ public class SpiderDiagramPanelTest extends javax.swing.JFrame {
         Region s2Region = new Region(Zone.fromInContours("A", "B"));
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
         return emptyPSD.addSpider("s2", s2Region);
+    }
+
+    public static CompoundSpiderDiagram getSDExample2() {
+        PrimarySpiderDiagram psd1 = getSDExample1();
+        PrimarySpiderDiagram psd2 = getSDExample1();
+        CompoundSpiderDiagram csd = SpiderDiagrams.createCompoundSD(Operator.Equivalence, psd1, psd2);
+        return csd;
+    }
+    
+    public static NullSpiderDiagram getSDExample3() {
+        return SpiderDiagrams.createNullSD();
     }
 }
