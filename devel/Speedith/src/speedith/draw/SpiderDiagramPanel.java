@@ -32,10 +32,15 @@
  */
 package speedith.draw;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import icircles.util.CannotDrawException;
+import java.awt.Dimension;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.util.Iterator;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.PrimarySpiderDiagram;
@@ -77,18 +82,30 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
 
         diagrams = new javax.swing.JPanel();
 
+        setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+
         diagrams.setBackground(new java.awt.Color(255, 255, 255));
-        diagrams.setLayout(new java.awt.GridBagLayout());
+
+        javax.swing.GroupLayout diagramsLayout = new javax.swing.GroupLayout(diagrams);
+        diagrams.setLayout(diagramsLayout);
+        diagramsLayout.setHorizontalGroup(
+            diagramsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 330, Short.MAX_VALUE)
+        );
+        diagramsLayout.setVerticalGroup(
+            diagramsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 234, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(diagrams, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(diagrams, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(diagrams, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+            .addComponent(diagrams, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -178,7 +195,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         errorLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         errorLabel.setText(i18n("PSD_LABEL_DISPLAY_ERROR"));
         diagrams.add(errorLabel);
-        invalidate();
+        refreshPrefSize();
     }
 
     /**
@@ -190,7 +207,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         noDiagramLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         noDiagramLbl.setText(i18n("CSD_PANEL_NO_DIAGRAM"));
         diagrams.add(noDiagramLbl);
-        invalidate();
+        refreshPrefSize();
     }
 
     /**
@@ -231,12 +248,14 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         if (csd != null && csd.getOperandCount() > 0) {
             int gridx = 0;
 
+            diagrams.setLayout(new GridBagLayout());
             GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
 
             Iterator<SpiderDiagram> it = csd.getOperands().iterator();
 
             gridBagConstraints.gridx = gridx++;
-            diagrams.add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
+            JPanel sdp = DiagramVisualisation.getSpiderDiagramPanel(it.next());
+            diagrams.add(sdp, gridBagConstraints);
 
             while (it.hasNext()) {
                 gridBagConstraints = new java.awt.GridBagConstraints();
@@ -247,6 +266,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
                 gridBagConstraints.gridx = gridx++;
                 diagrams.add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
             }
+            refreshPrefSize();
         } else {
             throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
         }
@@ -256,6 +276,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         if (csd != null && csd.getOperandCount() == 1) {
             diagrams.add(new OperatorPanel(csd.getOperator()));
             diagrams.add(DiagramVisualisation.getSpiderDiagramPanel(csd.getOperands().get(0)));
+            refreshPrefSize();
         } else {
             throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
         }
@@ -265,18 +286,34 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         if (psd == null) {
             throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
         } else {
+            diagrams.setLayout(new GridBagLayout());
             GridBagConstraints gbc = new java.awt.GridBagConstraints();
-            gbc.fill = GridBagConstraints.NONE;
-            gbc.anchor = GridBagConstraints.CENTER;
             diagrams.add(DiagramVisualisation.getSpiderDiagramPanel(psd), gbc);
+            refreshPrefSize();
         }
     }
 
     private void drawNullSpiderDiagram() {
-//        GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        diagrams.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new java.awt.GridBagConstraints();
         final NullSpiderDiagramPanel nullSpiderDiagramPanel = new NullSpiderDiagramPanel();
-        diagrams.add(nullSpiderDiagramPanel);
-//        nullSpiderDiagramPanel.invalidate();
+        diagrams.add(nullSpiderDiagramPanel, gbc);
+        refreshPrefSize();
     }
     // </editor-fold>
+
+    private void refreshPrefSize() {
+        Dimension prefSize = new Dimension();
+        for (Component component : diagrams.getComponents()) {
+            final Dimension curPrefSize = component.getPreferredSize();
+            prefSize.height = Math.max(prefSize.height, curPrefSize.height);
+            prefSize.width += curPrefSize.width;
+        }
+        prefSize.height += 10;
+        prefSize.width += 10;
+        setPreferredSize(prefSize);
+        invalidate();
+//        System.out.println("The preferred size: " + diagrams.getLayout().preferredLayoutSize(diagrams).toString());
+//        setPreferredSize(diagrams.getLayout().preferredLayoutSize(diagrams));
+    }
 }

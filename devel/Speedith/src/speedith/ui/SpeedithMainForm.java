@@ -44,6 +44,7 @@ import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.Operator;
 import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.Region;
+import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.SpiderDiagrams;
 import speedith.core.lang.Zone;
 
@@ -165,6 +166,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
             spiderDiagramPanel1.setDiagram(getSDExample2());
         } else if (getSDExample2() == spiderDiagramPanel1.getDiagram()) {
             spiderDiagramPanel1.setDiagram(getSDExample3());
+        } else if (getSDExample3() == spiderDiagramPanel1.getDiagram()) {
+            spiderDiagramPanel1.setDiagram(getSDExample4());
         } else {
             spiderDiagramPanel1.setDiagram(getSDExample1());
         }
@@ -234,6 +237,13 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     
     public static NullSpiderDiagram getSDExample3() {
         return SpiderDiagrams.createNullSD();
+    }
+
+    public static CompoundSpiderDiagram getSDExample4() {
+        PrimarySpiderDiagram sd1 = getSDExample1();
+        SpiderDiagram sd2 = getSDExample2();
+        CompoundSpiderDiagram csd = SpiderDiagrams.createCompoundSD(Operator.Conjunction, sd1, sd2);
+        return csd;
     }
     // </editor-fold>
 }
