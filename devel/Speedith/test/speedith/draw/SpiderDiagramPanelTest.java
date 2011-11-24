@@ -32,6 +32,7 @@
  */
 package speedith.draw;
 
+import icircles.util.CannotDrawException;
 import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagrams;
@@ -46,6 +47,12 @@ public class SpiderDiagramPanelTest extends javax.swing.JFrame {
     /** Creates new form SpiderDiagramPanelTest */
     public SpiderDiagramPanelTest() {
         initComponents();
+        try {
+            add(DiagramVisualisation.getSpiderDiagramPanel(getSDExample1()));
+            pack();
+        } catch (CannotDrawException ex) {
+            System.out.println("Could not draw the spider diagram...");
+        }
     }
 
     /** This method is called from within the constructor to
@@ -56,30 +63,8 @@ public class SpiderDiagramPanelTest extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
-
-        primarySpiderDiagramPanel1 = new speedith.draw.PrimarySpiderDiagramPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        try {
-            primarySpiderDiagramPanel1.setDiagramString("PrimarySD {spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\"], [\"B\", \"C\"]), ([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], [])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])], sh_zones = [([\"B\"], [\"A\", \"C\"])]}");
-        } catch (speedith.core.lang.reader.ReadingException e1) {
-            e1.printStackTrace();
-        }
-
-        javax.swing.GroupLayout primarySpiderDiagramPanel1Layout = new javax.swing.GroupLayout(primarySpiderDiagramPanel1);
-        primarySpiderDiagramPanel1.setLayout(primarySpiderDiagramPanel1Layout);
-        primarySpiderDiagramPanel1Layout.setHorizontalGroup(
-            primarySpiderDiagramPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        primarySpiderDiagramPanel1Layout.setVerticalGroup(
-            primarySpiderDiagramPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
-
-        getContentPane().add(primarySpiderDiagramPanel1, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -88,8 +73,8 @@ public class SpiderDiagramPanelTest extends javax.swing.JFrame {
     public void doLayout() {
         super.doLayout();
         
-        System.out.println("Size: " + this.getSize().toString());
-        System.out.println("Size of the psdPanel: " + this.primarySpiderDiagramPanel1.getSize().toString());
+        System.out.println("Size window: " + this.getSize().toString());
+//        System.out.println("Size of the psdPanel: " + this.primarySpiderDiagramPanel1.getSize().toString());
     }
 
     
@@ -130,7 +115,6 @@ public class SpiderDiagramPanelTest extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private speedith.draw.PrimarySpiderDiagramPanel primarySpiderDiagramPanel1;
     // End of variables declaration//GEN-END:variables
 
 

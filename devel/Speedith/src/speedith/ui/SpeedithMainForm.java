@@ -74,12 +74,13 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(SpeedithMainForm.class.getName()).log(Level.WARNING, "Speedith's icons could not have been loaded.", ex);
         }
-        try {
-            //        initialGoals.setDiagram(getSDExample2());
-            initialGoals.setDiagramString("BinarySD {\n\toperator = \"op -->\",\n\targ1 = BinarySD {\n\t\toperator = \"op &\",\n\t\targ1 = PrimarySD {spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\"], [\"B\", \"C\"]), ([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], [])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])], sh_zones = [([\"B\"], [\"A\", \"C\"])]},\n\t\targ2 = NullSD {}\n\t},\n\targ2 = PrimarySD {spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\"], [\"B\", \"C\"]), ([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], [])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])], sh_zones = [([\"B\"], [\"A\", \"C\"])]}\n}");
-        } catch (ReadingException ex) {
-            Logger.getLogger(SpeedithMainForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+                    initialGoals.setDiagram(getSDExample2());
+                    pack();
+//            initialGoals.setDiagramString("BinarySD {\n\toperator = \"op -->\",\n\targ1 = BinarySD {\n\t\toperator = \"op &\",\n\t\targ1 = PrimarySD {spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\"], [\"B\", \"C\"]), ([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], [])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])], sh_zones = [([\"B\"], [\"A\", \"C\"])]},\n\t\targ2 = NullSD {}\n\t},\n\targ2 = PrimarySD {spiders = [\"s1\", \"s2\", \"s3\"], habitats = [(\"s1\", [([\"A\"], [\"B\", \"C\"]), ([\"A\", \"B\"], [\"C\"]), ([\"A\", \"B\", \"C\"], [])]), (\"s2\", [([\"B\"], [\"A\", \"C\"])]), (\"s3\", [([\"B\"], [\"A\", \"C\"])])], sh_zones = [([\"B\"], [\"A\", \"C\"])]}\n}");
+//        } catch (ReadingException ex) {
+//            Logger.getLogger(SpeedithMainForm.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="Auto-generated code">
@@ -101,7 +102,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         currentGoals = new speedith.draw.SpiderDiagramPanel();
         jButton1 = new javax.swing.JButton();
         nullSpiderDiagramPanel1 = new speedith.draw.NullSpiderDiagramPanel();
-        primarySpiderDiagramPanel1 = new speedith.draw.PrimarySpiderDiagramPanel();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
@@ -204,25 +204,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         gridBagConstraints.weighty = 1.0;
         goalsPanel.add(nullSpiderDiagramPanel1, gridBagConstraints);
 
-        javax.swing.GroupLayout primarySpiderDiagramPanel1Layout = new javax.swing.GroupLayout(primarySpiderDiagramPanel1);
-        primarySpiderDiagramPanel1.setLayout(primarySpiderDiagramPanel1Layout);
-        primarySpiderDiagramPanel1Layout.setHorizontalGroup(
-            primarySpiderDiagramPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 124, Short.MAX_VALUE)
-        );
-        primarySpiderDiagramPanel1Layout.setVerticalGroup(
-            primarySpiderDiagramPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 142, Short.MAX_VALUE)
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        goalsPanel.add(primarySpiderDiagramPanel1, gridBagConstraints);
-
         fileMenu.setMnemonic('F');
         fileMenu.setText("File");
 
@@ -267,8 +248,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
-        this.primarySpiderDiagramPanel1.setDiagram(SpeedithMainForm.getSDExample2());
         
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -319,7 +298,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JMenuBar menuBar;
     private speedith.draw.NullSpiderDiagramPanel nullSpiderDiagramPanel1;
-    private speedith.draw.PrimarySpiderDiagramPanel primarySpiderDiagramPanel1;
     private javax.swing.JMenu rulesMenu;
     private javax.swing.JLabel subGoalLabel;
     // End of variables declaration//GEN-END:variables

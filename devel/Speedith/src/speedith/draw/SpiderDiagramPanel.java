@@ -76,7 +76,6 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         setBackground(new java.awt.Color(255, 255, 255));
-        setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         setLayout(new java.awt.GridBagLayout());
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -150,12 +149,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         if (diagram == null || diagram.isEmpty()) {
             setDiagram(null);
         } else {
-            SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(diagram);
-            if (sd instanceof SpiderDiagram) {
-                setDiagram((SpiderDiagram) sd);
-            } else {
-                throw new IllegalArgumentException(i18n("CSD_PANEL_INVALID_DIAGRAM_STRING"));
-            }
+            setDiagram(SpiderDiagramsReader.readSpiderDiagram(diagram));
         }
     }
     // </editor-fold>
@@ -221,15 +215,22 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
 
     private void drawInfixDiagram(CompoundSpiderDiagram csd) throws CannotDrawException {
         if (csd != null && csd.getOperandCount() > 0) {
+            int gridx = 0;
+
             GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
 
             Iterator<SpiderDiagram> it = csd.getOperands().iterator();
-            gridBagConstraints.gridx = 1;
+
+            gridBagConstraints.gridx = gridx++;
             add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
+
             while (it.hasNext()) {
-                ++gridBagConstraints.gridx;
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = gridx++;
                 add(new OperatorPanel(csd.getOperator()), gridBagConstraints);
-                ++gridBagConstraints.gridx;
+
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = gridx++;
                 add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
             }
             invalidate();
