@@ -56,6 +56,7 @@ import static speedith.i18n.Translations.*;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public final class DiagramVisualisation {
+    private static final int DefaultDiagramSize = 200;
 
     // <editor-fold defaultstate="collapsed" desc="Deprecated Methods">
 //    @Deprecated
@@ -241,7 +242,18 @@ public final class DiagramVisualisation {
      * be drawn for any reason.
      */
     public static JPanel getSpiderDiagramPanel(SpiderDiagram sd) throws CannotDrawException {
-        return getSpiderDiagramPanel(sd, 200);
+        return getSpiderDiagramPanel(sd, DefaultDiagramSize);
+    }
+
+    /**
+     * Creates a panel which is showing the given primary spider diagram.
+     * @param sd the primary spider diagram to draw.
+     * @return the panel which displays the given primary spider diagram.
+     * @throws CannotDrawException this exception is thrown if the diagram cannot
+     * be drawn for any reason.
+     */
+    public static CirclesPanel getSpiderDiagramPanel(PrimarySpiderDiagram sd) throws CannotDrawException {
+        return getSpiderDiagramPanel(sd, DefaultDiagramSize);
     }
 
     /**
@@ -306,7 +318,9 @@ public final class DiagramVisualisation {
      */
     static CirclesPanel getSpiderDiagramPanel(PrimarySpiderDiagram diagram, int size) throws CannotDrawException {
         ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(getAbstractDescription(diagram), size);
-        return new CirclesPanel("", "No failure message", cd, true);
+        CirclesPanel cp = new CirclesPanel("", "No failure message", cd, true);
+        cp.setAutoRescale(true);
+        return cp;
     }
 
     private static int getZoneInMask(String[] allContours, Zone zone) {

@@ -32,6 +32,7 @@
  */
 package speedith.draw;
 
+import icircles.gui.CirclesPanel;
 import java.awt.BorderLayout;
 import icircles.util.CannotDrawException;
 import javax.swing.JLabel;
@@ -91,7 +92,7 @@ public class PrimarySpiderDiagramPanel extends javax.swing.JPanel {
                 javax.swing.JComponent component;
                 try {
                     component = DiagramVisualisation.getSpiderDiagramPanel(this.diagram);
-//                    component.setSize(200, 200);
+                    component.setSize(200, 200);
                 } catch (CannotDrawException ex) {
                     JLabel errorLabel = new JLabel();
                     errorLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);

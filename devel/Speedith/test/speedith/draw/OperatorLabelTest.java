@@ -75,7 +75,6 @@ public class OperatorLabelTest {
      */
     @Test
     public void testSetOperator() {
-        System.out.println("setOperator");
         Operator operator = Operator.Equivalence;
         OperatorPanel instance = new OperatorPanel();
         instance.setOperator(operator);
