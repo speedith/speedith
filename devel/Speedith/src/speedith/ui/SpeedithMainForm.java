@@ -88,8 +88,13 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
-        spiderDiagramPanel1 = new speedith.draw.SpiderDiagramPanel();
+        scrlPnlGoals = new javax.swing.JScrollPane();
+        lblGoals = new javax.swing.JLabel();
+        lblAppliedRules = new javax.swing.JLabel();
+        scrlPnlAppliedRules = new javax.swing.JScrollPane();
+        lstAppliedRules = new javax.swing.JList();
+        cmbxApplyRule = new javax.swing.JComboBox();
+        lblApplyRule = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
@@ -99,14 +104,23 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Speedith");
 
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+        scrlPnlGoals.setBackground(new java.awt.Color(255, 255, 255));
 
-        spiderDiagramPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        lblGoals.setLabelFor(scrlPnlGoals);
+        lblGoals.setText("Goals:");
+
+        lblAppliedRules.setLabelFor(lstAppliedRules);
+        lblAppliedRules.setText("Applied rules:");
+
+        lstAppliedRules.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Split spiders", "Add foot", "Add foot", "Add foot", "Add foot" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        scrlPnlAppliedRules.setViewportView(lstAppliedRules);
+
+        lblApplyRule.setLabelFor(cmbxApplyRule);
+        lblApplyRule.setText("Apply rule:");
 
         fileMenu.setMnemonic('F');
         fileMenu.setText("File");
@@ -137,20 +151,38 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(spiderDiagramPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 595, Short.MAX_VALUE)
-                    .addComponent(jButton1))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(lblGoals, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(scrlPnlGoals, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scrlPnlAppliedRules, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                    .addComponent(lblAppliedRules, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                    .addComponent(cmbxApplyRule, javax.swing.GroupLayout.Alignment.TRAILING, 0, 155, Short.MAX_VALUE)
+                    .addComponent(lblApplyRule))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblGoals)
+                    .addComponent(lblAppliedRules))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spiderDiagramPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(scrlPnlAppliedRules, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblApplyRule)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmbxApplyRule, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(scrlPnlGoals, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -160,18 +192,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
         this.dispose();
     }//GEN-LAST:event_exitMenuItemActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (getSDExample1() == spiderDiagramPanel1.getDiagram()) {
-            spiderDiagramPanel1.setDiagram(getSDExample2());
-        } else if (getSDExample2() == spiderDiagramPanel1.getDiagram()) {
-            spiderDiagramPanel1.setDiagram(getSDExample3());
-        } else if (getSDExample3() == spiderDiagramPanel1.getDiagram()) {
-            spiderDiagramPanel1.setDiagram(getSDExample4());
-        } else {
-            spiderDiagramPanel1.setDiagram(getSDExample1());
-        }
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -209,13 +229,18 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox cmbxApplyRule;
     private javax.swing.JMenu drawMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel lblAppliedRules;
+    private javax.swing.JLabel lblApplyRule;
+    private javax.swing.JLabel lblGoals;
+    private javax.swing.JList lstAppliedRules;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu rulesMenu;
-    private speedith.draw.SpiderDiagramPanel spiderDiagramPanel1;
+    private javax.swing.JScrollPane scrlPnlAppliedRules;
+    private javax.swing.JScrollPane scrlPnlGoals;
     // End of variables declaration//GEN-END:variables
     // </editor-fold>
 
