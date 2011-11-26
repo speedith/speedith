@@ -60,7 +60,7 @@ public interface InferenceRuleProvider<TArgs extends RuleArg> {
      * same instance of the inference rule for many invocations.</p>
      * @return the actual inference rule.
      */
-    public abstract InferenceRule<TArgs> getInferenceRule();
+    InferenceRule<TArgs> getInferenceRule();
 
     /**
      * Returns the name of the {@link InferenceRule} this provider provides.
@@ -68,7 +68,7 @@ public interface InferenceRuleProvider<TArgs extends RuleArg> {
      * internationalised.</p>
      * @return the name of the {@link InferenceRule} this provider provides.
      */
-    public abstract String getInferenceRuleName();
+    String getInferenceRuleName();
 
     /**
      * Returns the description of the provided inference rule.
@@ -77,7 +77,7 @@ public interface InferenceRuleProvider<TArgs extends RuleArg> {
      * {@link Locale#getDefault() default locale}.</p>
      * @return the description of the provided inference rule.
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Returns the description of the provided inference rule in the given
@@ -86,7 +86,31 @@ public interface InferenceRuleProvider<TArgs extends RuleArg> {
      * @return the description of the provided inference rule in the given
      * {@link Locale locale}.
      */
-    public abstract String getDescription(Locale locale);
+    String getDescription(Locale locale);
+
+    /**
+     * Returns a pretty human-readable short name of the provided inference
+     * rule.
+     * <p>The name should not be more than half a dozen words in length as
+     * it will be displayed in a drop-down list to the user.</p>
+     * <p>By default, this method should call the {@link
+     * InferenceRuleProvider#getPrettyName(java.util.Locale)} method with the
+     * {@link Locale#getDefault() default locale}.</p>
+     * @return a pretty human-readable short name of the provided inference
+     * rule.
+     */
+    String getPrettyName();
+
+    /**
+     * Returns a pretty human-readable short name of the provided inference
+     * rule.
+     * <p>The name should not be more than half a dozen words in length as
+     * it will be displayed in a drop-down list to the user.</p>
+     * @param locale the locale to which to translate the returned string.
+     * @return a pretty human-readable short name of the provided inference
+     * rule.
+     */
+    String getPrettyName(Locale locale);
     
     /**
      * Returns the type of the argument the provided inference rule requires.
@@ -97,5 +121,14 @@ public interface InferenceRuleProvider<TArgs extends RuleArg> {
      * description} for more information on how to use the inference rule.</p>
      * @return the type of the argument the provided inference rule requires.
      */
-    public abstract Class<TArgs> getArgumentType();
+    Class<TArgs> getArgumentType();
+    
+    /**
+     * Returns the {@link InferenceRuleProvider#getPrettyName() pretty name} of
+     * the inference rule this provided provides.
+     * @return the {@link InferenceRuleProvider#getPrettyName() pretty name} of
+     * the inference rule this provided provides.
+     */
+    @Override
+    String toString();
 }

@@ -36,9 +36,13 @@ import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.Operator;
@@ -47,6 +51,8 @@ import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.SpiderDiagrams;
 import speedith.core.lang.Zone;
+import speedith.core.reasoning.Goals;
+import speedith.core.reasoning.InferenceRules;
 
 /**
  *
@@ -76,6 +82,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(SpeedithMainForm.class.getName()).log(Level.WARNING, "Speedith's icons could not have been loaded.", ex);
         }
+        
+        initGoals();
     }
 
     // <editor-fold defaultstate="collapsed" desc="Auto-generated code">
@@ -87,14 +95,22 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         scrlPnlGoals = new javax.swing.JScrollPane();
+        pnlGoals = new javax.swing.JPanel();
+        goalsPanel1 = new speedith.ui.GoalsPanel();
+        goalsPanel2 = new speedith.ui.GoalsPanel();
+        goalsPanel3 = new speedith.ui.GoalsPanel();
+        goalsPanel4 = new speedith.ui.GoalsPanel();
+        goalsPanel5 = new speedith.ui.GoalsPanel();
         lblGoals = new javax.swing.JLabel();
+        pnlRulesSidePane = new javax.swing.JPanel();
         lblAppliedRules = new javax.swing.JLabel();
         scrlPnlAppliedRules = new javax.swing.JScrollPane();
         lstAppliedRules = new javax.swing.JList();
-        cmbxApplyRule = new javax.swing.JComboBox();
         lblApplyRule = new javax.swing.JLabel();
+        cmbxApplyRule = new javax.swing.JComboBox();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
@@ -106,6 +122,55 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
         scrlPnlGoals.setBackground(new java.awt.Color(255, 255, 255));
 
+        pnlGoals.setLayout(new java.awt.GridBagLayout());
+
+        goalsPanel1.setPreferredSize(new java.awt.Dimension(0, 250));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        pnlGoals.add(goalsPanel1, gridBagConstraints);
+
+        goalsPanel2.setPreferredSize(new java.awt.Dimension(0, 250));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        pnlGoals.add(goalsPanel2, gridBagConstraints);
+
+        goalsPanel3.setPreferredSize(new java.awt.Dimension(0, 250));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        pnlGoals.add(goalsPanel3, gridBagConstraints);
+
+        goalsPanel4.setPreferredSize(new java.awt.Dimension(0, 250));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        pnlGoals.add(goalsPanel4, gridBagConstraints);
+
+        goalsPanel5.setPreferredSize(new java.awt.Dimension(0, 250));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        pnlGoals.add(goalsPanel5, gridBagConstraints);
+
+        scrlPnlGoals.setViewportView(pnlGoals);
+
         lblGoals.setLabelFor(scrlPnlGoals);
         lblGoals.setText("Goals:");
 
@@ -113,7 +178,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         lblAppliedRules.setText("Applied rules:");
 
         lstAppliedRules.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Split spiders", "Add foot", "Add foot", "Add foot", "Add foot" };
+            String[] strings = { "Split spider", "Add feet", "Add feet", "Add feet" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
@@ -121,6 +186,31 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
         lblApplyRule.setLabelFor(cmbxApplyRule);
         lblApplyRule.setText("Apply rule:");
+
+        cmbxApplyRule.setModel(getRulesComboList());
+
+        javax.swing.GroupLayout pnlRulesSidePaneLayout = new javax.swing.GroupLayout(pnlRulesSidePane);
+        pnlRulesSidePane.setLayout(pnlRulesSidePaneLayout);
+        pnlRulesSidePaneLayout.setHorizontalGroup(
+            pnlRulesSidePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblAppliedRules, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
+            .addComponent(scrlPnlAppliedRules, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
+            .addGroup(pnlRulesSidePaneLayout.createSequentialGroup()
+                .addComponent(lblApplyRule)
+                .addContainerGap())
+            .addComponent(cmbxApplyRule, 0, 268, Short.MAX_VALUE)
+        );
+        pnlRulesSidePaneLayout.setVerticalGroup(
+            pnlRulesSidePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlRulesSidePaneLayout.createSequentialGroup()
+                .addComponent(lblAppliedRules)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrlPnlAppliedRules, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblApplyRule)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cmbxApplyRule, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
 
         fileMenu.setMnemonic('F');
         fileMenu.setText("File");
@@ -155,34 +245,25 @@ public class SpeedithMainForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addComponent(lblGoals, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE))
+                        .addComponent(lblGoals, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
+                        .addGap(111, 111, 111))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(scrlPnlGoals, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrlPnlAppliedRules, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                    .addComponent(lblAppliedRules, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                    .addComponent(cmbxApplyRule, javax.swing.GroupLayout.Alignment.TRAILING, 0, 155, Short.MAX_VALUE)
-                    .addComponent(lblApplyRule))
+                        .addComponent(scrlPnlGoals, javax.swing.GroupLayout.DEFAULT_SIZE, 525, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addComponent(pnlRulesSidePane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblGoals)
-                    .addComponent(lblAppliedRules))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(scrlPnlAppliedRules, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(pnlRulesSidePane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(lblGoals)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblApplyRule)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbxApplyRule, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(scrlPnlGoals, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE))
+                        .addComponent(scrlPnlGoals, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -233,11 +314,18 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     private javax.swing.JMenu drawMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
+    private speedith.ui.GoalsPanel goalsPanel1;
+    private speedith.ui.GoalsPanel goalsPanel2;
+    private speedith.ui.GoalsPanel goalsPanel3;
+    private speedith.ui.GoalsPanel goalsPanel4;
+    private speedith.ui.GoalsPanel goalsPanel5;
     private javax.swing.JLabel lblAppliedRules;
     private javax.swing.JLabel lblApplyRule;
     private javax.swing.JLabel lblGoals;
     private javax.swing.JList lstAppliedRules;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JPanel pnlGoals;
+    private javax.swing.JPanel pnlRulesSidePane;
     private javax.swing.JMenu rulesMenu;
     private javax.swing.JScrollPane scrlPnlAppliedRules;
     private javax.swing.JScrollPane scrlPnlGoals;
@@ -245,12 +333,138 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Spider Diagram Examples">
+    /**
+     * s1: A, B
+     * s2: AB
+     * @return
+     */
     public static PrimarySpiderDiagram getSDExample1() {
         PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
-        Region s1Region = new Region(Zone.fromInContours("A").withOutContours("B"), Zone.fromInContours("A").withOutContours("B"));
+        Region s1Region = new Region(Zone.fromInContours("A").withOutContours("B"), Zone.fromInContours("B").withOutContours("A"));
         Region s2Region = new Region(Zone.fromInContours("A", "B"));
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
         return emptyPSD.addSpider("s2", s2Region);
+    }
+    
+    /**
+     * s1: A
+     * s2: AB
+     * @return
+     */
+    public static PrimarySpiderDiagram getSDExample5() {
+        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
+        Region s1Region = new Region(Zone.fromInContours("A").withOutContours("B"));
+        Region s2Region = new Region(Zone.fromInContours("A", "B"));
+        emptyPSD = emptyPSD.addSpider("s1", s1Region);
+        return emptyPSD.addSpider("s2", s2Region);
+    }
+    
+    /**
+     * s1: B
+     * s2: AB
+     * @return
+     */
+    public static PrimarySpiderDiagram getSDExample6() {
+        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
+        Region s1Region = new Region(Zone.fromInContours("B").withOutContours("A"));
+        Region s2Region = new Region(Zone.fromInContours("A", "B"));
+        emptyPSD = emptyPSD.addSpider("s1", s1Region);
+        return emptyPSD.addSpider("s2", s2Region);
+    }
+    
+    /**
+     * s1: A, AB
+     * s2: B, AB
+     * @return
+     */
+    public static PrimarySpiderDiagram getSDExample7() {
+        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
+        Region s1Region = new Region(Zone.fromInContours("A").withOutContours("B"), Zone.fromInContours("A", "B"));
+        Region s2Region = new Region(Zone.fromInContours("B").withOutContours("A"), Zone.fromInContours("A", "B"));
+        emptyPSD = emptyPSD.addSpider("s1", s1Region);
+        return emptyPSD.addSpider("s2", s2Region);
+    }
+    
+    /**
+     * s1: B, AB
+     * s2: AB
+     * @return
+     */
+    public static PrimarySpiderDiagram getSDExample8() {
+        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
+        Region s1Region = new Region(Zone.fromInContours("B").withOutContours("A"), Zone.fromInContours("A", "B"));
+        Region s2Region = new Region(Zone.fromInContours("A", "B"));
+        emptyPSD = emptyPSD.addSpider("s1", s1Region);
+        return emptyPSD.addSpider("s2", s2Region);
+    }
+    
+    /**
+     * s1: B, AB
+     * s2: A, AB
+     * @return
+     */
+    public static PrimarySpiderDiagram getSDExample9() {
+        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
+        Region s1Region = new Region(Zone.fromInContours("B").withOutContours("A"), Zone.fromInContours("A", "B"));
+        Region s2Region = new Region(Zone.fromInContours("A").withOutContours("B"), Zone.fromInContours("A", "B"));
+        emptyPSD = emptyPSD.addSpider("s1", s1Region);
+        return emptyPSD.addSpider("s2", s2Region);
+    }
+    
+    /**
+     * s1: A, AB
+     * s2: AB
+     * @return
+     */
+    public static PrimarySpiderDiagram getSDExample10() {
+        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
+        Region s1Region = new Region(Zone.fromInContours("A").withOutContours("B"), Zone.fromInContours("A", "B"));
+        Region s2Region = new Region(Zone.fromInContours("A", "B"));
+        emptyPSD = emptyPSD.addSpider("s1", s1Region);
+        return emptyPSD.addSpider("s2", s2Region);
+    }
+
+    public static CompoundSpiderDiagram getStep0() {
+        PrimarySpiderDiagram psd1 = getSDExample1();
+        PrimarySpiderDiagram psd2 = getSDExample7();
+        CompoundSpiderDiagram csd = SpiderDiagrams.createCompoundSD(Operator.Implication, psd1, psd2);
+        return csd;
+    }
+
+    public static CompoundSpiderDiagram getStep1() {
+        PrimarySpiderDiagram psd1 = getSDExample5();
+        PrimarySpiderDiagram psd2 = getSDExample6();
+        PrimarySpiderDiagram psd3 = getSDExample7();
+        CompoundSpiderDiagram csd1 = SpiderDiagrams.createCompoundSD(Operator.Disjunction, psd1, psd2);
+        CompoundSpiderDiagram csd2 = SpiderDiagrams.createCompoundSD(Operator.Implication, csd1, psd3);
+        return csd2;
+    }
+
+    public static CompoundSpiderDiagram getStep2() {
+        PrimarySpiderDiagram psd1 = getSDExample10();
+        PrimarySpiderDiagram psd2 = getSDExample6();
+        PrimarySpiderDiagram psd3 = getSDExample7();
+        CompoundSpiderDiagram csd1 = SpiderDiagrams.createCompoundSD(Operator.Disjunction, psd1, psd2);
+        CompoundSpiderDiagram csd2 = SpiderDiagrams.createCompoundSD(Operator.Implication, csd1, psd3);
+        return csd2;
+    }
+
+    public static CompoundSpiderDiagram getStep3() {
+        PrimarySpiderDiagram psd1 = getSDExample10();
+        PrimarySpiderDiagram psd2 = getSDExample8();
+        PrimarySpiderDiagram psd3 = getSDExample7();
+        CompoundSpiderDiagram csd1 = SpiderDiagrams.createCompoundSD(Operator.Disjunction, psd1, psd2);
+        CompoundSpiderDiagram csd2 = SpiderDiagrams.createCompoundSD(Operator.Implication, csd1, psd3);
+        return csd2;
+    }
+
+    public static CompoundSpiderDiagram getStep4() {
+        PrimarySpiderDiagram psd1 = getSDExample7();
+        PrimarySpiderDiagram psd2 = getSDExample8();
+        PrimarySpiderDiagram psd3 = getSDExample7();
+        CompoundSpiderDiagram csd1 = SpiderDiagrams.createCompoundSD(Operator.Disjunction, psd1, psd2);
+        CompoundSpiderDiagram csd2 = SpiderDiagrams.createCompoundSD(Operator.Implication, csd1, psd3);
+        return csd2;
     }
 
     public static CompoundSpiderDiagram getSDExample2() {
@@ -269,6 +483,54 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         SpiderDiagram sd2 = getSDExample2();
         CompoundSpiderDiagram csd = SpiderDiagrams.createCompoundSD(Operator.Conjunction, sd1, sd2);
         return csd;
+    }
+    // </editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="UI Refresh Methods">
+    private ComboBoxModel getRulesComboList() {
+        Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules();
+        Object[] prettyNames = new Object[knownInferenceRules.size()];
+        int i = 0;
+        for (String providerName : knownInferenceRules) {
+            prettyNames[i++] = InferenceRules.getProvider(providerName).getPrettyName();
+        }
+        Arrays.sort(prettyNames);
+        return new DefaultComboBoxModel(prettyNames);
+    }
+    //</editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Data Initialisation">
+    private void initGoals() {
+        /////////////////
+        /// Initial goal
+        /////////////////
+        Goals goals = Goals.createGoalsFrom(getStep0());
+        this.goalsPanel1.setGoals(goals);
+        this.goalsPanel1.setReasoningStep(0);
+        /////////////////
+        /// Step 1
+        /////////////////
+        goals = Goals.createGoalsFrom(getStep1());
+        this.goalsPanel2.setGoals(goals);
+        this.goalsPanel2.setReasoningStep(1);
+        /////////////////
+        /// Step 2
+        /////////////////
+        goals = Goals.createGoalsFrom(getStep2());
+        this.goalsPanel3.setGoals(goals);
+        this.goalsPanel3.setReasoningStep(2);
+        /////////////////
+        /// Step 3
+        /////////////////
+        goals = Goals.createGoalsFrom(getStep3());
+        this.goalsPanel4.setGoals(goals);
+        this.goalsPanel4.setReasoningStep(3);
+        /////////////////
+        /// Step 4
+        /////////////////
+        goals = Goals.createGoalsFrom(getStep4());
+        this.goalsPanel5.setGoals(goals);
+        this.goalsPanel5.setReasoningStep(4);
     }
     // </editor-fold>
 }

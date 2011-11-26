@@ -83,7 +83,11 @@ public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> impleme
     }
 
     public String getDescription(Locale locale) {
-        return i18n(locale, "SPLIT_SPIDERS_DESCRIPTION");
+        return i18n(locale, "IDEMPOTENCY_DESCRIPTION");
+    }
+
+    public String getPrettyName(Locale locale) {
+        return i18n(locale, "IDEMPOTENCY_PRETTY_NAME");
     }
 
     public Class<SubDiagramIndexArg> getArgumentType() {

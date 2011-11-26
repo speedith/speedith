@@ -125,6 +125,7 @@ public class InferenceRules {
      * Returns a set of names of all currently supported inference rules.
      * <p>To get information about a particular inference rule, use the
      * {@link InferenceRules#getProvider(java.lang.String)} method.</p>
+     * <p>Note: This method never returns {@code null}.</p>
      * @return a set of names of all currently supported inference rules.
      */
     public static Set<String> getKnownInferenceRules() {

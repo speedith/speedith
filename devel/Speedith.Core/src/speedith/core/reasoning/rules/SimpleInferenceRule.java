@@ -50,6 +50,15 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
     public String getDescription() {
         return getDescription(Locale.getDefault());
     }
+
+    public String getPrettyName() {
+        return getPrettyName(Locale.getDefault());
+    }
+
+    @Override
+    public String toString() {
+        return getPrettyName();
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Protected Helper Methods">

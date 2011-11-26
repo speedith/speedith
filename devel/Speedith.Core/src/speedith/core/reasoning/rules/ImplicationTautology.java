@@ -85,7 +85,11 @@ public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg
     }
 
     public String getDescription(Locale locale) {
-        return i18n("IMPLICATION_TAUTOLOGY_DESCRIPTION");
+        return i18n(locale, "IMPLICATION_TAUTOLOGY_DESCRIPTION");
+    }
+
+    public String getPrettyName(Locale locale) {
+        return i18n(locale, "IMPLICATION_TAUTOLOGY_PRETTY_NAME");
     }
 
     public Class<SubDiagramIndexArg> getArgumentType() {

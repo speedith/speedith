@@ -30,7 +30,6 @@ import java.util.Locale;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.SpiderDiagrams;
-import speedith.core.lang.TransformationException;
 import speedith.core.reasoning.BasicInferenceRule;
 import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.RuleApplicationException;
@@ -61,7 +60,7 @@ public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> impl
         SubgoalIndexArg arg = getTypedRuleArgs(args);
         // Check if the subgoal is a NullSpiderDiagram
         SpiderDiagram targetGoal = getSubgoal(arg, goals);
-        if (SpiderDiagrams.createNullSD().equals(targetGoal)) {
+        if (targetGoal instanceof NullSpiderDiagram) {
             // This rule changes the number of goals (it reduces it by one--it
             // removes the selected subgoal).
             SpiderDiagram[] newSubgoals = new SpiderDiagram[goals.getGoalsCount() - 1];
@@ -89,7 +88,11 @@ public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> impl
     }
 
     public String getDescription(Locale locale) {
-        return i18n("DISCHARGE_NULL_GOAL_DESCRIPTION");
+        return i18n(locale, "DISCHARGE_NULL_GOAL_DESCRIPTION");
+    }
+
+    public String getPrettyName(Locale locale) {
+        return i18n(locale, "DISCHARGE_NULL_GOAL_PRETTY_NAME");
     }
 
     public Class<SubgoalIndexArg> getArgumentType() {

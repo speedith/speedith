@@ -78,7 +78,11 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
     }
 
     public String getDescription(Locale locale) {
-        return i18n(locale, "SPLIT_SPIDERS_DESCRIPTION");
+        return i18n(locale, "ADD_FEET_DESCRIPTION");
+    }
+
+    public String getPrettyName(Locale locale) {
+        return i18n(locale, "ADD_FEET_PRETTY_NAME");
     }
 
     public Class<SpiderRegionArg> getArgumentType() {

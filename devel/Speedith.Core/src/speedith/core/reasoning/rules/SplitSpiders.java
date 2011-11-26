@@ -81,6 +81,10 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
         return i18n(locale, "SPLIT_SPIDERS_DESCRIPTION");
     }
 
+    public String getPrettyName(Locale locale) {
+        return i18n(locale, "SPLIT_SPIDERS_PRETTY_NAME");
+    }
+
     public Class<SpiderRegionArg> getArgumentType() {
         return SpiderRegionArg.class;
     }
