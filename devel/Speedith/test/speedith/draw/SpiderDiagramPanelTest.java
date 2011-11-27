@@ -32,7 +32,7 @@
  */
 package speedith.draw;
 
-import icircles.util.CannotDrawException;
+import org.junit.Test;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.Operator;
@@ -40,6 +40,7 @@ import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagrams;
 import speedith.core.lang.Zone;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -160,5 +161,13 @@ public class SpiderDiagramPanelTest extends javax.swing.JFrame {
     
     public static NullSpiderDiagram getSDExample3() {
         return SpiderDiagrams.createNullSD();
+    }
+
+    /**
+     * Test of main method, of class Main.
+     */
+    @Test
+    public void testMain() {
+        assertTrue(true);
     }
 }

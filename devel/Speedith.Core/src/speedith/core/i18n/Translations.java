@@ -24,7 +24,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package speedith.core.i18n;
 
 import java.util.Locale;
@@ -46,7 +45,6 @@ public final class Translations {
     private Translations() {
     }
     // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Constants">
     /**
      * The path to the bundle which contains translations for Speedith core.
@@ -87,7 +85,11 @@ public final class Translations {
      * @return a string in the language of the current locale.
      */
     public static String i18n(Locale locale, String key) {
-        return java.util.ResourceBundle.getBundle(StringsBundle, locale).getString(key);
+        if (locale == null) {
+            return i18n(key);
+        } else {
+            return java.util.ResourceBundle.getBundle(StringsBundle, locale).getString(key);
+        }
     }
 
     /**
@@ -100,7 +102,11 @@ public final class Translations {
      * @return a string in the language of the current locale.
      */
     public static String i18n(Locale locale, String key, Object... args) {
-        return String.format(java.util.ResourceBundle.getBundle(StringsBundle, locale).getString(key), args);
+        if (locale == null) {
+            return i18n(key, args);
+        } else {
+            return String.format(java.util.ResourceBundle.getBundle(StringsBundle, locale).getString(key), args);
+        }
     }
     // </editor-fold>
 }
