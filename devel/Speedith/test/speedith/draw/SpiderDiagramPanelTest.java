@@ -145,7 +145,7 @@ public class SpiderDiagramPanelTest extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     public static PrimarySpiderDiagram getSDExample1() {
-        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
+        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
         Region s1Region = new Region(Zone.fromInContours("A").withOutContours("B"), Zone.fromInContours("A").withOutContours("B"));
         Region s2Region = new Region(Zone.fromInContours("A", "B"));
         emptyPSD = emptyPSD.addSpider("s1", s1Region);

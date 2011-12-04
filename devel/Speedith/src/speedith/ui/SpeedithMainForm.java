@@ -339,7 +339,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
      * @return
      */
     public static PrimarySpiderDiagram getSDExample1() {
-        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
+        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
         Region s1Region = new Region(Zone.fromInContours("A").withOutContours("B"), Zone.fromInContours("B").withOutContours("A"));
         Region s2Region = new Region(Zone.fromInContours("A", "B"));
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
@@ -352,7 +352,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
      * @return
      */
     public static PrimarySpiderDiagram getSDExample5() {
-        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
+        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
         Region s1Region = new Region(Zone.fromInContours("A").withOutContours("B"));
         Region s2Region = new Region(Zone.fromInContours("A", "B"));
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
@@ -365,7 +365,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
      * @return
      */
     public static PrimarySpiderDiagram getSDExample6() {
-        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
+        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
         Region s1Region = new Region(Zone.fromInContours("B").withOutContours("A"));
         Region s2Region = new Region(Zone.fromInContours("A", "B"));
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
@@ -378,7 +378,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
      * @return
      */
     public static PrimarySpiderDiagram getSDExample7() {
-        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
+        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
         Region s1Region = new Region(Zone.fromInContours("A").withOutContours("B"), Zone.fromInContours("A", "B"));
         Region s2Region = new Region(Zone.fromInContours("B").withOutContours("A"), Zone.fromInContours("A", "B"));
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
@@ -391,7 +391,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
      * @return
      */
     public static PrimarySpiderDiagram getSDExample8() {
-        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
+        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
         Region s1Region = new Region(Zone.fromInContours("B").withOutContours("A"), Zone.fromInContours("A", "B"));
         Region s2Region = new Region(Zone.fromInContours("A", "B"));
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
@@ -404,7 +404,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
      * @return
      */
     public static PrimarySpiderDiagram getSDExample9() {
-        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
+        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
         Region s1Region = new Region(Zone.fromInContours("B").withOutContours("A"), Zone.fromInContours("A", "B"));
         Region s2Region = new Region(Zone.fromInContours("A").withOutContours("B"), Zone.fromInContours("A", "B"));
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
@@ -417,7 +417,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
      * @return
      */
     public static PrimarySpiderDiagram getSDExample10() {
-        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null);
+        PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
         Region s1Region = new Region(Zone.fromInContours("A").withOutContours("B"), Zone.fromInContours("A", "B"));
         Region s2Region = new Region(Zone.fromInContours("A", "B"));
         emptyPSD = emptyPSD.addSpider("s1", s1Region);

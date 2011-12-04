@@ -26,7 +26,6 @@
  */
 package speedith.core.lang.reader;
 
-import org.antlr.runtime.ParserRuleReturnScope;
 import java.util.Map.Entry;
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +38,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.ANTLRReaderStream;
@@ -220,9 +220,10 @@ public final class SpiderDiagramsReader {
     }
 
     private static interface ElementReader<T> {
+
         public T readElement(SpiderDiagramsParser parser) throws ReadingException, RecognitionException;
     }
-    
+
     private static <T> T readElement(CharStream chrStream, ElementReader<T> elReader) throws ReadingException {
         SpiderDiagramsLexer lexer = new SpiderDiagramsLexer(chrStream);
         SpiderDiagramsParser parser = new SpiderDiagramsParser(new CommonTokenStream(lexer));
@@ -326,23 +327,34 @@ public final class SpiderDiagramsReader {
     private static abstract class GeneralSDTranslator<V extends SpiderDiagram> extends ElementTranslator<V> {
 
         private GeneralMapTranslator<Object> keyValueMapTranslator;
+        private TreeSet<String> mandatoryAttributes;
 
         private GeneralSDTranslator(int headTokenType) {
             keyValueMapTranslator = new GeneralMapTranslator<Object>(headTokenType, new HashMap<String, ElementTranslator<? extends Object>>(), null);
         }
 
-        <T> void addMandatoryAttribute(String key, ElementTranslator<T> valueTranslator) {
+         <T> void addMandatoryAttribute(String key, ElementTranslator<T> valueTranslator) {
+            if (mandatoryAttributes == null) {
+                mandatoryAttributes = new TreeSet<String>();
+            }
+            mandatoryAttributes.add(key);
             keyValueMapTranslator.typedValueTranslators.put(key, valueTranslator);
         }
 
-        <T> void addDefaultAttribute(ElementTranslator<T> valueTranslator) {
+         <T> void addOptionalAttribute(String key, ElementTranslator<T> valueTranslator) {
+            keyValueMapTranslator.typedValueTranslators.put(key, valueTranslator);
+        }
+
+         <T> void addDefaultAttribute(ElementTranslator<T> valueTranslator) {
             keyValueMapTranslator.defaultValueTranslator = valueTranslator;
         }
 
         private boolean areMandatoryPresent(Map<String, ? extends Object> attributes) {
-            for (String string : keyValueMapTranslator.typedValueTranslators.keySet()) {
-                if (!attributes.containsKey(string)) {
-                    return false;
+            if (mandatoryAttributes != null) {
+                for (String string : mandatoryAttributes) {
+                    if (!attributes.containsKey(string)) {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -432,12 +444,17 @@ public final class SpiderDiagramsReader {
             addMandatoryAttribute(SDTextSpidersAttribute, ListTranslator.StringListTranslator);
             addMandatoryAttribute(SDTextHabitatsAttribute, HabitatTranslator.Instance);
             addMandatoryAttribute(SDTextShadedZonesAttribute, new ListTranslator<Zone>(ZoneTranslator.Instance));
+            addOptionalAttribute(SDTextPresentZonesAttribute, new ListTranslator<Zone>(ZoneTranslator.Instance));
         }
 
         @Override
         @SuppressWarnings("unchecked")
         PrimarySpiderDiagram createSD(Map<String, Entry<Object, CommonTree>> attributes, CommonTree mainNode) throws ReadingException {
-            return SpiderDiagrams.createPrimarySDNoCopy((Collection<String>) attributes.get(SDTextSpidersAttribute).getKey(), (Map<String, Region>) attributes.get(SDTextHabitatsAttribute).getKey(), (Collection<Zone>) attributes.get(SDTextShadedZonesAttribute).getKey());
+            Entry<Object, CommonTree> presentZonesAttribute = attributes.get(SDTextPresentZonesAttribute);
+            return SpiderDiagrams.createPrimarySDNoCopy((Collection<String>) attributes.get(SDTextSpidersAttribute).getKey(),
+                    (Map<String, Region>) attributes.get(SDTextHabitatsAttribute).getKey(),
+                    (Collection<Zone>) attributes.get(SDTextShadedZonesAttribute).getKey(),
+                    presentZonesAttribute == null ? null : (Collection<Zone>) presentZonesAttribute.getKey());
         }
     }
 

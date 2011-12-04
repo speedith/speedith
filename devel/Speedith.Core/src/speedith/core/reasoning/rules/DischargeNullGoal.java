@@ -1,3 +1,4 @@
+
 /*
  *   Project: Speedith.Core
  * 
@@ -29,7 +30,6 @@ package speedith.core.reasoning.rules;
 import java.util.Locale;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.SpiderDiagrams;
 import speedith.core.reasoning.BasicInferenceRule;
 import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.RuleApplicationException;

@@ -75,19 +75,12 @@ public class SpiderDiagrams {
      * @param habitats a key-value map of spiders and their corresponding
      * {@link Region habitats}.
      * @param shadedZones a set of shaded {@link Zone zones}. 
+     * @param presentZones the set of zones that should be drawn in the diagram
+     * if possible (see {@link PrimarySpiderDiagram#getPresentZones()}).
      * @return the primary spider diagram.
      */
-    public static PrimarySpiderDiagram createPrimarySD(Collection<String> spiders, Map<String, Region> habitats, Collection<Zone> shadedZones) {
-        if ((spiders == null || spiders instanceof TreeSet)
-                && (habitats == null || habitats instanceof TreeMap)
-                && (shadedZones == null || shadedZones instanceof TreeSet)) {
-            return createPrimarySD(spiders == null ? null : (TreeSet<String>) spiders,
-                    habitats == null ? null : (TreeMap<String, Region>) habitats,
-                    shadedZones == null ? null : (TreeSet<Zone>) shadedZones,
-                    true);
-        } else {
-            return __createPrimarySD(new PrimarySpiderDiagram(spiders, habitats, shadedZones), false, spiders, habitats, shadedZones);
-        }
+    public static PrimarySpiderDiagram createPrimarySD(Collection<String> spiders, Map<String, Region> habitats, Collection<Zone> shadedZones, Collection<Zone> presentZones) {
+        return createPrimarySD(spiders, habitats, shadedZones, presentZones, true);
     }
 
     /**
@@ -102,19 +95,12 @@ public class SpiderDiagrams {
      * @param habitats a key-value map of spiders and their corresponding
      * {@link Region habitats}.
      * @param shadedZones a set of shaded {@link Zone zones}. 
+     * @param presentZones the set of zones that should be drawn in the diagram
+     * if possible (see {@link PrimarySpiderDiagram#getPresentZones()}).
      * @return the primary spider diagram.
      */
-    public static PrimarySpiderDiagram createPrimarySDNoCopy(Collection<String> spiders, Map<String, Region> habitats, Collection<Zone> shadedZones) {
-        if ((spiders == null || spiders instanceof TreeSet)
-                && (habitats == null || habitats instanceof TreeMap)
-                && (shadedZones == null || shadedZones instanceof TreeSet)) {
-            return createPrimarySD(spiders == null ? null : (TreeSet<String>) spiders,
-                    habitats == null ? null : (TreeMap<String, Region>) habitats,
-                    shadedZones == null ? null : (TreeSet<Zone>) shadedZones,
-                    false);
-        } else {
-            return __createPrimarySD(new PrimarySpiderDiagram(spiders, habitats, shadedZones), false, spiders, habitats, shadedZones);
-        }
+    public static PrimarySpiderDiagram createPrimarySDNoCopy(Collection<String> spiders, Map<String, Region> habitats, Collection<Zone> shadedZones, Collection<Zone> presentZones) {
+        return createPrimarySD(spiders, habitats, shadedZones, presentZones, false);
     }
 
     /**
@@ -139,12 +125,14 @@ public class SpiderDiagrams {
      * @param habitats a key-value map of spiders and their corresponding
      * {@link Region habitats}.
      * @param shadedZones a set of shaded {@link Zone zones}. 
+     * @param presentZones the set of zones that should be drawn in the diagram
+     * if possible (see {@link PrimarySpiderDiagram#getPresentZones()}).
      * @param copyCollections indicates whether a copy of the above collections
      * should be made to construct the new primary spider diagram.
      * @return the primary spider diagram.
      */
-    static PrimarySpiderDiagram createPrimarySD(TreeSet<String> spiders, TreeMap<String, Region> habitats, TreeSet<Zone> shadedZones, boolean copyCollections) {
-        return __createPrimarySD(new PrimarySpiderDiagram(spiders, habitats, shadedZones), copyCollections, spiders, habitats, shadedZones);
+    static PrimarySpiderDiagram createPrimarySD(TreeSet<String> spiders, TreeMap<String, Region> habitats, TreeSet<Zone> shadedZones, TreeSet<Zone> presentZones, boolean copyCollections) {
+        return __createPrimarySD(spiders, habitats, shadedZones, presentZones, copyCollections);
     }
 
     /**
@@ -246,29 +234,66 @@ public class SpiderDiagrams {
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Private Helper Methods">
-    private static PrimarySpiderDiagram __createPrimarySD(PrimarySpiderDiagram psd, boolean copyCollections, Collection<String> tSpiders, Map<String, Region> tHabitats, Collection<Zone> tShadedZones) throws RuntimeException {
+    private static PrimarySpiderDiagram createPrimarySD(Collection<String> spiders, Map<String, Region> habitats, Collection<Zone> shadedZones, Collection<Zone> presentZones, boolean copyCollections) {
+        if ((spiders == null || spiders instanceof TreeSet)
+                && (habitats == null || habitats instanceof TreeMap)
+                && (shadedZones == null || shadedZones instanceof TreeSet)
+                && (presentZones == null || presentZones instanceof TreeSet)) {
+            return createPrimarySD(spiders == null ? null : (TreeSet<String>) spiders,
+                    habitats == null ? null : (TreeMap<String, Region>) habitats,
+                    shadedZones == null ? null : (TreeSet<Zone>) shadedZones,
+                    presentZones == null ? null : (TreeSet<Zone>) presentZones,
+                    copyCollections);
+        } else {
+            TreeSet<String> spidersCopy = spiders == null ? null : new TreeSet<String>(spiders);
+            TreeMap<String, Region> habitatsCopy = habitats == null ? null : new TreeMap<String, Region>(habitats);
+            TreeSet<Zone> shadedZonesCopy = shadedZones == null ? null : new TreeSet<Zone>(shadedZones);
+            TreeSet<Zone> presentZonesCopy = presentZones == null ? null : new TreeSet<Zone>(presentZones);
+            return __createPrimarySD(spidersCopy, habitatsCopy, shadedZonesCopy, presentZonesCopy, false);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static PrimarySpiderDiagram __createPrimarySD(TreeSet<String> spiders, TreeMap<String, Region> habitats, TreeSet<Zone> shadedZones, TreeSet<Zone> presentZones, boolean copyCollections) {
         synchronized (pool) {
+            // TODO: Create separate classes for Habitats and Spiders, and use
+            // Region for 'shadedZones' and 'presentZones. This way, we will
+            // never have to worry about copying these sets, recalculating
+            // hashes and extracting mentioned contours.
+
+            // Create the "temporary" primary spider diagram.
+            PrimarySpiderDiagram psd = null;
+            if (copyCollections) {
+                psd = new PrimarySpiderDiagram(spiders == null ? null : (TreeSet<String>) spiders.clone(),
+                        habitats == null ? null : (TreeMap<String, Region>) habitats.clone(),
+                        shadedZones == null ? null : (TreeSet<Zone>) shadedZones.clone(),
+                        presentZones == null ? null : (TreeSet<Zone>) presentZones.clone());
+            } else {
+                psd = new PrimarySpiderDiagram(spiders, habitats, shadedZones, presentZones);
+            }
+
+            // Check if an exact copy of it exists in the pool already.
             SpiderDiagram exPsd = __getSDFromPool(psd);
+
             // Is the spider diagram already in the pool?
             if (exPsd == null) {
-                // It is not. Then add this newly created one into the pool and
+                // It is not. Then add the newly created one into the pool and
                 // return it.
-                if (copyCollections) {
-                    psd = new PrimarySpiderDiagram(tSpiders, tHabitats, tShadedZones);
-                }
                 pool.put(psd, new WeakReference<SpiderDiagram>(psd));
                 return psd;
+            } else {
+                // Otherwise discard the newly created one and return the old one.
+                assert (exPsd instanceof PrimarySpiderDiagram) : i18n("GERR_ILLEGAL_STATE_EXPLANATION", i18n("ERR_PRIMARY_SD_EQUALS_NON_PRIMARY_SD"));
+                // The diagram is already in the pool. Just return it.
+                assert (((PrimarySpiderDiagram) exPsd).equals(psd)) : i18n("GERR_ILLEGAL_STATE");
+                assert (psd.equals(exPsd)) : i18n("GERR_ILLEGAL_STATE");
+                // The spider diagram might have been removed already (just
+                // after we fetched it from the pool and before the reference
+                // was assigned to the local variable). So, add it again to the
+                // pool.
+                pool.put(exPsd, new WeakReference<SpiderDiagram>(exPsd));
+                return (PrimarySpiderDiagram) exPsd;
             }
-            assert (exPsd instanceof PrimarySpiderDiagram) : i18n("GERR_ILLEGAL_STATE_EXPLANATION", i18n("ERR_PRIMARY_SD_EQUALS_NON_PRIMARY_SD"));
-            // The diagram is already in the pool. Just return it.
-            assert (((PrimarySpiderDiagram) exPsd).equals(psd)) : i18n("GERR_ILLEGAL_STATE");
-            assert (psd.equals(exPsd)) : i18n("GERR_ILLEGAL_STATE");
-            // The spider diagram might have been removed already (just
-            // after we fetched it from the pool and before the reference
-            // was assigned to the local variable). So, add it again to the
-            // pool.
-            pool.put(exPsd, new WeakReference<SpiderDiagram>(exPsd));
-            return (PrimarySpiderDiagram) exPsd;
         }
     }
 
