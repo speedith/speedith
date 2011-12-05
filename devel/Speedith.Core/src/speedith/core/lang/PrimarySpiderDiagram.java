@@ -94,7 +94,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     private TreeSet<String> spiders;
     private TreeMap<String, Region> habitats;
     private TreeSet<Zone> shadedZones;
-    private TreeSet<String> allContours;
+    private TreeSet<String> contours;
     private TreeSet<Zone> presentZones;
     private boolean hashInvalid = true;
     private int hash;
@@ -280,16 +280,24 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     }
 
     /**
-     * Returns a set of all contours that are mentioned in this primary spider
-     * diagram.
+     * <p>Returns a set of all contours that are mentioned in this primary
+     * spider diagram.</p>
+     * <p><span style="font-weight:bold">Important</span>: this method returns
+     * the set of all contours only if this primary spider diagram is {@link 
+     * PrimarySpiderDiagram#isValid() valid}, otherwise an {@link UnsupportedOperationException
+     * exception} is thrown.</p>
      * <p>Note: this method never returns {@code null}. If there are no contours
      * then this method will return an empty set.</p>
-     * @return a set of all contours that are mentioned in this primary spider
-     * diagram.
+     * @return an {@link Collections#unmodifiableSortedSet(java.util.SortedSet)
+     * unmodifiable sorted set} of all contours that are mentioned in this primary
+     * spider diagram.
      */
-    public SortedSet<String> getContours() {
-        extractContours();
-        return Collections.unmodifiableSortedSet(allContours);
+    public SortedSet<String> getAllContours() {
+        if (isValid()) {
+            return getContours();
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     @Override
@@ -544,55 +552,57 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * all names of contours mentioned in these zones.
      */
     private void extractContours() {
-        if (allContours == null) {
-            allContours = new TreeSet<String>();
-            extractContoursFromHabitats();
-            extractContoursFromShadedZones();
-            extractContoursFromPresentZones();
+        if (contours == null) {
+            contours = new TreeSet<String>();
+            if (extractContoursFromHabitats()
+                    || extractContoursFromShadedZones()
+                    || extractContoursFromPresentZones());
         }
     }
 
-    private void extractContoursFromHabitats() {
-        if (habitats != null) {
-            for (Region region : this.habitats.values()) {
-                if (region.getZonesCount() > 0) {
-                    for (Zone zone : region.getZones()) {
-                        if (zone.getInContoursCount() > 0) {
-                            allContours.addAll(zone.getInContours());
-                        }
-                        if (zone.getOutContoursCount() > 0) {
-                            allContours.addAll(zone.getOutContours());
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void extractContoursFromShadedZones() {
-        if (this.shadedZones != null) {
-            for (Zone zone : this.shadedZones) {
+    private boolean extractContoursFromHabitats() {
+        if (getHabitatsCount() > 0) {
+            Region region = habitats.firstEntry().getValue();
+            if (region.getZonesCount() > 0) {
+                Zone zone = region.getZones().first();
                 if (zone.getInContoursCount() > 0) {
-                    allContours.addAll(zone.getInContours());
+                    contours.addAll(zone.getInContours());
                 }
                 if (zone.getOutContoursCount() > 0) {
-                    allContours.addAll(zone.getOutContours());
+                    contours.addAll(zone.getOutContours());
                 }
+                return true;
             }
         }
+        return false;
     }
 
-    private void extractContoursFromPresentZones() {
+    private boolean extractContoursFromShadedZones() {
+        if (getShadedZonesCount() > 0) {
+            Zone zone = shadedZones.first();
+            if (zone.getInContoursCount() > 0) {
+                contours.addAll(zone.getInContours());
+            }
+            if (zone.getOutContoursCount() > 0) {
+                contours.addAll(zone.getOutContours());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean extractContoursFromPresentZones() {
         if (this.presentZones != null) {
-            for (Zone zone : this.presentZones) {
-                if (zone.getInContoursCount() > 0) {
-                    allContours.addAll(zone.getInContours());
-                }
-                if (zone.getOutContoursCount() > 0) {
-                    allContours.addAll(zone.getOutContours());
-                }
+            Zone zone = presentZones.first();
+            if (zone.getInContoursCount() > 0) {
+                contours.addAll(zone.getInContours());
             }
+            if (zone.getOutContoursCount() > 0) {
+                contours.addAll(zone.getOutContours());
+            }
+            return true;
         }
+        return false;
     }
     // </editor-fold>
 
@@ -648,6 +658,26 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
             }
         }
         return true;
+    }
+
+    /**
+     * <p><span style="font-weight:bold">Important</span>: this method returns
+     * the set of all contours only if this primary spider diagram is {@link 
+     * PrimarySpiderDiagram#isValid() valid}.</p>
+     * <p>Returns a set of contours that are mentioned in a randomly chosen zone of
+     * this primary spider diagram.</p>
+     * <p><span style="font-weight:bold">Q: </span>Why a <span style="font-style:italic;">randomly chosen</span> zone?</p>
+     * <p><span style="font-weight:bold">A: </span>Because all zones in a valid
+     * primary spider diagram</p>
+     * <p>Note: this method never returns {@code null}. If there are no contours
+     * then this method will return an empty set.</p>
+     * @return an {@link Collections#unmodifiableSortedSet(java.util.SortedSet)
+     * unmodifiable sorted set} of contours that are mentioned in a randomly
+     * chosen zone of this primary spider diagram.
+     */
+    SortedSet<String> getContours() {
+        extractContours();
+        return Collections.unmodifiableSortedSet(contours);
     }
     // </editor-fold>
 }

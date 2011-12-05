@@ -31,7 +31,6 @@ import java.io.FileInputStream;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -112,65 +111,53 @@ public class SpiderDiagramsReaderTest {
      */
     @Test
     public void testReadSpiderDiagram_String() throws Exception {
-        SpiderDiagram sd1 = checkSDExample(SD_EXAMPLE_1);
+        SpiderDiagram sd1 = checkSDExample(SD_EXAMPLE_1, false);
         testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd1);
         assertEquals(3, sd1.getSubDiagramCount());
-        assertFalse(sd1.isValid());
 
-        SpiderDiagram sd2 = checkSDExample(SD_EXAMPLE_2);
+        SpiderDiagram sd2 = checkSDExample(SD_EXAMPLE_2, false);
         testGetSubDiagramAt_sd2((CompoundSpiderDiagram) sd2);
         assertEquals(4, sd2.getSubDiagramCount());
-        assertFalse(sd2.isValid());
 
-        SpiderDiagram sd3 = checkSDExample(SD_EXAMPLE_3);
+        SpiderDiagram sd3 = checkSDExample(SD_EXAMPLE_3, false);
         testGetSubDiagramAt_sd2((CompoundSpiderDiagram) sd3);
         assertEquals(4, sd3.getSubDiagramCount());
-        assertFalse(sd3.isValid());
 
-        SpiderDiagram sd4 = checkSDExample(SD_EXAMPLE_4);
+        SpiderDiagram sd4 = checkSDExample(SD_EXAMPLE_4, true);
         assertEquals(1, sd4.getSubDiagramCount());
-        assertTrue(sd4.isValid());
 
-        SpiderDiagram sd5 = checkSDExample(SD_EXAMPLE_5);
+        SpiderDiagram sd5 = checkSDExample(SD_EXAMPLE_5, true);
         assertEquals(1, sd5.getSubDiagramCount());
-        assertTrue(sd5.isValid());
 
-        SpiderDiagram sd6 = checkSDExample(SD_EXAMPLE_6);
+        SpiderDiagram sd6 = checkSDExample(SD_EXAMPLE_6, true);
         testGetSubDiagramAt_sd6((CompoundSpiderDiagram) sd6);
         assertEquals(2, sd6.getSubDiagramCount());
-        assertTrue(sd6.isValid());
 
-        SpiderDiagram sd7 = checkSDExample(SD_EXAMPLE_7);
+        SpiderDiagram sd7 = checkSDExample(SD_EXAMPLE_7, true);
         testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd7);
         assertEquals(3, sd7.getSubDiagramCount());
-        assertTrue(sd7.isValid());
 
-        SpiderDiagram sd = checkSDExample(SD_EXAMPLE_8);
+        SpiderDiagram sd = checkSDExample(SD_EXAMPLE_8, true);
         testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd);
         assertEquals(3, sd.getSubDiagramCount());
-        assertTrue(sd.isValid());
 
-        sd = checkSDExample(SD_EXAMPLE_9);
+        sd = checkSDExample(SD_EXAMPLE_9, false);
         testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd);
         assertEquals(3, sd.getSubDiagramCount());
-        assertFalse(sd.isValid());
 
-        sd = checkSDExample(SD_EXAMPLE_10);
+        sd = checkSDExample(SD_EXAMPLE_10, false);
         testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd);
         assertEquals(3, sd.getSubDiagramCount());
-        assertFalse(sd.isValid());
 
-        sd = checkSDExample(SD_EXAMPLE_11);
+        sd = checkSDExample(SD_EXAMPLE_11, false);
         testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd);
         assertEquals(3, sd.getSubDiagramCount());
-        assertFalse(sd.isValid());
 
-        sd = checkSDExample(SD_EXAMPLE_15);
+        sd = checkSDExample(SD_EXAMPLE_15, true);
         testGetSubDiagramAt_sd1((CompoundSpiderDiagram) sd);
         assertEquals(3, sd.getSubDiagramCount());
-        assertTrue(sd.isValid());
 
-        sd = checkSDExample(SD_EXAMPLE_16);
+        sd = checkSDExample(SD_EXAMPLE_16, true);
         PrimarySpiderDiagram psd = (PrimarySpiderDiagram) sd;
         assertEquals(1, psd.getSpidersCount());
         assertEquals(1, psd.getHabitatsCount());
@@ -179,9 +166,8 @@ public class SpiderDiagramsReaderTest {
         assertEquals(new TreeSet<String>(Arrays.asList("s'")), psd.getSpiders());
         assertEquals(new TreeSet<Zone>(Arrays.asList(Zone.fromInContours("A", "B").withOutContours("C", "D"))), psd.getShadedZones());
         assertEquals(Maps.createTreeMap(Arrays.asList("s'"), Arrays.asList(new Region(Zone.fromInContours("A").withOutContours("B", "C", "D"), Zone.fromInContours("A", "D").withOutContours("B", "C")))), psd.getHabitats());
-        assertTrue(sd.isValid());
 
-        sd = checkSDExample(SD_EXAMPLE_17);
+        sd = checkSDExample(SD_EXAMPLE_17, true);
         psd = (PrimarySpiderDiagram) sd;
         assertEquals(2, psd.getSpidersCount());
         assertEquals(2, psd.getHabitatsCount());
@@ -192,10 +178,9 @@ public class SpiderDiagramsReaderTest {
         assertEquals(new TreeSet<Zone>(Arrays.asList(Zone.fromInContours("A", "B"))), psd.getShadedZones());
         assertEquals(new TreeSet<Zone>(Arrays.asList(Zone.fromInContours("A", "B"))), psd.getPresentZones());
         assertEquals(Maps.createTreeMap(Arrays.asList("s1", "s2"), Arrays.asList(new Region(Zone.fromInContours("A").withOutContours("B")), new Region(Zone.fromInContours("B").withOutContours("A")))), psd.getHabitats());
-        assertTrue(sd.isValid());
     }
 
-    private SpiderDiagram checkSDExample(String example) throws ReadingException {
+    private SpiderDiagram checkSDExample(String example, boolean isValid) throws ReadingException {
         SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(example);
         String str1 = sd.toString();
         SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(str1);
@@ -208,6 +193,7 @@ public class SpiderDiagramsReaderTest {
         assertTrue(sd.equalsSemantically(sd2));
         assertTrue(sd2.equalsSemantically(sd));
         assertTrue(sd.equalsSemantically(sd));
+        assertEquals(isValid, sd.isValid());
         return sd;
     }
 

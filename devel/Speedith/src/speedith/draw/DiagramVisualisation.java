@@ -152,7 +152,7 @@ public final class DiagramVisualisation {
 
         // Now we fetch all the contours that are mentioned in a primary spider
         // diagram.
-        SortedSet<String> contourStrings = psd.getContours();
+        SortedSet<String> contourStrings = psd.getAllContours();
 
         if (contourStrings.size() > 10) {
             throw new CannotDrawException(i18n("TOO_MANY_CONTOURS"));
