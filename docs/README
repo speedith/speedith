@@ -10,7 +10,7 @@ distribution's '`settings`' file.
 
 You can either edit your existing Isabelle settings, or copy the included
 '`devel/Theories/settings`' file to Isabelle's user settings folder (e.g.
-'`~/.isabelle/Isabelle2011/etc/`').
+'`~/.isabelle/Isabelle2011-1/etc/`').
 
 --------------------------------------------------------------------------------
 
@@ -79,7 +79,7 @@ these, you can build Speedith at any time.
 
     There should be the `./antlr-3.3/runtime/Java/target/antlr-runtime-3.3.jar` 
     file, which is the runtime library dependency required by Speedith. Also
-    needed by Speedith is the `antlr-3.3/lib/antlr-3.3-complete.jar` file, which
+    needed by Speedith is the `./antlr-3.3/lib/antlr-3.3-complete.jar` file, which
     is needed only during the compilation stage (not a runtime dependency).
 
 *   __Apache Commons CLI__: Speedith uses [Apache Commons CLI](http://commons.apache.org/cli/)
@@ -100,7 +100,7 @@ __Note__: the instructions below assume the following:
 
 *   the _current working directory_ is the __root of the Speedith repository__.
 *   the `ant` executable is in your `PATH` environment variable.
-*   the _iCircles_ sources are reachable via the `../inductive_circles` path
+*   the _iCircles_ sources are reachable via the `../inductive_circles` path.
     from the root of the Speedith repository.
 *   you know the paths of `antlr-3.3-complete.jar`, `antlr-runtime-3.3.jar` and
     `commons-cli-1.2.jar` files (the instructions will use dummy paths).
@@ -110,12 +110,11 @@ To build and run Speedith, perform the following steps:
 1.  Being in the repository's root folder, run:
 
             ../apache-ant-1.8.2/bin/ant --noconfig \
-                -Dlibs.ANTLRv3.classpath=/home/test/Downloads/antlr-3.3/runtime/Java/target/antlr-runtime-3.3.jar \
-                -Dantlr3.tool.jar=/home/test/Downloads/antlr-3.3/lib/antlr-3.3-complete.jar \
-                -Dlibs.JakartaCLI.classpath=/home/test/Downloads/commons-cli-1.2/commons-cli-1.2.jar \
+                -Dlibs.ANTLRv3.classpath=./antlr-3.3/runtime/Java/target/antlr-runtime-3.3.jar \
+                -Dantlr3.tool.jar=./antlr-3.3/lib/antlr-3.3-complete.jar \
+                -Dlibs.JakartaCLI.classpath=./commons-cli-1.2/commons-cli-1.2.jar \
                 -f devel/Speedith/build.xml jar
 
-2.  Run Speedith:
+2.  Run Speedith (again from the root folder of the `Speedith` repository):
 
-            java -cp "/home/test/Downloads/speedith/devel/Speedith.Core/dist/Speedith.Core.jar:/home/test/Downloads/antlr-3.3/runtime/Java/target/antlr-runtime-3.3.jar:/home/test/Downloads/commons-cli-1.2/commons-cli-1.2.jar:/home/test/Downloads/speedith/devel/Speedith/dist/Speedith.jar" \
-                speedith.Main
+            java -cp "./devel/Speedith.Core/dist/Speedith.Core.jar:./antlr-3.3/runtime/Java/target/antlr-runtime-3.3.jar:./commons-cli-1.2/commons-cli-1.2.jar:./devel/Speedith/dist/Speedith.jar:../inductive_circles/devel/iCircles/dist/iCircles.jar" speedith.Main
