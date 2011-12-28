@@ -52,7 +52,14 @@ import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.SpiderDiagrams;
 import speedith.core.lang.Zone;
 import speedith.core.reasoning.Goals;
+import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.InferenceRules;
+import speedith.core.reasoning.RuleApplicationException;
+import speedith.core.reasoning.RuleApplicationResult;
+import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.SpiderRegionArg;
+import speedith.core.reasoning.rules.AddFeet;
+import speedith.core.reasoning.rules.SplitSpiders;
 
 /**
  *
@@ -60,6 +67,7 @@ import speedith.core.reasoning.InferenceRules;
  */
 public class SpeedithMainForm extends javax.swing.JFrame {
 
+    // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final String[] SpeedithIcons = {
         "SpeedithIconVennDiagram-16.png",
         "SpeedithIconVennDiagram-32.png",
@@ -67,7 +75,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         "SpeedithIconVennDiagram-64.png",
         "SpeedithIconVennDiagram-128.png"
     };
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Constructor">
     /** Creates new form SpeedithMainForm */
     public SpeedithMainForm() {
         initComponents();
@@ -85,6 +95,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         
         initGoals();
     }
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Auto-generated code">
     /** This method is called from within the constructor to
@@ -340,8 +351,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
      */
     public static PrimarySpiderDiagram getSDExample1() {
         PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
-        Region s1Region = new Region(Zone.fromInContours("A").withOutContours("B"), Zone.fromInContours("B").withOutContours("A"));
-        Region s2Region = new Region(Zone.fromInContours("A", "B"));
+        Region s1Region = regionA_B__B_A();
+        Region s2Region = regionAB();
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
         return emptyPSD.addSpider("s2", s2Region);
     }
@@ -353,8 +364,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
      */
     public static PrimarySpiderDiagram getSDExample5() {
         PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
-        Region s1Region = new Region(Zone.fromInContours("A").withOutContours("B"));
-        Region s2Region = new Region(Zone.fromInContours("A", "B"));
+        Region s1Region = regionA_B();
+        Region s2Region = regionAB();
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
         return emptyPSD.addSpider("s2", s2Region);
     }
@@ -366,8 +377,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
      */
     public static PrimarySpiderDiagram getSDExample6() {
         PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
-        Region s1Region = new Region(Zone.fromInContours("B").withOutContours("A"));
-        Region s2Region = new Region(Zone.fromInContours("A", "B"));
+        Region s1Region = regionB_A();
+        Region s2Region = regionAB();
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
         return emptyPSD.addSpider("s2", s2Region);
     }
@@ -379,8 +390,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
      */
     public static PrimarySpiderDiagram getSDExample7() {
         PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
-        Region s1Region = new Region(Zone.fromInContours("A").withOutContours("B"), Zone.fromInContours("A", "B"));
-        Region s2Region = new Region(Zone.fromInContours("B").withOutContours("A"), Zone.fromInContours("A", "B"));
+        Region s1Region = regionA_B__AB();
+        Region s2Region = regionB_A__AB();
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
         return emptyPSD.addSpider("s2", s2Region);
     }
@@ -392,8 +403,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
      */
     public static PrimarySpiderDiagram getSDExample8() {
         PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
-        Region s1Region = new Region(Zone.fromInContours("B").withOutContours("A"), Zone.fromInContours("A", "B"));
-        Region s2Region = new Region(Zone.fromInContours("A", "B"));
+        Region s1Region = regionB_A__AB();
+        Region s2Region = regionAB();
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
         return emptyPSD.addSpider("s2", s2Region);
     }
@@ -405,8 +416,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
      */
     public static PrimarySpiderDiagram getSDExample9() {
         PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
-        Region s1Region = new Region(Zone.fromInContours("B").withOutContours("A"), Zone.fromInContours("A", "B"));
-        Region s2Region = new Region(Zone.fromInContours("A").withOutContours("B"), Zone.fromInContours("A", "B"));
+        Region s1Region = regionB_A__AB();
+        Region s2Region = regionA_B__AB();
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
         return emptyPSD.addSpider("s2", s2Region);
     }
@@ -418,53 +429,61 @@ public class SpeedithMainForm extends javax.swing.JFrame {
      */
     public static PrimarySpiderDiagram getSDExample10() {
         PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
-        Region s1Region = new Region(Zone.fromInContours("A").withOutContours("B"), Zone.fromInContours("A", "B"));
-        Region s2Region = new Region(Zone.fromInContours("A", "B"));
+        Region s1Region = regionA_B__AB();
+        Region s2Region = regionAB();
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
         return emptyPSD.addSpider("s2", s2Region);
     }
 
-    public static CompoundSpiderDiagram getStep0() {
+    public static Goals getStep0() {
         PrimarySpiderDiagram psd1 = getSDExample1();
         PrimarySpiderDiagram psd2 = getSDExample7();
         CompoundSpiderDiagram csd = SpiderDiagrams.createCompoundSD(Operator.Implication, psd1, psd2);
-        return csd;
+        return Goals.createGoalsFrom(csd);
     }
 
-    public static CompoundSpiderDiagram getStep1() {
-        PrimarySpiderDiagram psd1 = getSDExample5();
-        PrimarySpiderDiagram psd2 = getSDExample6();
-        PrimarySpiderDiagram psd3 = getSDExample7();
-        CompoundSpiderDiagram csd1 = SpiderDiagrams.createCompoundSD(Operator.Disjunction, psd1, psd2);
-        CompoundSpiderDiagram csd2 = SpiderDiagrams.createCompoundSD(Operator.Implication, csd1, psd3);
-        return csd2;
+    public static Goals getStep1() {
+        RuleArg ruleArg = new SpiderRegionArg(0, 1, "s1", regionA_B());
+        return applyInferenceRule(SplitSpiders.InferenceRuleName, ruleArg, getStep0());
+//        PrimarySpiderDiagram psd1 = getSDExample5();
+//        PrimarySpiderDiagram psd2 = getSDExample6();
+//        PrimarySpiderDiagram psd3 = getSDExample7();
+//        CompoundSpiderDiagram csd1 = SpiderDiagrams.createCompoundSD(Operator.Disjunction, psd1, psd2);
+//        CompoundSpiderDiagram csd2 = SpiderDiagrams.createCompoundSD(Operator.Implication, csd1, psd3);
+//        return csd2;
     }
 
-    public static CompoundSpiderDiagram getStep2() {
-        PrimarySpiderDiagram psd1 = getSDExample10();
-        PrimarySpiderDiagram psd2 = getSDExample6();
-        PrimarySpiderDiagram psd3 = getSDExample7();
-        CompoundSpiderDiagram csd1 = SpiderDiagrams.createCompoundSD(Operator.Disjunction, psd1, psd2);
-        CompoundSpiderDiagram csd2 = SpiderDiagrams.createCompoundSD(Operator.Implication, csd1, psd3);
-        return csd2;
+    public static Goals getStep2() {
+        RuleArg ruleArg = new SpiderRegionArg(0, 2, "s1", regionAB());
+        return applyInferenceRule(AddFeet.InferenceRuleName, ruleArg, getStep1());
+//        PrimarySpiderDiagram psd1 = getSDExample10();
+//        PrimarySpiderDiagram psd2 = getSDExample6();
+//        PrimarySpiderDiagram psd3 = getSDExample7();
+//        CompoundSpiderDiagram csd1 = SpiderDiagrams.createCompoundSD(Operator.Disjunction, psd1, psd2);
+//        CompoundSpiderDiagram csd2 = SpiderDiagrams.createCompoundSD(Operator.Implication, csd1, psd3);
+//        return csd2;
     }
 
-    public static CompoundSpiderDiagram getStep3() {
-        PrimarySpiderDiagram psd1 = getSDExample10();
-        PrimarySpiderDiagram psd2 = getSDExample8();
-        PrimarySpiderDiagram psd3 = getSDExample7();
-        CompoundSpiderDiagram csd1 = SpiderDiagrams.createCompoundSD(Operator.Disjunction, psd1, psd2);
-        CompoundSpiderDiagram csd2 = SpiderDiagrams.createCompoundSD(Operator.Implication, csd1, psd3);
-        return csd2;
+    public static Goals getStep3() {
+        RuleArg ruleArg = new SpiderRegionArg(0, 3, "s1", regionAB());
+        return applyInferenceRule(AddFeet.InferenceRuleName, ruleArg, getStep2());
+//        PrimarySpiderDiagram psd1 = getSDExample10();
+//        PrimarySpiderDiagram psd2 = getSDExample8();
+//        PrimarySpiderDiagram psd3 = getSDExample7();
+//        CompoundSpiderDiagram csd1 = SpiderDiagrams.createCompoundSD(Operator.Disjunction, psd1, psd2);
+//        CompoundSpiderDiagram csd2 = SpiderDiagrams.createCompoundSD(Operator.Implication, csd1, psd3);
+//        return csd2;
     }
 
-    public static CompoundSpiderDiagram getStep4() {
-        PrimarySpiderDiagram psd1 = getSDExample7();
-        PrimarySpiderDiagram psd2 = getSDExample8();
-        PrimarySpiderDiagram psd3 = getSDExample7();
-        CompoundSpiderDiagram csd1 = SpiderDiagrams.createCompoundSD(Operator.Disjunction, psd1, psd2);
-        CompoundSpiderDiagram csd2 = SpiderDiagrams.createCompoundSD(Operator.Implication, csd1, psd3);
-        return csd2;
+    public static Goals getStep4() {
+        RuleArg ruleArg = new SpiderRegionArg(0, 2, "s2", regionB_A());
+        return applyInferenceRule(AddFeet.InferenceRuleName, ruleArg, getStep3());
+//        PrimarySpiderDiagram psd1 = getSDExample7();
+//        PrimarySpiderDiagram psd2 = getSDExample8();
+//        PrimarySpiderDiagram psd3 = getSDExample7();
+//        CompoundSpiderDiagram csd1 = SpiderDiagrams.createCompoundSD(Operator.Disjunction, psd1, psd2);
+//        CompoundSpiderDiagram csd2 = SpiderDiagrams.createCompoundSD(Operator.Implication, csd1, psd3);
+//        return csd2;
     }
 
     public static CompoundSpiderDiagram getSDExample2() {
@@ -504,33 +523,78 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         /////////////////
         /// Initial goal
         /////////////////
-        Goals goals = Goals.createGoalsFrom(getStep0());
-        this.goalsPanel1.setGoals(goals);
+        this.goalsPanel1.setGoals(getStep0());
         this.goalsPanel1.setReasoningStep(0);
         /////////////////
         /// Step 1
         /////////////////
-        goals = Goals.createGoalsFrom(getStep1());
-        this.goalsPanel2.setGoals(goals);
+//        goals = Goals.createGoalsFrom();
+        this.goalsPanel2.setGoals(getStep1());
         this.goalsPanel2.setReasoningStep(1);
         /////////////////
         /// Step 2
         /////////////////
-        goals = Goals.createGoalsFrom(getStep2());
-        this.goalsPanel3.setGoals(goals);
+        this.goalsPanel3.setGoals(getStep2());
         this.goalsPanel3.setReasoningStep(2);
         /////////////////
         /// Step 3
         /////////////////
-        goals = Goals.createGoalsFrom(getStep3());
-        this.goalsPanel4.setGoals(goals);
+        this.goalsPanel4.setGoals(getStep3());
         this.goalsPanel4.setReasoningStep(3);
         /////////////////
         /// Step 4
         /////////////////
-        goals = Goals.createGoalsFrom(getStep4());
-        this.goalsPanel5.setGoals(goals);
+        this.goalsPanel5.setGoals(getStep4());
         this.goalsPanel5.setReasoningStep(4);
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Helper Methods">
+    private static Goals applyInferenceRule(String infRuleName, RuleArg ruleArg, Goals goals0) {
+        InferenceRule<? extends RuleArg> infRule = InferenceRules.getInferenceRule(infRuleName);
+        try {
+            RuleApplicationResult rar = infRule.apply(ruleArg, goals0);
+            goals0 = rar.getGoals();
+        } catch (RuleApplicationException ex) {
+            throw new RuntimeException(ex);
+        }
+        return goals0;
+    }
+
+    private static Region regionA_B() {
+        return new Region(zoneA_B());
+    }
+
+    private static Region regionA_B__AB() {
+        return new Region(zoneA_B(), zoneAB());
+    }
+
+    private static Region regionA_B__B_A() {
+        return new Region(zoneA_B(), zoneB_A());
+    }
+
+    private static Region regionB_A() {
+        return new Region(zoneB_A());
+    }
+
+    private static Region regionB_A__AB() {
+        return new Region(zoneB_A(), zoneAB());
+    }
+
+    private static Region regionAB() {
+        return new Region(zoneAB());
+    }
+
+    private static Zone zoneAB() {
+        return Zone.fromInContours("A", "B");
+    }
+
+    private static Zone zoneA_B() {
+        return Zone.fromInContours("A").withOutContours("B");
+    }
+
+    private static Zone zoneB_A() {
+        return Zone.fromInContours("B").withOutContours("A");
     }
     // </editor-fold>
 }
