@@ -46,6 +46,9 @@ import static speedith.core.i18n.Translations.*;
 
 /**
  * The implementation of the 'add feet' inference rule.
+ * <p>The argument to this inference rule is a {@link SpiderRegionArg
+ * spider-region argument}, which tells the rule into which zones to add new
+ * feet of a particular spider.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule {
