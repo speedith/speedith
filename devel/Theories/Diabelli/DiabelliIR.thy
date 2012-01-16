@@ -112,6 +112,15 @@ fun psd_sem :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> boo
 
 
 (*
+  The main interpretation function for the primary (unitary) spider diagram.
+*)
+fun usd_sem :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> 's list \<Rightarrow> bool"
+  where
+  "usd_sem [] sh_zones spiders = (distinct spiders \<and> (\<forall>z \<in> sh_zones. \<forall>el \<in> sd_zone_sem z. \<exists>s \<in> set spiders. s = el))"
+  | "usd_sem (h#hs) sh_zones spiders = (\<exists>s. s \<in> sd_region_sem h \<and> usd_sem hs sh_zones (s#spiders))"
+
+
+(*
   sd_sem provides an interpretation of the main data structure 'sd'. In
   fact, this function provides the semantic of the entire language of spider
   diagrams (as encoded by the 'sd' data type).
@@ -421,8 +430,6 @@ method_setup sd_tac = {*
 lemma example: "\<exists>s. s \<in> (A - B) \<union> (B - A) \<and> (A \<inter> B) = {}"
   oops
 
-
-(* This lemma should land in the unit tests. *)
 lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
               \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
   apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
