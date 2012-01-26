@@ -421,6 +421,31 @@ method_setup sd_tac = {*
 lemma example: "\<exists>s. s \<in> (A - B) \<union> (B - A) \<and> (A \<inter> B) = {}"
   oops
 
+lemma testB: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
+              \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B) \<and> (A \<inter> B) \<noteq> {}"
+  apply (rule impI)                                           (* Implication introduction *)
+  apply (erule exE | erule conjE)+                            (* Repeated existential and conjunction elimination *)
+  apply (rule conjI, simp)                                    (* Conjunction introduction and simplification of sets *)
+  apply (erule conjE | erule disjE)+                          (* Repeated conjunction and disjunction elimination *)
+  apply (rule_tac x = "s2" in exI, rule_tac x = "s1" in exI)  (* Existential introduction with instantiation of spiders *)
+  apply (fast)                                                (* Proves the goal from the assumptions. *)
+  apply (rule_tac x = "s1" in exI, rule_tac x = "s2" in exI)  (* Existential introduction with instantiation of spiders *)
+  apply (fast)                                                (* Proves the goal from the assumptions. *)
+  by blast                                                    (* Proves that A \<inter> B is not empty *)
+
+(*apply (rule exI)
+  apply (auto)
+  apply (rule exE)
+
+  apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
+  apply (sd_tac add_feet sdi: 2 sp: "s2" r: "[([\"A\", \"B\"],[])]")
+  apply (sd_tac add_feet sdi: 2 sp: "s1" r: "[([\"B\"],[\"A\"])]")
+  apply (sd_tac add_feet sdi: 3 sp: "s2" r: "[([\"A\", \"B\"],[])]")
+  apply (sd_tac add_feet sdi: 3 sp: "s1" r: "[([\"A\"],[\"B\"])]")
+  apply (sd_tac idempotency sdi: 1)
+  apply (sd_tac implication_tautology sdi: 0)
+  by simp*)
+
 
 (* This lemma should land in the unit tests. *)
 lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
@@ -433,6 +458,7 @@ lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<a
   apply (sd_tac idempotency sdi: 1)
   apply (sd_tac implication_tautology sdi: 0)
   by simp
+
 
 
 (*ML {* Diabelli.from_snf_to_sd @{term "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"} *}

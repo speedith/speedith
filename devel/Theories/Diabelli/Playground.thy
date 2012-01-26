@@ -5,12 +5,13 @@ begin
 lemma inj_noteq: "\<lbrakk> x \<noteq> y; inj f \<rbrakk> \<Longrightarrow> f x \<noteq> f y"
   by (auto simp add: inj_on_def)
 
-lemma test_export: "(EX s1 s2. distinct[s1, s2] & s1 : A Int B & s2 : (A - B) Un (B - A)) --> (EX s1 s2. distinct[s1, s2] & s1 : A & s2 : B)"
+lemma "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow>
+       (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
   apply(auto)
   by(iprover)
 
-lemma test_export_xSym: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
-  by(rule test_export)
+(*lemma test_export_xSym: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
+  by(rule test_export)*)
 
 (*lemma "(\<exists>f. distinct [s, s'] \<and> inj_on f {s, s'} \<and> f s \<in> A \<inter> B \<and> f s' \<in> (A - B) \<union> (B - A)) \<longleftrightarrow> sd_sem (UnitarySD [s, s'] {(s, {({A, B},{})}), (s', {({A},{B}), ({B},{A})})} {})"
   apply (auto)*)
@@ -231,7 +232,7 @@ lemma rockets: "(\<forall>x. x \<in> R \<longrightarrow> x \<in> F) \<and> \<not
   by (auto)
 
     (* So the FOL form does not imply the HOL form... *)
-(*lemma fol_implies_hol: "(\<exists>x y. (sp [x, y] (P x y)) \<and> distinct [s, s']) \<longrightarrow> (\<exists>f. sd [s, s'] f (P (f s) (f s')))"
+lemma fol_implies_hol: "(\<exists>x y. (sp [x, y] (P x y)) \<and> distinct [s, s']) \<longrightarrow> (\<exists>f. sd [s, s'] f (P (f s) (f s')))"
   apply (simp add: sp_def sd_def)
   apply (rule impI)
   apply (erule exE)+
@@ -241,7 +242,6 @@ lemma rockets: "(\<forall>x. x \<in> R \<longrightarrow> x \<in> F) \<and> \<not
   apply (auto simp add: inj_eq)
   apply (split split_if_asm)
 done
-*)
 
 (* Now the problem is how to include shaded zones\<dots> How do I go about that? *)
 
