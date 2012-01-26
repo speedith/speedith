@@ -560,7 +560,7 @@ local
                 performed.
 
      @returns   a primary spider diagram (see PrimarySD {...}). *)
- fun snf_to_sd_primary (spiders : string list) (t : term) (strict : bool) =
+   fun snf_to_sd_primary (spiders : string list) (t : term) (strict : bool) =
    let
        (* Extract all conjunctively connected terms. *)
        (* Check that amongst these terms there is one 'distinct' term which
@@ -613,6 +613,7 @@ local
       in
           (snf_to_sd_primary spiders inner_term strict)
       end
+    | snf_to_sd_outer (Const ("==>", @{typ "prop => prop => prop"}) $ t1 $ t2) (strict : bool) = BinarySD { operator = "op -->", arg1 = snf_to_sd_outer t1 strict, arg2 = snf_to_sd_outer t2 strict }
     | snf_to_sd_outer (@{term "Trueprop :: bool => prop"} $ t) strict = snf_to_sd_outer t strict
     | snf_to_sd_outer (@{term "True"}) strict = NullSD
     | snf_to_sd_outer t _ = raise (SD_TRANSLATE_ERROR ("Could not translate to spider diagrams. Unexpected snf_to_sd_outer term.", t))

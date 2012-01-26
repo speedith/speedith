@@ -112,6 +112,15 @@ fun psd_sem :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> boo
 
 
 (*
+  The main interpretation function for the primary (unitary) spider diagram.
+*)
+fun usd_sem :: "'s sd_region list \<Rightarrow> 's sd_zone set \<Rightarrow> 's list \<Rightarrow> bool"
+  where
+  "usd_sem [] sh_zones spiders = (distinct spiders \<and> (\<forall>z \<in> sh_zones. \<forall>el \<in> sd_zone_sem z. \<exists>s \<in> set spiders. s = el))"
+  | "usd_sem (h#hs) sh_zones spiders = (\<exists>s. s \<in> sd_region_sem h \<and> usd_sem hs sh_zones (s#spiders))"
+
+
+(*
   sd_sem provides an interpretation of the main data structure 'sd'. In
   fact, this function provides the semantic of the entire language of spider
   diagrams (as encoded by the 'sd' data type).
@@ -423,6 +432,19 @@ lemma example: "\<exists>s. s \<in> (A - B) \<union> (B - A) \<and> (A \<inter> 
 
 lemma testB: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
               \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B) \<and> (A \<inter> B) \<noteq> {}"
+  apply (rule impI)
+  apply (rule conjI)
+  apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
+  apply (sd_tac add_feet sdi: 2 sp: "s2" r: "[([\"A\", \"B\"],[])]")
+  apply (sd_tac add_feet sdi: 2 sp: "s1" r: "[([\"B\"],[\"A\"])]")
+  apply (sd_tac add_feet sdi: 3 sp: "s2" r: "[([\"A\", \"B\"],[])]")
+  apply (sd_tac add_feet sdi: 3 sp: "s1" r: "[([\"A\"],[\"B\"])]")
+  apply (sd_tac idempotency sdi: 1)
+  apply (sd_tac implication_tautology sdi: 0)
+  by (auto)
+
+lemma testC: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
+              \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B) \<and> (A \<inter> B) \<noteq> {}"
   apply (rule impI)                                           (* Implication introduction *)
   apply (erule exE | erule conjE)+                            (* Repeated existential and conjunction elimination *)
   apply (rule conjI, simp)                                    (* Conjunction introduction and simplification of sets *)
@@ -433,18 +455,6 @@ lemma testB: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<a
   apply (fast)                                                (* Proves the goal from the assumptions. *)
   by blast                                                    (* Proves that A \<inter> B is not empty *)
 
-(*apply (rule exI)
-  apply (auto)
-  apply (rule exE)
-
-  apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
-  apply (sd_tac add_feet sdi: 2 sp: "s2" r: "[([\"A\", \"B\"],[])]")
-  apply (sd_tac add_feet sdi: 2 sp: "s1" r: "[([\"B\"],[\"A\"])]")
-  apply (sd_tac add_feet sdi: 3 sp: "s2" r: "[([\"A\", \"B\"],[])]")
-  apply (sd_tac add_feet sdi: 3 sp: "s1" r: "[([\"A\"],[\"B\"])]")
-  apply (sd_tac idempotency sdi: 1)
-  apply (sd_tac implication_tautology sdi: 0)
-  by simp*)
 
 
 (* This lemma should land in the unit tests. *)

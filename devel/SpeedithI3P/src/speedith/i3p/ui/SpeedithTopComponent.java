@@ -168,7 +168,7 @@ public class SpeedithTopComponent extends TopComponent {
 
         @Override
         public void proverMessage(Message res) {
-            System.out.println("MATEJ: " + res.toString());
+//            System.out.println("MATEJ: " + res.toString());
             delayer.poke();
         }
     }
