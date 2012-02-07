@@ -34,6 +34,7 @@ import icircles.abstractDescription.AbstractSpider;
 import icircles.abstractDescription.CurveLabel;
 import icircles.concreteDiagram.ConcreteDiagram;
 import icircles.gui.CirclesPanel;
+import icircles.gui.CirclesPanel2;
 import icircles.util.CannotDrawException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -252,7 +253,7 @@ public final class DiagramVisualisation {
      * @throws CannotDrawException this exception is thrown if the diagram cannot
      * be drawn for any reason.
      */
-    public static CirclesPanel getSpiderDiagramPanel(PrimarySpiderDiagram sd) throws CannotDrawException {
+    public static CirclesPanel2 getSpiderDiagramPanel(PrimarySpiderDiagram sd) throws CannotDrawException {
         return getSpiderDiagramPanel(sd, DefaultDiagramSize);
     }
 
@@ -304,9 +305,9 @@ public final class DiagramVisualisation {
      * @return
      * @throws CannotDrawException
      */
-    static CirclesPanel getSpiderDiagramPanel(AbstractDescription ad, int size) throws CannotDrawException {
+    static CirclesPanel2 getSpiderDiagramPanel(AbstractDescription ad, int size) throws CannotDrawException {
         ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(ad, size);
-        return new CirclesPanel("", "No failure message", cd, true);
+        return new CirclesPanel2(cd);
     }
 
     /**
@@ -316,10 +317,10 @@ public final class DiagramVisualisation {
      * @return
      * @throws CannotDrawException
      */
-    static CirclesPanel getSpiderDiagramPanel(PrimarySpiderDiagram diagram, int size) throws CannotDrawException {
+    static CirclesPanel2 getSpiderDiagramPanel(PrimarySpiderDiagram diagram, int size) throws CannotDrawException {
         ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(getAbstractDescription(diagram), size);
-        CirclesPanel cp = new CirclesPanel("", "No failure message", cd, true);
-        cp.setAutoRescale(true);
+        CirclesPanel2 cp = new CirclesPanel2(cd);
+//        cp.setAutoRescale(true);
         return cp;
     }
 
