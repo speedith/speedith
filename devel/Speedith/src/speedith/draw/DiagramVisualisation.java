@@ -236,6 +236,19 @@ public final class DiagramVisualisation {
     }
 
     /**
+     * Creates a {@link ConcreteDiagram concrete diagram} from the given {@link 
+     * PrimarySpiderDiagram primary spider diagram}.
+     * @param diagram the primary spider diagram from which to create its concrete
+     * representation.
+     * @return the concrete representation of the given primary spider diagram.
+     * @throws CannotDrawException this exception is thrown if the concrete
+     * spider diagram could not have been created for whatever reason.
+     */
+    public static ConcreteDiagram getConcreteDiagram(PrimarySpiderDiagram diagram) throws CannotDrawException {
+        return ConcreteDiagram.makeConcreteDiagram(getAbstractDescription(diagram), DefaultDiagramSize);
+    }
+
+    /**
      * Creates a panel which is showing the given spider diagram.
      * @param sd the spider diagram to draw.
      * @return the panel which displays the given spider diagram.
