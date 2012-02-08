@@ -430,18 +430,18 @@ method_setup sd_tac = {*
 lemma example: "\<exists>s. s \<in> (A - B) \<union> (B - A) \<and> (A \<inter> B) = {}"
   oops
 
-lemma testB: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
-              \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B) \<and> (A \<inter> B) \<noteq> {}"
-  apply (rule impI)
-  apply (rule conjI)
-  apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
-  apply (sd_tac add_feet sdi: 2 sp: "s2" r: "[([\"A\", \"B\"],[])]")
-  apply (sd_tac add_feet sdi: 2 sp: "s1" r: "[([\"B\"],[\"A\"])]")
-  apply (sd_tac add_feet sdi: 3 sp: "s2" r: "[([\"A\", \"B\"],[])]")
-  apply (sd_tac add_feet sdi: 3 sp: "s1" r: "[([\"A\"],[\"B\"])]")
-  apply (sd_tac idempotency sdi: 1)
-  apply (sd_tac implication_tautology sdi: 0)
-  by (auto)
+lemma step1: "\<exists>s1 s2. distinct [s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> A - B \<union> (B - A) \<Longrightarrow>
+    (\<exists>s1 s2. distinct [s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B) \<and> A \<inter> B \<noteq> {}"
+  oops
+
+lemma step2: "\<And>s1 s2. \<lbrakk>distinct [s1, s2]; s1 \<in> A \<inter> B; s2 \<in> A - B \<union> (B - A)\<rbrakk>
+            \<Longrightarrow> (\<exists>s1 s2. distinct [s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B) \<and> A \<inter> B \<noteq> {}"
+  oops
+
+lemma step3A: "\<And>s1 s2. \<lbrakk>s1 \<noteq> s2; s1 \<in> A \<and> s1 \<in> B; s2 \<in> A \<and> s2 \<notin> B \<or> s2 \<in> B \<and> s2 \<notin> A\<rbrakk> \<Longrightarrow> \<exists>s1 s2. s1 \<noteq> s2 \<and> s1 \<in> A \<and> s2 \<in> B"
+  oops
+lemma step3B: "\<And>s1 s2. \<lbrakk>distinct [s1, s2]; s1 \<in> A \<inter> B; s2 \<in> A - B \<union> (B - A)\<rbrakk> \<Longrightarrow> A \<inter> B \<noteq> {}"
+  oops
 
 lemma testC: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
               \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B) \<and> (A \<inter> B) \<noteq> {}"
@@ -454,6 +454,20 @@ lemma testC: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<a
   apply (rule_tac x = "s1" in exI, rule_tac x = "s2" in exI)  (* Existential introduction with instantiation of spiders *)
   apply (fast)                                                (* Proves the goal from the assumptions. *)
   by blast                                                    (* Proves that A \<inter> B is not empty *)
+
+lemma example1: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
+              \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B) \<and> (A \<inter> B) \<noteq> {}"
+  apply (rule impI)
+  apply (rule conjI)
+  apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
+  apply (sd_tac add_feet sdi: 2 sp: "s2" r: "[([\"A\", \"B\"],[])]")
+  apply (sd_tac add_feet sdi: 2 sp: "s1" r: "[([\"B\"],[\"A\"])]")
+  apply (sd_tac add_feet sdi: 3 sp: "s2" r: "[([\"A\", \"B\"],[])]")
+  apply (sd_tac add_feet sdi: 3 sp: "s1" r: "[([\"A\"],[\"B\"])]")
+  apply (sd_tac idempotency sdi: 1)
+  apply (sd_tac implication_tautology sdi: 0)
+  by (auto)
+
 
 
 

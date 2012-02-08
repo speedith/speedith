@@ -232,7 +232,7 @@ lemma rockets: "(\<forall>x. x \<in> R \<longrightarrow> x \<in> F) \<and> \<not
   by (auto)
 
     (* So the FOL form does not imply the HOL form... *)
-lemma fol_implies_hol: "(\<exists>x y. (sp [x, y] (P x y)) \<and> distinct [s, s']) \<longrightarrow> (\<exists>f. sd [s, s'] f (P (f s) (f s')))"
+(*lemma fol_implies_hol: "(\<exists>x y. (sp [x, y] (P x y)) \<and> distinct [s, s']) \<longrightarrow> (\<exists>f. sd [s, s'] f (P (f s) (f s')))"
   apply (simp add: sp_def sd_def)
   apply (rule impI)
   apply (erule exE)+
@@ -241,7 +241,7 @@ lemma fol_implies_hol: "(\<exists>x y. (sp [x, y] (P x y)) \<and> distinct [s, s
   apply (rule_tac x = "\<lambda>z. if z = s then x else (if z = s' then y else g z)" in exI)
   apply (auto simp add: inj_eq)
   apply (split split_if_asm)
-done
+done*)
 
 (* Now the problem is how to include shaded zones\<dots> How do I go about that? *)
 
