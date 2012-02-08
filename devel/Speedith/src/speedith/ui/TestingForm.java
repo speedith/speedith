@@ -45,6 +45,7 @@ public class TestingForm extends javax.swing.JFrame {
         initComponents();
         try {
             this.circlesPanel21.setDiagram(DiagramVisualisation.getConcreteDiagram(getSDExample1()));
+            this.circlesPanel22.setDiagram(DiagramVisualisation.getConcreteDiagram(getSDExample5()));
         } catch (CannotDrawException ex) {
             Logger.getLogger(TestingForm.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -58,38 +59,56 @@ public class TestingForm extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         circlesPanel21 = new icircles.gui.CirclesPanel2();
+        circlesPanel22 = new icircles.gui.CirclesPanel2();
+        operatorPanel1 = new speedith.draw.OperatorPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         javax.swing.GroupLayout circlesPanel21Layout = new javax.swing.GroupLayout(circlesPanel21);
         circlesPanel21.setLayout(circlesPanel21Layout);
         circlesPanel21Layout.setHorizontalGroup(
             circlesPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 678, Short.MAX_VALUE)
+            .addGap(0, 331, Short.MAX_VALUE)
         );
         circlesPanel21Layout.setVerticalGroup(
             circlesPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 276, Short.MAX_VALUE)
+            .addGap(0, 300, Short.MAX_VALUE)
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(circlesPanel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(circlesPanel21, gridBagConstraints);
+
+        javax.swing.GroupLayout circlesPanel22Layout = new javax.swing.GroupLayout(circlesPanel22);
+        circlesPanel22.setLayout(circlesPanel22Layout);
+        circlesPanel22Layout.setHorizontalGroup(
+            circlesPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 331, Short.MAX_VALUE)
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(circlesPanel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+        circlesPanel22Layout.setVerticalGroup(
+            circlesPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
         );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(circlesPanel22, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        getContentPane().add(operatorPanel1, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -137,6 +156,8 @@ public class TestingForm extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private icircles.gui.CirclesPanel2 circlesPanel21;
+    private icircles.gui.CirclesPanel2 circlesPanel22;
+    private speedith.draw.OperatorPanel operatorPanel1;
     // End of variables declaration//GEN-END:variables
 
 

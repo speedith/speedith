@@ -32,12 +32,12 @@
  */
 package speedith.draw;
 
-import java.awt.Component;
-import java.awt.GridBagConstraints;
 import icircles.util.CannotDrawException;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
+import java.util.ArrayList;
 import java.util.Iterator;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -47,10 +47,13 @@ import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
-import static speedith.i18n.Translations.*;
+import speedith.core.util.Mapping;
+import speedith.core.util.Sequences;
+import static speedith.i18n.Translations.i18n;
 
 /**
  * This panel displays all types of {@link SpiderDiagram spider diagrams}.
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SpiderDiagramPanel extends javax.swing.JPanel {
@@ -65,10 +68,11 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Creates a new compound spider diagram panel with the given compound spider
-     * diagram.
-     * @param diagram the diagram to display in this panel.
-     * <p>May be {@code null} in which case nothing will be displayed.</p>
+     * Creates a new compound spider diagram panel with the given compound
+     * spider diagram.
+     *
+     * @param diagram the diagram to display in this panel. <p>May be {@code null}
+     * in which case nothing will be displayed.</p>
      */
     public SpiderDiagramPanel(SpiderDiagram diagram) {
         initComponents();
@@ -117,19 +121,20 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
 
     // <editor-fold defaultstate="collapsed" desc="Public Properties">
     /**
-     * Returns the currently presented diagram.
-     * <p>May be {@code null}, which indicates that the panel is empty.</p>
-     * @return the currently presented diagram, or {@code null} is no diagram
-     * is currently being shown.
+     * Returns the currently presented diagram. <p>May be {@code null}, which
+     * indicates that the panel is empty.</p>
+     *
+     * @return the currently presented diagram, or {@code null} is no diagram is
+     * currently being shown.
      */
     public SpiderDiagram getDiagram() {
         return diagram;
     }
 
     /**
-     * Sets the currently shown diagram.
-     * <p>May be {@code null}, which indicates that the panel should
-     * be empty.</p>
+     * Sets the currently shown diagram. <p>May be {@code null}, which indicates
+     * that the panel should be empty.</p>
+     *
      * @param diagram the new diagram to show, or {@code null} if no diagram is
      * to be shown.
      */
@@ -153,6 +158,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
 
     /**
      * Returns the string representation of the currently shown diagram.
+     *
      * @return the string representation of the currently shown diagram.
      */
     public String getDiagramString() {
@@ -160,16 +166,15 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Sets the currently shown diagram via its string representation.
-     * <p>This method tries to parse the string into a spider diagram and
-     * draws it.</p>
+     * Sets the currently shown diagram via its string representation. <p>This
+     * method tries to parse the string into a spider diagram and draws it.</p>
      * <p>Here is an example of a valid string:
      * <pre>BinarySD {
      *      operator = "op -->",
      *      arg1 = PrimarySD {spiders = ["s1", "s2", "s3"], habitats = [("s1", [(["A"], ["B", "C"]), (["A", "B"], ["C"]), (["A", "B", "C"], [])]), ("s2", [(["B"], ["A", "C"])]), ("s3", [(["B"], ["A", "C"])])], sh_zones = [(["B"], ["A", "C"])]},
      *      arg2 = PrimarySD {spiders = ["s1", "s2", "s3"], habitats = [("s1", [(["A"], ["B", "C"]), (["A", "B"], ["C"]), (["A", "B", "C"], [])]), ("s2", [(["B"], ["A", "C"])]), ("s3", [(["B"], ["A", "C"])])], sh_zones = [(["B"], ["A", "C"])]}
-     * }</pre>
-     * </p>
+     * }</pre> </p>
+     *
      * @param diagram the string representation of the diagram to present.
      * @throws ReadingException thrown if the string does not represent a valid
      * spider diagram.
@@ -211,11 +216,10 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     }
 
     /**
-     * This method puts the diagram panels onto this one.
-     * <p>This method does not remove any components, it just adds them to this
-     * panel.</p>
-     * <p>In case of failure, this method throws an exception and does not put
-     * any components onto this panel.</p>
+     * This method puts the diagram panels onto this one. <p>This method does
+     * not remove any components, it just adds them to this panel.</p> <p>In
+     * case of failure, this method throws an exception and does not put any
+     * components onto this panel.</p>
      */
     private void drawDiagram() throws CannotDrawException {
         if (diagram != null) {
@@ -247,29 +251,39 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     private void drawInfixDiagram(CompoundSpiderDiagram csd) throws CannotDrawException {
         if (csd != null && csd.getOperandCount() > 0) {
             int gridx = 0;
-
             diagrams.setLayout(new GridBagLayout());
-            GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
-
-            Iterator<SpiderDiagram> it = csd.getOperands().iterator();
-
-            gridBagConstraints.gridx = gridx++;
-            JPanel sdp = DiagramVisualisation.getSpiderDiagramPanel(it.next());
+            GridBagConstraints gridBagConstraints;
+            
+            // Now start adding the panels onto the surface
+            Iterator<SpiderDiagram> sdIter = csd.getOperands().iterator();
+            JPanel sdp = DiagramVisualisation.getSpiderDiagramPanel(sdIter.next());
+            gridBagConstraints = getOperandLayoutConstraints(gridx, true, sdp.getPreferredSize().width, 1);
             diagrams.add(sdp, gridBagConstraints);
 
-            while (it.hasNext()) {
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = gridx++;
+            while (sdIter.hasNext()) {
+                gridBagConstraints = getOperandLayoutConstraints(++gridx, false, 0, 0);
                 diagrams.add(new OperatorPanel(csd.getOperator()), gridBagConstraints);
 
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = gridx++;
-                diagrams.add(DiagramVisualisation.getSpiderDiagramPanel(it.next()), gridBagConstraints);
+                sdp = DiagramVisualisation.getSpiderDiagramPanel(sdIter.next());
+                gridBagConstraints = getOperandLayoutConstraints(++gridx, true, sdp.getPreferredSize().width, 1);
+                diagrams.add(sdp, gridBagConstraints);
             }
+
             refreshPrefSize();
         } else {
             throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
         }
+    }
+
+    private GridBagConstraints getOperandLayoutConstraints(int gridx, boolean fill, int weightx, int weighty) {
+        GridBagConstraints gridBagConstraints;
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = gridx;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = fill ? java.awt.GridBagConstraints.BOTH : GridBagConstraints.NONE;
+        gridBagConstraints.weightx = weightx;
+        gridBagConstraints.weighty = weighty;
+        return gridBagConstraints;
     }
 
     private void drawPrefixDiagram(CompoundSpiderDiagram csd) throws CannotDrawException {
@@ -300,7 +314,6 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         diagrams.add(nullSpiderDiagramPanel, gbc);
         refreshPrefSize();
     }
-    // </editor-fold>
 
     private void refreshPrefSize() {
         Dimension prefSize = new Dimension();
@@ -316,4 +329,5 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
 //        System.out.println("The preferred size: " + diagrams.getLayout().preferredLayoutSize(diagrams).toString());
 //        setPreferredSize(diagrams.getLayout().preferredLayoutSize(diagrams));
     }
+    // </editor-fold>
 }

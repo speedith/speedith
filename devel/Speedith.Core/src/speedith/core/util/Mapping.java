@@ -1,10 +1,10 @@
 /*
- *   Project: Speedith
+ *   Project: Speedith.Core
  * 
- * File name: MainTest.java
+ * File name: Mapping.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
- *  Copyright © 2011 Matej Urbas
+ *  Copyright © 2012 Matej Urbas
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,43 +24,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith;
-
-import static org.junit.Assert.assertTrue;
-import org.junit.*;
+package speedith.core.util;
 
 /**
- *
+ * This interface corresponds to a function, which maps an instance of type {@code 
+ * TIn} to an instance of the type {@code TOut}.
+ * @param <TIn> The type of the input object, which is to be mapped to an object
+ * of type {@code TOut}.
+ * @param <TOut> The type of the object to which the input parameter maps.
+ * @param <TEx> The type of exception this mapping throws if the mapping of a
+ * particular element fails.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class MainTest {
-    
-    private static final String CLI_ARG_SD_1 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }";
-    
-    public MainTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-
+public interface Mapping<TIn, TOut, TEx extends Throwable> {
     /**
-     * Test of main method, of class Main.
+     * This function maps the input parameter of type {@code TIn} to an instance
+     * of the type {@code TOut}.
+     * @param inst the input parameter to map.
+     * @return the mapped object.
+     * @throws TEx  the exception thrown if the mapping of a particular element
+     * fails.
      */
-    @Test
-    public void testMain() {
-        assertTrue(true);
-    }
+    TOut apply(TIn inst) throws TEx;
 }
