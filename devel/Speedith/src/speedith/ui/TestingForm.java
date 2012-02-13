@@ -68,11 +68,13 @@ public class TestingForm extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
+        circlesPanel21.setInteractionEnabled(true);
+
         javax.swing.GroupLayout circlesPanel21Layout = new javax.swing.GroupLayout(circlesPanel21);
         circlesPanel21.setLayout(circlesPanel21Layout);
         circlesPanel21Layout.setHorizontalGroup(
             circlesPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 331, Short.MAX_VALUE)
+            .addGap(0, 180, Short.MAX_VALUE)
         );
         circlesPanel21Layout.setVerticalGroup(
             circlesPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -91,7 +93,7 @@ public class TestingForm extends javax.swing.JFrame {
         circlesPanel22.setLayout(circlesPanel22Layout);
         circlesPanel22Layout.setHorizontalGroup(
             circlesPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 331, Short.MAX_VALUE)
+            .addGap(0, 180, Short.MAX_VALUE)
         );
         circlesPanel22Layout.setVerticalGroup(
             circlesPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
