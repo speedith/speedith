@@ -26,6 +26,7 @@
  */
 package speedith.ui;
 
+import icircles.gui.CirclesPanel2;
 import icircles.util.CannotDrawException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,7 +69,7 @@ public class TestingForm extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        circlesPanel21.setInteractionEnabled(true);
+        circlesPanel21.setInteraction(CirclesPanel2.Zones);
 
         javax.swing.GroupLayout circlesPanel21Layout = new javax.swing.GroupLayout(circlesPanel21);
         circlesPanel21.setLayout(circlesPanel21Layout);
