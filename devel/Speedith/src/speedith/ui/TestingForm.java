@@ -32,6 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import speedith.core.lang.*;
 import speedith.draw.DiagramVisualisation;
+import speedith.icircles.util.ICirclesToSpeedith;
 
 /**
  *
@@ -128,15 +129,20 @@ public class TestingForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void circlesPanel21ContourClicked(icircles.gui.ContourClickedEvent evt) {//GEN-FIRST:event_circlesPanel21ContourClicked
-        System.out.println("Contour clicked: " + evt.getContour().ac.getLabel().getLabel());
+        System.out.println("Contour '" + evt.getContour().ac.getLabel().getLabel() + "' clicked.");
     }//GEN-LAST:event_circlesPanel21ContourClicked
 
     private void circlesPanel21SpiderClicked(icircles.gui.SpiderClickedEvent evt) {//GEN-FIRST:event_circlesPanel21SpiderClicked
-        System.out.println("Spider clicked: " + evt.getFoot().getSpider().as.get_name());
+        System.out.println("Spider '" + evt.getFoot().getSpider().as.get_name()
+                + "' clicked in zone "
+                + ICirclesToSpeedith.convert(
+                circlesPanel21.getDiagram().getZoneAtPoint(
+                circlesPanel21.toDiagramCoordinates(
+                evt.getClickInfo().getPoint()))));
     }//GEN-LAST:event_circlesPanel21SpiderClicked
 
     private void circlesPanel21ZoneClicked(icircles.gui.ZoneClickedEvent evt) {//GEN-FIRST:event_circlesPanel21ZoneClicked
-        System.out.println("Zone clicked: " + evt.getZone().getAbstractBasicRegion().debug());
+        System.out.println("Zone " + ICirclesToSpeedith.convert(evt.getZone()).toString() + " clicked.");
     }//GEN-LAST:event_circlesPanel21ZoneClicked
 
     /**
@@ -186,12 +192,10 @@ public class TestingForm extends javax.swing.JFrame {
     private speedith.draw.OperatorPanel operatorPanel1;
     // End of variables declaration//GEN-END:variables
 
-
-
     // <editor-fold defaultstate="collapsed" desc="Spider Diagram Examples">
     /**
-     * s1: A, B
-     * s2: AB
+     * s1: A, B s2: AB
+     *
      * @return
      */
     public static PrimarySpiderDiagram getSDExample1() {
@@ -201,10 +205,10 @@ public class TestingForm extends javax.swing.JFrame {
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
         return emptyPSD.addSpider("s2", s2Region);
     }
-    
+
     /**
-     * s1: A
-     * s2: AB
+     * s1: A s2: AB
+     *
      * @return
      */
     public static PrimarySpiderDiagram getSDExample5() {
@@ -214,10 +218,10 @@ public class TestingForm extends javax.swing.JFrame {
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
         return emptyPSD.addSpider("s2", s2Region);
     }
-    
+
     /**
-     * s1: B
-     * s2: AB
+     * s1: B s2: AB
+     *
      * @return
      */
     public static PrimarySpiderDiagram getSDExample6() {
@@ -227,10 +231,10 @@ public class TestingForm extends javax.swing.JFrame {
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
         return emptyPSD.addSpider("s2", s2Region);
     }
-    
+
     /**
-     * s1: A, AB
-     * s2: B, AB
+     * s1: A, AB s2: B, AB
+     *
      * @return
      */
     public static PrimarySpiderDiagram getSDExample7() {
@@ -240,10 +244,10 @@ public class TestingForm extends javax.swing.JFrame {
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
         return emptyPSD.addSpider("s2", s2Region);
     }
-    
+
     /**
-     * s1: B, AB
-     * s2: AB
+     * s1: B, AB s2: AB
+     *
      * @return
      */
     public static PrimarySpiderDiagram getSDExample8() {
@@ -253,10 +257,10 @@ public class TestingForm extends javax.swing.JFrame {
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
         return emptyPSD.addSpider("s2", s2Region);
     }
-    
+
     /**
-     * s1: B, AB
-     * s2: A, AB
+     * s1: B, AB s2: A, AB
+     *
      * @return
      */
     public static PrimarySpiderDiagram getSDExample9() {
@@ -266,10 +270,10 @@ public class TestingForm extends javax.swing.JFrame {
         emptyPSD = emptyPSD.addSpider("s1", s1Region);
         return emptyPSD.addSpider("s2", s2Region);
     }
-    
+
     /**
-     * s1: A, AB
-     * s2: AB
+     * s1: A, AB s2: AB
+     *
      * @return
      */
     public static PrimarySpiderDiagram getSDExample10() {
@@ -286,7 +290,7 @@ public class TestingForm extends javax.swing.JFrame {
         CompoundSpiderDiagram csd = SpiderDiagrams.createCompoundSD(Operator.Equivalence, psd1, psd2);
         return csd;
     }
-    
+
     public static NullSpiderDiagram getSDExample3() {
         return SpiderDiagrams.createNullSD();
     }
