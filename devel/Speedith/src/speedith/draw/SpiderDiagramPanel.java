@@ -32,12 +32,12 @@
  */
 package speedith.draw;
 
+import icircles.gui.CirclesPanel2;
 import icircles.util.CannotDrawException;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.ArrayList;
 import java.util.Iterator;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -47,8 +47,6 @@ import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
-import speedith.core.util.Mapping;
-import speedith.core.util.Sequences;
 import static speedith.i18n.Translations.i18n;
 
 /**
@@ -80,6 +78,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     }
     //</editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -115,8 +114,14 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel diagrams;
     // End of variables declaration//GEN-END:variables
+    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
     private SpiderDiagram diagram;
+    /**
+     * Indicates which elements in the currently displayed diagram should be
+     * highlightable by the user.
+     */
+    private int highlightMode = CirclesPanel2.None;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public Properties">
@@ -151,6 +156,11 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             } else {
                 drawNoDiagramLabel();
             }
+            // If the highlight mode has been set, do apply it to the
+            // underlying panels.
+            applyHighlightModeToPanels();
+            // We have to repaint the content (Java does not repaint it--because
+            // removing and adding panels doesn't seem to trigger a repaint).
             validate();
             repaint();
         }
@@ -186,6 +196,47 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             setDiagram(null);
         } else {
             setDiagram(SpiderDiagramsReader.readSpiderDiagram(diagram));
+        }
+    }
+
+    /**
+     * Returns the set of flags that determines which elements of the diagram
+     * may be highlighted with the mouse. <p>This flag can be a (binary)
+     * combination of the following flags: <ul> <li>{@link CirclesPanel2#Spiders}:
+     * which indicates that spiders will be highlighted when the user hovers
+     * over them.</li> <li>{@link CirclesPanel2#Zones}: which indicates that
+     * zones will be highlighted when the user hovers over them.</li> <li>{@link CirclesPanel2#Contours}:
+     * which indicates that circle contours will be highlighted when the user
+     * hovers over them.</li> </ul></p> <p> The {@link CirclesPanel2#All} and {@link CirclesPanel2#None}
+     * flags can also be used. These indicate that all diagram or no elements
+     * (respectively) can be highlighted with the mouse.</p>
+     *
+     * @return the set of flags that determines which elements of the diagram
+     * may be highlighted with the mouse.
+     */
+    public int getHighlightMode() {
+        return highlightMode;
+    }
+
+    /**
+     * Sets the set of flags that determines which elements of the diagram may
+     * be highlighted with the mouse. <p>This flag can be a (binary) combination
+     * of the following flags: <ul> <li>{@link CirclesPanel2#Spiders}: which
+     * indicates that spiders will be highlighted when the user hovers over
+     * them.</li> <li>{@link CirclesPanel2#Zones}: which indicates that zones
+     * will be highlighted when the user hovers over them.</li> <li>{@link CirclesPanel2#Contours}:
+     * which indicates that circle contours will be highlighted when the user
+     * hovers over them.</li> </ul></p> <p> The {@link CirclesPanel2#All} and {@link CirclesPanel2#None}
+     * flags can also be used. These indicate that all diagram or no elements
+     * (respectively) can be highlighted with the mouse.</p>
+     *
+     * @param highlightMode the new set of flags that determines which elements
+     * of the diagram may be highlighted with the mouse.
+     */
+    public void setHighlightMode(int highlightMode) {
+        if (this.highlightMode != (highlightMode & CirclesPanel2.All)) {
+            this.highlightMode = highlightMode & CirclesPanel2.All;
+            applyHighlightModeToPanels();
         }
     }
     // </editor-fold>
@@ -253,7 +304,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             int gridx = 0;
             diagrams.setLayout(new GridBagLayout());
             GridBagConstraints gridBagConstraints;
-            
+
             // Now start adding the panels onto the surface
             Iterator<SpiderDiagram> sdIter = csd.getOperands().iterator();
             JPanel sdp = DiagramVisualisation.getSpiderDiagramPanel(sdIter.next());
@@ -328,6 +379,24 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         invalidate();
 //        System.out.println("The preferred size: " + diagrams.getLayout().preferredLayoutSize(diagrams).toString());
 //        setPreferredSize(diagrams.getLayout().preferredLayoutSize(diagrams));
+    }
+
+    /**
+     * This method applies the currently set {@link SpiderDiagramPanel#setHighlightMode(int) 
+     * highlight mode} to the underlying {@link CirclesPanel2 diagram presentation panels}.
+     * <p>This method has to be invoked whenever the highlight mode changes or
+     * when the current diagram changes.</p>
+     */
+    private void applyHighlightModeToPanels() {
+        if (this.diagram != null) {
+            for (Component component : this.diagrams.getComponents()) {
+                if (component instanceof CirclesPanel2) {
+                    ((CirclesPanel2)component).setHighlightMode(highlightMode);
+                } else if (component instanceof SpiderDiagramPanel) {
+                    ((SpiderDiagramPanel)component).setHighlightMode(highlightMode);
+                }
+            }
+        }
     }
     // </editor-fold>
 }

@@ -32,6 +32,7 @@
  */
 package speedith.ui;
 
+import icircles.gui.CirclesPanel2;
 import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,6 +65,10 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         "SpeedithIconVennDiagram-64.png",
         "SpeedithIconVennDiagram-128.png"
     };
+    /**
+     * The height of the particular goals panels in this form.
+     */
+    private static final int GoalsHeight = 250;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
@@ -83,6 +88,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         }
         
         initGoals();
+        this.scrlPnlGoals.getVerticalScrollBar().setBlockIncrement(GoalsHeight/3);
+        this.scrlPnlGoals.getVerticalScrollBar().setUnitIncrement(GoalsHeight/10);
     }
     // </editor-fold>
 
@@ -510,27 +517,32 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         /////////////////
         this.goalsPanel1.setGoals(getStep0());
         this.goalsPanel1.setReasoningStep(0);
+        this.goalsPanel1.setHighlightMode(CirclesPanel2.All);
         /////////////////
         /// Step 1
         /////////////////
 //        goals = Goals.createGoalsFrom();
         this.goalsPanel2.setGoals(getStep1());
         this.goalsPanel2.setReasoningStep(1);
+        this.goalsPanel2.setHighlightMode(CirclesPanel2.All);
         /////////////////
         /// Step 2
         /////////////////
         this.goalsPanel3.setGoals(getStep2());
         this.goalsPanel3.setReasoningStep(2);
+        this.goalsPanel3.setHighlightMode(CirclesPanel2.All);
         /////////////////
         /// Step 3
         /////////////////
         this.goalsPanel4.setGoals(getStep3());
         this.goalsPanel4.setReasoningStep(3);
+        this.goalsPanel4.setHighlightMode(CirclesPanel2.All);
         /////////////////
         /// Step 4
         /////////////////
         this.goalsPanel5.setGoals(getStep4());
         this.goalsPanel5.setReasoningStep(4);
+        this.goalsPanel5.setHighlightMode(CirclesPanel2.All);
     }
     // </editor-fold>
     

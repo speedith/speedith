@@ -32,6 +32,7 @@
  */
 package speedith.ui;
 
+import icircles.gui.CirclesPanel2;
 import speedith.core.reasoning.Goals;
 import static speedith.i18n.Translations.*;
 
@@ -156,6 +157,44 @@ public class GoalsPanel extends javax.swing.JPanel {
             refreshGoals();
             refreshGoalLabel();
         }
+    }
+
+    /**
+     * Returns the set of flags that determines which elements of the diagram
+     * may be highlighted with the mouse. <p>This flag can be a (binary)
+     * combination of the following flags: <ul> <li>{@link CirclesPanel2#Spiders}:
+     * which indicates that spiders will be highlighted when the user hovers
+     * over them.</li> <li>{@link CirclesPanel2#Zones}: which indicates that
+     * zones will be highlighted when the user hovers over them.</li> <li>{@link CirclesPanel2#Contours}:
+     * which indicates that circle contours will be highlighted when the user
+     * hovers over them.</li> </ul></p> <p> The {@link CirclesPanel2#All} and {@link CirclesPanel2#None}
+     * flags can also be used. These indicate that all diagram or no elements
+     * (respectively) can be highlighted with the mouse.</p>
+     *
+     * @return the set of flags that determines which elements of the diagram
+     * may be highlighted with the mouse.
+     */
+    public int getHighlightMode() {
+        return this.pnlGoals.getHighlightMode();
+    }
+
+    /**
+     * Sets the set of flags that determines which elements of the diagram may
+     * be highlighted with the mouse. <p>This flag can be a (binary) combination
+     * of the following flags: <ul> <li>{@link CirclesPanel2#Spiders}: which
+     * indicates that spiders will be highlighted when the user hovers over
+     * them.</li> <li>{@link CirclesPanel2#Zones}: which indicates that zones
+     * will be highlighted when the user hovers over them.</li> <li>{@link CirclesPanel2#Contours}:
+     * which indicates that circle contours will be highlighted when the user
+     * hovers over them.</li> </ul></p> <p> The {@link CirclesPanel2#All} and {@link CirclesPanel2#None}
+     * flags can also be used. These indicate that all diagram or no elements
+     * (respectively) can be highlighted with the mouse.</p>
+     *
+     * @param highlightMode the new set of flags that determines which elements
+     * of the diagram may be highlighted with the mouse.
+     */
+    public void setHighlightMode(int highlightMode) {
+        this.pnlGoals.setHighlightMode(highlightMode);
     }
     // </editor-fold>
 

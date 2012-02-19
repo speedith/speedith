@@ -70,7 +70,6 @@ public class TestingForm extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        circlesPanel21.setHighlighting(CirclesPanel2.All);
         circlesPanel21.addDiagramClickListener(new icircles.gui.DiagramClickListener() {
             public void spiderClicked(icircles.gui.SpiderClickedEvent evt) {
                 circlesPanel21SpiderClicked(evt);
