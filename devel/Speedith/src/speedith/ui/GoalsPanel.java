@@ -34,7 +34,7 @@ package speedith.ui;
 
 import icircles.gui.CirclesPanel2;
 import speedith.core.reasoning.Goals;
-import static speedith.i18n.Translations.*;
+import static speedith.i18n.Translations.i18n;
 
 /**
  *
@@ -68,7 +68,7 @@ public class GoalsPanel extends javax.swing.JPanel {
         pnlTitle = new javax.swing.JPanel();
         lblGoal = new javax.swing.JLabel();
         javax.swing.JSeparator jSeparator1 = new javax.swing.JSeparator();
-        pnlGoals = new speedith.draw.SpiderDiagramPanel();
+        pnlGoals = new speedith.ui.SpiderDiagramPanel();
 
         setPreferredSize(new java.awt.Dimension(599, 265));
         setLayout(new java.awt.GridBagLayout());
@@ -130,7 +130,7 @@ public class GoalsPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lblGoal;
-    private speedith.draw.SpiderDiagramPanel pnlGoals;
+    private speedith.ui.SpiderDiagramPanel pnlGoals;
     private javax.swing.JPanel pnlTitle;
     // End of variables declaration//GEN-END:variables
     // </editor-fold>

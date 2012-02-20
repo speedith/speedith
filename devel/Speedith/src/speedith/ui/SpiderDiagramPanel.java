@@ -30,14 +30,18 @@
  *
  * Created on 29-Sep-2011, 13:46:10
  */
-package speedith.draw;
+package speedith.ui;
 
-import icircles.gui.CirclesPanel2;
+import icircles.concreteDiagram.CircleContour;
+import icircles.concreteDiagram.ConcreteSpiderFoot;
+import icircles.concreteDiagram.ConcreteZone;
+import icircles.gui.*;
 import icircles.util.CannotDrawException;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.MouseEvent;
 import java.util.Iterator;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -145,6 +149,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
      */
     public final void setDiagram(SpiderDiagram diagram) {
         if (this.diagram != diagram) {
+            unregisterDiagramClickListeners();
             this.diagram = diagram;
             diagrams.removeAll();
             if (this.diagram != null) {
@@ -156,6 +161,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             } else {
                 drawNoDiagramLabel();
             }
+            registerDiagramClickListeners();
             // If the highlight mode has been set, do apply it to the
             // underlying panels.
             applyHighlightModeToPanels();
@@ -237,6 +243,54 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         if (this.highlightMode != (highlightMode & CirclesPanel2.All)) {
             this.highlightMode = highlightMode & CirclesPanel2.All;
             applyHighlightModeToPanels();
+        }
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Events">
+    /**
+     * Registers the given {@link SpiderDiagramClickListener diagram click listener}
+     * to the events which are fired when the user clicks on particular diagram
+     * elements. <p><span style="font-weight:bold">Note</span>: the events are
+     * invoked regardless of whether {@link SpiderDiagramPanel#getHighlightMode()}
+     * flags are set.</p>
+     *
+     * @param l the event listener to register.
+     */
+    public void addSpiderDiagramClickListener(SpiderDiagramClickListener l) {
+        this.listenerList.add(SpiderDiagramClickListener.class, l);
+    }
+
+    /**
+     * Removes the given {@link SpiderDiagramClickListener diagram click listener}
+     * from the events which are fired when the user clicks on particular
+     * diagram elements. <p>The given listener will no longer receive these
+     * events.</p>
+     *
+     * @param l the event listener to deregister.
+     */
+    public void removeSpiderDiagramClickListener(SpiderDiagramClickListener l) {
+        this.listenerList.remove(SpiderDiagramClickListener.class, l);
+    }
+
+    /**
+     * Returns the array of all {@link SpiderDiagramPanel#addSpiderDiagramClickListener(icircles.gui.SpiderDiagramClickListener) registered}
+     * {@link SpiderDiagramClickListener diagram click listeners}.
+     *
+     * @return the array of all {@link SpiderDiagramPanel#addSpiderDiagramClickListener(icircles.gui.SpiderDiagramClickListener) registered}
+     * {@link SpiderDiagramClickListener diagram click listeners}.
+     */
+    public SpiderDiagramClickListener[] getSpiderDiagramClickListeners() {
+        return listenerList.getListeners(SpiderDiagramClickListener.class);
+    }
+
+    protected void fireSpiderDiagramClicked(int subDiagramIndex, DiagramClickEvent info) {
+        SpiderDiagramClickListener[] ls = listenerList.getListeners(SpiderDiagramClickListener.class);
+        if (ls != null && ls.length > 0) {
+            SpiderDiagramClickEvent e = new SpiderDiagramClickEvent(this, diagram, info, subDiagramIndex);
+            for (int i = 0; i < ls.length; i++) {
+                ls[i].spiderDiagramClicked(e);
+            }
         }
     }
     // </editor-fold>
@@ -396,6 +450,18 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
                     ((SpiderDiagramPanel)component).setHighlightMode(highlightMode);
                 }
             }
+        }
+    }
+
+    private void unregisterDiagramClickListeners() {
+        if (diagram != null) {
+            
+        }
+    }
+
+    private void registerDiagramClickListeners() {
+        if (diagram != null) {
+            
         }
     }
     // </editor-fold>

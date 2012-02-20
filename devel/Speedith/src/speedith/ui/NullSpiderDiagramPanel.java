@@ -30,7 +30,7 @@
  *
  * Created on 29-Sep-2011, 13:46:22
  */
-package speedith.draw;
+package speedith.ui;
 
 import speedith.core.lang.NullSpiderDiagram;
 
@@ -60,7 +60,7 @@ public class NullSpiderDiagramPanel extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(25, 33));
         setLayout(new java.awt.BorderLayout());
 
-        lblNullSD.setFont(new java.awt.Font("Dialog", 0, 24));
+        lblNullSD.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
         lblNullSD.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblNullSD.setText("⊤");
         add(lblNullSD, java.awt.BorderLayout.CENTER);

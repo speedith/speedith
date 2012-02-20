@@ -30,7 +30,7 @@
  *
  * Created on 29-Sep-2011, 10:04:27
  */
-package speedith.draw;
+package speedith.ui;
 
 import speedith.core.i18n.Translations;
 import speedith.core.lang.Operator;
@@ -70,7 +70,7 @@ public class OperatorPanel extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(40, 40));
         setLayout(new java.awt.BorderLayout());
 
-        lblOperator.setFont(new java.awt.Font("Dialog", 0, 24));
+        lblOperator.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
         lblOperator.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         add(lblOperator, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents

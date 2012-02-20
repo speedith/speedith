@@ -26,17 +26,14 @@
  */
 package speedith.core.lang;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import static org.junit.Assert.*;
+import org.junit.*;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import speedith.core.lang.reader.SpiderDiagramsReaderTest;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -375,5 +372,133 @@ public class CompoundSpiderDiagramTest {
         assertTrue(sd == transformedSD);
 
         assertTrue(sd.equalsSemantically(transformedSD));
+    }
+
+    /**
+     * Test of visit method, of class CompoundSpiderDiagram.
+     */
+    @Test
+    public void testVisit1() throws ReadingException {
+        CompoundSpiderDiagram sd = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
+        int retVal = sd.visit(new DiagramVisitor<Integer>() {
+
+            int count = 0;
+
+            public void init(SpiderDiagram root) {
+            }
+
+            public void end() {
+            }
+
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+                ++count;
+            }
+
+            public boolean isDone() {
+                return false;
+            }
+
+            public Integer getResult() {
+                return count;
+            }
+        });
+        assertEquals(3, retVal);
+    }
+
+    /**
+     * Test of visit method, of class CompoundSpiderDiagram.
+     */
+    @Test
+    public void testVisit2() throws ReadingException {
+        checkVisitSD((CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1));
+        checkVisitSD((CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_2));
+        checkVisitSD((CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_3));
+        checkVisitSD((CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_6));
+        checkVisitSD((CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_7));
+        checkVisitSD((CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_8));
+        checkVisitSD((CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_9));
+        checkVisitSD((CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_10));
+        checkVisitSD((CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_11));
+        checkVisitSD((CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_12));
+        checkVisitSD((CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_13));
+        checkVisitSD((CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_14));
+        checkVisitSD((CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_15));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_2));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_3));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_4));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_5));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_6));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_7));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_8));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_9));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_10));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_11));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_12));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_13));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_14));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_15));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_16));
+        checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_17));
+    }
+
+    private void checkVisitSD(CompoundSpiderDiagram sd) {
+        for (int i = 0; i < sd.getSubDiagramCount(); i++) {
+            final int targetSD = i;
+            SpiderDiagram retVal = sd.visit(new DiagramVisitor<SpiderDiagram>() {
+
+                private SpiderDiagram sd = null;
+
+                public void init(SpiderDiagram root) {
+                }
+
+                public void end() {
+                }
+
+                public void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+                    if (subDiagramIndex == targetSD) {
+                        sd = subDiagram;
+                    }
+                }
+
+                public boolean isDone() {
+                    return sd != null;
+                }
+
+                public SpiderDiagram getResult() {
+                    return sd;
+                }
+            });
+            assertEquals(sd.getSubDiagramAt(targetSD), retVal);
+        }
+    }
+
+    private static void checkSDCollection(SpiderDiagram sd) {
+        ArrayList<SpiderDiagram> retVal = sd.visit(new DiagramVisitor<ArrayList<SpiderDiagram>>() {
+
+            private ArrayList<SpiderDiagram> collectedSDs = new ArrayList<SpiderDiagram>();
+
+            public void init(SpiderDiagram root) {
+            }
+
+            public void end() {
+            }
+
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+                assertEquals(collectedSDs.size(), subDiagramIndex);
+                collectedSDs.add(subDiagram);
+            }
+
+            public boolean isDone() {
+                return false;
+            }
+
+            public ArrayList<SpiderDiagram> getResult() {
+                return collectedSDs;
+            }
+        });
+        for (int i = 0; i < sd.getSubDiagramCount(); i++) {
+            assertSame(sd.getSubDiagramAt(i), retVal.get(i));
+        }
     }
 }

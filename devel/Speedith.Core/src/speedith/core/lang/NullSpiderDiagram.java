@@ -30,10 +30,11 @@ import static speedith.core.i18n.Translations.i18n;
 
 /**
  * Represents an empty spider diagram (it is a tautology and evaluates to '⊤' or
- * {@code true}).
- * <p>This class is a singleton. To get the only instance of the {@link
- * NullSpiderDiagram} use the {@link NullSpiderDiagram#getInstance()} method.</p>
- * <p>Instances of this class (and its derived classes) are immutable.</p>
+ * {@code true}). <p>This class is a singleton. To get the only instance of the {@link
+ * NullSpiderDiagram} use the {@link NullSpiderDiagram#getInstance()}
+ * method.</p> <p>Instances of this class (and its derived classes) are
+ * immutable.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class NullSpiderDiagram extends SpiderDiagram {
@@ -41,9 +42,8 @@ public class NullSpiderDiagram extends SpiderDiagram {
     // <editor-fold defaultstate="collapsed" desc="Constants">
     /**
      * The identifier of the null spider diagram in the textual representation
-     * of spider diagrams.
-     * <p>This value is used in the textual representation of spider diagrams
-     * (see {@link SpiderDiagram#toString()}).</p>
+     * of spider diagrams. <p>This value is used in the textual representation
+     * of spider diagrams (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextNullId = "NullSD";
     // </editor-fold>
@@ -51,6 +51,7 @@ public class NullSpiderDiagram extends SpiderDiagram {
     // <editor-fold defaultstate="collapsed" desc="The Singleton Instance Method">
     /**
      * Returns the only instance of the null spider diagram.
+     *
      * @return the only instance of the null spider diagram.
      */
     public static NullSpiderDiagram getInstance() {

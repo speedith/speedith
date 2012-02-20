@@ -1,10 +1,10 @@
 /*
  *   Project: Speedith
  * 
- * File name: package-info.java
+ * File name: SpiderDiagramClickListener.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
- *  Copyright © 2011 Matej Urbas
+ *  Copyright © 2012 Matej Urbas
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package speedith.ui;
+
+import java.util.EventListener;
+
 /**
- * A set of utilities that draw visual spider diagrams from {@link speedith.core.lang.SpiderDiagram
- * abstract spider diagrams}.
+ * Listeners of this type can receive click events on general spider diagrams.
+ * <p>The main source of these events is the {@link SpiderDiagramPanel spider
+ * diagram panel}, which can display any form of spider diagrams.</p>
+ * @author Matej Urbas [matej.urbas@gmail.com]
  */
-package speedith.draw;
+public interface SpiderDiagramClickListener extends EventListener {
+    /**
+     * This event is invoked when the user clicks on a spider diagram or an
+     * element thereof.
+     * @param e detailed description of the event.
+     */
+    void spiderDiagramClicked(SpiderDiagramClickEvent e);
+}

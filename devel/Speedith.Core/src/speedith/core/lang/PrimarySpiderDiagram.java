@@ -26,18 +26,11 @@
  */
 package speedith.core.lang;
 
-import java.util.Arrays;
 import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import speedith.core.util.Sets;
+import java.util.*;
 import static speedith.core.i18n.Translations.i18n;
+import static speedith.core.i18n.Translations.i18n;
+import speedith.core.util.Sets;
 import static speedith.core.util.Sets.equal;
 
 /**

@@ -31,7 +31,6 @@ import icircles.util.CannotDrawException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import speedith.core.lang.*;
-import speedith.draw.DiagramVisualisation;
 import speedith.icircles.util.ICirclesToSpeedith;
 
 /**
@@ -65,7 +64,7 @@ public class TestingForm extends javax.swing.JFrame {
 
         circlesPanel21 = new icircles.gui.CirclesPanel2();
         circlesPanel22 = new icircles.gui.CirclesPanel2();
-        operatorPanel1 = new speedith.draw.OperatorPanel();
+        operatorPanel1 = new speedith.ui.OperatorPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -188,7 +187,7 @@ public class TestingForm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private icircles.gui.CirclesPanel2 circlesPanel21;
     private icircles.gui.CirclesPanel2 circlesPanel22;
-    private speedith.draw.OperatorPanel operatorPanel1;
+    private speedith.ui.OperatorPanel operatorPanel1;
     // End of variables declaration//GEN-END:variables
 
     // <editor-fold defaultstate="collapsed" desc="Spider Diagram Examples">

@@ -26,6 +26,7 @@
  */
 package speedith.draw;
 
+import speedith.ui.OperatorPanel;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

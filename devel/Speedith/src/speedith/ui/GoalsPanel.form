@@ -92,7 +92,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="speedith.draw.SpiderDiagramPanel" name="pnlGoals">
+    <Component class="speedith.ui.SpiderDiagramPanel" name="pnlGoals">
       <Properties>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[0, 0]"/>

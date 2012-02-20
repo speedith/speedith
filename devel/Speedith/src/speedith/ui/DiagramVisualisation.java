@@ -24,7 +24,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.draw;
+package speedith.ui;
 
 import java.util.SortedSet;
 import icircles.abstractDescription.AbstractBasicRegion;

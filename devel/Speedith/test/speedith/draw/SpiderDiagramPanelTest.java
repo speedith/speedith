@@ -63,7 +63,7 @@ public class SpiderDiagramPanelTest extends javax.swing.JFrame {
     private void initComponents() {
 
         jButton1 = new javax.swing.JButton();
-        spiderDiagramPanel1 = new speedith.draw.SpiderDiagramPanel();
+        spiderDiagramPanel1 = new speedith.ui.SpiderDiagramPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -141,7 +141,7 @@ public class SpiderDiagramPanelTest extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private speedith.draw.SpiderDiagramPanel spiderDiagramPanel1;
+    private speedith.ui.SpiderDiagramPanel spiderDiagramPanel1;
     // End of variables declaration//GEN-END:variables
 
     public static PrimarySpiderDiagram getSDExample1() {

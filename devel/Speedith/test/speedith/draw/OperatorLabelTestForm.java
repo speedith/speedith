@@ -47,7 +47,7 @@ public class OperatorLabelTestForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        compoundSpiderDiagramPanel2 = new speedith.draw.SpiderDiagramPanel();
+        compoundSpiderDiagramPanel2 = new speedith.ui.SpiderDiagramPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -108,6 +108,6 @@ public class OperatorLabelTestForm extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private speedith.draw.SpiderDiagramPanel compoundSpiderDiagramPanel2;
+    private speedith.ui.SpiderDiagramPanel compoundSpiderDiagramPanel2;
     // End of variables declaration//GEN-END:variables
 }
