@@ -139,15 +139,16 @@ public abstract class SpiderDiagram {
      * @return the transformed spider diagram.
      */
     public abstract SpiderDiagram transform(Transformer t, boolean trackParents);
-    
+
     /**
-     * Visits every sub-diagram in this diagram and calls the appropriate methods
-     * of the given {@link DiagramVisitor visitor}.
-     * <p>This method simply calls the {@link SpiderDiagram#visit(speedith.core.lang.DiagramVisitor, boolean) full visit}
-     * function with parent tracking disabled.</p>
+     * Visits every sub-diagram in this diagram and calls the appropriate
+     * methods of the given {@link DiagramVisitor visitor}. <p>This method
+     * simply calls the {@link SpiderDiagram#visit(speedith.core.lang.DiagramVisitor, boolean) full visit}
+     * function with parent tracking enabled.</p>
+     *
      * @param <T> the type of the result produced by the visitor.
-     * @param visitor the object that will receive calls upon visiting particular
-     * elements.
+     * @param visitor the object that will receive calls upon visiting
+     * particular elements.
      * @return the result produced by the visitor.
      */
     public <T> T visit(DiagramVisitor<T> visitor) {
@@ -155,11 +156,12 @@ public abstract class SpiderDiagram {
     }
 
     /**
-     * Visits every sub-diagram in this diagram and calls the appropriate methods
-     * of the given {@link DiagramVisitor visitor}.
+     * Visits every sub-diagram in this diagram and calls the appropriate
+     * methods of the given {@link DiagramVisitor visitor}.
+     *
      * @param <T> the type of the result produced by the visitor.
-     * @param visitor the object that will receive calls upon visiting particular
-     * elements.
+     * @param visitor the object that will receive calls upon visiting
+     * particular elements.
      * @param trackParents indicates whether the parents of the visited
      * sub-diagrams should be tracked. If this parameter is set to {@code false}
      * then the visitor's {@link DiagramVisitor#visit(speedith.core.lang.SpiderDiagram, int, int, java.util.LinkedList)
@@ -203,6 +205,39 @@ public abstract class SpiderDiagram {
      * children of the children and also counting the diagram itself).
      */
     public abstract int getSubDiagramCount();
+
+    /**
+     * Returns the first index of the given spider diagram.
+     * @param sd the sub-diagram for which we want to look up the index
+     * @return the first index of the given spider diagram.
+     */
+    public int getSubDiagramIndex(final SpiderDiagram sd) {
+        Integer index = this.visit(new DiagramVisitor<Integer>() {
+
+            private int foundIndex = -1;
+
+            public void init(SpiderDiagram root) {
+            }
+
+            public void end() {
+            }
+
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+                if (subDiagram.equals(sd)) {
+                    foundIndex = subDiagramIndex;
+                }
+            }
+
+            public boolean isDone() {
+                return foundIndex != -1;
+            }
+
+            public Integer getResult() {
+                return foundIndex;
+            }
+        }, false);
+        return index;
+    }
 
     /**
      * Checks whether this spider diagram is valid (whether it conforms to all

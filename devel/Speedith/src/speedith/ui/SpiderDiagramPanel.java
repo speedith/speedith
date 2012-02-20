@@ -32,16 +32,13 @@
  */
 package speedith.ui;
 
-import icircles.concreteDiagram.CircleContour;
-import icircles.concreteDiagram.ConcreteSpiderFoot;
-import icircles.concreteDiagram.ConcreteZone;
-import icircles.gui.*;
+import icircles.gui.CirclesPanel2;
+import icircles.gui.DiagramClickEvent;
 import icircles.util.CannotDrawException;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.MouseEvent;
 import java.util.Iterator;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
