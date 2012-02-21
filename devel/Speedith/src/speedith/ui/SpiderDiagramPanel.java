@@ -32,13 +32,14 @@
  */
 package speedith.ui;
 
-import icircles.gui.CirclesPanel2;
-import icircles.gui.DiagramClickEvent;
+import icircles.gui.*;
 import icircles.util.CannotDrawException;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Iterator;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -146,7 +147,6 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
      */
     public final void setDiagram(SpiderDiagram diagram) {
         if (this.diagram != diagram) {
-            unregisterDiagramClickListeners();
             this.diagram = diagram;
             diagrams.removeAll();
             if (this.diagram != null) {
@@ -158,7 +158,6 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             } else {
                 drawNoDiagramLabel();
             }
-            registerDiagramClickListeners();
             // If the highlight mode has been set, do apply it to the
             // underlying panels.
             applyHighlightModeToPanels();
@@ -338,7 +337,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
                         drawPrefixDiagram(csd);
                         break;
                     default:
-                        throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
+                        throw new AssertionError(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
                 }
             } else if (diagram instanceof PrimarySpiderDiagram) {
                 drawPrimaryDiagram((PrimarySpiderDiagram) diagram);
@@ -352,28 +351,77 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
 
     private void drawInfixDiagram(CompoundSpiderDiagram csd) throws CannotDrawException {
         if (csd != null && csd.getOperandCount() > 0) {
-            int gridx = 0;
+            int gridx = 0, nextSubdiagramIndex = 1;
             diagrams.setLayout(new GridBagLayout());
-            GridBagConstraints gridBagConstraints;
 
-            // Now start adding the panels onto the surface
+            // Now start adding the panels of operand diagrams onto the surface
             Iterator<SpiderDiagram> sdIter = csd.getOperands().iterator();
-            JPanel sdp = DiagramVisualisation.getSpiderDiagramPanel(sdIter.next());
-            gridBagConstraints = getOperandLayoutConstraints(gridx, true, sdp.getPreferredSize().width, 1);
-            diagrams.add(sdp, gridBagConstraints);
-
+            nextSubdiagramIndex = addInfixSpiderDiagramPanel(nextSubdiagramIndex, sdIter.next(), gridx);
             while (sdIter.hasNext()) {
-                gridBagConstraints = getOperandLayoutConstraints(++gridx, false, 0, 0);
-                diagrams.add(new OperatorPanel(csd.getOperator()), gridBagConstraints);
-
-                sdp = DiagramVisualisation.getSpiderDiagramPanel(sdIter.next());
-                gridBagConstraints = getOperandLayoutConstraints(++gridx, true, sdp.getPreferredSize().width, 1);
-                diagrams.add(sdp, gridBagConstraints);
+                diagrams.add(new OperatorPanel(csd.getOperator()), getOperandLayoutConstraints(++gridx, false, 0, 0));
+                nextSubdiagramIndex = addInfixSpiderDiagramPanel(nextSubdiagramIndex, sdIter.next(), ++gridx);
             }
-
             refreshPrefSize();
         } else {
-            throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
+            throw new AssertionError(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
+        }
+    }
+
+    private int addInfixSpiderDiagramPanel(int nextSubdiagramIndex, SpiderDiagram curSD, int gridx) throws CannotDrawException {
+        GridBagConstraints gridBagConstraints;
+        JPanel sdp = DiagramVisualisation.getSpiderDiagramPanel(curSD);
+        registerSubdiagramClickListener(sdp, curSD, nextSubdiagramIndex);
+        gridBagConstraints = getOperandLayoutConstraints(gridx, true, sdp.getPreferredSize().width, 1);
+        diagrams.add(sdp, gridBagConstraints);
+        return nextSubdiagramIndex + curSD.getSubDiagramCount();
+    }
+
+    private void registerSubdiagramClickListener(JPanel diagramPanel, SpiderDiagram sd, final int nextSubdiagramIndex) {
+        if (diagramPanel instanceof CirclesPanel2) {
+            CirclesPanel2 cp = (CirclesPanel2) diagramPanel;
+            cp.addDiagramClickListener(new DiagramClickListener() {
+
+                public void spiderClicked(SpiderClickedEvent e) {
+                    fireSpiderDiagramClicked(nextSubdiagramIndex, e);
+                }
+
+                public void zoneClicked(ZoneClickedEvent e) {
+                    fireSpiderDiagramClicked(nextSubdiagramIndex, e);
+                }
+
+                public void contourClicked(ContourClickedEvent e) {
+                    fireSpiderDiagramClicked(nextSubdiagramIndex, e);
+                }
+            });
+        } else if (diagramPanel instanceof SpiderDiagramPanel) {
+            SpiderDiagramPanel sdp = (SpiderDiagramPanel) diagramPanel;
+            sdp.addSpiderDiagramClickListener(new SpiderDiagramClickListener() {
+
+                public void spiderDiagramClicked(SpiderDiagramClickEvent e) {
+                    fireSpiderDiagramClicked(nextSubdiagramIndex + e.getSubDiagramIndex(), e.getDetailedInfo());
+                }
+            });
+        } else if (diagramPanel instanceof NullSpiderDiagramPanel) {
+            diagramPanel.addMouseListener(new MouseListener() {
+
+                public void mouseClicked(MouseEvent e) {
+                    fireSpiderDiagramClicked(nextSubdiagramIndex, null);
+                }
+
+                public void mousePressed(MouseEvent e) {
+                }
+
+                public void mouseReleased(MouseEvent e) {
+                }
+
+                public void mouseEntered(MouseEvent e) {
+                }
+
+                public void mouseExited(MouseEvent e) {
+                }
+            });
+        } else {
+            throw new IllegalStateException(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
         }
     }
 
@@ -394,13 +442,13 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             diagrams.add(DiagramVisualisation.getSpiderDiagramPanel(csd.getOperands().get(0)));
             refreshPrefSize();
         } else {
-            throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
+            throw new AssertionError(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
         }
     }
 
     private void drawPrimaryDiagram(PrimarySpiderDiagram psd) throws CannotDrawException {
         if (psd == null) {
-            throw new AssertionError(i18n("GERR_ILLEGAL_STATE"));
+            throw new AssertionError(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
         } else {
             diagrams.setLayout(new GridBagLayout());
             GridBagConstraints gbc = new java.awt.GridBagConstraints();
@@ -428,12 +476,10 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         prefSize.width += 10;
         setPreferredSize(prefSize);
         invalidate();
-//        System.out.println("The preferred size: " + diagrams.getLayout().preferredLayoutSize(diagrams).toString());
-//        setPreferredSize(diagrams.getLayout().preferredLayoutSize(diagrams));
     }
 
     /**
-     * This method applies the currently set {@link SpiderDiagramPanel#setHighlightMode(int) 
+     * This method applies the currently set {@link SpiderDiagramPanel#setHighlightMode(int)
      * highlight mode} to the underlying {@link CirclesPanel2 diagram presentation panels}.
      * <p>This method has to be invoked whenever the highlight mode changes or
      * when the current diagram changes.</p>
@@ -442,23 +488,11 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         if (this.diagram != null) {
             for (Component component : this.diagrams.getComponents()) {
                 if (component instanceof CirclesPanel2) {
-                    ((CirclesPanel2)component).setHighlightMode(highlightMode);
+                    ((CirclesPanel2) component).setHighlightMode(highlightMode);
                 } else if (component instanceof SpiderDiagramPanel) {
-                    ((SpiderDiagramPanel)component).setHighlightMode(highlightMode);
+                    ((SpiderDiagramPanel) component).setHighlightMode(highlightMode);
                 }
             }
-        }
-    }
-
-    private void unregisterDiagramClickListeners() {
-        if (diagram != null) {
-            
-        }
-    }
-
-    private void registerDiagramClickListeners() {
-        if (diagram != null) {
-            
         }
     }
     // </editor-fold>

@@ -33,6 +33,7 @@ import icircles.gui.ZoneClickedEvent;
 import java.util.EventObject;
 import static speedith.core.i18n.Translations.i18n;
 import speedith.core.lang.SpiderDiagram;
+import speedith.icircles.util.ICirclesToSpeedith;
 
 /**
  *
@@ -47,10 +48,11 @@ public class SpiderDiagramClickEvent extends EventObject {
     /**
      * Initialises detailed event information of a {@link SpiderDiagramClickListener#spiderDiagramClicked(speedith.ui.SpiderDiagramClickEvent)
      * spider diagram click event}.
+     *
      * @param source the panel in which the mouse click event happened.
      * @param diagram the diagram that was clicked.
-     * @param eventDetail contains the information on which element of the diagram
-     * was clicked (spider, zone, contour, or none).
+     * @param eventDetail contains the information on which element of the
+     * diagram was clicked (spider, zone, contour, or none).
      * @param subDiagramIndex the index of the sub-diagram that was clicked.
      */
     public SpiderDiagramClickEvent(SpiderDiagramPanel source, SpiderDiagram diagram, DiagramClickEvent eventDetail, int subDiagramIndex) {
@@ -74,8 +76,24 @@ public class SpiderDiagramClickEvent extends EventObject {
         return (SpiderDiagramPanel) super.getSource();
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Clicked sub-diagram with index '" + subDiagramIndex + "'.");
+        if (eventDetail instanceof SpiderClickedEvent) {
+            sb.append(" Spider: ").append(((SpiderClickedEvent) eventDetail).getFoot().getSpider().as.get_name()).append(" Zone: ").append(ICirclesToSpeedith.convert(eventDetail.getDiagram().getZoneAtPoint(eventDetail.getDiagramCoordinates())).toString());
+        } else if (eventDetail instanceof ContourClickedEvent) {
+            sb.append(" Contour: ").append(((ContourClickedEvent) eventDetail).getContour().ac.getLabel().getLabel());
+        } else if (eventDetail instanceof ZoneClickedEvent) {
+            sb.append(" Zone: ").append(ICirclesToSpeedith.convert(((ZoneClickedEvent) eventDetail).getZone()).toString());
+        } else {
+            throw new IllegalStateException(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
+        }
+        return sb.toString();
+    }
+
     /**
      * Returns the diagram that was clicked.
+     *
      * @return the diagram that was clicked.
      */
     public SpiderDiagram getDiagram() {

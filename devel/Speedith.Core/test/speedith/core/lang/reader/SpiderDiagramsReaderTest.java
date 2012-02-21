@@ -32,17 +32,9 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.TreeSet;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import speedith.core.lang.CompoundSpiderDiagram;
-import speedith.core.lang.PrimarySpiderDiagram;
-import speedith.core.lang.Region;
 import static org.junit.Assert.*;
-import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.Zone;
+import org.junit.*;
+import speedith.core.lang.*;
 import speedith.core.util.Maps;
 
 /**
@@ -221,7 +213,6 @@ public class SpiderDiagramsReaderTest {
             sd = SpiderDiagramsReader.readSpiderDiagram(example);
             fail("An exception should have been thrown.");
         } catch (ReadingException readingException) {
-//            System.out.println(readingException);
             assertEquals(errorLine, readingException.getLineNumber());
             assertEquals(errorCharIndex, readingException.getCharIndex());
         }

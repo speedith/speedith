@@ -332,9 +332,7 @@ public final class DiagramVisualisation {
      */
     static CirclesPanel2 getSpiderDiagramPanel(PrimarySpiderDiagram diagram, int size) throws CannotDrawException {
         ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(getAbstractDescription(diagram), size);
-        CirclesPanel2 cp = new CirclesPanel2(cd);
-//        cp.setAutoRescale(true);
-        return cp;
+        return new CirclesPanel2(cd);
     }
 
     private static int getZoneInMask(String[] allContours, Zone zone) {

@@ -28,16 +28,12 @@
 package speedith.core.lang.export;
 
 import java.util.Set;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.*;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.lang.reader.SpiderDiagramsReaderTest;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -66,14 +62,15 @@ public class SDExportingTest {
 
     /**
      * Test of getExporter method, of class SDExporting.
-     * @throws ReadingException 
+     * @throws ReadingException
+     * @throws ExportException  
      */
     @Test
     public void testGetExporter_String() throws ReadingException, ExportException {
         SDExporter exporter = SDExporting.getExporter(Isabelle2011ExportProvider.FormatName);
         SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
         String sdStr = exporter.export(sd);
-        System.out.println(sdStr);
+        assertEquals("(EX s s'. distinct[s, s'] & s : A Int B & s' : (A - B) Un (B - A) & (A Int B) - (C Un D) <= {s, s'}) --> (EX s s'. distinct[s, s'] & s : A & s' : B)", sdStr);
     }
 
     /**

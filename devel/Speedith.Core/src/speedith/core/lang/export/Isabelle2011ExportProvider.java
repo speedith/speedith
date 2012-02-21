@@ -536,13 +536,4 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         void print(Writer output) throws IOException;
     }
     // </editor-fold>
-
-    public static void main(String[] args) throws ReadingException, ExportException {
-        HashMap<String, String> params = new HashMap<String, String>();
-        params.put(Isabelle2011ExportProvider.Parameter_UseXSymbols, "true");
-        SDExporter exporter = SDExporting.getExporter(Isabelle2011ExportProvider.FormatName, params);
-        SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }");
-        String sdStr = exporter.export(sd);
-        System.out.println(sdStr);
-    }
 }
