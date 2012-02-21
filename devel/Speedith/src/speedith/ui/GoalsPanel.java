@@ -51,6 +51,12 @@ public class GoalsPanel extends javax.swing.JPanel {
     /** Creates new form GoalsPanel */
     public GoalsPanel() {
         initComponents();
+        this.pnlGoals.addSpiderDiagramClickListener(new SpiderDiagramClickListener() {
+
+            public void spiderDiagramClicked(SpiderDiagramClickEvent e) {
+                System.out.println(e.toString());
+            }
+        });
     }
     //</editor-fold>
 

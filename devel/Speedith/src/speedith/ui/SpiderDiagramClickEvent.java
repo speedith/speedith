@@ -80,7 +80,7 @@ public class SpiderDiagramClickEvent extends EventObject {
     public String toString() {
         StringBuilder sb = new StringBuilder("Clicked sub-diagram with index '" + subDiagramIndex + "'.");
         if (eventDetail instanceof SpiderClickedEvent) {
-            sb.append(" Spider: ").append(((SpiderClickedEvent) eventDetail).getFoot().getSpider().as.get_name()).append(" Zone: ").append(ICirclesToSpeedith.convert(eventDetail.getDiagram().getZoneAtPoint(eventDetail.getDiagramCoordinates())).toString());
+            sb.append(" Spider: '").append(((SpiderClickedEvent) eventDetail).getFoot().getSpider().as.get_name()).append("' in zone: ").append(ICirclesToSpeedith.convert(eventDetail.getDiagram().getZoneAtPoint(eventDetail.getDiagramCoordinates())).toString());
         } else if (eventDetail instanceof ContourClickedEvent) {
             sb.append(" Contour: ").append(((ContourClickedEvent) eventDetail).getContour().ac.getLabel().getLabel());
         } else if (eventDetail instanceof ZoneClickedEvent) {
