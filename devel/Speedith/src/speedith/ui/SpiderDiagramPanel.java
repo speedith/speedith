@@ -383,8 +383,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
 
     private int addInfixSpiderDiagramPanel(int nextSubdiagramIndex, SpiderDiagram curSD, int gridx) throws CannotDrawException {
         GridBagConstraints gridBagConstraints;
-        JPanel sdp = DiagramVisualisation.getSpiderDiagramPanel(curSD);
-        registerSubdiagramClickListener(sdp, nextSubdiagramIndex);
+        JPanel sdp = registerSubdiagramClickListener(DiagramVisualisation.getSpiderDiagramPanel(curSD), nextSubdiagramIndex);
         gridBagConstraints = getOperandLayoutConstraints(gridx, true, sdp.getPreferredSize().width, 1);
         diagrams.add(sdp, gridBagConstraints);
         return nextSubdiagramIndex + curSD.getSubDiagramCount();
@@ -481,8 +480,8 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
 
     private void drawPrefixDiagram(CompoundSpiderDiagram csd) throws CannotDrawException {
         if (csd != null && csd.getOperandCount() == 1) {
-            diagrams.add(new OperatorPanel(csd.getOperator()));
-            diagrams.add(DiagramVisualisation.getSpiderDiagramPanel(csd.getOperands().get(0)));
+            diagrams.add(registerSubdiagramClickListener(new OperatorPanel(csd.getOperator()), 0));
+            diagrams.add(registerSubdiagramClickListener(DiagramVisualisation.getSpiderDiagramPanel(csd.getOperands().get(0)), 1));
             refreshPrefSize();
         } else {
             throw new AssertionError(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
@@ -495,7 +494,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         } else {
             diagrams.setLayout(new GridBagLayout());
             GridBagConstraints gbc = new java.awt.GridBagConstraints();
-            diagrams.add(DiagramVisualisation.getSpiderDiagramPanel(psd), gbc);
+            diagrams.add(registerSubdiagramClickListener(DiagramVisualisation.getSpiderDiagramPanel(psd), 0), gbc);
             refreshPrefSize();
         }
     }
@@ -503,8 +502,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     private void drawNullSpiderDiagram() {
         diagrams.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new java.awt.GridBagConstraints();
-        final NullSpiderDiagramPanel nullSpiderDiagramPanel = new NullSpiderDiagramPanel();
-        diagrams.add(nullSpiderDiagramPanel, gbc);
+        diagrams.add(registerSubdiagramClickListener(new NullSpiderDiagramPanel(), 0), gbc);
         refreshPrefSize();
     }
 
