@@ -85,7 +85,7 @@ public class SpiderDiagramClickEvent extends EventObject {
             sb.append(" Contour: ").append(((ContourClickedEvent) eventDetail).getContour().ac.getLabel().getLabel());
         } else if (eventDetail instanceof ZoneClickedEvent) {
             sb.append(" Zone: ").append(ICirclesToSpeedith.convert(((ZoneClickedEvent) eventDetail).getZone()).toString());
-        } else {
+        } else if (eventDetail != null) {
             throw new IllegalStateException(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
         }
         return sb.toString();

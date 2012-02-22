@@ -90,6 +90,11 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
 
         diagrams.setBackground(new java.awt.Color(255, 255, 255));
+        diagrams.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                onMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout diagramsLayout = new javax.swing.GroupLayout(diagrams);
         diagrams.setLayout(diagramsLayout);
@@ -113,6 +118,11 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             .addComponent(diagrams, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void onMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMouseClicked
+        fireSpiderDiagramClicked(0, null);
+    }//GEN-LAST:event_onMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel diagrams;
     // End of variables declaration//GEN-END:variables
@@ -358,7 +368,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             Iterator<SpiderDiagram> sdIter = csd.getOperands().iterator();
             nextSubdiagramIndex = addInfixSpiderDiagramPanel(nextSubdiagramIndex, sdIter.next(), gridx);
             while (sdIter.hasNext()) {
-                diagrams.add(new OperatorPanel(csd.getOperator()), getOperandLayoutConstraints(++gridx, false, 0, 0));
+                addInfixOperator(csd, ++gridx);
                 nextSubdiagramIndex = addInfixSpiderDiagramPanel(nextSubdiagramIndex, sdIter.next(), ++gridx);
             }
             refreshPrefSize();
@@ -367,16 +377,29 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         }
     }
 
+    private void addInfixOperator(CompoundSpiderDiagram csd, int gridx) {
+        diagrams.add(registerSubdiagramClickListener(new OperatorPanel(csd.getOperator()), 0), getOperandLayoutConstraints(gridx, false, 0, 0));
+    }
+
     private int addInfixSpiderDiagramPanel(int nextSubdiagramIndex, SpiderDiagram curSD, int gridx) throws CannotDrawException {
         GridBagConstraints gridBagConstraints;
         JPanel sdp = DiagramVisualisation.getSpiderDiagramPanel(curSD);
-        registerSubdiagramClickListener(sdp, curSD, nextSubdiagramIndex);
+        registerSubdiagramClickListener(sdp, nextSubdiagramIndex);
         gridBagConstraints = getOperandLayoutConstraints(gridx, true, sdp.getPreferredSize().width, 1);
         diagrams.add(sdp, gridBagConstraints);
         return nextSubdiagramIndex + curSD.getSubDiagramCount();
     }
 
-    private void registerSubdiagramClickListener(JPanel diagramPanel, SpiderDiagram sd, final int nextSubdiagramIndex) {
+    /**
+     * This function registers a click listener to the given panel. The
+     * registered listener will invoke the {@link SpiderDiagramPanel#addSpiderDiagramClickListener(speedith.ui.SpiderDiagramClickListener)
+     * spider diagram click event} of this panel.
+     *
+     * @param diagramPanel
+     * @param sd
+     * @param nextSubdiagramIndex
+     */
+    private JPanel registerSubdiagramClickListener(JPanel diagramPanel, final int nextSubdiagramIndex) {
         if (diagramPanel instanceof CirclesPanel2) {
             CirclesPanel2 cp = (CirclesPanel2) diagramPanel;
             cp.addDiagramClickListener(new DiagramClickListener() {
@@ -420,9 +443,29 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
                 public void mouseExited(MouseEvent e) {
                 }
             });
+        } else if (diagramPanel instanceof OperatorPanel) {
+            diagramPanel.addMouseListener(new MouseListener() {
+
+                public void mouseClicked(MouseEvent e) {
+                    fireSpiderDiagramClicked(nextSubdiagramIndex, null);
+                }
+
+                public void mousePressed(MouseEvent e) {
+                }
+
+                public void mouseReleased(MouseEvent e) {
+                }
+
+                public void mouseEntered(MouseEvent e) {
+                }
+
+                public void mouseExited(MouseEvent e) {
+                }
+            });
         } else {
             throw new IllegalStateException(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
         }
+        return diagramPanel;
     }
 
     private GridBagConstraints getOperandLayoutConstraints(int gridx, boolean fill, int weightx, int weighty) {
