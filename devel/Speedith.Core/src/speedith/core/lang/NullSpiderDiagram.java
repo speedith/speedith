@@ -26,6 +26,7 @@
  */
 package speedith.core.lang;
 
+import java.util.Iterator;
 import static speedith.core.i18n.Translations.i18n;
 
 /**
@@ -86,6 +87,12 @@ public class NullSpiderDiagram extends SpiderDiagram {
     @Override
     public boolean isValid() {
         return true;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Iterable Implementation">
+    public Iterator<SpiderDiagram> iterator() {
+        return new PrimarySpiderDiagram.AtomicSpiderDiagramIterator(this);
     }
     // </editor-fold>
 

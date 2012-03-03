@@ -26,14 +26,9 @@
  */
 package speedith.core.lang;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import speedith.core.reasoning.args.SubDiagramIndexArg;
+import java.util.*;
 import static speedith.core.i18n.Translations.i18n;
+import speedith.core.reasoning.args.SubDiagramIndexArg;
 
 /**
  * A compound spider diagram connects two applies an operator to one or more
@@ -255,6 +250,97 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         }
         visitor.end();
         return visitor.getResult();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Iterable Implementation">
+    public Iterator<SpiderDiagram> iterator() {
+        return new CompoundSpiderDiagramIterator(this);
+    }
+
+    private static class CompoundSpiderDiagramIterator implements Iterator<SpiderDiagram> {
+
+        private ArrayList<CompoundSDIterationCursor> iterationStack;
+
+        public CompoundSpiderDiagramIterator(CompoundSpiderDiagram csdToIterateThrough) {
+            if (csdToIterateThrough == null) {
+                throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "csdToIterateThrough"));
+            }
+            iterationStack = new ArrayList<CompoundSDIterationCursor>();
+            iterationStack.add(new CompoundSDIterationCursor(csdToIterateThrough, -1));
+        }
+
+        public boolean hasNext() {
+            // If there are no unfinished cursors on the stack then there is
+            // nothing left to iterate over.
+            return getLatestUnfinishedCursor() != null;
+        }
+
+        /**
+         * Returns the latest cursor that has not passed beyond the operand
+         * count of its compound spider diagram (i.e. that points to an existing
+         * operand in the compound spider diagram). This method pops all
+         * finished cursors from the stack.
+         *
+         * @return
+         */
+        private CompoundSDIterationCursor getLatestUnfinishedCursor() {
+            // Check first whether there are any cursors at all.
+            int lastIndex = iterationStack.size() - 1;
+            if (lastIndex < 0) {
+                return null;
+            }
+            // Now peek at the latest cursor and check whether it points to a valid
+            // operand.
+            CompoundSDIterationCursor cur = iterationStack.get(lastIndex);
+            // Check whether the current cursor went past the last operand.
+            while (cur.nextChildIndex >= cur.csd.getOperandCount()) {
+                // It went past all the operands. We can remove this cursor and
+                // move to the next one.
+                iterationStack.remove(lastIndex);
+                if (--lastIndex >= 0) {
+                    cur = iterationStack.get(lastIndex);
+                } else {
+                    // No cursors left... Return null to indicate that there is
+                    // nothing left to visit.
+                    return null;
+                }
+            }
+            return cur;
+        }
+
+        public SpiderDiagram next() {
+            CompoundSDIterationCursor nextCur = getLatestUnfinishedCursor();
+            if (nextCur == null) {
+                throw new NoSuchElementException();
+            }
+            SpiderDiagram next;
+            if (nextCur.nextChildIndex < 0) {
+                next = nextCur.csd;
+            } else {
+                next = nextCur.csd.getOperand(nextCur.nextChildIndex);
+                if (next instanceof CompoundSpiderDiagram) {
+                    iterationStack.add(new CompoundSDIterationCursor((CompoundSpiderDiagram) next, 0));
+                }
+            }
+            ++nextCur.nextChildIndex;
+            return next;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException(i18n("SD_ITER_REMOVE_NOT_SUPPORTED"));
+        }
+    }
+
+    private static class CompoundSDIterationCursor {
+
+        final CompoundSpiderDiagram csd;
+        int nextChildIndex;
+
+        public CompoundSDIterationCursor(CompoundSpiderDiagram csd, int nextChildIndex) {
+            this.csd = csd;
+            this.nextChildIndex = nextChildIndex;
+        }
     }
     // </editor-fold>
 

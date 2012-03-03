@@ -29,20 +29,20 @@ package speedith.core.lang;
 import java.util.Map.Entry;
 import java.util.*;
 import static speedith.core.i18n.Translations.i18n;
-import static speedith.core.i18n.Translations.i18n;
 import speedith.core.util.Sets;
 import static speedith.core.util.Sets.equal;
 
 /**
  * Represents a unitary spider diagram. For a complete and formal description of
- * spider diagrams see paper
- * <a href="http://journals.cambridge.org/action/displayAbstract?fromPage=online&aid=6564924" title="10.1112/S1461157000000942">
- * Spider Diagrams (2005)</a>.
- * <p>It contains all necessary information about the habitats of spiders,
- * shaded zones, contour names, zones etc.</p>
- * <p>You can construct new primary spider diagrams via the static methods in
- * {@link SpiderDiagrams}.</p>
- * <p>Instances of this class (and its derived classes) are immutable.</p>
+ * spider diagrams see paper <a
+ * href="http://journals.cambridge.org/action/displayAbstract?fromPage=online&aid=6564924"
+ * title="10.1112/S1461157000000942"> Spider Diagrams (2005)</a>. <p>It contains
+ * all necessary information about the habitats of spiders, shaded zones,
+ * contour names, zones etc.</p> <p>You can construct new primary spider
+ * diagrams via the static methods in
+ * {@link SpiderDiagrams}.</p> <p>Instances of this class (and its derived
+ * classes) are immutable.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class PrimarySpiderDiagram extends SpiderDiagram {
@@ -51,22 +51,21 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     /**
-     * The identifier of the primary (unitary) spider diagram in the textual representation
-     * of spider diagrams.
-     * <p>This value is used in the textual representation of spider diagrams
-     * (see {@link SpiderDiagram#toString()}).</p>
+     * The identifier of the primary (unitary) spider diagram in the textual
+     * representation of spider diagrams. <p>This value is used in the textual
+     * representation of spider diagrams (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextPrimaryId = "PrimarySD";
     /**
-     * The attribute key name for the list of habitats in the primary spider diagram.
-     * <p>This value is used in the textual representation of spider diagrams
-     * (see {@link SpiderDiagram#toString()}).</p>
+     * The attribute key name for the list of habitats in the primary spider
+     * diagram. <p>This value is used in the textual representation of spider
+     * diagrams (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextHabitatsAttribute = "habitats";
     /**
-     * The attribute key name for the list of shaded zones in the primary spider diagram.
-     * <p>This value is used in the textual representation of spider diagrams
-     * (see {@link SpiderDiagram#toString()}).</p>
+     * The attribute key name for the list of shaded zones in the primary spider
+     * diagram. <p>This value is used in the textual representation of spider
+     * diagrams (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextShadedZonesAttribute = "sh_zones";
     /**
@@ -77,9 +76,9 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      */
     public static final String SDTextPresentZonesAttribute = "present_zones";
     /**
-     * The attribute key name for the list of spiders in the primary spider diagram.
-     * <p>This value is used in the textual representation of spider diagrams
-     * (see {@link SpiderDiagram#toString()}).</p>
+     * The attribute key name for the list of spiders in the primary spider
+     * diagram. <p>This value is used in the textual representation of spider
+     * diagrams (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextSpidersAttribute = "spiders";
     // </editor-fold>
@@ -103,10 +102,11 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     /**
      * Creates an instance of a primary spider diagram with the given spiders,
-     * their habitats and shaded zones.
-     * <p>This method makes copies of the given parameters.</p>
-     * @param spiders a set of spiders (their names) that appear in this
-     * spider diagram.
+     * their habitats and shaded zones. <p>This method makes copies of the given
+     * parameters.</p>
+     *
+     * @param spiders a set of spiders (their names) that appear in this spider
+     * diagram.
      * @param habitats a key-value map of spiders and their corresponding
      * {@link Region habitats}.
      * @param shadedZones a set of shaded {@link Zone zones}.
@@ -122,11 +122,12 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     /**
      * Initialises a new primary spider diagram with the given set of spiders,
-     * habitats and shaded zones.
-     * <p>Note that this method does <span style="font-weight:bold">not</span>
-     * make copies of the input parameters.</p>
-     * @param spiders a set of spiders (their names) that appear in this
-     * spider diagram.
+     * habitats and shaded zones. <p>Note that this method does <span
+     * style="font-weight:bold">not</span> make copies of the input
+     * parameters.</p>
+     *
+     * @param spiders a set of spiders (their names) that appear in this spider
+     * diagram.
      * @param habitats a key-value map of spiders and their corresponding
      * {@link Region habitats}.
      * @param shadedZones a set of shaded {@link Zone zones}.
@@ -165,8 +166,8 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
      * Returns an unmodifiable key-value map of spiders with their corresponding
-     * {@link Region habitats}.
-     * <p>Note: this method may return {@code null}.</p>
+     * {@link Region habitats}. <p>Note: this method may return {@code null}.</p>
+     *
      * @return an unmodifiable key-value map of spiders with their corresponding
      * {@link Region habitats}.
      */
@@ -177,6 +178,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     /**
      * Returns the number of {@link PrimarySpiderDiagram#getHabitats() habitats}
      * specified in this primary spider diagram.
+     *
      * @return the number of {@link PrimarySpiderDiagram#getHabitats() habitats}
      * specified in this primary spider diagram.
      */
@@ -186,8 +188,8 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     /**
      * Returns an unmodifiable set of shaded {@link Zone zones} in this spider
-     * diagram.
-     * <p>Note: this method may return {@code null}.</p>
+     * diagram. <p>Note: this method may return {@code null}.</p>
+     *
      * @return a set of shaded {@link Zone zones} in this spider diagram..
      */
     public SortedSet<Zone> getShadedZones() {
@@ -197,6 +199,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     /**
      * Returns the number of {@link PrimarySpiderDiagram#getShadedZones() shaded
      * zones} specified in this primary spider diagram.
+     *
      * @return the number of {@link PrimarySpiderDiagram#getShadedZones() shaded
      * zones} specified in this primary spider diagram.
      */
@@ -205,25 +208,26 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     }
 
     /**
-     * Returns a set of zones that should be drawn in the spider diagram.
-     * <p>It should be noted that semantically equivalent spider diagrams can
-     * differ in the way they are drawn. For example, a spider diagram showing
-     * two disjoint sets A and B, can be drawn with the shaded intersection zone
-     * or merely drawing the contours A and B spatially disconnected (without
-     * the shaded intersection zone). This set indicates whether or not to draw
-     * such zones.</p>
-     * @return a set of zones that should be drawn in the diagram.
-     * <p>May return {@code null}.</p>
+     * Returns a set of zones that should be drawn in the spider diagram. <p>It
+     * should be noted that semantically equivalent spider diagrams can differ
+     * in the way they are drawn. For example, a spider diagram showing two
+     * disjoint sets A and B, can be drawn with the shaded intersection zone or
+     * merely drawing the contours A and B spatially disconnected (without the
+     * shaded intersection zone). This set indicates whether or not to draw such
+     * zones.</p>
+     *
+     * @return a set of zones that should be drawn in the diagram. <p>May return {@code null}.</p>
      */
     public SortedSet<Zone> getPresentZones() {
         return presentZones == null ? null : Collections.unmodifiableSortedSet(presentZones);
     }
 
     /**
-     * Returns the number of zones in the
-     * <span style="font-style:italic;">explicit present zones set</span>.
-     * <p>See {@link PrimarySpiderDiagram#getPresentZones()} for a description
-     * on what <span style="font-style:italic;">present zones</span> are.</p>
+     * Returns the number of zones in the <span
+     * style="font-style:italic;">explicit present zones set</span>. <p>See {@link PrimarySpiderDiagram#getPresentZones()}
+     * for a description on what <span style="font-style:italic;">present
+     * zones</span> are.</p>
+     *
      * @return the number of explicitly present zones.
      */
     public int getPresentZonesCount() {
@@ -232,8 +236,8 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     /**
      * Returns an unmodifiable set of spiders (their names) that appear in this
-     * spider diagram.
-     * <p>Note: this method may return {@code null}.</p>
+     * spider diagram. <p>Note: this method may return {@code null}.</p>
+     *
      * @return a set of spiders (their names) that appear in this spider
      * diagram.
      */
@@ -244,6 +248,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     /**
      * Returns the number of {@link PrimarySpiderDiagram#getSpiders() spiders}
      * specified in this primary spider diagram.
+     *
      * @return the number of {@link PrimarySpiderDiagram#getSpiders() spiders}
      * specified in this primary spider diagram.
      */
@@ -253,6 +258,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     /**
      * Returns the habitat of the given spider.
+     *
      * @param spider the name of the spider for which to return the habitat.
      * @return the habitat of the given spider.
      */
@@ -263,6 +269,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     /**
      * Checks whether the spider with the given name is present in this primary
      * spider diagram.
+     *
      * @param spider the name of the spider to check whether it is present in
      * this primary spider diagram.
      * @return {@code true} if and only if the spider is present in this primary
@@ -274,16 +281,16 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     /**
      * <p>Returns a set of all contours that are mentioned in this primary
-     * spider diagram.</p>
-     * <p><span style="font-weight:bold">Important</span>: this method returns
-     * the set of all contours only if this primary spider diagram is {@link 
+     * spider diagram.</p> <p><span style="font-weight:bold">Important</span>:
+     * this method returns the set of all contours only if this primary spider
+     * diagram is {@link
      * PrimarySpiderDiagram#isValid() valid}, otherwise an {@link UnsupportedOperationException
-     * exception} is thrown.</p>
-     * <p>Note: this method never returns {@code null}. If there are no contours
-     * then this method will return an empty set.</p>
+     * exception} is thrown.</p> <p>Note: this method never returns {@code null}.
+     * If there are no contours then this method will return an empty set.</p>
+     *
      * @return an {@link Collections#unmodifiableSortedSet(java.util.SortedSet)
-     * unmodifiable sorted set} of all contours that are mentioned in this primary
-     * spider diagram.
+     * unmodifiable sorted set} of all contours that are mentioned in this
+     * primary spider diagram.
      */
     public SortedSet<String> getAllContours() {
         if (isValid()) {
@@ -323,6 +330,41 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
             return this;
         } else {
             throw new IndexOutOfBoundsException(i18n("GERR_INDEX_OUT_OF_BOUNDS"));
+        }
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Iterable Implementation">
+    public Iterator<SpiderDiagram> iterator() {
+        return new AtomicSpiderDiagramIterator(this);
+    }
+
+    static class AtomicSpiderDiagramIterator implements Iterator<SpiderDiagram> {
+        private SpiderDiagram sd;
+        private boolean atStart = true;
+
+        public AtomicSpiderDiagramIterator(SpiderDiagram sd) {
+            if (sd == null) {
+                throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sd"));
+            }
+            this.sd = sd;
+        }
+
+        public boolean hasNext() {
+            return atStart;
+        }
+
+        public SpiderDiagram next() {
+            if (atStart) {
+                atStart = false;
+                return sd;
+            } else {
+                throw new NoSuchElementException();
+            }
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException(i18n("SD_ITER_REMOVE_NOT_SUPPORTED"));
         }
     }
     // </editor-fold>
@@ -381,9 +423,9 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     //<editor-fold defaultstate="collapsed" desc="Transformation Methods">
     /**
      * Creates a copy of this primary spider diagram that contains the given
-     * spider and its habitat.
-     * <p>If the original primary spider diagram already contained this spider,
-     * then it is simply replaced.</p>
+     * spider and its habitat. <p>If the original primary spider diagram already
+     * contained this spider, then it is simply replaced.</p>
+     *
      * @param spider the spider to be included in the new primary spider
      * diagram.
      * @param habitat the habitat of the spider.
@@ -449,10 +491,11 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     }
 
     /**
-     * Prints a list of habitats to the given {@link StringBuilder}.
-     * <p>The output format is '{@code [ habitat, habitat, ... ]}'. See {@link
+     * Prints a list of habitats to the given {@link StringBuilder}. <p>The
+     * output format is '{@code [ habitat, habitat, ... ]}'. See {@link
      * PrimarySpiderDiagram#printHabitat(java.lang.StringBuilder, java.lang.String, speedith.core.lang.Region)}
      * for a description of the habitat output format (for each habitat).</p>
+     *
      * @param sb
      */
     private void printHabitats(StringBuilder sb) {
@@ -473,9 +516,10 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     }
 
     /**
-     * Outputs a single habitat into the {@link StringBuilder}.
-     * <p>The format of the habitat is '{@code (spider, region)}' (it is a
-     * simple pair tuple).</p>
+     * Outputs a single habitat into the {@link StringBuilder}. <p>The format of
+     * the habitat is '{@code (spider, region)}' (it is a simple pair
+     * tuple).</p>
+     *
      * @param sb
      * @param spider
      * @param region
@@ -498,9 +542,10 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     // <editor-fold defaultstate="collapsed" desc="Equality Comparison Methods">
     /**
-     * Checks for syntactical and 
+     * Checks for syntactical and
+     *
      * @param psd
-     * @return 
+     * @return
      */
     @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
     private boolean __isPsdEqual(PrimarySpiderDiagram psd) {
@@ -513,8 +558,9 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     /**
      * Checks whether this and the given primary spider diagrams have the same
-     * habitats for their spiders (invariant under spider names).
-     * <p>This method can be used to check for semantic equivalence.</p>
+     * habitats for their spiders (invariant under spider names). <p>This method
+     * can be used to check for semantic equivalence.</p>
+     *
      * @param psd
      * @return
      */
@@ -601,8 +647,9 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     // <editor-fold defaultstate="collapsed" desc="Validity Check Methods">
     /**
-     * Checks whether this primary spider diagram is valid according to the rules
-     * described in {@link PrimarySpiderDiagram#isValid()}.
+     * Checks whether this primary spider diagram is valid according to the
+     * rules described in {@link PrimarySpiderDiagram#isValid()}.
+     *
      * @return see {@link PrimarySpiderDiagram#isValid()}.
      */
     private boolean checkValid() {
@@ -655,15 +702,15 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     /**
      * <p><span style="font-weight:bold">Important</span>: this method returns
-     * the set of all contours only if this primary spider diagram is {@link 
-     * PrimarySpiderDiagram#isValid() valid}.</p>
-     * <p>Returns a set of contours that are mentioned in a randomly chosen zone of
-     * this primary spider diagram.</p>
-     * <p><span style="font-weight:bold">Q: </span>Why a <span style="font-style:italic;">randomly chosen</span> zone?</p>
-     * <p><span style="font-weight:bold">A: </span>Because all zones in a valid
-     * primary spider diagram</p>
-     * <p>Note: this method never returns {@code null}. If there are no contours
-     * then this method will return an empty set.</p>
+     * the set of all contours only if this primary spider diagram is {@link
+     * PrimarySpiderDiagram#isValid() valid}.</p> <p>Returns a set of contours
+     * that are mentioned in a randomly chosen zone of this primary spider
+     * diagram.</p> <p><span style="font-weight:bold">Q: </span>Why a <span
+     * style="font-style:italic;">randomly chosen</span> zone?</p> <p><span
+     * style="font-weight:bold">A: </span>Because all zones in a valid primary
+     * spider diagram</p> <p>Note: this method never returns {@code null}. If
+     * there are no contours then this method will return an empty set.</p>
+     *
      * @return an {@link Collections#unmodifiableSortedSet(java.util.SortedSet)
      * unmodifiable sorted set} of contours that are mentioned in a randomly
      * chosen zone of this primary spider diagram.

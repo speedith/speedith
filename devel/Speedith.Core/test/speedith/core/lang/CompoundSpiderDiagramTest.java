@@ -442,29 +442,54 @@ public class CompoundSpiderDiagramTest {
         checkSDCollection(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_17));
     }
 
+    /**
+     * Test of iterator method, of class CompoundSpiderDiagram.
+     */
+    @Test
+    public void testIterator() throws ReadingException {
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1));
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_2));
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_3));
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_4));
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_5));
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_6));
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_7));
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_8));
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_9));
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_10));
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_11));
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_12));
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_13));
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_14));
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_15));
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_16));
+        checkSDIterator(SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_17));
+    }
+
+    //<editor-fold defaultstate="collapsed" desc="Private Helper Methods">
     private void checkVisitSD(CompoundSpiderDiagram sd) {
         for (int i = 0; i < sd.getSubDiagramCount(); i++) {
             final int targetSD = i;
             SpiderDiagram retVal = sd.visit(new DiagramVisitor<SpiderDiagram>() {
-
+                
                 private SpiderDiagram sd = null;
-
+                
                 public void init(SpiderDiagram root) {
                 }
-
+                
                 public void end() {
                 }
-
+                
                 public void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
                     if (subDiagramIndex == targetSD) {
                         sd = subDiagram;
                     }
                 }
-
+                
                 public boolean isDone() {
                     return sd != null;
                 }
-
+                
                 public SpiderDiagram getResult() {
                     return sd;
                 }
@@ -472,27 +497,27 @@ public class CompoundSpiderDiagramTest {
             assertEquals(sd.getSubDiagramAt(targetSD), retVal);
         }
     }
-
+    
     private static void checkSDCollection(SpiderDiagram sd) {
         ArrayList<SpiderDiagram> retVal = sd.visit(new DiagramVisitor<ArrayList<SpiderDiagram>>() {
-
+            
             private ArrayList<SpiderDiagram> collectedSDs = new ArrayList<SpiderDiagram>();
-
+            
             public void init(SpiderDiagram root) {
             }
-
+            
             public void end() {
             }
-
+            
             public void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
                 assertEquals(collectedSDs.size(), subDiagramIndex);
                 collectedSDs.add(subDiagram);
             }
-
+            
             public boolean isDone() {
                 return false;
             }
-
+            
             public ArrayList<SpiderDiagram> getResult() {
                 return collectedSDs;
             }
@@ -501,4 +526,13 @@ public class CompoundSpiderDiagramTest {
             assertSame(sd.getSubDiagramAt(i), retVal.get(i));
         }
     }
+
+    private void checkSDIterator(SpiderDiagram sd) {
+        int i = 0;
+        for (SpiderDiagram ssd : sd) {
+            assertSame(sd.getSubDiagramAt(i++), ssd);
+        }
+        assertEquals(i, sd.getSubDiagramCount());
+    }
+    //</editor-fold>
 }

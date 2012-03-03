@@ -42,7 +42,7 @@ import static speedith.core.i18n.Translations.i18n;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public abstract class SpiderDiagram {
+public abstract class SpiderDiagram implements Iterable<SpiderDiagram> {
 
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
