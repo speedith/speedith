@@ -444,6 +444,7 @@ public class CompoundSpiderDiagramTest {
 
     /**
      * Test of iterator method, of class CompoundSpiderDiagram.
+     * @throws ReadingException 
      */
     @Test
     public void testIterator() throws ReadingException {
