@@ -26,6 +26,8 @@
  */
 package speedith.ui.selection;
 
+import static speedith.i18n.Translations.*;
+
 /**
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
@@ -48,21 +50,95 @@ public class ElementSelectionDialog extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        elementSelectionPanel1 = new speedith.ui.selection.ElementSelectionPanel();
+        cancelButton = new javax.swing.JButton();
+        nextButton = new javax.swing.JButton();
+        finishButton = new javax.swing.JButton();
+        nextButton1 = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        cancelButton.setMnemonic(i18n("GSTR_CANCEL_BUTTON_MNEMONIC").charAt(0));
+        cancelButton.setText(i18n("GSTR_CANCEL_BUTTON_TEXT")); // NOI18N
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+
+        nextButton.setMnemonic(i18n("GSTR_NEXT_BUTTON_MNEMONIC").charAt(0));
+        nextButton.setText(i18n("GSTR_NEXT_BUTTON_TEXT")); // NOI18N
+        nextButton.setEnabled(false);
+        nextButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextButtonActionPerformed(evt);
+            }
+        });
+
+        finishButton.setMnemonic(i18n("GSTR_FINISH_BUTTON_MNEMONIC").charAt(0));
+        finishButton.setText(i18n("GSTR_FINISH_BUTTON_TEXT")); // NOI18N
+        finishButton.setEnabled(false);
+        finishButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                finishButtonActionPerformed(evt);
+            }
+        });
+
+        nextButton1.setText(i18n("GSTR_PREVIOUS_BUTTON_TEXT")); // NOI18N
+        nextButton1.setEnabled(false);
+        nextButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(elementSelectionPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(finishButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(nextButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(nextButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cancelButton)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(elementSelectionPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cancelButton)
+                    .addComponent(nextButton)
+                    .addComponent(finishButton)
+                    .addComponent(nextButton1))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nextButtonActionPerformed
+
+    private void finishButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_finishButtonActionPerformed
+
+    private void nextButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nextButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -106,5 +182,10 @@ public class ElementSelectionDialog extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cancelButton;
+    private speedith.ui.selection.ElementSelectionPanel elementSelectionPanel1;
+    private javax.swing.JButton finishButton;
+    private javax.swing.JButton nextButton;
+    private javax.swing.JButton nextButton1;
     // End of variables declaration//GEN-END:variables
 }
