@@ -27,6 +27,7 @@
 package speedith.ui.selection;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import speedith.ui.SpiderDiagramClickEvent;
@@ -38,19 +39,43 @@ import speedith.ui.SpiderDiagramClickEvent;
 public abstract class SelectionSequence {
 
     private ArrayList<SelectionStep> selectionSteps;
-    private ArrayList<ArrayList<SpiderDiagramClickEvent>> acceptedSelections;
+    private ArrayList<SpiderDiagramClickEvent>[] acceptedSelections;
 
+    /**
+     * Creates a new selection sequence with the given selection steps. <p><span
+     * style="font-weight:bold">Note</span>: this method makes a copy of the
+     * given collections.</p>
+     *
+     * @param selectionSteps the selection steps (which will guide the user
+     * through the selection process).
+     */
+    public SelectionSequence(Collection<SelectionStep> selectionSteps) {
+        this(selectionSteps == null || selectionSteps.isEmpty()
+                ? null
+                : new ArrayList<SelectionStep>(selectionSteps));
+    }
+
+    /**
+     * Creates a new selection sequence with the given selection steps. <p><span
+     * style="font-weight:bold">Note</span>: this method does not make a copy of
+     * the given collections.</p>
+     *
+     * @param selectionSteps the selection steps (which will guide the user
+     * through the selection process).
+     */
     SelectionSequence(ArrayList<SelectionStep> selectionSteps) {
         if (selectionSteps == null || selectionSteps.isEmpty()) {
             throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_EMPTY_ARGUMENT", "selectionSteps"));
         }
         this.selectionSteps = selectionSteps;
-        this.acceptedSelections = new ArrayList<ArrayList<SpiderDiagramClickEvent>>(selectionSteps.size());
+        this.acceptedSelections = new ArrayList[selectionSteps.size()];
     }
 
     /**
-     * Returns an unmodifiable list of selection click for the given step. Returns
-     * {@code null} if no click has been accepted for this step.
+     * Returns an unmodifiable view of the list of selection clicks for the
+     * given step. Returns {@code null} if no click has been accepted for this
+     * step.
+     *
      * @param stepIndex
      * @return
      */
@@ -58,10 +83,44 @@ public abstract class SelectionSequence {
         if (stepIndex < 0 || stepIndex >= selectionSteps.size()) {
             throw new IndexOutOfBoundsException(speedith.core.i18n.Translations.i18n("GERR_INDEX_OUT_OF_BOUNDS"));
         }
-        return (stepIndex >= acceptedSelections.size()
-                || acceptedSelections.get(stepIndex) == null
-                || acceptedSelections.get(stepIndex).isEmpty())
+        return (acceptedSelections[stepIndex] == null
+                || acceptedSelections[stepIndex].isEmpty())
                 ? null
-                : Collections.unmodifiableList(acceptedSelections.get(stepIndex));
+                : Collections.unmodifiableList(acceptedSelections[stepIndex]);
+    }
+
+    /**
+     * Returns the selection steps that will guide the user through the
+     * diagrammatic-element selection process.
+     *
+     * @return the selection steps that will guide the user through the
+     * diagrammatic-element selection process.
+     */
+    public List<SelectionStep> getSelectionSteps() {
+        return Collections.unmodifiableList(selectionSteps);
+    }
+
+    public int getSelectionStepsCount() {
+        return selectionSteps.size();
+    }
+
+    public SelectionStep getSelectionStepAt(int index) {
+        return selectionSteps.get(index);
+    }
+
+    public int getAcceptedClickCount(int stepIndex) {
+        return acceptedSelections[stepIndex] == null ? 0 : acceptedSelections[stepIndex].size();
+    }
+
+    protected void addAcceptedClick(int stepIndex, SpiderDiagramClickEvent click) {
+        (acceptedSelections[stepIndex] == null
+                ? (acceptedSelections[stepIndex] = new ArrayList<SpiderDiagramClickEvent>())
+                : acceptedSelections[stepIndex]).add(click);
+    }
+
+    protected void clearAcceptedClicks(int stepIndex) {
+        if (acceptedSelections[stepIndex] != null) {
+            acceptedSelections[stepIndex].clear();
+        }
     }
 }
