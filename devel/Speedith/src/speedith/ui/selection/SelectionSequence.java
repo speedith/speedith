@@ -26,10 +26,42 @@
  */
 package speedith.ui.selection;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import speedith.ui.SpiderDiagramClickEvent;
+
 /**
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SelectionSequence {
-    
+public abstract class SelectionSequence {
+
+    private ArrayList<SelectionStep> selectionSteps;
+    private ArrayList<ArrayList<SpiderDiagramClickEvent>> acceptedSelections;
+
+    SelectionSequence(ArrayList<SelectionStep> selectionSteps) {
+        if (selectionSteps == null || selectionSteps.isEmpty()) {
+            throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_EMPTY_ARGUMENT", "selectionSteps"));
+        }
+        this.selectionSteps = selectionSteps;
+        this.acceptedSelections = new ArrayList<ArrayList<SpiderDiagramClickEvent>>(selectionSteps.size());
+    }
+
+    /**
+     * Returns an unmodifiable list of selection click for the given step. Returns
+     * {@code null} if no click has been accepted for this step.
+     * @param stepIndex
+     * @return
+     */
+    public List<SpiderDiagramClickEvent> getAcceptedClicksForStepAt(int stepIndex) {
+        if (stepIndex < 0 || stepIndex >= selectionSteps.size()) {
+            throw new IndexOutOfBoundsException(speedith.core.i18n.Translations.i18n("GERR_INDEX_OUT_OF_BOUNDS"));
+        }
+        return (stepIndex >= acceptedSelections.size()
+                || acceptedSelections.get(stepIndex) == null
+                || acceptedSelections.get(stepIndex).isEmpty())
+                ? null
+                : Collections.unmodifiableList(acceptedSelections.get(stepIndex));
+    }
 }
