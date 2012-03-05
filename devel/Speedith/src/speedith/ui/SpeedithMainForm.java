@@ -517,32 +517,32 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         /////////////////
         this.goalsPanel1.setGoals(getStep0());
         this.goalsPanel1.setReasoningStep(0);
-        this.goalsPanel1.setHighlightMode(CirclesPanel2.All);
+        this.goalsPanel1.setHighlightMode(SpiderDiagramPanel.All);
         /////////////////
         /// Step 1
         /////////////////
 //        goals = Goals.createGoalsFrom();
         this.goalsPanel2.setGoals(getStep1());
         this.goalsPanel2.setReasoningStep(1);
-        this.goalsPanel2.setHighlightMode(CirclesPanel2.All);
+        this.goalsPanel2.setHighlightMode(SpiderDiagramPanel.All);
         /////////////////
         /// Step 2
         /////////////////
         this.goalsPanel3.setGoals(getStep2());
         this.goalsPanel3.setReasoningStep(2);
-        this.goalsPanel3.setHighlightMode(CirclesPanel2.All);
+        this.goalsPanel3.setHighlightMode(SpiderDiagramPanel.All);
         /////////////////
         /// Step 3
         /////////////////
         this.goalsPanel4.setGoals(getStep3());
         this.goalsPanel4.setReasoningStep(3);
-        this.goalsPanel4.setHighlightMode(CirclesPanel2.All);
+        this.goalsPanel4.setHighlightMode(SpiderDiagramPanel.All);
         /////////////////
         /// Step 4
         /////////////////
         this.goalsPanel5.setGoals(getStep4());
         this.goalsPanel5.setReasoningStep(4);
-        this.goalsPanel5.setHighlightMode(CirclesPanel2.All);
+        this.goalsPanel5.setHighlightMode(SpiderDiagramPanel.All);
     }
     // </editor-fold>
     

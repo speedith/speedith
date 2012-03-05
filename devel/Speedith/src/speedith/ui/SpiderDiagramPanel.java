@@ -57,6 +57,20 @@ import static speedith.i18n.Translations.i18n;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SpiderDiagramPanel extends javax.swing.JPanel {
+    
+    // <editor-fold defaultstate="collapsed" desc="Fields and Constants">
+    /**
+     * This value may be used in {@link SpiderDiagramPanel#setHighlightMode(int)}
+     * to indicate that operators should be highlighted.
+     */
+    public static final int Operators = CirclesPanel2.All + 1;
+    /**
+     * This value indicates that all diagrammatic components of a compound
+     * spider diagram should be highlighted (not just the {@link CirclesPanel2#All ones from primary
+     * spider diagrams}).
+     */
+    public static final int All = CirclesPanel2.All | Operators;
+    // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
@@ -238,16 +252,20 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
      * them.</li> <li>{@link CirclesPanel2#Zones}: which indicates that zones
      * will be highlighted when the user hovers over them.</li> <li>{@link CirclesPanel2#Contours}:
      * which indicates that circle contours will be highlighted when the user
-     * hovers over them.</li> </ul></p> <p> The {@link CirclesPanel2#All} and {@link CirclesPanel2#None}
-     * flags can also be used. These indicate that all diagram or no elements
+     * hovers over them.</li> <li>{@link SpiderDiagramPanel#Operators}:
+     * indicates that also the operators of compound spider diagrams should be
+     * highlighted.</li> </ul></p> <p> The {@link SpiderDiagramPanel#All}, 
+     * {@link CirclesPanel2#All}, and {@link CirclesPanel2#None}
+     * flags can also be used. These indicate that all elements, all primary
+     * spider diagram elements, or no elements at all
      * (respectively) can be highlighted with the mouse.</p>
      *
      * @param highlightMode the new set of flags that determines which elements
      * of the diagram may be highlighted with the mouse.
      */
     public void setHighlightMode(int highlightMode) {
-        if (this.highlightMode != (highlightMode & CirclesPanel2.All)) {
-            this.highlightMode = highlightMode & CirclesPanel2.All;
+        if (this.highlightMode != (highlightMode & All)) {
+            this.highlightMode = highlightMode & All;
             applyHighlightModeToPanels();
         }
     }
@@ -532,6 +550,9 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
                     ((CirclesPanel2) component).setHighlightMode(highlightMode);
                 } else if (component instanceof SpiderDiagramPanel) {
                     ((SpiderDiagramPanel) component).setHighlightMode(highlightMode);
+                } else if (component instanceof OperatorPanel) {
+                    OperatorPanel operatorPanel = (OperatorPanel) component;
+                    operatorPanel.setHighlighting((highlightMode & Operators) == Operators);
                 }
             }
         }

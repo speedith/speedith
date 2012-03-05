@@ -32,19 +32,29 @@
  */
 package speedith.ui;
 
+import java.awt.Color;
+import java.awt.Font;
 import speedith.core.i18n.Translations;
 import speedith.core.lang.Operator;
 
 /**
  * This label displays the spider-diagrammatic operators.
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class OperatorPanel extends javax.swing.JPanel {
 
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    private boolean highlighting = false;
+    private static final Font DefaultFont = new Font("Dialog", 0, 24);
+    private static final Color DefaultColor = new Color(0, 0, 0);
+    private static final Font HighlightFont = new Font("Dialog", Font.BOLD, 26);
+    private static final Color HighlightColor = new Color(0xff, 0, 0);
+    // </editor-fold>
+
     /**
-     * Creates an empty operator label.
-     * <p>Use {@link OperatorPanel#setOperator(speedith.core.lang.Operator)} to
-     * change what this label displays.</p>
+     * Creates an empty operator label. <p>Use {@link OperatorPanel#setOperator(speedith.core.lang.Operator)}
+     * to change what this label displays.</p>
      */
     public OperatorPanel() {
         this(null);
@@ -52,6 +62,7 @@ public class OperatorPanel extends javax.swing.JPanel {
 
     /**
      * Creates a new operator label with the given operator.
+     *
      * @param operator the operator to be displayed initially.
      */
     public OperatorPanel(Operator operator) {
@@ -70,10 +81,31 @@ public class OperatorPanel extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(40, 40));
         setLayout(new java.awt.BorderLayout());
 
-        lblOperator.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        lblOperator.setFont(DefaultFont);
+        lblOperator.setForeground(DefaultColor);
         lblOperator.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblOperator.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                onMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                onMouseEntered(evt);
+            }
+        });
         add(lblOperator, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void onMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMouseEntered
+        if (isHighlighting()) {
+            applyHighlight();
+        }
+    }//GEN-LAST:event_onMouseEntered
+
+    private void onMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMouseExited
+        if (isHighlighting()) {
+            applyNoHighlight();
+        }
+    }//GEN-LAST:event_onMouseExited
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lblOperator;
     // End of variables declaration//GEN-END:variables
@@ -91,6 +123,7 @@ public class OperatorPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
      * Returns the currently displayed operator.
+     *
      * @return the currently displayed operator.
      */
     public final Operator getOperator() {
@@ -99,6 +132,7 @@ public class OperatorPanel extends javax.swing.JPanel {
 
     /**
      * Sets the currently displayed operator in this operator label.
+     *
      * @param operator the new operator to display in this label.
      */
     public final void setOperator(Operator operator) {
@@ -128,6 +162,31 @@ public class OperatorPanel extends javax.swing.JPanel {
                 }
             }
         }
+    }
+
+    public void setHighlighting(boolean enable) {
+        if (enable != highlighting) {
+            this.highlighting = enable;
+            if (!this.highlighting) {
+                applyNoHighlight();
+            }
+        }
+    }
+
+    public boolean isHighlighting() {
+        return highlighting;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Private Helper Methods">
+    private void applyNoHighlight() {
+        lblOperator.setFont(DefaultFont);
+        lblOperator.setForeground(DefaultColor);
+    }
+
+    private void applyHighlight() {
+        lblOperator.setFont(HighlightFont);
+        lblOperator.setForeground(HighlightColor);
     }
     // </editor-fold>
 }
