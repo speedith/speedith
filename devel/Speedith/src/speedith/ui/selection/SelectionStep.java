@@ -177,4 +177,12 @@ public abstract class SelectionStep {
      * object should also contain a message explaining the reason for rejection.
      */
     public abstract ClickRejectionExplanation acceptClick(SpiderDiagramClickEvent event, SelectionSequence selection, int thisIndex);
+    
+    /**
+     * This method indicates whether the selection sequence UI should clean
+     * all the selection of this step when the user presses the "previous" button.
+     * @return a value that indicates whether the selection sequence UI should clean
+     * all the selection of this step when the user presses the "previous" button.
+     */
+    public abstract boolean cleanSelectionOnPrevious();
 }

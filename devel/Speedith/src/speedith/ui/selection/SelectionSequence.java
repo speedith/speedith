@@ -39,7 +39,7 @@ import speedith.ui.SpiderDiagramClickEvent;
 public abstract class SelectionSequence {
 
     private ArrayList<SelectionStep> selectionSteps;
-    private ArrayList<SpiderDiagramClickEvent>[] acceptedSelections;
+    protected ArrayList<SpiderDiagramClickEvent>[] acceptedSelections;
 
     /**
      * Creates a new selection sequence with the given selection steps. <p><span
@@ -63,6 +63,7 @@ public abstract class SelectionSequence {
      * @param selectionSteps the selection steps (which will guide the user
      * through the selection process).
      */
+    @SuppressWarnings("unchecked")
     SelectionSequence(ArrayList<SelectionStep> selectionSteps) {
         if (selectionSteps == null || selectionSteps.isEmpty()) {
             throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_EMPTY_ARGUMENT", "selectionSteps"));
@@ -110,17 +111,5 @@ public abstract class SelectionSequence {
 
     public int getAcceptedClickCount(int stepIndex) {
         return acceptedSelections[stepIndex] == null ? 0 : acceptedSelections[stepIndex].size();
-    }
-
-    protected void addAcceptedClick(int stepIndex, SpiderDiagramClickEvent click) {
-        (acceptedSelections[stepIndex] == null
-                ? (acceptedSelections[stepIndex] = new ArrayList<SpiderDiagramClickEvent>())
-                : acceptedSelections[stepIndex]).add(click);
-    }
-
-    protected void clearAcceptedClicks(int stepIndex) {
-        if (acceptedSelections[stepIndex] != null) {
-            acceptedSelections[stepIndex].clear();
-        }
     }
 }
