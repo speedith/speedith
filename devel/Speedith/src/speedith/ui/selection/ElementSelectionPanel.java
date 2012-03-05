@@ -161,6 +161,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
 
         clearButton.setMnemonic(i18n("GSTR_CLEAR_BUTTON_MNEMONIC").charAt(0));
         clearButton.setText(i18n("GSTR_CLEAR_BUTTON_TEXT")); // NOI18N
+        clearButton.setToolTipText(i18n("SELSEQ_CLEAR_SELECTION")); // NOI18N
         clearButton.setEnabled(false);
         clearButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -258,9 +259,9 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     private void onSpiderDiagramClicked(speedith.ui.SpiderDiagramClickEvent evt) {//GEN-FIRST:event_onSpiderDiagramClicked
         SelectionStep curSelStep = getCurSelStep();
         if (curSelStep != null && !curSelStep.isFinished(selection, curStep)) {
-            ClickRejectionExplanation result = curSelStep.acceptClick(evt, selection, curStep);
+            ClickRejectionExplanation result = curSelStep.acceptClick(evt, selection, getCurrentStep());
             if (result == null) {
-                selection.addAcceptedClick(curStep, evt);
+                selection.addAcceptedClick(getCurrentStep(), evt);
                 // Check if the step is finished. If it is, go to the next one:
                 goToNextStep(false, false);
                 refreshUI();
@@ -280,21 +281,39 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
     //</editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Public Properties">
+    /**
+     * Returns the current selection.
+     *
+     * @return the current selection.
+     */
+    public SelectionSequence getSelection() {
+        return selection;
+    }
+
+    /**
+     * @return the index of the current step.
+     */
+    public int getCurrentStep() {
+        return curStep;
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="UI Refresh Methods">
     private void refreshStepInstructionLabel() {
-        if (curStep >= getStepCount()) {
+        if (getCurrentStep() >= getStepCount()) {
             stepInstructionMessage.setText(null);
         } else {
-            String instruction = selection.getSelectionStepAt(curStep).getInstruction();
+            String instruction = selection.getSelectionStepAt(getCurrentStep()).getInstruction();
             stepInstructionMessage.setText(instruction);
         }
     }
 
     private void refreshStepLabel() {
-        if (curStep >= getStepCount()) {
+        if (getCurrentStep() >= getStepCount()) {
             stepNumber.setText(i18n("SELSEQ_STEP_FINISHED"));
         } else if (getStepCount() > 1) {
-            stepNumber.setText(i18n("SELSEQ_STEP_N_OF_M", curStep + 1, selection.getSelectionStepsCount()));
+            stepNumber.setText(i18n("SELSEQ_STEP_N_OF_M", getCurrentStep() + 1, selection.getSelectionStepsCount()));
         } else {
             stepNumber.setText(null);
         }
@@ -329,7 +348,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
 
     private void refreshNextButton() {
         SelectionStep curSelStep = getCurSelStep();
-        nextButton.setEnabled(curStep < getStepCount() - 1 && curSelStep.isSkippable(selection, curStep));
+        nextButton.setEnabled(getCurrentStep() < getStepCount() - 1 && curSelStep.isSkippable(selection, getCurrentStep()));
     }
 
     /**
@@ -337,7 +356,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
      */
     private void refreshFinishButton() {
         boolean canFinish = true;
-        for (int i = curStep; i < getStepCount(); i++) {
+        for (int i = getCurrentStep(); i < getStepCount(); i++) {
             SelectionStep selStep = selection.getSelectionStepAt(i);
             if (!selStep.isSkippable(selection, i)) {
                 canFinish = false;
@@ -348,16 +367,16 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     }
 
     private void refreshPreviousButton() {
-        previousButton.setEnabled(curStep > 0);
+        previousButton.setEnabled(getCurrentStep() > 0);
     }
 
     private void refreshClearButton() {
-        clearButton.setEnabled(getCurSelStep() != null && selection.getAcceptedClickCount(curStep) > 0);
+        clearButton.setEnabled(getCurSelStep() != null && selection.getAcceptedClickCount(getCurrentStep()) > 0);
     }
 
     private void refreshDiagramPanel() {
         // Disable highlighting in the diagram, if the whole thing is finished:
-        spiderDiagramPanel.setHighlightMode(getCurSelStep() == null || curStep >= getStepCount() ? CirclesPanel2.None : getCurSelStep().getHighlightingMode());
+        spiderDiagramPanel.setHighlightMode(getCurSelStep() == null || getCurrentStep() >= getStepCount() ? CirclesPanel2.None : getCurSelStep().getHighlightingMode());
     }
     // </editor-fold>
 
@@ -366,7 +385,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         // Check whether we should clean the selection on starting this step?
         SelectionStep curSelStep = getCurSelStep();
         if (curSelStep != null && (force || curSelStep.cleanSelectionOnStart())) {
-            selection.clearAcceptedClicks(curStep);
+            selection.clearAcceptedClicks(getCurrentStep());
             if (refreshUIIfChange) {
                 refreshUI();
             }
@@ -375,7 +394,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
 
     private void goToNextStep(boolean skip, boolean refreshUIIfNext) {
         SelectionStep curSelStep = getCurSelStep();
-        if (curSelStep != null && (skip || curSelStep.isFinished(selection, curStep))) {
+        if (curSelStep != null && (skip || curSelStep.isFinished(selection, getCurrentStep()))) {
             ++curStep;
             curSelStep = getCurSelStep();
             clearCurStepSelection(false, false);
@@ -386,7 +405,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     }
 
     private void goToPreviousStep(boolean refreshUIIfChange) {
-        if (curStep > 0) {
+        if (getCurrentStep() > 0) {
             --curStep;
             SelectionStep curSelStep = getCurSelStep();
             clearCurStepSelection(false, false);
@@ -399,7 +418,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
 
     // <editor-fold defaultstate="collapsed" desc="Private Properties">
     private SelectionStep getCurSelStep() {
-        return curStep >= getStepCount() ? null : selection.getSelectionStepAt(curStep);
+        return getCurrentStep() >= getStepCount() ? null : selection.getSelectionStepAt(getCurrentStep());
     }
 
     private int getStepCount() {

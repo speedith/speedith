@@ -114,6 +114,9 @@
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="speedith/i18n/strings.properties" key="GSTR_CLEAR_BUTTON_TEXT" replaceFormat="i18n(&quot;{key}&quot;)"/>
         </Property>
+        <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="speedith/i18n/strings.properties" key="SELSEQ_CLEAR_SELECTION" replaceFormat="i18n(&quot;{key}&quot;)"/>
+        </Property>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
