@@ -69,7 +69,7 @@ public class SelectionStepAny extends SelectionStep {
 
     @Override
     public int getHighlightingMode() {
-        return CirclesPanel2.All;
+        return SpiderDiagramPanel.All;
     }
     
 }

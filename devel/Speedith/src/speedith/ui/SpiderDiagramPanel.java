@@ -57,7 +57,7 @@ import static speedith.i18n.Translations.i18n;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SpiderDiagramPanel extends javax.swing.JPanel {
-    
+
     // <editor-fold defaultstate="collapsed" desc="Fields and Constants">
     /**
      * This value may be used in {@link SpiderDiagramPanel#setHighlightMode(int)}
@@ -65,11 +65,16 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
      */
     public static final int Operators = CirclesPanel2.All + 1;
     /**
+     * This value may be used in {@link SpiderDiagramPanel#setHighlightMode(int)}
+     * to indicate that null spider diagrams should be highlighted.
+     */
+    public static final int NullSpiderDiagrams = Operators << 1;
+    /**
      * This value indicates that all diagrammatic components of a compound
      * spider diagram should be highlighted (not just the {@link CirclesPanel2#All ones from primary
      * spider diagrams}).
      */
-    public static final int All = CirclesPanel2.All | Operators;
+    public static final int All = CirclesPanel2.All | Operators | NullSpiderDiagrams;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
@@ -136,7 +141,6 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     private void onMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMouseClicked
         fireSpiderDiagramClicked(0, null);
     }//GEN-LAST:event_onMouseClicked
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel diagrams;
     // End of variables declaration//GEN-END:variables
@@ -254,11 +258,13 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
      * which indicates that circle contours will be highlighted when the user
      * hovers over them.</li> <li>{@link SpiderDiagramPanel#Operators}:
      * indicates that also the operators of compound spider diagrams should be
-     * highlighted.</li> </ul></p> <p> The {@link SpiderDiagramPanel#All}, 
-     * {@link CirclesPanel2#All}, and {@link CirclesPanel2#None}
-     * flags can also be used. These indicate that all elements, all primary
-     * spider diagram elements, or no elements at all
-     * (respectively) can be highlighted with the mouse.</p>
+     * highlighted.</li> <li>{@link SpiderDiagramPanel#NullSpiderDiagrams}:
+     * indicates that also the null spider diagrams should be
+     * highlighted.</li> </ul></p> <p> The {@link SpiderDiagramPanel#All},
+     * {@link CirclesPanel2#All}, and {@link CirclesPanel2#None} flags can also
+     * be used. These indicate that all elements, all primary spider diagram
+     * elements, or no elements at all (respectively) can be highlighted with
+     * the mouse.</p>
      *
      * @param highlightMode the new set of flags that determines which elements
      * of the diagram may be highlighted with the mouse.
@@ -553,6 +559,9 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
                 } else if (component instanceof OperatorPanel) {
                     OperatorPanel operatorPanel = (OperatorPanel) component;
                     operatorPanel.setHighlighting((highlightMode & Operators) == Operators);
+                } else if (component instanceof NullSpiderDiagramPanel) {
+                    NullSpiderDiagramPanel nsdp = (NullSpiderDiagramPanel) component;
+                    nsdp.setHighlighting((highlightMode & NullSpiderDiagrams) == NullSpiderDiagrams);
                 }
             }
         }
