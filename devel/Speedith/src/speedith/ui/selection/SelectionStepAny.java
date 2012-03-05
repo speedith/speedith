@@ -26,10 +26,12 @@
  */
 package speedith.ui.selection;
 
+import icircles.gui.CirclesPanel2;
 import java.util.Locale;
 import speedith.ui.SpiderDiagramClickEvent;
 import speedith.ui.selection.SelectionStep.ClickRejectionExplanation;
 import static speedith.i18n.Translations.*;
+import speedith.ui.SpiderDiagramPanel;
 
 /**
  *
@@ -41,16 +43,12 @@ public class SelectionStepAny extends SelectionStep {
     }
 
     @Override
-    public void init(SelectionSequence selection, int thisIndex) {
-    }
-
-    @Override
-    public boolean isFinished() {
+    public boolean isFinished(SelectionSequence selection, int thisIndex) {
         return false;
     }
 
     @Override
-    public boolean isSkippable() {
+    public boolean isSkippable(SelectionSequence selection, int thisIndex) {
         return true;
     }
 
@@ -65,8 +63,13 @@ public class SelectionStepAny extends SelectionStep {
     }
 
     @Override
-    public boolean cleanSelectionOnPrevious() {
+    public boolean cleanSelectionOnStart() {
         return false;
+    }
+
+    @Override
+    public int getHighlightingMode() {
+        return CirclesPanel2.All;
     }
     
 }

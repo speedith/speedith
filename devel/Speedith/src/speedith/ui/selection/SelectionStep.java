@@ -30,6 +30,7 @@ import java.util.Locale;
 import speedith.i18n.Translations;
 import speedith.ui.SpiderDiagramClickEvent;
 import static speedith.i18n.Translations.*;
+import speedith.ui.SpiderDiagramPanel;
 
 /**
  *
@@ -104,19 +105,20 @@ public abstract class SelectionStep {
      */
     public static final ClickRejectionExplanation EmptyClickRejection = new ClickRejectionExplanation();
     
-    /**
-     * This function is called before the first click happens (i.e. before the
-     * first call to the {@link SelectionStep#acceptClick(speedith.ui.SpiderDiagramClickEvent)}
-     * function).
-     *  <p>This function is also called when the user hits the <span
-     * style="font-style:italic;">previous</span> button and this brings the
-     * user back to this selection step.</p>
-     * @param selection the selection sequence in which this selection step
-     * participates. This object contains currently {@link SelectionStep#acceptClick(speedith.ui.SpiderDiagramClickEvent)
-     * approved} selections.
-     * @param thisIndex the index of this step in the given {@link SelectionSequence}.
-     */
-    public abstract void init(SelectionSequence selection, int thisIndex);
+//    /**
+//     * This function is called before the first click happens (i.e. before the
+//     * first call to the {@link SelectionStep#acceptClick(speedith.ui.SpiderDiagramClickEvent)}
+//     * function) or when the user presses  the "Previous" button and ends up on
+//     * this step.
+//     *  <p>This function is also called when the user hits the <span
+//     * style="font-style:italic;">previous</span> button and this brings the
+//     * user back to this selection step.</p>
+//     * @param selection the selection sequence in which this selection step
+//     * participates. This object contains currently {@link SelectionStep#acceptClick(speedith.ui.SpiderDiagramClickEvent)
+//     * approved} selections.
+//     * @param thisIndex the index of this step in the given {@link SelectionSequence}.
+//     */
+//    public abstract void init(SelectionSequence selection, int thisIndex);
     
     /**
      * Indicates whether this selection step is finished. If it is, then the
@@ -127,9 +129,14 @@ public abstract class SelectionStep {
      * interface will acceptClick this function before the first click event in this
      * step and after every click event (i.e. after every call to the {@link SelectionStep#acceptClick(speedith.ui.SpiderDiagramClickEvent)}
      * function).</p>
+     * @param selection a list of selection steps and their accepted clicks.
+     * @param thisIndex the index of this step within the selection sequence.
+     * @return {@code null} if the click should be accepted, and a non-{@code null}
+     * value if the click should be rejected. In the latter case the returned
+     * object should also contain a message explaining the reason for rejection.
      * @return a value that indicates whether this selection step is finished.
      */
-    public abstract boolean isFinished();
+    public abstract boolean isFinished(SelectionSequence selection, int thisIndex);
     
     /**
      * Returns a value that indicates whether this step can be skipped.
@@ -139,9 +146,14 @@ public abstract class SelectionStep {
      * interface will acceptClick this function before the first click event in this
      * step and after every click event (i.e. after every call to the {@link SelectionStep#acceptClick(speedith.ui.SpiderDiagramClickEvent)}
      * function).</p>
-     * @return
+     * @param selection a list of selection steps and their accepted clicks.
+     * @param thisIndex the index of this step within the selection sequence.
+     * @return {@code null} if the click should be accepted, and a non-{@code null}
+     * value if the click should be rejected. In the latter case the returned
+     * object should also contain a message explaining the reason for rejection.
+     * @return a value that indicates whether this step can be skipped.
      */
-    public abstract boolean isSkippable();
+    public abstract boolean isSkippable(SelectionSequence selection, int thisIndex);
     
     /**
      * Returns an internationalised instructional message for the user. This
@@ -184,5 +196,13 @@ public abstract class SelectionStep {
      * @return a value that indicates whether the selection sequence UI should clean
      * all the selection of this step when the user presses the "previous" button.
      */
-    public abstract boolean cleanSelectionOnPrevious();
+    public abstract boolean cleanSelectionOnStart();
+    
+    /**
+     * Returns a value that indicates which elements of the diagram should be
+     * highlighted (for selection).
+     *  <p>For a set of possible values see: {@link SpiderDiagramPanel#setHighlightMode(int) }.</p>
+     * @return
+     */
+    public abstract int getHighlightingMode();
 }

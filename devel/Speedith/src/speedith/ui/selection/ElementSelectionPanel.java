@@ -26,6 +26,7 @@
  */
 package speedith.ui.selection;
 
+import icircles.gui.CirclesPanel2;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,6 +35,7 @@ import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.SpiderDiagrams;
 import static speedith.i18n.Translations.*;
 import speedith.ui.SpiderDiagramClickEvent;
+import speedith.ui.selection.SelectionStep.ClickRejectionExplanation;
 
 /**
  *
@@ -42,7 +44,7 @@ import speedith.ui.SpiderDiagramClickEvent;
 public class ElementSelectionPanel extends javax.swing.JPanel {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private final SelectionSequence selection;
+    private final SelectionSequenceMutable selection;
     private int curStep = 0;
     // </editor-fold>
 
@@ -108,8 +110,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         this.spiderDiagramPanel.setDiagram(diagram);
 
         // Some extra initialisation:
-        resetAllLabels();
-        refreshAllButtons();
+        refreshUI();
     }
     //</editor-fold>
 
@@ -132,6 +133,12 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         nextButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         previousButton = new javax.swing.JButton();
+
+        spiderDiagramPanel.addSpiderDiagramClickListener(new speedith.ui.SpiderDiagramClickListener() {
+            public void spiderDiagramClicked(speedith.ui.SpiderDiagramClickEvent evt) {
+                onSpiderDiagramClicked(evt);
+            }
+        });
 
         errorMessage.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         errorMessage.setForeground(new java.awt.Color(204, 0, 0));
@@ -233,11 +240,11 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_finishButtonActionPerformed
 
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
-        // TODO add your handling code here:
+        clearCurStepSelection(true, true);
     }//GEN-LAST:event_clearButtonActionPerformed
 
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
-        // TODO add your handling code here:
+        goToNextStep(true, true);
     }//GEN-LAST:event_nextButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
@@ -245,9 +252,21 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void previousButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousButtonActionPerformed
-        // TODO add your handling code here:
+        goToPreviousStep(true);
     }//GEN-LAST:event_previousButtonActionPerformed
 
+    private void onSpiderDiagramClicked(speedith.ui.SpiderDiagramClickEvent evt) {//GEN-FIRST:event_onSpiderDiagramClicked
+        SelectionStep curSelStep = getCurSelStep();
+        if (curSelStep != null && !curSelStep.isFinished(selection, curStep)) {
+            ClickRejectionExplanation result = curSelStep.acceptClick(evt, selection, curStep);
+            if (result == null) {
+                selection.addAcceptedClick(curStep, evt);
+                // Check if the step is finished. If it is, go to the next one:
+                goToNextStep(false, false);
+                refreshUI();
+            }
+        }
+    }//GEN-LAST:event_onSpiderDiagramClicked
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton clearButton;
@@ -281,6 +300,12 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         }
     }
 
+    private void refreshUI() {
+        refreshAllButtons();
+        refreshDiagramPanel();
+        refreshAllLabels();
+    }
+
     private void setErrorMsg(String msg) {
         if (msg == null || msg.isEmpty()) {
             errorMessage.setText(null);
@@ -289,12 +314,12 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         }
     }
 
-    private void resetAllLabels() {
+    private void refreshAllLabels() {
         refreshStepInstructionLabel();
         refreshStepLabel();
         setErrorMsg(null);
     }
-    
+
     private void refreshAllButtons() {
         refreshNextButton();
         refreshPreviousButton();
@@ -304,7 +329,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
 
     private void refreshNextButton() {
         SelectionStep curSelStep = getCurSelStep();
-        nextButton.setEnabled(curStep < getStepCount() - 1 && curSelStep.isSkippable());
+        nextButton.setEnabled(curStep < getStepCount() - 1 && curSelStep.isSkippable(selection, curStep));
     }
 
     /**
@@ -314,20 +339,61 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         boolean canFinish = true;
         for (int i = curStep; i < getStepCount(); i++) {
             SelectionStep selStep = selection.getSelectionStepAt(i);
-            if (!selStep.isSkippable()) {
+            if (!selStep.isSkippable(selection, i)) {
                 canFinish = false;
                 break;
             }
         }
         finishButton.setEnabled(canFinish);
     }
-    
+
     private void refreshPreviousButton() {
         previousButton.setEnabled(curStep > 0);
     }
-    
+
     private void refreshClearButton() {
         clearButton.setEnabled(getCurSelStep() != null && selection.getAcceptedClickCount(curStep) > 0);
+    }
+
+    private void refreshDiagramPanel() {
+        // Disable highlighting in the diagram, if the whole thing is finished:
+        spiderDiagramPanel.setHighlightMode(getCurSelStep() == null || curStep >= getStepCount() ? CirclesPanel2.None : getCurSelStep().getHighlightingMode());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Internal Logic Methods">
+    private void clearCurStepSelection(boolean force, boolean refreshUIIfChange) {
+        // Check whether we should clean the selection on starting this step?
+        SelectionStep curSelStep = getCurSelStep();
+        if (curSelStep != null && (force || curSelStep.cleanSelectionOnStart())) {
+            selection.clearAcceptedClicks(curStep);
+            if (refreshUIIfChange) {
+                refreshUI();
+            }
+        }
+    }
+
+    private void goToNextStep(boolean skip, boolean refreshUIIfNext) {
+        SelectionStep curSelStep = getCurSelStep();
+        if (curSelStep != null && (skip || curSelStep.isFinished(selection, curStep))) {
+            ++curStep;
+            curSelStep = getCurSelStep();
+            clearCurStepSelection(false, false);
+            if (refreshUIIfNext) {
+                refreshUI();
+            }
+        }
+    }
+
+    private void goToPreviousStep(boolean refreshUIIfChange) {
+        if (curStep > 0) {
+            --curStep;
+            SelectionStep curSelStep = getCurSelStep();
+            clearCurStepSelection(false, false);
+            if (refreshUIIfChange) {
+                refreshUI();
+            }
+        }
     }
     // </editor-fold>
 
