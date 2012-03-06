@@ -78,17 +78,36 @@ public class SpiderDiagramClickEvent extends EventObject {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Clicked sub-diagram with index '" + subDiagramIndex + "'.");
-        if (eventDetail instanceof SpiderClickedEvent) {
-            sb.append(" Spider: '").append(((SpiderClickedEvent) eventDetail).getFoot().getSpider().as.get_name()).append("' in zone: ").append(ICirclesToSpeedith.convert(((SpiderClickedEvent) eventDetail).getZoneOfFoot()).toString());
-        } else if (eventDetail instanceof ContourClickedEvent) {
-            sb.append(" Contour: ").append(((ContourClickedEvent) eventDetail).getContour().ac.getLabel().getLabel());
-        } else if (eventDetail instanceof ZoneClickedEvent) {
-            sb.append(" Zone: ").append(ICirclesToSpeedith.convert(((ZoneClickedEvent) eventDetail).getZone()).toString());
-        } else if (eventDetail != null) {
+        return toString(new StringBuilder("Sub-diagram index '" + subDiagramIndex + "'. "), eventDetail).toString();
+    }
+    
+    /**
+     * Returns the description of the given event.
+     * @param event the event of which description we want.
+     * @return the description of the given event.
+     */
+    public static String toString(DiagramClickEvent event) {
+        return toString(new StringBuilder(), event).toString();
+    }
+
+    /**
+     * Puts a string description of the event into the string builder.
+     * @param sb the string builder into which to print the event description.
+     * @param event the event of which the description will be appended to the
+     * given string builder.
+     * @return the given string builder (with the event description appended).
+     */
+    public static StringBuilder toString(StringBuilder sb, DiagramClickEvent event) {
+        if (event instanceof SpiderClickedEvent) {
+            ICirclesToSpeedith.convert(((SpiderClickedEvent) event).getZoneOfFoot()).toString(sb.append("Spider: '").append(((SpiderClickedEvent) event).getFoot().getSpider().as.get_name()).append("' in zone: "));
+        } else if (event instanceof ContourClickedEvent) {
+            sb.append("Contour: ").append(((ContourClickedEvent) event).getContour().ac.getLabel().getLabel());
+        } else if (event instanceof ZoneClickedEvent) {
+            ICirclesToSpeedith.convert(((ZoneClickedEvent) event).getZone()).toString(sb.append("Zone: "));
+        } else if (event != null) {
             throw new IllegalStateException(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
         }
-        return sb.toString();
+        return sb;
     }
 
     /**

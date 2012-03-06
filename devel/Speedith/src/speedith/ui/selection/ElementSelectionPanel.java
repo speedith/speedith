@@ -134,8 +134,8 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         cancelButton = new javax.swing.JButton();
         previousButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
-        jLabel1 = new javax.swing.JLabel();
+        selectionList = new javax.swing.JList();
+        selectionLabel = new javax.swing.JLabel();
 
         spiderDiagramPanel.addSpiderDiagramClickListener(new speedith.ui.SpiderDiagramClickListener() {
             public void spiderDiagramClicked(speedith.ui.SpiderDiagramClickEvent evt) {
@@ -198,10 +198,10 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
             }
         });
 
-        jList1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        jScrollPane1.setViewportView(jList1);
+        selectionList.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jScrollPane1.setViewportView(selectionList);
 
-        jLabel1.setText("Selection:");
+        selectionLabel.setText("Selection:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -226,7 +226,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
                 .addComponent(spiderDiagramPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(3, 3, 3)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                    .addComponent(selectionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
@@ -235,7 +235,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(spiderDiagramPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addComponent(selectionLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -291,11 +291,11 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     private javax.swing.JButton clearButton;
     private javax.swing.JLabel errorMessage;
     private javax.swing.JButton finishButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton nextButton;
     private javax.swing.JButton previousButton;
+    private javax.swing.JLabel selectionLabel;
+    private javax.swing.JList selectionList;
     private speedith.ui.SpiderDiagramPanel spiderDiagramPanel;
     private javax.swing.JLabel stepInstructionMessage;
     private javax.swing.JLabel stepNumber;
