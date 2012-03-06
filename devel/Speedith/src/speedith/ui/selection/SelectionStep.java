@@ -131,9 +131,6 @@ public abstract class SelectionStep {
      * function).</p>
      * @param selection a list of selection steps and their accepted clicks.
      * @param thisIndex the index of this step within the selection sequence.
-     * @return {@code null} if the click should be accepted, and a non-{@code null}
-     * value if the click should be rejected. In the latter case the returned
-     * object should also contain a message explaining the reason for rejection.
      * @return a value that indicates whether this selection step is finished.
      */
     public abstract boolean isFinished(SelectionSequence selection, int thisIndex);
@@ -148,9 +145,6 @@ public abstract class SelectionStep {
      * function).</p>
      * @param selection a list of selection steps and their accepted clicks.
      * @param thisIndex the index of this step within the selection sequence.
-     * @return {@code null} if the click should be accepted, and a non-{@code null}
-     * value if the click should be rejected. In the latter case the returned
-     * object should also contain a message explaining the reason for rejection.
      * @return a value that indicates whether this step can be skipped.
      */
     public abstract boolean isSkippable(SelectionSequence selection, int thisIndex);

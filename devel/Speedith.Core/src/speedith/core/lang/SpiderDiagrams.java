@@ -82,6 +82,19 @@ public class SpiderDiagrams {
     public static PrimarySpiderDiagram createPrimarySD(Collection<String> spiders, Map<String, Region> habitats, Collection<Zone> shadedZones, Collection<Zone> presentZones) {
         return createPrimarySD(spiders, habitats, shadedZones, presentZones, true);
     }
+    
+    /**
+     * Creates an empty primary spider diagram (which is equivalent to the {@link 
+     * NullSpiderDiagram null spider diagram}).
+     *  <p>This method is a shorthand for calling {@link
+     * SpiderDiagrams#createPrimarySD(java.util.Collection, java.util.Map,
+     * java.util.Collection, java.util.Collection)
+     * createPrimarySD(null, null, null, null)}.</p>
+     * @return an empty primary spider diagram.
+     */
+    public static PrimarySpiderDiagram createPrimarySD() {
+        return createPrimarySD(null, null, null, null);
+    }
 
     /**
      * <p>Creates a new primary spider diagram with the given parameters.</p>

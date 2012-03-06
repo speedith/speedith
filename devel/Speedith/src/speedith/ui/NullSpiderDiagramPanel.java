@@ -78,6 +78,9 @@ public class NullSpiderDiagramPanel extends javax.swing.JPanel {
         lblNullSD.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblNullSD.setText("⊤");
         lblNullSD.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                onLabelClicked(evt);
+            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 onMouseExited(evt);
             }
@@ -99,6 +102,10 @@ public class NullSpiderDiagramPanel extends javax.swing.JPanel {
             applyHighlight();
         }
     }//GEN-LAST:event_onMouseEntered
+
+    private void onLabelClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onLabelClicked
+        dispatchEvent(evt);
+    }//GEN-LAST:event_onLabelClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lblNullSD;

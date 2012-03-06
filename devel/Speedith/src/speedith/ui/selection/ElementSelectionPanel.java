@@ -30,10 +30,12 @@ import icircles.gui.CirclesPanel2;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import javax.swing.DefaultListModel;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.SpiderDiagrams;
 import static speedith.i18n.Translations.*;
+import speedith.ui.SpeedithMainForm;
 import speedith.ui.SpiderDiagramClickEvent;
 import speedith.ui.selection.SelectionStep.ClickRejectionExplanation;
 
@@ -47,6 +49,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     private final SelectionSequenceMutable selection;
     private int curStep = 0;
     // </editor-fold>
+    private final DefaultListModel selectionListModel = new DefaultListModel();
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
@@ -54,7 +57,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
      * omni-select step.
      */
     public ElementSelectionPanel() {
-        this(SpiderDiagrams.createNullSD(), new SelectionStepAny(), new SelectionStepAny());
+        this(SpeedithMainForm.getSDExample11(), new SelectionStepAny(), new SelectionStepAny());
     }
 
     /**
@@ -199,6 +202,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         });
 
         selectionList.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        selectionList.setModel(selectionListModel);
         jScrollPane1.setViewportView(selectionList);
 
         selectionLabel.setText("Selection:");
@@ -344,6 +348,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         refreshAllButtons();
         refreshDiagramPanel();
         refreshAllLabels();
+        refreshSelectionList();
     }
 
     private void setErrorMsg(String msg) {
@@ -398,6 +403,15 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     private void refreshDiagramPanel() {
         // Disable highlighting in the diagram, if the whole thing is finished:
         spiderDiagramPanel.setHighlightMode(getCurSelStep() == null || getCurrentStep() >= getStepCount() ? CirclesPanel2.None : getCurSelStep().getHighlightingMode());
+    }
+    
+    private void refreshSelectionList() {
+        selectionListModel.clear();
+        if (getCurSelStep() != null && selection.getAcceptedClickCount(getCurrentStep()) > 0) {
+            for (SpiderDiagramClickEvent selectedElement : selection.getAcceptedClicksForStepAt(getCurrentStep())) {
+                selectionListModel.addElement(selectedElement.toString());
+            }
+        }
     }
     // </editor-fold>
 

@@ -85,6 +85,9 @@ public class OperatorPanel extends javax.swing.JPanel {
         lblOperator.setForeground(DefaultColor);
         lblOperator.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblOperator.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                onLabelClicked(evt);
+            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 onMouseExited(evt);
             }
@@ -106,6 +109,11 @@ public class OperatorPanel extends javax.swing.JPanel {
             applyNoHighlight();
         }
     }//GEN-LAST:event_onMouseExited
+
+    private void onLabelClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onLabelClicked
+        dispatchEvent(evt);
+    }//GEN-LAST:event_onLabelClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lblOperator;
     // End of variables declaration//GEN-END:variables

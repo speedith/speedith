@@ -495,6 +495,13 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         CompoundSpiderDiagram csd = SpiderDiagrams.createCompoundSD(Operator.Conjunction, sd1, sd2);
         return csd;
     }
+
+    public static CompoundSpiderDiagram getSDExample11() {
+        SpiderDiagram sd1 = getSDExample4();
+        SpiderDiagram sd2 = SpiderDiagrams.createNullSD();
+        CompoundSpiderDiagram csd = SpiderDiagrams.createCompoundSD(Operator.Equivalence, sd1, sd2);
+        return csd;
+    }
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="UI Refresh Methods">

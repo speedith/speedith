@@ -78,11 +78,12 @@ public class SpiderDiagramClickEvent extends EventObject {
 
     @Override
     public String toString() {
-        return toString(new StringBuilder("Sub-diagram index '" + subDiagramIndex + "'. "), eventDetail).toString();
+        return toString(new StringBuilder(), eventDetail).append(eventDetail == null ? "" : " ").append("Sub-diagram: ").append(subDiagramIndex).toString();
     }
-    
+
     /**
      * Returns the description of the given event.
+     *
      * @param event the event of which description we want.
      * @return the description of the given event.
      */
@@ -92,6 +93,7 @@ public class SpiderDiagramClickEvent extends EventObject {
 
     /**
      * Puts a string description of the event into the string builder.
+     *
      * @param sb the string builder into which to print the event description.
      * @param event the event of which the description will be appended to the
      * given string builder.
@@ -99,7 +101,7 @@ public class SpiderDiagramClickEvent extends EventObject {
      */
     public static StringBuilder toString(StringBuilder sb, DiagramClickEvent event) {
         if (event instanceof SpiderClickedEvent) {
-            ICirclesToSpeedith.convert(((SpiderClickedEvent) event).getZoneOfFoot()).toString(sb.append("Spider: '").append(((SpiderClickedEvent) event).getFoot().getSpider().as.get_name()).append("' in zone: "));
+            ICirclesToSpeedith.convert(((SpiderClickedEvent) event).getZoneOfFoot()).toString(sb.append("Spider: ").append(((SpiderClickedEvent) event).getFoot().getSpider().as.get_name()).append(". Zone: "));
         } else if (event instanceof ContourClickedEvent) {
             sb.append("Contour: ").append(((ContourClickedEvent) event).getContour().ac.getLabel().getLabel());
         } else if (event instanceof ZoneClickedEvent) {
