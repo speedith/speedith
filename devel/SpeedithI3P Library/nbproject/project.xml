@@ -12,6 +12,7 @@
                 <package>icircles.concreteDiagram</package>
                 <package>icircles.decomposition</package>
                 <package>icircles.gui</package>
+                <package>icircles.i18n</package>
                 <package>icircles.recomposition</package>
                 <package>icircles.test</package>
                 <package>icircles.util</package>
@@ -25,10 +26,12 @@
                 <package>speedith.core.reasoning.args</package>
                 <package>speedith.core.reasoning.rules</package>
                 <package>speedith.core.util</package>
-                <package>speedith.draw</package>
                 <package>speedith.i18n</package>
+                <package>speedith.icircles.util</package>
                 <package>speedith.logging</package>
                 <package>speedith.preferences</package>
+                <package>speedith.ui</package>
+                <package>speedith.ui.selection</package>
             </public-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/Speedith.jar</runtime-relative-path>
