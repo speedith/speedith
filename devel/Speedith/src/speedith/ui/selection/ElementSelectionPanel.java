@@ -27,6 +27,8 @@
 package speedith.ui.selection;
 
 import icircles.gui.CirclesPanel2;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -49,6 +51,21 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     private final SelectionSequenceMutable selection;
     private int curStep = 0;
     private final DefaultListModel selectionListModel = new DefaultListModel();
+    private ArrayList<ActionListener> actionListeners;
+    /**
+     * This value is given as the {@link ActionEvent#getID() action ID} in the
+     * {@link ElementSelectionPanel#addActionListener(java.awt.event.ActionListener)
+     * selection concluded event} if the user pressed on the <span
+     * style="font-style:italic;">finish</span> button.
+     */
+    public final static int Finish = 0;
+    /**
+     * This value is given as the {@link ActionEvent#getID() action ID} in the
+     * {@link ElementSelectionPanel#addActionListener(java.awt.event.ActionListener)
+     * selection concluded event} if the user pressed on the <span
+     * style="font-style:italic;">finish</span> cancel.
+     */
+    public final static int Cancel = 1;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
@@ -221,7 +238,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
                 .addGap(0, 0, 0)
                 .addGroup(selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(selectionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE))
+                    .addComponent(selectionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, 0))
         );
         selectionPanelLayout.setVerticalGroup(
@@ -229,7 +246,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
             .addGroup(selectionPanelLayout.createSequentialGroup()
                 .addComponent(selectionLabel)
                 .addGap(3, 3, 3)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
 
@@ -241,7 +258,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(finishButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 228, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(previousButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(clearButton)
@@ -254,12 +271,12 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
                 .addGap(1, 1, 1)
                 .addComponent(stepInstructionMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(errorMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(diagramAndSelectionPanel)
+            .addComponent(diagramAndSelectionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(diagramAndSelectionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                .addComponent(diagramAndSelectionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(errorMessage)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -289,7 +306,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_nextButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        // TODO add your handling code here:
+        fireSelectionEnd(Cancel);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void previousButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousButtonActionPerformed
@@ -340,6 +357,62 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
      */
     public int getCurrentStep() {
         return curStep;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Events">
+    /**
+     * Registers the given {@link ActionListener selection concluded
+     * listener}. <p>This {@link ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * event} is invoked whenever the user presses the <span
+     * style="font-style:italic;">finish</span> or the <span
+     * style="font-style:italic;">cancel</span> button.</p> <p>If the user
+     * clicked <span style="font-style:italic;">cancel</span> then the
+     * {@link ActionEvent#getID()} will be set to {@link ElementSelectionPanel#Cancel}.
+     * Otherwise, in case the user pressed the <span
+     * style="font-style:italic;">finish</span> button, the ID will be set to
+     * {@link ElementSelectionPanel#Finish}.</p>
+     *
+     * @param l the event listener to register.
+     */
+    public void addActionListener(ActionListener l) {
+        if (actionListeners == null) {
+            actionListeners = new ArrayList<ActionListener>();
+        }
+        this.actionListeners.add(l);
+    }
+
+    /**
+     * Removes the given {@link ActionListener selection concluded event listener}
+     * from the selection concluded event. <p>The given listener will no longer
+     * receive these events.</p>
+     *
+     * @param l the event listener to deregister.
+     */
+    public void removeActionListener(ActionListener l) {
+        if (actionListeners != null) {
+            actionListeners.remove(l);
+        }
+    }
+
+    /**
+     * Returns the array of all {@link ElementSelectionPanel#addActionListener(ActionListener) registered}
+     * {@link ActionListener selection concluded listeners}.
+     *
+     * @return the array of all {@link ElementSelectionPanel#addActionListener(ActionListener) registered}
+     * {@link ActionListener selection concluded listeners}.
+     */
+    public ActionListener[] getActionListeners() {
+        return listenerList.getListeners(ActionListener.class);
+    }
+
+    protected final void fireSelectionEnd(int actionID) {
+        if (actionListeners != null && actionListeners.size() > 0) {
+            ActionEvent ae = new ActionEvent(this, actionID, null);
+            for (ActionListener actionListener : actionListeners) {
+                actionListener.actionPerformed(ae);
+            }
+        }
     }
     // </editor-fold>
 
@@ -423,7 +496,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         // Disable highlighting in the diagram, if the whole thing is finished:
         spiderDiagramPanel.setHighlightMode(getCurSelStep() == null || getCurrentStep() >= getStepCount() ? CirclesPanel2.None : getCurSelStep().getHighlightingMode());
     }
-    
+
     private void refreshSelectionList() {
         selectionListModel.clear();
         if (getCurSelStep() != null && selection.getAcceptedClickCount(getCurrentStep()) > 0) {
