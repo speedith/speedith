@@ -109,6 +109,7 @@ public class SpiderDiagramClickEvent extends EventObject {
         } else if (event != null) {
             throw new IllegalStateException(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
         }
+        sb.append(".");
         return sb;
     }
 

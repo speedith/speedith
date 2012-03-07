@@ -50,105 +50,24 @@ public class ElementSelectionDialog extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        finishButton = new javax.swing.JButton();
-        nextButton1 = new javax.swing.JButton();
-        nextButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
         elementSelectionPanel1 = new speedith.ui.selection.ElementSelectionPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        finishButton.setMnemonic(i18n("GSTR_FINISH_BUTTON_MNEMONIC").charAt(0));
-        finishButton.setText(i18n("GSTR_FINISH_BUTTON_TEXT")); // NOI18N
-        finishButton.setEnabled(false);
-        finishButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                finishButtonActionPerformed(evt);
-            }
-        });
-
-        nextButton1.setMnemonic(i18n("GSTR_PREVIOUS_BUTTON_MNEMONIC").charAt(0));
-        nextButton1.setText(i18n("GSTR_PREVIOUS_BUTTON_TEXT")); // NOI18N
-        nextButton1.setEnabled(false);
-        nextButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nextButton1ActionPerformed(evt);
-            }
-        });
-
-        nextButton.setMnemonic(i18n("GSTR_NEXT_BUTTON_MNEMONIC").charAt(0));
-        nextButton.setText(i18n("GSTR_NEXT_BUTTON_TEXT")); // NOI18N
-        nextButton.setEnabled(false);
-        nextButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nextButtonActionPerformed(evt);
-            }
-        });
-
-        cancelButton.setMnemonic(i18n("GSTR_CANCEL_BUTTON_MNEMONIC").charAt(0));
-        cancelButton.setText(i18n("GSTR_CANCEL_BUTTON_TEXT")); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(finishButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 143, Short.MAX_VALUE)
-                .addComponent(nextButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nextButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cancelButton))
-            .addComponent(elementSelectionPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(elementSelectionPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(nextButton)
-                    .addComponent(nextButton1)
-                    .addComponent(finishButton)))
-        );
+        setPreferredSize(new java.awt.Dimension(635, 283));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(elementSelectionPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 655, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(elementSelectionPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cancelButtonActionPerformed
-
-    private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_nextButtonActionPerformed
-
-    private void finishButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_finishButtonActionPerformed
-
-    private void nextButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_nextButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -192,11 +111,6 @@ public class ElementSelectionDialog extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton cancelButton;
     private speedith.ui.selection.ElementSelectionPanel elementSelectionPanel1;
-    private javax.swing.JButton finishButton;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JButton nextButton;
-    private javax.swing.JButton nextButton1;
     // End of variables declaration//GEN-END:variables
 }

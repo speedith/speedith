@@ -48,8 +48,8 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private final SelectionSequenceMutable selection;
     private int curStep = 0;
-    // </editor-fold>
     private final DefaultListModel selectionListModel = new DefaultListModel();
+    // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
@@ -127,7 +127,6 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        spiderDiagramPanel = new speedith.ui.SpiderDiagramPanel();
         errorMessage = new javax.swing.JLabel();
         stepInstructionMessage = new javax.swing.JLabel();
         stepNumber = new javax.swing.JLabel();
@@ -136,15 +135,12 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         nextButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         previousButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        selectionList = new javax.swing.JList();
+        diagramAndSelectionPanel = new javax.swing.JSplitPane();
+        spiderDiagramPanel = new speedith.ui.SpiderDiagramPanel();
+        selectionPanel = new javax.swing.JPanel();
         selectionLabel = new javax.swing.JLabel();
-
-        spiderDiagramPanel.addSpiderDiagramClickListener(new speedith.ui.SpiderDiagramClickListener() {
-            public void spiderDiagramClicked(speedith.ui.SpiderDiagramClickEvent evt) {
-                onSpiderDiagramClicked(evt);
-            }
-        });
+        javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
+        selectionList = new javax.swing.JList();
 
         errorMessage.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         errorMessage.setForeground(new java.awt.Color(204, 0, 0));
@@ -201,11 +197,43 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
             }
         });
 
+        diagramAndSelectionPanel.setDividerLocation(500);
+        diagramAndSelectionPanel.setDividerSize(5);
+
+        spiderDiagramPanel.addSpiderDiagramClickListener(new speedith.ui.SpiderDiagramClickListener() {
+            public void spiderDiagramClicked(speedith.ui.SpiderDiagramClickEvent evt) {
+                onSpiderDiagramClicked(evt);
+            }
+        });
+        diagramAndSelectionPanel.setLeftComponent(spiderDiagramPanel);
+
+        selectionLabel.setText("Selection:");
+
         selectionList.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         selectionList.setModel(selectionListModel);
         jScrollPane1.setViewportView(selectionList);
 
-        selectionLabel.setText("Selection:");
+        javax.swing.GroupLayout selectionPanelLayout = new javax.swing.GroupLayout(selectionPanel);
+        selectionPanel.setLayout(selectionPanelLayout);
+        selectionPanelLayout.setHorizontalGroup(
+            selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(selectionPanelLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addGroup(selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(selectionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE))
+                .addGap(0, 0, 0))
+        );
+        selectionPanelLayout.setVerticalGroup(
+            selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(selectionPanelLayout.createSequentialGroup()
+                .addComponent(selectionLabel)
+                .addGap(3, 3, 3)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
+        );
+
+        diagramAndSelectionPanel.setRightComponent(selectionPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -213,7 +241,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(finishButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 162, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 228, Short.MAX_VALUE)
                 .addComponent(previousButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(clearButton)
@@ -221,27 +249,17 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
                 .addComponent(nextButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cancelButton))
-            .addComponent(errorMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(stepNumber)
                 .addGap(1, 1, 1)
                 .addComponent(stepInstructionMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(spiderDiagramPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(3, 3, 3)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(selectionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+            .addComponent(errorMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(diagramAndSelectionPanel)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(spiderDiagramPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(selectionLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1)))
+                .addComponent(diagramAndSelectionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(errorMessage)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -293,13 +311,14 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton clearButton;
+    private javax.swing.JSplitPane diagramAndSelectionPanel;
     private javax.swing.JLabel errorMessage;
     private javax.swing.JButton finishButton;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton nextButton;
     private javax.swing.JButton previousButton;
     private javax.swing.JLabel selectionLabel;
     private javax.swing.JList selectionList;
+    private javax.swing.JPanel selectionPanel;
     private speedith.ui.SpiderDiagramPanel spiderDiagramPanel;
     private javax.swing.JLabel stepInstructionMessage;
     private javax.swing.JLabel stepNumber;

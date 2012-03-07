@@ -26,12 +26,7 @@
  */
 package speedith.ui;
 
-import icircles.gui.CirclesPanel2;
-import icircles.util.CannotDrawException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import speedith.core.lang.*;
-import speedith.icircles.util.ICirclesToSpeedith;
 
 /**
  *
@@ -44,12 +39,6 @@ public class TestingForm extends javax.swing.JFrame {
      */
     public TestingForm() {
         initComponents();
-        try {
-            this.circlesPanel21.setDiagram(DiagramVisualisation.getConcreteDiagram(getSDExample1()));
-            this.circlesPanel22.setDiagram(DiagramVisualisation.getConcreteDiagram(getSDExample5()));
-        } catch (CannotDrawException ex) {
-            Logger.getLogger(TestingForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     /**
@@ -61,112 +50,23 @@ public class TestingForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        circlesPanel21 = new icircles.gui.CirclesPanel2();
-        circlesPanel22 = new icircles.gui.CirclesPanel2();
-        operatorPanel1 = new speedith.ui.OperatorPanel();
         elementSelectionPanel1 = new speedith.ui.selection.ElementSelectionPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        circlesPanel21.addDiagramClickListener(new icircles.gui.DiagramClickListener() {
-            public void spiderClicked(icircles.gui.SpiderClickedEvent evt) {
-                circlesPanel21SpiderClicked(evt);
-            }
-            public void zoneClicked(icircles.gui.ZoneClickedEvent evt) {
-                circlesPanel21ZoneClicked(evt);
-            }
-            public void contourClicked(icircles.gui.ContourClickedEvent evt) {
-                circlesPanel21ContourClicked(evt);
-            }
-        });
-
-        javax.swing.GroupLayout circlesPanel21Layout = new javax.swing.GroupLayout(circlesPanel21);
-        circlesPanel21.setLayout(circlesPanel21Layout);
-        circlesPanel21Layout.setHorizontalGroup(
-            circlesPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 180, Short.MAX_VALUE)
-        );
-        circlesPanel21Layout.setVerticalGroup(
-            circlesPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout circlesPanel22Layout = new javax.swing.GroupLayout(circlesPanel22);
-        circlesPanel22.setLayout(circlesPanel22Layout);
-        circlesPanel22Layout.setHorizontalGroup(
-            circlesPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 157, Short.MAX_VALUE)
-        );
-        circlesPanel22Layout.setVerticalGroup(
-            circlesPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(circlesPanel21, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(operatorPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(circlesPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(circlesPanel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(operatorPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
-                    .addComponent(circlesPanel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(elementSelectionPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(elementSelectionPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 898, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(elementSelectionPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(elementSelectionPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 511, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void circlesPanel21ContourClicked(icircles.gui.ContourClickedEvent evt) {//GEN-FIRST:event_circlesPanel21ContourClicked
-        System.out.println("Contour '" + evt.getContour().ac.getLabel().getLabel() + "' clicked.");
-    }//GEN-LAST:event_circlesPanel21ContourClicked
-
-    private void circlesPanel21SpiderClicked(icircles.gui.SpiderClickedEvent evt) {//GEN-FIRST:event_circlesPanel21SpiderClicked
-        System.out.println("Spider '" + evt.getFoot().getSpider().as.get_name()
-                + "' clicked in zone "
-                + ICirclesToSpeedith.convert(
-                circlesPanel21.getDiagram().getZoneAtPoint(
-                circlesPanel21.toDiagramCoordinates(
-                evt.getClickInfo().getPoint()))));
-    }//GEN-LAST:event_circlesPanel21SpiderClicked
-
-    private void circlesPanel21ZoneClicked(icircles.gui.ZoneClickedEvent evt) {//GEN-FIRST:event_circlesPanel21ZoneClicked
-        System.out.println("Zone " + ICirclesToSpeedith.convert(evt.getZone()).toString() + " clicked.");
-    }//GEN-LAST:event_circlesPanel21ZoneClicked
 
     /**
      * @param args the command line arguments
@@ -210,11 +110,7 @@ public class TestingForm extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private icircles.gui.CirclesPanel2 circlesPanel21;
-    private icircles.gui.CirclesPanel2 circlesPanel22;
     private speedith.ui.selection.ElementSelectionPanel elementSelectionPanel1;
-    private javax.swing.JPanel jPanel1;
-    private speedith.ui.OperatorPanel operatorPanel1;
     // End of variables declaration//GEN-END:variables
 
     // <editor-fold defaultstate="collapsed" desc="Spider Diagram Examples">
