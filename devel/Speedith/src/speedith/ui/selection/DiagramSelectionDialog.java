@@ -26,7 +26,12 @@
  */
 package speedith.ui.selection;
 
+import java.awt.Frame;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import speedith.core.lang.SpiderDiagram;
 import static speedith.i18n.Translations.i18n;
 
 /**
@@ -35,16 +40,53 @@ import static speedith.i18n.Translations.i18n;
  */
 public class DiagramSelectionDialog extends javax.swing.JDialog {
 
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    private boolean cancelled = true;
+    // </editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
-     * Creates new form DiagramSelectionDialog
+     * Creates a new diagram selection dialog with a null diagram and a single
+     * {@link SelectionStepAny select-any-element step}.
      * @param parent
-     * @param modal  
+     * @param modal
      */
     public DiagramSelectionDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
 
+    /**
+     * Creates a new diagram selection dialog with the given diagram and the given
+     * {@link SelectionStep selection steps}.
+     *  <p>The final selection of the user can be retrieved through {@link DiagramSelectionDialog#getSelection()}.</p>
+     * @param diagram the diagram from which the user will choose elements.
+     * @param selectionSteps the selection instruction steps that will lead the
+     * user through the selection process.
+     * @param parent
+     * @param modal 
+     */
+    DiagramSelectionDialog(Frame parent, boolean modal, SpiderDiagram diagram, SelectionStep... selectionSteps) {
+        this(parent, modal, diagram, Arrays.asList(selectionSteps));
+    }
+
+    /**
+     * Creates a new diagram selection dialog with the given diagram and the given
+     * {@link SelectionStep selection steps}.
+     *  <p>The final selection of the user can be retrieved through {@link DiagramSelectionDialog#getSelection()}.</p>
+     * @param diagram the diagram from which the user will choose elements.
+     * @param selectionSteps the selection instruction steps that will lead the
+     * user through the selection process.
+     * @param parent
+     * @param modal 
+     */
+    DiagramSelectionDialog(Frame parent, boolean modal, SpiderDiagram diagram, Collection<SelectionStep> selectionSteps) {
+        this(parent, modal);
+        elementSelectionPanel.setDiagramAndSelectionSteps(diagram, selectionSteps);
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Generated Code">
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -70,17 +112,18 @@ public class DiagramSelectionDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(elementSelectionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(elementSelectionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 539, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(elementSelectionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(elementSelectionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void onSelectionConcluded(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onSelectionConcluded
+        cancelled = evt.getID() == ElementSelectionPanel.Cancel;
         dispose();
     }//GEN-LAST:event_onSelectionConcluded
 
@@ -136,4 +179,25 @@ public class DiagramSelectionDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private speedith.ui.selection.ElementSelectionPanel elementSelectionPanel;
     // End of variables declaration//GEN-END:variables
+    //</editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Public Properties">
+    /**
+     * Returns the current selection made by the user.
+     * @return the current selection made by the user.
+     */
+    public SelectionSequence getSelection() {
+        return this.elementSelectionPanel.getSelection();
+    }
+
+    /**
+     * Indicates whether the user pressed the cancel (or close window) button.
+     * <p>If this value is set to {@code true} then the user cancelled the
+     * selection.</p>
+     * @return whether the user pressed the cancel (or close window) button.
+     */
+    public boolean isCancelled() {
+        return cancelled;
+    }
+    // </editor-fold>
 }
