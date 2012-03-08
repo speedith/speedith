@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith
  * 
- * File name: Class.java
+ * File name: SelectSingleSpiderStep.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -27,39 +27,72 @@
 package speedith.ui.selection;
 
 import icircles.gui.CirclesPanel2;
+import icircles.gui.SpiderClickedEvent;
+import java.util.List;
 import java.util.Locale;
+import static speedith.i18n.Translations.i18n;
 import speedith.ui.SpiderDiagramClickEvent;
-import speedith.ui.selection.SelectionStep.SelectionRejectionExplanation;
-import static speedith.i18n.Translations.*;
-import speedith.ui.SpiderDiagramPanel;
 
 /**
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SelectionStepAny extends SelectionStep {
+public class SelectSingleSpiderStep extends SelectionStep {
 
-    public SelectionStepAny() {
+    private final boolean skippable;
+
+    public SelectSingleSpiderStep(boolean skippable) {
+        this.skippable = skippable;
+    }
+
+    /**
+     * Creates an unskippable single spider selection step.
+     */
+    public SelectSingleSpiderStep() {
+        this(false);
     }
 
     @Override
     public boolean isFinished(SelectionSequence selection, int thisIndex) {
-        return false;
+        List<SpiderDiagramClickEvent> sels = selection.getAcceptedClicksForStepAt(thisIndex);
+        // This selection step is finished if all the following conditions are satisfied:
+        return sels != null
+                && sels.size() == 1 // If a single element has been selected.
+                && sels.get(0).getDetailedInfo() instanceof SpiderClickedEvent; // And that element is a spider.
+    }
+
+    public boolean isSelectionValid(List<SpiderDiagramClickEvent> sels) {
+        if (sels == null || sels.isEmpty()) {
+            return true;
+        } else if (sels.size() == 1
+                && sels.get(0).getDetailedInfo() instanceof SpiderClickedEvent) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public boolean isSkippable(SelectionSequence selection, int thisIndex) {
-        return true;
+        return skippable || isFinished(selection, thisIndex);
     }
 
     @Override
     public String getInstruction(Locale locale) {
-        return i18n(locale, "SELECTION_STEP_MSG_ANY");
+        return i18n(locale, "SELSTEP_SINGLE_SPIDER");
     }
 
     @Override
     public SelectionRejectionExplanation acceptClick(SpiderDiagramClickEvent event, SelectionSequence selection, int thisIndex) {
-        return null;
+        if (event.getDetailedInfo() instanceof SpiderClickedEvent) {
+            if (selection.getAcceptedClickCount(thisIndex) >= 1) {
+                return new I18NClickRejectionExplanation("SELSTEP_JUST_ONE_SPIDER");
+            } else {
+                return null;
+            }
+        } else {
+            return new I18NClickRejectionExplanation("SELSTEP_NOT_A_SPIDER");
+        }
     }
 
     @Override
@@ -69,12 +102,13 @@ public class SelectionStepAny extends SelectionStep {
 
     @Override
     public int getHighlightingMode() {
-        return SpiderDiagramPanel.All;
+        return CirclesPanel2.Spiders;
     }
 
     @Override
     public SelectionRejectionExplanation init(SelectionSequence selection, int thisIndex) {
-        return null;
+        return isSelectionValid(selection.getAcceptedClicksForStepAt(thisIndex))
+                ? null
+                : new I18NClickRejectionExplanation("SELSTEP_SELECTION_INVALID_NOT_A_SPIDER");
     }
-    
 }

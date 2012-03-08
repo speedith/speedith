@@ -337,6 +337,17 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     // <editor-fold defaultstate="collapsed" desc="Spider Diagram Examples">
     /**
+     * The first main example used in most of our papers.
+     * @return
+     */
+    public static CompoundSpiderDiagram getExampleA() {
+        PrimarySpiderDiagram psd1 = getSDExample1();
+        PrimarySpiderDiagram psd2 = getSDExample7();
+        CompoundSpiderDiagram csd = SpiderDiagrams.createCompoundSD(Operator.Implication, psd1, psd2);
+        return csd;
+    }
+    
+    /**
      * s1: A, B
      * s2: AB
      * @return
@@ -428,9 +439,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
 
     public static Goals getStep0() {
-        PrimarySpiderDiagram psd1 = getSDExample1();
-        PrimarySpiderDiagram psd2 = getSDExample7();
-        CompoundSpiderDiagram csd = SpiderDiagrams.createCompoundSD(Operator.Implication, psd1, psd2);
+        CompoundSpiderDiagram csd = getExampleA();
         return Goals.createGoalsFrom(csd);
     }
 

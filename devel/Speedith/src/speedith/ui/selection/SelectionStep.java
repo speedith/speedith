@@ -44,7 +44,7 @@ public abstract class SelectionStep {
      *  <p>To issue a rejection without an explanation, you may want to use
      * {@link SelectionStep#EmptyClickRejection}.</p>
      */
-    public static class ClickRejectionExplanation {
+    public static class SelectionRejectionExplanation {
 
         /**
          * Returns the internationalise explanation of the rejection in {@link 
@@ -68,7 +68,7 @@ public abstract class SelectionStep {
         }
     }
     
-    public static class I18NClickRejectionExplanation extends ClickRejectionExplanation {
+    public static class I18NClickRejectionExplanation extends SelectionRejectionExplanation {
         private final String i18nKey;
         private final Object[] i18nStrArgs;
 
@@ -103,22 +103,25 @@ public abstract class SelectionStep {
      * This object may be used to reject a click in {@link SelectionStep#acceptClick(speedith.ui.SpiderDiagramClickEvent, speedith.ui.selection.SelectionSequence, int) }
      * without an explanation.
      */
-    public static final ClickRejectionExplanation EmptyClickRejection = new ClickRejectionExplanation();
+    public static final SelectionRejectionExplanation EmptyClickRejection = new SelectionRejectionExplanation();
     
-//    /**
-//     * This function is called before the first click happens (i.e. before the
-//     * first call to the {@link SelectionStep#acceptClick(speedith.ui.SpiderDiagramClickEvent)}
-//     * function) or when the user presses  the "Previous" button and ends up on
-//     * this step.
-//     *  <p>This function is also called when the user hits the <span
-//     * style="font-style:italic;">previous</span> button and this brings the
-//     * user back to this selection step.</p>
-//     * @param selection the selection sequence in which this selection step
-//     * participates. This object contains currently {@link SelectionStep#acceptClick(speedith.ui.SpiderDiagramClickEvent)
-//     * approved} selections.
-//     * @param thisIndex the index of this step in the given {@link SelectionSequence}.
-//     */
-//    public abstract void init(SelectionSequence selection, int thisIndex);
+    /**
+     * This function is called at the start of this step. Still, the selection
+     * might already contain some elements. This method should check it and
+     * produce an explanation if the elements do not adhere to the requirements
+     * of this step. Otherwise, if everything is alright, this method should
+     * simply return {@code null}.
+     *  <p>This function is also called when the user hits the <span
+     * style="font-style:italic;">previous</span> button and this brings the
+     * user back to this selection step.</p>
+     * @param selection the selection sequence in which this selection step
+     * participates. This object contains currently {@link SelectionStep#acceptClick(speedith.ui.SpiderDiagramClickEvent)
+     * approved} selections.
+     * @param thisIndex the index of this step in the given {@link SelectionSequence}.
+     * @return {@code null} if the selection is valid, and a non-{@code null}
+     * object otherwise.
+     */
+    public abstract SelectionRejectionExplanation init(SelectionSequence selection, int thisIndex);
     
     /**
      * Indicates whether this selection step is finished. If it is, then the
@@ -182,7 +185,7 @@ public abstract class SelectionStep {
      * value if the click should be rejected. In the latter case the returned
      * object should also contain a message explaining the reason for rejection.
      */
-    public abstract ClickRejectionExplanation acceptClick(SpiderDiagramClickEvent event, SelectionSequence selection, int thisIndex);
+    public abstract SelectionRejectionExplanation acceptClick(SpiderDiagramClickEvent event, SelectionSequence selection, int thisIndex);
     
     /**
      * This method indicates whether the selection sequence UI should clean

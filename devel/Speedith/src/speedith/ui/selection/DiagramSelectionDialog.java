@@ -66,7 +66,7 @@ public class DiagramSelectionDialog extends javax.swing.JDialog {
      * @param parent
      * @param modal 
      */
-    DiagramSelectionDialog(Frame parent, boolean modal, SpiderDiagram diagram, SelectionStep... selectionSteps) {
+    public DiagramSelectionDialog(Frame parent, boolean modal, SpiderDiagram diagram, SelectionStep... selectionSteps) {
         this(parent, modal, diagram, Arrays.asList(selectionSteps));
     }
 
@@ -80,7 +80,7 @@ public class DiagramSelectionDialog extends javax.swing.JDialog {
      * @param parent
      * @param modal 
      */
-    DiagramSelectionDialog(Frame parent, boolean modal, SpiderDiagram diagram, Collection<SelectionStep> selectionSteps) {
+    public DiagramSelectionDialog(Frame parent, boolean modal, SpiderDiagram diagram, Collection<SelectionStep> selectionSteps) {
         this(parent, modal);
         elementSelectionPanel.setDiagramAndSelectionSteps(diagram, selectionSteps);
     }

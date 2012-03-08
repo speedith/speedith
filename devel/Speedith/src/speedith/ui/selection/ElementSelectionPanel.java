@@ -34,12 +34,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import javax.swing.DefaultListModel;
-import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.SpiderDiagrams;
-import static speedith.i18n.Translations.*;
+import static speedith.i18n.Translations.i18n;
 import speedith.ui.SpiderDiagramClickEvent;
-import speedith.ui.selection.SelectionStep.ClickRejectionExplanation;
+import speedith.ui.selection.SelectionStep.SelectionRejectionExplanation;
 
 /**
  *
@@ -280,7 +278,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void finishButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishButtonActionPerformed
-        // TODO add your handling code here:
+        fireSelectionEnd(Finish);
     }//GEN-LAST:event_finishButtonActionPerformed
 
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
@@ -301,13 +299,15 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
 
     private void onSpiderDiagramClicked(speedith.ui.SpiderDiagramClickEvent evt) {//GEN-FIRST:event_onSpiderDiagramClicked
         SelectionStep curSelStep = getCurSelStep();
-        if (curSelStep != null && !curSelStep.isFinished(selection, curStep)) {
-            ClickRejectionExplanation result = curSelStep.acceptClick(evt, selection, getCurrentStep());
+        if (curSelStep != null && getCurrentStep() >= 0 && getCurrentStep() < getStepCount()) {
+            SelectionRejectionExplanation result = curSelStep.acceptClick(evt, selection, getCurrentStep());
             if (result == null) {
                 selection.addAcceptedClick(getCurrentStep(), evt);
                 // Check if the step is finished. If it is, go to the next one:
                 goToNextStep(false, false);
                 refreshUI();
+            } else {
+                setErrorMsg(result.getExplanation());
             }
         }
     }//GEN-LAST:event_onSpiderDiagramClicked
@@ -519,6 +519,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     private void resetCurStepAndUI() {
         // Some extra initialisation:
         this.curStep = 0;
+        initiateStep();
         refreshUI();
     }
 
@@ -555,7 +556,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
             boolean canFinish = true;
             for (int i = getCurrentStep(); i < getStepCount(); i++) {
                 SelectionStep selStep = selection.getSelectionStepAt(i);
-                if (!selStep.isSkippable(selection, i)) {
+                if (!selStep.isSkippable(selection, i) && !selStep.isFinished(selection, i)) {
                     canFinish = false;
                     break;
                 }
@@ -605,8 +606,8 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         SelectionStep curSelStep = getCurSelStep();
         if (curSelStep != null && (skip || curSelStep.isFinished(selection, getCurrentStep()))) {
             ++curStep;
-            curSelStep = getCurSelStep();
             clearCurStepSelection(false, false);
+            initiateStep();
             if (refreshUIIfNext) {
                 refreshUI();
             }
@@ -618,9 +619,17 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
             --curStep;
             SelectionStep curSelStep = getCurSelStep();
             clearCurStepSelection(false, false);
+            initiateStep();
             if (refreshUIIfChange) {
                 refreshUI();
             }
+        }
+    }
+
+    public void initiateStep() {
+        SelectionStep curSelStep = getCurSelStep();
+        if (curSelStep != null) {
+            getCurSelStep().init(selection, getCurrentStep());
         }
     }
 
