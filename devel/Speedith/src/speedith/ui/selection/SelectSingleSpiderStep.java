@@ -86,12 +86,12 @@ public class SelectSingleSpiderStep extends SelectionStep {
     public SelectionRejectionExplanation acceptClick(SpiderDiagramClickEvent event, SelectionSequence selection, int thisIndex) {
         if (event.getDetailedInfo() instanceof SpiderClickedEvent) {
             if (selection.getAcceptedClickCount(thisIndex) >= 1) {
-                return new I18NClickRejectionExplanation("SELSTEP_JUST_ONE_SPIDER");
+                return new I18NSelectionRejectionExplanation("SELSTEP_JUST_ONE_SPIDER");
             } else {
                 return null;
             }
         } else {
-            return new I18NClickRejectionExplanation("SELSTEP_NOT_A_SPIDER");
+            return new I18NSelectionRejectionExplanation("SELSTEP_NOT_A_SPIDER");
         }
     }
 
@@ -109,6 +109,6 @@ public class SelectSingleSpiderStep extends SelectionStep {
     public SelectionRejectionExplanation init(SelectionSequence selection, int thisIndex) {
         return isSelectionValid(selection.getAcceptedClicksForStepAt(thisIndex))
                 ? null
-                : new I18NClickRejectionExplanation("SELSTEP_SELECTION_INVALID_NOT_A_SPIDER");
+                : new I18NSelectionRejectionExplanation("SELSTEP_SELECTION_INVALID_NOT_A_SPIDER");
     }
 }

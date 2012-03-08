@@ -26,9 +26,20 @@
  */
 package speedith.ui;
 
+import icircles.gui.SpiderClickedEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import speedith.core.lang.*;
+import speedith.core.reasoning.*;
+import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.SpiderRegionArg;
+import speedith.core.reasoning.rules.SplitSpiders;
+import speedith.icircles.util.ICirclesToSpeedith;
 import speedith.ui.selection.DiagramSelectionDialog;
 import speedith.ui.selection.SelectSingleSpiderStep;
+import speedith.ui.selection.SelectSpiderFeetStep;
 
 /**
  *
@@ -91,9 +102,19 @@ public class TestingForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        DiagramSelectionDialog dsd = new DiagramSelectionDialog(this, true, spiderDiagramPanel1.getDiagram(), new SelectSingleSpiderStep());
+        DiagramSelectionDialog dsd = new DiagramSelectionDialog(this, true, spiderDiagramPanel1.getDiagram(), new SelectSpiderFeetStep());
         dsd.setVisible(true);
         System.out.println("Finished selection...");
+        if (!dsd.isCancelled()) {
+            List<SpiderDiagramClickEvent> selection = dsd.getSelection().getAcceptedClicksForStepAt(0);
+            InferenceRule<? extends RuleArg> splitSpiders = InferenceRules.getInferenceRule(SplitSpiders.InferenceRuleName);
+            try {
+                RuleApplicationResult applicationResult = splitSpiders.apply(new SpiderRegionArg(0, selection.get(0).getSubDiagramIndex(), ((SpiderClickedEvent)selection.get(0).getDetailedInfo()).getSpiderName(), getRegionFromFeetSelection(selection)), Goals.createGoalsFrom(spiderDiagramPanel1.getDiagram()));
+                spiderDiagramPanel1.setDiagram(applicationResult.getGoals().getGoalAt(0));
+            } catch (RuleApplicationException ex) {
+                System.out.println("Error!" + ex.getMessage());
+            }
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -289,4 +310,15 @@ public class TestingForm extends javax.swing.JFrame {
         return Zone.fromInContours("B").withOutContours("A");
     }
     // </editor-fold>
+
+    private Region getRegionFromFeetSelection(List<SpiderDiagramClickEvent> selection) {
+        ArrayList<Zone> zones = new ArrayList<Zone>();
+        for (SpiderDiagramClickEvent sel : selection) {
+            if (sel.getDetailedInfo() instanceof SpiderClickedEvent) {
+                SpiderClickedEvent curSp = (SpiderClickedEvent) sel.getDetailedInfo();
+                zones.add(ICirclesToSpeedith.convert(curSp.getZoneOfFoot()));
+            }
+        }
+        return new Region(zones);
+    }
 }

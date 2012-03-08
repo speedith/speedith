@@ -28,7 +28,6 @@ package speedith.ui.selection;
 
 import java.awt.Frame;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import speedith.core.lang.SpiderDiagram;

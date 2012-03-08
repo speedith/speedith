@@ -68,7 +68,7 @@ public abstract class SelectionStep {
         }
     }
     
-    public static class I18NClickRejectionExplanation extends SelectionRejectionExplanation {
+    public static class I18NSelectionRejectionExplanation extends SelectionRejectionExplanation {
         private final String i18nKey;
         private final Object[] i18nStrArgs;
 
@@ -78,7 +78,7 @@ public abstract class SelectionStep {
          * will be looked up through {@link Translations#i18n(java.lang.String)}.
          * @param i18nStrArgs the internationalisation arguments (may be {@code null}). 
          */
-        public I18NClickRejectionExplanation(String i18nKey, Object[] i18nStrArgs) {
+        public I18NSelectionRejectionExplanation(String i18nKey, Object[] i18nStrArgs) {
             this.i18nKey = i18nKey;
             this.i18nStrArgs = i18nStrArgs;
         }
@@ -88,7 +88,7 @@ public abstract class SelectionStep {
          * @param i18nKey the internationalisation key to use for the message. It
          * will be looked up through {@link Translations#i18n(java.lang.String)}.
          */
-        public I18NClickRejectionExplanation(String i18nKey) {
+        public I18NSelectionRejectionExplanation(String i18nKey) {
             this(i18nKey, null);
         }
 
