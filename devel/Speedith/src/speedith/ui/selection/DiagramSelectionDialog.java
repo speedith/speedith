@@ -32,9 +32,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import speedith.core.lang.SpiderDiagram;
 import static speedith.i18n.Translations.i18n;
+import speedith.ui.selection.steps.SelectionStep;
+import speedith.ui.selection.steps.SelectionStepAny;
 
 /**
- *
+ * This dialog provides a step-by-step diagram element selection method.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class DiagramSelectionDialog extends javax.swing.JDialog {

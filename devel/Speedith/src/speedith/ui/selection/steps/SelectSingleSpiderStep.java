@@ -24,7 +24,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.ui.selection;
+package speedith.ui.selection.steps;
 
 import icircles.gui.CirclesPanel2;
 import icircles.gui.SpiderClickedEvent;
@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import static speedith.i18n.Translations.i18n;
 import speedith.ui.SpiderDiagramClickEvent;
+import speedith.ui.selection.SelectionSequence;
 
 /**
  *
@@ -78,7 +79,7 @@ public class SelectSingleSpiderStep extends SelectionStep {
     }
 
     @Override
-    public String getInstruction(Locale locale) {
+    public String getInstruction(Locale locale, SelectionSequence selection, int thisIndex) {
         return i18n(locale, "SELSTEP_SINGLE_SPIDER");
     }
 

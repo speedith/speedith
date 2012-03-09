@@ -43,7 +43,7 @@ import speedith.core.reasoning.InferenceRule;
  */
 public class SubDiagramIndexArg extends SubgoalIndexArg implements RuleArg {
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private int subDiagramIndex;
+    private final int subDiagramIndex;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">

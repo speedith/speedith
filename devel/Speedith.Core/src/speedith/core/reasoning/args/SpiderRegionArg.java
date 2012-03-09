@@ -45,7 +45,7 @@ import speedith.core.lang.Region;
 public class SpiderRegionArg extends SpiderArg {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private Region region;
+    private final Region region;
     // </editor-fold>
 
     public SpiderRegionArg(int subgoalIndex, int primarySDIndex, String spider, Region region) {

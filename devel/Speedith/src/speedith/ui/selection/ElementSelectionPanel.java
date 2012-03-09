@@ -37,7 +37,8 @@ import javax.swing.DefaultListModel;
 import speedith.core.lang.SpiderDiagram;
 import static speedith.i18n.Translations.i18n;
 import speedith.ui.SpiderDiagramClickEvent;
-import speedith.ui.selection.SelectionStep.SelectionRejectionExplanation;
+import speedith.ui.selection.steps.SelectionStep;
+import speedith.ui.selection.steps.SelectionStep.SelectionRejectionExplanation;
 
 /**
  *
@@ -468,7 +469,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
                 || getCurrentStep() >= getStepCount()) {
             stepInstructionMessage.setText(null);
         } else {
-            String instruction = selection.getSelectionStepAt(getCurrentStep()).getInstruction();
+            String instruction = selection.getSelectionStepAt(getCurrentStep()).getInstruction(selection, getCurrentStep());
             stepInstructionMessage.setText(instruction);
         }
     }

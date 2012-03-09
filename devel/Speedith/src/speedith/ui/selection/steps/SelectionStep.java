@@ -24,16 +24,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.ui.selection;
+package speedith.ui.selection.steps;
 
 import java.util.Locale;
 import speedith.i18n.Translations;
+import static speedith.i18n.Translations.i18n;
 import speedith.ui.SpiderDiagramClickEvent;
-import static speedith.i18n.Translations.*;
 import speedith.ui.SpiderDiagramPanel;
+import speedith.ui.selection.SelectionSequence;
 
 /**
- *
+ * This class is used in {@link DiagramSelectionDialog} and {@link ElementSelectionPanel}
+ * to guide the user through the diagram element selection and also make sure
+ * that the exact selection is made.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public abstract class SelectionStep {
@@ -156,10 +159,12 @@ public abstract class SelectionStep {
      * Returns an internationalised instructional message for the user. This
      * message contains human-readable instructions on what elements to select
      * and how.
+     * @param selection a list of selection steps and their accepted clicks.
+     * @param thisIndex the index of this step within the selection sequence.
      * @return an internationalised instructional message for the user.
      */
-    public String getInstruction() {
-        return this.getInstruction(Locale.getDefault());
+    public String getInstruction(SelectionSequence selection, int thisIndex) {
+        return this.getInstruction(Locale.getDefault(), selection, thisIndex);
     }
     
     /**
@@ -167,9 +172,11 @@ public abstract class SelectionStep {
      * message contains human-readable instructions on what elements to select
      * and how.
      * @param locale the locale in which to return the internationalised message.
+     * @param selection a list of selection steps and their accepted clicks.
+     * @param thisIndex the index of this step within the selection sequence.
      * @return an internationalised instructional message for the user.
      */
-    public abstract String getInstruction(Locale locale);
+    public abstract String getInstruction(Locale locale, SelectionSequence selection, int thisIndex);
     
     /**
      * This method is invoked by the {@link ElementSelectionDialog element

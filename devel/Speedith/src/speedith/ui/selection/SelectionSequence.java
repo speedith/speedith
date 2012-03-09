@@ -26,6 +26,7 @@
  */
 package speedith.ui.selection;
 
+import speedith.ui.selection.steps.SelectionStep;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

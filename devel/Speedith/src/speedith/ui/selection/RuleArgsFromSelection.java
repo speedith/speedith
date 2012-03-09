@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith
  * 
- * File name: Class.java
+ * File name: RuleArgsFromSelection.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -26,55 +26,30 @@
  */
 package speedith.ui.selection;
 
-import icircles.gui.CirclesPanel2;
-import java.util.Locale;
-import speedith.ui.SpiderDiagramClickEvent;
-import speedith.ui.selection.SelectionStep.SelectionRejectionExplanation;
-import static speedith.i18n.Translations.*;
-import speedith.ui.SpiderDiagramPanel;
+import speedith.core.reasoning.args.RuleArg;
 
 /**
- *
+ * A class full of convenience methods for obtaining fully specified selection
+ * steps and procedures that translate the resulting selection into rule
+ * arguments.
+ *  @param <T> the type of rule this object produces given a selection sequence of
+ * diagrammatic elements.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SelectionStepAny extends SelectionStep {
-
-    public SelectionStepAny() {
-    }
-
-    @Override
-    public boolean isFinished(SelectionSequence selection, int thisIndex) {
-        return false;
-    }
-
-    @Override
-    public boolean isSkippable(SelectionSequence selection, int thisIndex) {
-        return true;
-    }
-
-    @Override
-    public String getInstruction(Locale locale) {
-        return i18n(locale, "SELECTION_STEP_MSG_ANY");
-    }
-
-    @Override
-    public SelectionRejectionExplanation acceptClick(SpiderDiagramClickEvent event, SelectionSequence selection, int thisIndex) {
-        return null;
-    }
-
-    @Override
-    public boolean cleanSelectionOnStart() {
-        return false;
-    }
-
-    @Override
-    public int getHighlightingMode() {
-        return SpiderDiagramPanel.All;
-    }
-
-    @Override
-    public SelectionRejectionExplanation init(SelectionSequence selection, int thisIndex) {
-        return null;
-    }
+public abstract class RuleArgsFromSelection<T extends RuleArg> {
+    // <editor-fold defaultstate="collapsed" desc="Public Conversion Interface">
+    /**
+     * Converts the given selection sequence to a rule argument.
+     * @param selection a collection of selected diagram elements.
+     * @return the resulting rule argument.
+     * @throws IllegalArgumentException thrown if the selection sequence cannot
+     * be converted to a rule argument because it's either {@code null}, faulty,
+     * or incomplete in any sense.
+     */
+    public abstract T convertToRuleArg(SelectionSequence selection);
+    // </editor-fold>
     
+    // <editor-fold defaultstate="collapsed" desc="Built-in Selection Converters">
+//    private static class 
+    // </editor-fold>
 }

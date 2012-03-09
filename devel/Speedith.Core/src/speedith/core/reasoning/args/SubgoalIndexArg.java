@@ -26,20 +26,23 @@
  */
 package speedith.core.reasoning.args;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.InferenceRule;
 
 /**
  * Instances of this class provide the <span style="font-style:italic;">subgoal
- * index</span> argument to inference rules.
- * <p>The subgoal index indicates which subgoal, specifically, the inference
- * rule should tackle (see the {@link Goals goals} parameter of the {@link
+ * index</span> argument to inference rules. <p>The subgoal index indicates
+ * which subgoal, specifically, the inference rule should tackle (see the {@link Goals goals}
+ * parameter of the {@link
  * InferenceRule inference rule's} {@link
  * InferenceRule#apply(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.Goals)
  * apply method}).</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SubgoalIndexArg implements RuleArg {
+public class SubgoalIndexArg implements Cloneable, RuleArg {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private int subgoalIndex;
@@ -56,6 +59,7 @@ public class SubgoalIndexArg implements RuleArg {
      * Returns the index of the subgoal on which the {@link InferenceRule
      * inference rule} should act (in its {@link InferenceRule#apply(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.Goals)
      * apply method}).
+     *
      * @return the index of the subgoal on which the {@link InferenceRule
      * inference rule} should act (in its {@link InferenceRule#apply(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.Goals)
      * apply method}).
@@ -64,4 +68,28 @@ public class SubgoalIndexArg implements RuleArg {
         return subgoalIndex;
     }
     // </editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Utility Methods">
+    /**
+     * Creates a clone of this instance but with a changed {@link SubgoalIndexArg#getSubgoalIndex() sub-goal index}.
+     * <p><span style="font-weight:bold">Note</span>: this returns this same instance
+     * in when the given sub-goal index equals the current one.</p>
+     *
+     * @param subgoalIndex the new subgoal index.
+     * @return a clone of this instance but with a changed {@link SubgoalIndexArg#getSubgoalIndex() sub-goal index}.
+     */
+    public SubgoalIndexArg withNewSubgoalIndex(int subgoalIndex) {
+        try {
+            if (this.getSubgoalIndex() != subgoalIndex) {
+                SubgoalIndexArg newArg = (SubgoalIndexArg) this.clone();
+                newArg.subgoalIndex = subgoalIndex;
+                return newArg;
+            } else {
+                return this;
+            }
+        } catch (CloneNotSupportedException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+    //</editor-fold>
 }

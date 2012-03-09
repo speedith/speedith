@@ -38,8 +38,8 @@ import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.icircles.util.ICirclesToSpeedith;
 import speedith.ui.selection.DiagramSelectionDialog;
-import speedith.ui.selection.SelectSingleSpiderStep;
-import speedith.ui.selection.SelectSpiderFeetStep;
+import speedith.ui.selection.steps.SelectSingleSpiderStep;
+import speedith.ui.selection.steps.SelectSpiderFeetStep;
 
 /**
  *
@@ -104,7 +104,6 @@ public class TestingForm extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         DiagramSelectionDialog dsd = new DiagramSelectionDialog(this, true, spiderDiagramPanel1.getDiagram(), new SelectSpiderFeetStep());
         dsd.setVisible(true);
-        System.out.println("Finished selection...");
         if (!dsd.isCancelled()) {
             List<SpiderDiagramClickEvent> selection = dsd.getSelection().getAcceptedClicksForStepAt(0);
             InferenceRule<? extends RuleArg> splitSpiders = InferenceRules.getInferenceRule(SplitSpiders.InferenceRuleName);
