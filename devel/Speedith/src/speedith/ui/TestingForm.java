@@ -26,21 +26,12 @@
  */
 package speedith.ui;
 
-import icircles.gui.SpiderClickedEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import speedith.core.lang.*;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.rules.SplitSpiders;
-import speedith.icircles.util.ICirclesToSpeedith;
-import speedith.ui.selection.DiagramSelectionDialog;
 import speedith.ui.selection.helpers.DiagramSelector;
-import speedith.ui.selection.steps.SelectSingleSpiderStep;
-import speedith.ui.selection.steps.SelectSpiderFeetStep;
 
 /**
  *
