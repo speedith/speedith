@@ -27,7 +27,6 @@
 package speedith.ui.selection.steps;
 
 import icircles.gui.CirclesPanel2;
-import icircles.gui.DiagramClickEvent;
 import icircles.gui.SpiderClickedEvent;
 import java.util.List;
 import java.util.Locale;
@@ -37,11 +36,26 @@ import speedith.ui.selection.SelectionSequence;
 
 /**
  *
- *      @author Matej Urbas [matej.urbas@gmail.com]
+ * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SelectSpiderFeetStep extends SelectionStep {
 
-    public int isSelectionValid(SelectionSequence selection, int thisIndex) {
+    /**
+     * Returns one of the following: <ul><li><span
+     * style="font-weight:bold">0</span>: if the selection is valid,</li>
+     * <li><span style="font-weight:bold">1</span>: if the selection contains
+     * selected elements that are not spiders.</li> <li><span
+     * style="font-weight:bold">2</span>: if not all spiders are from the same
+     * subdiagram,</li> <li><span style="font-weight:bold">3</span>: if not all
+     * spider feet belong to the same spider.</li> </ul>
+     *
+     * @param selection the selection sequence in which this selection step
+     * participates. This object contains currently {@link SelectionStep#acceptClick(speedith.ui.SpiderDiagramClickEvent)
+     * approved} selections.
+     * @param thisIndex the index of this step in the given {@link SelectionSequence}.
+     * @return
+     */
+    public static int isSelectionValid(SelectionSequence selection, int thisIndex) {
         List<SpiderDiagramClickEvent> sels = selection.getAcceptedClicksForStepAt(thisIndex);
         if (sels != null && !sels.isEmpty()) {
             for (SpiderDiagramClickEvent sel : sels) {
@@ -65,7 +79,18 @@ public class SelectSpiderFeetStep extends SelectionStep {
         return 0;
     }
 
-    private SelectionRejectionExplanation getSelectionProblem(SelectionSequence selection, int thisIndex) {
+    /**
+     * Returns an explanation for the problems with the selection as identified
+     * by the {@link SelectSpiderFeetStep#isSelectionValid(speedith.ui.selection.SelectionSequence, int)
+     * } method.
+     *
+     * @param selection the selection sequence in which this selection step
+     * participates. This object contains currently {@link SelectionStep#acceptClick(speedith.ui.SpiderDiagramClickEvent)
+     * approved} selections.
+     * @param thisIndex the index of this step in the given {@link SelectionSequence}.
+     * @return
+     */
+    public static SelectionRejectionExplanation getSelectionProblem(SelectionSequence selection, int thisIndex) {
         switch (isSelectionValid(selection, thisIndex)) {
             case 0:
                 return null;
@@ -145,7 +170,14 @@ public class SelectSpiderFeetStep extends SelectionStep {
         return CirclesPanel2.Spiders;
     }
 
-    private boolean isAlreadySelected(List<SpiderDiagramClickEvent> sels, SpiderClickedEvent event) {
+    /**
+     * Indicates whether a spider's foot has already been selected (whether it
+     * is present in the given selection).
+     * @param sels
+     * @param event
+     * @return 
+     */
+    private static boolean isAlreadySelected(List<SpiderDiagramClickEvent> sels, SpiderClickedEvent event) {
         for (SpiderDiagramClickEvent sel : sels) {
             if (sel.getDetailedInfo() instanceof SpiderClickedEvent) {
                 SpiderClickedEvent selSp = (SpiderClickedEvent) sel.getDetailedInfo();

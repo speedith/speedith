@@ -32,7 +32,6 @@
  */
 package speedith.ui;
 
-import icircles.gui.CirclesPanel2;
 import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;

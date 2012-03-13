@@ -26,20 +26,16 @@
  */
 package speedith.core.reasoning;
 
-import speedith.core.reasoning.rules.SplitSpiders;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collections;
-import java.util.Set;
 import java.util.HashMap;
+import java.util.Set;
+import static speedith.core.i18n.Translations.i18n;
 import speedith.core.reasoning.args.RuleArg;
-import speedith.core.reasoning.rules.AddFeet;
-import speedith.core.reasoning.rules.DischargeNullGoal;
-import speedith.core.reasoning.rules.Idempotency;
-import speedith.core.reasoning.rules.ImplicationTautology;
-import static speedith.core.i18n.Translations.*;
+import speedith.core.reasoning.rules.*;
 
 /**
  * Contains a list of available {@link InferenceRule inference rules}, provides
