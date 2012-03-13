@@ -93,10 +93,10 @@ public class InferenceRules {
      * diagrams.
      */
     public static InferenceRule<? extends RuleArg> getInferenceRule(String inferenceRule) {
-        InferenceRuleProvider<? extends RuleArg> provider = providers.get(inferenceRule);
         if (inferenceRule == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "inferenceRule"));
         }
+        InferenceRuleProvider<? extends RuleArg> provider = providers.get(inferenceRule);
         return provider.getInferenceRule();
     }
 

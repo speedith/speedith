@@ -38,7 +38,7 @@ import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.icircles.util.ICirclesToSpeedith;
 import speedith.ui.selection.DiagramSelectionDialog;
-import speedith.ui.selection.RuleArgsFromSelection;
+import speedith.ui.selection.helpers.DiagramSelector;
 import speedith.ui.selection.steps.SelectSingleSpiderStep;
 import speedith.ui.selection.steps.SelectSpiderFeetStep;
 
@@ -103,7 +103,7 @@ public class TestingForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        SpiderRegionArg feetArg = RuleArgsFromSelection.getSpiderRegionSelector().showSelectionDialog(this, spiderDiagramPanel1.getDiagram());
+        SpiderRegionArg feetArg = DiagramSelector.getSelector(SpiderRegionArg.class).showSelectionDialog(this, spiderDiagramPanel1.getDiagram());
         if (feetArg != null) {
             InferenceRule<? extends RuleArg> splitSpiders = InferenceRules.getInferenceRule(SplitSpiders.InferenceRuleName);
             try {

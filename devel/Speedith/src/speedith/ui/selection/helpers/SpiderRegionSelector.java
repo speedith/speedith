@@ -37,7 +37,6 @@ import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.icircles.util.ICirclesToSpeedith;
 import speedith.ui.SpiderDiagramClickEvent;
 import speedith.ui.selection.DiagramSelectionDialog;
-import speedith.ui.selection.RuleArgsFromSelection;
 import speedith.ui.selection.SelectionSequence;
 import speedith.ui.selection.steps.SelectSpiderFeetStep;
 
@@ -47,13 +46,14 @@ import speedith.ui.selection.steps.SelectSpiderFeetStep;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SpiderRegionRuleArgsSelector extends RuleArgsFromSelection<SpiderRegionArg> {
+@SelectorDetails(name="Spider region selector", targetRuleArg=SpiderRegionArg.class)
+public class SpiderRegionSelector extends DiagramSelector<SpiderRegionArg> {
 
     /**
      * An instance of this selector that can be used anywhere (since it is
      * stateless).
      */
-    public static final SpiderRegionRuleArgsSelector Instance = new SpiderRegionRuleArgsSelector();
+    public static final SpiderRegionSelector Instance = new SpiderRegionSelector();
 
     @Override
     public SpiderRegionArg convertToRuleArg(SelectionSequence selection) {
