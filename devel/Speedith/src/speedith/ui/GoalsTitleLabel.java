@@ -32,13 +32,16 @@ package speedith.ui;
  */
 public class GoalsTitleLabel extends javax.swing.JPanel {
 
+    //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
      * Creates new form GoalsTitleLabel
      */
     public GoalsTitleLabel() {
         initComponents();
     }
+    //</editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -48,17 +51,66 @@ public class GoalsTitleLabel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        javax.swing.JPanel pnlBackground = new javax.swing.JPanel();
+        lblTitle = new javax.swing.JLabel();
+
+        setBackground(new java.awt.Color(0, 102, 153));
+
+        pnlBackground.setBackground(new java.awt.Color(153, 153, 153));
+
+        lblTitle.setBackground(new java.awt.Color(153, 153, 153));
+        lblTitle.setFont(new java.awt.Font("Dialog", 3, 18)); // NOI18N
+        lblTitle.setForeground(new java.awt.Color(255, 255, 255));
+        lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblTitle.setText("Initial goal...");
+
+        javax.swing.GroupLayout pnlBackgroundLayout = new javax.swing.GroupLayout(pnlBackground);
+        pnlBackground.setLayout(pnlBackgroundLayout);
+        pnlBackgroundLayout.setHorizontalGroup(
+            pnlBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlBackgroundLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        pnlBackgroundLayout.setVerticalGroup(
+            pnlBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(pnlBackground, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(pnlBackground, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel lblTitle;
     // End of variables declaration//GEN-END:variables
+    //</editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Public Properties">
+    /**
+     * Returns the text displayed in this panel.
+     * @return
+     */
+    public String getTitle() {
+        return lblTitle.getText();
+    }
+    
+    /**
+     * Sets the text that should be displayed by this panel.
+     * @param title the text that should be displayed by this panel.
+     */
+    public void setTitle(String title) {
+        lblTitle.setText(title);
+    }
+    // </editor-fold>
 }

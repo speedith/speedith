@@ -102,7 +102,7 @@ public class ProofTrace implements Proof {
         applyRule(rule, null);
     }
 
-    public <TRuleArg extends RuleArg> void applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException {
+    public <TRuleArg extends RuleArg> void applyRule(InferenceRule<TRuleArg> rule, TRuleArg args) throws RuleApplicationException {
         if (isFinished()) {
             throw new RuleApplicationException(i18n("PROOF_TRACE_FINISHED"));
         }

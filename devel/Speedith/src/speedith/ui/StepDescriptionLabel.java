@@ -48,17 +48,48 @@ public class StepDescriptionLabel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        lblDescription = new javax.swing.JLabel();
+
+        setBackground(new java.awt.Color(0, 102, 153));
+
+        lblDescription.setBackground(new java.awt.Color(255, 255, 255));
+        lblDescription.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        lblDescription.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblDescription.setText("Applied rule: split spiders");
+        lblDescription.setOpaque(true);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(lblDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(lblDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel lblDescription;
     // End of variables declaration//GEN-END:variables
+
+    // <editor-fold defaultstate="collapsed" desc="Public Properties">
+    /**
+     * Returns the text displayed in this panel.
+     * @return
+     */
+    public String getDescription() {
+        return lblDescription.getText();
+    }
+    
+    /**
+     * Sets the text that should be displayed by this panel.
+     * @param title the text that should be displayed by this panel.
+     */
+    public void setTitle(String title) {
+        lblDescription.setText(title);
+    }
+    // </editor-fold>
 }

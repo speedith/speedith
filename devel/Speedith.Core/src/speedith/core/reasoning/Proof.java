@@ -57,7 +57,7 @@ public interface Proof {
      * @throws RuleApplicationException thrown if the rule could not be applied
      * for any reason.
      */
-    <TRuleArg extends RuleArg> void applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException;
+    <TRuleArg extends RuleArg> void applyRule(InferenceRule<TRuleArg> rule, TRuleArg args) throws RuleApplicationException;
 
     /**
      * Returns the subgoals at the given index. At index 0 are the initial

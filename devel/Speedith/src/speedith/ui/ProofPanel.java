@@ -26,9 +26,12 @@
  */
 package speedith.ui;
 
+import java.awt.GridBagConstraints;
 import java.util.List;
+import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
+import static speedith.i18n.Translations.i18n;
 
 /**
  *
@@ -61,8 +64,8 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
 
         // Create a proof trace for initial goals.
         proof = new ProofTrace(initialGoals);
-        // Refresh the user interface (present all the current goals and the
-        // rule applications)...
+        // Refresh the user interface (present all the initial goals)...
+        displayInitialGoals();
     }
     //</editor-fold>
 
@@ -75,19 +78,31 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+
+        scrlGoals = new javax.swing.JScrollPane();
+        pnlGoals = new javax.swing.JPanel();
+
+        scrlGoals.setBackground(new java.awt.Color(255, 255, 255));
+
+        pnlGoals.setBackground(new java.awt.Color(255, 255, 255));
+        pnlGoals.setLayout(new java.awt.GridBagLayout());
+        scrlGoals.setViewportView(pnlGoals);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(scrlGoals, javax.swing.GroupLayout.DEFAULT_SIZE, 642, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(scrlGoals, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel pnlGoals;
+    private javax.swing.JScrollPane scrlGoals;
     // End of variables declaration//GEN-END:variables
     //</editor-fold>
 
@@ -96,7 +111,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
         applyRule(rule, null);
     }
 
-    public <TRuleArg extends RuleArg> void applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException {
+    public <TRuleArg extends RuleArg> void applyRule(InferenceRule<TRuleArg> rule, TRuleArg args) throws RuleApplicationException {
         proof.applyRule(rule, args);
         // TODO: Refresh the GUI. Add a new set of goal panels and step description labels.
     }
@@ -145,4 +160,37 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
         return proof.isFinished();
     }
     //</editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="UI Interaction Methods">
+    private void displayInitialGoals() {
+        Goals initialGoals = proof.getInitialGoals();
+        GoalsTitleLabel gtl = new GoalsTitleLabel();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        gbc.anchor = GridBagConstraints.NORTH;
+        if (initialGoals == null || initialGoals.isEmpty()) {
+            gtl.setTitle(i18n("PROOF_PANEL_NO_GOALS"));
+            gbc.weighty = 1;
+            pnlGoals.add(gtl, gbc);
+        } else {
+            gtl.setTitle(i18n("PROOF_PANEL_INIT_GOAL_TITLE"));
+            pnlGoals.add(gtl, gbc);
+            // Add the subgoals
+            int i = 0;
+            for (SpiderDiagram spiderDiagram : initialGoals.getGoals()) {
+                gbc = new GridBagConstraints();
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                gbc.weightx = 1;
+                gbc.anchor = GridBagConstraints.NORTH;
+                SubgoalPanel sp = new SubgoalPanel();
+                sp.setSubgoalIndex(i);
+                sp.setDiagram(spiderDiagram);
+                i++;
+                gbc.gridy = i;
+                pnlGoals.add(sp, gbc);
+            }
+        }
+    }
+    // </editor-fold>
 }

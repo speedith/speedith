@@ -26,11 +26,17 @@
  */
 package speedith.ui;
 
+import speedith.core.lang.SpiderDiagram;
+
 /**
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SubgoalPanel extends javax.swing.JPanel {
+
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    private int subgoalIndex = 0;
+    // </editor-fold>
 
     /**
      * Creates new form SubgoalPanel
@@ -48,17 +54,62 @@ public class SubgoalPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        lblSubdiagramIndex = new javax.swing.JLabel();
+        spiderDiagramPanel1 = new speedith.ui.SpiderDiagramPanel();
+
+        setBackground(new java.awt.Color(255, 255, 255));
+
+        lblSubdiagramIndex.setBackground(new java.awt.Color(0, 102, 153));
+        lblSubdiagramIndex.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        lblSubdiagramIndex.setForeground(new java.awt.Color(255, 255, 255));
+        lblSubdiagramIndex.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSubdiagramIndex.setText(getSubdiagramIndexText());
+        lblSubdiagramIndex.setOpaque(true);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(lblSubdiagramIndex, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(1, 1, 1)
+                .addComponent(spiderDiagramPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(lblSubdiagramIndex, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(spiderDiagramPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel lblSubdiagramIndex;
+    private speedith.ui.SpiderDiagramPanel spiderDiagramPanel1;
     // End of variables declaration//GEN-END:variables
+
+    // <editor-fold defaultstate="collapsed" desc="Public Properties">
+    public int getSubgoalIndex() {
+        return subgoalIndex;
+    }
+
+    public void setSubgoalIndex(int subgoalIndex) {
+        if (this.subgoalIndex != subgoalIndex) {
+            this.subgoalIndex = subgoalIndex;
+            lblSubdiagramIndex.setText(getSubdiagramIndexText());
+        }
+    }
+    
+    public SpiderDiagram getDiagram() {
+        return this.spiderDiagramPanel1.getDiagram();
+    }
+    
+    public void setDiagram(SpiderDiagram diagram) {
+        this.spiderDiagramPanel1.setDiagram(diagram);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="UI Refresh Methods">
+    private String getSubdiagramIndexText() {
+        return Integer.toString(getSubgoalIndex() + 1);
+    }
+    // </editor-fold>
 }
