@@ -35,7 +35,7 @@ import speedith.core.reasoning.args.RuleArg;
 
 /**
  * An implementation of the {@link Proof} interface. <p>This class serves as the
- * main proof managing tool for Speedith.</p>
+ * main proof-managing tool for Speedith.</p>
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */

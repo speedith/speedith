@@ -26,8 +26,6 @@
  */
 package speedith.ui;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;

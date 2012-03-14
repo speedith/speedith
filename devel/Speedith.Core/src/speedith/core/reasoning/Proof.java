@@ -30,6 +30,7 @@ import java.util.List;
 import speedith.core.reasoning.args.RuleArg;
 
 /**
+ * This interface outlines how a proof in Speedith looks like.
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
@@ -91,46 +92,52 @@ public interface Proof {
      * an empty goal indicates that the proof is finished.</p><p><span
      * style="font-weight:bold">Note</span>: this method might return {@code null}
      * to indicate that there are no pending goals.</p>
-     * @return 
+     *
+     * @return
      */
     Goals getLastGoals();
-    
+
     /**
      * Returns an unmodifiable list of goals in this proof.
+     *
      * @return
      */
     List<Goals> getGoals();
-    
+
     /**
      * Returns an unmodifiable list of rule applications in this proof.
+     *
      * @return
      */
     List<RuleApplication> getRuleApplications();
-    
+
     /**
      * Returns the rule application at the given index.
-     * @param index 
+     *
+     * @param index
      * @return
      */
     RuleApplication getRuleApplicationAt(int index);
-    
+
     /**
      * Returns the number of rule application in this proof.
+     *
      * @return
      */
     int getRuleApplicationCount();
-    
+
     /**
-     * Indicates whether the proof is finished.
-     *  <p><span
+     * Indicates whether the proof is finished. <p><span
      * style="font-weight:bold">Note</span>: The call to this function is
      * similar to something like this: {@code }</p>
+     *
      * @return
      */
     boolean isFinished();
-    
+
     /**
      * Removes the last application of an inference rule (if any).
+     *
      * @return returns {@code true} if and only if a goal and a rule application
      * descriptor have been removed. Otherwise, {@code false} is returned, in
      * which case no change at all happens to this proof.
