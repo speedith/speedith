@@ -26,6 +26,7 @@
  */
 package speedith.core.reasoning;
 
+import java.util.List;
 import speedith.core.reasoning.args.RuleArg;
 
 /**
@@ -77,7 +78,9 @@ public interface Proof {
     int getGoalsCount();
 
     /**
-     * Returns the initial goal of this proof trace.
+     * Returns the initial goal of this proof trace. <p><span
+     * style="font-weight:bold">Note</span>: this method might return {@code null}
+     * to indicate that there are no initial goals.</p>
      *
      * @return the initial goal of this proof trace.
      */
@@ -85,8 +88,44 @@ public interface Proof {
 
     /**
      * Returns the pending goals. <p><span style="font-weight:bold">Note</span>:
-     * an empty goal indicates that the proof is finished.</p>
+     * an empty goal indicates that the proof is finished.</p><p><span
+     * style="font-weight:bold">Note</span>: this method might return {@code null}
+     * to indicate that there are no pending goals.</p>
      * @return 
      */
     Goals getLastGoals();
+    
+    /**
+     * Returns an unmodifiable list of goals in this proof.
+     * @return
+     */
+    List<Goals> getGoals();
+    
+    /**
+     * Returns an unmodifiable list of rule applications in this proof.
+     * @return
+     */
+    List<RuleApplication> getRuleApplications();
+    
+    /**
+     * Returns the rule application at the given index.
+     * @param index 
+     * @return
+     */
+    RuleApplication getRuleApplicationAt(int index);
+    
+    /**
+     * Returns the number of rule application in this proof.
+     * @return
+     */
+    int getRuleApplicationCount();
+    
+    /**
+     * Indicates whether the proof is finished.
+     *  <p><span
+     * style="font-weight:bold">Note</span>: The call to this function is
+     * similar to something like this: {@code }</p>
+     * @return
+     */
+    boolean isFinished();
 }

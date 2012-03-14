@@ -26,9 +26,8 @@
  */
 package speedith.core.reasoning;
 
-import java.util.List;
+import static speedith.core.i18n.Translations.i18n;
 import speedith.core.reasoning.args.RuleArg;
-import static speedith.core.i18n.Translations.*;
 
 /**
  * A pair of two elements:
@@ -41,7 +40,7 @@ import static speedith.core.i18n.Translations.*;
  */
 public class RuleApplication {
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private InferenceRule inferenceRule;
+    private InferenceRule<?> inferenceRule;
     private RuleArg ruleArguments;
     // </editor-fold>
 
@@ -53,7 +52,7 @@ public class RuleApplication {
      * some set of spider diagrams with the given additional arguments).
      * @param ruleArguments the additional arguments to the inference rule.
      */
-    public RuleApplication(InferenceRule inferenceRule, RuleArg ruleArguments) {
+    public RuleApplication(InferenceRule<?> inferenceRule, RuleArg ruleArguments) {
         if (inferenceRule == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "inferenceRule"));
         }
@@ -71,7 +70,7 @@ public class RuleApplication {
      * method.</p>
      * @return the inference rule stored in this object.
      */
-    public InferenceRule getInferenceRule() {
+    public InferenceRule<?> getInferenceRule() {
         return inferenceRule;
     }
     

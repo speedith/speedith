@@ -129,6 +129,14 @@ public class Goals {
     public int getGoalsCount() {
         return goals == null || goals.isEmpty() ? 0 : goals.size();
     }
+    
+    /**
+     * Indicates whether this collection of goals is empty.
+     * @return
+     */
+    public boolean isEmpty() {
+        return goals == null || goals.isEmpty();
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Factory Methods">
