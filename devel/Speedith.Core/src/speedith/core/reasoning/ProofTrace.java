@@ -4,7 +4,7 @@
  * File name: ProofTrace.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
- *  Copyright © 2011 Matej Urbas
+ *  Copyright © 2012 Matej Urbas
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,118 +26,136 @@
  */
 package speedith.core.reasoning;
 
-import speedith.core.reasoning.args.RuleArg;
 import java.util.ArrayList;
-import static speedith.core.i18n.Translations.*;
+import java.util.Collections;
+import java.util.List;
+import static speedith.core.i18n.Translations.i18n;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.args.RuleArg;
 
 /**
- * This class represents a sequence of applied inference rules with intermediate
- * subgoals (subgoals are lists of spider diagrams).
- * <p>A proof trace starts with a list of spider diagrams and continues with
- * pairs of applied inference rules and their resulting subgoals (the latter is
- * also a list of spider diagrams).</p>
+ * An implementation of the {@link Proof} interface. <p>This class serves as the
+ * main proof managing tool for Speedith.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class ProofTrace {
+public class ProofTrace implements Proof {
 
-    // TODO: Provide an 'unmodifiable' wrapper for proof traces (so that proofs
-    // can return their proof traces without the fear of them being modified).
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private Goals initialGoals;
-    private ArrayList<RuleApplication> inferenceRules;
-    private ArrayList<RuleApplicationResult> applicationResults;
+    /**
+     * Contains all goals of this proof trace (including the initial goal).
+     */
+    private ArrayList<Goals> goals = new ArrayList<Goals>();
+    private ArrayList<RuleApplication> ruleApplications = new ArrayList<RuleApplication>();
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Constructor">
+    // <editor-fold defaultstate="collapsed" desc="Constructors">
     /**
-     * Initialises a new proof trace with the given initial goal.
-     * @param initialGoals the initial goals (proof obligations). This parameter
-     * may be {@code null} or empty to indicate a proof trace without proof
-     * obligations -- an empty proof trace.
+     * Creates a new proof trace with the given initial goals.
+     *
+     * @param initialGoals the initial goals (the theorem we want to prove).
+     * <p><span style="font-weight:bold">Note</span>: this parameter may be {@code null}
+     * in which case no goals will be there to prove and no proof steps will be
+     * applicable.</p>
      */
     public ProofTrace(Goals initialGoals) {
-        this.initialGoals = initialGoals;
-        inferenceRules = new ArrayList<RuleApplication>();
-        applicationResults = new ArrayList<RuleApplicationResult>();
+        // Add the initial goals to the list of all goals
+        if (initialGoals != null) {
+            goals.add(initialGoals);
+        }
+    }
+
+    /**
+     * Creates a new empty proof trace.
+     */
+    public ProofTrace() {
+        this((Goals) null);
+    }
+
+    /**
+     * Creates a new proof trace with the given initial goals.
+     *
+     * @param initialGoals the initial goals (the theorem we want to prove).
+     * <p><span style="font-weight:bold">Note</span>: this parameter may be {@code null}
+     * in which case no goals will be there to prove and no proof steps will be
+     * applicable.</p>
+     */
+    public ProofTrace(SpiderDiagram... initialGoals) {
+        this(Goals.createGoalsFrom(initialGoals));
+    }
+
+    /**
+     * Creates a new proof trace with the given initial goals.
+     *
+     * @param initialGoals the initial goals (the theorem we want to prove).
+     * <p><span style="font-weight:bold">Note</span>: this parameter may be {@code null}
+     * in which case no goals will be there to prove and no proof steps will be
+     * applicable.</p>
+     */
+    public ProofTrace(List<SpiderDiagram> initialGoals) {
+        this(Goals.createGoalsFrom(initialGoals));
     }
     // </editor-fold>
 
-    // TODO: Specify the outward interface: maybe add methods for removing the
-    // tail of the proof trace?
-    // <editor-fold defaultstate="collapsed" desc="ProofTrace Interface">
-    public ProofTrace append(ProofTrace tralingTrace) {
-        throw new UnsupportedOperationException();
+    //<editor-fold defaultstate="collapsed" desc="Proof Interface Implementation">
+    public void applyRule(InferenceRule<? extends RuleArg> rule) throws RuleApplicationException {
+        applyRule(rule, null);
     }
 
-    public ProofTrace prepend(ProofTrace tralingTrace) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Returns the number of goals (this includes the initial goals).
-     * @return the number of goals (this includes the initial goals).
-     */
-    public int getGoalsCount() {
-        return 1 + applicationResults.size();
-    }
-
-    /**
-     * Returns the initial goal of this proof trace.
-     * @return the initial goal of this proof trace.
-     */
-    public Goals getInitialGoals() {
-        return initialGoals;
-    }
-
-    /**
-     * Returns the subgoals at the given index. At index 0 are the initial
-     * goals. At indices <span style="font-style:italic;">i</span>, where
-     * <span style="font-style:italic;">i</span> &gt; 0, we have goals that were
-     * the results of applying the <span style="font-style:italic;">i</span>-th
-     * inference rule.
-     * @param index the index of the subgoal to return.
-     * @return the subgoal at the given index.
-     */
-    public Goals getGoalsAt(int index) {
-        if (index == 0) {
-            return initialGoals;
-        } else if (__isAppResultsListEmpty()) {
-            return null;
-        } else {
-            RuleApplicationResult appResult = applicationResults.get(index - 1);
-            if (appResult == null) {
-                return null;
-            }
-            return appResult.getGoals();
+    public <TRuleArg extends RuleArg> void applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException {
+        if (isFinished()) {
+            throw new RuleApplicationException(i18n("PROOF_TRACE_FINISHED"));
         }
+        RuleApplicationResult appResult = rule.apply(args, getLastGoals());
+        ruleApplications.add(new RuleApplication(rule, args));
+        goals.add(appResult.getGoals());
+    }
+
+    public Goals getGoalsAt(int index) {
+        return goals.get(index);
+    }
+
+    public int getGoalsCount() {
+        return goals.size();
+    }
+
+    public Goals getInitialGoals() {
+        return goals.isEmpty() ? null : goals.get(0);
     }
 
     public Goals getLastGoals() {
-        return getGoalsAt(getGoalsCount() - 1);
+        return goals.isEmpty() ? null : goals.get(goals.size() - 1);
     }
 
-    public ProofTrace applyRule(InferenceRule rule) throws RuleApplicationException {
-        return applyRule(rule, null);
+    public List<Goals> getGoals() {
+        return Collections.unmodifiableList(goals);
     }
 
-    public ProofTrace applyRule(InferenceRule rule, RuleArg args) throws RuleApplicationException {
-        return applyRule(new RuleApplication(rule, args));
+    public List<RuleApplication> getRuleApplications() {
+        return Collections.unmodifiableList(ruleApplications);
     }
 
-    public ProofTrace applyRule(RuleApplication ruleApplication) throws RuleApplicationException {
-        if (ruleApplication == null) {
-            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "ruleApplication"));
+    public RuleApplication getRuleApplicationAt(int index) {
+        return ruleApplications.get(index);
+    }
+
+    public int getRuleApplicationCount() {
+        return ruleApplications.size();
+    }
+
+    public boolean isFinished() {
+        final Goals lastGoals = getLastGoals();
+        return lastGoals == null || lastGoals.isEmpty();
+    }
+
+    public boolean undoStep() {
+        if (getRuleApplicationCount() > 0) {
+            goals.remove(goals.size() - 1);
+            ruleApplications.remove(ruleApplications.size() - 1);
+            return true;
+        } else {
+            return false;
         }
-        RuleApplicationResult appResult = ruleApplication.applyTo(getLastGoals());
-        inferenceRules.add(ruleApplication);
-        applicationResults.add(appResult);
-        return this;
     }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Private Helper Methods">
-    private boolean __isAppResultsListEmpty() {
-        return applicationResults == null || applicationResults.isEmpty();
-    }
-    // </editor-fold>
+    //</editor-fold>
 }

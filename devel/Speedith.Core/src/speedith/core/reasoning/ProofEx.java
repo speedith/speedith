@@ -35,7 +35,7 @@ import speedith.core.lang.SpiderDiagram;
  * of whether the proof is complete or trusted etc.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class ProofEx extends ProofTrace {
+public class ProofEx extends ProofTraceEx {
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
     /**

@@ -37,18 +37,34 @@ import speedith.core.reasoning.args.RuleArg;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class ProofPanel extends javax.swing.JPanel implements Proof {
-    
+
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private ArrayList<Goals> goals = new ArrayList<Goals>();
-    private ArrayList<RuleApplication> ruleApplications = new ArrayList<RuleApplication>();
+    private ProofTrace proof;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
-     * Creates new form ProofPanel
+     * Creates a new proof panel with no goals.
      */
     public ProofPanel() {
+        this((Goals) null);
+    }
+
+    /**
+     * Creates a new proof panel with the given goals.
+     *
+     * @param initialGoals the initial goals (the theorem we want to prove).
+     * <p><span style="font-weight:bold">Note</span>: this parameter may be {@code null}
+     * in which case no goals will be displayed and no proof will be
+     * applicable.</p>
+     */
+    public ProofPanel(Goals initialGoals) {
         initComponents();
+
+        // Create a proof trace for initial goals.
+        proof = new ProofTrace(initialGoals);
+        // Refresh the user interface (present all the current goals and the
+        // rule applications)...
     }
     //</editor-fold>
 
@@ -76,51 +92,59 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
     //</editor-fold>
-    
+
     //<editor-fold defaultstate="collapsed" desc="Proof Interface Implementation">
     public void applyRule(InferenceRule<? extends RuleArg> rule) throws RuleApplicationException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        applyRule(rule, null);
     }
-    
+
     public <TRuleArg extends RuleArg> void applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        proof.applyRule(rule, args);
+        // TODO: Refresh the GUI. Add a new set of goal panels and step description labels.
     }
-    
+
+    public boolean undoStep() {
+        final boolean didUndo = proof.undoStep();
+        if (didUndo) {
+            // TODO: Refresh the GUI. Remove the last set of goals and step description labels.
+        }
+        return didUndo;
+    }
+
     public Goals getGoalsAt(int index) {
-        return goals.get(index);
+        return proof.getGoalsAt(index);
     }
-    
+
     public int getGoalsCount() {
-        return goals.size();
+        return proof.getGoalsCount();
     }
-    
+
     public Goals getInitialGoals() {
-        return goals.isEmpty() ? null : goals.get(0);
+        return proof.getInitialGoals();
     }
-    
+
     public Goals getLastGoals() {
-        return goals.isEmpty() ? null : goals.get(goals.size() - 1);
+        return proof.getLastGoals();
     }
 
     public List<Goals> getGoals() {
-        return Collections.unmodifiableList(goals);
+        return proof.getGoals();
     }
 
     public List<RuleApplication> getRuleApplications() {
-        return Collections.unmodifiableList(ruleApplications);
+        return proof.getRuleApplications();
     }
 
     public RuleApplication getRuleApplicationAt(int index) {
-        return ruleApplications.get(index);
+        return proof.getRuleApplicationAt(index);
     }
 
     public int getRuleApplicationCount() {
-        return ruleApplications.size();
+        return proof.getRuleApplicationCount();
     }
 
     public boolean isFinished() {
-        final Goals lastGoals = getLastGoals();
-        return lastGoals == null || lastGoals.isEmpty();
+        return proof.isFinished();
     }
     //</editor-fold>
 }

@@ -128,4 +128,12 @@ public interface Proof {
      * @return
      */
     boolean isFinished();
+    
+    /**
+     * Removes the last application of an inference rule (if any).
+     * @return returns {@code true} if and only if a goal and a rule application
+     * descriptor have been removed. Otherwise, {@code false} is returned, in
+     * which case no change at all happens to this proof.
+     */
+    boolean undoStep();
 }
