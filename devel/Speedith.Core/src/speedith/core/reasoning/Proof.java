@@ -4,7 +4,7 @@
  * File name: Proof.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
- *  Copyright © 2011 Matej Urbas
+ *  Copyright © 2012 Matej Urbas
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,29 +26,67 @@
  */
 package speedith.core.reasoning;
 
-import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.args.RuleArg;
 
 /**
- * This class contains the original statement (a {@link SpiderDiagram spider
- * diagram}), a proof trace (a sequence of applied inference rules with
- * intermediate subgoals -- the latter are lists of spider diagrams), indicators
- * of whether the proof is complete or trusted etc.
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class Proof extends ProofTrace {
+public interface Proof {
 
-    // <editor-fold defaultstate="collapsed" desc="Constructor">
     /**
-     * Initialises a new proof with the given initial goal.
-     * @param initialGoals the initial goal (may be {@code null} or empty to
-     * indicate a proof without proof obligations -- an empty proof).
+     * Applies the rule on the {@link Proof#getLastGoals()  current goals} (if
+     * any are left).
+     *
+     * @param rule the rule to apply on the current goal.
+     * @throws RuleApplicationException thrown if the rule could not be applied
+     * for any reason.
      */
-    public Proof(Goals initialGoals) {
-        super(initialGoals);
-    }
-    // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Public Methods">
-    // TODO: Specify the interface.
-    // </editor-fold>
+    void applyRule(InferenceRule<? extends RuleArg> rule) throws RuleApplicationException;
+
+    /**
+     * Applies the rule with the given argument on the {@link Proof#getLastGoals()  current goals}
+     * (if any are left).
+     *
+     * @param <TRuleArg> the type of arguments that will be passed to the
+     * inference rule.
+     * @param rule the rule to apply on the current goal.
+     * @param args the arguments that should be passed on to the rule.
+     * @throws RuleApplicationException thrown if the rule could not be applied
+     * for any reason.
+     */
+    <TRuleArg extends RuleArg> void applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException;
+
+    /**
+     * Returns the subgoals at the given index. At index 0 are the initial
+     * goals. At indices <span style="font-style:italic;">i</span>, where <span
+     * style="font-style:italic;">i</span> &gt; 0, we have goals that were the
+     * results of applying the <span style="font-style:italic;">i</span>-th
+     * inference rule.
+     *
+     * @param index the index of the subgoal to return.
+     * @return the subgoal at the given index.
+     */
+    Goals getGoalsAt(int index);
+
+    /**
+     * Returns the number of goals (this includes the initial goals).
+     *
+     * @return the number of goals (this includes the initial goals).
+     */
+    int getGoalsCount();
+
+    /**
+     * Returns the initial goal of this proof trace.
+     *
+     * @return the initial goal of this proof trace.
+     */
+    Goals getInitialGoals();
+
+    /**
+     * Returns the pending goals. <p><span style="font-weight:bold">Note</span>:
+     * an empty goal indicates that the proof is finished.</p>
+     * @return 
+     */
+    Goals getLastGoals();
 }
