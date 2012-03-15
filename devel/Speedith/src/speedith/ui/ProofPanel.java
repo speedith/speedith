@@ -161,7 +161,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
     }
     //</editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="UI Interaction Methods">
+    // <editor-fold defaultstate="collapsed" desc="UI Related Methods">
     private void displayInitialGoals() {
         Goals initialGoals = proof.getInitialGoals();
         GoalsTitleLabel gtl = new GoalsTitleLabel();
@@ -170,19 +170,22 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
         gbc.weightx = 1;
         gbc.anchor = GridBagConstraints.NORTH;
         if (initialGoals == null || initialGoals.isEmpty()) {
+            // If there are no goal, just put up a title saying this.
             gtl.setTitle(i18n("PROOF_PANEL_NO_GOALS"));
             gbc.weighty = 1;
             pnlGoals.add(gtl, gbc);
         } else {
             gtl.setTitle(i18n("PROOF_PANEL_INIT_GOAL_TITLE"));
+            gbc.insets.bottom = 1;
             pnlGoals.add(gtl, gbc);
-            // Add the subgoals
+            // Add the initial goals
             int i = 0;
             for (SpiderDiagram spiderDiagram : initialGoals.getGoals()) {
                 gbc = new GridBagConstraints();
                 gbc.fill = GridBagConstraints.HORIZONTAL;
                 gbc.weightx = 1;
                 gbc.anchor = GridBagConstraints.NORTH;
+                gbc.insets.top = 1;
                 SubgoalPanel sp = new SubgoalPanel();
                 sp.setSubgoalIndex(i);
                 sp.setDiagram(spiderDiagram);

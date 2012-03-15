@@ -34,10 +34,7 @@ package speedith.ui;
 
 import icircles.gui.*;
 import icircles.util.CannotDrawException;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Iterator;
@@ -499,6 +496,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = fill ? java.awt.GridBagConstraints.BOTH : GridBagConstraints.NONE;
         gridBagConstraints.weightx = weightx;
         gridBagConstraints.weighty = weighty;
+        gridBagConstraints.insets.set(3, 1, 3, 1);
         return gridBagConstraints;
     }
 
