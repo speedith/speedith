@@ -50,25 +50,25 @@ public class StepDescriptionLabel extends javax.swing.JPanel {
 
         lblDescription = new javax.swing.JLabel();
 
-        setBackground(new java.awt.Color(0, 102, 153));
+        setBackground(new java.awt.Color(228, 227, 227));
 
         lblDescription.setBackground(new java.awt.Color(255, 255, 255));
-        lblDescription.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        lblDescription.setFont(new java.awt.Font("Dialog", 2, 12)); // NOI18N
         lblDescription.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblDescription.setText("Applied rule: split spiders");
-        lblDescription.setOpaque(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(lblDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 527, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
+            .addComponent(lblDescription, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables

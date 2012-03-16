@@ -399,13 +399,13 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     }
 
     private void addInfixOperator(CompoundSpiderDiagram csd, int gridx) {
-        diagrams.add(registerSubdiagramClickListener(new OperatorPanel(csd.getOperator()), 0), getOperandLayoutConstraints(gridx, false, 0, 0));
+        diagrams.add(registerSubdiagramClickListener(new OperatorPanel(csd.getOperator()), 0), getSubdiagramLayoutConstraints(gridx, false, 0, 0));
     }
 
     private int addInfixSpiderDiagramPanel(int nextSubdiagramIndex, SpiderDiagram curSD, int gridx) throws CannotDrawException {
         GridBagConstraints gridBagConstraints;
         JPanel sdp = registerSubdiagramClickListener(DiagramVisualisation.getSpiderDiagramPanel(curSD), nextSubdiagramIndex);
-        gridBagConstraints = getOperandLayoutConstraints(gridx, true, sdp.getPreferredSize().width, 1);
+        gridBagConstraints = getSubdiagramLayoutConstraints(gridx, true, sdp.getPreferredSize().width, 1);
         diagrams.add(sdp, gridBagConstraints);
         return nextSubdiagramIndex + curSD.getSubDiagramCount();
     }
@@ -488,7 +488,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         return diagramPanel;
     }
 
-    private GridBagConstraints getOperandLayoutConstraints(int gridx, boolean fill, int weightx, int weighty) {
+    private GridBagConstraints getSubdiagramLayoutConstraints(int gridx, boolean fill, int weightx, int weighty) {
         GridBagConstraints gridBagConstraints;
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = gridx;

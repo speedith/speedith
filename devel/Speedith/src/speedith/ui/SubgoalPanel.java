@@ -59,9 +59,9 @@ public class SubgoalPanel extends javax.swing.JPanel {
 
         setBackground(new java.awt.Color(255, 255, 255));
 
-        lblSubdiagramIndex.setBackground(new java.awt.Color(0, 102, 153));
+        lblSubdiagramIndex.setBackground(new java.awt.Color(244, 242, 242));
         lblSubdiagramIndex.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        lblSubdiagramIndex.setForeground(new java.awt.Color(255, 255, 255));
+        lblSubdiagramIndex.setForeground(new java.awt.Color(102, 102, 102));
         lblSubdiagramIndex.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblSubdiagramIndex.setText(getSubdiagramIndexText());
         lblSubdiagramIndex.setOpaque(true);
