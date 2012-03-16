@@ -55,17 +55,19 @@ public class SubgoalsPanel extends javax.swing.JPanel {
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
+
+        pnlTitle.setMinimumSize(new java.awt.Dimension(153, 30));
+        pnlTitle.setPreferredSize(new java.awt.Dimension(223, 30));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipady = 10;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         add(pnlTitle, gridBagConstraints);
 
         pnlStepDescription.setMinimumSize(new java.awt.Dimension(202, 20));
-        pnlStepDescription.setPreferredSize(new java.awt.Dimension(561, 25));
+        pnlStepDescription.setPreferredSize(new java.awt.Dimension(561, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -73,6 +75,9 @@ public class SubgoalsPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         add(pnlStepDescription, gridBagConstraints);
+
+        subgoalPanel1.setMinimumSize(new java.awt.Dimension(31, 150));
+        subgoalPanel1.setPreferredSize(new java.awt.Dimension(361, 200));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
