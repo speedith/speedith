@@ -223,7 +223,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
                 .addGap(0, 0, 0)
                 .addGroup(selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(selectionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(selectionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE))
                 .addGap(0, 0, 0))
         );
         selectionPanelLayout.setVerticalGroup(
@@ -231,7 +231,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
             .addGroup(selectionPanelLayout.createSequentialGroup()
                 .addComponent(selectionLabel)
                 .addGap(3, 3, 3)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
 
@@ -243,7 +243,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(finishButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 123, Short.MAX_VALUE)
                 .addComponent(previousButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(clearButton)
@@ -261,7 +261,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(diagramAndSelectionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+                .addComponent(diagramAndSelectionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(errorMessage)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
