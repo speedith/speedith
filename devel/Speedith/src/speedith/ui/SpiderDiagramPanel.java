@@ -538,6 +538,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         prefSize.height += 10;
         prefSize.width += 10;
         setPreferredSize(prefSize);
+        setMinimumSize(prefSize);
         invalidate();
     }
 

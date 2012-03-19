@@ -104,7 +104,8 @@ public class SubgoalPanel extends javax.swing.JPanel {
     
     public void setDiagram(SpiderDiagram diagram) {
         this.spiderDiagramPanel1.setDiagram(diagram);
-        this.spiderDiagramPanel1.setHighlightMode(SpiderDiagramPanel.All);
+        this.setMinimumSize(this.spiderDiagramPanel1.getPreferredSize());
+        this.setPreferredSize(this.spiderDiagramPanel1.getPreferredSize());
     }
     // </editor-fold>
 

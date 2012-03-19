@@ -22,15 +22,16 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="proofPanel2" pref="763" max="32767" attributes="0"/>
+                  <Component id="proofPanel1" max="32767" attributes="0"/>
+                  <Component id="spiderDiagramPanel1" alignment="0" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
                       <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="proofPanel1" pref="763" max="32767" attributes="0"/>
-                  <Component id="spiderDiagramPanel1" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -44,7 +45,9 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jButton1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="proofPanel1" pref="196" max="32767" attributes="0"/>
+              <Component id="proofPanel1" pref="170" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="proofPanel2" min="-2" pref="152" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -65,6 +68,8 @@
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ProofPanel(Goals.createGoalsFrom(SpeedithMainForm.getExampleA(), SpeedithMainForm.getSDExample4()))"/>
       </AuxValues>
+    </Component>
+    <Component class="speedith.ui.ProofPanel" name="proofPanel2">
     </Component>
   </SubComponents>
 </Form>

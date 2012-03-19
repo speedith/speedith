@@ -48,7 +48,8 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
      * Creates a new proof panel with no goals.
      */
     public ProofPanel() {
-        this((Goals) null);
+        this(null);
+//        initComponents();
     }
 
     /**
@@ -78,7 +79,6 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         scrlGoals = new javax.swing.JScrollPane();
         pnlGoals = new javax.swing.JPanel();
@@ -164,36 +164,52 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
     // <editor-fold defaultstate="collapsed" desc="UI Related Methods">
     private void displayInitialGoals() {
         Goals initialGoals = proof.getInitialGoals();
-        GoalsTitleLabel gtl = new GoalsTitleLabel();
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1;
-        gbc.anchor = GridBagConstraints.NORTH;
         if (initialGoals == null || initialGoals.isEmpty()) {
             // If there are no goal, just put up a title saying this.
-            gtl.setTitle(i18n("PROOF_PANEL_NO_GOALS"));
-            gbc.weighty = 1;
-            pnlGoals.add(gtl, gbc);
+            displayEmptyGoals();
         } else {
-            gtl.setTitle(i18n("PROOF_PANEL_INIT_GOAL_TITLE"));
-            gbc.insets.bottom = 1;
-            pnlGoals.add(gtl, gbc);
+            displayInitialGoals(initialGoals);
+//            gtl.setTitle(i18n("PROOF_PANEL_INIT_GOAL_TITLE"));
+//            gbc.insets.bottom = 1;
+//            pnlGoals.add(gtl, gbc);
             // Add the initial goals
-            int i = 0;
-            for (SpiderDiagram spiderDiagram : initialGoals.getGoals()) {
-                gbc = new GridBagConstraints();
-                gbc.fill = GridBagConstraints.HORIZONTAL;
-                gbc.weightx = 1;
-                gbc.anchor = GridBagConstraints.NORTH;
-                gbc.insets.top = 1;
-                SubgoalPanel sp = new SubgoalPanel();
-                sp.setSubgoalIndex(i);
-                sp.setDiagram(spiderDiagram);
-                i++;
-                gbc.gridy = i;
-                pnlGoals.add(sp, gbc);
-            }
+//            int i = 0;
+//            for (SpiderDiagram spiderDiagram : initialGoals.getGoals()) {
+//                gbc = new GridBagConstraints();
+//                gbc.fill = GridBagConstraints.HORIZONTAL;
+//                gbc.weightx = 1;
+//                gbc.anchor = GridBagConstraints.NORTH;
+//                gbc.insets.top = 1;
+//                SubgoalPanel sp = new SubgoalPanel();
+//                sp.setSubgoalIndex(i);
+//                sp.setDiagram(spiderDiagram);
+//                i++;
+//                gbc.gridy = i;
+//                pnlGoals.add(sp, gbc);
+//            }
         }
+    }
+
+    private void displayInitialGoals(Goals initialGoals) {
+        GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.fill = java.awt.GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        SubgoalsPanel sgp = new SubgoalsPanel(initialGoals, i18n("PROOF_PANEL_INIT_GOAL_TITLE"), (String)null);
+        pnlGoals.add(sgp, gbc);
+    }
+
+    /**
+     * Puts a header saying there are no goals on which one could apply
+     * inference rules.
+     */
+    private void displayEmptyGoals() {
+        GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.fill = java.awt.GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        SubgoalsPanel sgp = new SubgoalsPanel(i18n("PROOF_PANEL_NO_GOALS"));
+        pnlGoals.add(sgp, gbc);
     }
     // </editor-fold>
 }
