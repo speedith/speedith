@@ -53,7 +53,7 @@ import static speedith.core.i18n.Translations.*;
  * equivalence} operators).</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule {
+public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**

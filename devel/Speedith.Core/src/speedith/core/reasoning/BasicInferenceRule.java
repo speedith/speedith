@@ -26,13 +26,16 @@
  */
 package speedith.core.reasoning;
 
+import speedith.core.reasoning.args.RuleArg;
+
 /**
  * Represents a first-principle inference rule. These rules are the most
  * granular, work on primary diagrams and are verified in theory.
  * <p>A proof that consists of only basic inference rules is said to be
  * <span style="font-weight:bold;font-style:italic">trusted</span>.</p>
+ * @param <TRuleArg> the type of the argument this rule takes.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface BasicInferenceRule {
+public interface BasicInferenceRule <TRuleArg extends RuleArg> extends InferenceRule<TRuleArg> {
     // TODO: Specify the interface. Might even be empty.
 }

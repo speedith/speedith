@@ -48,7 +48,7 @@ import speedith.core.reasoning.args.SpiderRegionArg;
  * The implementation of the 'split spiders' diagrammatic inference rule.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule {
+public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**

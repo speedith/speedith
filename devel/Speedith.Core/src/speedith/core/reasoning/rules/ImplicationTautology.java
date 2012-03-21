@@ -50,7 +50,7 @@ import static speedith.core.i18n.Translations.*;
  * and converts it to a {@link NullSpiderDiagram null diagram}.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule {
+public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**

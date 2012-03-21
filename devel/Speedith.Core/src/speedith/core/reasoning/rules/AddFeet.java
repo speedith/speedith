@@ -51,7 +51,7 @@ import static speedith.core.i18n.Translations.*;
  * feet of a particular spider.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule {
+public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**

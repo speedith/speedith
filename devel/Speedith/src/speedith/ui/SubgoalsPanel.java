@@ -50,24 +50,26 @@ public class SubgoalsPanel extends javax.swing.JPanel {
      * Creates new form SubgoalsPanel
      */
     public SubgoalsPanel() {
-        initComponents();
+        this(null, null, null);
     }
 
     public SubgoalsPanel(Goals goals) {
-        this();
+        this(goals, null, null);
     }
 
     public SubgoalsPanel(String goalTitle) {
-        this();
-        initTitleLabel(goalTitle);
-        initStepDescriptionLabel(null);
+        this(null, goalTitle, null);
+    }
+
+    public SubgoalsPanel(String goalTitle, String stepDescription) {
+        this(null, goalTitle, stepDescription);
     }
 
     public SubgoalsPanel(Goals goals, String title, String stepDescription) {
-        this();
+        initComponents();
         initTitleLabel(title);
         initStepDescriptionLabel(stepDescription);
-        putGoalPanels(goals.getGoals());
+        putGoalPanels(goals);
     }
     //</editor-fold>
 
@@ -140,8 +142,15 @@ public class SubgoalsPanel extends javax.swing.JPanel {
         pnlStepDescription.setTitle(description);
     }
 
+    private void putGoalPanels(Goals goals) {
+        if (goals != null && !goals.isEmpty()) {
+            putGoalPanels(goals.getGoals());
+        }
+    }
+
     private void putGoalPanels(List<SpiderDiagram> goals) {
         Dimension size = new Dimension();
+        // Display the spider diagrams together with their sub-goal index.
         for (int i = 0; i < goals.size(); i++) {
             SpiderDiagram spiderDiagram = goals.get(i);
             GridBagConstraints bgc = new java.awt.GridBagConstraints();
@@ -156,6 +165,7 @@ public class SubgoalsPanel extends javax.swing.JPanel {
             size.width = Math.max(size.width, subgoalPanel.getPreferredSize().width);
             size.height += subgoalPanel.getPreferredSize().height;
         }
+        // Calculate the preferred size of this panel.
         if (!Strings.isNullOrEmpty(pnlStepDescription.getDescription())) {
             size.height += STEP_DESCRIPTION_HEIGHT;
         }
