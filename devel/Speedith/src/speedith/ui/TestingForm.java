@@ -58,7 +58,7 @@ public class TestingForm extends javax.swing.JFrame {
 
         spiderDiagramPanel1 = new speedith.ui.SpiderDiagramPanel();
         jButton1 = new javax.swing.JButton();
-        proofPanel1 = new ProofPanel(Goals.createGoalsFrom(SpeedithMainForm.getExampleA(), SpeedithMainForm.getSDExample4()));
+        proofPanel1 = new ProofPanel(Goals.createGoalsFrom(SpeedithMainForm.getExampleA()));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
