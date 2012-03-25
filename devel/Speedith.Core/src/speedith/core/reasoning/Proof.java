@@ -40,11 +40,13 @@ public interface Proof {
      * Applies the rule on the {@link Proof#getLastGoals()  current goals} (if
      * any are left).
      *
+     * @param <TRuleArg> The type of the argument that the rule accepts.
      * @param rule the rule to apply on the current goal.
+     * @return the result of the rule application.
      * @throws RuleApplicationException thrown if the rule could not be applied
      * for any reason.
      */
-    void applyRule(InferenceRule<? extends RuleArg> rule) throws RuleApplicationException;
+    <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<TRuleArg> rule) throws RuleApplicationException;
 
     /**
      * Applies the rule with the given argument on the {@link Proof#getLastGoals()  current goals}
@@ -52,12 +54,14 @@ public interface Proof {
      *
      * @param <TRuleArg> the type of arguments that will be passed to the
      * inference rule.
-     * @param rule the rule to apply on the current goal.
+     * @param rule the rule to apply on the current goal. <span
+     * style="font-weight:bold">Note</span>: must not be {@code null}.
      * @param args the arguments that should be passed on to the rule.
+     * @return the result of the rule application.
      * @throws RuleApplicationException thrown if the rule could not be applied
      * for any reason.
      */
-    <TRuleArg extends RuleArg> void applyRule(InferenceRule<TRuleArg> rule, TRuleArg args) throws RuleApplicationException;
+    <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException;
 
     /**
      * Returns the subgoals at the given index. At index 0 are the initial

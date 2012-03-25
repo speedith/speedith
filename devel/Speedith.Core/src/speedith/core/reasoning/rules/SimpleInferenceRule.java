@@ -27,6 +27,7 @@
 package speedith.core.reasoning.rules;
 
 import java.util.Locale;
+import static speedith.core.i18n.Translations.i18n;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.InferenceRule;
@@ -34,7 +35,6 @@ import speedith.core.reasoning.InferenceRuleProvider;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
-import static speedith.core.i18n.Translations.*;
 
 /**
  * This simple abstract class provides some helper methods commonly used in
@@ -58,6 +58,12 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
     @Override
     public String toString() {
         return getPrettyName();
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
+    public InferenceRuleProvider<TArgs> getProvider() {
+        return this;
     }
     // </editor-fold>
 

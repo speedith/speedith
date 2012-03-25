@@ -102,6 +102,7 @@ public abstract class DiagramSelector<T extends RuleArg> {
      * GUI for selecting diagrammatic elements and returns the rule arguments of
      * the desired type.
      */
+    @SuppressWarnings("unchecked")
     public static <TArg extends RuleArg> DiagramSelector<TArg> getSelector(Class<TArg> ruleArgs, Object... selectorArgs) {
         if (ruleArgs == null) {
             throw new IllegalArgumentException(speedith.i18n.Translations.i18n("GERR_NULL_ARGUMENT", "ruleArgs"));
@@ -115,7 +116,7 @@ public abstract class DiagramSelector<T extends RuleArg> {
             throw new IllegalArgumentException(i18n("SELECTOR_AMBIGUOUS"));
         }
         // Now instantiate the selector.
-        return instantiateSelector(selectorArgs, providers.firstEntry().getValue());
+        return instantiateSelector(selectorArgs, (Class<? extends DiagramSelector<TArg>>) providers.firstEntry().getValue());
     }
 
     /**
@@ -133,13 +134,14 @@ public abstract class DiagramSelector<T extends RuleArg> {
      * GUI for selecting diagrammatic elements and returns the rule arguments of
      * the desired type.
      */
+    @SuppressWarnings("unchecked")
     public static <TArg extends RuleArg> DiagramSelector<TArg> getSelector(String name, Object... selectorArgs) {
         if (name == null) {
             throw new IllegalArgumentException(speedith.i18n.Translations.i18n("GERR_NULL_ARGUMENT", "name"));
         }
 
         // Now instantiate the selector.
-        return instantiateSelector(selectorArgs, providersByName.get(name));
+        return instantiateSelector(selectorArgs, (Class<? extends DiagramSelector<TArg>>) providersByName.get(name));
     }
 
     /**
@@ -205,7 +207,7 @@ public abstract class DiagramSelector<T extends RuleArg> {
     }
 
     //<editor-fold defaultstate="collapsed" desc="Private Helper Methods">
-    private static <TArg extends RuleArg> DiagramSelector<TArg> instantiateSelector(Object[] selectorArgs, Class<? extends DiagramSelector> selector) throws IllegalArgumentException {
+    private static <TArg extends RuleArg> DiagramSelector<TArg> instantiateSelector(Object[] selectorArgs, Class<? extends DiagramSelector<TArg>> selector) throws IllegalArgumentException {
         if (selector == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "selector"));
         }

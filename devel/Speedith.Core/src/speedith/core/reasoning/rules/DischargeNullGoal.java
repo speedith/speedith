@@ -43,7 +43,7 @@ import static speedith.core.i18n.Translations.*;
  * list of current goals.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> implements BasicInferenceRule {
+public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> implements BasicInferenceRule<SubgoalIndexArg> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**

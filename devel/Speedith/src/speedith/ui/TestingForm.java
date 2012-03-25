@@ -58,7 +58,7 @@ public class TestingForm extends javax.swing.JFrame {
 
         spiderDiagramPanel1 = new speedith.ui.SpiderDiagramPanel();
         jButton1 = new javax.swing.JButton();
-        proofPanel1 = new ProofPanel(Goals.createGoalsFrom(SpeedithMainForm.getExampleA(), SpeedithMainForm.getSDExample4()));
+        proofPanel1 = new ProofPanel(Goals.createGoalsFrom(SpeedithMainForm.getExampleA()));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -73,14 +73,14 @@ public class TestingForm extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(proofPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE)
-                    .addComponent(spiderDiagramPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(spiderDiagramPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -91,18 +91,20 @@ public class TestingForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(proofPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                .addComponent(proofPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    @SuppressWarnings("unchecked")
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         SpiderRegionArg feetArg = DiagramSelector.getSelector(SpiderRegionArg.class).showSelectionDialog(this, spiderDiagramPanel1.getDiagram());
         if (feetArg != null) {
-            InferenceRule<? extends RuleArg> splitSpiders = InferenceRules.getInferenceRule(SplitSpiders.InferenceRuleName);
+            InferenceRule<SpiderRegionArg> splitSpiders = (InferenceRule<SpiderRegionArg>) InferenceRules.getInferenceRule(SplitSpiders.InferenceRuleName);
             try {
+                proofPanel1.applyRule(splitSpiders, feetArg);
                 RuleApplicationResult applicationResult = splitSpiders.apply(feetArg, Goals.createGoalsFrom(spiderDiagramPanel1.getDiagram()));
                 spiderDiagramPanel1.setDiagram(applicationResult.getGoals().getGoalAt(0));
             } catch (RuleApplicationException ex) {
@@ -304,7 +306,6 @@ public class TestingForm extends javax.swing.JFrame {
         return Zone.fromInContours("B").withOutContours("A");
     }
     // </editor-fold>
-
 //    private Region getRegionFromFeetSelection(List<SpiderDiagramClickEvent> selection) {
 //        ArrayList<Zone> zones = new ArrayList<Zone>();
 //        for (SpiderDiagramClickEvent sel : selection) {

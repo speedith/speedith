@@ -26,8 +26,6 @@
  */
 package speedith.core.reasoning.args;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.InferenceRule;
 

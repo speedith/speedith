@@ -31,6 +31,7 @@ import java.util.List;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.SubgoalIndexArg;
 import static speedith.i18n.Translations.i18n;
 
 /**
@@ -48,7 +49,8 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
      * Creates a new proof panel with no goals.
      */
     public ProofPanel() {
-        this((Goals) null);
+        this(null);
+//        initComponents();
     }
 
     /**
@@ -78,7 +80,6 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         scrlGoals = new javax.swing.JScrollPane();
         pnlGoals = new javax.swing.JPanel();
@@ -107,19 +108,21 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Proof Interface Implementation">
-    public void applyRule(InferenceRule<? extends RuleArg> rule) throws RuleApplicationException {
-        applyRule(rule, null);
+    public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<TRuleArg> rule) throws RuleApplicationException {
+        return applyRule(rule, null);
     }
 
-    public <TRuleArg extends RuleArg> void applyRule(InferenceRule<TRuleArg> rule, TRuleArg args) throws RuleApplicationException {
-        proof.applyRule(rule, args);
-        // TODO: Refresh the GUI. Add a new set of goal panels and step description labels.
+    public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException {
+        RuleApplicationResult appResult = proof.applyRule(rule, args);
+        addGoals(proof.getGoalsCount() - 1, appResult.getGoals(), rule, args);
+        return appResult;
     }
 
     public boolean undoStep() {
         final boolean didUndo = proof.undoStep();
         if (didUndo) {
             // TODO: Refresh the GUI. Remove the last set of goals and step description labels.
+            throw new UnsupportedOperationException();
         }
         return didUndo;
     }
@@ -164,36 +167,61 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
     // <editor-fold defaultstate="collapsed" desc="UI Related Methods">
     private void displayInitialGoals() {
         Goals initialGoals = proof.getInitialGoals();
-        GoalsTitleLabel gtl = new GoalsTitleLabel();
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1;
-        gbc.anchor = GridBagConstraints.NORTH;
         if (initialGoals == null || initialGoals.isEmpty()) {
             // If there are no goal, just put up a title saying this.
-            gtl.setTitle(i18n("PROOF_PANEL_NO_GOALS"));
-            gbc.weighty = 1;
-            pnlGoals.add(gtl, gbc);
+            displayEmptyGoals();
         } else {
-            gtl.setTitle(i18n("PROOF_PANEL_INIT_GOAL_TITLE"));
-            gbc.insets.bottom = 1;
-            pnlGoals.add(gtl, gbc);
-            // Add the initial goals
-            int i = 0;
-            for (SpiderDiagram spiderDiagram : initialGoals.getGoals()) {
-                gbc = new GridBagConstraints();
-                gbc.fill = GridBagConstraints.HORIZONTAL;
-                gbc.weightx = 1;
-                gbc.anchor = GridBagConstraints.NORTH;
-                gbc.insets.top = 1;
-                SubgoalPanel sp = new SubgoalPanel();
-                sp.setSubgoalIndex(i);
-                sp.setDiagram(spiderDiagram);
-                i++;
-                gbc.gridy = i;
-                pnlGoals.add(sp, gbc);
-            }
+            displayInitialGoals(initialGoals);
         }
+    }
+
+    private void displayInitialGoals(Goals initialGoals) {
+        GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.fill = java.awt.GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        SubgoalsPanel sgp = new SubgoalsPanel(initialGoals, getSubgoalsTitle(0), (String) null);
+        pnlGoals.add(sgp, gbc);
+    }
+
+    private <TRuleArg extends RuleArg> void addGoals(int stepIndex, Goals goals, InferenceRule<? super TRuleArg> rule, TRuleArg args) {
+        GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.fill = java.awt.GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        SubgoalsPanel sgp = new SubgoalsPanel(goals, getSubgoalsTitle(stepIndex), getStepDescription(rule, args));
+        pnlGoals.add(sgp, gbc);
+        revalidate();
+    }
+
+    private String getSubgoalsTitle(int stepIndex) {
+        if (stepIndex < 1) {
+            return i18n("PROOF_PANEL_INIT_GOAL_TITLE");
+        } else {
+            return i18n("PROOF_PANEL_GOAL_TITLE", stepIndex + 1);
+        }
+    }
+
+    private <TRuleArg extends RuleArg> String getStepDescription(InferenceRule<? super TRuleArg> rule, TRuleArg args) {
+        if (args instanceof SubgoalIndexArg) {
+            return i18n("PROOF_PANEL_STEP_DESC_SUBGOAL", rule.getProvider().getPrettyName(), ((SubgoalIndexArg)args).getSubgoalIndex() + 1);
+        } else {
+            return i18n("PROOF_PANEL_STEP_DESC_GENERAL", rule.getProvider().getPrettyName());
+        }
+    }
+
+    /**
+     * Puts a header saying there are no goals on which one could apply
+     * inference rules.
+     */
+    private void displayEmptyGoals() {
+        GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.fill = java.awt.GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        SubgoalsPanel sgp = new SubgoalsPanel(i18n("PROOF_PANEL_NO_GOALS"));
+        pnlGoals.add(sgp, gbc);
     }
     // </editor-fold>
 }

@@ -48,6 +48,26 @@ import speedith.ui.selection.steps.SelectSpiderFeetStep;
  */
 @SelectorDetails(name="Spider region selector", targetRuleArg=SpiderRegionArg.class)
 public class SpiderRegionSelector extends DiagramSelector<SpiderRegionArg> {
+    private final int subgoalIndex;
+
+    /**
+     * Will create rule arguments with sub-goal index 0.
+     */
+    public SpiderRegionSelector() {
+        this(0);
+    }
+
+    /**
+     * Will create rule arguments with the given sub-goal.
+     * @param subgoalIndex 
+     */
+    public SpiderRegionSelector(int subgoalIndex) {
+        if (subgoalIndex < 0) {
+            throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_INDEX_OUT_OF_RANGE_LOWONLY", "subgoalIndex", "0"));
+        }
+        this.subgoalIndex = subgoalIndex;
+    }
+    
 
     /**
      * An instance of this selector that can be used anywhere (since it is
@@ -58,7 +78,7 @@ public class SpiderRegionSelector extends DiagramSelector<SpiderRegionArg> {
     @Override
     public SpiderRegionArg convertToRuleArg(SelectionSequence selection) {
         List<SpiderDiagramClickEvent> sel = selection.getAcceptedClicksForStepAt(0);
-        return new SpiderRegionArg(0, sel.get(0).getSubDiagramIndex(), ((SpiderClickedEvent) sel.get(0).getDetailedInfo()).getSpiderName(), getRegionFromFeetSelection(sel));
+        return new SpiderRegionArg(subgoalIndex, sel.get(0).getSubDiagramIndex(), ((SpiderClickedEvent) sel.get(0).getDetailedInfo()).getSpiderName(), getRegionFromFeetSelection(sel));
     }
 
     @Override

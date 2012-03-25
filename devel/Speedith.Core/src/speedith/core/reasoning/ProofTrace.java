@@ -98,56 +98,60 @@ public class ProofTrace implements Proof {
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Proof Interface Implementation">
-    public void applyRule(InferenceRule<? extends RuleArg> rule) throws RuleApplicationException {
-        applyRule(rule, null);
+    public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<TRuleArg> rule) throws RuleApplicationException {
+        return applyRule(rule, null);
     }
-
-    public <TRuleArg extends RuleArg> void applyRule(InferenceRule<TRuleArg> rule, TRuleArg args) throws RuleApplicationException {
+    
+    public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException {
         if (isFinished()) {
             throw new RuleApplicationException(i18n("PROOF_TRACE_FINISHED"));
         }
         RuleApplicationResult appResult = rule.apply(args, getLastGoals());
+        if (appResult == null) {
+            throw new IllegalStateException(i18n("SRK_RULE_MUST_RETURN_NONNULL_RESULT", rule.getProvider().getInferenceRuleName()));
+        }
         ruleApplications.add(new RuleApplication(rule, args));
         goals.add(appResult.getGoals());
+        return appResult;
     }
-
+    
     public Goals getGoalsAt(int index) {
         return goals.get(index);
     }
-
+    
     public int getGoalsCount() {
         return goals.size();
     }
-
+    
     public Goals getInitialGoals() {
         return goals.isEmpty() ? null : goals.get(0);
     }
-
+    
     public Goals getLastGoals() {
         return goals.isEmpty() ? null : goals.get(goals.size() - 1);
     }
-
+    
     public List<Goals> getGoals() {
         return Collections.unmodifiableList(goals);
     }
-
+    
     public List<RuleApplication> getRuleApplications() {
         return Collections.unmodifiableList(ruleApplications);
     }
-
+    
     public RuleApplication getRuleApplicationAt(int index) {
         return ruleApplications.get(index);
     }
-
+    
     public int getRuleApplicationCount() {
         return ruleApplications.size();
     }
-
+    
     public boolean isFinished() {
         final Goals lastGoals = getLastGoals();
         return lastGoals == null || lastGoals.isEmpty();
     }
-
+    
     public boolean undoStep() {
         if (getRuleApplicationCount() > 0) {
             goals.remove(goals.size() - 1);
