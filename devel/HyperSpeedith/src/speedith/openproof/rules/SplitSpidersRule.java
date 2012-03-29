@@ -13,6 +13,7 @@ import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.InferenceRules;
 import speedith.core.reasoning.RuleApplicationResult;
+import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.openproof.driver.SpiderDriver;
@@ -52,8 +53,20 @@ public class SplitSpidersRule extends OPDInferenceRule {
 		}
 		
 		SpiderDiagram citedDiagram = (SpiderDiagram) ((SpiderDriver) driver).getDriverInfo()[0];
-
-		SpiderRegionArg feetArg = DiagramSelector.getSelector(SpiderRegionArg.class).showSelectionDialog(null, citedDiagram);
+		
+		RuleArg arg = null;
+		
+		if (step.getRepresentation().getDriver() instanceof SpiderDriver) {
+			arg =  (RuleArg) step.getRepresentation().getDriver().getDriverInfo()[1];
+		}
+		
+		SpiderRegionArg feetArg;
+		
+		if (arg instanceof SpiderRegionArg) {
+			feetArg = (SpiderRegionArg) arg;
+		} else {
+			feetArg = DiagramSelector.getSelector(SpiderRegionArg.class).showSelectionDialog(null, citedDiagram);
+		}
 		
 		RuleApplicationResult applicationResult = null;
 		
@@ -68,7 +81,7 @@ public class SplitSpidersRule extends OPDInferenceRule {
 		}
 		
 		OPDStepInfo info = step.getRepresentation();
-		info.getDriver().setDriverInfo(new Object[] { applicationResult.getGoals().getGoalAt(0) });
+		info.getDriver().setDriverInfo(new Object[] { applicationResult.getGoals().getGoalAt(0), feetArg });
 		
 		return new OPDStatusObject(OPDStatusObject.OPDValid, "", "");
 	}

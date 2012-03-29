@@ -15,6 +15,7 @@ import openproof.zen.repdriver.OPDRepDriver;
 import openproof.zen.repeditor.OPERepEditor;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.args.RuleArg;
 import speedith.openproof.editor.SpiderInternalEditor;
 import speedith.ui.SpeedithMainForm;
 
@@ -23,6 +24,9 @@ public class SpiderDriver implements OPDRepDriver, Cloneable {
 	public static final Precondition[] PRECONDITIONS = null;
 	
 	private SpiderDiagram diagram;
+	private RuleArg ruleArgument;
+	
+	
 	private OPDStep step;
 	private OPDGoal goal;
 	
@@ -30,10 +34,15 @@ public class SpiderDriver implements OPDRepDriver, Cloneable {
 	
 	public SpiderDriver() {
 		diagram = SpeedithMainForm.getExampleA();
+		ruleArgument = null;
 	}
 	
-	public Object[] getDriverInfo() { return new Object[] { diagram }; }
-	public void setDriverInfo(Object objs[]) { diagram = (SpiderDiagram) objs[0]; }
+	public Object[] getDriverInfo() { return new Object[] { diagram, ruleArgument }; }
+	
+	public void setDriverInfo(Object objs[]) {
+		diagram = (SpiderDiagram) objs[0];
+		ruleArgument = (RuleArg) objs[1];
+	}
 	
 	public OPDRepDriver getHeadDriver() { return this; }
 	
