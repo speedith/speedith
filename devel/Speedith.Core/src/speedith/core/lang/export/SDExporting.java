@@ -62,6 +62,7 @@ public final class SDExporting {
     static {
         // Register built-in exporters.
         registerProvider(Isabelle2011ExportProvider.class);
+        registerProvider(OpenproofExportProvider.class);
     }
 
     /**

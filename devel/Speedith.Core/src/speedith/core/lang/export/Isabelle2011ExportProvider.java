@@ -26,27 +26,11 @@
  */
 package speedith.core.lang.export;
 
-import speedith.core.lang.reader.ReadingException;
-import speedith.core.lang.reader.SpiderDiagramsReader;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import speedith.core.lang.CompoundSpiderDiagram;
-import speedith.core.lang.NullSpiderDiagram;
-import speedith.core.lang.PrimarySpiderDiagram;
-import static speedith.core.i18n.Translations.i18n;
-import speedith.core.lang.Operator;
-import static speedith.core.lang.Operator.*;
-import speedith.core.lang.Region;
-import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.Zone;
+import java.util.*;
+import static speedith.core.i18n.Translations.*;
+import speedith.core.lang.*;
 import speedith.core.util.Sets;
 
 /**
@@ -271,7 +255,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         private void exportInfixOperator(CompoundSpiderDiagram nsd, Writer output, PrintCallback operatorSymbolPrinter) throws IOException, RuntimeException {
             // We have to print an infix operator application.
             if (nsd.getOperandCount() < 2) {
-                throw new RuntimeException(i18n("ERR_ISAEXPORT_ARG_COUNT_INVALID", nsd.getOperandCount()));
+                throw new RuntimeException(i18n("ERR_EXPORT_ARG_COUNT_INVALID", nsd.getOperandCount()));
             } else {
                 exportDiagram(nsd.getOperand(0), output);
                 for (int i = 1; i < nsd.getOperandCount(); i++) {

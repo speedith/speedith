@@ -24,7 +24,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package speedith.core.lang.export;
 
 import java.util.Locale;
@@ -34,12 +33,12 @@ import speedith.core.lang.SpiderDiagram;
 
 /**
  * This is the base of the classes that provide actual exporters for the
- * mechanism for exporting {@link SpiderDiagram spider diagrams}.
- * <p>See {@link SDExporting} for detailed description on how to register new
- * export providers.</p>
+ * mechanism for exporting {@link SpiderDiagram spider diagrams}. <p>See {@link SDExporting}
+ * for detailed description on how to register new export providers.</p>
  * <p><span style="font-weight:bold">Important</span>: implementations of this
  * class should have a <span style="font-style:italic;">public default
  * constructor</span>.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public abstract class SDExportProvider {
@@ -47,6 +46,7 @@ public abstract class SDExportProvider {
     /**
      * Returns the name of the format to which {@link SDExporter exporters} from
      * this provider export spider diagrams to.
+     *
      * @return the name of the format to which {@link SDExporter exporters} from
      * this provider export spider diagrams to.
      */
@@ -56,11 +56,15 @@ public abstract class SDExportProvider {
      * Creates an exporter of spider diagrams. This exporter will export spider
      * diagrams to the format as indicated by
      * {@link SDExportProvider#getFormatName()}.
+     *
      * @param parameters optional parameters, which can be considered by the
-     * export provider when constructing the exporter.
-     * <p>A list of valid parameters can be inspected via {@link
-     * SDExportProvider#getParameters()}. Description of every parameter
-     * can be obtained via {@link SDExportProvider#getParameterDescription(java.lang.String, java.util.Locale)}.</p>
+     * export provider when constructing the exporter. <p>A list of valid
+     * parameters can be inspected via {@link
+     * SDExportProvider#getParameters()}. Description of every parameter can be
+     * obtained via {@link SDExportProvider#getParameterDescription(java.lang.String, java.util.Locale)}.</p>
+     * <p><span style="font-weight:bold">Note</span>: this parameter may be
+     * {@code null}, which indicates that an exporter with no parameters should
+     * be returned.</p>
      * @return an exporter of spider diagrams. This exporter will export spider
      * diagrams to the format as indicated by
      * {@link SDExportProvider#getFormatName()}.
@@ -72,6 +76,7 @@ public abstract class SDExportProvider {
      * <p>This method may return {@code null}, which indicates that no
      * parameters are taken by {@link SDExportProvider#getExporter(java.util.Map)}.</p>
      * <p>Note: the default implementation returns {@code null}.</p>
+     *
      * @return a set of parameter names that are meaningful to {@link SDExportProvider#getExporter(java.util.Map)}.
      */
     public SortedSet<String> getParameters() {
@@ -80,12 +85,13 @@ public abstract class SDExportProvider {
 
     /**
      * Gets the description for the given parameter (which is in the
-     * {@link SDExportProvider#getParameters()} set).
-     * <p>The default implementation returns {@code null}</p>
+     * {@link SDExportProvider#getParameters()} set). <p>The default
+     * implementation returns {@code null}</p>
+     *
      * @param parameter the parameter for which we want a description.
      * @param locale the locale in which the description should be given.
-     * @return the description of the parameter with the given name in the
-     * given locale.
+     * @return the description of the parameter with the given name in the given
+     * locale.
      */
     public String getParameterDescription(String parameter, Locale locale) {
         return null;
@@ -93,9 +99,10 @@ public abstract class SDExportProvider {
 
     /**
      * Gets the description for the given parameter (which is in the
-     * {@link SDExportProvider#getParameters()} set).
-     * <p>The default implementation calls {@link SDExportProvider#getParameterDescription(java.lang.String, java.util.Locale)}
+     * {@link SDExportProvider#getParameters()} set). <p>The default
+     * implementation calls {@link SDExportProvider#getParameterDescription(java.lang.String, java.util.Locale)}
      * with the {@link Locale#getDefault() default locale}.</p>
+     *
      * @param parameter the parameter for which we want a description.
      * @return the description of the parameter with the given name in the
      * default locale.
@@ -105,9 +112,9 @@ public abstract class SDExportProvider {
     }
 
     /**
-     * Returns the description of this export format.
-     * <p>This method calls {@link SDExportProvider#getDescription(java.util.Locale)}
+     * Returns the description of this export format. <p>This method calls {@link SDExportProvider#getDescription(java.util.Locale)}
      * with the {@link Locale#getDefault() default locale}.</p>
+     *
      * @return the description of this export format.
      */
     public String getDescription() {
@@ -117,11 +124,11 @@ public abstract class SDExportProvider {
     /**
      * Returns the description of this export format in the given {@link Locale
      * locale}.
+     *
      * @param locale the locale in which to give the description of this export
      * format.
      * @return the description of this export format in the given {@link Locale
      * locale}.
      */
     public abstract String getDescription(Locale locale);
-
 }
