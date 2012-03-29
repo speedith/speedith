@@ -283,8 +283,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
         Region s1Region = regionA_B__B_A();
         Region s2Region = regionAB();
-        emptyPSD = emptyPSD.addSpider("s1", s1Region);
-        return emptyPSD.addSpider("s2", s2Region);
+        emptyPSD = emptyPSD.addSpider("t1", s1Region);
+        return emptyPSD.addSpider("t2", s2Region);
     }
     
     /**
@@ -322,8 +322,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
         Region s1Region = regionA_B__AB();
         Region s2Region = regionB_A__AB();
-        emptyPSD = emptyPSD.addSpider("s1", s1Region);
-        return emptyPSD.addSpider("s2", s2Region);
+        emptyPSD = emptyPSD.addSpider("u1", s1Region);
+        return emptyPSD.addSpider("u2", s2Region);
     }
     
     /**
