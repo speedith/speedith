@@ -145,7 +145,7 @@ public class OpenproofExportProvider extends SDExportProvider {
         }
 
         private static Writer printInequality(Writer output) throws IOException {
-            return output.append(" <> ");
+            return output.append(" # ");
         }
         // </editor-fold>
 
