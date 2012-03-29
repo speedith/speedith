@@ -93,8 +93,13 @@ public class SubgoalsPanel extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(561, 50));
         setLayout(new java.awt.GridBagLayout());
 
+<<<<<<< HEAD
+        pnlTitle.setMinimumSize(new java.awt.Dimension(153, 30));
+        pnlTitle.setPreferredSize(new java.awt.Dimension(223, 30));
+=======
         pnlTitle.setMinimumSize(new Dimension(150, SUBGOALS_TITLE_HEIGHT));
         pnlTitle.setPreferredSize(new Dimension(150, SUBGOALS_TITLE_HEIGHT));
+>>>>>>> 23d45fecfb5c34047e16644811be7041d6200ec3
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -103,8 +108,13 @@ public class SubgoalsPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         add(pnlTitle, gridBagConstraints);
 
+<<<<<<< HEAD
+        pnlStepDescription.setMinimumSize(new java.awt.Dimension(202, 20));
+        pnlStepDescription.setPreferredSize(new java.awt.Dimension(561, 20));
+=======
         pnlStepDescription.setMinimumSize(new Dimension(150, STEP_DESCRIPTION_HEIGHT));
         pnlStepDescription.setPreferredSize(new Dimension(150, STEP_DESCRIPTION_HEIGHT));
+>>>>>>> 23d45fecfb5c34047e16644811be7041d6200ec3
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
@@ -112,7 +122,12 @@ public class SubgoalsPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         add(pnlStepDescription, gridBagConstraints);
 
+<<<<<<< HEAD
+        subgoalPanel1.setMinimumSize(new java.awt.Dimension(31, 150));
+        subgoalPanel1.setPreferredSize(new java.awt.Dimension(361, 200));
+=======
         pnlGoals.setLayout(new java.awt.GridBagLayout());
+>>>>>>> 23d45fecfb5c34047e16644811be7041d6200ec3
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -150,9 +165,8 @@ public class SubgoalsPanel extends javax.swing.JPanel {
 
     private void putGoalPanels(List<SpiderDiagram> goals) {
         Dimension size = new Dimension();
-        final int goalsCount = goals.size();
         // Display the spider diagrams together with their sub-goal index.
-        for (int i = 0; i < goalsCount; i++) {
+        for (int i = 0; i < goals.size(); i++) {
             SpiderDiagram spiderDiagram = goals.get(i);
             GridBagConstraints bgc = new java.awt.GridBagConstraints();
             bgc.gridx = 0;
@@ -160,9 +174,7 @@ public class SubgoalsPanel extends javax.swing.JPanel {
             bgc.weightx = 1.0;
             bgc.weighty = 1.0;
             SubgoalPanel subgoalPanel = new SubgoalPanel();
-            // If there is only one subgoal, don't display its subgoal index.
-            // TODO: Rather create a function that hides the subgoal index.
-            subgoalPanel.setSubgoalIndex(goalsCount > 1 ? i : -1);
+            subgoalPanel.setSubgoalIndex(i);
             subgoalPanel.setDiagram(spiderDiagram);
             pnlGoals.add(subgoalPanel, bgc);
             size.width = Math.max(size.width, subgoalPanel.getPreferredSize().width);

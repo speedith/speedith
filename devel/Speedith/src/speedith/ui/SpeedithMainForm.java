@@ -85,10 +85,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(SpeedithMainForm.class.getName()).log(Level.WARNING, "Speedith's icons could not have been loaded.", ex);
         }
-        
-        initGoals();
-        this.scrlPnlGoals.getVerticalScrollBar().setBlockIncrement(GoalsHeight/3);
-        this.scrlPnlGoals.getVerticalScrollBar().setUnitIncrement(GoalsHeight/10);
     }
     // </editor-fold>
 
@@ -103,14 +99,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        scrlPnlGoals = new javax.swing.JScrollPane();
-        pnlGoals = new javax.swing.JPanel();
-        goalsPanel1 = new speedith.ui.GoalsPanel();
-        goalsPanel2 = new speedith.ui.GoalsPanel();
-        goalsPanel3 = new speedith.ui.GoalsPanel();
-        goalsPanel4 = new speedith.ui.GoalsPanel();
-        goalsPanel5 = new speedith.ui.GoalsPanel();
-        lblGoals = new javax.swing.JLabel();
+        javax.swing.JSplitPane mainSplitPane = new javax.swing.JSplitPane();
+        proofPanel1 = new speedith.ui.ProofPanel();
         pnlRulesSidePane = new javax.swing.JPanel();
         lblAppliedRules = new javax.swing.JLabel();
         scrlPnlAppliedRules = new javax.swing.JScrollPane();
@@ -126,97 +116,57 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Speedith");
 
-        scrlPnlGoals.setBackground(new java.awt.Color(255, 255, 255));
+        mainSplitPane.setLeftComponent(proofPanel1);
 
-        pnlGoals.setLayout(new java.awt.GridBagLayout());
+        pnlRulesSidePane.setMinimumSize(new java.awt.Dimension(150, 300));
+        pnlRulesSidePane.setPreferredSize(new java.awt.Dimension(150, 300));
+        pnlRulesSidePane.setLayout(new java.awt.GridBagLayout());
 
-        goalsPanel1.setPreferredSize(new java.awt.Dimension(0, 250));
+        lblAppliedRules.setLabelFor(lstAppliedRules);
+        lblAppliedRules.setText("Applied rules:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        pnlGoals.add(goalsPanel1, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+        pnlRulesSidePane.add(lblAppliedRules, gridBagConstraints);
 
-        goalsPanel2.setPreferredSize(new java.awt.Dimension(0, 250));
+        scrlPnlAppliedRules.setViewportView(lstAppliedRules);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        pnlGoals.add(goalsPanel2, gridBagConstraints);
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
+        pnlRulesSidePane.add(scrlPnlAppliedRules, gridBagConstraints);
 
-        goalsPanel3.setPreferredSize(new java.awt.Dimension(0, 250));
+        lblApplyRule.setLabelFor(cmbxApplyRule);
+        lblApplyRule.setText("Apply rule:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        pnlGoals.add(goalsPanel3, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(6, 3, 0, 0);
+        pnlRulesSidePane.add(lblApplyRule, gridBagConstraints);
 
-        goalsPanel4.setPreferredSize(new java.awt.Dimension(0, 250));
+        cmbxApplyRule.setModel(getRulesComboList());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        pnlGoals.add(goalsPanel4, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
+        pnlRulesSidePane.add(cmbxApplyRule, gridBagConstraints);
 
-        goalsPanel5.setPreferredSize(new java.awt.Dimension(0, 250));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
-        pnlGoals.add(goalsPanel5, gridBagConstraints);
-
-        scrlPnlGoals.setViewportView(pnlGoals);
-
-        lblGoals.setLabelFor(scrlPnlGoals);
-        lblGoals.setText("Goals:");
-
-        pnlRulesSidePane.setPreferredSize(new java.awt.Dimension(115, 325));
-
-        lblAppliedRules.setLabelFor(lstAppliedRules);
-        lblAppliedRules.setText("Applied rules:");
-
-        lstAppliedRules.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Split spider", "Add feet", "Add feet", "Add feet" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        scrlPnlAppliedRules.setViewportView(lstAppliedRules);
-
-        lblApplyRule.setLabelFor(cmbxApplyRule);
-        lblApplyRule.setText("Apply rule:");
-
-        cmbxApplyRule.setModel(getRulesComboList());
-
-        javax.swing.GroupLayout pnlRulesSidePaneLayout = new javax.swing.GroupLayout(pnlRulesSidePane);
-        pnlRulesSidePane.setLayout(pnlRulesSidePaneLayout);
-        pnlRulesSidePaneLayout.setHorizontalGroup(
-            pnlRulesSidePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrlPnlAppliedRules)
-            .addComponent(cmbxApplyRule, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(lblAppliedRules, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
-            .addComponent(lblApplyRule, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        pnlRulesSidePaneLayout.setVerticalGroup(
-            pnlRulesSidePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlRulesSidePaneLayout.createSequentialGroup()
-                .addComponent(lblAppliedRules)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrlPnlAppliedRules, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblApplyRule)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cmbxApplyRule, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        mainSplitPane.setRightComponent(pnlRulesSidePane);
 
         fileMenu.setMnemonic('F');
         fileMenu.setText("File");
@@ -247,26 +197,11 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrlPnlGoals)
-                    .addComponent(lblGoals, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlRulesSidePane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 995, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(lblGoals)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(scrlPnlGoals, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE))
-                    .addComponent(pnlRulesSidePane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+            .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
         );
 
         pack();
@@ -316,21 +251,14 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     private javax.swing.JMenu drawMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
-    private speedith.ui.GoalsPanel goalsPanel1;
-    private speedith.ui.GoalsPanel goalsPanel2;
-    private speedith.ui.GoalsPanel goalsPanel3;
-    private speedith.ui.GoalsPanel goalsPanel4;
-    private speedith.ui.GoalsPanel goalsPanel5;
     private javax.swing.JLabel lblAppliedRules;
     private javax.swing.JLabel lblApplyRule;
-    private javax.swing.JLabel lblGoals;
     private javax.swing.JList lstAppliedRules;
     private javax.swing.JMenuBar menuBar;
-    private javax.swing.JPanel pnlGoals;
     private javax.swing.JPanel pnlRulesSidePane;
+    private speedith.ui.ProofPanel proofPanel1;
     private javax.swing.JMenu rulesMenu;
     private javax.swing.JScrollPane scrlPnlAppliedRules;
-    private javax.swing.JScrollPane scrlPnlGoals;
     // End of variables declaration//GEN-END:variables
     // </editor-fold>
 
@@ -524,42 +452,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         return new DefaultComboBoxModel(prettyNames);
     }
     //</editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Data Initialisation">
-    private void initGoals() {
-        /////////////////
-        /// Initial goal
-        /////////////////
-        this.goalsPanel1.setGoals(getStep0());
-        this.goalsPanel1.setReasoningStep(0);
-        this.goalsPanel1.setHighlightMode(SpiderDiagramPanel.All);
-        /////////////////
-        /// Step 1
-        /////////////////
-//        goals = Goals.createGoalsFrom();
-        this.goalsPanel2.setGoals(getStep1());
-        this.goalsPanel2.setReasoningStep(1);
-        this.goalsPanel2.setHighlightMode(SpiderDiagramPanel.All);
-        /////////////////
-        /// Step 2
-        /////////////////
-        this.goalsPanel3.setGoals(getStep2());
-        this.goalsPanel3.setReasoningStep(2);
-        this.goalsPanel3.setHighlightMode(SpiderDiagramPanel.All);
-        /////////////////
-        /// Step 3
-        /////////////////
-        this.goalsPanel4.setGoals(getStep3());
-        this.goalsPanel4.setReasoningStep(3);
-        this.goalsPanel4.setHighlightMode(SpiderDiagramPanel.All);
-        /////////////////
-        /// Step 4
-        /////////////////
-        this.goalsPanel5.setGoals(getStep4());
-        this.goalsPanel5.setReasoningStep(4);
-        this.goalsPanel5.setHighlightMode(SpiderDiagramPanel.All);
-    }
-    // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Helper Methods">
     private static Goals applyInferenceRule(String infRuleName, RuleArg ruleArg, Goals goals0) {

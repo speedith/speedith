@@ -199,7 +199,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
         if (stepIndex < 1) {
             return i18n("PROOF_PANEL_INIT_GOAL_TITLE");
         } else {
-            return i18n("PROOF_PANEL_GOAL_TITLE", stepIndex + 1);
+            return i18n("PROOF_PANEL_GOAL_TITLE", stepIndex);
         }
     }
 

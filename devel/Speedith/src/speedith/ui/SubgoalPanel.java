@@ -53,6 +53,7 @@ public class SubgoalPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         lblSubdiagramIndex = new javax.swing.JLabel();
         spiderDiagramPanel1 = new speedith.ui.SpiderDiagramPanel();
@@ -64,21 +65,23 @@ public class SubgoalPanel extends javax.swing.JPanel {
         lblSubdiagramIndex.setForeground(new java.awt.Color(102, 102, 102));
         lblSubdiagramIndex.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblSubdiagramIndex.setText(getSubdiagramIndexText());
+        lblSubdiagramIndex.setMinimumSize(new java.awt.Dimension(25, 35));
         lblSubdiagramIndex.setOpaque(true);
+        lblSubdiagramIndex.setPreferredSize(new java.awt.Dimension(25, 35));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(lblSubdiagramIndex, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblSubdiagramIndex, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
-                .addComponent(spiderDiagramPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(spiderDiagramPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblSubdiagramIndex, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(spiderDiagramPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(lblSubdiagramIndex, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(spiderDiagramPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -91,17 +94,24 @@ public class SubgoalPanel extends javax.swing.JPanel {
         return subgoalIndex;
     }
 
+    /**
+     * This number is incremented by one and is then displayed on the left of
+     * the diagram. <p>If you specify a negative number, the label on the left
+     * will be empty.</p>
+     *
+     * @param subgoalIndex
+     */
     public void setSubgoalIndex(int subgoalIndex) {
         if (this.subgoalIndex != subgoalIndex) {
             this.subgoalIndex = subgoalIndex;
             lblSubdiagramIndex.setText(getSubdiagramIndexText());
         }
     }
-    
+
     public SpiderDiagram getDiagram() {
         return this.spiderDiagramPanel1.getDiagram();
     }
-    
+
     public void setDiagram(SpiderDiagram diagram) {
         this.spiderDiagramPanel1.setDiagram(diagram);
         this.setMinimumSize(this.spiderDiagramPanel1.getPreferredSize());
@@ -111,7 +121,11 @@ public class SubgoalPanel extends javax.swing.JPanel {
 
     // <editor-fold defaultstate="collapsed" desc="UI Refresh Methods">
     private String getSubdiagramIndexText() {
-        return Integer.toString(getSubgoalIndex() + 1);
+        if (getSubgoalIndex() >= 0) {
+            return Integer.toString(getSubgoalIndex() + 1);
+        } else {
+            return "";
+        }
     }
     // </editor-fold>
 }
