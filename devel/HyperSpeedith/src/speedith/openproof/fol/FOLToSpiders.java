@@ -37,6 +37,7 @@ import speedith.core.lang.*;
  */
 public class FOLToSpiders {
 
+	//<editor-fold defaultstate="collapsed" desc="Public Methods">
 	/**
 	 * Takes an Openproof {@link OPFormula FOL formula} and converts it into an
 	 * equivalent spider diagram.
@@ -56,7 +57,14 @@ public class FOLToSpiders {
 
 		return snf2sd(formula);
 	}
+	//</editor-fold>
 
+	// <editor-fold defaultstate="collapsed" desc="Constructor">
+	private FOLToSpiders() {
+	}
+	// </editor-fold>
+
+	// <editor-fold defaultstate="collapsed" desc="Private Helper Methods">
 	private static SpiderDiagram snf2sd(OPFormula formula) throws ConversionException {
 		if (formula instanceof OPDisjunction) {
 			return nary2csd((NAryFormula) formula, Operator.Disjunction);
@@ -74,7 +82,7 @@ public class FOLToSpiders {
 			throw new ConversionException(speedith.openproof.i18n.Translations.i18n("FOL2SD_UNKNOWN_FORMULA", formula.toString()));
 		}
 	}
-
+	
 	private static SpiderDiagram nary2csd(NAryFormula nAryFormula, Operator operator) throws ConversionException {
 		final OPFormulaList juncts = nAryFormula.getJuncts();
 		SpiderDiagram sd = snf2sd(juncts.formulaAt(0));
@@ -83,15 +91,15 @@ public class FOLToSpiders {
 		}
 		return sd;
 	}
-
+	
 	private static CompoundSpiderDiagram binary2csd(BinaryFormula binaryFormula, Operator operator) throws ConversionException {
 		throw new ConversionException(speedith.openproof.i18n.Translations.i18n("FOL2SD_NOT_IMPLEMENTED_YET", binaryFormula.toString()));
 	}
-
+	
 	private static CompoundSpiderDiagram unary2csd(UnaryFormula unaryFormula, Operator operator) throws ConversionException {
 		throw new ConversionException(speedith.openproof.i18n.Translations.i18n("FOL2SD_NOT_IMPLEMENTED_YET", unaryFormula.toString()));
 	}
-
+	
 	private static SpiderDiagram existential2psd(OPExistential formula, Operator operator) throws ConversionException {
 		// First get all the nested existentially quantified variables.
 		TreeSet<String> spiders = new TreeSet<String>();
@@ -288,7 +296,7 @@ public class FOLToSpiders {
 			extractContourNames(((QuantifiedFormula) formula).getMatrixFormula(), contours, spidersArr);
 		}
 	}
-
+	
 	private static void extractHabitats(ArrayList<OPFormula> conjuncts, TreeMap<String, Region> habitats, String[] contoursArr, String[] spidersArr) {
 		for (int i = 0; i < conjuncts.size(); i++) {
 			OPFormula conjunct = conjuncts.get(i);
@@ -319,4 +327,5 @@ public class FOLToSpiders {
 		}
 		return null;
 	}
+	// </editor-fold>
 }
