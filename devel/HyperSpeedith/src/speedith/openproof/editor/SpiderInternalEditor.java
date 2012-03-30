@@ -1,13 +1,14 @@
 package speedith.openproof.editor;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 
 import openproof.zen.Precondition;
 import openproof.zen.repeditor.DiagrammaticRepresentationEditor;
@@ -20,19 +21,18 @@ public class SpiderInternalEditor extends OPEEmbeddedEditorAdapter {
 	
 	private static SpiderExternalEditor extEditor = new SpiderExternalEditor();
 	
-	public SpiderInternalEditor() {
-		setSize(20, 20);
-	}
+	private static ImageIcon icns = new ImageIcon(Toolkit.getDefaultToolkit().getImage("SpeedithIconVennDiagram-32.png"));
 	
-	public Dimension getPreferredSize() { return new Dimension(25, 25); }
+	public SpiderInternalEditor() { }
+	
+	public Dimension getPreferredSize() { return new Dimension(32, 32); }
 	
 	public void displayIcon(boolean isAmbiguous) { }
 	
 	public String getRepresentationName() { return REPRESENTATION_NAME; }
 	
 	public void paint(Graphics g) {
-		g.setColor(Color.red);
-		g.fillRect(0, 0, 20, 20);
+		g.drawImage(icns.getImage(), 0, 0, this);
 	}
 	
 	public DiagrammaticRepresentationEditor getRepEditor() { return extEditor; }
