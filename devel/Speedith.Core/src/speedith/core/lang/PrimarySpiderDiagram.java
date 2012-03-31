@@ -26,8 +26,11 @@
  */
 package speedith.core.lang;
 
+import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static speedith.core.i18n.Translations.i18n;
 import speedith.core.util.Sets;
 import static speedith.core.util.Sets.equal;
@@ -340,6 +343,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     }
 
     static class AtomicSpiderDiagramIterator implements Iterator<SpiderDiagram> {
+
         private SpiderDiagram sd;
         private boolean atStart = true;
 
@@ -458,7 +462,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
     @Override
-    public void toString(StringBuilder sb) {
+    public void toString(Appendable sb) throws IOException {
         if (sb == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
         }
@@ -475,19 +479,31 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         sb.append('}');
     }
 
-    private void printSpiders(StringBuilder sb) {
-        sb.append(SDTextSpidersAttribute).append(" = ");
-        printStringList(sb, spiders);
+    private void printSpiders(Appendable sb) {
+        try {
+            sb.append(SDTextSpidersAttribute).append(" = ");
+            printStringList(sb, spiders);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
-    private void printShadedZones(StringBuilder sb) {
-        sb.append(SDTextShadedZonesAttribute).append(" = ");
-        printZoneList(sb, shadedZones);
+    private void printShadedZones(Appendable sb) {
+        try {
+            sb.append(SDTextShadedZonesAttribute).append(" = ");
+            printZoneList(sb, shadedZones);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
-    private void printPresentZones(StringBuilder sb) {
-        sb.append(SDTextPresentZonesAttribute).append(" = ");
-        printZoneList(sb, presentZones);
+    private void printPresentZones(Appendable sb) {
+        try {
+            sb.append(SDTextPresentZonesAttribute).append(" = ");
+            printZoneList(sb, presentZones);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     /**
@@ -498,7 +514,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      *
      * @param sb
      */
-    private void printHabitats(StringBuilder sb) {
+    private void printHabitats(Appendable sb) throws IOException {
         sb.append(SDTextHabitatsAttribute).append(" = ");
         sb.append('[');
         if (habitats != null && !habitats.isEmpty()) {
@@ -524,7 +540,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * @param spider
      * @param region
      */
-    private static void printHabitat(StringBuilder sb, String spider, Region region) {
+    private static void printHabitat(Appendable sb, String spider, Region region) throws IOException {
         sb.append('(');
         printString(sb, spider);
         sb.append(", ");
@@ -534,9 +550,13 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        toString(sb);
-        return sb.toString();
+        try {
+            final StringBuilder sb = new StringBuilder();
+            toString(sb);
+            return sb.toString();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
     // </editor-fold>
 

@@ -97,36 +97,36 @@ public interface Proof {
      * style="font-weight:bold">Note</span>: this method might return {@code null}
      * to indicate that there are no pending goals.</p>
      *
-     * @return
+     * @return the pending goals.
      */
     Goals getLastGoals();
 
     /**
      * Returns an unmodifiable list of goals in this proof.
      *
-     * @return
+     * @return an unmodifiable list of goals in this proof.
      */
     List<Goals> getGoals();
 
     /**
      * Returns an unmodifiable list of rule applications in this proof.
      *
-     * @return
+     * @return an unmodifiable list of rule applications in this proof.
      */
     List<RuleApplication> getRuleApplications();
 
     /**
      * Returns the rule application at the given index.
      *
-     * @param index
-     * @return
+     * @param index the index of the rule application information to get.
+     * @return the rule application at the given index.
      */
     RuleApplication getRuleApplicationAt(int index);
 
     /**
      * Returns the number of rule application in this proof.
      *
-     * @return
+     * @return the number of rule application in this proof.
      */
     int getRuleApplicationCount();
 
@@ -135,7 +135,7 @@ public interface Proof {
      * style="font-weight:bold">Note</span>: The call to this function is
      * similar to something like this: {@code }</p>
      *
-     * @return
+     * @return a value that indicates whether the proof is finished.
      */
     boolean isFinished();
 

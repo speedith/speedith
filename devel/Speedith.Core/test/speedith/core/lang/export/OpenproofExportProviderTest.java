@@ -70,11 +70,11 @@ public class OpenproofExportProviderTest {
         exportDiagram(exporter, SpiderDiagramsReaderTest.SD_EXAMPLE_11);
         exportDiagram(exporter, SpiderDiagramsReaderTest.SD_EXAMPLE_10);
         exportDiagram(exporter, SpiderDiagramsReaderTest.SD_EXAMPLE_18);
-        exportDiagram(exporter, SpiderDiagramsReaderTest.SD_EXAMPLE_3);
+//        exportDiagram(exporter, SpiderDiagramsReaderTest.SD_EXAMPLE_3);
     }
 
     private void exportDiagram(SDExporter exporter, final String sd) throws ExportException, ReadingException {
         String exportedDiagram = exporter.export(SpiderDiagramsReader.readSpiderDiagram(sd));
-        System.out.println(exportedDiagram);
+//        System.out.println(exportedDiagram);
     }
 }

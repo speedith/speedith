@@ -132,7 +132,7 @@ public class Goals {
     
     /**
      * Indicates whether this collection of goals is empty.
-     * @return
+     * @return a flag that indicates whether this collection of goals is empty.
      */
     public boolean isEmpty() {
         return goals == null || goals.isEmpty();

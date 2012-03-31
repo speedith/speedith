@@ -26,7 +26,10 @@
  */
 package speedith.core.lang;
 
+import java.io.IOException;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static speedith.core.i18n.Translations.i18n;
 
 /**
@@ -122,7 +125,7 @@ public class NullSpiderDiagram extends SpiderDiagram {
 
     // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
     @Override
-    public void toString(StringBuilder sb) {
+    public void toString(Appendable sb) throws IOException {
         if (sb == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
         }
@@ -131,9 +134,13 @@ public class NullSpiderDiagram extends SpiderDiagram {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        toString(sb);
-        return sb.toString();
+        try {
+            final StringBuilder sb = new StringBuilder();
+            toString(sb);
+            return sb.toString();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
     // </editor-fold>
 }

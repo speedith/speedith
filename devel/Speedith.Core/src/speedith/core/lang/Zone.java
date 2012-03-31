@@ -26,11 +26,14 @@
  */
 package speedith.core.lang;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import speedith.core.util.Sets;
 import static speedith.core.i18n.Translations.i18n;
 import static speedith.core.util.Sets.equal;
@@ -43,7 +46,7 @@ import static speedith.core.util.Sets.equal;
  * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class Zone implements Comparable<Zone> {
+public class Zone implements Comparable<Zone>, SpiderDiagramElement {
 
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
     private TreeSet<String> inContours;
@@ -268,15 +271,19 @@ public class Zone implements Comparable<Zone> {
      * @param sb the string builder into which to write the string representation
      * of this zone.
      */
-    public void toString(StringBuilder sb) {
-        if (sb == null) {
-            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
+    public void toString(Appendable sb) {
+        try {
+            if (sb == null) {
+                throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sb"));
+            }
+            sb.append('(');
+            SpiderDiagram.printStringList(sb, inContours);
+            sb.append(", ");
+            SpiderDiagram.printStringList(sb, outContours);
+            sb.append(')');
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
-        sb.append('(');
-        SpiderDiagram.printStringList(sb, inContours);
-        sb.append(", ");
-        SpiderDiagram.printStringList(sb, outContours);
-        sb.append(')');
     }
 
     @Override

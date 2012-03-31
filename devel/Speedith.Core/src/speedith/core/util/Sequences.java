@@ -57,7 +57,7 @@ public final class Sequences {
      * @throws IOException this exception is thrown if an error occurred while
      * writing to the output.
      */
-    public static void print(Iterable<? extends Object> list, Writer output, String openingString, String closingString, String delimiter) throws IOException {
+    public static void print(Iterable<? extends Object> list, Appendable output, String openingString, String closingString, String delimiter) throws IOException {
         if (output == null) {
             throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_NULL_ARGUMENT", "output"));
         }
@@ -81,7 +81,7 @@ public final class Sequences {
 
     /**
      * This method is a shorthand for <span style="font-style:italic;font-family:monospace;">
-     * {@link Sets#print(java.lang.Iterable, java.io.Writer, java.lang.String,
+     * {@link Sequences#print(java.lang.Iterable, java.io.Writer, java.lang.String,
      * java.lang.String, java.lang.String) print}(list,
      * stringWriter, "[", "]", ", ")</span>.
      * @param list the list whose elements to print to the given writer.

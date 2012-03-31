@@ -26,6 +26,7 @@
  */
 package speedith.core.lang;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -42,7 +43,7 @@ import static speedith.core.i18n.Translations.i18n;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public abstract class SpiderDiagram implements Iterable<SpiderDiagram> {
+public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDiagramElement {
 
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
@@ -269,14 +270,15 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram> {
      *
      * @param sb the string builder into which to put the textual representation
      * of this spider diagram (must not be {@code null}).
+     * @throws IOException thrown if the string builder throws an exception.
      */
-    public abstract void toString(StringBuilder sb);
+    public abstract void toString(Appendable sb) throws IOException;
 
-    static void printString(StringBuilder sb, String str) {
+    static void printString(Appendable sb, String str) throws IOException {
         sb.append('"').append(str).append('"');
     }
 
-    static void printStringList(StringBuilder sb, Collection<String> strList) {
+    static void printStringList(Appendable sb, Collection<String> strList) throws IOException {
         sb.append('[');
         if (strList != null) {
             Iterator<String> strIter = strList.iterator();
@@ -290,7 +292,7 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram> {
         sb.append(']');
     }
 
-    static void printZoneList(StringBuilder sb, Collection<Zone> zones) {
+    static void printZoneList(Appendable sb, Collection<Zone> zones) throws IOException {
         sb.append('[');
         if (zones != null) {
             Iterator<Zone> spIterator = zones.iterator();

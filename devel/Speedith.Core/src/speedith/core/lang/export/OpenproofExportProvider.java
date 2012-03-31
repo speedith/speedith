@@ -29,10 +29,8 @@ package speedith.core.lang.export;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
-import javax.naming.OperationNotSupportedException;
 import static speedith.core.i18n.Translations.*;
 import speedith.core.lang.*;
-import speedith.core.util.Sets;
 
 /**
  * The provider for exporting spider diagrams to Openproof's FOL formulae.

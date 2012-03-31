@@ -26,6 +26,7 @@
  */
 package speedith.core.lang;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.WeakHashMap;
@@ -117,7 +118,7 @@ public class NullSpiderDiagramTest {
      * Test of toString method, of class NullSpiderDiagram.
      */
     @Test
-    public void testToString_StringBuilder() {
+    public void testToString_StringBuilder() throws IOException {
         StringBuilder sb = new StringBuilder();
         NullSpiderDiagram instance = NullSpiderDiagram.getInstance();
         instance.toString(sb);
