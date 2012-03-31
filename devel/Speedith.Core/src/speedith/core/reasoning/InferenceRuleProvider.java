@@ -131,7 +131,7 @@ public interface InferenceRuleProvider<TArgs extends RuleArg> {
      * to produce the final parameter for the rule).</li></ul>.</p>
      * @return the rule application instructions for the provided inference rule.
      */
-    RuleApplicationInstruction getInstructions();
+//    RuleApplicationInstruction getInstructions();
 
     /**
      * Returns the {@link InferenceRuleProvider#getPrettyName() pretty name} of
