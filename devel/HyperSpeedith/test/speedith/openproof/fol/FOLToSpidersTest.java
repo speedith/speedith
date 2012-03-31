@@ -26,12 +26,12 @@
  */
 package speedith.openproof.fol;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.UnsupportedEncodingException;
 import openproof.fol.representation.OPFormula;
+import openproof.fol.representation.parser.ParseException;
 import openproof.fol.representation.parser.StringToFormulaParser;
-import org.junit.*;
 import static org.junit.Assert.*;
+import org.junit.*;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.export.ExportException;
 import speedith.core.lang.export.OpenproofExportProvider;
@@ -45,7 +45,8 @@ import speedith.core.lang.reader.SpiderDiagramsReader;
  */
 public class FOLToSpidersTest {
 
-	public static final String SD_EXAMPLE_1 = "BinarySD {arg1 = PrimarySD { spiders = [\"t1\", \"t2\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"t1\", [([\"A\", \"B\"], [])]), (\"t2\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"t1\", \"t2\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"t2\", [([\"A\", \"B\"], [])]), (\"t1\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op |\" }";
+	public static final String SD_EXAMPLE_1 = "BinarySD {arg1 = PrimarySD { spiders = [\"t1\", \"t2\"], sh_zones = [], habitats = [(\"t1\", [([\"A\", \"B\"], [])]), (\"t2\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"t1\", \"t2\"], sh_zones = [], habitats = [(\"t2\", [([\"A\", \"B\"], [])]), (\"t1\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op |\" }";
+	public static final String OP_EXAMPLE_1 = "(/t1(/t2((t1 # t2) & A(t1) & B(t1) & ((A(t2) & ~B(t2)) | (B(t2) & ~A(t2)))))) | (/t1(/t2((t1 # t2) & ((A(t1) & ~B(t1)) | (B(t1) & ~A(t1))) & A(t2) & B(t2))))";
 
 	public FOLToSpidersTest() {
 	}
@@ -72,15 +73,39 @@ public class FOLToSpidersTest {
 		SpiderDiagram expResult = SpiderDiagramsReader.readSpiderDiagram(SD_EXAMPLE_1);
 		SpiderDiagram result = FOLToSpiders.convert(formula);
 		assertEquals(expResult, result);
+		
+		checkConversionToFrom(OP_EXAMPLE_1, false, SpiderDiagramsReader.readSpiderDiagram(SD_EXAMPLE_1));
 	}
 
 	public OPFormula getOPFormulaFromSpider(String sd) {
 		try {
 			SDExporter exporter = SDExporting.getProvider(OpenproofExportProvider.FormatName).getExporter(null);
 			String exportedDiagram = exporter.export(SpiderDiagramsReader.readSpiderDiagram(sd));
+			System.out.println(exportedDiagram);
 			return StringToFormulaParser.getFormula(exportedDiagram);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
+		}
+	}
+
+	public static void checkConversionToFrom(String opFormulaString, boolean shouldFail, SpiderDiagram expectedDiagram) throws ParseException, UnsupportedEncodingException, ExportException {
+		OPFormula opFormula = StringToFormulaParser.getFormula(opFormulaString);
+		try {
+			SpiderDiagram convertedSD = FOLToSpiders.convert(opFormula);
+			if (shouldFail) {
+				fail("The conversion should fail.");
+			}
+			SDExporter exporter = SDExporting.getProvider(OpenproofExportProvider.FormatName).getExporter(null);
+			String opFormula2 = exporter.export(convertedSD);
+			SpiderDiagram convertedSD2 = FOLToSpiders.convert(StringToFormulaParser.getFormula(opFormula2));
+			assertEquals(convertedSD, convertedSD2);
+			if (expectedDiagram != null) {
+				assertEquals(expectedDiagram, convertedSD);
+			}
+		} catch (ConversionException ex) {
+			if (!shouldFail) {
+				fail("The conversion should not fail.");
+			}
 		}
 	}
 }
