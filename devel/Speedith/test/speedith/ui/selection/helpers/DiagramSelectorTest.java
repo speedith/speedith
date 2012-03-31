@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
-import speedith.ui.selection.SelectionSequence;
+import speedith.core.reasoning.args.selection.SelectionSequence;
 
 /**
  *

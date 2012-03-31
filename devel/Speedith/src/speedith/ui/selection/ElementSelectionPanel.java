@@ -26,19 +26,18 @@
  */
 package speedith.ui.selection;
 
-import icircles.gui.CirclesPanel2;
+import speedith.core.reasoning.args.selection.SelectionSequence;
+import speedith.ui.CirclesPanel2;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import javax.swing.DefaultListModel;
 import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.args.RuleArg;
 import static speedith.i18n.Translations.i18n;
 import speedith.ui.SpiderDiagramClickEvent;
-import speedith.ui.selection.steps.SelectionStep;
-import speedith.ui.selection.steps.SelectionStep.SelectionRejectionExplanation;
+import speedith.core.reasoning.args.selection.SelectionStep;
+import speedith.core.reasoning.args.selection.SelectionStep.SelectionRejectionExplanation;
 
 /**
  *
@@ -301,9 +300,9 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     private void onSpiderDiagramClicked(speedith.ui.SpiderDiagramClickEvent evt) {//GEN-FIRST:event_onSpiderDiagramClicked
         SelectionStep curSelStep = getCurSelStep();
         if (curSelStep != null && getCurrentStep() >= 0 && getCurrentStep() < getStepCount()) {
-            SelectionRejectionExplanation result = curSelStep.acceptClick(evt, selection, getCurrentStep());
+            SelectionRejectionExplanation result = curSelStep.acceptSelection(evt.toRuleArg(), selection, getCurrentStep());
             if (result == null) {
-                selection.addAcceptedClick(getCurrentStep(), evt);
+                selection.addAcceptedClick(getCurrentStep(), evt, evt.toRuleArg());
                 // Check if the step is finished. If it is, go to the next one:
                 goToNextStep(false, false);
                 refreshUI();
@@ -573,18 +572,18 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     }
 
     private void refreshClearButton() {
-        clearButton.setEnabled(selection != null && getCurSelStep() != null && selection.getAcceptedClickCount(getCurrentStep()) > 0);
+        clearButton.setEnabled(selection != null && getCurSelStep() != null && selection.getAcceptedSelectionsCount(getCurrentStep()) > 0);
     }
 
     private void refreshDiagramPanel() {
         // Disable highlighting in the diagram, if the whole thing is finished:
-        spiderDiagramPanel.setHighlightMode(getCurSelStep() == null || getCurrentStep() >= getStepCount() ? CirclesPanel2.None : getCurSelStep().getHighlightingMode());
+        spiderDiagramPanel.setHighlightMode(getCurSelStep() == null || getCurrentStep() >= getStepCount() ? SelectionStep.None : getCurSelStep().getSelectableElements());
     }
 
     private void refreshSelectionList() {
         selectionListModel.clear();
-        if (getCurSelStep() != null && selection.getAcceptedClickCount(getCurrentStep()) > 0) {
-            for (SpiderDiagramClickEvent selectedElement : selection.getAcceptedClicksForStepAt(getCurrentStep())) {
+        if (getCurSelStep() != null && selection.getAcceptedSelectionsCount(getCurrentStep()) > 0) {
+            for (SpiderDiagramClickEvent selectedElement : selection.acceptedClicks[getCurrentStep()]) {
                 selectionListModel.addElement(selectedElement.toString());
             }
         }
@@ -662,14 +661,21 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
     private static class SelectionSequenceMutable extends SelectionSequence {
 
+        protected ArrayList<SpiderDiagramClickEvent>[] acceptedClicks;
+
+        @SuppressWarnings("unchecked")
         public SelectionSequenceMutable(ArrayList<SelectionStep> selectionSteps) {
             super(selectionSteps);
+            this.acceptedClicks = new ArrayList[selectionSteps.size()];
         }
 
-        void addAcceptedClick(int stepIndex, SpiderDiagramClickEvent click) {
+        void addAcceptedClick(int stepIndex, SpiderDiagramClickEvent evt, RuleArg arg) {
             (acceptedSelections[stepIndex] == null
-                    ? (acceptedSelections[stepIndex] = new ArrayList<SpiderDiagramClickEvent>())
-                    : acceptedSelections[stepIndex]).add(click);
+                    ? (acceptedSelections[stepIndex] = new ArrayList<RuleArg>())
+                    : acceptedSelections[stepIndex]).add(arg);
+            (acceptedClicks[stepIndex] == null
+                    ? (acceptedClicks[stepIndex] = new ArrayList<SpiderDiagramClickEvent>())
+                    : acceptedClicks[stepIndex]).add(evt);
         }
 
         void clearAcceptedClicks(int stepIndex) {

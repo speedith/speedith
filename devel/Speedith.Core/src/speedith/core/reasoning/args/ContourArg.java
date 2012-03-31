@@ -27,42 +27,45 @@
 package speedith.core.reasoning.args;
 
 /**
+ * Contains the name of the contour that should be passed to an inference rule.
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SpiderArg extends SubDiagramIndexArg {
+public class ContourArg extends SubDiagramIndexArg {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private final String spider;
+    private final String contour;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructor">
     /**
      * Initialises an argument object for a spider-diagrammatic inference rule.
-     * 
+     *
      * @param subgoalIndex the index of the subgoal to target by the rule.
      * @param primarySDIndex the index of the sub-diagram to target by the rule.
-     * @param spider the name of the spider. This parameter must not be
+     * @param contour the name of the contour that should be passed to an
+     * inference rule. This parameter must not be
      * {@code null} or empty, otherwise an exception will be thrown.
      */
-    public SpiderArg(int subgoalIndex, int primarySDIndex, String spider) {
+    public ContourArg(int subgoalIndex, int primarySDIndex, String contour) {
         super(subgoalIndex, primarySDIndex);
-        if (spider == null || spider.isEmpty()) {
-            throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_EMPTY_ARGUMENT", "spider"));
+        if (contour == null || contour.isEmpty()) {
+            throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_EMPTY_ARGUMENT", "contour"));
         }
-        this.spider = spider;
+        this.contour = contour;
     }
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public Properties">
     /**
-     * The name of the spider.
-     *  <p>This property is guaranteed to return a non-null and non-empty
+     * The name of the contour that should be passed to an inference rule.
+     * <p>This property is guaranteed to return a non-null and non-empty
      * string.</p>
-     * @return name of the spider.
+     *
+     * @return name of the spider that should be passed to an inference rule.
      */
     public String getSpider() {
-        return spider;
+        return contour;
     }
     // </editor-fold>
 }

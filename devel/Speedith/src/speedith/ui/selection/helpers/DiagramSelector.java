@@ -32,7 +32,7 @@ import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.rules.SplitSpiders;
-import speedith.ui.selection.SelectionSequence;
+import speedith.core.reasoning.args.selection.SelectionSequence;
 import static speedith.i18n.Translations.i18n;
 
 /**

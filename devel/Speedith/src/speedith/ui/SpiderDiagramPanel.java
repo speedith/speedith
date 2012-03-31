@@ -46,6 +46,7 @@ import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
+import speedith.core.reasoning.args.selection.SelectionStep;
 import static speedith.i18n.Translations.i18n;
 
 /**
@@ -54,25 +55,6 @@ import static speedith.i18n.Translations.i18n;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SpiderDiagramPanel extends javax.swing.JPanel {
-
-    // <editor-fold defaultstate="collapsed" desc="Fields and Constants">
-    /**
-     * This value may be used in {@link SpiderDiagramPanel#setHighlightMode(int)}
-     * to indicate that operators should be highlighted.
-     */
-    public static final int Operators = CirclesPanel2.All + 1;
-    /**
-     * This value may be used in {@link SpiderDiagramPanel#setHighlightMode(int)}
-     * to indicate that null spider diagrams should be highlighted.
-     */
-    public static final int NullSpiderDiagrams = Operators << 1;
-    /**
-     * This value indicates that all diagrammatic components of a compound
-     * spider diagram should be highlighted (not just the {@link CirclesPanel2#All ones from primary
-     * spider diagrams}).
-     */
-    public static final int All = CirclesPanel2.All | Operators | NullSpiderDiagrams;
-    // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
@@ -148,7 +130,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
      * Indicates which elements in the currently displayed diagram should be
      * highlightable by the user.
      */
-    private int highlightMode = CirclesPanel2.None;
+    private int highlightMode = SelectionStep.None;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public Properties">
@@ -247,28 +229,14 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
 
     /**
      * Sets the set of flags that determines which elements of the diagram may
-     * be highlighted with the mouse. <p>This flag can be a (binary) combination
-     * of the following flags: <ul> <li>{@link CirclesPanel2#Spiders}: which
-     * indicates that spiders will be highlighted when the user hovers over
-     * them.</li> <li>{@link CirclesPanel2#Zones}: which indicates that zones
-     * will be highlighted when the user hovers over them.</li> <li>{@link CirclesPanel2#Contours}:
-     * which indicates that circle contours will be highlighted when the user
-     * hovers over them.</li> <li>{@link SpiderDiagramPanel#Operators}:
-     * indicates that also the operators of compound spider diagrams should be
-     * highlighted.</li> <li>{@link SpiderDiagramPanel#NullSpiderDiagrams}:
-     * indicates that also the null spider diagrams should be
-     * highlighted.</li> </ul></p> <p> The {@link SpiderDiagramPanel#All},
-     * {@link CirclesPanel2#All}, and {@link CirclesPanel2#None} flags can also
-     * be used. These indicate that all elements, all primary spider diagram
-     * elements, or no elements at all (respectively) can be highlighted with
-     * the mouse.</p>
-     *
+     * be highlighted with the mouse. <p>See {@link SelectionStep#getSelectableElements()}
+     * for a list of possible values.</p>
      * @param highlightMode the new set of flags that determines which elements
      * of the diagram may be highlighted with the mouse.
      */
     public void setHighlightMode(int highlightMode) {
-        if (this.highlightMode != (highlightMode & All)) {
-            this.highlightMode = highlightMode & All;
+        if (this.highlightMode != (highlightMode & SelectionStep.All)) {
+            this.highlightMode = highlightMode & SelectionStep.All;
             applyHighlightModeToPanels();
         }
     }
@@ -557,10 +525,10 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
                     ((SpiderDiagramPanel) component).setHighlightMode(highlightMode);
                 } else if (component instanceof OperatorPanel) {
                     OperatorPanel operatorPanel = (OperatorPanel) component;
-                    operatorPanel.setHighlighting((highlightMode & Operators) == Operators);
+                    operatorPanel.setHighlighting((highlightMode & SelectionStep.Operators) == SelectionStep.Operators);
                 } else if (component instanceof NullSpiderDiagramPanel) {
                     NullSpiderDiagramPanel nsdp = (NullSpiderDiagramPanel) component;
-                    nsdp.setHighlighting((highlightMode & NullSpiderDiagrams) == NullSpiderDiagrams);
+                    nsdp.setHighlighting((highlightMode & SelectionStep.NullSpiderDiagrams) == SelectionStep.NullSpiderDiagrams);
                 }
             }
         }

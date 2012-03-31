@@ -34,7 +34,6 @@ import icircles.abstractDescription.AbstractSpider;
 import icircles.abstractDescription.CurveLabel;
 import icircles.concreteDiagram.ConcreteDiagram;
 import icircles.gui.CirclesPanel;
-import icircles.gui.CirclesPanel2;
 import icircles.util.CannotDrawException;
 import java.util.Arrays;
 import java.util.HashMap;

@@ -30,16 +30,13 @@ import speedith.core.lang.Region;
 
 /**
  * This inference rule argument provides the following (in addition to data
- * provided by {@link SpiderArg}):
- *  <ul>
- *      <li>a sub-{@link Region region} of the {@link
- *          SpiderRegionArg#getSpider() spider's} habitat.</li>
- *  </ul>
- * <p>This argument type is used to target a particular sub-region of the
- * spider's habitat.</p>
+ * provided by {@link SpiderArg}): <ul> <li>a sub-{@link Region region} of the {@link
+ *          SpiderRegionArg#getSpider() spider's} habitat.</li> </ul> <p>This argument
+ * type is used to target a particular sub-region of the spider's habitat.</p>
  * <p><span style="font-weight:bold">Note</span>: there is no way for this
  * object to check whether the given region actually is a sub-region of the
  * given spider. The object has no knowledge of the spider's habitat.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SpiderRegionArg extends SpiderArg {
@@ -48,11 +45,31 @@ public class SpiderRegionArg extends SpiderArg {
     private final Region region;
     // </editor-fold>
 
+    /**
+     * Initialises an argument object for a spider-diagrammatic inference rule.
+     *
+     * @param subgoalIndex the index of the subgoal to target by the rule.
+     * @param primarySDIndex the index of the sub-diagram to target by the rule.
+     * @param spider the name of the spider. This parameter must not be
+     * {@code null} or empty, otherwise an exception will be thrown.
+     * @param region the region of the {@link SpiderArg#getSpider()}. This
+     * parameter must not be
+     * {@code null}, otherwise an exception will be thrown.
+     */
     public SpiderRegionArg(int subgoalIndex, int primarySDIndex, String spider, Region region) {
         super(subgoalIndex, primarySDIndex, spider);
+        if (region == null) {
+            throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_NULL_ARGUMENT", "region"));
+        }
         this.region = region;
     }
 
+    /**
+     * The region of the {@link SpiderArg#getSpider()}. <p>This property is
+     * guaranteed to return a non-null value.</p>
+     *
+     * @return the region of the {@link SpiderArg#getSpider()}.
+     */
     public Region getRegion() {
         return region;
     }

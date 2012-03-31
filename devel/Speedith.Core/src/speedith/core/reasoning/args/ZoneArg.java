@@ -26,14 +26,16 @@
  */
 package speedith.core.reasoning.args;
 
+import speedith.core.lang.Zone;
+
 /**
- *
+ * This argument contains a zone.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SpiderArg extends SubDiagramIndexArg {
+public class ZoneArg extends SubDiagramIndexArg {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private final String spider;
+    private final Zone zone;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructor">
@@ -42,27 +44,25 @@ public class SpiderArg extends SubDiagramIndexArg {
      * 
      * @param subgoalIndex the index of the subgoal to target by the rule.
      * @param primarySDIndex the index of the sub-diagram to target by the rule.
-     * @param spider the name of the spider. This parameter must not be
-     * {@code null} or empty, otherwise an exception will be thrown.
+     * @param zone the zone that should be passed to the inference rule.
      */
-    public SpiderArg(int subgoalIndex, int primarySDIndex, String spider) {
+    public ZoneArg(int subgoalIndex, int primarySDIndex, Zone zone) {
         super(subgoalIndex, primarySDIndex);
-        if (spider == null || spider.isEmpty()) {
-            throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_EMPTY_ARGUMENT", "spider"));
+        if (zone == null) {
+            throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_NULL_ARGUMENT", "zone"));
         }
-        this.spider = spider;
+        this.zone = zone;
     }
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public Properties">
     /**
-     * The name of the spider.
-     *  <p>This property is guaranteed to return a non-null and non-empty
-     * string.</p>
-     * @return name of the spider.
+     * The zone that should be passed to the inference rule.
+     *  <p>This property is guaranteed to return a non-null value.</p>
+     * @return zone that should be passed to the inference rule.
      */
-    public String getSpider() {
-        return spider;
+    public Zone getZone() {
+        return zone;
     }
     // </editor-fold>
 }

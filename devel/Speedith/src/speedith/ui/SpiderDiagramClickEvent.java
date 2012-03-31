@@ -26,13 +26,10 @@
  */
 package speedith.ui;
 
-import icircles.gui.ContourClickedEvent;
-import icircles.gui.DiagramClickEvent;
-import icircles.gui.SpiderClickedEvent;
-import icircles.gui.ZoneClickedEvent;
 import java.util.EventObject;
 import static speedith.core.i18n.Translations.i18n;
 import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.args.*;
 import speedith.icircles.util.ICirclesToSpeedith;
 
 /**
@@ -44,6 +41,7 @@ public class SpiderDiagramClickEvent extends EventObject {
     private final SpiderDiagram diagram;
     private final DiagramClickEvent eventDetail;
     private final int subDiagramIndex;
+    private RuleArg ruleArg = null;
 
     /**
      * Initialises detailed event information of a {@link SpiderDiagramClickListener#spiderDiagramClicked(speedith.ui.SpiderDiagramClickEvent)
@@ -147,5 +145,34 @@ public class SpiderDiagramClickEvent extends EventObject {
      */
     public DiagramClickEvent getDetailedInfo() {
         return eventDetail;
+    }
+
+    /**
+     * Extracts all selection information from this click event, produces the
+     * most (straight-forwardly) suitable {@link RuleArg rule argument}, and
+     * returns the result. <p><span style="font-weight:bold">Note</span>: the {@link SubgoalIndexArg#getSubgoalIndex() subgoal index}
+     * of the returned rule argument will be -1.</p> <p>This argument is stored
+     * when the rule argument is extracted for the first time and then the same
+     * instance will be returned for subsequent calls to this method.</p>
+     *
+     * @return a rule argument corresponding to the clicked diagrammatic
+     * element.
+     */
+    public RuleArg toRuleArg() {
+        if (ruleArg == null) {
+            if (eventDetail instanceof SpiderClickedEvent) {
+                SpiderClickedEvent spiderClickedEvent = (SpiderClickedEvent) eventDetail;
+                ruleArg = new SpiderZoneArg(-1, subDiagramIndex, spiderClickedEvent.getSpiderName(), ICirclesToSpeedith.convert(spiderClickedEvent.getZoneOfFoot()));
+            } else if (eventDetail instanceof ContourClickedEvent) {
+                ContourClickedEvent contourClickedEvent = (ContourClickedEvent) eventDetail;
+                ruleArg = new ContourArg(-1, subDiagramIndex, contourClickedEvent.getContourLabel());
+            } else if (eventDetail instanceof ZoneClickedEvent) {
+                ZoneClickedEvent zoneClickedEvent = (ZoneClickedEvent) eventDetail;
+                ruleArg = new ZoneArg(-1, subDiagramIndex, ICirclesToSpeedith.convert(zoneClickedEvent.getZone()));
+            } else if (eventDetail != null) {
+                throw new IllegalStateException(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
+            }
+        }
+        return ruleArg;
     }
 }

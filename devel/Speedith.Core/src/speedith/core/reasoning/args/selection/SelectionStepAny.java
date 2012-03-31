@@ -24,14 +24,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.ui.selection.steps;
+package speedith.core.reasoning.args.selection;
 
 import java.util.Locale;
-import static speedith.i18n.Translations.i18n;
-import speedith.ui.SpiderDiagramClickEvent;
-import speedith.ui.SpiderDiagramPanel;
-import speedith.ui.selection.SelectionSequence;
-import speedith.ui.selection.steps.SelectionStep.SelectionRejectionExplanation;
+import speedith.core.reasoning.args.RuleArg;
+import static speedith.core.i18n.Translations.i18n;
+import speedith.core.reasoning.args.selection.SelectionStep.SelectionRejectionExplanation;
 
 /**
  *
@@ -58,7 +56,7 @@ public class SelectionStepAny extends SelectionStep {
     }
 
     @Override
-    public SelectionRejectionExplanation acceptClick(SpiderDiagramClickEvent event, SelectionSequence selection, int thisIndex) {
+    public SelectionRejectionExplanation acceptSelection(RuleArg selection, SelectionSequence selectionSeq, int thisIndex) {
         return null;
     }
 
@@ -68,13 +66,13 @@ public class SelectionStepAny extends SelectionStep {
     }
 
     @Override
-    public int getHighlightingMode() {
-        return SpiderDiagramPanel.All;
+    public SelectionRejectionExplanation init(SelectionSequence selection, int thisIndex) {
+        return null;
     }
 
     @Override
-    public SelectionRejectionExplanation init(SelectionSequence selection, int thisIndex) {
-        return null;
+    public int getSelectableElements() {
+        return SelectionStep.All;
     }
     
 }

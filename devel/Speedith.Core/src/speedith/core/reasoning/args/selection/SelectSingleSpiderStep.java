@@ -24,15 +24,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.ui.selection.steps;
+package speedith.core.reasoning.args.selection;
 
-import icircles.gui.CirclesPanel2;
-import icircles.gui.SpiderClickedEvent;
 import java.util.List;
 import java.util.Locale;
-import static speedith.i18n.Translations.i18n;
-import speedith.ui.SpiderDiagramClickEvent;
-import speedith.ui.selection.SelectionSequence;
+import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.SpiderZoneArg;
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  *
@@ -55,22 +53,18 @@ public class SelectSingleSpiderStep extends SelectionStep {
 
     @Override
     public boolean isFinished(SelectionSequence selection, int thisIndex) {
-        List<SpiderDiagramClickEvent> sels = selection.getAcceptedClicksForStepAt(thisIndex);
+        return isFinished(selection.getAcceptedSelectionsForStepAt(thisIndex)); 
+    }
+
+    private static boolean isFinished(List<RuleArg> sels) {
         // This selection step is finished if all the following conditions are satisfied:
         return sels != null
                 && sels.size() == 1 // If a single element has been selected.
-                && sels.get(0).getDetailedInfo() instanceof SpiderClickedEvent; // And that element is a spider.
+                && sels.get(0) instanceof SpiderZoneArg; // And that element is a spider.
     }
 
-    public boolean isSelectionValid(List<SpiderDiagramClickEvent> sels) {
-        if (sels == null || sels.isEmpty()) {
-            return true;
-        } else if (sels.size() == 1
-                && sels.get(0).getDetailedInfo() instanceof SpiderClickedEvent) {
-            return true;
-        } else {
-            return false;
-        }
+    public static boolean isSelectionValid(List<RuleArg> sels) {
+        return sels == null || sels.isEmpty() || isFinished(sels);
     }
 
     @Override
@@ -84,9 +78,9 @@ public class SelectSingleSpiderStep extends SelectionStep {
     }
 
     @Override
-    public SelectionRejectionExplanation acceptClick(SpiderDiagramClickEvent event, SelectionSequence selection, int thisIndex) {
-        if (event.getDetailedInfo() instanceof SpiderClickedEvent) {
-            if (selection.getAcceptedClickCount(thisIndex) >= 1) {
+    public SelectionRejectionExplanation acceptSelection(RuleArg selection, SelectionSequence selectionSeq, int thisIndex) {
+        if (selection instanceof SpiderZoneArg) {
+            if (selectionSeq.getAcceptedSelectionsCount(thisIndex) >= 1) {
                 return new I18NSelectionRejectionExplanation("SELSTEP_JUST_ONE_SPIDER");
             } else {
                 return null;
@@ -102,13 +96,13 @@ public class SelectSingleSpiderStep extends SelectionStep {
     }
 
     @Override
-    public int getHighlightingMode() {
-        return CirclesPanel2.Spiders;
+    public int getSelectableElements() {
+        return SelectionStep.Spiders;
     }
 
     @Override
     public SelectionRejectionExplanation init(SelectionSequence selection, int thisIndex) {
-        return isSelectionValid(selection.getAcceptedClicksForStepAt(thisIndex))
+        return isSelectionValid(selection.getAcceptedSelectionsForStepAt(thisIndex))
                 ? null
                 : new I18NSelectionRejectionExplanation("SELSTEP_SELECTION_INVALID_NOT_A_SPIDER");
     }

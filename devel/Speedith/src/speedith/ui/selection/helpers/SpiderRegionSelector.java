@@ -26,19 +26,21 @@
  */
 package speedith.ui.selection.helpers;
 
-import icircles.gui.SpiderClickedEvent;
+import speedith.ui.SpiderClickedEvent;
 import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.List;
 import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Zone;
+import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
+import speedith.core.reasoning.args.SpiderZoneArg;
 import speedith.icircles.util.ICirclesToSpeedith;
 import speedith.ui.SpiderDiagramClickEvent;
 import speedith.ui.selection.DiagramSelectionDialog;
-import speedith.ui.selection.SelectionSequence;
-import speedith.ui.selection.steps.SelectSpiderFeetStep;
+import speedith.core.reasoning.args.selection.SelectionSequence;
+import speedith.core.reasoning.args.selection.SelectSpiderFeetStep;
 
 /**
  * Provides selection services for {@link SpiderRegionArg spider region rule
@@ -77,8 +79,9 @@ public class SpiderRegionSelector extends DiagramSelector<SpiderRegionArg> {
 
     @Override
     public SpiderRegionArg convertToRuleArg(SelectionSequence selection) {
-        List<SpiderDiagramClickEvent> sel = selection.getAcceptedClicksForStepAt(0);
-        return new SpiderRegionArg(subgoalIndex, sel.get(0).getSubDiagramIndex(), ((SpiderClickedEvent) sel.get(0).getDetailedInfo()).getSpiderName(), getRegionFromFeetSelection(sel));
+        List<RuleArg> sel = selection.getAcceptedSelectionsForStepAt(0);
+        SpiderZoneArg firstSelection = (SpiderZoneArg) sel.get(0);
+        return new SpiderRegionArg(subgoalIndex, firstSelection.getSubDiagramIndex(), firstSelection.getSpider(), getRegionFromFeetSelection(sel));
     }
 
     @Override
@@ -92,12 +95,12 @@ public class SpiderRegionSelector extends DiagramSelector<SpiderRegionArg> {
         }
     }
 
-    private static Region getRegionFromFeetSelection(List<SpiderDiagramClickEvent> selection) {
+    private static Region getRegionFromFeetSelection(List<RuleArg> selection) {
         ArrayList<Zone> zones = new ArrayList<Zone>();
-        for (SpiderDiagramClickEvent sel : selection) {
-            if (sel.getDetailedInfo() instanceof SpiderClickedEvent) {
-                SpiderClickedEvent curSp = (SpiderClickedEvent) sel.getDetailedInfo();
-                zones.add(ICirclesToSpeedith.convert(curSp.getZoneOfFoot()));
+        for (RuleArg sel : selection) {
+            if (sel instanceof SpiderZoneArg) {
+                SpiderZoneArg curSel = (SpiderZoneArg) sel;
+                zones.add(curSel.getZone());
             }
         }
         return new Region(zones);

@@ -24,14 +24,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.ui.selection;
+package speedith.core.reasoning.args.selection;
 
-import speedith.ui.selection.steps.SelectionStep;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import speedith.ui.SpiderDiagramClickEvent;
+import speedith.core.reasoning.args.RuleArg;
 
 /**
  *
@@ -39,9 +38,12 @@ import speedith.ui.SpiderDiagramClickEvent;
  */
 public abstract class SelectionSequence {
 
-    private ArrayList<SelectionStep> selectionSteps;
-    protected ArrayList<SpiderDiagramClickEvent>[] acceptedSelections;
+    //<editor-fold defaultstate="collapsed" desc="Fields">
+    protected ArrayList<SelectionStep> selectionSteps;
+    protected ArrayList<RuleArg>[] acceptedSelections;
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
      * Creates a new selection sequence with the given selection steps. <p><span
      * style="font-weight:bold">Note</span>: this method makes a copy of the
@@ -72,16 +74,18 @@ public abstract class SelectionSequence {
         this.selectionSteps = selectionSteps;
         this.acceptedSelections = new ArrayList[selectionSteps.size()];
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
-     * Returns an unmodifiable view of the list of selection clicks for the
-     * given step. Returns {@code null} if no click has been accepted for this
+     * Returns an unmodifiable view of the list of selections for the given
+     * step. Returns {@code null} if no selection has been accepted for this
      * step.
      *
      * @param stepIndex
      * @return
      */
-    public List<SpiderDiagramClickEvent> getAcceptedClicksForStepAt(int stepIndex) {
+    public List<RuleArg> getAcceptedSelectionsForStepAt(int stepIndex) {
         if (stepIndex < 0 || stepIndex >= selectionSteps.size()) {
             throw new IndexOutOfBoundsException(speedith.core.i18n.Translations.i18n("GERR_INDEX_OUT_OF_BOUNDS"));
         }
@@ -110,7 +114,8 @@ public abstract class SelectionSequence {
         return selectionSteps.get(index);
     }
 
-    public int getAcceptedClickCount(int stepIndex) {
+    public int getAcceptedSelectionsCount(int stepIndex) {
         return acceptedSelections[stepIndex] == null ? 0 : acceptedSelections[stepIndex].size();
     }
+    //</editor-fold>
 }

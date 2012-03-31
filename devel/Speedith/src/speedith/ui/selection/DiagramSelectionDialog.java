@@ -26,14 +26,15 @@
  */
 package speedith.ui.selection;
 
+import speedith.core.reasoning.args.selection.SelectionSequence;
 import java.awt.Frame;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.Collection;
 import speedith.core.lang.SpiderDiagram;
 import static speedith.i18n.Translations.i18n;
-import speedith.ui.selection.steps.SelectionStep;
-import speedith.ui.selection.steps.SelectionStepAny;
+import speedith.core.reasoning.args.selection.SelectionStep;
+import speedith.core.reasoning.args.selection.SelectionStepAny;
 
 /**
  * This dialog provides a step-by-step diagram element selection method.

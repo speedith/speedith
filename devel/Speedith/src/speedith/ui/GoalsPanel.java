@@ -32,7 +32,6 @@
  */
 package speedith.ui;
 
-import icircles.gui.CirclesPanel2;
 import speedith.core.reasoning.Goals;
 import static speedith.i18n.Translations.i18n;
 

@@ -24,15 +24,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.ui.selection.steps;
+package speedith.core.reasoning.args.selection;
 
-import icircles.gui.CirclesPanel2;
-import icircles.gui.SpiderClickedEvent;
 import java.util.List;
 import java.util.Locale;
-import static speedith.i18n.Translations.i18n;
-import speedith.ui.SpiderDiagramClickEvent;
-import speedith.ui.selection.SelectionSequence;
+import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.SpiderZoneArg;
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  *
@@ -46,32 +44,29 @@ public class SelectSpiderFeetStep extends SelectionStep {
      * <li><span style="font-weight:bold">1</span>: if the selection contains
      * selected elements that are not spiders.</li> <li><span
      * style="font-weight:bold">2</span>: if not all spiders are from the same
-     * subdiagram,</li> <li><span style="font-weight:bold">3</span>: if not all
+     * sub-diagram,</li> <li><span style="font-weight:bold">3</span>: if not all
      * spider feet belong to the same spider.</li> </ul>
      *
      * @param selection the selection sequence in which this selection step
-     * participates. This object contains currently {@link SelectionStep#acceptClick(speedith.ui.SpiderDiagramClickEvent)
+     * participates. This object contains currently {@link SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent)
      * approved} selections.
      * @param thisIndex the index of this step in the given {@link SelectionSequence}.
      * @return
      */
     public static int isSelectionValid(SelectionSequence selection, int thisIndex) {
-        List<SpiderDiagramClickEvent> sels = selection.getAcceptedClicksForStepAt(thisIndex);
+        List<RuleArg> sels = selection.getAcceptedSelectionsForStepAt(thisIndex);
         if (sels != null && !sels.isEmpty()) {
-            for (SpiderDiagramClickEvent sel : sels) {
-                if (!(sel.getDetailedInfo() instanceof SpiderClickedEvent)) {
+            for (RuleArg sel : sels) {
+                if (!(sel instanceof SpiderZoneArg)) {
                     return 1;
                 }
             }
-            SpiderDiagramClickEvent firstFoot = sels.get(0);
-            SpiderClickedEvent firstSpInfo = (SpiderClickedEvent) sels.get(0).getDetailedInfo();
+            SpiderZoneArg firstFoot = (SpiderZoneArg) sels.get(0);
             for (int i = 1; i < sels.size(); i++) {
-                SpiderDiagramClickEvent sel = sels.get(i);
-                SpiderClickedEvent spInfo = (SpiderClickedEvent) sels.get(i).getDetailedInfo();
+                SpiderZoneArg sel = (SpiderZoneArg) sels.get(i);
                 if (firstFoot.getSubDiagramIndex() != sel.getSubDiagramIndex()) {
                     return 2;
-                }
-                if (firstSpInfo.getFoot().getSpider() != spInfo.getFoot().getSpider()) {
+                } else if (!firstFoot.getSpider().equals(sel.getSpider())) {
                     return 3;
                 }
             }
@@ -85,7 +80,7 @@ public class SelectSpiderFeetStep extends SelectionStep {
      * } method.
      *
      * @param selection the selection sequence in which this selection step
-     * participates. This object contains currently {@link SelectionStep#acceptClick(speedith.ui.SpiderDiagramClickEvent)
+     * participates. This object contains currently {@link SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent)
      * approved} selections.
      * @param thisIndex the index of this step in the given {@link SelectionSequence}.
      * @return
@@ -117,7 +112,7 @@ public class SelectSpiderFeetStep extends SelectionStep {
 
     @Override
     public boolean isSkippable(SelectionSequence selection, int thisIndex) {
-        List<SpiderDiagramClickEvent> sels = selection.getAcceptedClicksForStepAt(thisIndex);
+        List<RuleArg> sels = selection.getAcceptedSelectionsForStepAt(thisIndex);
         return sels != null && !sels.isEmpty() && isSelectionValid(selection, thisIndex) == 0;
     }
 
@@ -127,24 +122,50 @@ public class SelectSpiderFeetStep extends SelectionStep {
     }
 
     @Override
-    public SelectionRejectionExplanation acceptClick(SpiderDiagramClickEvent event, SelectionSequence selection, int thisIndex) {
+    public boolean cleanSelectionOnStart() {
+        return false;
+    }
+
+    /**
+     * Indicates whether a spider's foot has already been selected (whether it
+     * is present in the given selection).
+     *
+     * @param sels
+     * @param sel
+     * @return
+     */
+    private static boolean isAlreadySelected(List<RuleArg> sels, SpiderZoneArg sel) {
+        for (RuleArg oldSel : sels) {
+            if (oldSel instanceof SpiderZoneArg) {
+                SpiderZoneArg oldSelT = (SpiderZoneArg) oldSel;
+                if (oldSelT.getZone().equals(sel.getZone())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public SelectionRejectionExplanation acceptSelection(RuleArg selection, SelectionSequence selectionSeq, int thisIndex) {
         // Did the user click at the right thing
-        if (event.getDetailedInfo() instanceof SpiderClickedEvent) {
-            List<SpiderDiagramClickEvent> sels = selection.getAcceptedClicksForStepAt(thisIndex);
+        if (selection instanceof SpiderZoneArg) {
+            List<RuleArg> sels = selectionSeq.getAcceptedSelectionsForStepAt(thisIndex);
             // Is there already a foot in the selection?
             if (sels != null && !sels.isEmpty()) {
                 // There is already something in the selection. The foot has to
                 // be in the same sub-diagram and must belong to the same spider
                 // as the others.
-                SpiderClickedEvent sp = (SpiderClickedEvent) sels.get(0).getDetailedInfo();
+                SpiderZoneArg sp = (SpiderZoneArg) sels.get(0);
+                SpiderZoneArg sel = (SpiderZoneArg) selection;
 
                 // Is the spider in the same sub-diagram?
-                if (sels.get(0).getSubDiagramIndex() != event.getSubDiagramIndex()) {
+                if (sp.getSubDiagramIndex() != sel.getSubDiagramIndex()) {
                     return new I18NSelectionRejectionExplanation("SELSTEP_SPIDER_DIFFERENT_SUBDIAGRAM");
-                } else if (sp.getFoot().getSpider() != ((SpiderClickedEvent) event.getDetailedInfo()).getFoot().getSpider()) {
+                } else if (!sel.getSpider().equals(sp.getSpider())) {
                     // The selected foot does not belong to the same spider.
                     return new I18NSelectionRejectionExplanation("SELSTEP_DIFFERENT_SPIDER");
-                } else if (isAlreadySelected(sels, (SpiderClickedEvent) event.getDetailedInfo())) {
+                } else if (isAlreadySelected(sels, sel)) {
                     return new I18NSelectionRejectionExplanation("SELSTEP_ALREADY_SELECTED");
                 } else {
                     // The selected foot is okay.
@@ -161,31 +182,7 @@ public class SelectSpiderFeetStep extends SelectionStep {
     }
 
     @Override
-    public boolean cleanSelectionOnStart() {
-        return false;
-    }
-
-    @Override
-    public int getHighlightingMode() {
-        return CirclesPanel2.Spiders;
-    }
-
-    /**
-     * Indicates whether a spider's foot has already been selected (whether it
-     * is present in the given selection).
-     * @param sels
-     * @param event
-     * @return 
-     */
-    private static boolean isAlreadySelected(List<SpiderDiagramClickEvent> sels, SpiderClickedEvent event) {
-        for (SpiderDiagramClickEvent sel : sels) {
-            if (sel.getDetailedInfo() instanceof SpiderClickedEvent) {
-                SpiderClickedEvent selSp = (SpiderClickedEvent) sel.getDetailedInfo();
-                if (selSp.getFoot() == event.getFoot()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public int getSelectableElements() {
+        return SelectionStep.Spiders;
     }
 }
