@@ -31,6 +31,7 @@ import java.io.Writer;
 import java.util.*;
 import static speedith.core.i18n.Translations.*;
 import speedith.core.lang.*;
+import speedith.core.util.Sequences;
 import speedith.core.util.Sets;
 
 /**
@@ -332,7 +333,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         private void exportSpidersDistinct(PrimarySpiderDiagram psd, Writer output, boolean useML) throws IOException {
             if (psd.getSpidersCount() > 1) {
                 output.append("distinct");
-                Sets.print(psd.getSpiders(), output, "[", "]", ", ");
+                Sequences.print(psd.getSpiders(), output, "[", "]", ", ");
                 printHolOrMlAnd(output, useML);
             }
         }

@@ -433,44 +433,6 @@ public final class Sets {
 
     // <editor-fold defaultstate="collapsed" desc="Printing">
     /**
-     * Prints the contents of the given list to the writer output.
-     * <p>Note: this method calls the {@link Object#toString()} method on
-     * non-null elements, otherwise it prints an empty string.</p>
-     * @param list the list whose elements to print to the given writer.
-     * @param output the output where to write the elements to (may not be
-     * {@code null}).
-     * @param openingString the opening string (usually the opening parenthesis)
-     * of the printed list.
-     * @param closingString the closing string (usually the closing parenthesis)
-     * of the printed list.
-     * @param delimiter the string to print between separate elements (usually a
-     * a comma, followed by a blank space, i.e.: ', ').
-     * @throws IOException this exception is thrown if an error occurred while
-     * writing to the output.
-     */
-    public static void print(Iterable<? extends Object> list, Writer output, String openingString, String closingString, String delimiter) throws IOException {
-        if (output == null) {
-            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "output"));
-        }
-        output.append(openingString);
-        if (list != null) {
-            Iterator<? extends Object> itr = list.iterator();
-            if (itr.hasNext()) {
-                Object el = itr.next();
-                output.append(el == null ? "" : el.toString());
-                while (itr.hasNext()) {
-                    el = itr.next();
-                    output.append(delimiter);
-                    if (el != null) {
-                        output.append(el.toString());
-                    }
-                }
-            }
-        }
-        output.append(closingString);
-    }
-
-    /**
      * This method is a shorthand for <span style="font-style:italic;font-family:monospace;">
      * {@link Sets#print(java.lang.Iterable, java.io.Writer, java.lang.String,
      * java.lang.String, java.lang.String) print}(list,
@@ -482,7 +444,7 @@ public final class Sets {
      * writing to the output.
      */
     public static void printSet(Iterable<? extends Object> list, Writer output) throws IOException {
-        print(list, output, "{", "}", ", ");
+        Sequences.print(list, output, "{", "}", ", ");
     }
 
     /**
@@ -496,7 +458,7 @@ public final class Sets {
     public static String toString(Iterable<? extends Object> list) {
         StringWriter sw = new StringWriter();
         try {
-            print(list, sw, "{", "}", ", ");
+            Sequences.print(list, sw, "{", "}", ", ");
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
