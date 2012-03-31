@@ -74,6 +74,16 @@ public class FOLToSpiders {
 	// </editor-fold>
 
 	// <editor-fold defaultstate="collapsed" desc="Private Helper Methods">
+	/**
+	 * This method expects a general Openproof first-order formula, and returns
+	 * a spider diagram.
+	 * 
+	 * This is a syntactical translation method. It does not transform the formula
+	 * into any other form.
+	 * @param formula
+	 * @return
+	 * @throws ConversionException 
+	 */
 	private static SpiderDiagram snf2sd(OPFormula formula) throws ConversionException {
 		if (formula instanceof OPDisjunction) {
 			return nary2csd((NAryFormula) formula, Operator.Disjunction);
