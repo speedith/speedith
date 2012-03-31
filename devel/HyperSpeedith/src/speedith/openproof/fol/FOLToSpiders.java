@@ -82,7 +82,7 @@ public class FOLToSpiders {
 			throw new ConversionException(speedith.openproof.i18n.Translations.i18n("FOL2SD_UNKNOWN_FORMULA", formula.toString()));
 		}
 	}
-	
+
 	private static SpiderDiagram nary2csd(NAryFormula nAryFormula, Operator operator) throws ConversionException {
 		final OPFormulaList juncts = nAryFormula.getJuncts();
 		SpiderDiagram sd = snf2sd(juncts.formulaAt(0));
@@ -91,15 +91,15 @@ public class FOLToSpiders {
 		}
 		return sd;
 	}
-	
+
 	private static CompoundSpiderDiagram binary2csd(BinaryFormula binaryFormula, Operator operator) throws ConversionException {
 		throw new ConversionException(speedith.openproof.i18n.Translations.i18n("FOL2SD_NOT_IMPLEMENTED_YET", binaryFormula.toString()));
 	}
-	
+
 	private static CompoundSpiderDiagram unary2csd(UnaryFormula unaryFormula, Operator operator) throws ConversionException {
 		throw new ConversionException(speedith.openproof.i18n.Translations.i18n("FOL2SD_NOT_IMPLEMENTED_YET", unaryFormula.toString()));
 	}
-	
+
 	private static SpiderDiagram existential2psd(OPExistential formula, Operator operator) throws ConversionException {
 		// First get all the nested existentially quantified variables.
 		TreeSet<String> spiders = new TreeSet<String>();
@@ -149,6 +149,8 @@ public class FOLToSpiders {
 		// Now get the habitats:
 		TreeMap<String, Region> habitats = new TreeMap<String, Region>();
 		extractHabitats(conjuncts, habitats, contoursArr, spidersArr);
+		// The habitats part should contain only conjunctions, disjunctions and
+		// negations of unary predicate symbols. We can convert
 
 		// TODO: Extract habitats...
 
@@ -296,29 +298,37 @@ public class FOLToSpiders {
 			extractContourNames(((QuantifiedFormula) formula).getMatrixFormula(), contours, spidersArr);
 		}
 	}
-	
+
 	private static void extractHabitats(ArrayList<OPFormula> conjuncts, TreeMap<String, Region> habitats, String[] contoursArr, String[] spidersArr) {
 		for (int i = 0; i < conjuncts.size(); i++) {
 			OPFormula conjunct = conjuncts.get(i);
-			String extracted = extractFullHabitat(conjunct, habitats, contoursArr, spidersArr);
+			String extracted = extractHabitatLong(conjunct, habitats, contoursArr, spidersArr);
 		}
 	}
 
 	/**
-	 * A full habitat is one that contains disjunctively connected zones. An
-	 * example of a full habitat is: 'A(t) & B(t) | ~A(t) & B(t) | A(t) &
-	 * ~B(t)'.
+	 * A long habitat description is one that contains disjunctively connected
+	 * zones. An example of a habitat in the long form is: 'A(t) & B(t) | ~A(t)
+	 * & B(t) | A(t) & ~B(t)'.
 	 *
 	 * @param conjunct
 	 * @param habitats
 	 * @param contoursArr
 	 * @param spidersArr
-	 * @return the spider for which the habitat has been extracted.
+	 * @return the spider for which the habitat has been extracted, or {@code null}
+	 * if no habitat was extracted.
 	 */
-	private static String extractFullHabitat(OPFormula conjunct, TreeMap<String, Region> habitats, String[] contoursArr, String[] spidersArr) {
+	private static String extractHabitatLong(OPFormula conjunct, TreeMap<String, Region> habitats, String[] contoursArr, String[] spidersArr) {
+		// A full habitat description is of the form 'z1 | z2 | z3' where each
+		// zone is a conjunction of all contours
 		if (conjunct instanceof OPDisjunction) {
-			final ArrayList<OPFormula> disjuncts = new ArrayList<OPFormula>();
+			// Check that all atoms in this disjunct are unary predicates with
+			// the same spider.
+			int spIdx = checkPredicatesUnaryOnSpider(conjunct, spidersArr, -1);
+			// Each disjunct is expected to be one zone
+			ArrayList<OPFormula> disjuncts = new ArrayList<OPFormula>();
 			extractDisjuncts(conjunct, disjuncts);
+			// Go through all disjuncts and get a zone for each.
 			ArrayList<Zone> zones = new ArrayList<Zone>();
 			for (OPFormula disjunct : disjuncts) {
 				// TODO: Extract Zone...
@@ -326,6 +336,54 @@ public class FOLToSpiders {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * This method returns the index of the spider diagram if every predicate
+	 * mentions only it.
+	 *
+	 * <ul> <li>-1 is returned if there were at least two different spiders
+	 * mentioned.</li> <li>-2 is returned if an unknown spider has been
+	 * mentioned (a spider not in the given list of spiders).</li> <li>-3 is
+	 * returned if a non-unary predicate has been mentioned in the given
+	 * formula, or if the predicate uses something else other than the spider in
+	 * its arguments.</li><li>-4 is returned if a term appears that is not a
+	 * negated atom connected disjunctively or conjunctively.</li></ul>
+	 */
+	private static int checkPredicatesUnaryOnSpider(OPFormula formula, String[] spidersArr, int expectedSpider) {
+		if (formula instanceof OPAtom) {
+			OPAtom atom = (OPAtom) formula;
+			OPTermList arguments = atom.getArguments();
+			if (arguments != null
+					&& arguments.count() == 1
+					&& arguments.termAt(0) instanceof OPVariable) {
+				int spIdx = Arrays.binarySearch(spidersArr, ((OPVariable) arguments.termAt(0)).toString());
+				if (spIdx < 0) {
+					return -2;
+				} else if (expectedSpider < 0) {
+					return spIdx;
+				} else {
+					return expectedSpider == spIdx ? expectedSpider : -1;
+				}
+			} else {
+				return -3;
+			}
+		} else if (formula instanceof OPDisjunction || formula instanceof OPConjunction) {
+			OPFormulaList juncts = ((NAryFormula) formula).getJuncts();
+			for (int i = 0; i < juncts.count(); i++) {
+				expectedSpider = checkPredicatesUnaryOnSpider(juncts.formulaAt(i), spidersArr, expectedSpider);
+				if (expectedSpider < 0) {
+					return expectedSpider;
+				}
+			}
+			return expectedSpider;
+		} else if (formula instanceof OPNegation) {
+			OPNegation neg = (OPNegation) formula;
+			if (neg.getNegated() instanceof OPAtom) {
+				return checkPredicatesUnaryOnSpider(neg.getNegated(), spidersArr, expectedSpider);
+			}
+		}
+		return -4;
 	}
 	// </editor-fold>
 }
