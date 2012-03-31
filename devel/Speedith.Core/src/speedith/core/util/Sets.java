@@ -28,6 +28,7 @@ package speedith.core.util;
 
 import java.util.Collection;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -482,6 +483,24 @@ public final class Sets {
      */
     public static void printSet(Iterable<? extends Object> list, Writer output) throws IOException {
         print(list, output, "{", "}", ", ");
+    }
+
+    /**
+     * This method is a shorthand for <span style="font-style:italic;font-family:monospace;">
+     * {@link Sets#print(java.lang.Iterable, java.io.Writer, java.lang.String,
+     * java.lang.String, java.lang.String) print}(list,
+     * stringWriter, "{", "}", ", ")</span>.
+     * @param list the list whose elements to print to the given writer.
+     * @return the printed string version of the set.
+     */
+    public static String toString(Iterable<? extends Object> list) {
+        StringWriter sw = new StringWriter();
+        try {
+            print(list, sw, "{", "}", ", ");
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        return sw.toString();
     }
     // </editor-fold>
 
