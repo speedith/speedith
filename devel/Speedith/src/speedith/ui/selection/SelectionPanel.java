@@ -140,6 +140,7 @@ public class SelectionPanel extends javax.swing.JPanel {
         cancelButton = new javax.swing.JButton();
         previousButton = new javax.swing.JButton();
         diagramAndSelectionPanel = new javax.swing.JSplitPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
         spiderDiagramPanel = new speedith.ui.SpiderDiagramPanel();
         selectionPanel = new javax.swing.JPanel();
         selectionLabel = new javax.swing.JLabel();
@@ -201,15 +202,24 @@ public class SelectionPanel extends javax.swing.JPanel {
             }
         });
 
-        diagramAndSelectionPanel.setDividerLocation(500);
         diagramAndSelectionPanel.setDividerSize(5);
 
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(500, 250));
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(500, 250));
+
+        spiderDiagramPanel.setMinimumSize(new java.awt.Dimension(200, 200));
+        spiderDiagramPanel.setPreferredSize(new java.awt.Dimension(500, 250));
         spiderDiagramPanel.addSpiderDiagramClickListener(new speedith.ui.SpiderDiagramClickListener() {
             public void spiderDiagramClicked(speedith.ui.SpiderDiagramClickEvent evt) {
                 onSpiderDiagramClicked(evt);
             }
         });
-        diagramAndSelectionPanel.setLeftComponent(spiderDiagramPanel);
+        jScrollPane2.setViewportView(spiderDiagramPanel);
+
+        diagramAndSelectionPanel.setLeftComponent(jScrollPane2);
+
+        selectionPanel.setMinimumSize(new java.awt.Dimension(75, 150));
+        selectionPanel.setPreferredSize(new java.awt.Dimension(75, 150));
 
         selectionLabel.setText("Selection:");
 
@@ -224,8 +234,8 @@ public class SelectionPanel extends javax.swing.JPanel {
             .addGroup(selectionPanelLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addGroup(selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(selectionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                    .addComponent(selectionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE))
                 .addGap(0, 0, 0))
         );
         selectionPanelLayout.setVerticalGroup(
@@ -233,7 +243,7 @@ public class SelectionPanel extends javax.swing.JPanel {
             .addGroup(selectionPanelLayout.createSequentialGroup()
                 .addComponent(selectionLabel)
                 .addGap(3, 3, 3)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
 
@@ -245,25 +255,28 @@ public class SelectionPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(finishButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 123, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(previousButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(clearButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(124, 124, 124)
                 .addComponent(nextButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cancelButton))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(stepNumber)
-                .addGap(1, 1, 1)
-                .addComponent(stepInstructionMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(errorMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(diagramAndSelectionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(stepNumber)
+                        .addGap(1, 1, 1)
+                        .addComponent(stepInstructionMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(errorMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(diagramAndSelectionPanel)
+                .addComponent(diagramAndSelectionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(errorMessage)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -320,6 +333,7 @@ public class SelectionPanel extends javax.swing.JPanel {
     private javax.swing.JSplitPane diagramAndSelectionPanel;
     private javax.swing.JLabel errorMessage;
     private javax.swing.JButton finishButton;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton nextButton;
     private javax.swing.JButton previousButton;
     private javax.swing.JLabel selectionLabel;

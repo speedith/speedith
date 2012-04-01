@@ -131,9 +131,10 @@ public interface Proof {
     int getRuleApplicationCount();
 
     /**
-     * Indicates whether the proof is finished. <p><span
+     * Indicates whether the proof is finished (i.e. whether there are any goals
+     * left, goals on which we can still apply inference rules). <p><span
      * style="font-weight:bold">Note</span>: The call to this function is
-     * similar to something like this: {@code }</p>
+     * similar to something like this: {@code getLastGoals() == null || getLastGoals().isEmpty()}</p>
      *
      * @return a value that indicates whether the proof is finished.
      */

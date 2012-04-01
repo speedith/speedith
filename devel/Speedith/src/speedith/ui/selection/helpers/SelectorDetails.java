@@ -30,6 +30,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import speedith.core.reasoning.InferenceRuleProvider;
 import speedith.core.reasoning.args.RuleArg;
 
 /**
@@ -37,9 +38,12 @@ import speedith.core.reasoning.args.RuleArg;
  * diagram selector}. It describes the selector in detail: it's name and the type
  * of rule argument it produces from user's selection.
  * @author Matej Urbas [matej.urbas@gmail.com]
+ * @deprecated Should use the mechanism that comes with {@link InferenceRuleProvider
+ * inference rule providers}. See {@link InferenceRuleProvider#getInstructions() }.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@Deprecated
 public @interface SelectorDetails {
     /**
      * The name of the annotated GUI selection provider.

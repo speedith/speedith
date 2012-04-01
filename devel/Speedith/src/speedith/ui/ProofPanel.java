@@ -50,7 +50,6 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
      */
     public ProofPanel() {
         this(null);
-//        initComponents();
     }
 
     /**
@@ -64,10 +63,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
     public ProofPanel(Goals initialGoals) {
         initComponents();
 
-        // Create a proof trace for initial goals.
-        proof = new ProofTrace(initialGoals);
-        // Refresh the user interface (present all the initial goals)...
-        displayInitialGoals();
+        resetProof(initialGoals, false);
     }
     //</editor-fold>
 
@@ -105,6 +101,18 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
     private javax.swing.JPanel pnlGoals;
     private javax.swing.JScrollPane scrlGoals;
     // End of variables declaration//GEN-END:variables
+    //</editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+    /**
+     * Removes the previous proof entirely and starts a new proof with the given
+     * initial goals.
+     *
+     * @param initialGoals the initial goals of the new proof.
+     */
+    public void newProof(Goals initialGoals) {
+        resetProof(initialGoals, true);
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Proof Interface Implementation">
@@ -205,7 +213,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
 
     private <TRuleArg extends RuleArg> String getStepDescription(InferenceRule<? super TRuleArg> rule, TRuleArg args) {
         if (args instanceof SubgoalIndexArg) {
-            return i18n("PROOF_PANEL_STEP_DESC_SUBGOAL", rule.getProvider().getPrettyName(), ((SubgoalIndexArg)args).getSubgoalIndex() + 1);
+            return i18n("PROOF_PANEL_STEP_DESC_SUBGOAL", rule.getProvider().getPrettyName(), ((SubgoalIndexArg) args).getSubgoalIndex() + 1);
         } else {
             return i18n("PROOF_PANEL_STEP_DESC_GENERAL", rule.getProvider().getPrettyName());
         }
@@ -222,6 +230,23 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
         gbc.weighty = 1.0;
         SubgoalsPanel sgp = new SubgoalsPanel(i18n("PROOF_PANEL_NO_GOALS"));
         pnlGoals.add(sgp, gbc);
+    }
+
+    private void resetProof(Goals initialGoals, boolean invalidateAndRedraw) {
+        proof = new ProofTrace(initialGoals);
+        // Clean the current user interface
+        cleanProofPanel();
+        // And display the initial goals.
+        displayInitialGoals();
+        if (invalidateAndRedraw) {
+//            invalidate();
+            validate();
+//            repaint();
+        }
+    }
+
+    private void cleanProofPanel() {
+        pnlGoals.removeAll();
     }
     // </editor-fold>
 }

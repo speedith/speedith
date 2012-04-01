@@ -26,18 +26,16 @@
  */
 package speedith.ui.selection.helpers;
 
-import speedith.ui.SpiderClickedEvent;
 import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.List;
 import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Zone;
+import speedith.core.reasoning.InferenceRuleProvider;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.args.SpiderZoneArg;
-import speedith.icircles.util.ICirclesToSpeedith;
-import speedith.ui.SpiderDiagramClickEvent;
 import speedith.ui.selection.SelectionDialog;
 import speedith.core.reasoning.args.selection.SelectionSequence;
 import speedith.core.reasoning.args.selection.SelectSpiderFeetStep;
@@ -47,7 +45,10 @@ import speedith.core.reasoning.args.selection.SelectSpiderFeetStep;
  * arguments}. It provides a GUI for selecting feet of any spider in a diagram.
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
+ * @deprecated Should use the mechanism that comes with {@link InferenceRuleProvider
+ * inference rule providers}. See {@link InferenceRuleProvider#getInstructions() }.
  */
+@Deprecated
 @SelectorDetails(name="Spider region selector", targetRuleArg=SpiderRegionArg.class)
 public class SpiderRegionSelector extends DiagramSelector<SpiderRegionArg> {
     private final int subgoalIndex;

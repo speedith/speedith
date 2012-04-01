@@ -46,7 +46,10 @@ import static speedith.i18n.Translations.i18n;
  * @param <T> the type of rule this object produces given a selection sequence
  * of diagrammatic elements.
  * @author Matej Urbas [matej.urbas@gmail.com]
+ * @deprecated Should use the mechanism that comes with {@link InferenceRuleProvider
+ * inference rule providers}. See {@link InferenceRuleProvider#getInstructions() }.
  */
+@Deprecated
 public abstract class DiagramSelector<T extends RuleArg> {
 
     // <editor-fold defaultstate="collapsed" desc="The Selection Conversion Interface">
