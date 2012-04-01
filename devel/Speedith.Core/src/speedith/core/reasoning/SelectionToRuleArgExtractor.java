@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: RuleApplicationInstruction.java
+ * File name: SelectionToRuleArgExtractor.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -27,13 +27,28 @@
 package speedith.core.reasoning;
 
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.selection.SelectionSequence;
 
 /**
- * Instances of this type provide information on how to apply an inference rule
- * to the user and the UI.
+ * Converts the user's selection of diagrammatic elements to a rule argument.
+ * This is used, for example, in providing sufficient arguments to an inference
+ * rule.
  *
- * @param <T> the type of arguments to be used in the inference rule.
+ * @param <T> the type of rule arguments this extractor returns.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface RuleApplicationInstruction<T extends RuleArg> extends SelectionInstructions, SelectionToRuleArgExtractor<T> {
+public interface SelectionToRuleArgExtractor<T extends RuleArg> {
+
+    /**
+     * Gets the {@link RuleArg arguments} from the successful user's selection.
+     * The returned arguments can be passed to the {@link InferenceRule#apply(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.Goals) apply method}
+     * of the inference rule.
+     *
+     * @param selectionSequence the user's selection from which to extract the
+     * rule argument.
+     * @param subgoalIndex the index of the subgoal on which the inference rule
+     * should be applied.
+     * @return the extracted arguments.
+     */
+    T extractRuleArg(SelectionSequence selectionSequence, int subgoalIndex);
 }

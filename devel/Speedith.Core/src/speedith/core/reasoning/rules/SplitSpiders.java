@@ -26,34 +26,26 @@
  */
 package speedith.core.reasoning.rules;
 
+import speedith.core.reasoning.rules.instructions.SelectFeetOfSpiderInstruction;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Locale;
 import static speedith.core.i18n.Translations.*;
-import speedith.core.lang.CompoundSpiderDiagram;
-import speedith.core.lang.IdTransformer;
-import speedith.core.lang.Operator;
-import speedith.core.lang.PrimarySpiderDiagram;
-import speedith.core.lang.Region;
-import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.SpiderDiagrams;
-import speedith.core.reasoning.BasicInferenceRule;
-import speedith.core.reasoning.Goals;
+import speedith.core.lang.*;
+import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
-import speedith.core.reasoning.RuleApplicationException;
-import speedith.core.reasoning.RuleApplicationResult;
 import speedith.core.reasoning.args.SpiderRegionArg;
 
 /**
  * The implementation of the 'split spiders' diagrammatic inference rule.
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
-     * The name of this inference rule.
-     * <p>This value is returned by the {@link SplitSpiders#getInferenceRuleName()}
+     * The name of this inference rule. <p>This value is returned by the {@link SplitSpiders#getInferenceRuleName()}
      * method.</p>
      */
     public static final String InferenceRuleName = "split_spiders";
@@ -87,6 +79,10 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
 
     public Class<SpiderRegionArg> getArgumentType() {
         return SpiderRegionArg.class;
+    }
+
+    public RuleApplicationInstruction<SpiderRegionArg> getInstructions() {
+        return SelectFeetOfSpiderInstruction.getInstance();
     }
     // </editor-fold>
 

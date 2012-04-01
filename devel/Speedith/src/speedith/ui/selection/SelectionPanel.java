@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith
  * 
- * File name: ElementSelectionPanel.java
+ * File name: SelectionPanel.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -40,10 +40,15 @@ import speedith.core.reasoning.args.selection.SelectionStep;
 import speedith.core.reasoning.args.selection.SelectionStep.SelectionRejectionExplanation;
 
 /**
+ * This is a GUI component that provides a step-by-step selection process on a
+ * selected spider diagram.<p>This is useful for interactively providing
+ * parameters for the application of an inference rule.</p> 
+ * <p>{@link SelectionDialog The selection dialog} may be more convenient for
+ * most use cases (as its use is quite straight-forward).</p>
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class ElementSelectionPanel extends javax.swing.JPanel {
+public class SelectionPanel extends javax.swing.JPanel {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private SelectionSequenceMutable selection;
@@ -52,14 +57,14 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     private ArrayList<ActionListener> actionListeners;
     /**
      * This value is given as the {@link ActionEvent#getID() action ID} in the
-     * {@link ElementSelectionPanel#addActionListener(java.awt.event.ActionListener)
+     * {@link SelectionPanel#addActionListener(java.awt.event.ActionListener)
      * selection concluded event} if the user pressed on the <span
      * style="font-style:italic;">finish</span> button.
      */
     public final static int Finish = 0;
     /**
      * This value is given as the {@link ActionEvent#getID() action ID} in the
-     * {@link ElementSelectionPanel#addActionListener(java.awt.event.ActionListener)
+     * {@link SelectionPanel#addActionListener(java.awt.event.ActionListener)
      * selection concluded event} if the user pressed on the <span
      * style="font-style:italic;">finish</span> cancel.
      */
@@ -70,10 +75,8 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     /**
      * Initialises the selection panel with no diagram and no selection steps.
      */
-    public ElementSelectionPanel() {
+    public SelectionPanel() {
         initComponents();
-//        this(SpiderDiagrams.createNullSD(), new SelectionStepAny());
-//        this(SpeedithMainForm.getSDExample11(), new SelectionStepAny());
         refreshUI();
     }
 
@@ -86,7 +89,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
      * @param selectionSteps the selection steps this panel should display to
      * the user.
      */
-    public ElementSelectionPanel(SpiderDiagram diagram, SelectionStep... selectionSteps) {
+    public SelectionPanel(SpiderDiagram diagram, SelectionStep... selectionSteps) {
         this(diagram, selectionSteps == null || selectionSteps.length == 0 ? null : new ArrayList<SelectionStep>(Arrays.asList(selectionSteps)));
     }
 
@@ -99,7 +102,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
      * @param selectionSteps the selection steps this panel should display to
      * the user.
      */
-    public ElementSelectionPanel(SpiderDiagram diagram, Collection<SelectionStep> selectionSteps) {
+    public SelectionPanel(SpiderDiagram diagram, Collection<SelectionStep> selectionSteps) {
         this(diagram, selectionSteps == null || selectionSteps.isEmpty() ? null : new ArrayList<SelectionStep>(selectionSteps));
     }
 
@@ -112,7 +115,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
      * @param selectionSteps the selection steps this panel should display to
      * the user.
      */
-    ElementSelectionPanel(SpiderDiagram diagram, ArrayList<SelectionStep> selectionSteps) {
+    SelectionPanel(SpiderDiagram diagram, ArrayList<SelectionStep> selectionSteps) {
         initComponents();
         resetDiagramAndSelectionSteps(diagram, selectionSteps);
     }
@@ -222,7 +225,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
                 .addGap(0, 0, 0)
                 .addGroup(selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(selectionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE))
+                    .addComponent(selectionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, 0))
         );
         selectionPanelLayout.setVerticalGroup(
@@ -260,7 +263,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(diagramAndSelectionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+                .addComponent(diagramAndSelectionPanel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(errorMessage)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -364,6 +367,11 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
      * the user should choose elements).
      */
     public void setDiagram(SpiderDiagram diagram) {
+        // Since we have changed the diagram, we also have to reset the current
+        // selection (as there are no guarantees that the selection will remain
+        // valid after the change of the diagram).
+        selection.clearCurrentSelection();
+        selection.setDiagram(diagram);
         resetDiagram(diagram, true);
     }
 
@@ -400,7 +408,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         resetSelectionSteps(new ArrayList<SelectionStep>(steps), true);
     }
 
-    public void setDiagramAndSelectionSteps(SpiderDiagram diagram, Collection<SelectionStep> steps) {
+    public void setDiagramAndSelectionSteps(SpiderDiagram diagram, Collection<? extends SelectionStep> steps) {
         resetDiagramAndSelectionSteps(diagram, new ArrayList<SelectionStep>(steps));
     }
     // </editor-fold>
@@ -413,10 +421,10 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
      * style="font-style:italic;">finish</span> or the <span
      * style="font-style:italic;">cancel</span> button.</p> <p>If the user
      * clicked <span style="font-style:italic;">cancel</span> then the
-     * {@link ActionEvent#getID()} will be set to {@link ElementSelectionPanel#Cancel}.
+     * {@link ActionEvent#getID()} will be set to {@link SelectionPanel#Cancel}.
      * Otherwise, in case the user pressed the <span
      * style="font-style:italic;">finish</span> button, the ID will be set to
-     * {@link ElementSelectionPanel#Finish}.</p>
+     * {@link SelectionPanel#Finish}.</p>
      *
      * @param l the event listener to register.
      */
@@ -441,10 +449,10 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Returns the array of all {@link ElementSelectionPanel#addActionListener(ActionListener) registered}
+     * Returns the array of all {@link SelectionPanel#addActionListener(ActionListener) registered}
      * {@link ActionListener selection concluded listeners}.
      *
-     * @return the array of all {@link ElementSelectionPanel#addActionListener(ActionListener) registered}
+     * @return the array of all {@link SelectionPanel#addActionListener(ActionListener) registered}
      * {@link ActionListener selection concluded listeners}.
      */
     public ActionListener[] getActionListeners() {
@@ -510,7 +518,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
                 throw new IllegalArgumentException(i18n("SELSEQ_NULL_STEPS"));
             }
         }
-        this.selection = new SelectionSequenceMutable(selectionSteps);
+        this.selection = new SelectionSequenceMutable(getDiagram(), selectionSteps);
         if (resetUI) {
             resetCurStepAndUI();
         }
@@ -595,7 +603,7 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         // Check whether we should clean the selection on starting this step?
         SelectionStep curSelStep = getCurSelStep();
         if (curSelStep != null && (force || curSelStep.cleanSelectionOnStart())) {
-            selection.clearAcceptedClicks(getCurrentStep());
+            selection.clearCurrentSelection(getCurrentStep());
             if (refreshUIIfChange) {
                 refreshUI();
             }
@@ -664,8 +672,8 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
         protected ArrayList<SpiderDiagramClickEvent>[] acceptedClicks;
 
         @SuppressWarnings("unchecked")
-        public SelectionSequenceMutable(ArrayList<SelectionStep> selectionSteps) {
-            super(selectionSteps);
+        public SelectionSequenceMutable(SpiderDiagram diagram, ArrayList<SelectionStep> selectionSteps) {
+            super(diagram, selectionSteps);
             this.acceptedClicks = new ArrayList[selectionSteps.size()];
         }
 
@@ -678,10 +686,22 @@ public class ElementSelectionPanel extends javax.swing.JPanel {
                     : acceptedClicks[stepIndex]).add(evt);
         }
 
-        void clearAcceptedClicks(int stepIndex) {
+        void clearCurrentSelection(int stepIndex) {
             if (acceptedSelections[stepIndex] != null) {
                 acceptedSelections[stepIndex].clear();
             }
+            if (acceptedClicks[stepIndex] != null) {
+                acceptedClicks[stepIndex].clear();
+            }
+        }
+        
+        void clearCurrentSelection() {
+            Arrays.fill(acceptedClicks, null);
+            Arrays.fill(acceptedSelections, null);
+        }
+
+        void setDiagram(SpiderDiagram diagram) {
+            this.diagram = diagram;
         }
     }
     //</editor-fold>

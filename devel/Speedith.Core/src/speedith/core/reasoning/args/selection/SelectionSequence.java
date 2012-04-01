@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.args.RuleArg;
 
 /**
@@ -41,6 +43,7 @@ public abstract class SelectionSequence {
     //<editor-fold defaultstate="collapsed" desc="Fields">
     protected ArrayList<SelectionStep> selectionSteps;
     protected ArrayList<RuleArg>[] acceptedSelections;
+    protected SpiderDiagram diagram;
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
@@ -49,11 +52,12 @@ public abstract class SelectionSequence {
      * style="font-weight:bold">Note</span>: this method makes a copy of the
      * given collections.</p>
      *
+     * @param diagram the diagram from which we select the elements.
      * @param selectionSteps the selection steps (which will guide the user
      * through the selection process).
      */
-    public SelectionSequence(Collection<SelectionStep> selectionSteps) {
-        this(selectionSteps == null || selectionSteps.isEmpty()
+    public SelectionSequence(SpiderDiagram diagram, Collection<SelectionStep> selectionSteps) {
+        this(diagram, selectionSteps == null || selectionSteps.isEmpty()
                 ? null
                 : new ArrayList<SelectionStep>(selectionSteps));
     }
@@ -63,11 +67,12 @@ public abstract class SelectionSequence {
      * style="font-weight:bold">Note</span>: this method does not make a copy of
      * the given collections.</p>
      *
+     * @param diagram the diagram from which we select the elements.
      * @param selectionSteps the selection steps (which will guide the user
      * through the selection process).
      */
     @SuppressWarnings("unchecked")
-    SelectionSequence(ArrayList<SelectionStep> selectionSteps) {
+    SelectionSequence(SpiderDiagram diagram, ArrayList<SelectionStep> selectionSteps) {
         if (selectionSteps == null || selectionSteps.isEmpty()) {
             throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_EMPTY_ARGUMENT", "selectionSteps"));
         }
@@ -82,8 +87,9 @@ public abstract class SelectionSequence {
      * step. Returns {@code null} if no selection has been accepted for this
      * step.
      *
-     * @param stepIndex
-     * @return
+     * @param stepIndex the index of the step for which we want the selected
+     * elements.
+     * @return the elements selected in the given step.
      */
     public List<RuleArg> getAcceptedSelectionsForStepAt(int stepIndex) {
         if (stepIndex < 0 || stepIndex >= selectionSteps.size()) {
@@ -93,6 +99,23 @@ public abstract class SelectionSequence {
                 || acceptedSelections[stepIndex].isEmpty())
                 ? null
                 : Collections.unmodifiableList(acceptedSelections[stepIndex]);
+    }
+
+    /**
+     * Returns the number of selected diagrammatic elements for the given step.
+     * @param stepIndex the selection step in which we are interested.
+     * @return the number of selected diagrammatic elements for the given step.
+     */
+    public int getAcceptedSelectionsCount(int stepIndex) {
+        return acceptedSelections[stepIndex] == null ? 0 : acceptedSelections[stepIndex].size();
+    }
+
+    /**
+     * The diagram from which we select the elements.
+     * @return the diagram from which we select the elements.
+     */
+    public SpiderDiagram getDiagram() {
+        return diagram;
     }
 
     /**
@@ -106,16 +129,23 @@ public abstract class SelectionSequence {
         return Collections.unmodifiableList(selectionSteps);
     }
 
+    /**
+     * Returns the number of steps the user has to make in this selection
+     * process.
+     * @return the number of steps the user has to make in this selection
+     * process.
+     */
     public int getSelectionStepsCount() {
         return selectionSteps.size();
     }
 
+    /**
+     * Returns the description of the selection step at the given index.
+     * @param index the index of the step to return.
+     * @return the description of the selection step at the given index.
+     */
     public SelectionStep getSelectionStepAt(int index) {
         return selectionSteps.get(index);
-    }
-
-    public int getAcceptedSelectionsCount(int stepIndex) {
-        return acceptedSelections[stepIndex] == null ? 0 : acceptedSelections[stepIndex].size();
     }
     //</editor-fold>
 }

@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith
  * 
- * File name: DiagramSelectionDialog.java
+ * File name: SelectionDialog.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -40,7 +40,7 @@ import speedith.core.reasoning.args.selection.SelectionStepAny;
  * This dialog provides a step-by-step diagram element selection method.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class DiagramSelectionDialog extends javax.swing.JDialog {
+public class SelectionDialog extends javax.swing.JDialog {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private boolean cancelled = true;
@@ -53,7 +53,7 @@ public class DiagramSelectionDialog extends javax.swing.JDialog {
      * @param parent
      * @param modal
      */
-    public DiagramSelectionDialog(java.awt.Frame parent, boolean modal) {
+    public SelectionDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
@@ -61,28 +61,28 @@ public class DiagramSelectionDialog extends javax.swing.JDialog {
     /**
      * Creates a new diagram selection dialog with the given diagram and the given
      * {@link SelectionStep selection steps}.
-     *  <p>The final selection of the user can be retrieved through {@link DiagramSelectionDialog#getSelection()}.</p>
+     *  <p>The final selection of the user can be retrieved through {@link SelectionDialog#getSelection()}.</p>
      * @param diagram the diagram from which the user will choose elements.
      * @param selectionSteps the selection instruction steps that will lead the
      * user through the selection process.
      * @param parent
      * @param modal 
      */
-    public DiagramSelectionDialog(Frame parent, boolean modal, SpiderDiagram diagram, SelectionStep... selectionSteps) {
+    public SelectionDialog(Frame parent, boolean modal, SpiderDiagram diagram, SelectionStep... selectionSteps) {
         this(parent, modal, diagram, Arrays.asList(selectionSteps));
     }
 
     /**
      * Creates a new diagram selection dialog with the given diagram and the given
      * {@link SelectionStep selection steps}.
-     *  <p>The final selection of the user can be retrieved through {@link DiagramSelectionDialog#getSelection()}.</p>
+     *  <p>The final selection of the user can be retrieved through {@link SelectionDialog#getSelection()}.</p>
      * @param diagram the diagram from which the user will choose elements.
      * @param selectionSteps the selection instruction steps that will lead the
      * user through the selection process.
      * @param parent
      * @param modal 
      */
-    public DiagramSelectionDialog(Frame parent, boolean modal, SpiderDiagram diagram, Collection<SelectionStep> selectionSteps) {
+    public SelectionDialog(Frame parent, boolean modal, SpiderDiagram diagram, Collection<? extends SelectionStep> selectionSteps) {
         this(parent, modal);
         elementSelectionPanel.setDiagramAndSelectionSteps(diagram, selectionSteps);
     }
@@ -98,7 +98,7 @@ public class DiagramSelectionDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        elementSelectionPanel = new speedith.ui.selection.ElementSelectionPanel();
+        elementSelectionPanel = new speedith.ui.selection.SelectionPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(i18n("SELDIA_DEFAULT_TITLE")); // NOI18N
@@ -125,7 +125,7 @@ public class DiagramSelectionDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void onSelectionConcluded(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onSelectionConcluded
-        cancelled = evt.getID() == ElementSelectionPanel.Cancel;
+        cancelled = evt.getID() == SelectionPanel.Cancel;
         dispose();
     }//GEN-LAST:event_onSelectionConcluded
 
@@ -150,13 +150,13 @@ public class DiagramSelectionDialog extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DiagramSelectionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SelectionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DiagramSelectionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SelectionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DiagramSelectionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SelectionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DiagramSelectionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SelectionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -166,7 +166,7 @@ public class DiagramSelectionDialog extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                DiagramSelectionDialog dialog = new DiagramSelectionDialog(new javax.swing.JFrame(), true);
+                SelectionDialog dialog = new SelectionDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 
                     @Override
@@ -179,7 +179,7 @@ public class DiagramSelectionDialog extends javax.swing.JDialog {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private speedith.ui.selection.ElementSelectionPanel elementSelectionPanel;
+    private speedith.ui.selection.SelectionPanel elementSelectionPanel;
     // End of variables declaration//GEN-END:variables
     //</editor-fold>
     

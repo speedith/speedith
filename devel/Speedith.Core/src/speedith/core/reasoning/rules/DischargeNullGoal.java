@@ -37,6 +37,7 @@ import speedith.core.reasoning.RuleApplicationResult;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
 import static speedith.core.i18n.Translations.*;
+import speedith.core.reasoning.*;
 
 /**
  * This inference rule removes a {@link NullSpiderDiagram null-subgoal} from the
@@ -99,4 +100,8 @@ public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> impl
         return SubgoalIndexArg.class;
     }
     // </editor-fold>
+
+    public RuleApplicationInstruction<SubgoalIndexArg> getInstructions() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

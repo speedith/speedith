@@ -270,6 +270,10 @@ public abstract class SelectionStep {
     /**
      * This method indicates whether the selection sequence UI should clean all
      * the selection of this step when the user presses the "previous" button.
+     * In fact, this method indicates that all selection made for this step
+     * should be cleaned whenever (just before) the {@link SelectionStep#init(speedith.core.reasoning.args.selection.SelectionSequence, int)
+     * }
+     * method is called.
      *
      * @return a value that indicates whether the selection sequence UI should
      * clean all the selection of this step when the user presses the "previous"
@@ -279,13 +283,8 @@ public abstract class SelectionStep {
 
     /**
      * Returns a value that indicates which elements of the diagram should be
-     * selectable for this step. <p>This is a binary combination of: <ul>
-     * <li>{@link SelectionStep#Spiders},</li>
-     * <li>{@link SelectionStep#Zones},</li>
-     * <li>{@link SelectionStep#Contours},</li>
-     * <li>{@link SelectionStep#Operators}, and</li>
-     * <li>{@link SelectionStep#NullSpiderDiagrams}.</li>
-     * </ul></p>
+     * selectable for this step. <p>This is a binary combination of: <ul> <li>{@link SelectionStep#Spiders},</li> <li>{@link SelectionStep#Zones},</li> <li>{@link SelectionStep#Contours},</li> <li>{@link SelectionStep#Operators},
+     * and</li> <li>{@link SelectionStep#NullSpiderDiagrams}.</li> </ul></p>
      * <p>The value {@link SelectionStep#All} can be used to indicate that all
      * diagrammatic elements should be selectable.</p>
      *

@@ -27,13 +27,11 @@
 package speedith.ui;
 
 import speedith.core.lang.*;
-import speedith.core.reasoning.Goals;
-import speedith.core.reasoning.InferenceRule;
-import speedith.core.reasoning.InferenceRules;
-import speedith.core.reasoning.RuleApplicationException;
-import speedith.core.reasoning.args.SpiderRegionArg;
+import speedith.core.reasoning.*;
+import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
-import speedith.ui.selection.helpers.DiagramSelector;
+import speedith.ui.selection.SelectionDialog;
 
 /**
  *
@@ -91,11 +89,15 @@ public class TestingForm extends javax.swing.JFrame {
 
     @SuppressWarnings("unchecked")
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        SpiderRegionArg feetArg = DiagramSelector.getSelector(SpiderRegionArg.class).showSelectionDialog(this, proofPanel1.getInitialGoals().getGoalAt(0));
-        if (feetArg != null) {
-            InferenceRule<SpiderRegionArg> splitSpiders = (InferenceRule<SpiderRegionArg>) InferenceRules.getInferenceRule(SplitSpiders.InferenceRuleName);
+        InferenceRule<RuleArg> splitSpiders = (InferenceRule<RuleArg>) InferenceRules.getInferenceRule(AddFeet.InferenceRuleName);
+        RuleApplicationInstruction<?> instructions = splitSpiders.getProvider().getInstructions();
+        SelectionDialog dsd = new SelectionDialog(this, true, proofPanel1.getLastGoals().getGoalAt(0), instructions.getSelectionSteps());
+        dsd.setVisible(true);
+        if (dsd.isCancelled()) {
+        } else {
+            RuleArg ruleArg = instructions.extractRuleArg(dsd.getSelection(), 0);
             try {
-                proofPanel1.applyRule(splitSpiders, feetArg);
+                proofPanel1.applyRule(splitSpiders, ruleArg);
             } catch (RuleApplicationException ex) {
                 System.out.println("Error!" + ex.getMessage());
             }

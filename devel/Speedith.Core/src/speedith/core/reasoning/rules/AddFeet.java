@@ -26,6 +26,7 @@
  */
 package speedith.core.reasoning.rules;
 
+import speedith.core.reasoning.rules.instructions.AddFeetRuleInstruction;
 import java.util.Iterator;
 import java.util.Locale;
 import speedith.core.lang.Operator;
@@ -33,6 +34,7 @@ import speedith.core.lang.Region;
 import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.CompoundSpiderDiagram;
 import java.util.LinkedList;
+import java.util.List;
 import speedith.core.lang.IdTransformer;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.TransformationException;
@@ -43,6 +45,10 @@ import speedith.core.reasoning.RuleApplicationResult;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import static speedith.core.i18n.Translations.*;
+import speedith.core.reasoning.*;
+import speedith.core.reasoning.args.selection.SelectionSequence;
+import speedith.core.reasoning.args.selection.SelectionStep;
+import speedith.core.reasoning.rules.instructions.SelectFeetOfSpiderInstruction;
 
 /**
  * The implementation of the 'add feet' inference rule.
@@ -90,6 +96,10 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
 
     public Class<SpiderRegionArg> getArgumentType() {
         return SpiderRegionArg.class;
+    }
+
+    public RuleApplicationInstruction<SpiderRegionArg> getInstructions() {
+        return AddFeetRuleInstruction.getInstance();
     }
     // </editor-fold>
 

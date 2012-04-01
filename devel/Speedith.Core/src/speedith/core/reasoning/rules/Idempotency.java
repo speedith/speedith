@@ -42,6 +42,7 @@ import speedith.core.reasoning.RuleApplicationResult;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import static speedith.core.i18n.Translations.*;
+import speedith.core.reasoning.*;
 
 /**
  * The implementation of the idempotency inference rule.
@@ -94,6 +95,10 @@ public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> impleme
         return SubDiagramIndexArg.class;
     }
     // </editor-fold>
+
+    public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
     private class IdempotencyTransformer extends IdTransformer {

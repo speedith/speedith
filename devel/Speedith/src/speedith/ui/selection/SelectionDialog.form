@@ -38,7 +38,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="speedith.ui.selection.ElementSelectionPanel" name="elementSelectionPanel">
+    <Component class="speedith.ui.selection.SelectionPanel" name="elementSelectionPanel">
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onSelectionConcluded"/>
       </Events>

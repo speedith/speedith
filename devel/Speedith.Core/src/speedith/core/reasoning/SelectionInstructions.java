@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: RuleApplicationInstruction.java
+ * File name: SelectionInstructions.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -26,14 +26,23 @@
  */
 package speedith.core.reasoning;
 
-import speedith.core.reasoning.args.RuleArg;
+import java.util.List;
+import speedith.core.reasoning.args.selection.SelectionStep;
 
 /**
- * Instances of this type provide information on how to apply an inference rule
- * to the user and the UI.
- *
- * @param <T> the type of arguments to be used in the inference rule.
+ * Instructs the user how to select diagrammatic elements. This is used for example
+ * in providing sufficient arguments to an inference rule.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface RuleApplicationInstruction<T extends RuleArg> extends SelectionInstructions, SelectionToRuleArgExtractor<T> {
+public interface SelectionInstructions {
+
+    /**
+     * These selection steps guide the user in selecting the proper diagrammatic
+     * elements required by this inference rule.
+     *
+     * @return selection steps that guide the user in selecting the proper
+     * diagrammatic elements required by this inference rule.
+     */
+    List<? extends SelectionStep> getSelectionSteps();
+    
 }

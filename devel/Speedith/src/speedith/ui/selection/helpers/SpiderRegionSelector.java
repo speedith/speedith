@@ -38,7 +38,7 @@ import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.args.SpiderZoneArg;
 import speedith.icircles.util.ICirclesToSpeedith;
 import speedith.ui.SpiderDiagramClickEvent;
-import speedith.ui.selection.DiagramSelectionDialog;
+import speedith.ui.selection.SelectionDialog;
 import speedith.core.reasoning.args.selection.SelectionSequence;
 import speedith.core.reasoning.args.selection.SelectSpiderFeetStep;
 
@@ -86,7 +86,7 @@ public class SpiderRegionSelector extends DiagramSelector<SpiderRegionArg> {
 
     @Override
     public SpiderRegionArg showSelectionDialog(Frame parent, SpiderDiagram diagram) {
-        DiagramSelectionDialog dsd = new DiagramSelectionDialog(parent, true, diagram, new SelectSpiderFeetStep());
+        SelectionDialog dsd = new SelectionDialog(parent, true, diagram, SelectSpiderFeetStep.getInstance());
         dsd.setVisible(true);
         if (dsd.isCancelled()) {
             return null;

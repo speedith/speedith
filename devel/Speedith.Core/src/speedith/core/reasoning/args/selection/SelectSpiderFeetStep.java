@@ -33,73 +33,26 @@ import speedith.core.reasoning.args.SpiderZoneArg;
 import static speedith.core.i18n.Translations.i18n;
 
 /**
- *
+ * This selection step asks the user to select feet of a spider. This step
+ * requires that all the selected feet belong to the same spider.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SelectSpiderFeetStep extends SelectionStep {
-
-    /**
-     * Returns one of the following: <ul><li><span
-     * style="font-weight:bold">0</span>: if the selection is valid,</li>
-     * <li><span style="font-weight:bold">1</span>: if the selection contains
-     * selected elements that are not spiders.</li> <li><span
-     * style="font-weight:bold">2</span>: if not all spiders are from the same
-     * sub-diagram,</li> <li><span style="font-weight:bold">3</span>: if not all
-     * spider feet belong to the same spider.</li> </ul>
-     *
-     * @param selection the selection sequence in which this selection step
-     * participates. This object contains currently {@link SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent)
-     * approved} selections.
-     * @param thisIndex the index of this step in the given {@link SelectionSequence}.
-     * @return
-     */
-    public static int isSelectionValid(SelectionSequence selection, int thisIndex) {
-        List<RuleArg> sels = selection.getAcceptedSelectionsForStepAt(thisIndex);
-        if (sels != null && !sels.isEmpty()) {
-            for (RuleArg sel : sels) {
-                if (!(sel instanceof SpiderZoneArg)) {
-                    return 1;
-                }
-            }
-            SpiderZoneArg firstFoot = (SpiderZoneArg) sels.get(0);
-            for (int i = 1; i < sels.size(); i++) {
-                SpiderZoneArg sel = (SpiderZoneArg) sels.get(i);
-                if (firstFoot.getSubDiagramIndex() != sel.getSubDiagramIndex()) {
-                    return 2;
-                } else if (!firstFoot.getSpider().equals(sel.getSpider())) {
-                    return 3;
-                }
-            }
-        }
-        return 0;
+    
+    // <editor-fold defaultstate="collapsed" desc="Constructors">
+    private SelectSpiderFeetStep() {
     }
-
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
-     * Returns an explanation for the problems with the selection as identified
-     * by the {@link SelectSpiderFeetStep#isSelectionValid(speedith.ui.selection.SelectionSequence, int)
-     * } method.
-     *
-     * @param selection the selection sequence in which this selection step
-     * participates. This object contains currently {@link SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent)
-     * approved} selections.
-     * @param thisIndex the index of this step in the given {@link SelectionSequence}.
-     * @return
+     * Returns the single instance of this step.
+     * @return the single instance of this step.
      */
-    public static SelectionRejectionExplanation getSelectionProblem(SelectionSequence selection, int thisIndex) {
-        switch (isSelectionValid(selection, thisIndex)) {
-            case 0:
-                return null;
-            case 1:
-                return new I18NSelectionRejectionExplanation("SELSTEP_NOT_A_SPIDER_FOOT");
-            case 2:
-                return new I18NSelectionRejectionExplanation("SELSTEP_NOT_ALL_SPIDER_FEET_IN_SAME_SUBDIAGRAM");
-            case 3:
-                return new I18NSelectionRejectionExplanation("SELSTEP_NOT_ALL_SPIDER_FEET_OF_SAME_SPIDER");
-            default:
-                throw new IllegalStateException();
-        }
+    public static SelectSpiderFeetStep getInstance() {
+        return SingletonHolder.Instance;
     }
-
+    
     @Override
     public SelectionRejectionExplanation init(SelectionSequence selection, int thisIndex) {
         return getSelectionProblem(selection, thisIndex);
@@ -123,26 +76,6 @@ public class SelectSpiderFeetStep extends SelectionStep {
 
     @Override
     public boolean cleanSelectionOnStart() {
-        return false;
-    }
-
-    /**
-     * Indicates whether a spider's foot has already been selected (whether it
-     * is present in the given selection).
-     *
-     * @param sels
-     * @param sel
-     * @return
-     */
-    private static boolean isAlreadySelected(List<RuleArg> sels, SpiderZoneArg sel) {
-        for (RuleArg oldSel : sels) {
-            if (oldSel instanceof SpiderZoneArg) {
-                SpiderZoneArg oldSelT = (SpiderZoneArg) oldSel;
-                if (oldSelT.getZone().equals(sel.getZone())) {
-                    return true;
-                }
-            }
-        }
         return false;
     }
 
@@ -185,4 +118,95 @@ public class SelectSpiderFeetStep extends SelectionStep {
     public int getSelectableElements() {
         return SelectionStep.Spiders;
     }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Private Methods">
+    /**
+     * Returns one of the following: <ul><li><span
+     * style="font-weight:bold">0</span>: if the selection is valid,</li>
+     * <li><span style="font-weight:bold">1</span>: if the selection contains
+     * selected elements that are not spiders.</li> <li><span
+     * style="font-weight:bold">2</span>: if not all spiders are from the same
+     * sub-diagram,</li> <li><span style="font-weight:bold">3</span>: if not all
+     * spider feet belong to the same spider.</li> </ul>
+     *
+     * @param selection the selection sequence in which this selection step
+     * participates. This object contains currently {@link SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent)
+     * approved} selections.
+     * @param thisIndex the index of this step in the given {@link SelectionSequence}.
+     * @return
+     */
+    private static int isSelectionValid(SelectionSequence selection, int thisIndex) {
+        List<RuleArg> sels = selection.getAcceptedSelectionsForStepAt(thisIndex);
+        if (sels != null && !sels.isEmpty()) {
+            for (RuleArg sel : sels) {
+                if (!(sel instanceof SpiderZoneArg)) {
+                    return 1;
+                }
+            }
+            SpiderZoneArg firstFoot = (SpiderZoneArg) sels.get(0);
+            for (int i = 1; i < sels.size(); i++) {
+                SpiderZoneArg sel = (SpiderZoneArg) sels.get(i);
+                if (firstFoot.getSubDiagramIndex() != sel.getSubDiagramIndex()) {
+                    return 2;
+                } else if (!firstFoot.getSpider().equals(sel.getSpider())) {
+                    return 3;
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Returns an explanation for the problems with the selection as identified
+     * by the {@link SelectSpiderFeetStep#isSelectionValid(speedith.ui.selection.SelectionSequence, int)
+     * } method.
+     *
+     * @param selection the selection sequence in which this selection step
+     * participates. This object contains currently {@link SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent)
+     * approved} selections.
+     * @param thisIndex the index of this step in the given {@link SelectionSequence}.
+     * @return
+     */
+    private static SelectionRejectionExplanation getSelectionProblem(SelectionSequence selection, int thisIndex) {
+        switch (isSelectionValid(selection, thisIndex)) {
+            case 0:
+                return null;
+            case 1:
+                return new I18NSelectionRejectionExplanation("SELSTEP_NOT_A_SPIDER_FOOT");
+            case 2:
+                return new I18NSelectionRejectionExplanation("SELSTEP_NOT_ALL_SPIDER_FEET_IN_SAME_SUBDIAGRAM");
+            case 3:
+                return new I18NSelectionRejectionExplanation("SELSTEP_NOT_ALL_SPIDER_FEET_OF_SAME_SPIDER");
+            default:
+                throw new IllegalStateException();
+        }
+    }
+    
+    /**
+     * Indicates whether a spider's foot has already been selected (whether it
+     * is present in the given selection).
+     *
+     * @param sels
+     * @param sel
+     * @return
+     */
+    private static boolean isAlreadySelected(List<RuleArg> sels, SpiderZoneArg sel) {
+        for (RuleArg oldSel : sels) {
+            if (oldSel instanceof SpiderZoneArg) {
+                SpiderZoneArg oldSelT = (SpiderZoneArg) oldSel;
+                if (oldSelT.getZone().equals(sel.getZone())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Singleton Holder Class">
+    private static final class SingletonHolder {
+        private static final SelectSpiderFeetStep Instance = new SelectSpiderFeetStep();
+    }
+    // </editor-fold>
 }
