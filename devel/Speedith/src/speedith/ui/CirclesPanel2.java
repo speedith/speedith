@@ -382,6 +382,7 @@ public class CirclesPanel2 extends javax.swing.JPanel {
                 // TODO a proper way to place labels - it can't be a method in CircleContour,
                 // we need the context in the ConcreteDiagram
                 Font f = diagram.getFont();
+                System.out.println(f.getFontName() + " :: " + f.getFamily());
                 if (f != null) {
                     g2d.setFont(f);
                 }

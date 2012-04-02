@@ -29,9 +29,6 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="lblOperator">
       <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="DefaultFont" type="code"/>
-        </Property>
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
           <Connection code="DefaultColor" type="code"/>
         </Property>

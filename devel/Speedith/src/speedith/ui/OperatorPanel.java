@@ -46,10 +46,10 @@ public class OperatorPanel extends javax.swing.JPanel {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private boolean highlighting = false;
-    private static final Font DefaultFont = new Font("Dialog", 0, 24);
-    private static final Color DefaultColor = new Color(0, 0, 0);
-    private static final Font HighlightFont = new Font("Dialog", Font.BOLD, 26);
-    private static final Color HighlightColor = new Color(0xff, 0, 0);
+    private final Color DefaultColor = new Color(0, 0, 0);
+    private final Color HighlightColor = new Color(0xff, 0, 0);
+    private Font defaultFont;
+    private Font highlightFont;
     // </editor-fold>
 
     /**
@@ -68,6 +68,10 @@ public class OperatorPanel extends javax.swing.JPanel {
     public OperatorPanel(Operator operator) {
         initComponents();
         setOperator(operator);
+        
+        defaultFont = getFont().deriveFont(24f);
+        highlightFont = getFont().deriveFont(Font.BOLD, 26);
+        lblOperator.setFont(defaultFont);
     }
 
     @SuppressWarnings("unchecked")
@@ -81,7 +85,6 @@ public class OperatorPanel extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(40, 40));
         setLayout(new java.awt.BorderLayout());
 
-        lblOperator.setFont(DefaultFont);
         lblOperator.setForeground(DefaultColor);
         lblOperator.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblOperator.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -188,12 +191,12 @@ public class OperatorPanel extends javax.swing.JPanel {
 
     // <editor-fold defaultstate="collapsed" desc="Private Helper Methods">
     private void applyNoHighlight() {
-        lblOperator.setFont(DefaultFont);
+        lblOperator.setFont(defaultFont);
         lblOperator.setForeground(DefaultColor);
     }
 
     private void applyHighlight() {
-        lblOperator.setFont(HighlightFont);
+        lblOperator.setFont(highlightFont);
         lblOperator.setForeground(HighlightColor);
     }
     // </editor-fold>

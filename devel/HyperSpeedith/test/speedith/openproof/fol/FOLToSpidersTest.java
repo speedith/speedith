@@ -37,6 +37,7 @@ import speedith.core.lang.export.ExportException;
 import speedith.core.lang.export.OpenproofExportProvider;
 import speedith.core.lang.export.SDExporter;
 import speedith.core.lang.export.SDExporting;
+import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 
 /**
@@ -70,15 +71,18 @@ public class FOLToSpidersTest {
 
 	@Test
 	public void testConvert() throws Exception {
-		OPFormula formula = getOPFormulaFromSpider(SD_EXAMPLE_1);
-		SpiderDiagram expResult = SpiderDiagramsReader.readSpiderDiagram(SD_EXAMPLE_1);
-		SpiderDiagram result = FOLToSpiders.convert(formula);
-		assertEquals(expResult, result);
-		
+		convCheckWithSDString(SD_EXAMPLE_1);
+		convCheckWithSDString(SD_EXAMPLE_2);
+
 		checkConversionToFrom(OP_EXAMPLE_1, false, SpiderDiagramsReader.readSpiderDiagram(SD_EXAMPLE_1));
-		
-		formula = getOPFormulaFromSpider(SD_EXAMPLE_2);
-		expResult = SpiderDiagramsReader.readSpiderDiagram(SD_EXAMPLE_2);
+	}
+
+	private void convCheckWithSDString(String exampleSDString) throws ReadingException, ConversionException {
+		OPFormula formula;
+		SpiderDiagram expResult;
+		SpiderDiagram result;
+		formula = getOPFormulaFromSpider(exampleSDString);
+		expResult = SpiderDiagramsReader.readSpiderDiagram(exampleSDString);
 		result = FOLToSpiders.convert(formula);
 		assertEquals(expResult, result);
 	}
