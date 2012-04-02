@@ -10,7 +10,7 @@ import openproof.zen.exception.OPCodingException;
 import openproof.zen.proofdriver.OPDInferenceRuleList;
 import openproof.zen.proofdriver.OPDRuleDriver;
 import speedith.openproof.rules.ObserveRule;
-import speedith.openproof.rules.SplitSpidersRule;
+import speedith.openproof.rules.UnarySpidersRule;
 import speedith.openproof.rules.TranslateRule;
 
 public class SpiderRuleDriver extends OPDRuleDriver {
@@ -21,22 +21,31 @@ public class SpiderRuleDriver extends OPDRuleDriver {
 	public OPDInferenceRuleList createRules() {
 		_fRules = new OPDInferenceRuleList(this, REPRESENTATION_NAME, REPRESENTATION_NAME, REPRESENTATION_NAME, null);
 		
-		SplitSpidersRule splitSpiders = new SplitSpidersRule();
-		splitSpiders.set(this, "speedith" + splitSpiders.getSpeedithRule().getProvider().getInferenceRuleName(),
-						splitSpiders.getSpeedithRule().getProvider().getPrettyName(),
-						splitSpiders.getSpeedithRule().getProvider().getPrettyName(),
-						null, Color.red);
-		
 		ObserveRule observe = new ObserveRule();
 		observe.set(this, "speedithObserve", "Observe", "Observe", null, Color.red);
 		
 		TranslateRule translate = new TranslateRule();
 		translate.set(this, "speedithTranslate", "Translate", "Translate", null, Color.red);
 		
-		_fRules.addInferenceRule(splitSpiders);
+		_fRules.addInferenceRule(createRule("add_feet"));
+		_fRules.addInferenceRule(createRule("discharge_goal"));
+		_fRules.addInferenceRule(createRule("idempotency"));
+		_fRules.addInferenceRule(createRule("implication_tautology"));
+		_fRules.addInferenceRule(createRule("split_spiders"));
 		_fRules.addInferenceRule(observe);
 		_fRules.addInferenceRule(translate);
 		return _fRules;
+	}
+
+	private UnarySpidersRule createRule(String name) {
+		UnarySpidersRule rule = new UnarySpidersRule(name);
+		
+		rule.set(this, "speedith" + rule.getSpeedithRule().getProvider().getInferenceRuleName(),
+						rule.getSpeedithRule().getProvider().getPrettyName(),
+						rule.getSpeedithRule().getProvider().getPrettyName(),
+						null, Color.red);
+		
+		return rule;
 	}
 
 	@Override
