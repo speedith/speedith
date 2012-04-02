@@ -26,6 +26,7 @@
  */
 package speedith.ui;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.util.List;
 import javax.swing.JPanel;
@@ -125,9 +126,12 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
         RuleApplicationResult appResult = proof.applyRule(rule, args);
         if (proof.isFinished()) {
             // TODO: Display a label that says the proof is finished.
+            addProofFinished();
         } else {
             addGoals(proof.getGoalsCount() - 1, appResult.getGoals(), rule, args);
         }
+        // Scroll the last component into view:
+        scrlGoals.getVerticalScrollBar().setValue(scrlGoals.getVerticalScrollBar().getMaximum());
         return appResult;
     }
 
@@ -194,6 +198,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         SubgoalsPanel sgp = new SubgoalsPanel(initialGoals, getSubgoalsTitle(0), (String) null);
+        sgp.setTitleBackground(Color.BLUE);
         pnlGoals.add(sgp, gbc);
     }
 
@@ -205,7 +210,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
         gbc.weighty = 1.0;
         SubgoalsPanel sgp = new SubgoalsPanel(goals, getSubgoalsTitle(stepIndex), getStepDescription(rule, args));
         pnlGoals.add(sgp, gbc);
-        revalidate();
+        validate();
     }
 
     private String getSubgoalsTitle(int stepIndex) {
@@ -235,6 +240,18 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
         gbc.weighty = 1.0;
         SubgoalsPanel sgp = new SubgoalsPanel(i18n("PROOF_PANEL_NO_GOALS"));
         pnlGoals.add(sgp, gbc);
+    }
+
+    private void addProofFinished() {
+        GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.fill = java.awt.GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        SubgoalsPanel sgp = new SubgoalsPanel(i18n("PROOF_PANEL_PROOF_FINISHED"));
+        sgp.setTitleBackground(Color.GREEN);
+        pnlGoals.add(sgp, gbc);
+        validate();
     }
 
     /**

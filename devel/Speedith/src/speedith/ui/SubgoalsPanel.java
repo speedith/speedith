@@ -26,6 +26,7 @@
  */
 package speedith.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.LayoutManager;
@@ -178,6 +179,12 @@ public class SubgoalsPanel extends javax.swing.JPanel {
             size.height += SUBGOALS_TITLE_HEIGHT;
         }
         setPreferredSize(size);
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Public Properties">
+    public void setTitleBackground(Color backgroundColour) {
+        this.pnlTitle.setBackground(backgroundColour);
     }
     // </editor-fold>
 }

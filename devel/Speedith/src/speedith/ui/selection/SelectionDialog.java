@@ -38,18 +38,21 @@ import speedith.core.reasoning.args.selection.SelectionStepAny;
 
 /**
  * This dialog provides a step-by-step diagram element selection method.
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SelectionDialog extends javax.swing.JDialog {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private boolean cancelled = true;
+//    private boolean closeOnFinish = false;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
      * Creates a new diagram selection dialog with a null diagram and a single
      * {@link SelectionStepAny select-any-element step}.
+     *
      * @param parent
      * @param modal
      */
@@ -59,28 +62,32 @@ public class SelectionDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Creates a new diagram selection dialog with the given diagram and the given
-     * {@link SelectionStep selection steps}.
-     *  <p>The final selection of the user can be retrieved through {@link SelectionDialog#getSelection()}.</p>
+     * Creates a new diagram selection dialog with the given diagram and the
+     * given
+     * {@link SelectionStep selection steps}. <p>The final selection of the user
+     * can be retrieved through {@link SelectionDialog#getSelection()}.</p>
+     *
      * @param diagram the diagram from which the user will choose elements.
      * @param selectionSteps the selection instruction steps that will lead the
      * user through the selection process.
      * @param parent
-     * @param modal 
+     * @param modal
      */
     public SelectionDialog(Frame parent, boolean modal, SpiderDiagram diagram, SelectionStep... selectionSteps) {
         this(parent, modal, diagram, Arrays.asList(selectionSteps));
     }
 
     /**
-     * Creates a new diagram selection dialog with the given diagram and the given
-     * {@link SelectionStep selection steps}.
-     *  <p>The final selection of the user can be retrieved through {@link SelectionDialog#getSelection()}.</p>
+     * Creates a new diagram selection dialog with the given diagram and the
+     * given
+     * {@link SelectionStep selection steps}. <p>The final selection of the user
+     * can be retrieved through {@link SelectionDialog#getSelection()}.</p>
+     *
      * @param diagram the diagram from which the user will choose elements.
      * @param selectionSteps the selection instruction steps that will lead the
      * user through the selection process.
      * @param parent
-     * @param modal 
+     * @param modal
      */
     public SelectionDialog(Frame parent, boolean modal, SpiderDiagram diagram, Collection<? extends SelectionStep> selectionSteps) {
         this(parent, modal);
@@ -182,10 +189,11 @@ public class SelectionDialog extends javax.swing.JDialog {
     private speedith.ui.selection.SelectionPanel elementSelectionPanel;
     // End of variables declaration//GEN-END:variables
     //</editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Public Properties">
     /**
      * Returns the current selection made by the user.
+     *
      * @return the current selection made by the user.
      */
     public SelectionSequence getSelection() {
@@ -196,10 +204,33 @@ public class SelectionDialog extends javax.swing.JDialog {
      * Indicates whether the user pressed the cancel (or close window) button.
      * <p>If this value is set to {@code true} then the user cancelled the
      * selection.</p>
+     *
      * @return whether the user pressed the cancel (or close window) button.
      */
     public boolean isCancelled() {
         return cancelled;
     }
+
+//    /**
+//     * This value indicates whether the dialog should automatically close itself
+//     * when the selection finishes.
+//     *
+//     * @return value that indicates whether the dialog should automatically
+//     * close itself when the selection finishes.
+//     */
+//    public boolean isCloseOnFinish() {
+//        return closeOnFinish;
+//    }
+//
+//    /**
+//     * Sets a new value that indicates whether the dialog should automatically
+//     * close itself when the selection finishes.
+//     *
+//     * @param closeOnFinish the new value that indicates whether the dialog
+//     * should automatically close itself when the selection finishes.
+//     */
+//    public void setCloseOnFinish(boolean closeOnFinish) {
+//        this.closeOnFinish = closeOnFinish;
+//    }
     // </editor-fold>
 }
