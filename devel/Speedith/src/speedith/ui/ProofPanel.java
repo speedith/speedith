@@ -126,7 +126,6 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
     public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException {
         RuleApplicationResult appResult = proof.applyRule(rule, args);
         if (proof.isFinished()) {
-            // TODO: Display a label that says the proof is finished.
             addProofFinished(rule, args);
         } else {
             addGoals(proof.getGoalsCount() - 1, appResult.getGoals(), rule, args);
