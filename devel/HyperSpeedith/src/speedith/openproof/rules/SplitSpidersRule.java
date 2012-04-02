@@ -1,5 +1,7 @@
 package speedith.openproof.rules;
 
+import java.util.Iterator;
+
 import openproof.zen.Precondition;
 import openproof.zen.proofdriver.OPDInferenceRule;
 import openproof.zen.proofdriver.OPDProof;
@@ -24,6 +26,14 @@ public class SplitSpidersRule extends OPDInferenceRule {
 	public static final Precondition[] PRECONDITIONS = null;
 	
 	private InferenceRule<SpiderRegionArg> splitSpiders = (InferenceRule<SpiderRegionArg>) InferenceRules.getInferenceRule(SplitSpiders.InferenceRuleName);
+	
+	static {
+		Iterator<String> itr = InferenceRules.getKnownInferenceRules().iterator();
+		
+		while (itr.hasNext()) {
+			System.out.println(itr.next());
+		}
+	}
 	
 	public InferenceRule<SpiderRegionArg> getSpeedithRule() { return splitSpiders; }
 	
