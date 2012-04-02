@@ -49,6 +49,7 @@ public class NullSpiderDiagramPanel extends javax.swing.JPanel {
     private static final Color DefaultColor = new Color(0, 0, 0);
     private static final Font HighlightFont = new Font("Dialog", Font.BOLD, 26);
     private static final Color HighlightColor = new Color(0xff, 0, 0);
+    private static final String TopSymbol = "\u22A4";
     // </editor-fold>
 
     /**
@@ -76,7 +77,7 @@ public class NullSpiderDiagramPanel extends javax.swing.JPanel {
         lblNullSD.setFont(DefaultFont);
         lblNullSD.setForeground(DefaultColor);
         lblNullSD.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblNullSD.setText("⊤");
+        lblNullSD.setText(TopSymbol);
         lblNullSD.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 onLabelClicked(evt);
