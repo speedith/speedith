@@ -627,7 +627,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         int subgoalIndex = 0;
         try {
             InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proof);
-        } catch (RuleApplicationException ex) {
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
         }
     }

@@ -116,7 +116,7 @@ public class FOLToSpiders {
 	}
 
 	private static CompoundSpiderDiagram unary2csd(UnaryFormula unaryFormula, Operator operator) throws ConversionException {
-		throw new ConversionException(speedith.openproof.i18n.Translations.i18n("FOL2SD_NOT_IMPLEMENTED_YET", unaryFormula.toString()));
+		throw new ConversionException(speedith.openproof.i18n.Translations.i18n("FOL2SD_NOT_IMPLEMENTED_YET", unaryFormula.toUnicode()));
 	}
 
 	private static SpiderDiagram existential2psd(OPExistential formula, Operator operator) throws ConversionException {

@@ -63,7 +63,7 @@ public class ObserveRule extends OPDInferenceRule {
 		try {
 			OPFOLRule.setText(step, exp.export(citedDiagram));
 		} catch (ExportException e) {
-			return new OPDStatusObject(OPDStatusObject.OPDInvalid, e.getMessage(), e.getMessage());
+			return new OPDStatusObject(OPDStatusObject.OPDInvalid, e.getLocalizedMessage(), e.getLocalizedMessage());
 		}
 		
 		return new OPDStatusObject(OPDStatusObject.OPDValid, "", "");

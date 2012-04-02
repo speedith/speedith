@@ -11,6 +11,7 @@ import openproof.zen.proofdriver.OPDInferenceRuleList;
 import openproof.zen.proofdriver.OPDRuleDriver;
 import speedith.openproof.rules.ObserveRule;
 import speedith.openproof.rules.SplitSpidersRule;
+import speedith.openproof.rules.TranslateRule;
 
 public class SpiderRuleDriver extends OPDRuleDriver {
 	public static final String REPRESENTATION_NAME = SpiderDriver.REPRESENTATION_NAME;
@@ -27,10 +28,14 @@ public class SpiderRuleDriver extends OPDRuleDriver {
 						null, Color.red);
 		
 		ObserveRule observe = new ObserveRule();
-		observe.set(this, "observe", "Observe", "observe", null, Color.red);
+		observe.set(this, "speedithObserve", "Observe", "Observe", null, Color.red);
+		
+		TranslateRule translate = new TranslateRule();
+		translate.set(this, "speedithTranslate", "Translate", "Translate", null, Color.red);
 		
 		_fRules.addInferenceRule(splitSpiders);
 		_fRules.addInferenceRule(observe);
+		_fRules.addInferenceRule(translate);
 		return _fRules;
 	}
 
