@@ -27,6 +27,7 @@
 package speedith.ui.rules;
 
 import javax.swing.JFrame;
+import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
@@ -36,7 +37,7 @@ import speedith.ui.selection.SelectionDialog;
  * This class contains static utility methods for interactive application of
  * inference rules on goals within a proof. The most useful method will probably
  * be {@link InteractiveRuleApplication#applyRuleInteractively(java.lang.String,
- * speedith.core.reasoning.Goals)}
+ * speedith.core.lang.SpiderDiagram)}
  * }.
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
@@ -169,6 +170,24 @@ public final class InteractiveRuleApplication {
      */
     public static RuleApplicationResult applyRuleInteractively(String rule, Goals goals) throws RuleApplicationException {
         return applyRuleInteractively(null, InferenceRules.getInferenceRule(rule), 0, null, goals);
+    }
+
+    /**
+     * Applies the inference rule with the given name on the provided spider
+     * diagram. This method interactively asks the user to provide
+     * additional information for the inference rule (if the inference rule
+     * requires it).
+     *
+     * @param rule the inference rule to apply.
+     * @param diagram the diagram on which to apply the inference rule.
+     * @return the result of the rule application. However, if the user
+     * cancelled the process {@code null} is returned.
+     * @throws RuleApplicationException this exception is thrown if the rule
+     * application failed (while the rule was being applied). This could be due
+     * to invalid arguments or similar.
+     */
+    public static RuleApplicationResult applyRuleInteractively(String rule, SpiderDiagram diagram) throws RuleApplicationException {
+        return applyRuleInteractively(null, InferenceRules.getInferenceRule(rule), 0, null, Goals.createGoalsFrom(diagram));
     }
     //</editor-fold>
 
