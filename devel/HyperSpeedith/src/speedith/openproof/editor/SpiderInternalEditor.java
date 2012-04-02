@@ -2,19 +2,14 @@ package speedith.openproof.editor;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 
 import openproof.zen.Precondition;
 import openproof.zen.repeditor.DiagrammaticRepresentationEditor;
@@ -30,34 +25,24 @@ public class SpiderInternalEditor extends OPEEmbeddedEditorAdapter {
 
 	static {
 		try {
-			InputStream imgStream = SpiderInternalEditor.class.getResourceAsStream("SpeedithIconVennDiagram-32.png");
+			InputStream imgStream = SpiderInternalEditor.class.getResourceAsStream("/speedith/openproof/editor/SpeedithIconVennDiagram-32.png");
 			icns = ImageIO.read(imgStream);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 
-	public SpiderInternalEditor() {
-	}
+	public SpiderInternalEditor() { }
 
-	public Dimension getPreferredSize() {
-		return new Dimension(32, 32);
-	}
+	public Dimension getPreferredSize() { return new Dimension(32, 32); }
 
-	public void displayIcon(boolean isAmbiguous) {
-	}
+	public void displayIcon(boolean isAmbiguous) { }
 
-	public String getRepresentationName() {
-		return REPRESENTATION_NAME;
-	}
+	public String getRepresentationName() { return REPRESENTATION_NAME; }
 
-	public void paint(Graphics g) {
-		g.drawImage(icns, 0, 0, this);
-	}
+	public void paint(Graphics g) { g.drawImage(icns, 0, 0, this); }
 
-	public DiagrammaticRepresentationEditor getRepEditor() {
-		return extEditor;
-	}
+	public DiagrammaticRepresentationEditor getRepEditor() { return extEditor; }
 
 	/**
 	 * This could be simplified by creating an action, but this would require
