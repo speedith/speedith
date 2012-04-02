@@ -202,13 +202,9 @@ public class SelectionPanel extends javax.swing.JPanel {
             }
         });
 
-        diagramAndSelectionPanel.setDividerSize(5);
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(450, 250));
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(450, 250));
 
-        jScrollPane2.setMinimumSize(new java.awt.Dimension(500, 250));
-        jScrollPane2.setPreferredSize(new java.awt.Dimension(500, 250));
-
-        spiderDiagramPanel.setMinimumSize(new java.awt.Dimension(200, 200));
-        spiderDiagramPanel.setPreferredSize(new java.awt.Dimension(500, 250));
         spiderDiagramPanel.addSpiderDiagramClickListener(new speedith.ui.SpiderDiagramClickListener() {
             public void spiderDiagramClicked(speedith.ui.SpiderDiagramClickEvent evt) {
                 onSpiderDiagramClicked(evt);
@@ -234,8 +230,8 @@ public class SelectionPanel extends javax.swing.JPanel {
             .addGroup(selectionPanelLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addGroup(selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
-                    .addComponent(selectionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(selectionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE))
                 .addGap(0, 0, 0))
         );
         selectionPanelLayout.setVerticalGroup(
@@ -255,7 +251,7 @@ public class SelectionPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(finishButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 139, Short.MAX_VALUE)
                 .addComponent(previousButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(clearButton)

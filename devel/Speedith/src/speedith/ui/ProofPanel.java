@@ -28,6 +28,7 @@ package speedith.ui;
 
 import java.awt.GridBagConstraints;
 import java.util.List;
+import javax.swing.JPanel;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
@@ -122,7 +123,11 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
 
     public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException {
         RuleApplicationResult appResult = proof.applyRule(rule, args);
-        addGoals(proof.getGoalsCount() - 1, appResult.getGoals(), rule, args);
+        if (proof.isFinished()) {
+            // TODO: Display a label that says the proof is finished.
+        } else {
+            addGoals(proof.getGoalsCount() - 1, appResult.getGoals(), rule, args);
+        }
         return appResult;
     }
 
@@ -232,16 +237,20 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
         pnlGoals.add(sgp, gbc);
     }
 
-    private void resetProof(Goals initialGoals, boolean invalidateAndRedraw) {
+    /**
+     *
+     * @param initialGoals
+     * @param forceValidation tells whether the panel should be {@link JPanel#validate() validated}
+     * just after the UI has been updated.
+     */
+    private void resetProof(Goals initialGoals, boolean forceValidation) {
         proof = new ProofTrace(initialGoals);
         // Clean the current user interface
         cleanProofPanel();
         // And display the initial goals.
         displayInitialGoals();
-        if (invalidateAndRedraw) {
-//            invalidate();
+        if (forceValidation) {
             validate();
-//            repaint();
         }
     }
 

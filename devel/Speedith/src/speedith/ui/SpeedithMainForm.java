@@ -122,6 +122,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Speedith");
 
+        proofPanel1.setMinimumSize(new java.awt.Dimension(750, 300));
+        proofPanel1.setPreferredSize(new java.awt.Dimension(750, 300));
         mainSplitPane.setLeftComponent(proofPanel1);
 
         pnlRulesSidePane.setMinimumSize(new java.awt.Dimension(100, 300));

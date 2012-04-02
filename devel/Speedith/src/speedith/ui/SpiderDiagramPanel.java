@@ -464,7 +464,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = fill ? java.awt.GridBagConstraints.BOTH : GridBagConstraints.NONE;
         gridBagConstraints.weightx = weightx;
         gridBagConstraints.weighty = weighty;
-        gridBagConstraints.insets.set(3, 1, 3, 1);
+        gridBagConstraints.insets.set(3, 2, 3, 2);
         return gridBagConstraints;
     }
 
@@ -497,17 +497,18 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     }
 
     private void refreshPrefSize() {
-        Dimension prefSize = new Dimension();
-        for (Component component : diagrams.getComponents()) {
-            final Dimension curPrefSize = component.getPreferredSize();
-            prefSize.height = Math.max(prefSize.height, curPrefSize.height);
-            prefSize.width += curPrefSize.width;
-        }
-        prefSize.height += 10;
-        prefSize.width += 10;
-        setPreferredSize(prefSize);
-        setMinimumSize(prefSize);
-        invalidate();
+//        Dimension prefSize = new Dimension();
+//        for (Component component : diagrams.getComponents()) {
+//            final Dimension curPrefSize = component.getPreferredSize();
+//            prefSize.height = Math.max(prefSize.height, curPrefSize.height);
+//            prefSize.width += curPrefSize.width + 40;
+//        }
+//        
+//        prefSize.height += 10;
+//        prefSize.width += 10;
+//        setPreferredSize(prefSize);
+//        setMinimumSize(prefSize);
+//        invalidate();
     }
 
     /**

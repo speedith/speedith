@@ -112,6 +112,8 @@ public class SubgoalsPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         add(pnlStepDescription, gridBagConstraints);
 
+        pnlGoals.setMinimumSize(new java.awt.Dimension(300, 300));
+        pnlGoals.setPreferredSize(new java.awt.Dimension(300, 300));
         pnlGoals.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

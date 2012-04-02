@@ -59,7 +59,7 @@ public interface Proof {
      * @param args the arguments that should be passed on to the rule.
      * @return the result of the rule application.
      * @throws RuleApplicationException thrown if the rule could not be applied
-     * for any reason.
+     * for any reason (e.g., if the proof is finished).
      */
     <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException;
 

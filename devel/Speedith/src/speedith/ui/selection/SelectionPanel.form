@@ -18,7 +18,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <Component id="finishButton" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="139" max="32767" attributes="0"/>
               <Component id="previousButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="clearButton" min="-2" max="-2" attributes="0"/>
@@ -165,19 +165,16 @@
       </Events>
     </Component>
     <Container class="javax.swing.JSplitPane" name="diagramAndSelectionPanel">
-      <Properties>
-        <Property name="dividerSize" type="int" value="5"/>
-      </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
       <SubComponents>
         <Container class="javax.swing.JScrollPane" name="jScrollPane2">
           <Properties>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[500, 250]"/>
+              <Dimension value="[450, 250]"/>
             </Property>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[500, 250]"/>
+              <Dimension value="[450, 250]"/>
             </Property>
           </Properties>
           <Constraints>
@@ -189,14 +186,6 @@
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
             <Component class="speedith.ui.SpiderDiagramPanel" name="spiderDiagramPanel">
-              <Properties>
-                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[200, 200]"/>
-                </Property>
-                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[500, 250]"/>
-                </Property>
-              </Properties>
               <Events>
                 <EventHandler event="spiderDiagramClicked" listener="speedith.ui.SpiderDiagramClickListener" parameters="speedith.ui.SpiderDiagramClickEvent" handler="onSpiderDiagramClicked"/>
               </Events>
@@ -224,8 +213,8 @@
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane1" pref="324" max="32767" attributes="0"/>
-                          <Component id="selectionLabel" pref="502" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" pref="0" max="32767" attributes="0"/>
+                          <Component id="selectionLabel" pref="152" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   </Group>
