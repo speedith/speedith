@@ -36,8 +36,6 @@ public class SpiderInternalEditor extends OPEEmbeddedEditorAdapter {
 
 	public Dimension getPreferredSize() { return new Dimension(32, 32); }
 
-	public void displayIcon(boolean isAmbiguous) { }
-
 	public String getRepresentationName() { return REPRESENTATION_NAME; }
 
 	public void paint(Graphics g) { g.drawImage(icns, 0, 0, this); }

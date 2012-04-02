@@ -15,6 +15,7 @@ import openproof.zen.repdriver.OPDRepDriver;
 import openproof.zen.repeditor.OPERepEditor;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
+import speedith.core.lang.SpiderDiagrams;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.openproof.editor.SpiderInternalEditor;
 import speedith.ui.SpeedithMainForm;
@@ -33,7 +34,7 @@ public class SpiderDriver implements OPDRepDriver, Cloneable {
 	private SpiderInternalEditor editor;
 	
 	public SpiderDriver() {
-		diagram = SpeedithMainForm.getExampleA();
+		diagram = SpiderDiagrams.createNullSD();
 		ruleArgument = null;
 	}
 	

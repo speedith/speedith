@@ -1,16 +1,25 @@
 package speedith.openproof.editor;
 
 import java.awt.Color;
+import java.awt.Font;
 
 import javax.swing.JFrame;
 
 import openproof.awt.OPUndoManager;
+import openproof.util.Gestalt;
 import openproof.zen.repeditor.ChangeReporter;
 import openproof.zen.repeditor.DiagrammaticRepresentationEditor;
 import speedith.core.lang.SpiderDiagram;
 import speedith.ui.SpiderDiagramPanel;
 
 public class SpiderExternalEditor extends SpiderDiagramPanel implements DiagrammaticRepresentationEditor {
+	private JFrame frame;
+	
+	public SpiderExternalEditor() {
+		Font f = super.getFont();
+		super.setFont(new Font(Gestalt.FONT_STRING_NAME_LPL, Font.PLAIN, 10));
+	}
+	
 	public Color getBackgroundColor() { return null; }
 
 	public String getTitle() { return "Spider Editor"; }
@@ -26,6 +35,8 @@ public class SpiderExternalEditor extends SpiderDiagramPanel implements Diagramm
 		
 		SpiderDiagram d = (SpiderDiagram) ((Object[]) o)[0];
 		setDiagram(d);
+		
+		showFrame();
 	}
 
 	public void setReporter(ChangeReporter r) { }
@@ -42,13 +53,16 @@ public class SpiderExternalEditor extends SpiderDiagramPanel implements Diagramm
 	 * Returns the JFrame.
 	 */
 	public JFrame showFrame() {
-		JFrame f = new JFrame("Spider");
+		if (frame == null) {
+			frame = new JFrame("Spider");
+			
+			frame.setSize(300, 200);
+			frame.getContentPane().add(this);
+			frame.pack();
+		}
 		
-		f.setSize(100, 100);
-		f.getContentPane().add(this);
-		f.pack();
-		f.setVisible(true);
+		frame.setVisible(true);
 		
-		return f;
+		return frame;
 	}
 }

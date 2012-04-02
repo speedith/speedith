@@ -22,9 +22,9 @@ public class SpiderRuleDriver extends OPDRuleDriver {
 		_fRules = new OPDInferenceRuleList(this, REPRESENTATION_NAME, REPRESENTATION_NAME, REPRESENTATION_NAME, null);
 		
 		SplitSpidersRule splitSpiders = new SplitSpidersRule();
-		splitSpiders.set(this, splitSpiders.getSpeedithRule().getProvider().getInferenceRuleName(),
+		splitSpiders.set(this, "speedith" + splitSpiders.getSpeedithRule().getProvider().getInferenceRuleName(),
 						splitSpiders.getSpeedithRule().getProvider().getPrettyName(),
-						splitSpiders.getSpeedithRule().getProvider().getInferenceRuleName(),
+						splitSpiders.getSpeedithRule().getProvider().getPrettyName(),
 						null, Color.red);
 		
 		ObserveRule observe = new ObserveRule();
