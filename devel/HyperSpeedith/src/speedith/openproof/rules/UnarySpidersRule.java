@@ -28,14 +28,6 @@ public class UnarySpidersRule extends OPDInferenceRule {
 	
 	private InferenceRule inferenceRule;
 	
-	static {
-		Iterator<String> itr = InferenceRules.getKnownInferenceRules().iterator();
-		
-		while (itr.hasNext()) {
-			System.out.println(itr.next());
-		}
-	}
-	
 	public UnarySpidersRule(String speedithRuleName) {
 		inferenceRule = InferenceRules.getInferenceRule(speedithRuleName);
 	}
