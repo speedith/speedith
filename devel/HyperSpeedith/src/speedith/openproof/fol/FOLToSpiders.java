@@ -26,7 +26,6 @@
  */
 package speedith.openproof.fol;
 
-import java.io.IOException;
 import java.util.*;
 import openproof.fol.representation.*;
 import speedith.core.lang.*;
@@ -77,12 +76,13 @@ public class FOLToSpiders {
 	/**
 	 * This method expects a general Openproof first-order formula, and returns
 	 * a spider diagram.
-	 * 
-	 * This is a syntactical translation method. It does not transform the formula
-	 * into any other form.
+	 *
+	 * This is a syntactical translation method. It does not transform the
+	 * formula into any other form.
+	 *
 	 * @param formula
 	 * @return
-	 * @throws ConversionException 
+	 * @throws ConversionException
 	 */
 	private static SpiderDiagram snf2sd(OPFormula formula) throws ConversionException {
 		if (formula instanceof OPDisjunction) {
@@ -112,7 +112,7 @@ public class FOLToSpiders {
 	}
 
 	private static CompoundSpiderDiagram binary2csd(BinaryFormula binaryFormula, Operator operator) throws ConversionException {
-		throw new ConversionException(speedith.openproof.i18n.Translations.i18n("FOL2SD_NOT_IMPLEMENTED_YET", binaryFormula.toString()));
+		return SpiderDiagrams.createCompoundSD(operator, snf2sd(binaryFormula.getLeft()), snf2sd(binaryFormula.getRight()));
 	}
 
 	private static CompoundSpiderDiagram unary2csd(UnaryFormula unaryFormula, Operator operator) throws ConversionException {

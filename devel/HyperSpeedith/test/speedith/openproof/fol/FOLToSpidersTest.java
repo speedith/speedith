@@ -46,6 +46,7 @@ import speedith.core.lang.reader.SpiderDiagramsReader;
 public class FOLToSpidersTest {
 
 	public static final String SD_EXAMPLE_1 = "BinarySD {arg1 = PrimarySD { spiders = [\"t1\", \"t2\"], sh_zones = [], habitats = [(\"t1\", [([\"A\", \"B\"], [])]), (\"t2\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"t1\", \"t2\"], sh_zones = [], habitats = [(\"t2\", [([\"A\", \"B\"], [])]), (\"t1\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op |\" }";
+	public static final String SD_EXAMPLE_2 = "BinarySD {arg1 = PrimarySD { spiders = [\"t1\", \"t2\"], sh_zones = [], habitats = [(\"t1\", [([\"A\", \"B\"], [])]), (\"t2\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"t1\", \"t2\"], sh_zones = [], habitats = [(\"t2\", [([\"A\", \"B\"], [])]), (\"t1\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op -->\" }";
 	public static final String OP_EXAMPLE_1 = "(/t1(/t2((t1 # t2) & A(t1) & B(t1) & ((A(t2) & ~B(t2)) | (B(t2) & ~A(t2)))))) | (/t1(/t2((t1 # t2) & ((A(t1) & ~B(t1)) | (B(t1) & ~A(t1))) & A(t2) & B(t2))))";
 
 	public FOLToSpidersTest() {
@@ -75,6 +76,11 @@ public class FOLToSpidersTest {
 		assertEquals(expResult, result);
 		
 		checkConversionToFrom(OP_EXAMPLE_1, false, SpiderDiagramsReader.readSpiderDiagram(SD_EXAMPLE_1));
+		
+		formula = getOPFormulaFromSpider(SD_EXAMPLE_2);
+		expResult = SpiderDiagramsReader.readSpiderDiagram(SD_EXAMPLE_2);
+		result = FOLToSpiders.convert(formula);
+		assertEquals(expResult, result);
 	}
 
 	public OPFormula getOPFormulaFromSpider(String sd) {
