@@ -16,7 +16,6 @@ public class SpiderExternalEditor extends SpiderDiagramPanel implements Diagramm
 	private JFrame frame;
 	
 	public SpiderExternalEditor() {
-		Font f = super.getFont();
 		super.setFont(new Font(Gestalt.FONT_STRING_NAME_LPL, Font.PLAIN, 10));
 	}
 	
