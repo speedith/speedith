@@ -57,7 +57,7 @@ public class OperatorPanel extends javax.swing.JPanel {
      * to change what this label displays.</p>
      */
     public OperatorPanel() {
-        this(null);
+        this(null, null);
     }
 
     /**
@@ -65,12 +65,14 @@ public class OperatorPanel extends javax.swing.JPanel {
      *
      * @param operator the operator to be displayed initially.
      */
-    public OperatorPanel(Operator operator) {
+    public OperatorPanel(Operator operator, Font f) {
         initComponents();
         setOperator(operator);
         
-        defaultFont = getFont().deriveFont(24f);
-        highlightFont = getFont().deriveFont(Font.BOLD, 26);
+        if (f == null) f = getFont();
+        
+        defaultFont = f.deriveFont(24f);
+        highlightFont = f.deriveFont(Font.BOLD, 26);
         lblOperator.setFont(defaultFont);
     }
 
@@ -121,16 +123,16 @@ public class OperatorPanel extends javax.swing.JPanel {
     private javax.swing.JLabel lblOperator;
     // End of variables declaration//GEN-END:variables
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final String NegationSign = "¬";
-    private static final String DisjunctionSign = "∨";
-    private static final String ConjunctionSign = "∧";
-    private static final String ImplicationSign = "⟶";
-    private static final String EquivalenceSign = "⟷";
+    private static final String NegationSign = "\u00AC";
+    private static final String DisjunctionSign = "\u2228";
+    private static final String ConjunctionSign = "\u2227";
+    private static final String ImplicationSign = "\u27F6";
+    private static final String EquivalenceSign = "\u27F7";
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
     private Operator operator;
     // </editor-fold>
-
+    
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
      * Returns the currently displayed operator.

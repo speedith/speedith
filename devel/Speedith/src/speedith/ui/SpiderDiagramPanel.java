@@ -367,7 +367,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     }
 
     private void addInfixOperator(CompoundSpiderDiagram csd, int gridx) {
-        diagrams.add(registerSubdiagramClickListener(new OperatorPanel(csd.getOperator()), 0), getSubdiagramLayoutConstraints(gridx, false, 0, 0));
+        diagrams.add(registerSubdiagramClickListener(new OperatorPanel(csd.getOperator(), getFont()), 0), getSubdiagramLayoutConstraints(gridx, false, 0, 0));
     }
 
     private int addInfixSpiderDiagramPanel(int nextSubdiagramIndex, SpiderDiagram curSD, int gridx) throws CannotDrawException {
@@ -470,7 +470,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
 
     private void drawPrefixDiagram(CompoundSpiderDiagram csd) throws CannotDrawException {
         if (csd != null && csd.getOperandCount() == 1) {
-            diagrams.add(registerSubdiagramClickListener(new OperatorPanel(csd.getOperator()), 0));
+            diagrams.add(registerSubdiagramClickListener(new OperatorPanel(csd.getOperator(), getFont()), 0));
             diagrams.add(registerSubdiagramClickListener(DiagramVisualisation.getSpiderDiagramPanel(csd.getOperands().get(0)), 1));
             refreshPrefSize();
         } else {
