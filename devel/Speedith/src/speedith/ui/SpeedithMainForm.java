@@ -41,12 +41,14 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.*;
 import speedith.core.lang.*;
+import speedith.core.lang.reader.ReadingException;
+import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
+import speedith.core.reasoning.args.SubgoalIndexArg;
 import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.ui.selection.SelectionDialog;
@@ -110,13 +112,13 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         lblAppliedRules = new javax.swing.JLabel();
         scrlPnlAppliedRules = new javax.swing.JScrollPane();
         lstAppliedRules = new javax.swing.JList();
-        lblApplyRule = new javax.swing.JLabel();
-        cmbxApplyRule = new javax.swing.JComboBox();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
         drawMenu = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
         rulesMenu = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -131,7 +133,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         pnlRulesSidePane.setLayout(new java.awt.GridBagLayout());
 
         lblAppliedRules.setLabelFor(lstAppliedRules);
-        lblAppliedRules.setText("Applied rules:");
+        lblAppliedRules.setText(i18n("MAIN_FORM_RULE_LIST")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -141,6 +143,12 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
         pnlRulesSidePane.add(lblAppliedRules, gridBagConstraints);
 
+        lstAppliedRules.setModel(getRulesList());
+        lstAppliedRules.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                onRuleItemClicked(evt);
+            }
+        });
         scrlPnlAppliedRules.setViewportView(lstAppliedRules);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -152,32 +160,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
         pnlRulesSidePane.add(scrlPnlAppliedRules, gridBagConstraints);
-
-        lblApplyRule.setLabelFor(cmbxApplyRule);
-        lblApplyRule.setText("Apply rule:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(6, 3, 0, 0);
-        pnlRulesSidePane.add(lblApplyRule, gridBagConstraints);
-
-        cmbxApplyRule.setModel(getRulesComboList());
-        cmbxApplyRule.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                onApplyRuleChosen(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
-        pnlRulesSidePane.add(cmbxApplyRule, gridBagConstraints);
 
         mainSplitPane.setRightComponent(pnlRulesSidePane);
 
@@ -209,6 +191,26 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         });
         drawMenu.add(jMenuItem1);
 
+        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem2.setMnemonic(i18n("MAIN_FORM_USE_EXAMPLE2_MNEMONIC").charAt(0));
+        jMenuItem2.setText(i18n("MAIN_FORM_USE_EXAMPLE2")); // NOI18N
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        drawMenu.add(jMenuItem2);
+
+        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem3.setMnemonic(i18n("MAIN_FORM_USE_EXAMPLE3_MNEMONIC").charAt(0));
+        jMenuItem3.setText(i18n("MAIN_FORM_USE_EXAMPLE3")); // NOI18N
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        drawMenu.add(jMenuItem3);
+
         menuBar.add(drawMenu);
 
         rulesMenu.setMnemonic('R');
@@ -235,17 +237,28 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
-    private void onApplyRuleChosen(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onApplyRuleChosen
-        if (!proofPanel1.isFinished()) {
-            DefaultComboBoxModel model = (DefaultComboBoxModel) cmbxApplyRule.getModel();
-            InfRuleComboBoxItem selectedRule = (InfRuleComboBoxItem) model.getSelectedItem();
-            applyRule(selectedRule);
-        }
-    }//GEN-LAST:event_onApplyRuleChosen
-
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         proofPanel1.newProof(Goals.createGoalsFrom(getExampleA()));
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        proofPanel1.newProof(Goals.createGoalsFrom(getExampleB()));
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        proofPanel1.newProof(Goals.createGoalsFrom(getExampleC()));
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void onRuleItemClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onRuleItemClicked
+        if (evt.getClickCount() == 2) {
+            if (!proofPanel1.isFinished()) {
+                int index = lstAppliedRules.locationToIndex(evt.getPoint());
+                DefaultComboBoxModel model = (DefaultComboBoxModel) lstAppliedRules.getModel();
+                InfRuleListItem selectedRule = (InfRuleListItem) model.getElementAt(index);
+                applyRule(selectedRule);
+            }
+        }
+    }//GEN-LAST:event_onRuleItemClicked
 
     /**
      * @param args the command line arguments
@@ -289,13 +302,13 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox cmbxApplyRule;
     private javax.swing.JMenu drawMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JLabel lblAppliedRules;
-    private javax.swing.JLabel lblApplyRule;
     private javax.swing.JList lstAppliedRules;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JPanel pnlRulesSidePane;
@@ -307,7 +320,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     // <editor-fold defaultstate="collapsed" desc="Spider Diagram Examples">
     /**
-     * The first main example used in most of our papers.
+     * The first main example used in most of our papers. Useful for testing the
+     * rules: split spider, add feet, idempotency, and tautology of implication.
      *
      * @return
      */
@@ -316,6 +330,32 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         PrimarySpiderDiagram psd2 = getSDExample7();
         CompoundSpiderDiagram csd = SpiderDiagrams.createCompoundSD(Operator.Implication, psd1, psd2);
         return csd;
+    }
+
+    /**
+     * The second example. Useful for testing the rule: idempotency.
+     *
+     * @return
+     */
+    public static SpiderDiagram getExampleB() {
+        try {
+            return SpiderDiagramsReader.readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op &\" }");
+        } catch (Exception ex) {
+            throw new RuntimeException();
+        }
+    }
+
+    /**
+     * The third example. Useful for testing the rule: implication tautology.
+     *
+     * @return
+     */
+    public static SpiderDiagram getExampleC() {
+        try {
+            return SpiderDiagramsReader.readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op -->\" }");
+        } catch (Exception ex) {
+            throw new RuntimeException();
+        }
     }
 
     /**
@@ -487,20 +527,32 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     //<editor-fold defaultstate="collapsed" desc="UI Refresh Methods">
     private ComboBoxModel getRulesComboList() {
         Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules();
-        InfRuleComboBoxItem[] infRules = new InfRuleComboBoxItem[knownInferenceRules.size()];
+        InfRuleListItem[] infRules = new InfRuleListItem[knownInferenceRules.size()];
         int i = 0;
         for (String providerName : knownInferenceRules) {
-            infRules[i++] = new InfRuleComboBoxItem(InferenceRules.getProvider(providerName));
+            infRules[i++] = new InfRuleListItem(InferenceRules.getProvider(providerName));
         }
         Arrays.sort(infRules);
         return new DefaultComboBoxModel(infRules);
     }
 
-    private static class InfRuleComboBoxItem implements Comparable<InfRuleComboBoxItem> {
+    private ListModel getRulesList() {
+        Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules();
+        InfRuleListItem[] infRules = new InfRuleListItem[knownInferenceRules.size()];
+        int i = 0;
+        for (String providerName : knownInferenceRules) {
+            infRules[i++] = new InfRuleListItem(InferenceRules.getProvider(providerName));
+        }
+        Arrays.sort(infRules);
+        return new DefaultComboBoxModel(infRules);
+
+    }
+
+    private static class InfRuleListItem implements Comparable<InfRuleListItem> {
 
         private final InferenceRuleProvider<? extends RuleArg> infRuleProvider;
 
-        public InfRuleComboBoxItem(InferenceRuleProvider<? extends RuleArg> infRuleProvider) {
+        public InfRuleListItem(InferenceRuleProvider<? extends RuleArg> infRuleProvider) {
             if (infRuleProvider == null) {
                 throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_NULL_ARGUMENT", "infRuleProvider"));
             }
@@ -516,7 +568,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
             return infRuleProvider.getPrettyName();
         }
 
-        public int compareTo(InfRuleComboBoxItem o) {
+        public int compareTo(InfRuleListItem o) {
             return infRuleProvider.toString().compareToIgnoreCase(o.toString());
         }
     }
@@ -571,20 +623,26 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
 
     @SuppressWarnings("unchecked")
-    private void applyRule(InfRuleComboBoxItem selectedRule) {
+    private void applyRule(InfRuleListItem selectedRule) {
         InferenceRule<? extends RuleArg> rule = selectedRule.getInfRuleProvider().getInferenceRule();
         RuleApplicationInstruction<? extends RuleArg> instructions = rule.getProvider().getInstructions();
-        SelectionDialog dsd = new SelectionDialog(this, true, proofPanel1.getLastGoals().getGoalAt(0), instructions.getSelectionSteps());
-        dsd.pack();
-        dsd.setVisible(true);
-        if (dsd.isCancelled()) {
+        RuleArg ruleArg;
+        if (instructions == null) {
+            ruleArg = new SubgoalIndexArg(0);
         } else {
-            RuleArg ruleArg = instructions.extractRuleArg(dsd.getSelection(), 0);
-            try {
-                proofPanel1.applyRule((InferenceRule<RuleArg>) rule, ruleArg);
-            } catch (RuleApplicationException ex) {
-                System.out.println("Error!" + ex.getMessage());
+            SelectionDialog dsd = new SelectionDialog(this, true, proofPanel1.getLastGoals().getGoalAt(0), instructions.getSelectionSteps());
+            dsd.pack();
+            dsd.setVisible(true);
+            if (dsd.isCancelled()) {
+                return;
+            } else {
+                ruleArg = instructions.extractRuleArg(dsd.getSelection(), 0);
             }
+        }
+        try {
+            proofPanel1.applyRule((InferenceRule<RuleArg>) rule, ruleArg);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
         }
     }
     // </editor-fold>

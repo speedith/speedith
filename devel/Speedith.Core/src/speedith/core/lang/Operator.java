@@ -133,6 +133,15 @@ public enum Operator {
     }
 
     /**
+     * Returns the name of the operator.
+     * @return the name of the operator.
+     */
+    @Override
+    public String toString() {
+        return this.getName();
+    }
+
+    /**
      * Operators have unique names (regardless of their arity). Thus one can
      * determine which operator they are dealing with just its name.
      * <p>This function checks whether this operator has the given name and

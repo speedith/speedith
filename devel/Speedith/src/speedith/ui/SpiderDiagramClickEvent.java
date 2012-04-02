@@ -39,7 +39,7 @@ import speedith.icircles.util.ICirclesToSpeedith;
 public class SpiderDiagramClickEvent extends EventObject {
 
     private final SpiderDiagram diagram;
-    private final DiagramClickEvent eventDetail;
+    private final DiagramClickEvent detailedEvent;
     private final int subDiagramIndex;
     private RuleArg ruleArg = null;
 
@@ -65,7 +65,7 @@ public class SpiderDiagramClickEvent extends EventObject {
             throw new IllegalArgumentException(i18n("GERR_INDEX_OUT_OF_RANGE", "subDiagramIndex", "0", "diagram.getSubDiagramCount()"));
         }
         this.diagram = diagram;
-        this.eventDetail = eventDetail;
+        this.detailedEvent = eventDetail;
         this.subDiagramIndex = subDiagramIndex;
     }
 
@@ -76,7 +76,7 @@ public class SpiderDiagramClickEvent extends EventObject {
 
     @Override
     public String toString() {
-        return toString(new StringBuilder(), eventDetail).append(eventDetail == null ? "" : " ").append("Sub-diagram: ").append(subDiagramIndex).toString();
+        return toString(new StringBuilder(), getDetailedEvent()).append(getDetailedEvent() == null ? "" : " ").append("Sub-diagram: ").append(getSubDiagramIndex()).toString();
     }
 
     /**
@@ -143,8 +143,8 @@ public class SpiderDiagramClickEvent extends EventObject {
      * element in a diagram has been clicked, instead the diagram as a whole was
      * clicked.
      */
-    public DiagramClickEvent getDetailedInfo() {
-        return eventDetail;
+    public DiagramClickEvent getDetailedEvent() {
+        return detailedEvent;
     }
 
     /**
@@ -160,17 +160,19 @@ public class SpiderDiagramClickEvent extends EventObject {
      */
     public RuleArg toRuleArg() {
         if (ruleArg == null) {
-            if (eventDetail instanceof SpiderClickedEvent) {
-                SpiderClickedEvent spiderClickedEvent = (SpiderClickedEvent) eventDetail;
-                ruleArg = new SpiderZoneArg(-1, subDiagramIndex, spiderClickedEvent.getSpiderName(), ICirclesToSpeedith.convert(spiderClickedEvent.getZoneOfFoot()));
-            } else if (eventDetail instanceof ContourClickedEvent) {
-                ContourClickedEvent contourClickedEvent = (ContourClickedEvent) eventDetail;
-                ruleArg = new ContourArg(-1, subDiagramIndex, contourClickedEvent.getContourLabel());
-            } else if (eventDetail instanceof ZoneClickedEvent) {
-                ZoneClickedEvent zoneClickedEvent = (ZoneClickedEvent) eventDetail;
-                ruleArg = new ZoneArg(-1, subDiagramIndex, ICirclesToSpeedith.convert(zoneClickedEvent.getZone()));
-            } else if (eventDetail != null) {
+            if (getDetailedEvent() instanceof SpiderClickedEvent) {
+                SpiderClickedEvent spiderClickedEvent = (SpiderClickedEvent) getDetailedEvent();
+                ruleArg = new SpiderZoneArg(-1, getSubDiagramIndex(), spiderClickedEvent.getSpiderName(), ICirclesToSpeedith.convert(spiderClickedEvent.getZoneOfFoot()));
+            } else if (getDetailedEvent() instanceof ContourClickedEvent) {
+                ContourClickedEvent contourClickedEvent = (ContourClickedEvent) getDetailedEvent();
+                ruleArg = new ContourArg(-1, getSubDiagramIndex(), contourClickedEvent.getContourLabel());
+            } else if (getDetailedEvent() instanceof ZoneClickedEvent) {
+                ZoneClickedEvent zoneClickedEvent = (ZoneClickedEvent) getDetailedEvent();
+                ruleArg = new ZoneArg(-1, getSubDiagramIndex(), ICirclesToSpeedith.convert(zoneClickedEvent.getZone()));
+            } else if (getDetailedEvent() != null) {
                 throw new IllegalStateException(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
+            } else {
+                ruleArg = new SubDiagramIndexArg(-1, getSubDiagramIndex());
             }
         }
         return ruleArg;

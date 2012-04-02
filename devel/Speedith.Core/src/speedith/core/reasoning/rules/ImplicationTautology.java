@@ -43,20 +43,21 @@ import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import static speedith.core.i18n.Translations.*;
 import speedith.core.reasoning.*;
+import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
 
 /**
- * The implementation of the <span style="font-weight:bold">implication tautology</span>
- * inference rule.
- * <p>This inference rule takes a sub-diagram of the form <span style="font-style:italic;">φ &#x27f6; φ</span> 
- * and converts it to a {@link NullSpiderDiagram null diagram}.</p>
+ * The implementation of the <span style="font-weight:bold">implication
+ * tautology</span> inference rule. <p>This inference rule takes a sub-diagram
+ * of the form <span style="font-style:italic;">φ &#x27f6; φ</span> and converts
+ * it to a {@link NullSpiderDiagram null diagram}.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
-     * The name of this inference rule.
-     * <p>This value is returned by the {@link ImplicationTautology#getInferenceRuleName()}
+     * The name of this inference rule. <p>This value is returned by the {@link ImplicationTautology#getInferenceRuleName()}
      * method.</p>
      */
     public static final String InferenceRuleName = "implication_tautology";
@@ -96,13 +97,17 @@ public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg
     public Class<SubDiagramIndexArg> getArgumentType() {
         return SubDiagramIndexArg.class;
     }
-    // </editor-fold>
 
     public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return SingletonContainer.Instruction;
     }
+    // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
+    private  static final class SingletonContainer {
+        private static final SelectSingleOperatorInstruction Instruction = new SelectSingleOperatorInstruction(Operator.Implication, Operator.Equivalence);
+    }
+
     private class IdempotencyTransformer extends IdTransformer {
 
         private final SubDiagramIndexArg arg;

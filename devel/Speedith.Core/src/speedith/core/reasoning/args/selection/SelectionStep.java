@@ -143,7 +143,7 @@ public abstract class SelectionStep {
          * It will be looked up through {@link Translations#i18n(java.lang.String)}.
          * @param i18nStrArgs the internationalisation arguments (may be {@code null}).
          */
-        public I18NSelectionRejectionExplanation(String i18nKey, Object[] i18nStrArgs) {
+        public I18NSelectionRejectionExplanation(String i18nKey, Object... i18nStrArgs) {
             this.i18nKey = i18nKey;
             this.i18nStrArgs = i18nStrArgs;
         }

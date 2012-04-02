@@ -76,6 +76,10 @@ public abstract class SelectionSequence {
         if (selectionSteps == null || selectionSteps.isEmpty()) {
             throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_EMPTY_ARGUMENT", "selectionSteps"));
         }
+        if (diagram == null) {
+            throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_NULL_ARGUMENT", "diagram"));
+        }
+        this.diagram = diagram;
         this.selectionSteps = selectionSteps;
         this.acceptedSelections = new ArrayList[selectionSteps.size()];
     }

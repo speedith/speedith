@@ -409,7 +409,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             sdp.addSpiderDiagramClickListener(new SpiderDiagramClickListener() {
 
                 public void spiderDiagramClicked(SpiderDiagramClickEvent e) {
-                    fireSpiderDiagramClicked(nextSubdiagramIndex + e.getSubDiagramIndex(), e.getDetailedInfo());
+                    fireSpiderDiagramClicked(nextSubdiagramIndex + e.getSubDiagramIndex(), e.getDetailedEvent());
                 }
             });
         } else if (diagramPanel instanceof NullSpiderDiagramPanel) {

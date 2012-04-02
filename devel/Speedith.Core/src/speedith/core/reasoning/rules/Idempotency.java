@@ -43,6 +43,7 @@ import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import static speedith.core.i18n.Translations.*;
 import speedith.core.reasoning.*;
+import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
 
 /**
  * The implementation of the idempotency inference rule.
@@ -94,13 +95,18 @@ public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> impleme
     public Class<SubDiagramIndexArg> getArgumentType() {
         return SubDiagramIndexArg.class;
     }
-    // </editor-fold>
 
     public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // This rule needs a subdiagram. In fact, it needs an OR or AND operator
+        return SingletonContainer.Instruction;
     }
+    // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
+    private static final class SingletonContainer {
+        private static final SelectSingleOperatorInstruction Instruction = new SelectSingleOperatorInstruction(Operator.Conjunction, Operator.Disjunction);
+    }
+    
     private class IdempotencyTransformer extends IdTransformer {
 
         private final SubDiagramIndexArg arg;

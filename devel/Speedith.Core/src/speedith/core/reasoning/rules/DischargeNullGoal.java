@@ -99,9 +99,9 @@ public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> impl
     public Class<SubgoalIndexArg> getArgumentType() {
         return SubgoalIndexArg.class;
     }
-    // </editor-fold>
 
     public RuleApplicationInstruction<SubgoalIndexArg> getInstructions() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
+    // </editor-fold>
 }
