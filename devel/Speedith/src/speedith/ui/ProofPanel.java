@@ -30,14 +30,15 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.util.List;
 import javax.swing.JPanel;
-import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
 import static speedith.i18n.Translations.i18n;
 
 /**
- *
+ * This panel displays a spider-diagrammatic proof. This is the main way to
+ * display and work with proofs in Speedith.
+ * 
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class ProofPanel extends javax.swing.JPanel implements Proof {
@@ -126,7 +127,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
         RuleApplicationResult appResult = proof.applyRule(rule, args);
         if (proof.isFinished()) {
             // TODO: Display a label that says the proof is finished.
-            addProofFinished();
+            addProofFinished(rule, args);
         } else {
             addGoals(proof.getGoalsCount() - 1, appResult.getGoals(), rule, args);
         }
@@ -242,13 +243,13 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
         pnlGoals.add(sgp, gbc);
     }
 
-    private void addProofFinished() {
+    private <TRuleArg extends RuleArg> void addProofFinished(InferenceRule<? super TRuleArg> rule, TRuleArg args) {
         GridBagConstraints gbc = new java.awt.GridBagConstraints();
         gbc.fill = java.awt.GridBagConstraints.BOTH;
         gbc.gridx = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        SubgoalsPanel sgp = new SubgoalsPanel(i18n("PROOF_PANEL_PROOF_FINISHED"));
+        SubgoalsPanel sgp = new SubgoalsPanel(i18n("PROOF_PANEL_PROOF_FINISHED"), getStepDescription(rule, args));
         sgp.setTitleBackground(Color.GREEN);
         pnlGoals.add(sgp, gbc);
         validate();

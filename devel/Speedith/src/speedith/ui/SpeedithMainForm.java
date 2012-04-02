@@ -43,7 +43,6 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import speedith.core.lang.*;
-import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
@@ -53,6 +52,7 @@ import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.ui.selection.SelectionDialog;
 import static speedith.i18n.Translations.*;
+import speedith.ui.rules.InteractiveRuleApplication;
 
 /**
  * The main application window of Speedith.
@@ -622,26 +622,12 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         return Zone.fromInContours("B").withOutContours("A");
     }
 
-    @SuppressWarnings("unchecked")
     private void applyRule(InfRuleListItem selectedRule) {
-        InferenceRule<? extends RuleArg> rule = selectedRule.getInfRuleProvider().getInferenceRule();
-        RuleApplicationInstruction<? extends RuleArg> instructions = rule.getProvider().getInstructions();
-        RuleArg ruleArg;
-        if (instructions == null) {
-            ruleArg = new SubgoalIndexArg(0);
-        } else {
-            SelectionDialog dsd = new SelectionDialog(this, true, proofPanel1.getLastGoals().getGoalAt(0), instructions.getSelectionSteps());
-            dsd.pack();
-            dsd.setVisible(true);
-            if (dsd.isCancelled()) {
-                return;
-            } else {
-                ruleArg = instructions.extractRuleArg(dsd.getSelection(), 0);
-            }
-        }
+        Proof proof = proofPanel1;
+        int subgoalIndex = 0;
         try {
-            proofPanel1.applyRule((InferenceRule<RuleArg>) rule, ruleArg);
-        } catch (Exception ex) {
+            InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proof);
+        } catch (RuleApplicationException ex) {
             JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
         }
     }
