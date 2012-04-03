@@ -53,4 +53,12 @@ public class SelectSingleOperatorInstruction implements RuleApplicationInstructi
         SubDiagramIndexArg sza = (SubDiagramIndexArg) selectionSequence.getAcceptedSelectionsForStepAt(0).get(0);
         return new SubDiagramIndexArg(subgoalIndex, sza.getSubDiagramIndex());
     }
+
+    public Map<String, Class<?>> getSupportedObjectNames() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public SubDiagramIndexArg extractRuleArg(Map<String, Object> objects) throws RuleArgExtractionException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

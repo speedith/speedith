@@ -1,7 +1,7 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: RuleApplicationInstruction.java
+ * File name: RuleArgExtractionException.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -24,17 +24,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.core.reasoning;
-
-import speedith.core.reasoning.args.RuleArg;
-import speedith.core.reasoning.args.RuleArgExtractor;
+package speedith.core.reasoning.args;
 
 /**
- * Instances of this type provide information on how to apply an inference rule
- * to the user and the UI.
- *
- * @param <T> the type of arguments to be used in the inference rule.
+ * This exception is thrown if the extraction of inference rule arguments from
+ * a collection of objects fails.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface RuleApplicationInstruction<T extends RuleArg> extends SelectionInstructions, SelectionToRuleArgExtractor<T>, RuleArgExtractor<T> {
+public class RuleArgExtractionException extends Exception {
+
+    public RuleArgExtractionException(Throwable cause) {
+        super(cause);
+    }
+
+    public RuleArgExtractionException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public RuleArgExtractionException(String message) {
+        super(message);
+    }
+
+    public RuleArgExtractionException() {
+    }
+    
 }

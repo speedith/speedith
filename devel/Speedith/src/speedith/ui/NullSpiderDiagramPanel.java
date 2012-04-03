@@ -45,18 +45,32 @@ public class NullSpiderDiagramPanel extends javax.swing.JPanel {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private boolean highlighting = false;
-    private static final Font DefaultFont = new Font("Dialog", 0, 24);
     private static final Color DefaultColor = new Color(0, 0, 0);
-    private static final Font HighlightFont = new Font("Dialog", Font.BOLD, 26);
     private static final Color HighlightColor = new Color(0xff, 0, 0);
     private static final String TopSymbol = "\u22A4";
+    private final Font defaultFont;
+    private final Font highlightFont;
     // </editor-fold>
 
     /**
      * Creates new form NullSpiderDiagramPanel
      */
     public NullSpiderDiagramPanel() {
+        this(null);
+    }
+
+    /**
+     * Creates new form NullSpiderDiagramPanel
+     * @param font the font to use to display the top symbol with.
+     */
+    public NullSpiderDiagramPanel(Font font) {
         initComponents();
+        if (font == null) {
+            font = getFont();
+        }
+        defaultFont = font.deriveFont(24f);
+        highlightFont = font.deriveFont(Font.BOLD, 26f);
+        lblNullSD.setFont(defaultFont);
     }
 
     /**
@@ -74,7 +88,6 @@ public class NullSpiderDiagramPanel extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(25, 33));
         setLayout(new java.awt.BorderLayout());
 
-        lblNullSD.setFont(DefaultFont);
         lblNullSD.setForeground(DefaultColor);
         lblNullSD.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblNullSD.setText(TopSymbol);
@@ -107,7 +120,6 @@ public class NullSpiderDiagramPanel extends javax.swing.JPanel {
     private void onLabelClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onLabelClicked
         dispatchEvent(evt);
     }//GEN-LAST:event_onLabelClicked
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lblNullSD;
     // End of variables declaration//GEN-END:variables
@@ -129,12 +141,12 @@ public class NullSpiderDiagramPanel extends javax.swing.JPanel {
 
     // <editor-fold defaultstate="collapsed" desc="Private Helper Methods">
     private void applyNoHighlight() {
-        lblNullSD.setFont(DefaultFont);
+        lblNullSD.setFont(defaultFont);
         lblNullSD.setForeground(DefaultColor);
     }
 
     private void applyHighlight() {
-        lblNullSD.setFont(HighlightFont);
+        lblNullSD.setFont(highlightFont);
         lblNullSD.setForeground(HighlightColor);
     }
     // </editor-fold>

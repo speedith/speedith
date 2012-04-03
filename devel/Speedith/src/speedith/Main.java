@@ -45,38 +45,35 @@ import speedith.core.reasoning.InferenceRuleProvider;
 import speedith.core.reasoning.InferenceRules;
 import speedith.core.reasoning.RuleApplicationResult;
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.SpiderArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
+import speedith.core.reasoning.args.SubDiagramIndexArg;
+import speedith.core.util.Strings;
 import speedith.ui.SpeedithMainForm;
 import static speedith.i18n.Translations.*;
 import static speedith.logging.Logger.*;
 
 /**
- * This is the main entry point to Speedith.
- * <p>Speedith is a theorem prover for spider diagrams.</p>
- * <p>Speedith can be invoked in two modes:
- * <ul>
- *  <li>interactive</li>
- *  <li>batch</li>
- * </ul>
- * </p>
- * <h2>Interactive mode</h2>
+ * This is the main entry point to Speedith. <p>Speedith is a theorem prover for
+ * spider diagrams.</p> <p>Speedith can be invoked in two modes: <ul>
+ * <li>interactive</li> <li>batch</li> </ul> </p> <h2>Interactive mode</h2>
  * <p>When starting Speedith in interactive mode (i.e., by not providing the
  * '-b' command line argument), a graphical user interface is displayed and the
  * user can interactively work on diagrams and proofs interactively.</p>
- * <h2>Batch mode</h2>
- * <p>When starting Speedith in batch mode (i.e., by providing at least the '-b'
- * command line argument), the command line arguments are parsed and
- * corresponding actions are performed without the graphical user interface
- * being displayed.</p>
+ * <h2>Batch mode</h2> <p>When starting Speedith in batch mode (i.e., by
+ * providing at least the '-b' command line argument), the command line
+ * arguments are parsed and corresponding actions are performed without the
+ * graphical user interface being displayed.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class Main {
 
     // <editor-fold defaultstate="collapsed" desc="Main Entry Method">
     /**
-     * The main entry point to Speedith.
-     * <p>Parses the arguments and starts Speedith either in interactive or
-     * batch mode.</p>
+     * The main entry point to Speedith. <p>Parses the arguments and starts
+     * Speedith either in interactive or batch mode.</p>
+     *
      * @param args the Command line arguments to Speedith.
      */
     public static void main(String[] args) {
@@ -106,7 +103,7 @@ public class Main {
                     if (ir == null || ir.isEmpty()) {
                         throw new IllegalArgumentException(i18n("APP_NO_INFERENCE_RULE"));
                     }
-                    
+
                     String spider = clargs.getSpider();
                     int subDiagramIndex = clargs.getSubDiagramIndex();
                     Region region = clargs.getRegion();
@@ -116,7 +113,21 @@ public class Main {
                         throw new IllegalArgumentException(i18n("APP_UNKNOWN_INFERENCE_RULE"));
                     }
 
-                    RuleApplicationResult subGoals = inferenceRule.apply(new SpiderRegionArg(0, subDiagramIndex, spider, region), new Goals(Arrays.asList(readSpiderDiagram)));
+                    RuleArg ruleArg;
+                    if (subDiagramIndex >= 0) {
+                        if (!Strings.isNullOrEmpty(spider)) {
+                            if (region != null) {
+                                ruleArg = new SpiderRegionArg(0, subDiagramIndex, spider, region);
+                            } else {
+                                ruleArg = new SpiderArg(0, subDiagramIndex, spider);
+                            }
+                        } else {
+                            ruleArg = new SubDiagramIndexArg(0, subDiagramIndex);
+                        }
+                    } else {
+                        throw new IllegalArgumentException(i18n("MAIN_SUBDIAGRAM_INDEX_NEGATIVE"));
+                    }
+                    RuleApplicationResult subGoals = inferenceRule.apply(ruleArg, new Goals(Arrays.asList(readSpiderDiagram)));
 
                     if (subGoals != null && subGoals.getGoals() != null && subGoals.getGoals().getGoalsCount() > 0) {
                         readSpiderDiagram = subGoals.getGoals().getGoalAt(0);
@@ -156,7 +167,7 @@ public class Main {
 
     // <editor-fold defaultstate="collapsed" desc="Help Printing Methods">
     /**
-     * Prints a list of known spider diagram formula export formats (see {@link 
+     * Prints a list of known spider diagram formula export formats (see {@link
      * SDExporting} for more info.
      */
     private static void printKnownFormats() {

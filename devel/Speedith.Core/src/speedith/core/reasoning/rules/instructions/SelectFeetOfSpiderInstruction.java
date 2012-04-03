@@ -26,14 +26,12 @@
  */
 package speedith.core.reasoning.rules.instructions;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import speedith.core.lang.Region;
 import speedith.core.lang.Zone;
 import speedith.core.reasoning.RuleApplicationInstruction;
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.RuleArgExtractionException;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.args.SpiderZoneArg;
 import speedith.core.reasoning.args.selection.SelectSpiderFeetStep;
@@ -73,6 +71,14 @@ public class SelectFeetOfSpiderInstruction implements RuleApplicationInstruction
             }
         }
         return new Region(zones);
+    }
+
+    public Map<String, Class<?>> getSupportedObjectNames() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public SpiderRegionArg extractRuleArg(Map<String, Object> objects) throws RuleArgExtractionException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     // <editor-fold defaultstate="collapsed" desc="Singleton Container Helper">

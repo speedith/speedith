@@ -30,30 +30,49 @@ import java.util.*;
 import speedith.core.lang.Region;
 import speedith.core.lang.Zone;
 import speedith.core.reasoning.RuleApplicationInstruction;
-import speedith.core.reasoning.args.RuleArg;
-import speedith.core.reasoning.args.SpiderRegionArg;
-import speedith.core.reasoning.args.SpiderZoneArg;
-import speedith.core.reasoning.args.ZoneArg;
+import speedith.core.reasoning.args.*;
 import speedith.core.reasoning.args.selection.SelectSingleSpiderStep;
 import speedith.core.reasoning.args.selection.SelectZonesStep;
 import speedith.core.reasoning.args.selection.SelectionSequence;
 import speedith.core.reasoning.args.selection.SelectionStep;
+import speedith.core.reasoning.rules.AddFeet;
+import speedith.core.util.Maps;
 
 /**
+ * Instructions on how to get arguments for the {@link AddFeet add feet}
+ * inference rule.
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class AddFeetRuleInstruction implements RuleApplicationInstruction<SpiderRegionArg> {
 
+    //<editor-fold defaultstate="collapsed" desc="Fields">
+    /**
+     * You ask yourself why not a static field?
+     *
+     * Because of lazy initialisation, which is provided through the singleton
+     * pattern.
+     */
     private final List<? extends SelectionStep> steps = Arrays.asList(new SelectSingleSpiderStep(false), SelectZonesStep.getInstance());
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Hidden Constructor">
     private AddFeetRuleInstruction() {
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Singleton Instance">
+    /**
+     * Returns the singleton instance of these instructions.
+     *
+     * @return the singleton instance of these instructions.
+     */
     public static AddFeetRuleInstruction getInstance() {
         return SingletonContainer.TheInstructions;
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Implementation of RuleApplicationInstruction">
     public List<? extends SelectionStep> getSelectionSteps() {
         return Collections.unmodifiableList(steps);
     }
@@ -69,8 +88,19 @@ public class AddFeetRuleInstruction implements RuleApplicationInstruction<Spider
         return new SpiderRegionArg(subgoalIndex, sza.getSubDiagramIndex(), spider, new Region(addFeetZones));
     }
 
-    public static final class SingletonContainer {
+    public Map<String, Class<?>> getSupportedObjectNames() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public SpiderRegionArg extractRuleArg(Map<String, Object> objects) throws RuleArgExtractionException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Helper Classes">
+    private static final class SingletonContainer {
 
         private static final AddFeetRuleInstruction TheInstructions = new AddFeetRuleInstruction();
     }
+    //</editor-fold>
 }

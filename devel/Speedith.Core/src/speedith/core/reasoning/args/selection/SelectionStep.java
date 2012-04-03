@@ -141,21 +141,11 @@ public abstract class SelectionStep {
          *
          * @param i18nKey the internationalisation key to use for the message.
          * It will be looked up through {@link Translations#i18n(java.lang.String)}.
-         * @param i18nStrArgs the internationalisation arguments (may be {@code null}).
+         * @param i18nStrArgs the internationalisation arguments (may be empty).
          */
         public I18NSelectionRejectionExplanation(String i18nKey, Object... i18nStrArgs) {
             this.i18nKey = i18nKey;
             this.i18nStrArgs = i18nStrArgs;
-        }
-
-        /**
-         * Creates an internationalised explanation of the click rejection.
-         *
-         * @param i18nKey the internationalisation key to use for the message.
-         * It will be looked up through {@link Translations#i18n(java.lang.String)}.
-         */
-        public I18NSelectionRejectionExplanation(String i18nKey) {
-            this(i18nKey, null);
         }
 
         @Override
