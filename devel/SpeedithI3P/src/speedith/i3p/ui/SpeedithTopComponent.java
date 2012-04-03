@@ -29,22 +29,22 @@ import java.awt.event.ActionListener;
 import java.util.logging.Level;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import org.isabelle.iapp.process.features.InjectedCommands;
-import org.isabelle.iapp.process.features.InjectionResult;
 import org.isabelle.iapp.facade.IAPP;
 import org.isabelle.iapp.process.Message;
 import org.isabelle.iapp.process.ProverManager;
 import org.isabelle.iapp.process.ProverMessageListener;
+import org.isabelle.iapp.process.features.InjectedCommands;
 import org.isabelle.iapp.process.features.InjectionFinishListener;
+import org.isabelle.iapp.process.features.InjectionResult;
 import org.isabelle.iapp.process.features.InjectionResultListener;
-import org.openide.util.Exceptions;
-import org.openide.util.NbBundle;
-import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.util.Exceptions;
+import org.openide.util.NbBundle;
+import org.openide.windows.TopComponent;
 import speedith.core.lang.reader.ReadingException;
-import static speedith.i3p.ui.Translations.*;
+import static speedith.i3p.ui.Translations.i18n;
 
 /**
  * Top component which displays something.
@@ -75,6 +75,7 @@ public class SpeedithTopComponent extends TopComponent {
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -92,6 +93,7 @@ public class SpeedithTopComponent extends TopComponent {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private speedith.ui.SpiderDiagramPanel compoundSpiderDiagramPanel1;
     // End of variables declaration//GEN-END:variables
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Overrides">
     @Override

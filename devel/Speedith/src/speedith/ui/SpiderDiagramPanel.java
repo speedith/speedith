@@ -413,6 +413,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
                 }
             });
         } else if (diagramPanel instanceof NullSpiderDiagramPanel) {
+            diagramPanel.setFont(getFont());
             diagramPanel.addMouseListener(new MouseListener() {
 
                 public void mouseClicked(MouseEvent e) {
@@ -492,7 +493,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     private void drawNullSpiderDiagram() {
         diagrams.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new java.awt.GridBagConstraints();
-        diagrams.add(registerSubdiagramClickListener(new NullSpiderDiagramPanel(), 0), gbc);
+        diagrams.add(registerSubdiagramClickListener(new NullSpiderDiagramPanel(getFont()), 0), gbc);
         refreshPrefSize();
     }
 

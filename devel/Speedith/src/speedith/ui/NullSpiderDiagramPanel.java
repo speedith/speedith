@@ -34,6 +34,7 @@ package speedith.ui;
 
 import java.awt.Color;
 import java.awt.Font;
+import javax.swing.UIManager;
 import speedith.core.lang.NullSpiderDiagram;
 
 /**
@@ -48,8 +49,8 @@ public class NullSpiderDiagramPanel extends javax.swing.JPanel {
     private static final Color DefaultColor = new Color(0, 0, 0);
     private static final Color HighlightColor = new Color(0xff, 0, 0);
     private static final String TopSymbol = "\u22A4";
-    private final Font defaultFont;
-    private final Font highlightFont;
+    private Font defaultFont;
+    private Font highlightFont;
     // </editor-fold>
 
     /**
@@ -68,9 +69,7 @@ public class NullSpiderDiagramPanel extends javax.swing.JPanel {
         if (font == null) {
             font = getFont();
         }
-        defaultFont = font.deriveFont(24f);
-        highlightFont = font.deriveFont(Font.BOLD, 26f);
-        lblNullSD.setFont(defaultFont);
+        resetFont(font);
     }
 
     /**
@@ -139,6 +138,15 @@ public class NullSpiderDiagramPanel extends javax.swing.JPanel {
     }
     // </editor-fold>
 
+    
+    // <editor-fold defaultstate="collapsed" desc="Overrides">
+    @Override
+    public void setFont(Font font) {
+        super.setFont(font);
+        resetFont(font);
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Private Helper Methods">
     private void applyNoHighlight() {
         lblNullSD.setFont(defaultFont);
@@ -148,6 +156,17 @@ public class NullSpiderDiagramPanel extends javax.swing.JPanel {
     private void applyHighlight() {
         lblNullSD.setFont(highlightFont);
         lblNullSD.setForeground(HighlightColor);
+    }
+
+    private void resetFont(Font font) {
+        if (font == null) {
+            // NOTE: Maybe we should get the default font? Something like:
+            // UIManager.getDefaults().getFont("Label.font");
+            font = new Font(Font.DIALOG, Font.PLAIN, 12);
+        }
+        defaultFont = font.deriveFont(24f);
+        highlightFont = font.deriveFont(Font.BOLD, 26f);
+        lblNullSD.setFont(defaultFont);
     }
     // </editor-fold>
 }
