@@ -8,6 +8,7 @@
             <module-dependencies/>
             <public-packages>
                 <package>diabelli</package>
+                <package>diabelli.components</package>
             </public-packages>
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
