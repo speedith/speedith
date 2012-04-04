@@ -26,15 +26,17 @@
  */
 package speedith.openproof.blocksworld;
 
-import java.awt.BorderLayout;
-import java.awt.Menu;
-import java.awt.MenuBar;
-import java.awt.MenuItem;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import openproof.awt.SmartEditMenu;
+import openproof.fol.representation.OPFormula;
+import openproof.folblocks.ApplyRule;
+import openproof.folblocks.ObserveRule;
 import openproof.situation.editor.BlocksSitExternalEditor;
 import openproof.situation.editor.BlocksSitToolbar;
 import openproof.situation.editor.BlocksSitUIController;
-import openproof.situation.representation.ExtendedSituation;
+import openproof.situation.representation.*;
 import openproof.tarski.world.WorldController;
 
 /**
@@ -84,6 +86,39 @@ public class BlocksworldTestFrame extends javax.swing.JFrame {
 		controller.enableDelBlockItem(true);
 		
 		getContentPane().add(toolbar, BorderLayout.SOUTH);
+		
+		// Building up a situation
+		HyperBlock block = new HyperBlock();
+		mySituation.applyChange(new NewBlockChangeDelta(block));
+		mySituation.applyChange(new SizeChangeDelta(block, HyperBlock.LARGE));
+		mySituation.applyChange(new AddLabelChangeDelta(block, "a"));
+		mySituation.applyChange(new ShapeChangeDelta(block, HyperBlock.CUBE));
+		mySituation.applyChange(new MoodChangeDelta(block, HyperBlock.HAPPY));
+		mySituation.applyChange(new PositionChangeDelta(block, new Point(2, 6), null));
+		
+		// Building up a situation
+		HyperBlock blockB = new HyperBlock();
+		mySituation.applyChange(new NewBlockChangeDelta(blockB));
+		mySituation.applyChange(new SizeChangeDelta(blockB, HyperBlock.SMALL));
+		mySituation.applyChange(new AddLabelChangeDelta(blockB, "b"));
+		mySituation.applyChange(new ShapeChangeDelta(blockB, HyperBlock.TET));
+		mySituation.applyChange(new MoodChangeDelta(blockB, HyperBlock.SAD));
+		mySituation.applyChange(new PositionChangeDelta(blockB, new Point(3, 4), null));
+		
+		bsee.refresh();
+		
+//		ObserveRule or = new ObserveRule();
+//		// This is how you observe.
+////		or.check(mySituation, "some formula");
+//		
+//		// This is how you apply
+//		ApplyRule ar = new ApplyRule();
+//		ExtendedSituation es = new ExtendedSituation(mySituation);
+//		// Apply a change to the es...
+//		// ...
+//		// This will check whether the changes (deltas) made from the parent on
+//		// are okay (given the preconditions):
+////		ar.check(es, new ArrayList(Arrays.asList((OPFormula)null)), null);
 	}
 
 	/**
