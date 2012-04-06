@@ -24,6 +24,9 @@
  */
 package diabelli;
 
+import org.openide.util.Lookup;
+import org.openide.util.lookup.Lookups;
+
 /**
  * This is the main entry point to Diabelli for other I3P plugins. Reasoners can
  * register themselves here, currently opened standalone reasoners (the ones
@@ -37,7 +40,7 @@ package diabelli;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public final class Diabelli {
+public final class Diabelli implements Lookup.Provider {
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
     private Diabelli() {
@@ -59,6 +62,13 @@ public final class Diabelli {
     private static final class SingletonContainer {
 
         private static final Diabelli Instance = new Diabelli();
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Lookup Provider Implementation">
+    @Override
+    public Lookup getLookup() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     // </editor-fold>
 }

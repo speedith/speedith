@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: diabelli.hyperblocks
+OpenIDE-Module-Localizing-Bundle: diabelli/hyperblocks/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+

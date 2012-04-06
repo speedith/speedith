@@ -29,6 +29,7 @@ package speedith.openproof.blocksworld;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Vector;
 import openproof.awt.SmartEditMenu;
 import openproof.fol.representation.OPFormula;
 import openproof.folblocks.ApplyRule;
@@ -37,6 +38,7 @@ import openproof.situation.editor.BlocksSitExternalEditor;
 import openproof.situation.editor.BlocksSitToolbar;
 import openproof.situation.editor.BlocksSitUIController;
 import openproof.situation.representation.*;
+import openproof.tarski.Block;
 import openproof.tarski.world.WorldController;
 
 /**
@@ -107,18 +109,20 @@ public class BlocksworldTestFrame extends javax.swing.JFrame {
 		
 		bsee.refresh();
 		
-//		ObserveRule or = new ObserveRule();
-//		// This is how you observe.
-////		or.check(mySituation, "some formula");
-//		
-//		// This is how you apply
-//		ApplyRule ar = new ApplyRule();
-//		ExtendedSituation es = new ExtendedSituation(mySituation);
-//		// Apply a change to the es...
-//		// ...
-//		// This will check whether the changes (deltas) made from the parent on
-//		// are okay (given the preconditions):
-////		ar.check(es, new ArrayList(Arrays.asList((OPFormula)null)), null);
+		// This is how you get the representation that is flattened.
+		Situation situation = Situation.representedSituation(mySituation);
+		//		ObserveRule or = new ObserveRule();
+		//		// This is how you observe.
+		////		or.check(mySituation, "some formula");
+		//
+		//		// This is how you apply
+		//		ApplyRule ar = new ApplyRule();
+		//		ExtendedSituation es = new ExtendedSituation(mySituation);
+		//		// Apply a change to the es...
+		//		// ...
+		//		// This will check whether the changes (deltas) made from the parent on
+		//		// are okay (given the preconditions):
+		////		ar.check(es, new ArrayList(Arrays.asList((OPFormula)null)), null);
 	}
 
 	/**

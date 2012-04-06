@@ -29,8 +29,13 @@ package diabelli.components;
  * inference rules in other Diabelli reasoners). The new goals should logically
  * entail the old goals, which means that if the new goal is proved, so will be
  * the old one.
+ *  <p>A goal-accepting reasoner provides the following:
+ * <ul>
+ * <li>this reasoner's current goals </li>
+ * </ul>
+ * </p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface GoalAcceptingReasoner extends GoalBasedReasoner {
+public interface GoalAcceptingReasoner extends GoalProvidingReasoner {
     
 }

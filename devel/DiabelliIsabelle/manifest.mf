@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: diabelli.isabelle
+OpenIDE-Module-Localizing-Bundle: diabelli/isabelle/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
