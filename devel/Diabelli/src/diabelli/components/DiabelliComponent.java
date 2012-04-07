@@ -24,12 +24,19 @@
  */
 package diabelli.components;
 
+import org.openide.util.lookup.ServiceProvider;
+
 /**
  * This is the base type of all (interactive or non-interactive) reasoners and
  * presenters that want to be part of the Diabelli framework. Different
  * components will provide different functionality. Some will provide different
  * representations of formulae, others will provide fully-fledged interactive
  * proof environments.
+ * 
+ * <p><span style="font-weight:bold">Important</span>: All Diabelli components
+ * can register themselves only by specifying the {@link ServiceProvider}
+ * attribute with this type as the service type.</p>
+ * 
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public interface DiabelliComponent {

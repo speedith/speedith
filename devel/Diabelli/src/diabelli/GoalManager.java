@@ -1,5 +1,5 @@
 /*
- * File name: Reasoner.java
+ * File name: GoalManager.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -22,16 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package diabelli.components;
+package diabelli;
 
-import org.openide.util.lookup.ServiceProvider;
+import org.openide.util.Lookup;
 
 /**
- * This is the main class for all reasoners that are plugged into Diabelli.
- * Reasoner drivers should register themselves by specifying this type in the {@link ServiceProvider#service()
- * } annotation.
+ * Keeps a list of currently pending {@link Goal goals} for the currently
+ * focused {@link GoalProvidingReasoner goal-providing resoner}. It provides the
+ * goals through the lookup provider API (which proxies the lookup of goals in
+ * the currently focused goal-providing reasoner).
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface Reasoner extends DiabelliComponent {
+public interface GoalManager extends Lookup.Provider {
 }

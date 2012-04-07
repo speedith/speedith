@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package diabelli.ui;
+package diabelli.hyperblocks.ui;
 
 import java.awt.*;
 import openproof.awt.SmartEditMenu;

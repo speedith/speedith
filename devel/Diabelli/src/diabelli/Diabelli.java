@@ -25,50 +25,46 @@
 package diabelli;
 
 import org.openide.util.Lookup;
-import org.openide.util.lookup.Lookups;
+import org.openide.util.Lookup.Provider;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
- * This is the main entry point to Diabelli for other I3P plugins. Reasoners can
- * register themselves here, currently opened standalone reasoners (the ones
- * that host a proof) can be found here, supporting reasoners (the ones which
- * can apply inference steps on goals or prove them outright, display goals,
- * provide formula input mechanisms etc.), currently pending goals in a proof of
- * a standalone reasoner etc.
+ * This is the main hub of the Diabelli framework. The only instance of this
+ * class can be found through the {@link Lookup#getDefault() Lookup API}.
+ *
+ * <p>This class provides a catalogue of all available {@link Reasoner reasoners}
+ * and {@link DiabelliComponent other components} that plug into Diabelli and
+ * provide a certain kind of functionality.</p>
+ *
+ * <p>Additionally, this class provides central access to, for example, </p>
+ *
+ * {@link Reasoner Reasoners} can register themselves here, currently opened {@link GoalProvidingReasoner
+ * standalone reasoners} (the ones that host a proof) can also be found here,
+ * additionally, the {@link RuleApplicationReasoner supporting reasoners} (the
+ * ones which can apply inference steps on goals or prove them outright) will
+ * be, display goals, provide formula input mechanisms etc.), currently pending
+ * goals in a proof of a standalone reasoner etc.
  *
  * <p><span style="font-weight:bold">Note</span>: This class is a singleton,
- * access its only instance through</p>
+ * access its only instance through the lookup API.</p>
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public final class Diabelli implements Lookup.Provider {
-    
-    // <editor-fold defaultstate="collapsed" desc="Constructor">
-    private Diabelli() {
-    }
-    // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Singleton Stuff">
-    /**
-     * Returns the only instance of this class.
-     * @return the only instance of this class.
-     */
-    public static Diabelli getInstance() {
-        return SingletonContainer.Instance;
-    }
-    
-    /**
-     * This class lazily instantiates the Diabelli instance.
-     */
-    private static final class SingletonContainer {
+public interface Diabelli extends Provider {
 
-        private static final Diabelli Instance = new Diabelli();
-    }
-    // </editor-fold>
+    /**
+     * Returns the manager of currently active goals. It is used by other
+     * components to obtain the goals for various reasons (e.g., to visualise
+     * the goals in different presentations, to apply inference rules on them,
+     * etc.).
+     *
+     * @return the manager of currently active goals.
+     */
+    GoalManager getGoalManager();
     
-    // <editor-fold defaultstate="collapsed" desc="Lookup Provider Implementation">
-    @Override
-    public Lookup getLookup() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    // </editor-fold>
+    /**
+     * Returns the manager of reasoners currently registered to Diabelli.
+     * @return the manager of reasoners currently registered to Diabelli.
+     */
+    ReasonersManager getReasonersManager();
 }

@@ -1,5 +1,5 @@
 /*
- * File name: DiabelliTestTopComponent.java
+ * File name: HyperblocksTopComponent.java
  *    Author: matej
  * 
  *  Copyright © 2012 Matej Urbas
@@ -22,9 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package diabelli.ui;
+package diabelli.hyperblocks.ui;
 
+import diabelli.Diabelli;
+import diabelli.GoalManager;
 import java.awt.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import openproof.awt.SmartEditMenu;
 import openproof.situation.editor.BlocksSitExternalEditor;
 import openproof.situation.editor.BlocksSitToolbar;
@@ -34,35 +38,110 @@ import openproof.tarski.world.WorldController;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
 /**
  * Top component which displays something.
  */
-@ConvertAsProperties(dtd = "-//diabelli.ui//DiabelliTest//EN",
+@ConvertAsProperties(dtd = "-//diabelli.hyperblocks.ui//Hyperblocks//EN",
 autostore = false)
-@TopComponent.Description(preferredID = "DiabelliTestTopComponent",
+@TopComponent.Description(preferredID = "HyperblocksTopComponent",
 //iconBase="SET/PATH/TO/ICON/HERE", 
 persistenceType = TopComponent.PERSISTENCE_ALWAYS)
 @TopComponent.Registration(mode = "editor", openAtStartup = true)
-@ActionID(category = "Window", id = "diabelli.ui.DiabelliTestTopComponent")
+@ActionID(category = "Window", id = "diabelli.hyperblocks.ui.HyperblocksTopComponent")
 @ActionReference(path = "Menu/Window" /*
  * , position = 333
  */)
-@TopComponent.OpenActionRegistration(displayName = "#CTL_DiabelliTestAction",
-preferredID = "DiabelliTestTopComponent")
+@TopComponent.OpenActionRegistration(displayName = "#CTL_HyperblocksAction",
+preferredID = "HyperblocksTopComponent")
 @Messages({
-    "CTL_DiabelliTestAction=DiabelliTest",
-    "CTL_DiabelliTestTopComponent=DiabelliTest Window",
-    "HINT_DiabelliTestTopComponent=This is a DiabelliTest window"
+    "CTL_HyperblocksAction=Hyperblocks",
+    "CTL_HyperblocksTopComponent=Hyperblocks Window",
+    "HINT_HyperblocksTopComponent=This is a Hyperblocks window"
 })
-public final class DiabelliTestTopComponent extends TopComponent {
+public final class HyperblocksTopComponent extends TopComponent {
 
-    public DiabelliTestTopComponent() {
+    public HyperblocksTopComponent() {
         initComponents();
-        setName(Bundle.CTL_DiabelliTestTopComponent());
-        setToolTipText(Bundle.HINT_DiabelliTestTopComponent());
+        setName(Bundle.CTL_HyperblocksTopComponent());
+        setToolTipText(Bundle.HINT_HyperblocksTopComponent());
+        
+        
+
+
+        BlocksSitExternalEditor bsee = new BlocksSitExternalEditor();
+        bsee.init(new BorderLayout());
+        ExtendedSituation mySituation = new ExtendedSituation();
+        bsee.setSituation(mySituation);
+        BlocksSitUIController controller = bsee.createNewController();
+
+        MenuBar menu = new MenuBar();
+
+        Menu blocks = new Menu("Blocks");
+        MenuItem newBlock = new MenuItem("New block");
+        newBlock.setActionCommand(WorldController.NEW_BLOCK_CMD);
+        blocks.add(newBlock);
+        MenuItem delBlock = new MenuItem("Delete block");
+        delBlock.setActionCommand(SmartEditMenu.CLEAR_CMD);
+        blocks.add(delBlock);
+        MenuItem toggle = new MenuItem("Toggle");
+        toggle.setActionCommand(WorldController.TOGGLE_2D_CMD);
+        blocks.add(toggle);
+
+        menu.add(blocks);
+//        setMenuBar(menu);
+
+        controller.setNewBlockMI(newBlock);
+        controller.setDelBlockMI(delBlock);
+        controller.setToggle2DMI(toggle);
+
+        jPanel1.add(bsee, BorderLayout.CENTER);
+        BlocksSitToolbar toolbar = controller.getToolbar();
+        toolbar.setEnabled(true);
+        toolbar.setEditing(true);
+
+        controller.enableNewBlockItem(true);
+        controller.enableDelBlockItem(true);
+
+        jPanel1.add(toolbar, BorderLayout.SOUTH);
+
+        // Building up a situation
+        HyperBlock block = new HyperBlock();
+        mySituation.applyChange(new NewBlockChangeDelta(block));
+        mySituation.applyChange(new SizeChangeDelta(block, HyperBlock.LARGE));
+        mySituation.applyChange(new AddLabelChangeDelta(block, "a"));
+        mySituation.applyChange(new ShapeChangeDelta(block, HyperBlock.CUBE));
+        mySituation.applyChange(new MoodChangeDelta(block, HyperBlock.HAPPY));
+        mySituation.applyChange(new PositionChangeDelta(block, new Point(2, 6), null));
+
+        // Building up a situation
+        HyperBlock blockB = new HyperBlock();
+        mySituation.applyChange(new NewBlockChangeDelta(blockB));
+        mySituation.applyChange(new SizeChangeDelta(blockB, HyperBlock.SMALL));
+        mySituation.applyChange(new AddLabelChangeDelta(blockB, "b"));
+        mySituation.applyChange(new ShapeChangeDelta(blockB, HyperBlock.TET));
+        mySituation.applyChange(new MoodChangeDelta(blockB, HyperBlock.SAD));
+        mySituation.applyChange(new PositionChangeDelta(blockB, new Point(3, 4), null));
+
+        bsee.refresh();
+
+        // This is how you get the representation that is flattened.
+        Situation situation = Situation.representedSituation(mySituation);
+        //		ObserveRule or = new ObserveRule();
+        //		// This is how you observe.
+        ////		or.check(mySituation, "some formula");
+        //
+        //		// This is how you apply
+        //		ApplyRule ar = new ApplyRule();
+        //		ExtendedSituation es = new ExtendedSituation(mySituation);
+        //		// Apply a change to the es...
+        //		// ...
+        //		// This will check whether the changes (deltas) made from the parent on
+        //		// are okay (given the preconditions):
+        ////		ar.check(es, new ArrayList(Arrays.asList((OPFormula)null)), null);
     }
 
     /**
@@ -76,23 +155,14 @@ public final class DiabelliTestTopComponent extends TopComponent {
         jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
 
-        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getBundle(DiabelliTestTopComponent.class).getString("DiabelliTestTopComponent.jButton1.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getBundle(HyperblocksTopComponent.class).getString("HyperblocksTopComponent.jButton1.text")); // NOI18N
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 245, Short.MAX_VALUE)
-        );
+        jPanel1.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -104,7 +174,7 @@ public final class DiabelliTestTopComponent extends TopComponent {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton1)
-                        .addGap(0, 213, Short.MAX_VALUE)))
+                        .addGap(0, 214, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -113,20 +183,21 @@ public final class DiabelliTestTopComponent extends TopComponent {
                 .addContainerGap()
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         HyperblocksTestFrame hyperblocksTestFrame = new HyperblocksTestFrame();
+        hyperblocksTestFrame.pack();
         hyperblocksTestFrame.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
+
     @Override
     public void componentOpened() {
         // TODO add custom code on component opening

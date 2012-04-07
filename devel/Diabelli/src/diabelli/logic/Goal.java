@@ -1,5 +1,5 @@
 /*
- * File name: Reasoner.java
+ * File name: Goal.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -22,16 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package diabelli.components;
-
-import org.openide.util.lookup.ServiceProvider;
+package diabelli.logic;
 
 /**
- * This is the main class for all reasoners that are plugged into Diabelli.
- * Reasoner drivers should register themselves by specifying this type in the {@link ServiceProvider#service()
- * } annotation.
- *
+ * Represents a proof goal (with premises and conclusions) that are being
+ * tackled in a {@link GoalProvidingReasoner goal-providing reasoner}.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface Reasoner extends DiabelliComponent {
+public interface Goal {
+    
 }

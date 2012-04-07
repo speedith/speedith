@@ -1,5 +1,5 @@
 /*
- * File name: Reasoner.java
+ * File name: GoalManagerImpl.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -22,16 +22,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package diabelli.components;
+package diabelli.implementation;
 
-import org.openide.util.lookup.ServiceProvider;
+import diabelli.GoalManager;
+import org.openide.util.Lookup;
 
 /**
- * This is the main class for all reasoners that are plugged into Diabelli.
- * Reasoner drivers should register themselves by specifying this type in the {@link ServiceProvider#service()
- * } annotation.
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface Reasoner extends DiabelliComponent {
+class GoalManagerImpl implements GoalManager {
+
+    @Override
+    public Lookup getLookup() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
 }

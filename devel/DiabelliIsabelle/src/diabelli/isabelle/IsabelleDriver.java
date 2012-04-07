@@ -1,5 +1,5 @@
 /*
- * File name: Reasoner.java
+ * File name: IsabelleDriver.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -22,16 +22,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package diabelli.components;
+package diabelli.isabelle;
 
+import diabelli.Diabelli;
+import diabelli.GoalManager;
+import diabelli.components.DiabelliComponent;
+import diabelli.components.GoalAcceptingReasoner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * This is the main class for all reasoners that are plugged into Diabelli.
- * Reasoner drivers should register themselves by specifying this type in the {@link ServiceProvider#service()
- * } annotation.
+ * This is the main class of the Isabelle driver for Diabelli. It provides
+ * current Isabelle's goals to Diabelli and gives changed goals back to the
+ * active Isabelle script.
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface Reasoner extends DiabelliComponent {
+@ServiceProvider(service = DiabelliComponent.class)
+public class IsabelleDriver implements GoalAcceptingReasoner {
+
+    public IsabelleDriver() {
+        Logger.getLogger(IsabelleDriver.class.getName()).log(Level.INFO, "Diabelli Isabelle Driver initialised.");
+        Diabelli diabelli = Lookup.getDefault().lookup(Diabelli.class);
+        GoalManager goalManager = diabelli.getGoalManager();
+        Logger.getLogger(IsabelleDriver.class.getName()).log(Level.INFO, "Got goal manager: {0}", goalManager.toString());
+    }
+
+    @Override
+    public String getName() {
+        return org.openide.util.NbBundle.getBundle(IsabelleDriver.class).getString("ISA_DRIVER_NAME");
+    }
 }
