@@ -468,7 +468,7 @@ lemma our: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and
   apply (sd_tac add_feet sdi: 3 sp: "s1" r: "[([\"A\"],[\"B\"])]")
   apply (sd_tac idempotency sdi: 1)
   apply (sd_tac implication_tautology sdi: 0)
-  apply auto
+  by auto
 
 lemma example1: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
               \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B) \<and> (A \<inter> B) \<noteq> {}"
