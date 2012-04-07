@@ -123,7 +123,6 @@ public final class DiabelliImpl implements Diabelli {
     private void updateComponentsList() {
         Collection<? extends DiabelliComponent> comps = lookupResult.allInstances();
         for (DiabelliComponent comp : comps) {
-            Logger.getLogger(DiabelliImpl.class.getName()).log(Level.INFO, "Found registered component: {0}", comp.getName());
             instanceContent.add(comp);
         }
     }
