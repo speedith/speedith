@@ -10,7 +10,10 @@ import openproof.zen.proofdriver.OPDStatusObject;
 import openproof.zen.proofdriver.OPDStepInfo;
 import openproof.zen.proofdriver.OPDSupportPack;
 import openproof.zen.repdriver.OPDRepDriver;
+import speedith.core.lang.CompoundSpiderDiagram;
+import speedith.core.lang.Operator;
 import speedith.core.lang.SpiderDiagram;
+import speedith.core.lang.SpiderDiagrams;
 import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.InferenceRules;
@@ -69,6 +72,9 @@ public class UnarySpidersRule extends OPDInferenceRule {
 		
 		Goals goals = Goals.createGoalsFrom(citedDiagram);
 		
+		goals = Goals.createGoalsFrom(SpiderDiagrams.createCompoundSD(Operator.Implication,
+					goals.getGoalAt(0), SpiderDiagrams.createNullSD()));
+		
 		if (arg == null) {
 			try {
 				arg = InteractiveRuleApplication.collectArgument(null, inferenceRule, 0, goals);
@@ -79,14 +85,17 @@ public class UnarySpidersRule extends OPDInferenceRule {
 		
 		RuleApplicationResult applicationResult = null;
 		
+		SpiderDiagram result = null;
+		
 		try {
 			applicationResult = inferenceRule.apply(arg, goals);
+			result = ((CompoundSpiderDiagram) applicationResult.getGoals().getGoalAt(0)).getOperand(0);
 		} catch (Exception ex) {
 			return new OPDStatusObject(OPDStatusObject.OPDInvalid, ex.getLocalizedMessage(), ex.getLocalizedMessage());
 		}
 		
 		OPDStepInfo info = step.getRepresentation();
-		info.getDriver().setDriverInfo(new Object[] { applicationResult.getGoals().getGoalAt(0), arg });
+		info.getDriver().setDriverInfo(new Object[] { result, arg });
 		
 		return new OPDStatusObject(OPDStatusObject.OPDValid, "", "");
 	}
