@@ -24,9 +24,13 @@
  */
 package diabelli;
 
+import diabelli.components.DiabelliComponent;
+import diabelli.components.GoalProvidingReasoner;
+import diabelli.components.Reasoner;
+import diabelli.components.RuleApplicationReasoner;
+import java.util.Set;
 import org.openide.util.Lookup;
 import org.openide.util.Lookup.Provider;
-import org.openide.util.lookup.ServiceProvider;
 
 /**
  * This is the main hub of the Diabelli framework. The only instance of this
@@ -61,10 +65,20 @@ public interface Diabelli extends Provider {
      * @return the manager of currently active goals.
      */
     GoalManager getGoalManager();
-    
+
     /**
      * Returns the manager of reasoners currently registered to Diabelli.
+     *
      * @return the manager of reasoners currently registered to Diabelli.
      */
     ReasonersManager getReasonersManager();
+
+    /**
+     * Returns the set of all registered Diabelli components (this set includes
+     * all the registered {@link Reasoner reasoners}). <p><span
+     * style="font-weight:bold">Note</span>: this method never returns {@code null}.</p>
+     *
+     * @return the set of all registered Diabelli components.
+     */
+    Set<? extends DiabelliComponent> getRegisteredComponents();
 }

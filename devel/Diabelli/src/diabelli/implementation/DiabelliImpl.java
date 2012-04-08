@@ -28,18 +28,18 @@ import diabelli.Diabelli;
 import diabelli.GoalManager;
 import diabelli.ReasonersManager;
 import diabelli.components.DiabelliComponent;
-import diabelli.components.GoalProvidingReasoner;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.Lookup;
-import org.openide.util.Lookup.Item;
 import org.openide.util.Lookup.Result;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
-import org.openide.util.lookup.ProxyLookup;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -57,18 +57,26 @@ import org.openide.util.lookup.ServiceProvider;
  */
 @ServiceProvider(service = Diabelli.class)
 public final class DiabelliImpl implements Diabelli {
-
-    // <editor-fold defaultstate="collapsed" desc="Managers">
-    private GoalManager goalManager = new GoalManagerImpl();
+    
+    // <editor-fold defaultstate="collapsed" desc="Private Fields">
     private final InstanceContent instanceContent;
     private Result<DiabelliComponent> lookupResult;
-    private ReasonersManager reasonersManager = new ReasonersManagerImpl();
     private final AbstractLookup componentsLookup;
+    private final HashSet<DiabelliComponent> components = new HashSet<DiabelliComponent>();
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Managers Fields">
+    private final ReasonersManager reasonersManager;
+    private final GoalManager goalManager;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
     public DiabelliImpl() {
         Logger.getLogger(DiabelliImpl.class.getName()).log(Level.INFO, "Diabelli initialised.");
+        
+        // Initialise all managers:
+        reasonersManager = new ReasonersManagerImpl();
+        goalManager = new GoalManagerImpl(reasonersManager);
 
         // First create an empty list of components (then wait for them to
         // register or deregister).
@@ -86,6 +94,11 @@ public final class DiabelliImpl implements Diabelli {
     @Override
     public ReasonersManager getReasonersManager() {
         return reasonersManager;
+    }
+
+    @Override
+    public Set<? extends DiabelliComponent> getRegisteredComponents() {
+        return Collections.unmodifiableSet(components);
     }
     // </editor-fold>
 
@@ -122,8 +135,10 @@ public final class DiabelliImpl implements Diabelli {
     // <editor-fold defaultstate="collapsed" desc="Components Registration">
     private void updateComponentsList() {
         Collection<? extends DiabelliComponent> comps = lookupResult.allInstances();
+        components.clear();
         for (DiabelliComponent comp : comps) {
             instanceContent.add(comp);
+            components.add(comp);
         }
     }
     // </editor-fold>

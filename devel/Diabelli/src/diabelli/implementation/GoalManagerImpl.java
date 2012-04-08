@@ -24,18 +24,78 @@
  */
 package diabelli.implementation;
 
+import diabelli.logic.Goals;
 import diabelli.GoalManager;
+import diabelli.ReasonersManager;
+import diabelli.components.GoalProvidingReasoner;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import org.openide.util.Lookup;
 
 /**
- *
+ * The main implementation of the {@link GoalManager Diabelli goal manager
+ * specification}.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 class GoalManagerImpl implements GoalManager {
+    
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    private Goals currentGoals;
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Constructors">
+    /**
+     * 
+     * @param reasonersManager this goal manager will listen to this guy for
+     * changes to the {@link ReasonersManager#getActiveReasoner() } property.
+     */
+    public GoalManagerImpl(ReasonersManager reasonersManager) {
+        // TODO: Listen to activeReasoner changes...
+        // TODO: Also listen to the goal changes of the currently active reasoner.
+    }
+    // </editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="GoalManager Interface Implementation">
+    @Override
+    public Goals getCurrentGoals() {
+        return currentGoals;
+    }
+    //</editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Property Changed Event Stuff">
+    private void fireCurrentGoalsChangedEvent(Goals oldGoals) {
+        pcs.firePropertyChange(CurrentGoalsChangedEvent, oldGoals, currentGoals);
+    }
 
     @Override
-    public Lookup getLookup() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
     }
-    
+
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener, String event) {
+        pcs.addPropertyChangeListener(event, listener);
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(listener);
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener, String event) {
+        pcs.removePropertyChangeListener(event, listener);
+    }
+    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Private Properties">
+    private void setCurrentGoals(Goals goals) {
+        if (goals != currentGoals) {
+            Goals oldGoals = currentGoals;
+            currentGoals = goals;
+            fireCurrentGoalsChangedEvent(oldGoals);
+        }
+    }
+    // </editor-fold>
 }

@@ -24,6 +24,8 @@
  */
 package diabelli;
 
+import diabelli.logic.Goals;
+import java.beans.PropertyChangeListener;
 import org.openide.util.Lookup;
 
 /**
@@ -34,5 +36,53 @@ import org.openide.util.Lookup;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface GoalManager extends Lookup.Provider {
+public interface GoalManager {
+    /**
+     * Returns the currently active goals of Diabelli.
+     * @return the currently active goals of Diabelli.
+     */
+    Goals getCurrentGoals();
+
+    //<editor-fold defaultstate="collapsed" desc="Property Changed Stuff">
+    /**
+     * Registers a property listener. This manager provides the following
+     * events: <ul><li>{@link GoalManager#CurrentGoalsChangedEvent}</li></ul>
+     *
+     * @param listener the object that will receive the property changed events.
+     */
+    void addPropertyChangeListener(PropertyChangeListener listener);
+    
+    /**
+     * Registers a property listener.
+     *
+     * @param listener the object that will receive the property changed events.
+     * @param event the event to which the listener wants to be registered (see
+     * {@link GoalManager#addPropertyChangeListener(java.beans.PropertyChangeListener)}
+     * for a list of available events).
+     */
+    void addPropertyChangeListener(PropertyChangeListener listener, String event);
+    
+    /**
+     * Unregisters the given property listener.
+     *
+     * @param listener the object that will not receive the property changed
+     * events anymore.
+     */
+    void removePropertyChangeListener(PropertyChangeListener listener);
+    
+    /**
+     * Unregisters the given property listener.
+     *
+     * @param listener the object that will not receive the property changed
+     * events anymore.
+     * @param event the event from which to deregister this listener.
+     */
+    void removePropertyChangeListener(PropertyChangeListener listener, String event);
+    
+    /**
+     * The identifier that will come with the {@link GoalManager#addPropertyChangeListener(java.beans.PropertyChangeListener) property
+     * change event} that indicates that the current goals have changed.
+     */
+    static final String CurrentGoalsChangedEvent = "current_goals_changed";
+    //</editor-fold>
 }

@@ -26,7 +26,8 @@ package diabelli.implementation;
 
 import diabelli.ReasonersManager;
 import diabelli.components.GoalProvidingReasoner;
-import org.openide.util.Lookup;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 /**
  *
@@ -34,22 +35,63 @@ import org.openide.util.Lookup;
  */
 class ReasonersManagerImpl implements ReasonersManager {
 
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    private GoalProvidingReasoner activeReasoner;
+    // </editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Constructors">
     public ReasonersManagerImpl() {
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="ReasonersManager Interface Implementation">
     @Override
     public GoalProvidingReasoner getActiveReasoner() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return activeReasoner;
     }
 
     @Override
     public void requestActive(GoalProvidingReasoner reasoner) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO: Somewhen in the future we might want to check whether the
+        // currently active reasoner is busy etc.
+        setActiveReasoner(reasoner);
+    }
+    //</editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Private Properties">
+    private void setActiveReasoner(GoalProvidingReasoner reasoner) {
+        if (reasoner != activeReasoner) {
+            GoalProvidingReasoner oldReasoner = activeReasoner;
+            activeReasoner = reasoner;
+            fireActiveReasonerChangedEvent(oldReasoner);
+        }
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Property Changed Event Stuff">
+    private void fireActiveReasonerChangedEvent(GoalProvidingReasoner oldReasoner) {
+        pcs.firePropertyChange(ActiveReasonerChangedEvent, oldReasoner, activeReasoner);
     }
 
     @Override
-    public Lookup getLookup() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
     }
-    
+
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener, String event) {
+        pcs.addPropertyChangeListener(event, listener);
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(listener);
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener, String event) {
+        pcs.removePropertyChangeListener(event, listener);
+    }
+    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    // </editor-fold>
 }
