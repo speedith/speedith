@@ -64,7 +64,7 @@ public interface Diabelli extends Provider {
      *
      * @return the manager of currently active goals.
      */
-    GoalManager getGoalManager();
+    GoalsManager getGoalManager();
 
     /**
      * Returns the manager of reasoners currently registered to Diabelli.

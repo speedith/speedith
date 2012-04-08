@@ -1,5 +1,5 @@
 /*
- * File name: Class.java
+ * File name: BareGoalProvidingReasoner.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -22,68 +22,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package diabelli.implementation;
+package diabelli.components.util;
 
-import diabelli.Diabelli;
-import diabelli.ReasonersManager;
 import diabelli.components.GoalProvidingReasoner;
+import diabelli.logic.Goals;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.openide.util.NbBundle;
 
 /**
- *
+ * Provides a <span style="font-style:italic;">bare</span> (partial and convenience)
+ * implementation of the {@link GoalProvidingReasoner} interface.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-@NbBundle.Messages({
-    "RM_diabelli_null=A valid Diabelli framework manager instance must be provided."
-})
-class ReasonersManagerImpl implements ReasonersManager {
-
+public abstract class BareGoalProvidingReasoner implements GoalProvidingReasoner {
+    
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private GoalProvidingReasoner activeReasoner;
-    private Diabelli diabelli;
+    private Goals goals;
     // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Constructors">
-    ReasonersManagerImpl(Diabelli diabelli) {
-        if (diabelli == null) {
-            throw new IllegalArgumentException(Bundle.RM_diabelli_null());
-        }
-        this.diabelli = diabelli;
+    //<editor-fold defaultstate="collapsed" desc="Public Properties">
+    @Override
+    public Goals getGoals() {
+        return goals;
     }
     //</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="ReasonersManager Interface Implementation">
-    @Override
-    public GoalProvidingReasoner getActiveReasoner() {
-        return activeReasoner;
-    }
-
-    @Override
-    public void requestActive(GoalProvidingReasoner reasoner) {
-        // TODO: Somewhen in the future we might want to check whether the
-        // currently active reasoner is busy etc.
-        Logger.getLogger(ReasonersManagerImpl.class.getName()).log(Level.INFO, "Reasoner ''{0}'' requested focus.", reasoner.getName());
-        setActiveReasoner(reasoner);
-    }
-    //</editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Private Properties">
-    private void setActiveReasoner(GoalProvidingReasoner reasoner) {
-        if (reasoner != activeReasoner) {
-            GoalProvidingReasoner oldReasoner = activeReasoner;
-            activeReasoner = reasoner;
-            fireActiveReasonerChangedEvent(oldReasoner);
+    
+    // <editor-fold defaultstate="collapsed" desc="Protected Properties">
+    /**
+     * Sets the goals and fires the goals changed event if the new goals differ
+     * from the current ones.
+     * @param goals the new goals to be set.
+     */
+    protected void setGoals(Goals goals) {
+        if (this.goals != goals) {
+            Goals oldGoals = this.goals;
+            this.goals = goals;
+            fireCurrentGoalsChangedEvent(oldGoals);
         }
     }
     // </editor-fold>
-
+    
     // <editor-fold defaultstate="collapsed" desc="Property Changed Event Stuff">
-    private void fireActiveReasonerChangedEvent(GoalProvidingReasoner oldReasoner) {
-        pcs.firePropertyChange(ActiveReasonerChangedEvent, oldReasoner, activeReasoner);
+    protected void fireCurrentGoalsChangedEvent(Goals oldGoals) {
+        pcs.firePropertyChange(CurrentGoalsChangedEvent, oldGoals, goals);
     }
 
     @Override

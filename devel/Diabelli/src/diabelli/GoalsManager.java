@@ -1,5 +1,5 @@
 /*
- * File name: GoalManager.java
+ * File name: GoalsManager.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -36,7 +36,7 @@ import org.openide.util.Lookup;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface GoalManager {
+public interface GoalsManager {
     /**
      * Returns the currently active goals of Diabelli.
      * @return the currently active goals of Diabelli.
@@ -46,7 +46,7 @@ public interface GoalManager {
     //<editor-fold defaultstate="collapsed" desc="Property Changed Stuff">
     /**
      * Registers a property listener. This manager provides the following
-     * events: <ul><li>{@link GoalManager#CurrentGoalsChangedEvent}</li></ul>
+     * events: <ul><li>{@link GoalsManager#CurrentGoalsChangedEvent}</li></ul>
      *
      * @param listener the object that will receive the property changed events.
      */
@@ -57,7 +57,7 @@ public interface GoalManager {
      *
      * @param listener the object that will receive the property changed events.
      * @param event the event to which the listener wants to be registered (see
-     * {@link GoalManager#addPropertyChangeListener(java.beans.PropertyChangeListener)}
+     * {@link GoalsManager#addPropertyChangeListener(java.beans.PropertyChangeListener)}
      * for a list of available events).
      */
     void addPropertyChangeListener(PropertyChangeListener listener, String event);
@@ -80,7 +80,7 @@ public interface GoalManager {
     void removePropertyChangeListener(PropertyChangeListener listener, String event);
     
     /**
-     * The identifier that will come with the {@link GoalManager#addPropertyChangeListener(java.beans.PropertyChangeListener) property
+     * The identifier that will come with the {@link GoalsManager#addPropertyChangeListener(java.beans.PropertyChangeListener) property
      * change event} that indicates that the current goals have changed.
      */
     static final String CurrentGoalsChangedEvent = "current_goals_changed";

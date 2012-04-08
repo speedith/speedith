@@ -25,7 +25,7 @@
 package diabelli.implementation;
 
 import diabelli.Diabelli;
-import diabelli.GoalManager;
+import diabelli.GoalsManager;
 import diabelli.ReasonersManager;
 import diabelli.components.DiabelliComponent;
 import java.util.Collection;
@@ -67,7 +67,7 @@ public final class DiabelliImpl implements Diabelli {
 
     // <editor-fold defaultstate="collapsed" desc="Managers Fields">
     private final ReasonersManager reasonersManager;
-    private final GoalManager goalManager;
+    private final GoalsManager goalManager;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
@@ -75,8 +75,8 @@ public final class DiabelliImpl implements Diabelli {
         Logger.getLogger(DiabelliImpl.class.getName()).log(Level.INFO, "Diabelli initialised.");
         
         // Initialise all managers:
-        reasonersManager = new ReasonersManagerImpl();
-        goalManager = new GoalManagerImpl(reasonersManager);
+        reasonersManager = new ReasonersManagerImpl(this);
+        goalManager = new GoalsManagerImpl(this, reasonersManager);
 
         // First create an empty list of components (then wait for them to
         // register or deregister).
@@ -87,7 +87,7 @@ public final class DiabelliImpl implements Diabelli {
 
     // <editor-fold defaultstate="collapsed" desc="Diabelli Interface Implementation">
     @Override
-    public GoalManager getGoalManager() {
+    public GoalsManager getGoalManager() {
         return goalManager;
     }
 

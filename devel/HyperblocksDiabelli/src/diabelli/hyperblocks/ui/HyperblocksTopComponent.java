@@ -25,7 +25,7 @@
 package diabelli.hyperblocks.ui;
 
 import diabelli.Diabelli;
-import diabelli.GoalManager;
+import diabelli.GoalsManager;
 import java.awt.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;

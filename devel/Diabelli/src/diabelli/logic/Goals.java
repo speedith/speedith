@@ -25,12 +25,12 @@
 package diabelli.logic;
 
 import diabelli.Diabelli;
-import diabelli.GoalManager;
+import diabelli.GoalsManager;
 import diabelli.components.GoalProvidingReasoner;
 
 /**
  * Contains a set of goals that are provided by {@link GoalProvidingReasoner goal-providing
- * reasoners}. Use the {@link GoalManager} in the {@link Diabelli} service to
+ * reasoners}. Use the {@link GoalsManager} in the {@link Diabelli} service to
  * find the currently active goals in Diabelli.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */

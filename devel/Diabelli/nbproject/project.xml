@@ -67,6 +67,7 @@
             <public-packages>
                 <package>diabelli</package>
                 <package>diabelli.components</package>
+                <package>diabelli.components.util</package>
                 <package>diabelli.logic</package>
                 <package>diabelli.ui</package>
             </public-packages>

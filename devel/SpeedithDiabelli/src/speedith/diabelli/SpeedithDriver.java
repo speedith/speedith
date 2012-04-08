@@ -26,7 +26,7 @@ package speedith.diabelli;
 
 import diabelli.components.DiabelliComponent;
 import diabelli.components.GoalAcceptingReasoner;
-import diabelli.components.GoalProvidingReasoner;
+import diabelli.components.util.BareGoalProvidingReasoner;
 import diabelli.logic.Goal;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -44,7 +44,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 @ServiceProvider(service = DiabelliComponent.class)
-public class SpeedithDriver implements GoalProvidingReasoner {
+public class SpeedithDriver extends BareGoalProvidingReasoner {
 
     @Override
     public String getName() {

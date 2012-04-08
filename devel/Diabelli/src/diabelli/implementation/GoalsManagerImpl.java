@@ -1,5 +1,5 @@
 /*
- * File name: GoalManagerImpl.java
+ * File name: GoalsManagerImpl.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -24,38 +24,58 @@
  */
 package diabelli.implementation;
 
-import diabelli.logic.Goals;
-import diabelli.GoalManager;
+import diabelli.Diabelli;
+import diabelli.GoalsManager;
 import diabelli.ReasonersManager;
 import diabelli.components.GoalProvidingReasoner;
+import diabelli.logic.Goals;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import org.openide.util.Lookup;
+import org.openide.util.NbBundle;
+import static diabelli.implementation.Bundle.*;
+import java.beans.PropertyChangeEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * The main implementation of the {@link GoalManager Diabelli goal manager
+ * The main implementation of the {@link GoalsManager Diabelli goal manager
  * specification}.
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-class GoalManagerImpl implements GoalManager {
-    
+class GoalsManagerImpl implements GoalsManager {
+
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private Goals currentGoals;
+    private GoalsChangedListener goalsChangedListener;
+    private final Diabelli diabelli;
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Constructors">
     /**
-     * 
+     *
      * @param reasonersManager this goal manager will listen to this guy for
      * changes to the {@link ReasonersManager#getActiveReasoner() } property.
      */
-    public GoalManagerImpl(ReasonersManager reasonersManager) {
+    @NbBundle.Messages({
+        "GM_reasoners_manager_null=A valid reasoners manager must be provided."
+    })
+    public GoalsManagerImpl(Diabelli diabelli, final ReasonersManager reasonersManager) {
         // TODO: Listen to activeReasoner changes...
         // TODO: Also listen to the goal changes of the currently active reasoner.
+        if (reasonersManager == null) {
+            throw new IllegalArgumentException(GM_reasoners_manager_null());
+        }
+        if (diabelli == null) {
+            throw new IllegalArgumentException(RM_diabelli_null());
+        }
+        reasonersManager.addPropertyChangeListener(new ActiveReasonerChangedListener(reasonersManager), ReasonersManager.ActiveReasonerChangedEvent);
+        this.diabelli = diabelli;
+        goalsChangedListener = new GoalsChangedListener();
     }
     // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="GoalManager Interface Implementation">
+    //<editor-fold defaultstate="collapsed" desc="GoalsManager Interface Implementation">
     @Override
     public Goals getCurrentGoals() {
         return currentGoals;
@@ -94,8 +114,56 @@ class GoalManagerImpl implements GoalManager {
         if (goals != currentGoals) {
             Goals oldGoals = currentGoals;
             currentGoals = goals;
+            Logger.getLogger(GoalsManagerImpl.class.getName()).log(Level.INFO, "Current goals have changed.");
             fireCurrentGoalsChangedEvent(oldGoals);
         }
     }
     // </editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Goals Change Monitoring Stuff">
+    private class ActiveReasonerChangedListener implements PropertyChangeListener {
+        
+        private final ReasonersManager reasonersManager;
+        
+        public ActiveReasonerChangedListener(ReasonersManager reasonersManager) {
+            this.reasonersManager = reasonersManager;
+        }
+        
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            assert(evt.getOldValue() == null || evt.getOldValue() instanceof GoalProvidingReasoner);
+            unregisterGoalsListener((GoalProvidingReasoner)evt.getOldValue());
+            if (reasonersManager.getActiveReasoner() != null) {
+                registerGoalsListener(reasonersManager.getActiveReasoner());
+                setCurrentGoals(reasonersManager.getActiveReasoner().getGoals());
+            } else {
+                setCurrentGoals(null);
+            }
+        }
+    }
+
+    private class GoalsChangedListener implements PropertyChangeListener {
+
+        public GoalsChangedListener() {
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            assert(evt.getNewValue() == null || evt.getNewValue() instanceof Goals);
+            setCurrentGoals((Goals)evt.getNewValue());
+        }
+    }
+    
+    public void unregisterGoalsListener(GoalProvidingReasoner reasoner) {
+        if (reasoner != null) {
+            reasoner.removePropertyChangeListener(goalsChangedListener, GoalProvidingReasoner.CurrentGoalsChangedEvent);
+        }
+    }
+    
+    public void registerGoalsListener(GoalProvidingReasoner reasoner) {
+        if (reasoner != null) {
+            reasoner.addPropertyChangeListener(goalsChangedListener, GoalProvidingReasoner.CurrentGoalsChangedEvent);
+        }
+    }
+    //</editor-fold>
 }

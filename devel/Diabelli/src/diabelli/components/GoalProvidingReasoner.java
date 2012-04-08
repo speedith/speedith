@@ -24,6 +24,9 @@
  */
 package diabelli.components;
 
+import diabelli.logic.Goals;
+import java.beans.PropertyChangeListener;
+
 /**
  * Goal-providing reasoners are all interactive reasoners that fulfil the following
  * requirements: <ul> <li>they provide a list of goals that are to be proved
@@ -44,5 +47,55 @@ package diabelli.components;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public interface GoalProvidingReasoner extends Reasoner {
+    /**
+     * Returns this reasoner's current goals (the ones the user is currently
+     * working with, for example, the goals of the current proof in the active editor
+     * window).
+     * @return this reasoner's current goals.
+     */
+    Goals getGoals();
+
+    //<editor-fold defaultstate="collapsed" desc="Property Changed Stuff">
+    /**
+     * Registers a property listener. This manager provides the following
+     * events: <ul><li>{@link GoalProvidingReasoner#CurrentGoalsChangedEvent}</li></ul>
+     *
+     * @param listener the object that will receive the property changed events.
+     */
+    void addPropertyChangeListener(PropertyChangeListener listener);
+    
+    /**
+     * Registers a property listener.
+     *
+     * @param listener the object that will receive the property changed events.
+     * @param event the event to which the listener wants to be registered (see
+     * {@link GoalProvidingReasoner#addPropertyChangeListener(java.beans.PropertyChangeListener)}
+     * for a list of available events).
+     */
+    void addPropertyChangeListener(PropertyChangeListener listener, String event);
+    
+    /**
+     * Unregisters the given property listener.
+     *
+     * @param listener the object that will not receive the property changed
+     * events anymore.
+     */
+    void removePropertyChangeListener(PropertyChangeListener listener);
+    
+    /**
+     * Unregisters the given property listener.
+     *
+     * @param listener the object that will not receive the property changed
+     * events anymore.
+     * @param event the event from which to deregister this listener.
+     */
+    void removePropertyChangeListener(PropertyChangeListener listener, String event);
+    
+    /**
+     * The identifier that will come with the {@link GoalProvidingReasoner#addPropertyChangeListener(java.beans.PropertyChangeListener) property
+     * change event} that indicates that the current goals have changed.
+     */
+    static final String CurrentGoalsChangedEvent = "current_goals_changed";
+    //</editor-fold>
     
 }
