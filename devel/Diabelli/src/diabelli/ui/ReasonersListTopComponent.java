@@ -27,7 +27,6 @@ package diabelli.ui;
 import diabelli.Diabelli;
 import diabelli.components.DiabelliComponent;
 import diabelli.components.Reasoner;
-import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.ActionMap;
@@ -48,6 +47,9 @@ import org.openide.util.LookupListener;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.Lookups;
 import org.openide.windows.TopComponent;
+import static diabelli.ui.Bundle.*;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Top component which displays something.
@@ -66,7 +68,7 @@ persistenceType = TopComponent.PERSISTENCE_ALWAYS)
 preferredID = "ReasonersListTopComponent")
 @Messages({
     "CTL_ReasonersListAction=ReasonersList",
-    "CTL_ReasonersListTopComponent=Diabelli Components",
+    "CTL_ReasonersListTopComponent=Diabelli Reasoners",
     "HINT_ReasonersListTopComponent=This is a list of all Diabelli components (reasoners, presenters, etc.)."
 })
 public final class ReasonersListTopComponent extends TopComponent implements ExplorerManager.Provider {
@@ -148,13 +150,30 @@ public final class ReasonersListTopComponent extends TopComponent implements Exp
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Explorer Nodes">
-    private static class ReasonersNode extends AbstractNode {
+    private static class ReasonersNode extends AbstractNode implements Comparable<ReasonersNode> {
+        
+        private Reasoner reasoner;
 
+        @Messages({
+            "ReasonersNode_reasoner_null=The reasoner must not be null."
+        })
         public ReasonersNode(Reasoner reasoner) {
             super(Children.LEAF, Lookups.singleton(reasoner));
-
+            if (reasoner == null) {
+                throw new IllegalArgumentException(ReasonersNode_reasoner_null());
+            }
+            this.reasoner = reasoner;
             setName(reasoner.toString());
             setDisplayName(reasoner.getName());
+        }
+
+        public Reasoner getReasoner() {
+            return reasoner;
+        }
+
+        @Override
+        public int compareTo(ReasonersNode o) {
+            return getReasoner().getName().compareToIgnoreCase(o.getReasoner().getName());
         }
     }
 
@@ -178,7 +197,6 @@ public final class ReasonersListTopComponent extends TopComponent implements Exp
         protected Collection<Node> initCollection() {
             Collection<? extends DiabelliComponent> allReasoners = reasonersLookupResult.allInstances();
 
-
             ArrayList<Node> reasonerNodes = new ArrayList<Node>();
             if (allReasoners != null) {
                 for (DiabelliComponent reasoner : allReasoners) {
@@ -188,6 +206,13 @@ public final class ReasonersListTopComponent extends TopComponent implements Exp
                     }
                 }
             }
+            Collections.sort(reasonerNodes, new Comparator<Node>() {
+
+                @Override
+                public int compare(Node o1, Node o2) {
+                    return ((ReasonersNode)o1).compareTo((ReasonersNode)o2);
+                }
+            });
             return reasonerNodes;
         }
 

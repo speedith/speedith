@@ -73,7 +73,7 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>speedith.diabelli</code-name-base>
+                    <code-name-base>speedith.diabelli.libraries</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
