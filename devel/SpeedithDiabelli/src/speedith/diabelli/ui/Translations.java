@@ -24,19 +24,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.i3p.ui;
+package speedith.diabelli.ui;
 
 import java.util.Locale;
 
 /**
  * This class provides translated strings for the SpeedithI3P module.
  * <p>To use internationalised strings in SpeedithI3P, import the
- * {@link speedith.i3p.ui.Translations#i18n(String) i18n} and similar methods like this:</p>
- * {@code import static speedith.i3p.ui.Translations.*; }
+ * {@link speedith.diabelli.ui.Translations#i18n(String) i18n} and similar methods like this:</p>
+ * {@code import static speedith.diabelli.ui.Translations.*; }
  * <p>and use it anywhere in your code, like this:</p>
  * {@code i18n("STRING_RESOURCE_KEY"); }
- * <p>Additional strings can be added to the {@code "speedith/i3p/ui/Bundle"}
- * bundle (see {@link speedith.i3p.ui.Translations#StringsBundle}).</p>
+ * <p>Additional strings can be added to the {@code "speedith/diabelli/ui/Bundle"}
+ * bundle (see {@link speedith.diabelli.ui.Translations#StringsBundle}).</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public final class Translations {
@@ -50,7 +50,7 @@ public final class Translations {
     /**
      * The path to the bundle which contains translations for SpeedithI3P.
      */
-    public static final String StringsBundle = "speedith/i3p/ui/Bundle";
+    public static final String StringsBundle = "speedith/diabelli/ui/Bundle";
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Translated Strings">

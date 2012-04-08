@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.i3p.ui;
+package speedith.diabelli.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,15 +44,15 @@ import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import speedith.core.lang.reader.ReadingException;
-import static speedith.i3p.ui.Translations.i18n;
+import static speedith.diabelli.ui.Translations.i18n;
 
 /**
  * Top component which displays something.
  */
-@ConvertAsProperties(dtd = "-//speedith.i3p.ui//Speedith//EN", autostore = false)
-@TopComponent.Description(preferredID = "SpeedithTopComponent", iconBase = "speedith/i3p/ui/SpeedithIconVennDiagram-16.png")
+@ConvertAsProperties(dtd = "-//speedith.diabelli.ui//Speedith//EN", autostore = false)
+@TopComponent.Description(preferredID = "SpeedithTopComponent", iconBase = "speedith/diabelli/ui/SpeedithIconVennDiagram-16.png")
 @TopComponent.Registration(mode = "explorer", openAtStartup = true, position = 60)
-@ActionID(category = "Window", id = "speedith.i3p.ui.SpeedithTopComponent")
+@ActionID(category = "Window", id = "speedith.diabelli.ui.SpeedithTopComponent")
 @ActionReference(path = "Menu/Window", position = 300)
 @TopComponent.OpenActionRegistration(displayName = "#CTL_SpeedithAction", preferredID = "SpeedithTopComponent")
 public class SpeedithTopComponent extends TopComponent {

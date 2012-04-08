@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-OpenIDE-Module: speedith.i3p/1
-OpenIDE-Module-Implementation-Version: 1
-OpenIDE-Module-Layer: speedith/i3p/layer.xml
-OpenIDE-Module-Localizing-Bundle: speedith/i3p/Bundle.properties
-OpenIDE-Module-Requires: org.openide.windows.WindowManager
-

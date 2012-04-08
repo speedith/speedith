@@ -3,7 +3,7 @@
     <type>org.netbeans.modules.apisupport.project</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/nb-module-project/3">
-            <code-name-base>speedith.i3p</code-name-base>
+            <code-name-base>speedith.diabelli</code-name-base>
             <suite-component/>
             <module-dependencies>
                 <dependency>
@@ -83,7 +83,7 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
-                <package>speedith.i3p.ui</package>
+                <package>speedith.diabelli.ui</package>
             </public-packages>
         </data>
     </configuration>

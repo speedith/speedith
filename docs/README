@@ -118,3 +118,20 @@ To build and run Speedith, perform the following steps:
 2.  Run Speedith (again from the root folder of the `Speedith` repository):
 
             java -cp "./devel/Speedith.Core/dist/Speedith.Core.jar:./antlr-3.3/runtime/Java/target/antlr-runtime-3.3.jar:./commons-cli-1.2/commons-cli-1.2.jar:./devel/Speedith/dist/Speedith.jar:../inductive_circles/devel/iCircles/dist/iCircles.jar" speedith.Main
+
+
+
+
+--------------------------------------------------------------------------------
+
+# Using _Hyperblocks_ #
+
+The Blocksworld component requires an past version of JOGL (both the Java JAR
+package and related platform-specific binaries). This can be obtained through
+the installation package provided through Openbox. For example, the RPM package
+`LPL-11_09-linux-rpm-installer.sh` will install the `jogl` binaries in the
+folder `/usr/share/OP-jre/lib/i386/` (this folder must be placed into
+`java.libs.path` or you can create a symbolic link from one of the existing
+empty folders in the path, for example `/usr/java/packages/lib/i386` on Fedora
+16). To obtain the Java JAR `jogl.jar` package, contact
+[Stanford CSLI](http://www-csli.stanford.edu/hp/).
