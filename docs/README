@@ -124,6 +124,16 @@ To build and run Speedith, perform the following steps:
 
 --------------------------------------------------------------------------------
 
+# Building _Diabelli_ #
+
+Diabelli currently depends on _I3P_. The sources of the I3P framework are
+available from [the I3P's official web page](http://www-pu.informatik.uni-tuebingen.de/i3p/).
+
+
+
+
+--------------------------------------------------------------------------------
+
 # Using _Hyperblocks_ #
 
 The Blocksworld component requires an past version of JOGL (both the Java JAR
