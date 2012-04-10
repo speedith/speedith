@@ -206,7 +206,7 @@ public class SpeedithTopComponent extends TopComponent {
             synchronized (delayTimer) {
                 delayTimer.stop();
             }
-            fireDiagramDrawing();
+//            fireDiagramDrawing();
         }
     }
 

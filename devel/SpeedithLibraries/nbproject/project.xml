@@ -16,17 +16,10 @@
                 <package>icircles.recomposition</package>
                 <package>icircles.test</package>
                 <package>icircles.util</package>
-                <package>org.antlr</package>
-                <package>org.antlr.analysis</package>
-                <package>org.antlr.codegen</package>
-                <package>org.antlr.grammar.v2</package>
-                <package>org.antlr.grammar.v3</package>
-                <package>org.antlr.misc</package>
                 <package>org.antlr.runtime</package>
                 <package>org.antlr.runtime.debug</package>
                 <package>org.antlr.runtime.misc</package>
                 <package>org.antlr.runtime.tree</package>
-                <package>org.antlr.tool</package>
                 <package>org.apache.commons.cli</package>
                 <package>speedith</package>
                 <package>speedith.cli</package>
@@ -52,10 +45,6 @@
             <class-path-extension>
                 <runtime-relative-path>ext/commons-cli.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-cli.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/antlr3.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/antlr3.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/iCircles.jar</runtime-relative-path>

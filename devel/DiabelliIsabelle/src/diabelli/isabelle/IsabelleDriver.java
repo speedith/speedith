@@ -25,33 +25,30 @@
 package diabelli.isabelle;
 
 import diabelli.Diabelli;
-import diabelli.GoalsManager;
 import diabelli.components.DiabelliComponent;
 import diabelli.components.util.BareGoalProvidingReasoner;
-import diabelli.logic.Goals;
-import isabelle.*;
-import isabelle.XML.Elem;
-import isabelle.XML.Tree;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Timer;
+import org.isabelle.iapp.facade.CentralEventDispatcher;
 import org.isabelle.iapp.facade.IAPP;
-import org.isabelle.iapp.process.Message;
-import org.isabelle.iapp.process.ProverManager;
-import org.isabelle.iapp.process.ProverMessageListener;
+import org.isabelle.iapp.installations.Configuration;
+import org.isabelle.iapp.process.*;
 import org.isabelle.iapp.process.features.InjectedCommands;
 import org.isabelle.iapp.process.features.InjectionFinishListener;
 import org.isabelle.iapp.process.features.InjectionResult;
+import org.isabelle.iapp.process.features.InjectionResultListener;
+import org.isabelle.iapp.proofdocument.StateChangeEvent;
+import org.isabelle.iapp.proofdocument.StateListener;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
-import scala.Function1;
-import scala.collection.immutable.List;
+import org.openide.windows.TopComponent;
 
 /**
  * This is the main class of the Isabelle driver for Diabelli. It provides
@@ -151,7 +148,7 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
      * notifications of the completion of the request to Isabelle that it should
      * return current goals.
      */
-    private class IsabelleMessageListener extends InjectionFinishListener implements ProverMessageListener, ActionListener {
+    private class IsabelleMessageListener extends InjectionFinishListener implements StateListener, ActionListener, PropertyChangeListener {
 
         public static final String DIABELLI_ISABELLE_RESPONSE_GOAL = "DiabelliResponse: Goal: ";
         private static final String DIABELLI_ISABELLE_RESPONSE = "DiabelliResponse: ";
@@ -160,22 +157,10 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
 
         IsabelleMessageListener() {
             // Start listening for goal changes in Isabelle:
-            getProver().addProverMessageListener(this);
+            CentralEventDispatcher centralEvents = IAPP.getInstance().getCentralEvents();
+            centralEvents.addStateListener(this);
+            TopComponent.getRegistry().addPropertyChangeListener(this);
             delayer = new Timer(DelayMillis, this);
-        }
-
-        @Override
-        public void proverMessage(Message res) {
-            synchronized (delayer) {
-                // We've got to check that the message isn't a Diabelli
-                // response. The thing is that we can get an endless loop of
-                // goal-fetches if we don't ignore messages that are actually
-                // responses to Diabelli. All responses to Diabelli have
-                // the string "DiabelliResponse: " at the beginning.
-                if (!res.getText().startsWith(DIABELLI_ISABELLE_RESPONSE)) {
-                    delayer.restart();
-                }
-            }
         }
 
         @Override
@@ -183,6 +168,7 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
             synchronized (delayer) {
                 delayer.stop();
             }
+            Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "Sending a goals request...");
             fetchGoalsFromIsabelle();
         }
 
@@ -199,387 +185,11 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
                         if (message.getText() != null && message.getText().startsWith(DIABELLI_ISABELLE_RESPONSE_GOAL)) {
                             String strangeXML = message.getText().substring(DIABELLI_ISABELLE_RESPONSE_GOAL.length());
                             String strangeXML2 = unembedControls(strangeXML);
-                            final Tree tree = YXML.parse(strangeXML2);
-                            isabelle.Term_XML$Decode$ a = new Term_XML$Decode$();
-                            scala.collection.immutable.List<Tree> treeList = scala.collection.immutable.List.tabulate(0, new Function1<Integer, Tree>() {
-
-                                @Override
-                                public Tree apply(Integer t1) {
-                                    return tree;
-                                }
-
-                                @Override
-                                public <A> Function1<A, Tree> compose(Function1<A, Integer> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Integer, A> andThen(Function1<Tree, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public void apply$mcVI$sp(int i) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public boolean apply$mcZI$sp(int i) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public int apply$mcII$sp(int i) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public float apply$mcFI$sp(int i) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public long apply$mcLI$sp(int i) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public double apply$mcDI$sp(int i) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public void apply$mcVL$sp(long l) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public boolean apply$mcZL$sp(long l) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public int apply$mcIL$sp(long l) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public float apply$mcFL$sp(long l) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public long apply$mcLL$sp(long l) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public double apply$mcDL$sp(long l) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public void apply$mcVF$sp(float f) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public boolean apply$mcZF$sp(float f) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public int apply$mcIF$sp(float f) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public float apply$mcFF$sp(float f) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public long apply$mcLF$sp(float f) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public double apply$mcDF$sp(float f) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public void apply$mcVD$sp(double d) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public boolean apply$mcZD$sp(double d) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public int apply$mcID$sp(double d) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public float apply$mcFD$sp(double d) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public long apply$mcLD$sp(double d) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public double apply$mcDD$sp(double d) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Object> compose$mcVI$sp(Function1<A, Integer> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Boolean> compose$mcZI$sp(Function1<A, Integer> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Integer> compose$mcII$sp(Function1<A, Integer> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Float> compose$mcFI$sp(Function1<A, Integer> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Long> compose$mcLI$sp(Function1<A, Integer> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Double> compose$mcDI$sp(Function1<A, Integer> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Object> compose$mcVL$sp(Function1<A, Long> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Boolean> compose$mcZL$sp(Function1<A, Long> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Integer> compose$mcIL$sp(Function1<A, Long> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Float> compose$mcFL$sp(Function1<A, Long> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Long> compose$mcLL$sp(Function1<A, Long> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Double> compose$mcDL$sp(Function1<A, Long> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Object> compose$mcVF$sp(Function1<A, Float> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Boolean> compose$mcZF$sp(Function1<A, Float> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Integer> compose$mcIF$sp(Function1<A, Float> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Float> compose$mcFF$sp(Function1<A, Float> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Long> compose$mcLF$sp(Function1<A, Float> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Double> compose$mcDF$sp(Function1<A, Float> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Object> compose$mcVD$sp(Function1<A, Double> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Boolean> compose$mcZD$sp(Function1<A, Double> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Integer> compose$mcID$sp(Function1<A, Double> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Float> compose$mcFD$sp(Function1<A, Double> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Long> compose$mcLD$sp(Function1<A, Double> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<A, Double> compose$mcDD$sp(Function1<A, Double> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Integer, A> andThen$mcVI$sp(Function1<Object, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Integer, A> andThen$mcZI$sp(Function1<Boolean, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Integer, A> andThen$mcII$sp(Function1<Integer, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Integer, A> andThen$mcFI$sp(Function1<Float, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Integer, A> andThen$mcLI$sp(Function1<Long, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Integer, A> andThen$mcDI$sp(Function1<Double, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Long, A> andThen$mcVL$sp(Function1<Object, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Long, A> andThen$mcZL$sp(Function1<Boolean, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Long, A> andThen$mcIL$sp(Function1<Integer, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Long, A> andThen$mcFL$sp(Function1<Float, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Long, A> andThen$mcLL$sp(Function1<Long, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Long, A> andThen$mcDL$sp(Function1<Double, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Float, A> andThen$mcVF$sp(Function1<Object, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Float, A> andThen$mcZF$sp(Function1<Boolean, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Float, A> andThen$mcIF$sp(Function1<Integer, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Float, A> andThen$mcFF$sp(Function1<Float, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Float, A> andThen$mcLF$sp(Function1<Long, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Float, A> andThen$mcDF$sp(Function1<Double, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Double, A> andThen$mcVD$sp(Function1<Object, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Double, A> andThen$mcZD$sp(Function1<Boolean, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Double, A> andThen$mcID$sp(Function1<Integer, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Double, A> andThen$mcFD$sp(Function1<Float, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Double, A> andThen$mcLD$sp(Function1<Long, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-
-                                @Override
-                                public <A> Function1<Double, A> andThen$mcDD$sp(Function1<Double, A> fnctn) {
-                                    throw new UnsupportedOperationException("Not supported yet.");
-                                }
-                            });
-                            Term.Term t = a.term().apply(treeList);
-                            Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "WTF: {0}", t.toString());
+                            Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "Got diabelli response: {0}", strangeXML2);
+//                            final Tree tree = YXML.parse(strangeXML2);
+//                            isabelle.Term_XML$Decode$ a = new Term_XML$Decode$();
+//                            Term.Term t = a.term().apply(tree);
+//                            Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "WTF: {0}", t.toString());
                         }
                     }
                 }
@@ -587,11 +197,39 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
                 throw new RuntimeException(Bundle.ID_isabelle_goals_not_obtained(), ex);
             }
         }
+
+        @Override
+        public void stateChanged(StateChangeEvent ev) {
+            Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "State Changed: {0}", ev.toString());
+            synchronized (delayer) {
+                // We've got to check that the message isn't a Diabelli
+                // response. The thing is that we can get an endless loop of
+                // goal-fetches if we don't ignore messages that are actually
+                // responses to Diabelli. All responses to Diabelli have
+                // the string "DiabelliResponse: " at the beginning.
+//                if (!ev..getText().startsWith(DIABELLI_ISABELLE_RESPONSE)) {
+                delayer.restart();
+//                }
+            }
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if ("activated".equals(evt.getPropertyName())) {
+                TopComponent activated = TopComponent.getRegistry().getActivated();
+                if (activated instanceof org.isabelle.theoryeditor.TheoryEditor) {
+                    requestActive();
+                    Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "Activated window: {0} ({1})", new Object[]{activated.getDisplayName(), activated.getClass().getCanonicalName()});
+                }
+            }
+        }
     }
 
     /**
      * Unembeds control characters from the embedded YXML string. Use this on
-     * the YXML string before you pass it on to {@link YXML#parse(java.lang.CharSequence) }.
+     * the YXML string before you pass it on to {@link YXML#parse(java.lang.CharSequence)
+     * }.
+     *
      * @param s the YXML string to unembed.
      * @return the unembedded version of the given YXML string.
      */
@@ -620,6 +258,8 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
             }
         }
         return sb.toString();
+
+
     }
 
     /**
@@ -634,5 +274,9 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
         // Check for new goals (asynchronously)...
         fireFetchGoals();
     }
-    // </editor-fold>
+
+    private void requestActive() {
+        Lookup.getDefault().lookup(Diabelli.class).getReasonersManager().requestActive(this);
+    }
+// </editor-fold>
 }
