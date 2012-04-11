@@ -27,6 +27,8 @@ package diabelli.isabelle;
 import diabelli.Diabelli;
 import diabelli.components.DiabelliComponent;
 import diabelli.components.util.BareGoalProvidingReasoner;
+import diabelli.isabelle.pure.lib.TermYXML;
+import isabelle.Term.Term;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -128,18 +130,6 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
     }
 
     /**
-     * Tries to obtain current goals from the Isabelle process.
-     */
-    private void fireFetchGoals() {
-        try {
-            InjectionResult cmd = executeCommand("GoalsExport.i3p_write_sds_goals ()");
-            cmd.addInjectionResultListener(new IsabelleMessageListener());
-        } catch (UnsupportedOperationException uoex) {
-            Exceptions.attachSeverity(uoex, Level.INFO);
-        }
-    }
-
-    /**
      * This class listens for messages from Isabelle. There are plenty of
      * messages being exchanged all the time. This listener uses a delay
      * mechanism to prevent redundant goal updates when there is an onslaught of
@@ -161,13 +151,14 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
             centralEvents.addStateListener(this);
             TopComponent.getRegistry().addPropertyChangeListener(this);
             delayer = new Timer(DelayMillis, this);
+            delayer.setRepeats(false);
+            delayer.setCoalesce(true);
+            delayer.setInitialDelay(DelayMillis);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            synchronized (delayer) {
-                delayer.stop();
-            }
+            delayer.stop();
             Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "Sending a goals request...");
             fetchGoalsFromIsabelle();
         }
@@ -183,9 +174,10 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
                     for (Message message : results) {
                         Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "Got the following reply from Isabelle: {0}", message.getText());
                         if (message.getText() != null && message.getText().startsWith(DIABELLI_ISABELLE_RESPONSE_GOAL)) {
-                            String strangeXML = message.getText().substring(DIABELLI_ISABELLE_RESPONSE_GOAL.length());
-                            String strangeXML2 = unembedControls(strangeXML);
-                            Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "Got diabelli response: {0}", strangeXML2);
+                            String escapedYXML = message.getText().substring(DIABELLI_ISABELLE_RESPONSE_GOAL.length());
+                            String unescapedYXML = TermYXML.unescapeControlChars(escapedYXML);
+                            Term term = TermYXML.parseYXML(unescapedYXML);
+                            Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "Got diabelli response: {0} :: Term {1}", new Object[]{unescapedYXML, term});
 //                            final Tree tree = YXML.parse(strangeXML2);
 //                            isabelle.Term_XML$Decode$ a = new Term_XML$Decode$();
 //                            Term.Term t = a.term().apply(tree);
@@ -201,16 +193,7 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
         @Override
         public void stateChanged(StateChangeEvent ev) {
             Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "State Changed: {0}", ev.toString());
-            synchronized (delayer) {
-                // We've got to check that the message isn't a Diabelli
-                // response. The thing is that we can get an endless loop of
-                // goal-fetches if we don't ignore messages that are actually
-                // responses to Diabelli. All responses to Diabelli have
-                // the string "DiabelliResponse: " at the beginning.
-//                if (!ev..getText().startsWith(DIABELLI_ISABELLE_RESPONSE)) {
-                delayer.restart();
-//                }
-            }
+            delayer.restart();
         }
 
         @Override
@@ -218,48 +201,11 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
             if ("activated".equals(evt.getPropertyName())) {
                 TopComponent activated = TopComponent.getRegistry().getActivated();
                 if (activated instanceof org.isabelle.theoryeditor.TheoryEditor) {
-                    requestActive();
                     Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "Activated window: {0} ({1})", new Object[]{activated.getDisplayName(), activated.getClass().getCanonicalName()});
+                    requestActive();
                 }
             }
         }
-    }
-
-    /**
-     * Unembeds control characters from the embedded YXML string. Use this on
-     * the YXML string before you pass it on to {@link YXML#parse(java.lang.CharSequence)
-     * }.
-     *
-     * @param s the YXML string to unembed.
-     * @return the unembedded version of the given YXML string.
-     */
-    @NbBundle.Messages({
-        "ID_yxml_invalid_controls=The YXML string contains illegal embedded control characters."
-    })
-    public static String unembedControls(CharSequence s) {
-        int length = s.length();
-        StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            char c = s.charAt(i);
-            if (c == 192) {
-                i++;
-                if (i < length) {
-                    c = (char) (s.charAt(i) - 128);
-                    if (c == 5 || c == 6) {
-                        sb.append(c);
-                    } else {
-                        sb.append(s.charAt(i - 1)).append(s.charAt(i));
-                    }
-                } else {
-                    sb.append(c);
-                }
-            } else {
-                sb.append(c);
-            }
-        }
-        return sb.toString();
-
-
     }
 
     /**
@@ -267,12 +213,12 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
      * XML dump of the term trees.
      */
     private void fetchGoalsFromIsabelle() {
-        // TODO: Focus request should happen only when the user enters an Isabelle
-        // editor...
-        Diabelli diabelli = Lookup.getDefault().lookup(Diabelli.class);
-        diabelli.getReasonersManager().requestActive(this);
-        // Check for new goals (asynchronously)...
-        fireFetchGoals();
+        try {
+            InjectionResult cmd = executeCommand("GoalsExport.i3p_write_sds_goals ()");
+            cmd.addInjectionResultListener(isabelleListener);
+        } catch (UnsupportedOperationException uoex) {
+            Exceptions.attachSeverity(uoex, Level.INFO);
+        }
     }
 
     private void requestActive() {
