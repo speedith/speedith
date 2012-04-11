@@ -79,7 +79,7 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
     }
     //</editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Isabelle Monitoring">
+    // <editor-fold defaultstate="collapsed" desc="Isabelle Goal-Change Monitoring">
     /**
      * Tries to fetch the current prover. It will throw an exception if the
      * prover could not have been obtained for any reason. <p>This prover is
@@ -145,6 +145,10 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
         private static final int DelayMillis = 500;
         private final Timer delayer;
 
+        /**
+         * <span style="font-weight:bold">Do not create new instances of this class.</span>
+         * Use the one provided in {@link IsabelleDriver#isabelleListener}.
+         */
         IsabelleMessageListener() {
             // Start listening for goal changes in Isabelle:
             CentralEventDispatcher centralEvents = IAPP.getInstance().getCentralEvents();
@@ -156,6 +160,14 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
             delayer.setInitialDelay(DelayMillis);
         }
 
+        /**
+         * This is invoked by the ``delay timer'', which is started (and reset)
+         * upon every {@link IsabelleMessageListener#stateChanged(org.isabelle.iapp.proofdocument.StateChangeEvent) state change event}.
+         * The reason for delaying this action is to merge an avalanche of state
+         * change events into a single request to Isabelle to give us its current
+         * goals.
+         * @param e 
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             delayer.stop();
@@ -163,6 +175,11 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
             fetchGoalsFromIsabelle();
         }
 
+        /**
+         * This method receives Isabelle's response, which gives us the YXML
+         * format of the current goals in Isabelle.
+         * @param inj 
+         */
         @Override
         @NbBundle.Messages({
             "ID_isabelle_goals_not_obtained=Could not fetch the list of goals from Isabelle. A communication error occurred."
@@ -172,16 +189,14 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
                 Message[] results = inj.getResults();
                 if (results != null) {
                     for (Message message : results) {
+                        // TODO: Build the goals collection...
                         Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "Got the following reply from Isabelle: {0}", message.getText());
                         if (message.getText() != null && message.getText().startsWith(DIABELLI_ISABELLE_RESPONSE_GOAL)) {
                             String escapedYXML = message.getText().substring(DIABELLI_ISABELLE_RESPONSE_GOAL.length());
                             String unescapedYXML = TermYXML.unescapeControlChars(escapedYXML);
                             Term term = TermYXML.parseYXML(unescapedYXML);
                             Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "Got diabelli response: {0} :: Term {1}", new Object[]{unescapedYXML, term});
-//                            final Tree tree = YXML.parse(strangeXML2);
-//                            isabelle.Term_XML$Decode$ a = new Term_XML$Decode$();
-//                            Term.Term t = a.term().apply(tree);
-//                            Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "WTF: {0}", t.toString());
+                            // TODO: Add the term into the set of current goals.
                         }
                     }
                 }
@@ -190,12 +205,25 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
             }
         }
 
+        /**
+         * This method is invoked by I3P when the state of the Isabelle prover
+         * changes. Typically, only user's interaction (like issuing commands
+         * etc.) triggers an avalanche of state changes. After the avalanche is
+         * over, no state changes should happen before another user-interaction.
+         * @param ev 
+         */
         @Override
         public void stateChanged(StateChangeEvent ev) {
             Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "State Changed: {0}", ev.toString());
             delayer.restart();
         }
 
+        /**
+         * Listens for TopComponent activations. It looks whether an I3P
+         * Isabelle theory editor has been activated by the user (i.e., whether
+         * the user has started editing an Isabelle theory editor).
+         * @param evt 
+         */
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if ("activated".equals(evt.getPropertyName())) {
@@ -221,6 +249,10 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
         }
     }
 
+    /**
+     * Asks Diabelli to make this reasoner the active one. This method is called
+     * when the user starts editing Isabelle theory files in I3P.
+     */
     private void requestActive() {
         Lookup.getDefault().lookup(Diabelli.class).getReasonersManager().requestActive(this);
     }
