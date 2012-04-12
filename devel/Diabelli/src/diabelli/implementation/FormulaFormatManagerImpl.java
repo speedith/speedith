@@ -1,5 +1,5 @@
 /*
- * File name: Goal.java
+ * File name: Class.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -22,28 +22,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package diabelli.logic;
+package diabelli.implementation;
 
-import diabelli.components.GoalProvidingReasoner;
-import java.util.List;
+import diabelli.FormulaFormatManager;
 
 /**
- * Represents a proof goal (with premises and conclusions) that are being
- * tackled in a {@link GoalProvidingReasoner goal-providing reasoner}.
+ * Diabelli's main implementation of the {@link FormulaFormatManager}.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class Goal {
-    
-    // TODO: Implement the rest of the Goal class.
-    
-    // <editor-fold defaultstate="collapsed" desc="Public Methods">
-    public List<Formula> getPremises() {
-        return null;
+class FormulaFormatManagerImpl implements FormulaFormatManager {
+
+    public FormulaFormatManagerImpl() {
     }
     
-    public Formula getConclusion() {
-        return null;
-    }
-    // </editor-fold>
+    // TODO: Add methods for registering new formats, listing all of them, and
+    // getting them.
     
 }

@@ -1,5 +1,5 @@
 /*
- * File name: Goal.java
+ * File name: FormulaFormatManager.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -22,28 +22,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package diabelli.logic;
+package diabelli;
 
-import diabelli.components.GoalProvidingReasoner;
-import java.util.List;
+import diabelli.logic.FormulaFormatDescriptor;
+import diabelli.logic.FormulaRepresentation;
 
 /**
- * Represents a proof goal (with premises and conclusions) that are being
- * tackled in a {@link GoalProvidingReasoner goal-providing reasoner}.
+ * Provides a central mechanism for registering known {@link
+ * FormulaFormatDescriptor formula formats}. This provides a way for
+ * identifying, translating, and understanding of {@link FormulaRepresentation formulae}
+ * in different formats. Since Diabelli's main goal is to connect different
+ * reasoners, all of which may understand different representations, this class
+ * provides a solution for ease of translation between the reasoners.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class Goal {
-    
-    // TODO: Implement the rest of the Goal class.
-    
-    // <editor-fold defaultstate="collapsed" desc="Public Methods">
-    public List<Formula> getPremises() {
-        return null;
-    }
-    
-    public Formula getConclusion() {
-        return null;
-    }
-    // </editor-fold>
+public interface FormulaFormatManager {
     
 }

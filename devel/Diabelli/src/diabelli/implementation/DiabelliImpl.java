@@ -25,6 +25,7 @@
 package diabelli.implementation;
 
 import diabelli.Diabelli;
+import diabelli.FormulaFormatManager;
 import diabelli.GoalsManager;
 import diabelli.ReasonersManager;
 import diabelli.components.DiabelliComponent;
@@ -68,6 +69,7 @@ public final class DiabelliImpl implements Diabelli {
     // <editor-fold defaultstate="collapsed" desc="Managers Fields">
     private final ReasonersManager reasonersManager;
     private final GoalsManager goalManager;
+    private final FormulaFormatManager formulaFormatManager;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
@@ -77,6 +79,7 @@ public final class DiabelliImpl implements Diabelli {
         // Initialise all managers:
         reasonersManager = new ReasonersManagerImpl(this);
         goalManager = new GoalsManagerImpl(this, reasonersManager);
+        formulaFormatManager = new FormulaFormatManagerImpl();
 
         // First create an empty list of components (then wait for them to
         // register or deregister).
@@ -99,6 +102,11 @@ public final class DiabelliImpl implements Diabelli {
     @Override
     public Set<? extends DiabelliComponent> getRegisteredComponents() {
         return Collections.unmodifiableSet(components);
+    }
+
+    @Override
+    public FormulaFormatManager getFormulaFormatManager() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     // </editor-fold>
 

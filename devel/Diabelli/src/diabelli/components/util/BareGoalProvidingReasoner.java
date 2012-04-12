@@ -28,13 +28,15 @@ import diabelli.components.GoalProvidingReasoner;
 import diabelli.logic.Goals;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.RandomAccess;
+import org.openide.util.Lookup;
 
 /**
  * Provides a <span style="font-style:italic;">bare</span> (partial and convenience)
  * implementation of the {@link GoalProvidingReasoner} interface.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public abstract class BareGoalProvidingReasoner implements GoalProvidingReasoner {
+public abstract class BareGoalProvidingReasoner implements GoalProvidingReasoner, RandomAccess {
     
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private Goals goals;
@@ -59,6 +61,15 @@ public abstract class BareGoalProvidingReasoner implements GoalProvidingReasoner
             this.goals = goals;
             fireCurrentGoalsChangedEvent(oldGoals);
         }
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Protected Helper Methods">
+    /**
+     * Asks Diabelli to make this reasoner the active one.
+     */
+    protected void requestActive() {
+        Lookup.getDefault().lookup(diabelli.Diabelli.class).getReasonersManager().requestActive(this);
     }
     // </editor-fold>
     
