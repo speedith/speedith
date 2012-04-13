@@ -24,6 +24,8 @@
  */
 package diabelli;
 
+import diabelli.components.GoalProvidingReasoner;
+import diabelli.logic.Goal;
 import diabelli.logic.Goals;
 import java.beans.PropertyChangeListener;
 import org.openide.util.Lookup;

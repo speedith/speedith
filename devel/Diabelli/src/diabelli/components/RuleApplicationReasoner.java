@@ -25,7 +25,7 @@
 package diabelli.components;
 
 /**
- * Reasoners of this kind can take a goal from a {@link GoalBasedReasoner goal-based
+ * Reasoners of this kind can take a goal from a {@link GoalProvidingReasoner goal-providing
  * reasoner}, give it to the user to interactively apply inference rules on it,
  * and then give the changed goal back to the goal-based reasoner.
  * @author Matej Urbas [matej.urbas@gmail.com]

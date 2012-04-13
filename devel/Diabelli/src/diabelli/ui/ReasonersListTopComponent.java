@@ -27,8 +27,11 @@ package diabelli.ui;
 import diabelli.Diabelli;
 import diabelli.components.DiabelliComponent;
 import diabelli.components.Reasoner;
+import static diabelli.ui.Bundle.ReasonersNode_reasoner_null;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
@@ -47,9 +50,6 @@ import org.openide.util.LookupListener;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.Lookups;
 import org.openide.windows.TopComponent;
-import static diabelli.ui.Bundle.*;
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * Top component which displays something.
@@ -67,7 +67,7 @@ persistenceType = TopComponent.PERSISTENCE_ALWAYS)
 @TopComponent.OpenActionRegistration(displayName = "#CTL_ReasonersListAction",
 preferredID = "ReasonersListTopComponent")
 @Messages({
-    "CTL_ReasonersListAction=ReasonersList",
+    "CTL_ReasonersListAction=Diabelli Reasoners",
     "CTL_ReasonersListTopComponent=Diabelli Reasoners",
     "HINT_ReasonersListTopComponent=This is a list of all Diabelli components (reasoners, presenters, etc.)."
 })
@@ -90,6 +90,8 @@ public final class ReasonersListTopComponent extends TopComponent implements Exp
         InputMap keys = this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         this.lookup = ExplorerUtils.createLookup(this.em, map);
         this.associateLookup(this.lookup);
+        
+        
         Children children = new ReasonersRootNode();
         Node root = new AbstractNode(children);
         this.em.setRootContext(root);

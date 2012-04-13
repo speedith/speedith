@@ -28,14 +28,15 @@ import diabelli.Diabelli;
 import diabelli.GoalsManager;
 import diabelli.ReasonersManager;
 import diabelli.components.GoalProvidingReasoner;
+import static diabelli.implementation.Bundle.GM_reasoners_manager_null;
+import static diabelli.implementation.Bundle.RM_diabelli_null;
 import diabelli.logic.Goals;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import org.openide.util.NbBundle;
-import static diabelli.implementation.Bundle.*;
-import java.beans.PropertyChangeEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.openide.util.NbBundle;
 
 /**
  * The main implementation of the {@link GoalsManager Diabelli goal manager
@@ -85,6 +86,7 @@ class GoalsManagerImpl implements GoalsManager {
     // <editor-fold defaultstate="collapsed" desc="Property Changed Event Stuff">
     private void fireCurrentGoalsChangedEvent(Goals oldGoals) {
         pcs.firePropertyChange(CurrentGoalsChangedEvent, oldGoals, currentGoals);
+        Logger.getLogger(GoalsManagerImpl.class.getName()).log(Level.INFO, "Goals changed.");
     }
 
     @Override

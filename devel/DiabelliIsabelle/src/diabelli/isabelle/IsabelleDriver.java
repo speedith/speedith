@@ -24,21 +24,21 @@
  */
 package diabelli.isabelle;
 
-import diabelli.Diabelli;
 import diabelli.components.DiabelliComponent;
 import diabelli.components.util.BareGoalProvidingReasoner;
 import diabelli.isabelle.pure.lib.TermYXML;
+import diabelli.logic.*;
 import isabelle.Term.Term;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Timer;
 import org.isabelle.iapp.facade.CentralEventDispatcher;
 import org.isabelle.iapp.facade.IAPP;
-import org.isabelle.iapp.installations.Configuration;
 import org.isabelle.iapp.process.*;
 import org.isabelle.iapp.process.features.InjectedCommands;
 import org.isabelle.iapp.process.features.InjectionFinishListener;
@@ -47,7 +47,6 @@ import org.isabelle.iapp.process.features.InjectionResultListener;
 import org.isabelle.iapp.proofdocument.StateChangeEvent;
 import org.isabelle.iapp.proofdocument.StateListener;
 import org.openide.util.Exceptions;
-import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.TopComponent;
@@ -60,9 +59,17 @@ import org.openide.windows.TopComponent;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 @ServiceProvider(service = DiabelliComponent.class)
+@NbBundle.Messages({
+    "IsabelleDriver_term_format_pretty_name=Isabelle term"
+})
 public class IsabelleDriver extends BareGoalProvidingReasoner {
-    //<editor-fold defaultstate="collapsed" desc="Fields">
 
+    //<editor-fold defaultstate="collapsed" desc="Fields">
+    /**
+     * The name of Isabelle's 2011-1 term tree format. This name is used in {@link FormulaFormatDescriptor#getFormatName()}.
+     */
+    public static final String TermFormatName = "Isabelle2011_1_term_tree";
+    private static final FormulaFormatDescriptor TermFormatDescriptor = new FormulaFormatDescriptor(TermFormatName, Bundle.IsabelleDriver_term_format_pretty_name());
     private IsabelleMessageListener isabelleListener;
     //</editor-fold>
 
@@ -190,6 +197,7 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
             try {
                 Message[] results = inj.getResults();
                 if (results != null) {
+                    ArrayList<Goal> goals = new ArrayList<Goal>();
                     for (Message message : results) {
                         // TODO: Build the goals collection...
                         Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "Got the following reply from Isabelle: {0}", message.getText());
@@ -199,8 +207,11 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
                             Term term = TermYXML.parseYXML(unescapedYXML);
                             Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "Got diabelli response: {0} :: Term {1}", new Object[]{unescapedYXML, term});
                             // TODO: Add the term into the set of current goals.
+                            Goal curGoal = new Goal(null, null, new Formula(new FormulaRepresentation<Term>(term, TermFormatDescriptor)));
+                            goals.add(curGoal);
                         }
                     }
+                    setGoals(new Goals(goals));
                 }
             } catch (InterruptedException ex) {
                 throw new RuntimeException(Bundle.ID_isabelle_goals_not_obtained(), ex);

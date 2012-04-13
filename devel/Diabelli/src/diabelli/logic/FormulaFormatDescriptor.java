@@ -38,6 +38,7 @@ public class FormulaFormatDescriptor {
     
     //<editor-fold defaultstate="collapsed" desc="Fields">
     private final String formatName;
+    private final String prettyName;
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
@@ -45,15 +46,21 @@ public class FormulaFormatDescriptor {
      * Creates a new formula format descriptor.
      * @param formatName the {@link FormulaFormatDescriptor#getFormatName() name
      * of this format}.
+     * @param prettyName  
      */
     @NbBundle.Messages({
-        "FFD_format_name_null_or_empty=The name of the format must not be null or empty."
+        "FFD_format_name_null_or_empty=The name of the format must not be null or empty.",
+        "FFD_pretty_name_null_or_empty=The human-readable name of the format must not be null or empty."
     })
-    public FormulaFormatDescriptor(@NonNull String formatName) {
+    public FormulaFormatDescriptor(@NonNull String formatName, @NonNull String prettyName) {
         if (formatName == null || formatName.isEmpty()) {
             throw new IllegalArgumentException(Bundle.FFD_format_name_null_or_empty());
         }
+        if (prettyName == null) {
+            throw new IllegalArgumentException(Bundle.FFD_pretty_name_null_or_empty());
+        }
         this.formatName = formatName;
+        this.prettyName = prettyName;
     }
     //</editor-fold>
     
@@ -70,7 +77,7 @@ public class FormulaFormatDescriptor {
      * Isabelle2011_1_term_tree,</li> <li>Isabelle 2011-1 pretty formula string:
      * Isabelle2011_1_pretty_string,</li> <li>Speedith's spider diagram objects:
      * Speedith_sd, and</li> <li>Speedith's spider diagram text format:
-     * Speedith_sd_text,</li> </ul></p>
+     * Speedith_sd_text.</li> </ul></p>
      * @return the name of the format.
      */
     @NonNull
@@ -78,6 +85,25 @@ public class FormulaFormatDescriptor {
         return formatName;
     }
     
+    /**
+     * Returns a human-readable name of this formula format. This string will be
+     * displayed to the user in the GUI.
+     * 
+     * <p>Some examples: <ul> <li>Isabelle 2011-1 term tree:
+     *  <span
+     * style="font-style:italic;">Isabelle</span>,</li> <li>Isabelle 2011-1 pretty formula string:
+     *  <span style="font-style:italic;">Isabelle (pretty
+     * text)</span>,</li> <li>Speedith's spider diagram objects:
+     *  <span
+     * style="font-style:italic;">Spider diagrams</span>, and</li> <li>Speedith's spider diagram text format:
+     *  <span
+     * style="font-style:italic;">Spider diagrams (text)</span>,</li> </ul></p>
+     * @return a human-readable name of this formula format.
+     */
+    @NonNull
+    public String getPrettyName() {
+        return prettyName;
+    }
     // TODO: Add translators here...
     // </editor-fold>
 }
