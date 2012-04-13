@@ -35,7 +35,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.Timer;
 import org.isabelle.iapp.facade.CentralEventDispatcher;
 import org.isabelle.iapp.facade.IAPP;
@@ -179,7 +178,6 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
         @Override
         public void actionPerformed(ActionEvent e) {
             delayer.stop();
-            Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "Sending a goals request...");
             fetchGoalsFromIsabelle();
         }
 
@@ -199,14 +197,10 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
                 if (results != null) {
                     ArrayList<Goal> goals = new ArrayList<Goal>();
                     for (Message message : results) {
-                        // TODO: Build the goals collection...
-                        Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "Got the following reply from Isabelle: {0}", message.getText());
                         if (message.getText() != null && message.getText().startsWith(DIABELLI_ISABELLE_RESPONSE_GOAL)) {
                             String escapedYXML = message.getText().substring(DIABELLI_ISABELLE_RESPONSE_GOAL.length());
                             String unescapedYXML = TermYXML.unescapeControlChars(escapedYXML);
                             Term term = TermYXML.parseYXML(unescapedYXML);
-                            Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "Got diabelli response: {0} :: Term {1}", new Object[]{unescapedYXML, term});
-                            // TODO: Add the term into the set of current goals.
                             Goal curGoal = new Goal(null, null, new Formula(new FormulaRepresentation<Term>(term, TermFormatDescriptor)));
                             goals.add(curGoal);
                         }
@@ -228,7 +222,6 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
          */
         @Override
         public void stateChanged(StateChangeEvent ev) {
-            Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "State Changed: {0}", ev.toString());
             delayer.restart();
         }
 
@@ -244,7 +237,6 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
             if ("activated".equals(evt.getPropertyName())) {
                 TopComponent activated = TopComponent.getRegistry().getActivated();
                 if (activated instanceof org.isabelle.theoryeditor.TheoryEditor) {
-                    Logger.getLogger(IsabelleMessageListener.class.getName()).log(Level.INFO, "Activated window: {0} ({1})", new Object[]{activated.getDisplayName(), activated.getClass().getCanonicalName()});
                     requestActive();
                 }
             }

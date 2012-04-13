@@ -86,7 +86,6 @@ class GoalsManagerImpl implements GoalsManager {
     // <editor-fold defaultstate="collapsed" desc="Property Changed Event Stuff">
     private void fireCurrentGoalsChangedEvent(Goals oldGoals) {
         pcs.firePropertyChange(CurrentGoalsChangedEvent, oldGoals, currentGoals);
-        Logger.getLogger(GoalsManagerImpl.class.getName()).log(Level.INFO, "Goals changed.");
     }
 
     @Override
