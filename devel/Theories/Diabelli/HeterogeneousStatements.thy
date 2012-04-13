@@ -8,6 +8,4 @@ lemma assumes en1: "A \<Longrightarrow> A'" and en2: "B' \<Longrightarrow> B" an
       shows "A \<Longrightarrow> B"
   by (fast intro: en1 en2 new)
 
-(* We will use diagrams *)
-
 end
