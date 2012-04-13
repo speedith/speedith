@@ -26,6 +26,7 @@ package diabelli.implementation;
 
 import diabelli.Diabelli;
 import diabelli.ReasonersManager;
+import diabelli.components.DiabelliComponent;
 import diabelli.components.GoalProvidingReasoner;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -38,7 +39,7 @@ import org.openide.util.NbBundle;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 @NbBundle.Messages({
-    "RM_diabelli_null=A valid Diabelli framework manager instance must be provided."
+    "Manager_diabelli_null=A valid Diabelli framework manager instance must be provided."
 })
 class ReasonersManagerImpl implements ReasonersManager {
 
@@ -50,7 +51,7 @@ class ReasonersManagerImpl implements ReasonersManager {
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     ReasonersManagerImpl(Diabelli diabelli) {
         if (diabelli == null) {
-            throw new IllegalArgumentException(Bundle.RM_diabelli_null());
+            throw new IllegalArgumentException(Bundle.Manager_diabelli_null());
         }
         this.diabelli = diabelli;
     }
@@ -106,5 +107,22 @@ class ReasonersManagerImpl implements ReasonersManager {
         pcs.removePropertyChangeListener(event, listener);
     }
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Package Private Implementation Specifics">
+    /**
+     * This method is called by {@link DiabelliImpl} just after all managers
+     * have been constructed. There is no particular order in which Diabelli's
+     * managers will have their <pre>initialise()</pre> method called.
+     */
+    void initialise() {
+        // Set the first goal providing reasoner as the active one:
+        for (DiabelliComponent diabelliComponent : diabelli.getRegisteredComponents()) {
+            if (diabelliComponent instanceof GoalProvidingReasoner) {
+                requestActive((GoalProvidingReasoner)diabelliComponent);
+                break;
+            }
+        }
+    }
     // </editor-fold>
 }

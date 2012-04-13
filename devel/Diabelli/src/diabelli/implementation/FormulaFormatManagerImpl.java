@@ -24,6 +24,7 @@
  */
 package diabelli.implementation;
 
+import diabelli.Diabelli;
 import diabelli.FormulaFormatManager;
 
 /**
@@ -31,11 +32,26 @@ import diabelli.FormulaFormatManager;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 class FormulaFormatManagerImpl implements FormulaFormatManager {
+    private final Diabelli diabelli;
 
-    public FormulaFormatManagerImpl() {
+    public FormulaFormatManagerImpl(Diabelli diabelli) {
+        if (diabelli == null) {
+            throw new IllegalArgumentException(Bundle.Manager_diabelli_null());
+        }
+        this.diabelli = diabelli;
     }
     
     // TODO: Add methods for registering new formats, listing all of them, and
     // getting them.
     
+    // <editor-fold defaultstate="collapsed" desc="Package Private Implementation Specifics">
+    /**
+     * This method is called by {@link DiabelliImpl} just after all managers
+     * have been constructed. There is no particular order in which Diabelli's
+     * managers will have their <pre>initialise()</pre> method called.
+     */
+    void initialise() {
+        
+    }
+    // </editor-fold>
 }

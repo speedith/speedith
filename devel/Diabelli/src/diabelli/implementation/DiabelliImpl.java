@@ -67,9 +67,9 @@ public final class DiabelliImpl implements Diabelli {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Managers Fields">
-    private final ReasonersManager reasonersManager;
-    private final GoalsManager goalManager;
-    private final FormulaFormatManager formulaFormatManager;
+    private final ReasonersManagerImpl reasonersManager;
+    private final GoalsManagerImpl goalManager;
+    private final FormulaFormatManagerImpl formulaFormatManager;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
@@ -79,12 +79,28 @@ public final class DiabelliImpl implements Diabelli {
         // Initialise all managers:
         reasonersManager = new ReasonersManagerImpl(this);
         goalManager = new GoalsManagerImpl(this, reasonersManager);
-        formulaFormatManager = new FormulaFormatManagerImpl();
+        formulaFormatManager = new FormulaFormatManagerImpl(this);
 
         // First create an empty list of components (then wait for them to
         // register or deregister).
         instanceContent = new InstanceContent();
         componentsLookup = new AbstractLookup(instanceContent);
+        
+        // Find all Diabelli components and register them.
+        lookupResult = Lookup.getDefault().lookupResult(DiabelliComponent.class);
+        lookupResult.addLookupListener(new LookupListener() {
+
+            @Override
+            public void resultChanged(LookupEvent ev) {
+                throw new UnsupportedOperationException("Registering/unregistering Diabelli drivers is not yet implemented.");
+            }
+        });
+        updateComponentsList();
+        
+        // Initialise the particular managers:
+        reasonersManager.initialise();
+        goalManager.initialise();
+        formulaFormatManager.initialise();
     }
     // </editor-fold>
 
@@ -115,19 +131,10 @@ public final class DiabelliImpl implements Diabelli {
     public Lookup getLookup() {
         // TODO: Check if we have to provide synchronisation here.
 //        synchronized (instanceContent) {
-        if (lookupResult == null) {
+//        if (lookupResult == null) {
             // Listen for Diabelli component registration (this will update the list
             // of components in Diabelli.
-            lookupResult = Lookup.getDefault().lookupResult(DiabelliComponent.class);
-            lookupResult.addLookupListener(new LookupListener() {
-
-                @Override
-                public void resultChanged(LookupEvent ev) {
-                    throw new UnsupportedOperationException("Registering/unregistering Diabelli drivers is not yet implemented.");
-                }
-            });
-            updateComponentsList();
-        }
+//        }
 //        }
         return componentsLookup;
     }

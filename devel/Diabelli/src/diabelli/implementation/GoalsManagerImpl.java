@@ -65,10 +65,10 @@ class GoalsManagerImpl implements GoalsManager {
         // TODO: Listen to activeReasoner changes...
         // TODO: Also listen to the goal changes of the currently active reasoner.
         if (reasonersManager == null) {
-            throw new IllegalArgumentException(GM_reasoners_manager_null());
+            throw new IllegalArgumentException(Bundle.GM_reasoners_manager_null());
         }
         if (diabelli == null) {
-            throw new IllegalArgumentException(RM_diabelli_null());
+            throw new IllegalArgumentException(Bundle.Manager_diabelli_null());
         }
         reasonersManager.addPropertyChangeListener(new ActiveReasonerChangedListener(reasonersManager), ReasonersManager.ActiveReasonerChangedEvent);
         this.diabelli = diabelli;
@@ -167,4 +167,15 @@ class GoalsManagerImpl implements GoalsManager {
         }
     }
     //</editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Package Private Implementation Specifics">
+    /**
+     * This method is called by {@link DiabelliImpl} just after all managers
+     * have been constructed. There is no particular order in which Diabelli's
+     * managers will have their <pre>initialise()</pre> method called.
+     */
+    void initialise() {
+        
+    }
+    // </editor-fold>
 }
