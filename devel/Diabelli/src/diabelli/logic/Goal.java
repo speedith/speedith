@@ -74,6 +74,14 @@ public class Goal {
     public List<Formula> getPremises() {
         return premises == null || premises.isEmpty() ? null : Collections.unmodifiableList(premises);
     }
+    
+    /**
+     * Returns the number of premises present in this goal.
+     * @return the number of premises present in this goal.
+     */
+    public int getPremisesCount() {
+        return premises == null ? 0 : premises.size();
+    }
 
     /**
      * Returns the conclusion of this goal. This method may return {@code

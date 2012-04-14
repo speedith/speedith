@@ -27,6 +27,8 @@ package diabelli.isabelle;
 import diabelli.components.DiabelliComponent;
 import diabelli.components.util.BareGoalProvidingReasoner;
 import diabelli.isabelle.pure.lib.TermYXML;
+import diabelli.isabelle.terms.TermFormatDescriptor;
+import diabelli.isabelle.terms.TermsToDiabelli;
 import diabelli.logic.*;
 import isabelle.Term.Term;
 import java.awt.event.ActionEvent;
@@ -38,7 +40,8 @@ import java.util.logging.Level;
 import javax.swing.Timer;
 import org.isabelle.iapp.facade.CentralEventDispatcher;
 import org.isabelle.iapp.facade.IAPP;
-import org.isabelle.iapp.process.*;
+import org.isabelle.iapp.process.Message;
+import org.isabelle.iapp.process.ProverManager;
 import org.isabelle.iapp.process.features.InjectedCommands;
 import org.isabelle.iapp.process.features.InjectionFinishListener;
 import org.isabelle.iapp.process.features.InjectionResult;
@@ -58,17 +61,9 @@ import org.openide.windows.TopComponent;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 @ServiceProvider(service = DiabelliComponent.class)
-@NbBundle.Messages({
-    "IsabelleDriver_term_format_pretty_name=Isabelle term"
-})
 public class IsabelleDriver extends BareGoalProvidingReasoner {
 
     //<editor-fold defaultstate="collapsed" desc="Fields">
-    /**
-     * The name of Isabelle's 2011-1 term tree format. This name is used in {@link FormulaFormatDescriptor#getFormatName()}.
-     */
-    public static final String TermFormatName = "Isabelle2011_1_term_tree";
-    private static final FormulaFormatDescriptor TermFormatDescriptor = new FormulaFormatDescriptor(TermFormatName, Bundle.IsabelleDriver_term_format_pretty_name());
     private IsabelleMessageListener isabelleListener;
     //</editor-fold>
 
@@ -201,8 +196,7 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
                             String escapedYXML = message.getText().substring(DIABELLI_ISABELLE_RESPONSE_GOAL.length());
                             String unescapedYXML = TermYXML.unescapeControlChars(escapedYXML);
                             Term term = TermYXML.parseYXML(unescapedYXML);
-                            Goal curGoal = new Goal(null, null, new Formula(new FormulaRepresentation<Term>(term, TermFormatDescriptor)));
-                            goals.add(curGoal);
+                            goals.add(TermsToDiabelli.toGoal(term));
                         }
                     }
                     setGoals(new Goals(goals));

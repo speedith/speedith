@@ -93,7 +93,7 @@ public final class GoalsTopComponent extends TopComponent implements ExplorerMan
         // Make the root node invisible in the view:
         ((TreeTableView)goalsView).setRootVisible(false);
         
-        updateGoalsList(null);
+        updateGoalsList();
     }
 
     //<editor-fold defaultstate="collapsed" desc="Generated Code">
@@ -132,6 +132,7 @@ public final class GoalsTopComponent extends TopComponent implements ExplorerMan
         }
         GoalsManager goalManager = Lookup.getDefault().lookup(Diabelli.class).getGoalManager();
         goalManager.addPropertyChangeListener(goalsChangedListener, GoalsManager.CurrentGoalsChangedEvent);
+        updateGoalsList();
     }
 
     @Override
@@ -306,6 +307,14 @@ public final class GoalsTopComponent extends TopComponent implements ExplorerMan
         Node root = new AbstractNode(children);
         this.em.setRootContext(root);
         this.em.getRootContext().setDisplayName("Diabelli Goals List");
+    }
+
+    private void updateGoalsList() {
+        GoalsManager goalManager = Lookup.getDefault().lookup(Diabelli.class).getGoalManager();
+        if (goalManager.getCurrentGoals() != null)
+            updateGoalsList(goalManager.getCurrentGoals());
+        else
+            updateGoalsList(null);
     }
     // </editor-fold>
 }

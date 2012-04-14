@@ -74,7 +74,7 @@ public class FormulaFormatDescriptor {
      * raised.
      * 
      * <p>Some examples: <ul> <li>Isabelle 2011-1 term tree:
-     * Isabelle2011_1_term_tree,</li> <li>Isabelle 2011-1 pretty formula string:
+     * Isabelle_term_tree,</li> <li>Isabelle 2011-1 pretty formula string:
      * Isabelle2011_1_pretty_string,</li> <li>Speedith's spider diagram objects:
      * Speedith_sd, and</li> <li>Speedith's spider diagram text format:
      * Speedith_sd_text.</li> </ul></p>

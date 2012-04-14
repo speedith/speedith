@@ -50,6 +50,7 @@ class GoalsManagerImpl implements GoalsManager {
     private Goals currentGoals;
     private GoalsChangedListener goalsChangedListener;
     private final Diabelli diabelli;
+    private final ReasonersManager reasonersManager;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -61,7 +62,7 @@ class GoalsManagerImpl implements GoalsManager {
     @NbBundle.Messages({
         "GM_reasoners_manager_null=A valid reasoners manager must be provided."
     })
-    public GoalsManagerImpl(Diabelli diabelli, final ReasonersManager reasonersManager) {
+    public GoalsManagerImpl(final Diabelli diabelli, final ReasonersManager reasonersManager) {
         // TODO: Listen to activeReasoner changes...
         // TODO: Also listen to the goal changes of the currently active reasoner.
         if (reasonersManager == null) {
@@ -70,8 +71,9 @@ class GoalsManagerImpl implements GoalsManager {
         if (diabelli == null) {
             throw new IllegalArgumentException(Bundle.Manager_diabelli_null());
         }
-        reasonersManager.addPropertyChangeListener(new ActiveReasonerChangedListener(reasonersManager), ReasonersManager.ActiveReasonerChangedEvent);
         this.diabelli = diabelli;
+        this.reasonersManager = reasonersManager;
+        reasonersManager.addPropertyChangeListener(new ActiveReasonerChangedListener(), ReasonersManager.ActiveReasonerChangedEvent);
         goalsChangedListener = new GoalsChangedListener();
     }
     // </editor-fold>
@@ -123,17 +125,14 @@ class GoalsManagerImpl implements GoalsManager {
 
     //<editor-fold defaultstate="collapsed" desc="Goals Change Monitoring Stuff">
     private class ActiveReasonerChangedListener implements PropertyChangeListener {
-        
-        private final ReasonersManager reasonersManager;
-        
-        public ActiveReasonerChangedListener(ReasonersManager reasonersManager) {
-            this.reasonersManager = reasonersManager;
+
+        public ActiveReasonerChangedListener() {
         }
-        
+
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            assert(evt.getOldValue() == null || evt.getOldValue() instanceof GoalProvidingReasoner);
-            unregisterGoalsListener((GoalProvidingReasoner)evt.getOldValue());
+            assert (evt.getOldValue() == null || evt.getOldValue() instanceof GoalProvidingReasoner);
+            unregisterGoalsListener((GoalProvidingReasoner) evt.getOldValue());
             if (reasonersManager.getActiveReasoner() != null) {
                 registerGoalsListener(reasonersManager.getActiveReasoner());
                 setCurrentGoals(reasonersManager.getActiveReasoner().getGoals());
@@ -150,32 +149,37 @@ class GoalsManagerImpl implements GoalsManager {
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            assert(evt.getNewValue() == null || evt.getNewValue() instanceof Goals);
-            setCurrentGoals((Goals)evt.getNewValue());
+            assert (evt.getNewValue() == null || evt.getNewValue() instanceof Goals);
+            setCurrentGoals((Goals) evt.getNewValue());
         }
     }
-    
+
     public void unregisterGoalsListener(GoalProvidingReasoner reasoner) {
         if (reasoner != null) {
             reasoner.removePropertyChangeListener(goalsChangedListener, GoalProvidingReasoner.CurrentGoalsChangedEvent);
         }
     }
-    
+
     public void registerGoalsListener(GoalProvidingReasoner reasoner) {
         if (reasoner != null) {
             reasoner.addPropertyChangeListener(goalsChangedListener, GoalProvidingReasoner.CurrentGoalsChangedEvent);
         }
     }
     //</editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Package Private Implementation Specifics">
     /**
      * This method is called by {@link DiabelliImpl} just after all managers
      * have been constructed. There is no particular order in which Diabelli's
-     * managers will have their <pre>initialise()</pre> method called.
+     * managers will have their
+     * <pre>initialise()</pre> method called.
      */
     void initialise() {
-        
+        // Check whether the currently active reasoner has a goal:
+        GoalProvidingReasoner activeReasoner = reasonersManager.getActiveReasoner();
+        if (activeReasoner != null && activeReasoner.getGoals() != null) {
+            setCurrentGoals(activeReasoner.getGoals());
+        }
     }
     // </editor-fold>
 }
