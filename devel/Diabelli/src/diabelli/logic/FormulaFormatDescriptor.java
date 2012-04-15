@@ -104,6 +104,5 @@ public class FormulaFormatDescriptor {
     public String getPrettyName() {
         return prettyName;
     }
-    // TODO: Add translators here...
     // </editor-fold>
 }

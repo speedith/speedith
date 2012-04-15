@@ -1,5 +1,5 @@
 /*
- * File name: FormulaFormatManager.java
+ * File name: FormulaTranslator.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -22,31 +22,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package diabelli;
-
-import diabelli.components.DiabelliComponent;
-import diabelli.logic.FormulaFormatDescriptor;
-import diabelli.logic.FormulaRepresentation;
-import java.util.Collection;
+package diabelli.logic;
 
 /**
- * Provides a central mechanism for registering known {@link
- * FormulaFormatDescriptor formula formats}. This provides a way for
- * identifying, translating, and understanding of {@link FormulaRepresentation formulae}
- * in different formats. Since Diabelli's main goal is to connect different
- * reasoners, all of which may understand different representations, this class
- * provides a solution for ease of translation between the reasoners.
- * <p>Formula formats are registered when {@link DiabelliComponent Diabelli components}
- * are loaded. The components which want to register new formula formats must 
- * implement the {@link FormulaFormatProvider} interface.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface FormulaFormatManager {
+public class FormulaTranslator {
 
-    /**
-     * Returns all registered formula formats.
-     * @return 
-     */
-    Collection<FormulaFormatDescriptor> getFormulaFormats();
-    
+    public static enum TranslationType {
+        
+        ToEquivalent(0),
+        ToEntailed(1),
+        ToEntailing(2);
+        
+        private final int typeId;
+
+        private TranslationType(int typeId) {
+            this.typeId = typeId;
+        }
+
+        public int getTypeId() {
+            return typeId;
+        }
+        
+    }
+    FormulaFormatDescriptor getFromFormat() {
+        throw new UnsupportedOperationException();
+    }
+    FormulaFormatDescriptor getToFormat() {
+        throw new UnsupportedOperationException();
+    }
+    TranslationType getTranslationType() {
+        throw new UnsupportedOperationException();
+    }
+    String getName() {
+        throw new UnsupportedOperationException();
+    }
+    String getDescription() {
+        throw new UnsupportedOperationException();
+    }
+    String getPrettyName() {
+        throw new UnsupportedOperationException();
+    }
 }

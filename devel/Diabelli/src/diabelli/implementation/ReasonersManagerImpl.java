@@ -41,7 +41,7 @@ import org.openide.util.NbBundle;
 @NbBundle.Messages({
     "Manager_diabelli_null=A valid Diabelli framework manager instance must be provided."
 })
-class ReasonersManagerImpl implements ReasonersManager {
+class ReasonersManagerImpl implements ReasonersManager, ManagerInternals {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private GoalProvidingReasoner activeReasoner;
@@ -109,13 +109,13 @@ class ReasonersManagerImpl implements ReasonersManager {
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="Package Private Implementation Specifics">
-    /**
-     * This method is called by {@link DiabelliImpl} just after all managers
-     * have been constructed. There is no particular order in which Diabelli's
-     * managers will have their <pre>initialise()</pre> method called.
-     */
-    void initialise() {
+    // <editor-fold defaultstate="collapsed" desc="Implementation Specifics">
+    @Override
+    public void initialise() {
+    }
+
+    @Override
+    public void onAfterComponentsLoaded() {
         // Set the first goal providing reasoner as the active one:
         for (DiabelliComponent diabelliComponent : diabelli.getRegisteredComponents()) {
             if (diabelliComponent instanceof GoalProvidingReasoner) {

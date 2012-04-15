@@ -1,5 +1,5 @@
 /*
- * File name: FormulaFormatManager.java
+ * File name: FormulaFormatProvider.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -22,31 +22,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package diabelli;
+package diabelli.components;
 
-import diabelli.components.DiabelliComponent;
+import diabelli.Diabelli;
+import diabelli.FormulaFormatManager;
 import diabelli.logic.FormulaFormatDescriptor;
-import diabelli.logic.FormulaRepresentation;
 import java.util.Collection;
 
 /**
- * Provides a central mechanism for registering known {@link
- * FormulaFormatDescriptor formula formats}. This provides a way for
- * identifying, translating, and understanding of {@link FormulaRepresentation formulae}
- * in different formats. Since Diabelli's main goal is to connect different
- * reasoners, all of which may understand different representations, this class
- * provides a solution for ease of translation between the reasoners.
- * <p>Formula formats are registered when {@link DiabelliComponent Diabelli components}
- * are loaded. The components which want to register new formula formats must 
- * implement the {@link FormulaFormatProvider} interface.</p>
+ * Diabelli components of this type can register known formula formats with the
+ * {@link FormulaFormatManager formula format manager} (see {@link Diabelli#getFormulaFormatManager()
+ * }).
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface FormulaFormatManager {
-
+public interface FormulaFormatProvider extends DiabelliComponent {
     /**
-     * Returns all registered formula formats.
-     * @return 
+     * Returns a list of formula formats provided by this Diabelli component.
+     * @return a list of formula formats provided by this Diabelli component.
      */
     Collection<FormulaFormatDescriptor> getFormulaFormats();
-    
 }

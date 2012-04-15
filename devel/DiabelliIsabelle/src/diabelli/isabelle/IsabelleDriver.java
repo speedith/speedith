@@ -25,17 +25,21 @@
 package diabelli.isabelle;
 
 import diabelli.components.DiabelliComponent;
+import diabelli.components.FormulaFormatProvider;
 import diabelli.components.util.BareGoalProvidingReasoner;
 import diabelli.isabelle.pure.lib.TermYXML;
 import diabelli.isabelle.terms.TermFormatDescriptor;
 import diabelli.isabelle.terms.TermsToDiabelli;
-import diabelli.logic.*;
+import diabelli.logic.FormulaFormatDescriptor;
+import diabelli.logic.Goal;
+import diabelli.logic.Goals;
 import isabelle.Term.Term;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Level;
 import javax.swing.Timer;
 import org.isabelle.iapp.facade.CentralEventDispatcher;
@@ -61,7 +65,7 @@ import org.openide.windows.TopComponent;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 @ServiceProvider(service = DiabelliComponent.class)
-public class IsabelleDriver extends BareGoalProvidingReasoner {
+public class IsabelleDriver extends BareGoalProvidingReasoner implements FormulaFormatProvider {
 
     //<editor-fold defaultstate="collapsed" desc="Fields">
     private IsabelleMessageListener isabelleListener;
@@ -79,6 +83,21 @@ public class IsabelleDriver extends BareGoalProvidingReasoner {
         return org.openide.util.NbBundle.getBundle(IsabelleDriver.class).getString("ISA_DRIVER_NAME");
     }
     //</editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Formula Format Provider">
+    @Override
+    public Collection<FormulaFormatDescriptor> getFormulaFormats() {
+        return FormulaFormatsContainer.IsabelleFormats;
+    }
+    
+    private static class FormulaFormatsContainer {
+        private static final ArrayList<FormulaFormatDescriptor> IsabelleFormats = new ArrayList<FormulaFormatDescriptor>();
+        
+        static {
+            IsabelleFormats.add(TermFormatDescriptor.getInstance());
+        }
+    }
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Isabelle Goal-Change Monitoring">
     /**

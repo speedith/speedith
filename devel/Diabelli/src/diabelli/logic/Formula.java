@@ -44,52 +44,75 @@ import org.openide.util.NbBundle;
  * other direction of entailment must hold; the representations can be logically
  * equivalent, i.e., mutually entailed, which is always allowed).
  *
+ * <p><span style="font-weight:bold">Note</span>: a formula may have only one
+ * representation in a particular {@link FormulaFormatDescriptor format}.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 @NbBundle.Messages({
-    "Formula_no_representations=At least one representation of the formula must be given."
+    "Formula_null_main_representation=The formula must have a main representation."
 })
 public class Formula {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private ArrayList<FormulaRepresentation<?>> representations = new ArrayList<FormulaRepresentation<?>>();
+    private final FormulaRepresentation<?> mainRepresentation;
+    private final HashMap<String, FormulaRepresentation<?>> representations;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
      * Creates a formula with the given list of different representations.
      *
-     * @param representations this list of representations must contain at least
-     * one element. The first element of the list will become the {@link
+     * @param mainRepresentation the main representation of this formula.
+     * <p>Other representations must be either entailed by this representation
+     * (if this formula acts as a premise) or they must entail the main
+     * representation (if this formula acts as a conclusion).</p>
+     * @param otherRepresentations this list of representations must contain at
+     * least one element. The first element of the list will become the {@link
      * Formula#getMainRepresentation() main representation}.
      */
-    public Formula(Collection<FormulaRepresentation<?>> representations) {
-        this(representations == null || representations.isEmpty() ? null : new ArrayList<FormulaRepresentation<?>>(representations));
-    }
-    
-    /**
-     * Creates a formula with the given list of different representations.
-     *
-     * @param representations this list of representations must contain at least
-     * one element. The first element of the list will become the {@link
-     * Formula#getMainRepresentation() main representation}.
-     */
-    public Formula(FormulaRepresentation<?>... representations) {
-        this(representations == null || representations.length < 1 ? null : new ArrayList<FormulaRepresentation<?>>(Arrays.asList(representations)));
-    }
-    
-    /**
-     * Creates a formula with the given list of different representations.
-     *
-     * @param representations this list of representations must contain at least
-     * one element. The first element of the list will become the {@link
-     * Formula#getMainRepresentation() main representation}.
-     */
-    public Formula(ArrayList<FormulaRepresentation<?>> representations) {
-        if (representations == null || representations.isEmpty()) {
-            throw new IllegalArgumentException(Bundle.Formula_no_representations());
+    public Formula(FormulaRepresentation<?> mainRepresentation, Collection<FormulaRepresentation<?>> otherRepresentations) {
+        if (mainRepresentation == null) {
+            throw new IllegalArgumentException(Bundle.Formula_null_main_representation());
         }
-        this.representations = representations;
+        this.mainRepresentation = mainRepresentation;
+        this.representations = new HashMap<String, FormulaRepresentation<?>>();
+        this.representations.put(mainRepresentation.getFormat().getFormatName(), mainRepresentation);
+        if (otherRepresentations != null) {
+            for (FormulaRepresentation<?> formulaRepresentation : otherRepresentations) {
+                this.representations.put(formulaRepresentation.getFormat().getFormatName(), formulaRepresentation);
+            }
+        }
+    }
+
+    /**
+     * Creates a formula with the given list of different representations.
+     *
+     * @param mainRepresentation the main representation of this formula.
+     * <p>Other representations must be either entailed by this representation
+     * (if this formula acts as a premise) or they must entail the main
+     * representation (if this formula acts as a conclusion).</p>
+     * @param otherRepresentations this list of representations must contain at
+     * least one element. The first element of the list will become the {@link
+     * Formula#getMainRepresentation() main representation}.
+     */
+    public Formula(FormulaRepresentation<?> mainRepresentation, FormulaRepresentation<?>... otherRepresentations) {
+        this(mainRepresentation, otherRepresentations == null || otherRepresentations.length < 1 ? null : Arrays.asList(otherRepresentations));
+    }
+
+    /**
+     * Creates a formula with the given list of different representations.
+     *
+     * @param mainRepresentation the main representation of this formula.
+     * <p>Other representations must be either entailed by this representation
+     * (if this formula acts as a premise) or they must entail the main
+     * representation (if this formula acts as a conclusion).</p>
+     * @param otherRepresentations this list of representations must contain at
+     * least one element. The first element of the list will become the {@link
+     * Formula#getMainRepresentation() main representation}.
+     */
+    public Formula(FormulaRepresentation<?> mainRepresentation, ArrayList<FormulaRepresentation<?>> otherRepresentations) {
+        this(mainRepresentation, (Collection<FormulaRepresentation<?>>) otherRepresentations);
     }
     //</editor-fold>
 
@@ -99,20 +122,53 @@ public class Formula {
      * native formula representation of the {@link GoalProvidingReasoner
      * reasoner} that provided this formula.
      *
+     * <p>Other representations must be either entailed by this representation
+     * (if this formula acts as a premise) or they must entail the main
+     * representation (if this formula acts as a conclusion).</p>
+     *
      * @return the main representation of this formula.
      */
     public FormulaRepresentation<?> getMainRepresentation() {
-        return representations.get(0);
+        return mainRepresentation;
     }
 
     /**
-     * Returns all representations of this formula. This list includes the main
-     * representation (as the first element).
+     * Returns all representations of this formula. This collection includes the
+     * main representation (as the first element).
      *
      * @return all representations of this formula.
      */
-    public List<FormulaRepresentation<?>> getRepresentations() {
-        return Collections.unmodifiableList(representations);
+    public Collection<FormulaRepresentation<?>> getRepresentations() {
+        // We synchronise here because we may add new representations in another
+        // thread.
+        synchronized (representations) {
+            return Collections.unmodifiableCollection(representations.values());
+        }
+    }
+
+    /**
+     * Returns the number of representations this formula has. The minimum this
+     * function can return is {@code 1}.
+     *
+     * @return the number of representations this formula has.
+     */
+    public int getRepresentationsCount() {
+        synchronized (representations) {
+            return representations.size();
+        }
+    }
+
+    /**
+     * Returns the representation of this formula in the given format. This
+     * method does not try to convert the formula into the given format.
+     *
+     * @param format
+     * @return
+     */
+    public FormulaRepresentation<?> getRepresentation(FormulaFormatDescriptor format) {
+        synchronized (representations) {
+            return representations.get(format.getFormatName());
+        }
     }
     // </editor-fold>
 }

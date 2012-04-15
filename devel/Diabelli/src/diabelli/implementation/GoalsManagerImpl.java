@@ -28,8 +28,6 @@ import diabelli.Diabelli;
 import diabelli.GoalsManager;
 import diabelli.ReasonersManager;
 import diabelli.components.GoalProvidingReasoner;
-import static diabelli.implementation.Bundle.GM_reasoners_manager_null;
-import static diabelli.implementation.Bundle.RM_diabelli_null;
 import diabelli.logic.Goals;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -44,7 +42,7 @@ import org.openide.util.NbBundle;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-class GoalsManagerImpl implements GoalsManager {
+class GoalsManagerImpl implements GoalsManager, ManagerInternals {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private Goals currentGoals;
@@ -63,8 +61,6 @@ class GoalsManagerImpl implements GoalsManager {
         "GM_reasoners_manager_null=A valid reasoners manager must be provided."
     })
     public GoalsManagerImpl(final Diabelli diabelli, final ReasonersManager reasonersManager) {
-        // TODO: Listen to activeReasoner changes...
-        // TODO: Also listen to the goal changes of the currently active reasoner.
         if (reasonersManager == null) {
             throw new IllegalArgumentException(Bundle.GM_reasoners_manager_null());
         }
@@ -168,13 +164,12 @@ class GoalsManagerImpl implements GoalsManager {
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Package Private Implementation Specifics">
-    /**
-     * This method is called by {@link DiabelliImpl} just after all managers
-     * have been constructed. There is no particular order in which Diabelli's
-     * managers will have their
-     * <pre>initialise()</pre> method called.
-     */
-    void initialise() {
+    @Override
+    public void initialise() {
+    }
+
+    @Override
+    public void onAfterComponentsLoaded() {
         // Check whether the currently active reasoner has a goal:
         GoalProvidingReasoner activeReasoner = reasonersManager.getActiveReasoner();
         if (activeReasoner != null && activeReasoner.getGoals() != null) {

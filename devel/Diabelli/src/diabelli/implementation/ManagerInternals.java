@@ -1,5 +1,5 @@
 /*
- * File name: FormulaFormatManager.java
+ * File name: ManagerInternals.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -22,31 +22,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package diabelli;
-
-import diabelli.components.DiabelliComponent;
-import diabelli.logic.FormulaFormatDescriptor;
-import diabelli.logic.FormulaRepresentation;
-import java.util.Collection;
+package diabelli.implementation;
 
 /**
- * Provides a central mechanism for registering known {@link
- * FormulaFormatDescriptor formula formats}. This provides a way for
- * identifying, translating, and understanding of {@link FormulaRepresentation formulae}
- * in different formats. Since Diabelli's main goal is to connect different
- * reasoners, all of which may understand different representations, this class
- * provides a solution for ease of translation between the reasoners.
- * <p>Formula formats are registered when {@link DiabelliComponent Diabelli components}
- * are loaded. The components which want to register new formula formats must 
- * implement the {@link FormulaFormatProvider} interface.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface FormulaFormatManager {
+public interface ManagerInternals {
 
     /**
-     * Returns all registered formula formats.
-     * @return 
+     * This method is called by {@link DiabelliImpl} just after all managers
+     * have been constructed. There is no particular order in which Diabelli's
+     * managers will have their <pre>initialise()</pre> method called.
+     * <p><span
+     * style="font-weight:bold">Note</span>: this method is called before
+     * Diabelli components are loaded.</p>
      */
-    Collection<FormulaFormatDescriptor> getFormulaFormats();
+    void initialise();
+    
+    /**
+     * This method is called by {@link DiabelliImpl} just after all components
+     * have loaded.
+     */
+    void onAfterComponentsLoaded();
     
 }

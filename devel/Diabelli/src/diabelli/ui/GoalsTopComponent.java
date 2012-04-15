@@ -231,7 +231,7 @@ public final class GoalsTopComponent extends TopComponent implements ExplorerMan
                 if (premises != null) {
                     int i = 0;
                     for (Formula formula : premises) {
-                        toPopulate.add(new FormulaWrapper(formula, i));
+                        toPopulate.add(new FormulaWrapper(formula, i++));
                     }
                 }
                 if (goal.getConclusion() != null) {

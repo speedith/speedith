@@ -29,6 +29,7 @@ import diabelli.FormulaFormatManager;
 import diabelli.GoalsManager;
 import diabelli.ReasonersManager;
 import diabelli.components.DiabelliComponent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -58,14 +59,14 @@ import org.openide.util.lookup.ServiceProvider;
  */
 @ServiceProvider(service = Diabelli.class)
 public final class DiabelliImpl implements Diabelli {
-    
+
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
     private final InstanceContent instanceContent;
     private Result<DiabelliComponent> lookupResult;
     private final AbstractLookup componentsLookup;
     private final HashSet<DiabelliComponent> components = new HashSet<DiabelliComponent>();
+    private final ArrayList<ManagerInternals> managers = new ArrayList<ManagerInternals>();
     // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Managers Fields">
     private final ReasonersManagerImpl reasonersManager;
     private final GoalsManagerImpl goalManager;
@@ -75,17 +76,22 @@ public final class DiabelliImpl implements Diabelli {
     // <editor-fold defaultstate="collapsed" desc="Constructor">
     public DiabelliImpl() {
         Logger.getLogger(DiabelliImpl.class.getName()).log(Level.INFO, "Diabelli initialised.");
-        
+
         // Initialise all managers:
-        reasonersManager = new ReasonersManagerImpl(this);
-        goalManager = new GoalsManagerImpl(this, reasonersManager);
-        formulaFormatManager = new FormulaFormatManagerImpl(this);
+        managers.add(reasonersManager = new ReasonersManagerImpl(this));
+        managers.add(goalManager = new GoalsManagerImpl(this, reasonersManager));
+        managers.add(formulaFormatManager = new FormulaFormatManagerImpl(this));
 
         // First create an empty list of components (then wait for them to
         // register or deregister).
         instanceContent = new InstanceContent();
         componentsLookup = new AbstractLookup(instanceContent);
-        
+
+        // Initialise the particular managers:
+        for (ManagerInternals manager : managers) {
+            manager.initialise();
+        }
+
         // Find all Diabelli components and register them.
         lookupResult = Lookup.getDefault().lookupResult(DiabelliComponent.class);
         lookupResult.addLookupListener(new LookupListener() {
@@ -96,11 +102,11 @@ public final class DiabelliImpl implements Diabelli {
             }
         });
         updateComponentsList();
-        
-        // Initialise the particular managers:
-        reasonersManager.initialise();
-        goalManager.initialise();
-        formulaFormatManager.initialise();
+
+        // Now call the final stage in the initialisation of managers:
+        for (ManagerInternals manager : managers) {
+            manager.onAfterComponentsLoaded();
+        }
     }
     // </editor-fold>
 
@@ -132,8 +138,8 @@ public final class DiabelliImpl implements Diabelli {
         // TODO: Check if we have to provide synchronisation here.
 //        synchronized (instanceContent) {
 //        if (lookupResult == null) {
-            // Listen for Diabelli component registration (this will update the list
-            // of components in Diabelli.
+        // Listen for Diabelli component registration (this will update the list
+        // of components in Diabelli.
 //        }
 //        }
         return componentsLookup;
