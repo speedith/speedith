@@ -35,12 +35,14 @@ import java.util.List;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.tree.TreeSelectionModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.TreeTableView;
+import org.openide.explorer.view.TreeView;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
@@ -92,6 +94,7 @@ public final class GoalsTopComponent extends TopComponent implements ExplorerMan
 
         // Make the root node invisible in the view:
         ((TreeTableView) goalsView).setRootVisible(false);
+//        ((TreeTableView) goalsView).setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         updateGoalsList();
     }

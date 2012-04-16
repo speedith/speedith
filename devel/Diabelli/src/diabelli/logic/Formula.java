@@ -201,7 +201,7 @@ public class Formula {
      * @return the translation of the {@link Formula#getMainRepresentation()
      * formula}.
      */
-    public FormulaRepresentation<?> geRepresentationtRepresentation(FormulaFormatDescriptor format) {
+    public FormulaRepresentation<?> getRepresentation(FormulaFormatDescriptor format) {
         if (format == null) {
             throw new IllegalArgumentException(Bundle.F_toFormat_null());
         }

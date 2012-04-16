@@ -1,5 +1,5 @@
 /*
- * File name: FormulaFormatDescriptor.java
+ * File name: FormulaFormat.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -24,47 +24,16 @@
  */
 package diabelli.logic;
 
-import diabelli.FormulaFormatManager;
 import org.netbeans.api.annotations.common.NonNull;
-import org.openide.util.NbBundle;
 
 /**
- * Contains meta-information about the format in which {@link
+ * Provides meta-information about the format in which {@link
  * FormulaRepresentation#getFormula() formulae} may be encoded.
- * 
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class FormulaFormatDescriptor implements FormulaFormat {
-    
-    //<editor-fold defaultstate="collapsed" desc="Fields">
-    private final String formatName;
-    private final String prettyName;
-    //</editor-fold>
+public interface FormulaFormat {
 
-    //<editor-fold defaultstate="collapsed" desc="Constructors">
-    /**
-     * Creates a new formula format descriptor.
-     * @param formatName the {@link FormulaFormatDescriptor#getFormatName() name
-     * of this format}.
-     * @param prettyName  
-     */
-    @NbBundle.Messages({
-        "FFD_format_name_null_or_empty=The name of the format must not be null or empty.",
-        "FFD_pretty_name_null_or_empty=The human-readable name of the format must not be null or empty."
-    })
-    public FormulaFormatDescriptor(@NonNull String formatName, @NonNull String prettyName) {
-        if (formatName == null || formatName.isEmpty()) {
-            throw new IllegalArgumentException(Bundle.FFD_format_name_null_or_empty());
-        }
-        if (prettyName == null) {
-            throw new IllegalArgumentException(Bundle.FFD_pretty_name_null_or_empty());
-        }
-        this.formatName = formatName;
-        this.prettyName = prettyName;
-    }
-    //</editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Public Properties">
     /**
      * Returns the name of the format. This name should be unique across all
      * Diabelli components. When reasoners register their formats in {@link
@@ -72,7 +41,7 @@ public class FormulaFormatDescriptor implements FormulaFormat {
      * as the unique key that identifies the format. If another reasoner tries
      * to register a format with the same name, then an exception will be
      * raised.
-     * 
+     *
      * <p>Some examples: <ul> <li>Isabelle 2011-1 term tree:
      * Isabelle_term_tree,</li> <li>Isabelle 2011-1 pretty formula string:
      * Isabelle2011_1_pretty_string,</li> <li>Speedith's spider diagram objects:
@@ -81,30 +50,24 @@ public class FormulaFormatDescriptor implements FormulaFormat {
      * @return the name of the format.
      */
     @NonNull
-    @Override
-    public String getFormatName() {
-        return formatName;
-    }
-    
+    String getFormatName();
+
     /**
      * Returns a human-readable name of this formula format. This string will be
      * displayed to the user in the GUI.
-     * 
+     *
      * <p>Some examples: <ul> <li>Isabelle 2011-1 term tree:
-     *  <span
+     * <span
      * style="font-style:italic;">Isabelle</span>,</li> <li>Isabelle 2011-1 pretty formula string:
-     *  <span style="font-style:italic;">Isabelle (pretty
+     * <span style="font-style:italic;">Isabelle (pretty
      * text)</span>,</li> <li>Speedith's spider diagram objects:
-     *  <span
+     * <span
      * style="font-style:italic;">Spider diagrams</span>, and</li> <li>Speedith's spider diagram text format:
-     *  <span
+     * <span
      * style="font-style:italic;">Spider diagrams (text)</span>,</li> </ul></p>
      * @return a human-readable name of this formula format.
      */
     @NonNull
-    @Override
-    public String getPrettyName() {
-        return prettyName;
-    }
-    // </editor-fold>
+    String getPrettyName();
+    
 }
