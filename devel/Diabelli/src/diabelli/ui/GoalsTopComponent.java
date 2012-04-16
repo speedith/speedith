@@ -89,12 +89,13 @@ public final class GoalsTopComponent extends TopComponent implements ExplorerMan
         InputMap keys = this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         this.lookup = ExplorerUtils.createLookup(this.em, map);
         this.associateLookup(this.lookup);
-        
+
         // Make the root node invisible in the view:
-        ((TreeTableView)goalsView).setRootVisible(false);
-        
+        ((TreeTableView) goalsView).setRootVisible(false);
+
         updateGoalsList();
     }
+    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Generated Code">
     /**
@@ -162,8 +163,9 @@ public final class GoalsTopComponent extends TopComponent implements ExplorerMan
     public ExplorerManager getExplorerManager() {
         return em;
     }
-    
-    private static class GoalChildrenFactory extends ChildFactory<GoalWrapper> {
+
+    //<editor-fold defaultstate="collapsed" desc="Children Factories">
+    private static class GoalChildrenFactory extends ChildFactory<GoalNode> {
 
         private final Goals goals;
 
@@ -172,120 +174,139 @@ public final class GoalsTopComponent extends TopComponent implements ExplorerMan
         }
 
         @Override
-        protected boolean createKeys(List<GoalWrapper> toPopulate) {
+        protected boolean createKeys(List<GoalNode> toPopulate) {
             if (goals != null && !goals.isEmpty()) {
                 for (int i = 0; i < goals.size(); i++) {
-                    toPopulate.add(new GoalWrapper(goals.get(i), i));
+                    toPopulate.add(new GoalNode(goals.get(i), i));
                 }
             }
             return true;
         }
 
         @Override
-        protected Node createNodeForKey(GoalWrapper key) {
-            return new GoalNode(key.goal, key.index);
+        protected GoalNode createNodeForKey(GoalNode key) {
+            return key;
         }
     }
 
-    private static class GoalWrapper {
+    private static class GoalPremisesConclusionFactory extends ChildFactory<AbstractNode> {
 
         private final Goal goal;
-        private final int index;
+        private final int goalIndex;
 
-        public GoalWrapper(Goal goal, int index) {
+        public GoalPremisesConclusionFactory(Goal goal, int goalIndex) {
             this.goal = goal;
-            this.index = index;
-        }
-    }
-
-    public static class GoalNode extends AbstractNode {
-
-        private final Goal goal;
-        private final int index;
-
-        /**
-         *
-         * @param goal
-         * @param index
-         */
-        public GoalNode(Goal goal, int index) {
-            super(Children.create(new GoalPremisesConclusionFactory(goal), false), Lookups.singleton(goal));
-            this.goal = goal;
-            this.index = index;
-            setDisplayName("Goal #" + (index + 1));
-        }
-    }
-
-    private static class GoalPremisesConclusionFactory extends ChildFactory<FormulaWrapper> {
-
-        private final Goal goal;
-
-        public GoalPremisesConclusionFactory(Goal goal) {
-            this.goal = goal;
+            this.goalIndex = goalIndex;
         }
 
         @Override
-        protected boolean createKeys(List<FormulaWrapper> toPopulate) {
+        protected boolean createKeys(List<AbstractNode> toPopulate) {
             if (goal != null) {
-                List<Formula> premises = goal.getPremises();
-                if (premises != null) {
-                    int i = 0;
-                    for (Formula formula : premises) {
-                        toPopulate.add(new FormulaWrapper(formula, i++));
-                    }
+                if (goal.getPremisesCount() > 0) {
+                    toPopulate.add(new PremisesNode(goal, goalIndex));
                 }
                 if (goal.getConclusion() != null) {
-                    toPopulate.add(new FormulaWrapper(goal.getConclusion()));
+                    toPopulate.add(new ConclusionNode(goal, goalIndex));
                 }
             }
             return true;
         }
 
         @Override
-        protected Node createNodeForKey(FormulaWrapper key) {
-            return new FormulaNode(key);
+        protected Node createNodeForKey(AbstractNode key) {
+            return key;
         }
     }
 
-    private static class FormulaWrapper {
+    private static class PremisesFactory extends ChildFactory<AbstractNode> {
 
-        private final int premiseIndex;
-        private final Formula formula;
+        private final Goal goal;
+        private final int goalIndex;
 
-        public FormulaWrapper(Formula premise, int premiseIndex) {
-            this.formula = premise;
+        public PremisesFactory(Goal goal, int goalIndex) {
+            this.goal = goal;
+            this.goalIndex = goalIndex;
+        }
+
+        @Override
+        protected boolean createKeys(List<AbstractNode> toPopulate) {
+            int premisesCount = goal.getPremisesCount();
+            for (int premiseIndex = 0; premiseIndex < premisesCount; premiseIndex++) {
+                toPopulate.add(new PremiseNode(goal, goalIndex, premiseIndex));
+            }
+            return true;
+        }
+
+        @Override
+        protected Node createNodeForKey(AbstractNode key) {
+            return key;
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Explorer Nodes">
+    public abstract static class GeneralGoalNode extends AbstractNode {
+        public final Goal goal;
+        public final int goalIndex;
+        
+        public GeneralGoalNode(Goal goal, int goalIndex, Children children, Lookup lookup) {
+            super(children, lookup);
+            this.goal = goal;
+            this.goalIndex = goalIndex;
+        }
+
+        public GeneralGoalNode(Goal goal, int goalIndex, Children children) {
+            super(children);
+            this.goal = goal;
+            this.goalIndex = goalIndex;
+        }
+        
+    }
+    
+    public static class GoalNode extends GeneralGoalNode {
+
+        private GoalNode(Goal goal, int goalIndex) {
+            super(goal, goalIndex, Children.create(new GoalPremisesConclusionFactory(goal, goalIndex), false), Lookups.singleton(goal));
+            setDisplayName("Goal #" + (goalIndex + 1));
+        }
+    }
+
+    @Messages({
+        "FN_conclusion_display_name=Conclusion"
+    })
+    public static class ConclusionNode extends GeneralGoalNode {
+
+        private ConclusionNode(Goal parentGoal, int goalIndex) {
+            super(parentGoal, goalIndex, Children.LEAF);
+            setDisplayName(Bundle.FN_conclusion_display_name());
+        }
+    }
+
+    @Messages({
+        "PN_premises_display_name=Premises"
+    })
+    public static class PremisesNode extends GeneralGoalNode {
+
+        private PremisesNode(Goal parentGoal, int goalIndex) {
+            super(parentGoal, goalIndex, Children.create(new PremisesFactory(parentGoal, goalIndex), false));
+            setDisplayName(Bundle.PN_premises_display_name());
+        }
+    }
+
+    @Messages({
+        "PN_premise_display_name=Premise #{0}"
+    })
+    public static class PremiseNode extends GeneralGoalNode {
+
+        public final int premiseIndex;
+
+        private PremiseNode(Goal goal, int goalIndex, int premiseIndex){
+            super(goal, goalIndex, Children.LEAF);
             this.premiseIndex = premiseIndex;
-        }
-
-        public FormulaWrapper(Formula conclusion) {
-            this(conclusion, -1);
-        }
-
-        public boolean isPremise() {
-            return premiseIndex >= 0;
-        }
-
-        public Formula getFormula() {
-            return formula;
-        }
-
-        public String getPrettyFormatName() {
-            return formula == null ? "No formula!" : formula.getMainRepresentation().getFormat().getPrettyName();
-        }
-
-        public String getDisplayName() {
-            return (isPremise() ? ("Premise #" + (premiseIndex + 1) + ": ") : "Conclusion: ") + getPrettyFormatName();
+            this.setDisplayName(Bundle.PN_premise_display_name(premiseIndex + 1));
         }
     }
-
-    private static class FormulaNode extends AbstractNode {
-
-        public FormulaNode(FormulaWrapper key) {
-            super(Children.LEAF);
-            setName(key.toString());
-            setDisplayName(key.getDisplayName());
-        }
-    }
+    //</editor-fold>
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Event Handlers">
@@ -296,11 +317,11 @@ public final class GoalsTopComponent extends TopComponent implements ExplorerMan
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            updateGoalsList((Goals)evt.getNewValue());
+            updateGoalsList((Goals) evt.getNewValue());
         }
     }
     //</editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="UI Refresh Methods">
     private void updateGoalsList(Goals goals) {
         Children children = Children.create(new GoalChildrenFactory(goals), false);
@@ -311,10 +332,11 @@ public final class GoalsTopComponent extends TopComponent implements ExplorerMan
 
     private void updateGoalsList() {
         GoalsManager goalManager = Lookup.getDefault().lookup(Diabelli.class).getGoalManager();
-        if (goalManager.getCurrentGoals() != null)
+        if (goalManager.getCurrentGoals() != null) {
             updateGoalsList(goalManager.getCurrentGoals());
-        else
+        } else {
             updateGoalsList(null);
+        }
     }
     // </editor-fold>
 }

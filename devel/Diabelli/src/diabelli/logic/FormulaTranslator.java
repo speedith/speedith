@@ -181,11 +181,8 @@ public abstract class FormulaTranslator {
 
     /**
      * Translates the given formulae (in the {@link
-     * FormulaTranslator#getFromFormat() source format}) into formulae in the {@link FormulaTranslator#getToFormat() target format}.
-     * <p>If more than one formula is returned, it is assumed that the formulae
-     * are conjunctively composed. This is used only for premises and the
-     * {@link TranslationType#ToEquivalent} and {@link TranslationType#ToEntailed}
-     * translation types.</p>
+     * FormulaTranslator#getFromFormat() source format}) into formulae in the
+     * {@link FormulaTranslator#getToFormat() target format}.
      *
      * @param formulae the formulae to translate.
      * @return the translated formulae.

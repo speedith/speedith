@@ -45,6 +45,7 @@ public class Goal {
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private final ArrayList<Formula> premises;
     private final Formula conclusion;
+//    private final Formula premisesFormula;
     private final Formula goalAsformula;
     // </editor-fold>
 
@@ -55,11 +56,13 @@ public class Goal {
      *
      * @param premises the premises of the goal.
      * @param conclusion the conclusion of the goal.
+     * @param premisesFormula the premises expressed as a single formula.
      * @param goalAsformula the goal represented with a formula.
      */
-    public Goal(ArrayList<Formula> premises, Formula conclusion, Formula goalAsformula) {
+    public Goal(ArrayList<Formula> premises, Formula conclusion,/* Formula premisesFormula,*/ Formula goalAsformula) {
         this.premises = premises;
         this.conclusion = conclusion;
+//        this.premisesFormula = premisesFormula;
         this.goalAsformula = goalAsformula;
     }
     // </editor-fold>
@@ -82,6 +85,15 @@ public class Goal {
     public int getPremisesCount() {
         return premises == null ? 0 : premises.size();
     }
+
+//    /**
+//     * Returns the premises represented as a single formula. This function
+//     * can return {@code null} even though there are some premises present.
+//     * @return the premises represented as a single formula.
+//     */
+//    public Formula getPremisesFormula() {
+//        return premisesFormula;
+//    }
 
     /**
      * Returns the conclusion of this goal. This method may return {@code
