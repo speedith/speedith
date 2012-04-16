@@ -24,9 +24,14 @@
  */
 package diabelli.logic;
 
+import diabelli.Diabelli;
+import diabelli.FormulaFormatManager;
 import diabelli.components.GoalProvidingReasoner;
+import diabelli.logic.FormulaTranslator.TranslationException;
 import java.util.*;
 import org.netbeans.api.annotations.common.NonNull;
+import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 
 /**
@@ -58,8 +63,8 @@ public class Formula {
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private final FormulaRepresentation<?> mainRepresentation;
     private final HashMap<String, FormulaRepresentation<?>> representations;
-    // </editor-fold>
     private final FormulaRole role;
+    // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
@@ -72,7 +77,7 @@ public class Formula {
      * @param otherRepresentations this list of representations must contain at
      * least one element. The first element of the list will become the {@link
      * Formula#getMainRepresentation() main representation}.
-     * @param role  the role of this formula in a {@link Goal}.
+     * @param role the role of this formula in a {@link Goal}.
      */
     @NbBundle.Messages({
         "F_role_null=A role must be provided for this formula."
@@ -105,7 +110,7 @@ public class Formula {
      * @param otherRepresentations this list of representations must contain at
      * least one element. The first element of the list will become the {@link
      * Formula#getMainRepresentation() main representation}.
-     * @param role  the role of this formula in a {@link Goal}.
+     * @param role the role of this formula in a {@link Goal}.
      */
     public Formula(FormulaRepresentation<?> mainRepresentation, @NonNull FormulaRole role, FormulaRepresentation<?>... otherRepresentations) {
         this(mainRepresentation, role, otherRepresentations == null || otherRepresentations.length < 1 ? null : Arrays.asList(otherRepresentations));
@@ -121,7 +126,7 @@ public class Formula {
      * @param otherRepresentations this list of representations must contain at
      * least one element. The first element of the list will become the {@link
      * Formula#getMainRepresentation() main representation}.
-     * @param role  the role of this formula in a {@link Goal}.
+     * @param role the role of this formula in a {@link Goal}.
      */
     public Formula(FormulaRepresentation<?> mainRepresentation, @NonNull FormulaRole role, ArrayList<FormulaRepresentation<?>> otherRepresentations) {
         this(mainRepresentation, role, (Collection<FormulaRepresentation<?>>) otherRepresentations);
@@ -145,12 +150,13 @@ public class Formula {
     }
 
     /**
-     * Returns all representations of this formula. This collection includes the
-     * main representation (as the first element).
+     * Returns the formats of all currently present/calculated representations
+     * of this formula. This collection includes the main representation.
      *
-     * @return all representations of this formula.
+     * @return all formats into which we translated the formula (at least tried
+     * to translate).
      */
-    public FormulaRepresentation[] getRepresentations() {
+    public FormulaFormatDescriptor[] getRepresentationsFormats() {
         // Returning a 'wrapped view' of the hash map's values is unsafe. We
         // must return a copy of the representations collection. The backing
         // hash map may still be changed long after this function returns the
@@ -158,7 +164,7 @@ public class Formula {
         // We synchronise here because we may add new representations in another
         // thread.
         synchronized (representations) {
-            return representations.values().toArray(new FormulaRepresentation[representations.size()]);
+            return representations.keySet().toArray(new FormulaFormatDescriptor[representations.size()]);
 //            return Collections.unmodifiableCollection(representations.values());
         }
     }
@@ -177,6 +183,7 @@ public class Formula {
 
     /**
      * Returns the role of this formula in a {@link Goal}.
+     *
      * @return the role of this formula in a {@link Goal}.
      */
     public FormulaRole getRole() {
@@ -187,10 +194,17 @@ public class Formula {
      * Returns the representation of this formula in the given format. This
      * method does not try to convert the formula into the given format.
      *
-     * @param format
-     * @return
+     * <p>This function returns {@code null} if there is no translation of the
+     * formula to the given format.</p>
+     *
+     * @param format the desired format in which to get this formula.
+     * @return the translation of the {@link Formula#getMainRepresentation()
+     * formula}.
      */
-    public FormulaRepresentation<?> getRepresentation(FormulaFormatDescriptor format) {
+    public FormulaRepresentation<?> geRepresentationtRepresentation(FormulaFormatDescriptor format) {
+        if (format == null) {
+            throw new IllegalArgumentException(Bundle.F_toFormat_null());
+        }
         synchronized (representations) {
             return representations.get(format.getFormatName());
         }
@@ -198,26 +212,70 @@ public class Formula {
 
     /**
      * Tries to convert this formula into the given format and returns the
-     * translated representation if the translation succeeded. 
-     * <p><span
-     * style="font-weight:bold">Note</span>: if a translation of this format</p>
+     * translated representation if the translation succeeded.
      *
-     * @param format
-     * @param tryAllCombinations 
-     * @return
+     * <p>This function returns {@code null} if there is no translation of the
+     * formula to the given format.</p>
+     *
+     * <p><span style="font-weight:bold">Note</span>: if a translation of this
+     * format doesn't exist yet, this method will try and translate it with the
+     * help of the {@link FormulaFormatManager#getFormulaTranslators() registered translators}
+     * in the {@link Diabelli#getFormulaFormatManager() formula format manager}.</p>
+     *
+     * <p>This method is thread-safe.</p>
+     *
+     * @param format the desired format in which to get this formula.
+     * @return the translation of the {@link Formula#getMainRepresentation()
+     * formula}.
      */
-    public FormulaRepresentation<?> fetchRepresentation(FormulaFormatDescriptor format, boolean tryAllCombinations) {
-        synchronized (representations) {
-            return representations.get(format.getFormatName());
+    @NbBundle.Messages({
+        "F_toFormat_null=A target format has to be specified."
+    })
+    public FormulaRepresentation<?> fetchRepresentation(FormulaFormatDescriptor format) {
+        if (format == null) {
+            throw new IllegalArgumentException(Bundle.F_toFormat_null());
         }
+        synchronized (representations) {
+            if (representations.containsKey(format.getFormatName())) {
+                return representations.get(format.getFormatName());
+            }
+        }
+        FormulaRepresentation<?> representation = null;
+        // There is no representation yet for this format. Try to find one.
+        for (FormulaTranslator translator : Lookup.getDefault().lookup(Diabelli.class).getFormulaFormatManager().getFormulaTranslators()) {
+            // Make sure that the translation is valid:
+            if (translator.getFromFormat().equals(getMainRepresentation().getFormat())
+                    && translator.getToFormat().equals(format)
+                    && getRole().isTranslationApplicable(translator.getTranslationType())) {
+                try {
+                    // We can try and translate it:
+                    Formula otherRep = translator.translate(this);
+                    if (otherRep != null) {
+                        // We got a translation, add it to the collection of
+                        // all representations of this formula and return it
+                        representation = new FormulaRepresentation(otherRep, format);
+                        break;
+                    }
+                } catch (TranslationException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        }
+        // Put the found representation into the collection of all representatios.
+        // In case the translation didn't succeed, null will be inserted.
+        synchronized (representations) {
+            representations.put(format.getFormatName(), representation);
+        }
+        return representation;
     }
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Helper Classes">
     /**
      * Indicates the role of the {@link Formula formula} in a goal.
      */
     public static enum FormulaRole {
+
         /**
          * Indicates that the {@link Formula formula} is {@link
          * Goal#getPremises() a premise}.
@@ -232,7 +290,21 @@ public class Formula {
          * Indicates that the {@link Formula formula} is {@link
          * Goal#asFormula() the goal itself}.
          */
-        Goal
+        Goal;
+
+        /**
+         * Checks whether the translation of the given type is applicable on a
+         * formula of this role.
+         *
+         * @param transType the type of the translation.
+         * @return a value indicating whether the translation of the given type
+         * is applicable on a formula of this role.
+         */
+        public boolean isTranslationApplicable(FormulaTranslator.TranslationType transType) {
+            return this == Premise ? transType == FormulaTranslator.TranslationType.ToEquivalent || transType == FormulaTranslator.TranslationType.ToEntailed
+                    : this == Conclusion ? transType == FormulaTranslator.TranslationType.ToEquivalent || transType == FormulaTranslator.TranslationType.ToEntailing
+                    : transType == FormulaTranslator.TranslationType.ToEquivalent;
+        }
     }
     // </editor-fold>
 }

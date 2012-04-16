@@ -28,6 +28,7 @@ import diabelli.components.DiabelliComponent;
 import diabelli.logic.FormulaFormatDescriptor;
 import diabelli.logic.FormulaRepresentation;
 import diabelli.logic.FormulaTranslator;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -46,10 +47,14 @@ public interface FormulaFormatManager {
 
     /**
      * Returns all registered formula formats.
-     * @return 
+     * @return all registered formula formats.
      */
     Collection<FormulaFormatDescriptor> getFormulaFormats();
 
+    /**
+     * Returns all registered formula translators.
+     * @return all registered formula translators.
+     */
     Collection<FormulaTranslator> getFormulaTranslators();
     
 }

@@ -24,10 +24,19 @@
  */
 package speedith.diabelli;
 
+import speedith.diabelli.logic.SpeedithFormatDescriptor;
 import diabelli.components.DiabelliComponent;
+import diabelli.components.FormulaFormatsProvider;
+import diabelli.components.FormulaTranslationsProvider;
 import diabelli.components.GoalAcceptingReasoner;
 import diabelli.components.util.BareGoalProvidingReasoner;
+import diabelli.logic.FormulaFormatDescriptor;
+import diabelli.logic.FormulaTranslator;
 import diabelli.logic.Goal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -44,10 +53,33 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 @ServiceProvider(service = DiabelliComponent.class)
-public class SpeedithDriver extends BareGoalProvidingReasoner {
+public class SpeedithDriver extends BareGoalProvidingReasoner implements FormulaFormatsProvider {
 
     @Override
     public String getName() {
         return "Speedith";
     }
+    
+    // <editor-fold defaultstate="collapsed" desc="Formula Format Provider">
+    @Override
+    public Collection<FormulaFormatDescriptor> getFormulaFormats() {
+        return FormulaFormatsContainer.SpeedithFormats;
+    }
+    
+    private static class FormulaFormatsContainer {
+        private static final List<FormulaFormatDescriptor> SpeedithFormats;
+        
+        static {
+            ArrayList<FormulaFormatDescriptor> tmp = new ArrayList<FormulaFormatDescriptor>();
+            tmp.add(SpeedithFormatDescriptor.getInstance());
+            SpeedithFormats = Collections.unmodifiableList(tmp);
+        }
+    }
+    // </editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Formula Translations Provider">
+    public Collection<FormulaTranslator> getFormulaTranslators() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    //</editor-fold>
 }

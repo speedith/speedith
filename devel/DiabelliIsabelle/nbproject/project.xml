@@ -74,8 +74,8 @@
                 </test-type>
             </test-dependencies>
             <public-packages>
-                <package>diabelli.isabelle</package>
                 <package>diabelli.isabelle.pure.lib</package>
+                <package>diabelli.isabelle.terms</package>
                 <package>isabelle</package>
                 <package>scala</package>
                 <package>scala.actors</package>

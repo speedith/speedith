@@ -38,7 +38,7 @@ import org.openide.util.NbBundle;
  * translations provider interface}. {@link Diabelli#getFormulaFormatManager() The
  * formula format manager} will pick all these components up, fetch their
  * translators, and register them for later automatic use in Diabelli.
- * 
+ *
  * <p>Diabelli will try to automatically translate all goals, premises, and
  * conclusions, that the user deliberately inspects.</p>
  *
@@ -168,16 +168,16 @@ public abstract class FormulaTranslator {
 
     /**
      * Translates the given formula (in the {@link
-     * FormulaTranslator#getFromFormat() source format}) into formulae in the {@link FormulaTranslator#getToFormat() target format}.
-     * <p>If more than one formula is returned, it is assumed that the formulae
-     * are conjunctively composed. This is used only for premises and the
-     * {@link TranslationType#ToEquivalent} and {@link TranslationType#ToEntailed}
-     * translation types.</p>
+     * FormulaTranslator#getFromFormat() source format}) into a formula in the
+     * {@link FormulaTranslator#getToFormat() target format}.
      *
      * @param formula the formula to translate.
      * @return the translated formulae.
+     * @throws diabelli.logic.FormulaTranslator.TranslationException This
+     * exception is thrown whenever the translation didn't succeed for any
+     * reason. A detailed explanation might be given for the user.
      */
-    public abstract ArrayList<Formula> translate(Formula formula);
+    public abstract Formula translate(Formula formula) throws TranslationException;
 
     /**
      * Translates the given formulae (in the {@link
@@ -189,8 +189,11 @@ public abstract class FormulaTranslator {
      *
      * @param formulae the formulae to translate.
      * @return the translated formulae.
+     * @throws diabelli.logic.FormulaTranslator.TranslationException This
+     * exception is thrown whenever the translation didn't succeed for any
+     * reason. A detailed explanation might be given for the user.
      */
-    public abstract ArrayList<Formula> translate(List<Formula> formulae);
+    public abstract ArrayList<Formula> translate(List<Formula> formulae) throws TranslationException;
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
@@ -215,6 +218,32 @@ public abstract class FormulaTranslator {
          * (implies) the original one.
          */
         ToEntailing;
+    }
+
+    /**
+     * This exception gives a detailed explanation as to why a translation did
+     * not succeed. The message may be displayed to the user in the GUI.
+     */
+    public static class TranslationException extends Exception {
+
+        public TranslationException() {
+        }
+
+        public TranslationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+            super(message, cause, enableSuppression, writableStackTrace);
+        }
+
+        public TranslationException(Throwable cause) {
+            super(cause);
+        }
+
+        public TranslationException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public TranslationException(String message) {
+            super(message);
+        }
     }
     //</editor-fold>
 }
