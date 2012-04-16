@@ -27,9 +27,11 @@ package diabelli.implementation;
 import diabelli.Diabelli;
 import diabelli.FormulaFormatManager;
 import diabelli.components.DiabelliComponent;
-import diabelli.components.FormulaFormatProvider;
+import diabelli.components.FormulaFormatsProvider;
+import diabelli.components.FormulaTranslationsProvider;
 import diabelli.components.GoalProvidingReasoner;
 import diabelli.logic.FormulaFormatDescriptor;
+import diabelli.logic.FormulaTranslator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,6 +46,7 @@ class FormulaFormatManagerImpl implements FormulaFormatManager, ManagerInternals
 
     //<editor-fold defaultstate="collapsed" desc="Fields">
     private final HashMap<String, FormulaFormatDescriptor> formulaFormats;
+    private final HashMap<String, FormulaTranslator> formulaTranslators;
     private final Diabelli diabelli;
     //</editor-fold>
 
@@ -54,6 +57,7 @@ class FormulaFormatManagerImpl implements FormulaFormatManager, ManagerInternals
         }
         this.diabelli = diabelli;
         this.formulaFormats = new HashMap<String, FormulaFormatDescriptor>();
+        this.formulaTranslators = new HashMap<String, FormulaTranslator>();
     }
     //</editor-fold>
 
@@ -72,7 +76,7 @@ class FormulaFormatManagerImpl implements FormulaFormatManager, ManagerInternals
         "FFM_formats_empty=The Diabelli component '{0}' advertises itself as a formula format provider, however, it provides no formats.",
         "FFM_format_null=The Diabelli component '{0}' tried to register a 'null' format."
     })
-    void registerFormulaFormats(Collection<FormulaFormatDescriptor> formats, FormulaFormatProvider providingComponent) {
+    void registerFormulaFormats(Collection<FormulaFormatDescriptor> formats, FormulaFormatsProvider providingComponent) {
         if (formats == null || formats.isEmpty()) {
             throw new IllegalArgumentException(Bundle.FFM_formats_empty(providingComponent.getName()));
         } else {
@@ -83,6 +87,39 @@ class FormulaFormatManagerImpl implements FormulaFormatManager, ManagerInternals
                 if (formulaFormats.containsKey(format.getFormatName())) {
                     throw new IllegalArgumentException(Bundle.FFM_format_already_exists(providingComponent.getName(), format.getFormatName()));
                 }
+                formulaFormats.put(format.getFormatName(), format);
+            }
+        }
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Formula Translators">
+    @Override
+    public Collection<FormulaTranslator> getFormulaTranslators() {
+        return Collections.unmodifiableCollection(formulaTranslators.values());
+    }
+
+    /**
+     * Registers the given formats with this manager. This method throws an
+     * exception if any of the formats is already present.
+     */
+    @NbBundle.Messages({
+        "FFM_translator_already_exists=The Diabelli component '{0}' tried to register the formula translator '{1}', which is already registered.",
+        "FFM_translators_empty=The Diabelli component '{0}' advertises itself as a formula translator provider, however, it provides no formula translators.",
+        "FFM_translator_null=The Diabelli component '{0}' tried to register a 'null' formula translator."
+    })
+    void registerFormulaTranslators(Collection<FormulaTranslator> translators, FormulaTranslationsProvider providingComponent) {
+        if (translators == null || translators.isEmpty()) {
+            throw new IllegalArgumentException(Bundle.FFM_translators_empty(providingComponent.getName()));
+        } else {
+            for (FormulaTranslator translator : translators) {
+                if (translator == null) {
+                    throw new IllegalArgumentException(Bundle.FFM_translator_null(providingComponent.getName()));
+                }
+                if (formulaTranslators.containsKey(translator.getName())) {
+                    throw new IllegalArgumentException(Bundle.FFM_translator_already_exists(providingComponent.getName(), translator.getName()));
+                }
+                formulaTranslators.put(translator.getName(), translator);
             }
         }
     }
@@ -95,11 +132,15 @@ class FormulaFormatManagerImpl implements FormulaFormatManager, ManagerInternals
 
     @Override
     public void onAfterComponentsLoaded() {
-        // Register all available formula formats:
+        // Register all available formula formats and translations:
         for (DiabelliComponent diabelliComponent : diabelli.getRegisteredComponents()) {
-            if (diabelliComponent instanceof FormulaFormatProvider) {
-                FormulaFormatProvider formulaFormatProvider = (FormulaFormatProvider) diabelliComponent;
+            if (diabelliComponent instanceof FormulaFormatsProvider) {
+                FormulaFormatsProvider formulaFormatProvider = (FormulaFormatsProvider) diabelliComponent;
                 registerFormulaFormats(formulaFormatProvider.getFormulaFormats(), formulaFormatProvider);
+            }
+            if (diabelliComponent instanceof FormulaTranslationsProvider) {
+                FormulaTranslationsProvider ftp = (FormulaTranslationsProvider) diabelliComponent;
+                registerFormulaTranslators(ftp.getFormulaTranslators(), ftp);
             }
         }
     }

@@ -24,6 +24,7 @@
  */
 package diabelli.isabelle.terms;
 
+import diabelli.logic.Formula;
 import diabelli.logic.Goal;
 import isabelle.Term.Free;
 import isabelle.Term.Term;
@@ -43,7 +44,7 @@ public class TermGoal extends Goal {
 
     //<editor-fold defaultstate="collapsed" desc="Constructor">
     TermGoal(ArrayList<Free> variables, ArrayList<Term> premises, Term conclusion, Term term) {
-        super(TermsToDiabelli.toFormulae(premises), TermsToDiabelli.toFormula(conclusion), TermsToDiabelli.toFormula(term));
+        super(TermsToDiabelli.toFormulae(premises, Formula.FormulaRole.Premise), TermsToDiabelli.toFormula(conclusion, Formula.FormulaRole.Conclusion), TermsToDiabelli.toFormula(term, Formula.FormulaRole.Goal));
         this.variables = variables;
     }
     //</editor-fold>

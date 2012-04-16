@@ -72,25 +72,27 @@ public final class TermsToDiabelli {
      * Takes an Isabelle term and wraps it into a Diabelli formula.
      *
      * @param term the term to wrap.
+     * @param role the role of this term in the goal.
      * @return a Diabelli formula (containing the term and a description of the
      * term format).
      */
-    public static Formula toFormula(Term.Term term) {
-        return new Formula(new FormulaRepresentation<Term.Term>(term, TermFormatDescriptor.getInstance()));
+    public static Formula toFormula(Term.Term term, Formula.FormulaRole role) {
+        return new Formula(new FormulaRepresentation<Term.Term>(term, TermFormatDescriptor.getInstance()), role);
     }
 
     /**
      * Takes a bunch of Isabelle terms and wraps them into a Diabelli formulae.
      *
      * @param terms the terms to wrap.
+     * @param role the role of these terms in the goal.
      * @return a bunch of Diabelli formulae (containing the terms and
      * descriptions of the term format).
      */
-    public static ArrayList<Formula> toFormulae(Collection<Term.Term> terms) {
+    public static ArrayList<Formula> toFormulae(Collection<Term.Term> terms, Formula.FormulaRole role) {
         if (terms != null) {
             ArrayList<Formula> formulae = new ArrayList<Formula>();
             for (Term.Term term : terms) {
-                formulae.add(toFormula(term));
+                formulae.add(toFormula(term, role));
             }
             return formulae;
         } else {

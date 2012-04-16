@@ -25,7 +25,7 @@
 package diabelli.isabelle;
 
 import diabelli.components.DiabelliComponent;
-import diabelli.components.FormulaFormatProvider;
+import diabelli.components.FormulaFormatsProvider;
 import diabelli.components.util.BareGoalProvidingReasoner;
 import diabelli.isabelle.pure.lib.TermYXML;
 import diabelli.isabelle.terms.TermFormatDescriptor;
@@ -40,6 +40,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import javax.swing.Timer;
 import org.isabelle.iapp.facade.CentralEventDispatcher;
@@ -65,7 +67,7 @@ import org.openide.windows.TopComponent;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 @ServiceProvider(service = DiabelliComponent.class)
-public class IsabelleDriver extends BareGoalProvidingReasoner implements FormulaFormatProvider {
+public class IsabelleDriver extends BareGoalProvidingReasoner implements FormulaFormatsProvider {
 
     //<editor-fold defaultstate="collapsed" desc="Fields">
     private IsabelleMessageListener isabelleListener;
@@ -91,10 +93,12 @@ public class IsabelleDriver extends BareGoalProvidingReasoner implements Formula
     }
     
     private static class FormulaFormatsContainer {
-        private static final ArrayList<FormulaFormatDescriptor> IsabelleFormats = new ArrayList<FormulaFormatDescriptor>();
+        private static final List<FormulaFormatDescriptor> IsabelleFormats;
         
         static {
-            IsabelleFormats.add(TermFormatDescriptor.getInstance());
+            ArrayList<FormulaFormatDescriptor> tmp = new ArrayList<FormulaFormatDescriptor>();
+            tmp.add(TermFormatDescriptor.getInstance());
+            IsabelleFormats = Collections.unmodifiableList(tmp);
         }
     }
     // </editor-fold>

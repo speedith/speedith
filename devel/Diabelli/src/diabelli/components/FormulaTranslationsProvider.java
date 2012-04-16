@@ -1,5 +1,5 @@
 /*
- * File name: FormulaFormatProvider.java
+ * File name: FormulaTranslationsProvider.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -24,22 +24,25 @@
  */
 package diabelli.components;
 
-import diabelli.Diabelli;
-import diabelli.FormulaFormatManager;
-import diabelli.logic.FormulaFormatDescriptor;
+import diabelli.logic.FormulaTranslator;
 import java.util.Collection;
 
 /**
- * Diabelli components of this type can register known formula formats with the
- * {@link FormulaFormatManager formula format manager} (see {@link Diabelli#getFormulaFormatManager()
- * }).
+ * Diabelli components of this type can register their formula translators with
+ * the {@link FormulaFormatManager formula format manager} (see {@link Diabelli#getFormulaFormatManager()
+ * }). The registration process is automatic and happens during Diabelli's
+ * loading stage.
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface FormulaFormatProvider extends DiabelliComponent {
+public interface FormulaTranslationsProvider extends DiabelliComponent {
+
     /**
-     * Returns a list of formula formats provided by this Diabelli component.
-     * @return a list of formula formats provided by this Diabelli component.
+     * Returns a list of formula translators provided by this Diabelli
+     * component.
+     *
+     * @return a list of formula translators provided by this Diabelli
+     * component.
      */
-    Collection<FormulaFormatDescriptor> getFormulaFormats();
+    Collection<FormulaTranslator> getFormulaTranslators();
 }

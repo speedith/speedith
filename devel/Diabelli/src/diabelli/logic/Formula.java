@@ -26,6 +26,7 @@ package diabelli.logic;
 
 import diabelli.components.GoalProvidingReasoner;
 import java.util.*;
+import org.netbeans.api.annotations.common.NonNull;
 import org.openide.util.NbBundle;
 
 /**
@@ -58,6 +59,7 @@ public class Formula {
     private final FormulaRepresentation<?> mainRepresentation;
     private final HashMap<String, FormulaRepresentation<?>> representations;
     // </editor-fold>
+    private final FormulaRole role;
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
@@ -70,10 +72,17 @@ public class Formula {
      * @param otherRepresentations this list of representations must contain at
      * least one element. The first element of the list will become the {@link
      * Formula#getMainRepresentation() main representation}.
+     * @param role  the role of this formula in a {@link Goal}.
      */
-    public Formula(FormulaRepresentation<?> mainRepresentation, Collection<FormulaRepresentation<?>> otherRepresentations) {
+    @NbBundle.Messages({
+        "F_role_null=A role must be provided for this formula."
+    })
+    public Formula(@NonNull FormulaRepresentation<?> mainRepresentation, @NonNull FormulaRole role, Collection<FormulaRepresentation<?>> otherRepresentations) {
         if (mainRepresentation == null) {
             throw new IllegalArgumentException(Bundle.Formula_null_main_representation());
+        }
+        if (role == null) {
+            throw new IllegalArgumentException(Bundle.F_role_null());
         }
         this.mainRepresentation = mainRepresentation;
         this.representations = new HashMap<String, FormulaRepresentation<?>>();
@@ -83,6 +92,7 @@ public class Formula {
                 this.representations.put(formulaRepresentation.getFormat().getFormatName(), formulaRepresentation);
             }
         }
+        this.role = role;
     }
 
     /**
@@ -95,9 +105,10 @@ public class Formula {
      * @param otherRepresentations this list of representations must contain at
      * least one element. The first element of the list will become the {@link
      * Formula#getMainRepresentation() main representation}.
+     * @param role  the role of this formula in a {@link Goal}.
      */
-    public Formula(FormulaRepresentation<?> mainRepresentation, FormulaRepresentation<?>... otherRepresentations) {
-        this(mainRepresentation, otherRepresentations == null || otherRepresentations.length < 1 ? null : Arrays.asList(otherRepresentations));
+    public Formula(FormulaRepresentation<?> mainRepresentation, @NonNull FormulaRole role, FormulaRepresentation<?>... otherRepresentations) {
+        this(mainRepresentation, role, otherRepresentations == null || otherRepresentations.length < 1 ? null : Arrays.asList(otherRepresentations));
     }
 
     /**
@@ -110,9 +121,10 @@ public class Formula {
      * @param otherRepresentations this list of representations must contain at
      * least one element. The first element of the list will become the {@link
      * Formula#getMainRepresentation() main representation}.
+     * @param role  the role of this formula in a {@link Goal}.
      */
-    public Formula(FormulaRepresentation<?> mainRepresentation, ArrayList<FormulaRepresentation<?>> otherRepresentations) {
-        this(mainRepresentation, (Collection<FormulaRepresentation<?>>) otherRepresentations);
+    public Formula(FormulaRepresentation<?> mainRepresentation, @NonNull FormulaRole role, ArrayList<FormulaRepresentation<?>> otherRepresentations) {
+        this(mainRepresentation, role, (Collection<FormulaRepresentation<?>>) otherRepresentations);
     }
     //</editor-fold>
 
@@ -138,11 +150,16 @@ public class Formula {
      *
      * @return all representations of this formula.
      */
-    public Collection<FormulaRepresentation<?>> getRepresentations() {
+    public FormulaRepresentation[] getRepresentations() {
+        // Returning a 'wrapped view' of the hash map's values is unsafe. We
+        // must return a copy of the representations collection. The backing
+        // hash map may still be changed long after this function returns the
+        // view.
         // We synchronise here because we may add new representations in another
         // thread.
         synchronized (representations) {
-            return Collections.unmodifiableCollection(representations.values());
+            return representations.values().toArray(new FormulaRepresentation[representations.size()]);
+//            return Collections.unmodifiableCollection(representations.values());
         }
     }
 
@@ -159,6 +176,14 @@ public class Formula {
     }
 
     /**
+     * Returns the role of this formula in a {@link Goal}.
+     * @return the role of this formula in a {@link Goal}.
+     */
+    public FormulaRole getRole() {
+        return role;
+    }
+
+    /**
      * Returns the representation of this formula in the given format. This
      * method does not try to convert the formula into the given format.
      *
@@ -169,6 +194,45 @@ public class Formula {
         synchronized (representations) {
             return representations.get(format.getFormatName());
         }
+    }
+
+    /**
+     * Tries to convert this formula into the given format and returns the
+     * translated representation if the translation succeeded. 
+     * <p><span
+     * style="font-weight:bold">Note</span>: if a translation of this format</p>
+     *
+     * @param format
+     * @param tryAllCombinations 
+     * @return
+     */
+    public FormulaRepresentation<?> fetchRepresentation(FormulaFormatDescriptor format, boolean tryAllCombinations) {
+        synchronized (representations) {
+            return representations.get(format.getFormatName());
+        }
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Helper Classes">
+    /**
+     * Indicates the role of the {@link Formula formula} in a goal.
+     */
+    public static enum FormulaRole {
+        /**
+         * Indicates that the {@link Formula formula} is {@link
+         * Goal#getPremises() a premise}.
+         */
+        Premise,
+        /**
+         * Indicates that the {@link Formula formula} is {@link
+         * Goal#getConclusion() the conclusion}.
+         */
+        Conclusion,
+        /**
+         * Indicates that the {@link Formula formula} is {@link
+         * Goal#asFormula() the goal itself}.
+         */
+        Goal
     }
     // </editor-fold>
 }
