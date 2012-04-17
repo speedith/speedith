@@ -107,8 +107,11 @@ is needed only during the compilation stage (not a runtime dependency).</p>
 </ol>
 <hr />
 <h1>Building <em>Diabelli</em></h1>
-<p>Diabelli currently depends on <em>I3P</em>. The sources of the I3P framework are
-available from <a href="http://www-pu.informatik.uni-tuebingen.de/i3p/" />.</p>
+<p>The Isabelle driver for Diabelli currently depends on <em>I3P</em>. The sources of the
+I3P framework are available from <a href="http://www-pu.informatik.uni-tuebingen.de/i3p/">the I3P's official web
+page</a>.</p>
+<p>Note that all other Diabelli components do not depend on I3P, which makes them
+usable in a plain NetBeans platform (without I3P modules).</p>
 <hr />
 <h1>Using <em>Hyperblocks</em></h1>
 <p>The Blocksworld component requires an past version of JOGL (both the Java JAR
@@ -116,7 +119,97 @@ package and related platform-specific binaries). This can be obtained through
 the installation package provided through Openbox. For example, the RPM package
 <code>LPL-11_09-linux-rpm-installer.sh</code> will install the <code>jogl</code> binaries in the
 folder <code>/usr/share/OP-jre/lib/i386/</code> (this folder must be placed into
-<code>java.libs.path</code> or you can create a symbolic link from one of the existing
+<code>java.library.path</code> or you can create a symbolic link from one of the existing
 empty folders in the path, for example <code>/usr/java/packages/lib/i386</code> on Fedora
 16). To obtain the Java JAR <code>jogl.jar</code> package, contact
 <a href="http://www-csli.stanford.edu/hp/">Stanford CSLI</a>.</p>
+<p>Note that this works only with 32-bit versions of Java.</p>
+<p><strong>Below are my notes from trying to make Hyperblocks work on a 64-bit Linux
+machine. After trying for a while, I finally gave up. Maybe somebody will find
+these notes useful:</strong></p>
+<p>On 64-bit machines, one
+also has to install the following packages:</p>
+<ul>
+<li><code>mesa-libGLU.i686</code></li>
+</ul>
+<h2>Getting JOGL from sources</h2>
+<p>If for some reason things keep failing, you might want to get JOGL yourself.</p>
+<p>Since Hyperblocks uses an old version of JOGL (one that uses package names such
+as <code>net.java.games.jogl</code>), you'll have to dig in the history of the <a href="http://kenai.com/projects/jogl/sources/jogl-git/content/src/net/java/games/jogl/DefaultGLCapabilitiesChooser.java?rev=8da5bfa2d72282bfdcd2889a70a93a4072221a1c">JOGL git
+repository</a>.</p>
+<p>To get the sources issue the following command:</p>
+<pre><code>git clone git://kenai.com/jogl~jogl-git
+</code></pre>
+<p>It seems like the last revision before the merge of JSR-231 (which changed the
+package names) was <code>42843c3290d64c41c9c8a18b93f5ad3c00d35ddc</code>.</p>
+<p>Afterwards follow the guide <code>jogl~jogl-git/doc/HowToBuild.html</code> in the
+repository.</p>
+<p>If you are building on a 64-bit machine, open the <code>make/build.xml</code> file, find:</p>
+<pre><code>&lt;compiler id="compiler.cfg.linux" name="gcc"&gt;
+</code></pre>
+<p>and change it to:</p>
+<pre><code>&lt;compiler id="compiler.cfg.linux" name="gcc"&gt;
+    &lt;compilerarg value="-m32"/&gt;
+&lt;/compiler&gt;
+</code></pre>
+<h3>Notes</h3>
+<p>I had the following errors while trying to build JOGL:</p>
+<ol>
+<li>
+<p>Error message:</p>
+<pre><code>    /home/matej/Documents/jogl~jogl-git/make/build.xml:1105: The following error occurred while executing this line:
+    /home/matej/Documents/jogl~jogl-git/make/build.xml:866: The following error occurred while executing this line:
+    /home/matej/Documents/jogl~jogl-git/make/build.xml:821: /usr/X11R6/lib does not exist.
+</code></pre>
+<p>Solution:</p>
+<p>Replace every occurrence of <code>/usr/X11R6</code> into <code>/usr/lib</code>.</p>
+</li>
+<li>
+<p>Error message (probably only on 64-bit):</p>
+<pre><code>    /home/matej/Documents/jogl~jogl-git/make/build.xml:1105: The following error occurred while executing this line:
+    /home/matej/Documents/jogl~jogl-git/make/build.xml:866: The following error occurred while executing this line:
+    /home/matej/Documents/jogl~jogl-git/make/build.xml:821: /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.3.x86_64/jre/lib/i386 does not exist.
+</code></pre>
+<p>Solution:</p>
+<p>In the <code>jogl.properties</code> file set the <code>java.home.dir</code> to a 32-bit JVM:</p>
+<pre><code>java.home.dir=/usr/lib/jvm/java-1.7.0-openjdk
+</code></pre>
+</li>
+<li>
+<p>Error message (in C compilation stage):</p>
+<pre><code>           [cc] In file included from /home/matej/Documents/jogl~jogl-git/src/native/jogl/JAWT_DrawingSurfaceInfo.c:40:0:
+           [cc] /usr/lib/jvm/java-1.7.0-openjdk/include/linux/jawt_md.h:31:27: fatal error: X11/Intrinsic.h: No such file or directory
+           [cc] compilation terminated.
+
+    BUILD FAILED
+    /home/matej/Documents/jogl~jogl-git/make/build.xml:1105: The following error occurred while executing this line:
+    /home/matej/Documents/jogl~jogl-git/make/build.xml:866: The following error occurred while executing this line:
+    /home/matej/Documents/jogl~jogl-git/make/build.xml:821: gcc failed with return code 1
+</code></pre>
+<p>Solution:</p>
+<p>Install this:</p>
+<pre><code>    yum install libXt-devel.i686
+</code></pre>
+</li>
+<li>
+<p>Message (and other similar ones):</p>
+<pre><code>    [cc] /usr/include/gnu/stubs.h:7:27: fatal error: gnu/stubs-32.h: No such file or directory
+    [cc] compilation terminated.
+</code></pre>
+<p>Solution: Install:</p>
+<pre><code>yum install glibc-devel.i686
+</code></pre>
+</li>
+<li>
+<p>Missing libraries (on a 64-bit machine):</p>
+<pre><code>    [cc] Starting link
+    [cc] /usr/bin/ld: cannot find -lGL
+    [cc] /usr/bin/ld: cannot find -lGLU
+    [cc] /usr/bin/ld: skipping incompatible /usr/lib/jvm/java-1.7.0-openjdk/jre/lib/i386/libjawt.so when searching for -ljawt
+    [cc] /usr/bin/ld: cannot find -ljawt
+    [cc] /usr/bin/ld: skipping incompatible /usr/lib/libc.so when searching for -lc
+    [cc] collect2: ld returned 1 exit status
+</code></pre>
+<p>Solution:</p>
+</li>
+</ol>
