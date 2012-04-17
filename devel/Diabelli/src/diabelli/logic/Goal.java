@@ -28,6 +28,7 @@ import diabelli.components.GoalProvidingReasoner;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.openide.util.NbBundle;
 
 /**
  * Represents a proof goal (with premises and conclusions) that are being
@@ -59,7 +60,9 @@ public class Goal {
      * @param premisesFormula the premises expressed as a single formula.
      * @param goalAsformula the goal represented with a formula.
      */
-    public Goal(ArrayList<Formula> premises, Formula conclusion,/* Formula premisesFormula,*/ Formula goalAsformula) {
+    public Goal(ArrayList<Formula> premises, Formula conclusion,/*
+             * Formula premisesFormula,
+             */ Formula goalAsformula) {
         this.premises = premises;
         this.conclusion = conclusion;
 //        this.premisesFormula = premisesFormula;
@@ -77,13 +80,31 @@ public class Goal {
     public List<Formula> getPremises() {
         return premises == null || premises.isEmpty() ? null : Collections.unmodifiableList(premises);
     }
-    
+
     /**
      * Returns the number of premises present in this goal.
+     *
      * @return the number of premises present in this goal.
      */
     public int getPremisesCount() {
         return premises == null ? 0 : premises.size();
+    }
+
+    /**
+     * Returns the premise at the given index.
+     * @param index the index of the premise to return.
+     * @return the premise at the given index.
+     */
+    @NbBundle.Messages({
+        "G_premise_index_out_of_bounds=Could not fetch the premise at index '{0}'. There are '{1}' premises in this goal."
+    })
+    public Formula getPremiseAt(int index) {
+        int count = getPremisesCount();
+        if (index >= count || index < 0) {
+            throw new IndexOutOfBoundsException(Bundle.G_premise_index_out_of_bounds(index, count));
+        } else {
+            return premises.get(index);
+        }
     }
 
 //    /**
@@ -94,7 +115,6 @@ public class Goal {
 //    public Formula getPremisesFormula() {
 //        return premisesFormula;
 //    }
-
     /**
      * Returns the conclusion of this goal. This method may return {@code
      * null} if this goal has no conclusion.

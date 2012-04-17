@@ -122,13 +122,13 @@ public final class DiabelliImpl implements Diabelli {
     }
 
     @Override
-    public Set<? extends DiabelliComponent> getRegisteredComponents() {
-        return Collections.unmodifiableSet(components);
+    public FormulaFormatManager getFormulaFormatManager() {
+        return formulaFormatManager;
     }
 
     @Override
-    public FormulaFormatManager getFormulaFormatManager() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Set<? extends DiabelliComponent> getRegisteredComponents() {
+        return Collections.unmodifiableSet(components);
     }
     // </editor-fold>
 

@@ -94,7 +94,7 @@ public final class GoalsTopComponent extends TopComponent implements ExplorerMan
 
         // Make the root node invisible in the view:
         ((TreeTableView) goalsView).setRootVisible(false);
-//        ((TreeTableView) goalsView).setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        ((TreeTableView) goalsView).setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         updateGoalsList();
     }

@@ -30,6 +30,7 @@ import diabelli.logic.FormulaRepresentation;
 import diabelli.logic.FormulaTranslator;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.netbeans.api.annotations.common.NonNull;
 
 /**
  * Provides a central mechanism for registering known {@link
@@ -49,12 +50,14 @@ public interface FormulaFormatManager {
      * Returns all registered formula formats.
      * @return all registered formula formats.
      */
+    @NonNull
     Collection<FormulaFormatDescriptor> getFormulaFormats();
 
     /**
      * Returns all registered formula translators.
      * @return all registered formula translators.
      */
+    @NonNull
     Collection<FormulaTranslator> getFormulaTranslators();
     
 }
