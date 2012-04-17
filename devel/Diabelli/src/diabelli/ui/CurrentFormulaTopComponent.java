@@ -175,7 +175,6 @@ public final class CurrentFormulaTopComponent extends TopComponent implements Ex
 
         @Override
         public void resultChanged(LookupEvent ev) {
-            System.out.println(":::::::::::: Goals selection changed! :::::::::::::::::");
             Collection<? extends GeneralGoalNode> allInstances = goalSelection.allInstances();
             for (GeneralGoalNode generalGoalNode : allInstances) {
                 if (generalGoalNode instanceof GoalsTopComponent.PremisesNode) {

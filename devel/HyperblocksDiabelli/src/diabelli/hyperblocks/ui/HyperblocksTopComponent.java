@@ -24,11 +24,7 @@
  */
 package diabelli.hyperblocks.ui;
 
-import diabelli.Diabelli;
-import diabelli.GoalsManager;
 import java.awt.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import openproof.awt.SmartEditMenu;
 import openproof.situation.editor.BlocksSitExternalEditor;
 import openproof.situation.editor.BlocksSitToolbar;
@@ -38,9 +34,8 @@ import openproof.tarski.world.WorldController;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.util.Lookup;
-import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
+import org.openide.windows.TopComponent;
 
 /**
  * Top component which displays something.
@@ -68,8 +63,11 @@ public final class HyperblocksTopComponent extends TopComponent {
         initComponents();
         setName(Bundle.CTL_HyperblocksTopComponent());
         setToolTipText(Bundle.HINT_HyperblocksTopComponent());
-        
-        
+//        // Print out the 'java.libs.path'
+//        String property = System.getProperty("java.libs.path");
+//        System.out.println(property);
+//        property = System.getProperty("java.library.path");
+//        System.out.println(property);
 
 
         BlocksSitExternalEditor bsee = new BlocksSitExternalEditor();
