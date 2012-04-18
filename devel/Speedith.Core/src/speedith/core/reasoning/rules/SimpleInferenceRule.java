@@ -31,8 +31,6 @@ import static speedith.core.i18n.Translations.i18n;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
-import speedith.core.reasoning.args.SpiderRegionArg;
-import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
 
 /**
@@ -46,10 +44,12 @@ import speedith.core.reasoning.args.SubgoalIndexArg;
 public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements InferenceRule<TArgs>, InferenceRuleProvider<TArgs> {
 
     // <editor-fold defaultstate="collapsed" desc="InferenceRuleProvider Implementation">
+    @Override
     public String getDescription() {
         return getDescription(Locale.getDefault());
     }
 
+    @Override
     public String getPrettyName() {
         return getPrettyName(Locale.getDefault());
     }
@@ -65,14 +65,18 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
      * 
      * @return {@code this.getClass()}.
      */
+    @SuppressWarnings("unchecked")
+    @Override
     public Class<? extends InferenceRule<TArgs>> getInferenceRuleType() {
         return (Class<? extends InferenceRule<TArgs>>) getClass();
     }
 
+    @Override
     public boolean isForwardRule() {
         return ForwardRule.class.isAssignableFrom(getInferenceRuleType());
     }
 
+    @Override
     public boolean isBackwardRule() {
         return BackwardRule.class.isAssignableFrom(getInferenceRuleType());
     }
