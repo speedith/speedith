@@ -1,7 +1,7 @@
 theory HeterogeneousStatements
 imports Main
-uses
-  "GoalsExport.ML"
+(*uses
+  "GoalsExport.ML"*)
 begin
 
 (* Lemma 1: If we have formula A' that is entailed by a premise A, and B'
@@ -19,5 +19,17 @@ qed
 lemma assumes en1: "G' \<Longrightarrow> G" and new: "G'"
       shows "G"
   by (fast intro: en1 new)
+
+(* Lemma 3: A backward proof can be applied on a conclusion in HOL if it is a
+    conjunction. *)
+lemma assumes p1: "B' \<Longrightarrow> B" and p2: "A \<Longrightarrow> B' \<and> C"
+  shows "A \<Longrightarrow> B \<and> C"
+  by (metis p1 p2)
+
+(* Lemma 4: A backward proof can be applied on a conclusion in HOL if it is a
+    disjunction. *)
+lemma assumes p1: "B' \<Longrightarrow> B" and p2: "A \<Longrightarrow> B' \<or> C"
+  shows "A \<Longrightarrow> B \<or> C"
+  by (metis p1 p2)
 
 end
