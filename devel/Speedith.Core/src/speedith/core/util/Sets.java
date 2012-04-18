@@ -434,8 +434,7 @@ public final class Sets {
     // <editor-fold defaultstate="collapsed" desc="Printing">
     /**
      * This method is a shorthand for <span style="font-style:italic;font-family:monospace;">
-     * {@link Sequences#print(java.lang.Iterable, java.io.Writer, java.lang.String,
-     * java.lang.String, java.lang.String) print}(list,
+     * {@link Sequences#print(java.lang.Iterable, java.lang.Appendable, java.lang.String, java.lang.String, java.lang.String)  print}(list,
      * output, "{", "}", ", ")</span>.
      * @param list the list whose elements to print to the given writer.
      * @param output the output where to write the elements to (may not be
@@ -449,8 +448,7 @@ public final class Sets {
 
     /**
      * This method is a shorthand for <span style="font-style:italic;font-family:monospace;">
-     * {@link Sequences#print(java.lang.Iterable, java.io.Writer, java.lang.String,
-     * java.lang.String, java.lang.String) print}(list,
+     * {@link Sequences#print(java.lang.Iterable, java.lang.Appendable, java.lang.String, java.lang.String, java.lang.String)  print}(list,
      * stringWriter, "{", "}", ", ")</span>.
      * @param list the list whose elements to print to the given writer.
      * @return the printed string version of the set.

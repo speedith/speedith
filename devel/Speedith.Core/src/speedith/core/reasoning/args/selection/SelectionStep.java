@@ -27,10 +27,11 @@
 package speedith.core.reasoning.args.selection;
 
 import java.util.Locale;
+import speedith.core.i18n.Translations;
 import speedith.core.reasoning.args.RuleArg;
 
 /**
- * This class is used in {@link DiagramSelectionDialog} and {@link ElementSelectionPanel}
+ * This class is used in diagram selection dialogs and element selection user interfaces
  * to guide the user through the diagram element selection and also make sure
  * that the exact selection is made.
  *
@@ -97,7 +98,7 @@ public abstract class SelectionStep {
     // <editor-fold defaultstate="collapsed" desc="Rejection Explanation Classes">
     /**
      * This class provides an explanation on why a click was rejected in {@link
-     * SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent, speedith.ui.selection.SelectionSequence, int)
+     * SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int) 
      * }. <p>To issue a rejection without an explanation, you may want to use
      * {@link SelectionStep#EmptyClickRejection}.</p>
      */
@@ -105,11 +106,11 @@ public abstract class SelectionStep {
 
         /**
          * Returns the internationalise explanation of the rejection in {@link
-         * SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent, speedith.ui.selection.SelectionSequence, int)
+         * SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int) 
          * }.
          *
          * @return the internationalise explanation of the rejection in {@link
-         * SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent, speedith.ui.selection.SelectionSequence, int)
+         * SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)
          * }.
          */
         public String getExplanation() {
@@ -118,12 +119,12 @@ public abstract class SelectionStep {
 
         /**
          * Returns the internationalise explanation of the rejection in {@link
-         * SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent, speedith.ui.selection.SelectionSequence, int)
+         * SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)
          * }.
          *
          * @param locale the locale in which to return the explanation message.
          * @return the internationalise explanation of the rejection in {@link
-         * SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent, speedith.ui.selection.SelectionSequence, int)
+         * SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)
          * }.
          */
         public String getExplanation(Locale locale) {
@@ -154,7 +155,7 @@ public abstract class SelectionStep {
         }
     }
     /**
-     * This object may be used to reject a click in {@link SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent, speedith.ui.selection.SelectionSequence, int)
+     * This object may be used to reject a click in {@link SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)
      * }
      * without an explanation.
      */
@@ -172,7 +173,7 @@ public abstract class SelectionStep {
      * brings the user back to this selection step.</p>
      *
      * @param selection the selection sequence in which this selection step
-     * participates. This object contains currently {@link SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent)
+     * participates. This object contains currently {@link SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)
      * approved} selections.
      * @param thisIndex the index of this step in the given {@link SelectionSequence}.
      * @return {@code null} if the selection is valid, and a non-{@code null}
@@ -184,11 +185,11 @@ public abstract class SelectionStep {
      * Indicates whether this selection step is finished. If it is, then the
      * user interface must proceed to the next step. <p>This value can change
      * only after the calls to {@link
-     * SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent)} and {@link
-     * SelectionStep#init(speedith.ui.selection.SelectionSequence, int)}. The
+     * SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)} and {@link
+     * SelectionStep#init(speedith.core.reasoning.args.selection.SelectionSequence, int)}. The
      * user interface will acceptSelection this function before the first click
      * event in this step and after every click event (i.e. after every call to
-     * the {@link SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent)}
+     * the {@link SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)}
      * function).</p>
      *
      * @param selection a list of selection steps and their accepted clicks.
@@ -200,11 +201,11 @@ public abstract class SelectionStep {
     /**
      * Returns a value that indicates whether this step can be skipped. <p>This
      * value can change only after the calls to {@link
-     * SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent)} and {@link
-     * SelectionStep#init(speedith.ui.selection.SelectionSequence, int)}. The
+     * SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)} and {@link
+     * SelectionStep#init(speedith.core.reasoning.args.selection.SelectionSequence, int)}. The
      * user interface will acceptSelection this function before the first click
      * event in this step and after every click event (i.e. after every call to
-     * the {@link SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent)}
+     * the {@link SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)}
      * function).</p>
      *
      * @param selection a list of selection steps and their accepted clicks.
@@ -240,8 +241,8 @@ public abstract class SelectionStep {
     public abstract String getInstruction(Locale locale, SelectionSequence selection, int thisIndex);
 
     /**
-     * This method is invoked by the {@link ElementSelectionDialog element
-     * selection dialog} whenever the user clicks on the diagram. <p>If this
+     * This method is invoked by the element
+     * selection user interfaces whenever the user clicks on the diagram. <p>If this
      * method returns {@code null} then the click is accepted and is added to
      * the list of accepted click events of this step in the given {@link SelectionSequence
      * selection sequence}. If any non-{@code null} value is returned, the click

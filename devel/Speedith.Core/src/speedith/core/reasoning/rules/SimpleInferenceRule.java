@@ -29,11 +29,10 @@ package speedith.core.reasoning.rules;
 import java.util.Locale;
 import static speedith.core.i18n.Translations.i18n;
 import speedith.core.lang.SpiderDiagram;
-import speedith.core.reasoning.Goals;
-import speedith.core.reasoning.InferenceRule;
-import speedith.core.reasoning.InferenceRuleProvider;
-import speedith.core.reasoning.RuleApplicationException;
+import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.SpiderRegionArg;
+import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
 
 /**
@@ -58,6 +57,24 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
     @Override
     public String toString() {
         return getPrettyName();
+    }
+
+    /**
+     * This is the default implementation of the {@link InferenceRuleProvider#getInferenceRuleType()}.
+     * It returns {@code this.getClass()}.
+     * 
+     * @return {@code this.getClass()}.
+     */
+    public Class<? extends InferenceRule<TArgs>> getInferenceRuleType() {
+        return (Class<? extends InferenceRule<TArgs>>) getClass();
+    }
+
+    public boolean isForwardRule() {
+        return ForwardRule.class.isAssignableFrom(getInferenceRuleType());
+    }
+
+    public boolean isBackwardRule() {
+        return BackwardRule.class.isAssignableFrom(getInferenceRuleType());
     }
     // </editor-fold>
     
