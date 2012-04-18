@@ -1,33 +1,37 @@
 package diabelli.isabelle.pure.lib
 import java.util.ArrayList
-import isabelle.Term
+import isabelle.Term._
 
 /**
  * Provides a bunch of methods for
  */
 object TermUtils {
 
+  // Binary operators:
   val HOLConjunction = "HOL.conj";
   val HOLDisjunction = "HOL.disj";
   val HOLImplication = "HOL.implies";
   val HOLEquality = "HOL.eq";
+  val MetaImplication = "==>";
+  // Quantifiers:
   val HOLExistential = "HOL.Ex";
   val HOLAll = "HOL.All";
+  val MetaAll = "all";
+  // Unary operators:
   val HOLNot = "HOL.Not";
+  val HOLTrueprop = "HOL.Trueprop";
+  // Constants:
   val HOLTrue = "HOL.True";
   val HOLFalse = "HOL.False";
-  val HOLTrueprop = "HOL.Trueprop";
-  val MetaImplication = "==>";
-  val MetaAll = "all";
 
   def main(args: Array[String]): Unit = {
-    val premises: ArrayList[Term.Term] = new ArrayList();
-    val conclusion: Term.Term = findPremisesAndConclusion(TermYXML.parseYXML(TermYXML.Example2_unescapedYXML), premises);
+    val premises: ArrayList[Term] = new ArrayList();
+    val conclusion: Term = findPremisesAndConclusion(TermYXML.parseYXML(TermYXML.Example2_unescapedYXML), premises);
     println(conclusion);
     println(premises);
     println(premises.size());
-    val variables: ArrayList[Term.Free] = new ArrayList();
-    val body: Term.Term = findQuantifiedVarsAndBody(TermYXML.parseYXML(TermYXML.Example3_unescapedYXML), variables);
+    val variables: ArrayList[Free] = new ArrayList();
+    val body: Term = findQuantifiedVarsAndBody(TermYXML.parseYXML(TermYXML.Example3_unescapedYXML), variables);
     println(body);
     println(variables);
     println(variables.size());
@@ -37,9 +41,9 @@ object TermUtils {
    * Extracts the premises and the conclusion from the given term `t`. This
    * method puts the premises into the given array and returns the conclusion.
    */
-  def findPremisesAndConclusion(t: Term.Term, premises: ArrayList[Term.Term]): Term.Term = {
+  def findPremisesAndConclusion(t: Term, premises: ArrayList[Term]): Term = {
     t match {
-      case Term.App(Term.App(Term.Const(MetaImplication, _), lhsTerm), rhsTerm) => {
+      case App(App(Const(MetaImplication, _), lhsTerm), rhsTerm) => {
         premises.add(lhsTerm);
         findPremisesAndConclusion(rhsTerm, premises);
       }
@@ -58,10 +62,10 @@ object TermUtils {
    *
    * The quantified variables in the body are still retained as bound.
    */
-  def findQuantifiedVarsAndBody(t: Term.Term, variables: ArrayList[Term.Free]): Term.Term = {
+  def findQuantifiedVarsAndBody(t: Term, variables: ArrayList[Free]): Term = {
     t match {
-      case Term.App(Term.Const(MetaAll, _), Term.Abs(varName, varType, body)) => {
-        variables.add(Term.Free(varName, varType));
+      case App(Const(MetaAll, _), Abs(varName, varType, body)) => {
+        variables.add(Free(varName, varType));
         findQuantifiedVarsAndBody(body, variables);
       }
       case _ => t
