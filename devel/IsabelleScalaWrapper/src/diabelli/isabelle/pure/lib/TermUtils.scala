@@ -13,6 +13,7 @@ object TermUtils {
   val HOLImplication = "HOL.implies";
   val HOLEquality = "HOL.eq";
   val MetaImplication = "==>";
+  val HOLBinaryOperators = Set(HOLConjunction, HOLDisjunction, HOLImplication, HOLEquality);
   // Quantifiers:
   val HOLExistential = "HOL.Ex";
   val HOLAll = "HOL.All";

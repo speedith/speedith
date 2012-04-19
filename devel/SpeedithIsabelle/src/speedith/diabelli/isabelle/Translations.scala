@@ -17,8 +17,8 @@ object Translations {
     sd = termToSpiderDiagram(parseYXML(Example1_unescapedYXML));
     println(sd);
   }
-  
-  def isaOperators2SDOperators(operator:String): Operator = {
+
+  def isaOperators2SDOperators(operator: String): Operator = {
     operator match {
       case HOLConjunction => Conjunction
       case HOLDisjunction => Disjunction
@@ -36,30 +36,71 @@ object Translations {
   @throws(classOf[ReadingException])
   def termToSpiderDiagram(t: Term): SpiderDiagram = {
     println(t);
-    t match {
-      case App(App(Const(operator, typ), lhs), rhs) => {
-        // We've got a binary operator. Create a compound spider diagram out of
-        // it:
-        //binary2csd(isaOperators2SDOperators(operator), typ, lhs, rhs);
-        println("Found an operator: " + t.toString());
-      }
-      case App(Const(HOLNot, typ), operand) => {
-        // We've got the negation.
-        //unary2csd(Negation, operand);
-        println("Found a negation: " + t.toString());
-      }
-      case App(Const(HOLExistential, typ), Abs(spider, spiderTyp, body)) => {
-        println("Found an existential quantifier: " + t.toString());
-      }
-      case App(Const(HOLTrueprop, typ), body) => {
-        println("Found an HOL goal: " + t.toString());
-      }
-      case App(Const(MetaAll, typ), Abs(spider, spiderTyp, body)) => {
-        println("Found a global universal meta-quantification: " + t.toString());
-      }
-      case _ => throw new ReadingException("Could not translate the formula to a spider diagram. Found an unknown term: " + t.toString());
+    val (sd, spiderType) = recognise(t, null);
+    return sd;
+  }
+
+  private type In = ( /*term:*/ Term, /*spiderType:*/ Typ);
+  private type Out = (SpiderDiagram, /*spiderType:*/ Typ);
+  private type Convertor = PartialFunction[In, Out];
+
+  private val recognise: Convertor = {
+    case x => (recogniseBinaryHOLOperator
+      orElse recogniseMetaAll
+      orElse recogniseMetaImplication
+      orElse recogniseTrueprop
+      orElse recogniseExistential
+      orElse recogniseNegation)(x)
+  }
+
+  private val recogniseBinaryHOLOperator: Convertor = {
+    case (App(App(Const(operator, typ), lhs), rhs), spiderType) if HOLBinaryOperators contains operator => {
+      // We've got a binary HOL operator
+      println("Binary HOL operator: " + operator);
+      val (sd, newSpiderType) = recognise(lhs, spiderType);
+      recognise(rhs, newSpiderType);
     }
-    return null;
+  };
+
+  private val recogniseNegation: Convertor = {
+    case (App(Const(HOLNot, typ), body), spiderType) => {
+      // We've got a binary HOL operator
+      println("Got negation!");
+      recognise(body, spiderType);
+    }
+  };
+
+  private val recogniseMetaImplication: Convertor = {
+    case (App(App(Const(MetaImplication, typ), lhs), rhs), spiderType) => {
+      // We've got a binary HOL operator
+      println("Got meta implication!");
+      recognise(lhs, spiderType);
+      recognise(rhs, spiderType);
+    }
+  };
+
+  private val recogniseExistential: Convertor = {
+    case (App(Const(HOLExistential, typ), Abs(spider, spiderTyp, body)), spiderType) => {
+      // We've got a binary HOL operator
+      println("Got existential!");
+      (null, typ);
+    }
+  };
+  
+  private val recogniseTrueprop: Convertor = {
+    case (App(Const(HOLTrueprop, typ), body), spiderType) => recognise (body, spiderType)
+  }
+  
+  private val recogniseMetaAll: Convertor = {
+    case (App(Const(MetaAll, typ), Abs(spider, newSpiderType, body)), spiderType) => {
+      println("Got meta existential!");
+      // Collect all quantified spiders and try to convert the premises into a
+      // single spider diagram
+      
+      // Tactic:
+      // 	- fetch all premises that in any way mention the quantified spiders.
+      (null, typ);
+    }
   }
 
 }
