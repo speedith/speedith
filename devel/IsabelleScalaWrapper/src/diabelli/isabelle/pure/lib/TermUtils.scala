@@ -1,6 +1,9 @@
 package diabelli.isabelle.pure.lib
 import java.util.ArrayList
+import java.util.List
 import isabelle.Term._
+import scala.collection.mutable.Buffer
+import scala.collection.JavaConversions
 
 /**
  * Provides a bunch of methods for
@@ -13,7 +16,6 @@ object TermUtils {
   val HOLImplication = "HOL.implies";
   val HOLEquality = "HOL.eq";
   val MetaImplication = "==>";
-  val HOLBinaryOperators = Set(HOLConjunction, HOLDisjunction, HOLImplication, HOLEquality);
   // Quantifiers:
   val HOLExistential = "HOL.Ex";
   val HOLAll = "HOL.All";
@@ -42,7 +44,7 @@ object TermUtils {
    * Extracts the premises and the conclusion from the given term `t`. This
    * method puts the premises into the given array and returns the conclusion.
    */
-  def findPremisesAndConclusion(t: Term, premises: ArrayList[Term]): Term = {
+  def findPremisesAndConclusion(t: Term, premises: List[Term]): Term = {
     t match {
       case App(App(Const(MetaImplication, _), lhsTerm), rhsTerm) => {
         premises.add(lhsTerm);
@@ -51,6 +53,8 @@ object TermUtils {
       case _ => t
     }
   }
+
+  def findPremisesAndConclusion(t: Term, premises: Buffer[Term]): Term = findPremisesAndConclusion(t, JavaConversions.asJavaList(premises))
 
   /**
    * Extracts the globally meta-quantified variables from the term, puts them
@@ -63,7 +67,7 @@ object TermUtils {
    *
    * The quantified variables in the body are still retained as bound.
    */
-  def findQuantifiedVarsAndBody(t: Term, variables: ArrayList[Free]): Term = {
+  def findQuantifiedVarsAndBody(t: Term, variables: List[Free]): Term = {
     t match {
       case App(Const(MetaAll, _), Abs(varName, varType, body)) => {
         variables.add(Free(varName, varType));
@@ -72,4 +76,6 @@ object TermUtils {
       case _ => t
     }
   }
+  
+  def findQuantifiedVarsAndBody(t: Term, variables: Buffer[Free]): Term = findQuantifiedVarsAndBody(t, JavaConversions.asJavaList(variables))
 }
