@@ -47,8 +47,8 @@ import org.openide.util.NbBundle;
 public abstract class FormulaTranslator {
 
     //<editor-fold defaultstate="collapsed" desc="Fields">
-    private final FormulaFormatDescriptor fromFormat;
-    private final FormulaFormatDescriptor toFormat;
+    private final FormulaFormat fromFormat;
+    private final FormulaFormat toFormat;
     private final TranslationType type;
     private final String name;
     //</editor-fold>
@@ -76,7 +76,7 @@ public abstract class FormulaTranslator {
         "FT_type_null=The type of the translation is not specified.",
         "FT_name_null=The name of this translator is not specified."
     })
-    protected FormulaTranslator(@NonNull FormulaFormatDescriptor fromFormat, @NonNull FormulaFormatDescriptor toFormat, @NonNull TranslationType type, @NonNull String name) {
+    protected FormulaTranslator(@NonNull FormulaFormat fromFormat, @NonNull FormulaFormat toFormat, @NonNull TranslationType type, @NonNull String name) {
         if (fromFormat == null) {
             throw new IllegalArgumentException(Bundle.FT_fromFormat_null());
         }
@@ -105,7 +105,7 @@ public abstract class FormulaTranslator {
      * formulae.
      */
     @NonNull
-    public FormulaFormatDescriptor getFromFormat() {
+    public FormulaFormat getFromFormat() {
         return fromFormat;
     }
 
@@ -117,7 +117,7 @@ public abstract class FormulaTranslator {
      * formulae.
      */
     @NonNull
-    public FormulaFormatDescriptor getToFormat() {
+    public FormulaFormat getToFormat() {
         return toFormat;
     }
 

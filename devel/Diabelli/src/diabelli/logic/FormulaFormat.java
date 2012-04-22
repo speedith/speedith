@@ -69,5 +69,13 @@ public interface FormulaFormat {
      */
     @NonNull
     String getPrettyName();
+
+    /**
+     * Returns the type of {@link FormulaRepresentation#getFormula() the raw
+     * formula} for this format.
+     * @return the type of {@link FormulaRepresentation#getFormula() the raw
+     * formula} for this format.
+     */
+    Class<?> getRawFormulaType();
     
 }

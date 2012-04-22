@@ -25,16 +25,15 @@
 package diabelli;
 
 import diabelli.components.DiabelliComponent;
-import diabelli.logic.FormulaFormatDescriptor;
+import diabelli.logic.FormulaFormat;
 import diabelli.logic.FormulaRepresentation;
 import diabelli.logic.FormulaTranslator;
-import java.util.ArrayList;
 import java.util.Collection;
 import org.netbeans.api.annotations.common.NonNull;
 
 /**
  * Provides a central mechanism for registering known {@link
- * FormulaFormatDescriptor formula formats}. This provides a way for
+ * FormulaFormat formula formats}. This provides a way for
  * identifying, translating, and understanding of {@link FormulaRepresentation formulae}
  * in different formats. Since Diabelli's main goal is to connect different
  * reasoners, all of which may understand different representations, this class
@@ -51,7 +50,20 @@ public interface FormulaFormatManager {
      * @return all registered formula formats.
      */
     @NonNull
-    Collection<FormulaFormatDescriptor> getFormulaFormats();
+    Collection<FormulaFormat> getFormulaFormats();
+
+    /**
+     * Returns the formula format with the given name.
+     * @param formatName the name of the format to look up.
+     * @return the formula format with the given name.
+     */
+    FormulaFormat getFormulaFormat(String formatName);
+    
+    /**
+     * Returns the number of registered formula formats.
+     * @return the number of registered formula formats.
+     */
+    int getFormulaFormatsCount();
 
     /**
      * Returns all registered formula translators.
@@ -59,5 +71,18 @@ public interface FormulaFormatManager {
      */
     @NonNull
     Collection<FormulaTranslator> getFormulaTranslators();
+
+    /**
+     * Returns the formula translator with the given name.
+     * @param formatName the name of the formula translator to look up.
+     * @return the formula translator with the given name.
+     */
+    FormulaTranslator getFormulaTranslator(String formatName);
+    
+    /**
+     * Returns the number of registered formula translators.
+     * @return the number of registered formula translators.
+     */
+    int getFormulaTranslatorsCount();
     
 }

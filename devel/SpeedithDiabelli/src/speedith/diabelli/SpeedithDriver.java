@@ -31,6 +31,7 @@ import diabelli.components.FormulaFormatsProvider;
 import diabelli.components.FormulaTranslationsProvider;
 import diabelli.components.GoalAcceptingReasoner;
 import diabelli.components.util.BareGoalProvidingReasoner;
+import diabelli.logic.FormulaFormat;
 import diabelli.logic.FormulaFormatDescriptor;
 import diabelli.logic.FormulaTranslator;
 import diabelli.logic.Goal;
@@ -63,15 +64,15 @@ public class SpeedithDriver extends BareGoalProvidingReasoner implements Formula
     
     // <editor-fold defaultstate="collapsed" desc="Formula Format Provider">
     @Override
-    public Collection<FormulaFormatDescriptor> getFormulaFormats() {
+    public Collection<FormulaFormat> getFormulaFormats() {
         return FormulaFormatsContainer.SpeedithFormats;
     }
     
     private static class FormulaFormatsContainer {
-        private static final List<FormulaFormatDescriptor> SpeedithFormats;
+        private static final List<FormulaFormat> SpeedithFormats;
         
         static {
-            ArrayList<FormulaFormatDescriptor> tmp = new ArrayList<FormulaFormatDescriptor>();
+            ArrayList<FormulaFormat> tmp = new ArrayList<FormulaFormat>();
             tmp.add(SpeedithFormatDescriptor.getInstance());
             SpeedithFormats = Collections.unmodifiableList(tmp);
         }

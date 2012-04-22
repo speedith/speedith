@@ -1,5 +1,5 @@
 /*
- * File name: FormulaFormatsProvider.java
+ * File name: BareFormulaPresenter.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -22,27 +22,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package diabelli.components;
+package diabelli.components.util;
 
-import diabelli.Diabelli;
-import diabelli.FormulaFormatManager;
+import diabelli.components.FormulaPresenter;
+import diabelli.logic.Formula;
 import diabelli.logic.FormulaFormat;
-import java.util.Collection;
+import diabelli.logic.FormulaRepresentation;
+import diabelli.logic.Goal;
 
 /**
- * Diabelli components of this type can register known formula formats with the
- * {@link FormulaFormatManager formula format manager} (see {@link Diabelli#getFormulaFormatManager()
- * }). The registration process is automatic and happens during Diabelli's
- * loading stage.
- *
+ * Provides a basic partial implementation of the {@link FormulaPresenter formula presenter
+ * interface}. This class provides implementations of some methods which can be
+ * implemented through using others.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface FormulaFormatsProvider extends DiabelliComponent {
+public abstract class BareFormulaPresenter implements FormulaPresenter {
 
-    /**
-     * Returns a list of formula formats provided by this Diabelli component.
-     *
-     * @return a list of formula formats provided by this Diabelli component.
-     */
-    Collection<FormulaFormat> getFormulaFormats();
+    @Override
+    public boolean canPresent(Goal goal) {
+        if (goal == null) {
+            return false;
+        }
+        return canPresent(goal.asFormula());
+    }
+
+    @Override
+    public boolean canPresent(Formula formula) {
+        if (formula == null) {
+            return false;
+        }
+        for (FormulaFormat formulaFormat : formula.getFormats()) {
+            if (canPresent(formulaFormat)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean canPresent(FormulaRepresentation<?> formula) {
+        if (formula == null) {
+            return false;
+        }
+        return canPresent(formula.getFormat());
+    }
 }

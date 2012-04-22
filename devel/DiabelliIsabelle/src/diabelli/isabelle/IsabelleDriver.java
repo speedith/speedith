@@ -30,7 +30,7 @@ import diabelli.components.util.BareGoalProvidingReasoner;
 import diabelli.isabelle.pure.lib.TermYXML;
 import diabelli.isabelle.terms.TermFormatDescriptor;
 import diabelli.isabelle.terms.TermsToDiabelli;
-import diabelli.logic.FormulaFormatDescriptor;
+import diabelli.logic.FormulaFormat;
 import diabelli.logic.Goal;
 import diabelli.logic.Goals;
 import isabelle.Term.Term;
@@ -88,15 +88,15 @@ public class IsabelleDriver extends BareGoalProvidingReasoner implements Formula
     
     // <editor-fold defaultstate="collapsed" desc="Formula Format Provider">
     @Override
-    public Collection<FormulaFormatDescriptor> getFormulaFormats() {
+    public Collection<FormulaFormat> getFormulaFormats() {
         return FormulaFormatsContainer.IsabelleFormats;
     }
     
     private static class FormulaFormatsContainer {
-        private static final List<FormulaFormatDescriptor> IsabelleFormats;
+        private static final List<FormulaFormat> IsabelleFormats;
         
         static {
-            ArrayList<FormulaFormatDescriptor> tmp = new ArrayList<FormulaFormatDescriptor>();
+            ArrayList<FormulaFormat> tmp = new ArrayList<FormulaFormat>();
             tmp.add(TermFormatDescriptor.getInstance());
             IsabelleFormats = Collections.unmodifiableList(tmp);
         }

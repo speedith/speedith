@@ -32,7 +32,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.api.annotations.common.NonNull;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 
@@ -79,7 +78,7 @@ public class Formula {
      * translations in this case,</li>
      *
      * <li>if this hash map returns a non-{@code null} value, then this
-     * indicates that a translation attempt through {@link Formula#fetchRepresentations(diabelli.logic.FormulaFormatDescriptor)}
+     * indicates that a translation attempt through {@link Formula#fetchRepresentations(diabelli.logic.FormulaFormat)}
      * has been made but no translation has been found. In this case, there is
      * no need to search for a translation again.</li>
      *
@@ -181,25 +180,25 @@ public class Formula {
      * Returns the formats of all currently present/calculated representations
      * of this formula. This collection includes the main representation.
      *
-     * <p><span style="font-weight:bold">Note</span>: it might be that there is
-     * no representation of this formula in a format, even though the format is
-     * listed in {@link Formula#getFormats()}. This means that an attempt on
-     * translating the formula to the format has been made via {@link Formula#fetchRepresentations(diabelli.logic.FormulaFormatDescriptor)}
-     * but it yielded no results──the translation did not succeed.</p>
+     * <p><span style="font-weight:bold">Note</span>: this method returns only
+     * those formats for which there is an actual representation of this formula
+     * present.</p>
+     * 
+     * <p>This method always returns a non-{@code null} value.</p>
      *
-     * @return all formats into which we translated the formula (at least tried
-     * to translate).
+     * @return all formats into which we translated the formula.
      */
-    public FormulaFormatDescriptor[] getFormats() {
-        // Returning a 'wrapped view' of the hash map's values is unsafe. We
-        // must return a copy of the representations collection. The backing
-        // hash map may still be changed long after this function returns the
-        // view.
-        // We synchronise here because we may add new representations in another
-        // thread.
+    @NonNull
+    public ArrayList<FormulaFormat> getFormats() {
         synchronized (representations) {
-            return representations.keySet().toArray(new FormulaFormatDescriptor[representations.size()]);
-//            return Collections.unmodifiableCollection(representations.values());
+            ArrayList<FormulaFormat> formats = new ArrayList<FormulaFormat>();
+            FormulaFormatManager formatManager = Lookup.getDefault().lookup(Diabelli.class).getFormulaFormatManager();
+            for (Map.Entry<String, HashSet<FormulaRepresentation<?>>> formatEntry : representations.entrySet()) {
+                if (formatEntry.getValue() != null && formatEntry.getValue().size() > 0) {
+                    formats.add(formatManager.getFormulaFormat(formatEntry.getKey()));
+                }
+            }
+            return formats;
         }
     }
 
@@ -234,7 +233,7 @@ public class Formula {
      * Returns the representations of this formula in the given format. This
      * method does not try to convert the formula into the given format. It only
      * gives already present representations. To try and automatically calculate
-     * a representation of this formula in the given format, use {@link Formula#fetchRepresentations(diabelli.logic.FormulaFormatDescriptor)
+     * a representation of this formula in the given format, use {@link Formula#fetchRepresentations(diabelli.logic.FormulaFormat)
      * }.
      *
      * <p>This function returns {@code null} if there is no translation of the
@@ -244,7 +243,7 @@ public class Formula {
      * @return the translations of the {@link Formula#getMainRepresentation()
      * formula} in the given format.
      */
-    public FormulaRepresentation[] getRepresentations(FormulaFormatDescriptor format) {
+    public FormulaRepresentation[] getRepresentations(FormulaFormat format) {
         if (format == null) {
             throw new IllegalArgumentException(Bundle.F_toFormat_null());
         }
@@ -263,7 +262,7 @@ public class Formula {
      * @return the number of representations of this formula in the given
      * format.
      */
-    public int getRepresentationsCount(FormulaFormatDescriptor format) {
+    public int getRepresentationsCount(FormulaFormat format) {
         if (format == null) {
             throw new IllegalArgumentException(Bundle.F_toFormat_null());
         }
@@ -296,7 +295,7 @@ public class Formula {
     @NbBundle.Messages({
         "F_toFormat_null=A target format has to be specified."
     })
-    public FormulaRepresentation[] fetchRepresentations(FormulaFormatDescriptor format) {
+    public FormulaRepresentation[] fetchRepresentations(FormulaFormat format) {
         if (format == null) {
             throw new IllegalArgumentException(Bundle.F_toFormat_null());
         }
@@ -390,7 +389,7 @@ public class Formula {
     @NbBundle.Messages({
         "F_format_null=The representation to be added does not identify its format. A valid format must be provided."
     })
-    private void putRepresentation(FormulaFormatDescriptor format, FormulaRepresentation<?> representation) {
+    private void putRepresentation(FormulaFormat format, FormulaRepresentation<?> representation) {
         if (format == null) {
             throw new IllegalArgumentException(Bundle.F_format_null());
         }

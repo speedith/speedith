@@ -28,7 +28,7 @@ import diabelli.components.DiabelliComponent;
 import diabelli.components.GoalProvidingReasoner;
 import diabelli.components.Reasoner;
 import diabelli.components.RuleApplicationReasoner;
-import diabelli.logic.FormulaFormatDescriptor;
+import diabelli.logic.FormulaFormat;
 import java.util.Set;
 import org.openide.util.Lookup;
 import org.openide.util.Lookup.Provider;
@@ -85,10 +85,10 @@ public interface Diabelli extends Provider {
     
     /**
      * Returns the manager which keeps track of all {@link
-     * FormulaFormatDescriptor formula formats} known to Diabelli. (or rather:
+     * FormulaFormat formula formats} known to Diabelli. (or rather:
      * known to various components of Diabelli).
      * @return the manager which keeps track of all {@link
-     * FormulaFormatDescriptor formula formats} known to Diabelli. (or rather:
+     * FormulaFormat formula formats} known to Diabelli. (or rather:
      * known to various components of Diabelli).
      */
     FormulaFormatManager getFormulaFormatManager();

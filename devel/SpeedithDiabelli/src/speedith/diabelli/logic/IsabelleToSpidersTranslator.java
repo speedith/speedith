@@ -31,7 +31,6 @@ import diabelli.logic.FormulaTranslator;
 import isabelle.Term;
 import java.util.ArrayList;
 import java.util.List;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.reader.ReadingException;

@@ -1,5 +1,5 @@
 /*
- * File name: GoalPresenter.java
+ * File name: PresentationManager.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
  *  Copyright © 2012 Matej Urbas
@@ -22,19 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package diabelli.components;
+package diabelli;
+
+import diabelli.logic.Formula;
 
 /**
- * Goal presenters can take a goal and return a visual component that displays
- * it. For example, an MFOLE formula could be presented with a spider diagram. A
- * spider diagram presenter (like Speedith) could then provide visual
- * representations of the formula.
- *
- * <p>Note that the goal can consist of premises and a conclusion. The goal
- * presenter may return a presentation for the entire goal or it may return
- * separate representations for the particular components.</p>
- *
+ * Provides a central mechanism for handling visualisation of {@link Formula Diabelli formulae}.
+ * 
+ * <p>This manager keeps track of all </p>
+ * 
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface GoalPresenter extends DiabelliComponent {
+public interface PresentationManager {
+    
 }

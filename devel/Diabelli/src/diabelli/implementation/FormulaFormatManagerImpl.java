@@ -29,8 +29,7 @@ import diabelli.FormulaFormatManager;
 import diabelli.components.DiabelliComponent;
 import diabelli.components.FormulaFormatsProvider;
 import diabelli.components.FormulaTranslationsProvider;
-import diabelli.components.GoalProvidingReasoner;
-import diabelli.logic.FormulaFormatDescriptor;
+import diabelli.logic.FormulaFormat;
 import diabelli.logic.FormulaTranslator;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +46,7 @@ import org.openide.util.NbBundle;
 class FormulaFormatManagerImpl implements FormulaFormatManager, ManagerInternals {
 
     //<editor-fold defaultstate="collapsed" desc="Fields">
-    private final HashMap<String, FormulaFormatDescriptor> formulaFormats;
+    private final HashMap<String, FormulaFormat> formulaFormats;
     private final HashMap<String, FormulaTranslator> formulaTranslators;
     private final Diabelli diabelli;
     //</editor-fold>
@@ -58,15 +57,25 @@ class FormulaFormatManagerImpl implements FormulaFormatManager, ManagerInternals
             throw new IllegalArgumentException(Bundle.Manager_diabelli_null());
         }
         this.diabelli = diabelli;
-        this.formulaFormats = new HashMap<String, FormulaFormatDescriptor>();
+        this.formulaFormats = new HashMap<String, FormulaFormat>();
         this.formulaTranslators = new HashMap<String, FormulaTranslator>();
     }
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Formula Formats">
     @Override
-    public Collection<FormulaFormatDescriptor> getFormulaFormats() {
+    public Collection<FormulaFormat> getFormulaFormats() {
         return Collections.unmodifiableCollection(formulaFormats.values());
+    }
+
+    @Override
+    public FormulaFormat getFormulaFormat(String formatName) {
+        return formulaFormats.get(formatName);
+    }
+
+    @Override
+    public int getFormulaFormatsCount() {
+        return formulaFormats.size();
     }
 
     /**
@@ -78,11 +87,11 @@ class FormulaFormatManagerImpl implements FormulaFormatManager, ManagerInternals
         "FFM_formats_empty=The Diabelli component '{0}' advertises itself as a formula format provider, however, it provides no formats.",
         "FFM_format_null=The Diabelli component '{0}' tried to register a 'null' format."
     })
-    void registerFormulaFormats(Collection<FormulaFormatDescriptor> formats, FormulaFormatsProvider providingComponent) {
+    void registerFormulaFormats(Collection<FormulaFormat> formats, FormulaFormatsProvider providingComponent) {
         if (formats == null || formats.isEmpty()) {
             throw new IllegalArgumentException(Bundle.FFM_formats_empty(providingComponent.getName()));
         } else {
-            for (FormulaFormatDescriptor format : formats) {
+            for (FormulaFormat format : formats) {
                 if (format == null) {
                     throw new IllegalArgumentException(Bundle.FFM_format_null(providingComponent.getName()));
                 }
@@ -99,6 +108,16 @@ class FormulaFormatManagerImpl implements FormulaFormatManager, ManagerInternals
     @Override
     public Collection<FormulaTranslator> getFormulaTranslators() {
         return Collections.unmodifiableCollection(formulaTranslators.values());
+    }
+
+    @Override
+    public int getFormulaTranslatorsCount() {
+        return formulaTranslators.size();
+    }
+
+    @Override
+    public FormulaTranslator getFormulaTranslator(String formatName) {
+        return formulaTranslators.get(formatName);
     }
 
     /**

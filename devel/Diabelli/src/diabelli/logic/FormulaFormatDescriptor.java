@@ -122,6 +122,7 @@ public class FormulaFormatDescriptor implements FormulaFormat {
      * @return the type of {@link FormulaRepresentation#getFormula() the raw
      * formula} for this format.
      */
+    @Override
     public Class<?> getRawFormulaType() {
         return rawFormulaType;
     }

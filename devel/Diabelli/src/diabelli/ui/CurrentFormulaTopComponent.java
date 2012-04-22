@@ -26,10 +26,8 @@ package diabelli.ui;
 
 import diabelli.Diabelli;
 import diabelli.FormulaFormatManager;
-import diabelli.logic.Formula;
-import diabelli.logic.FormulaFormatDescriptor;
-import diabelli.logic.FormulaRepresentation;
-import diabelli.logic.Goal;
+import diabelli.components.FormulaPresenter;
+import diabelli.logic.*;
 import diabelli.ui.GoalsTopComponent.ConclusionNode;
 import diabelli.ui.GoalsTopComponent.GeneralGoalNode;
 import diabelli.ui.GoalsTopComponent.PremiseNode;
@@ -59,10 +57,12 @@ import org.openide.util.LookupListener;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
-import org.openide.util.lookup.Lookups;
 
 /**
- * Top component which displays something.
+ * This window gives the user the option to select particular representations (formats) of
+ * a formula. This selection may then consequently be displayed with the help
+ * of {@link FormulaPresenter formula presenters}. Additionally, the user may
+ * request additional translations through this window.
  */
 @ConvertAsProperties(dtd = "-//diabelli.ui//CurrentFormula//EN",
 autostore = false)
@@ -344,12 +344,12 @@ public final class CurrentFormulaTopComponent extends TopComponent implements Ex
 
     public static class FormatNode<T extends GeneralGoalNode> extends CurrentGoalSelectionDelegateNode<T> {
 
-        final FormulaFormatDescriptor toFormat;
+        final FormulaFormat toFormat;
 
         @Messages({
             "FormatNode_displayName=Format: {0}"
         })
-        FormatNode(CurrentGoalSelectionNode<T> selection, FormulaFormatDescriptor toFormat) {
+        FormatNode(CurrentGoalSelectionNode<T> selection, FormulaFormat toFormat) {
             super(selection, Children.LEAF);
             this.toFormat = toFormat;
             setDisplayName(Bundle.FormatNode_displayName(toFormat.getPrettyName()));
@@ -403,8 +403,8 @@ public final class CurrentFormulaTopComponent extends TopComponent implements Ex
             // Go through all known formats and try to translate the selected
             // formula into all the formats.
             FormulaFormatManager formatManager = Lookup.getDefault().lookup(Diabelli.class).getFormulaFormatManager();
-            Collection<FormulaFormatDescriptor> formats = formatManager.getFormulaFormats();
-            for (FormulaFormatDescriptor format : formats) {
+            Collection<FormulaFormat> formats = formatManager.getFormulaFormats();
+            for (FormulaFormat format : formats) {
                 toPopulate.add(new FormatNode<T>(source, format));
             }
             return true;
