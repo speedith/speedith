@@ -49,11 +49,16 @@ public class IsabelleToSpidersTranslator extends FormulaTranslator {
 
     // <editor-fold defaultstate="collapsed" desc="Singleton stuff">
     private IsabelleToSpidersTranslator() {
-        super(SpeedithFormatDescriptor.getInstance(), TermFormatDescriptor.getInstance(), TranslationType.ToEquivalent, Bundle.ISAtoSDTrans_internal_name());
+        super(TermFormatDescriptor.getInstance(), SpeedithFormatDescriptor.getInstance(), TranslationType.ToEquivalent, Bundle.ISAtoSDTrans_internal_name());
     }
 
     public static FormulaTranslator getInstance() {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return SingletonContainer.Instance;
+    }
+
+    private static class SingletonContainer {
+
+        private static final IsabelleToSpidersTranslator Instance = new IsabelleToSpidersTranslator();
     }
     // </editor-fold>
 
@@ -77,7 +82,8 @@ public class IsabelleToSpidersTranslator extends FormulaTranslator {
     @NbBundle.Messages({
         "ISAtoSDTrans_translation_error_no_isa_term=The formula does not have an Isabelle term representation.",
         "ISAtoSDTrans_translation_error_reading_failed=The Isabelle formula is not of the format that can be translated to spider diagrams.",
-        "ISAtoSDTrans_translation_error_isa_formula_not_a_term=The Isabelle driver might be faulty. It returned an Isabelle term formula that is not a Term.Term."
+        "ISAtoSDTrans_translation_error_isa_formula_not_a_term=The Isabelle driver might be faulty. It returned an Isabelle term formula that is not a Term.Term.",
+        "ISAtoSDTrans_translation_error_null_sd_returned=The translation failed to produce a valid spider diagram."
     })
     public Formula translate(Formula formula) throws TranslationException {
         FormulaRepresentation[] isaRepresentations = formula.fetchRepresentations(TermFormatDescriptor.getInstance());
@@ -88,6 +94,9 @@ public class IsabelleToSpidersTranslator extends FormulaTranslator {
             Term.Term term = (Term.Term) isaRepresentations[0].getFormula();
             try {
                 SpiderDiagram sd = speedith.diabelli.isabelle.Translations.fromTermToSpiderDiagram(term);
+                if (sd == null) {
+                    throw new TranslationException(Bundle.ISAtoSDTrans_translation_error_null_sd_returned());
+                }
                 return new Formula(new FormulaRepresentation<SpiderDiagram>(sd, SpeedithFormatDescriptor.getInstance()), formula.getRole());
             } catch (ReadingException ex) {
                 throw new TranslationException(Bundle.ISAtoSDTrans_translation_error_reading_failed(), ex);

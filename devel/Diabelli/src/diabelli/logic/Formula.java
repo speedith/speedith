@@ -29,6 +29,8 @@ import diabelli.FormulaFormatManager;
 import diabelli.components.GoalProvidingReasoner;
 import diabelli.logic.FormulaTranslator.TranslationException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.netbeans.api.annotations.common.NonNull;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
@@ -324,7 +326,7 @@ public class Formula {
                         break;
                     }
                 } catch (TranslationException ex) {
-                    Exceptions.printStackTrace(ex);
+                    Logger.getLogger(Formula.class.getName()).log(Level.INFO, String.format("Translation with '%s' failed. Translation error message: %s", translator.getPrettyName(), ex.getMessage()), ex);
                 }
             }
         }

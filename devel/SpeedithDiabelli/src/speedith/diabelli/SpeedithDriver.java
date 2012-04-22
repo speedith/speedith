@@ -79,8 +79,9 @@ public class SpeedithDriver extends BareGoalProvidingReasoner implements Formula
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Formula Translations Provider">
+    @Override
     public Collection<FormulaTranslator> getFormulaTranslators() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return FormulaTranslatorsContainer.SpeedithTranslator;
     }
     
     private static class FormulaTranslatorsContainer {
