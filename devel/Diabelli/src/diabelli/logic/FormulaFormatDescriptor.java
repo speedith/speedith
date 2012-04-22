@@ -39,6 +39,7 @@ public class FormulaFormatDescriptor implements FormulaFormat {
     //<editor-fold defaultstate="collapsed" desc="Fields">
     private final String formatName;
     private final String prettyName;
+    private final Class<?> rawFormulaType;
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
@@ -46,21 +47,29 @@ public class FormulaFormatDescriptor implements FormulaFormat {
      * Creates a new formula format descriptor.
      * @param formatName the {@link FormulaFormatDescriptor#getFormatName() name
      * of this format}.
-     * @param prettyName  
+     * @param prettyName the {@link FormulaFormatDescriptor#getPrettyName() pretty
+     * name of this format}.
+     * @param rawFormulaType the {@link FormulaFormatDescriptor#getRawFormulaType()
+     * type of the raw formula} of this format.
      */
     @NbBundle.Messages({
         "FFD_format_name_null_or_empty=The name of the format must not be null or empty.",
-        "FFD_pretty_name_null_or_empty=The human-readable name of the format must not be null or empty."
+        "FFD_pretty_name_null_or_empty=The human-readable name of the format must not be null or empty.",
+        "FFD_raw_formula_type_null=The type of the raw formula for this format must not be null."
     })
-    public FormulaFormatDescriptor(@NonNull String formatName, @NonNull String prettyName) {
+    public FormulaFormatDescriptor(@NonNull String formatName, @NonNull String prettyName, @NonNull Class<?> rawFormulaType) {
         if (formatName == null || formatName.isEmpty()) {
             throw new IllegalArgumentException(Bundle.FFD_format_name_null_or_empty());
         }
         if (prettyName == null) {
             throw new IllegalArgumentException(Bundle.FFD_pretty_name_null_or_empty());
         }
+        if (rawFormulaType == null) {
+            throw new IllegalArgumentException(Bundle.FFD_raw_formula_type_null());
+        }
         this.formatName = formatName;
         this.prettyName = prettyName;
+        this.rawFormulaType = rawFormulaType;
     }
     //</editor-fold>
     
@@ -105,6 +114,16 @@ public class FormulaFormatDescriptor implements FormulaFormat {
     @Override
     public String getPrettyName() {
         return prettyName;
+    }
+    
+    /**
+     * Returns the type of {@link FormulaRepresentation#getFormula() the raw
+     * formula} for this format.
+     * @return the type of {@link FormulaRepresentation#getFormula() the raw
+     * formula} for this format.
+     */
+    public Class<?> getRawFormulaType() {
+        return rawFormulaType;
     }
     // </editor-fold>
 }

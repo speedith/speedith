@@ -75,7 +75,6 @@ public final class DiabelliImpl implements Diabelli {
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
     public DiabelliImpl() {
-        Logger.getLogger(DiabelliImpl.class.getName()).log(Level.INFO, "Diabelli initialised.");
 
         // Initialise all managers:
         managers.add(reasonersManager = new ReasonersManagerImpl(this));
@@ -107,6 +106,8 @@ public final class DiabelliImpl implements Diabelli {
         for (ManagerInternals manager : managers) {
             manager.onAfterComponentsLoaded();
         }
+        
+        Logger.getLogger(DiabelliImpl.class.getName()).log(Level.INFO, "Diabelli initialised.");
     }
     // </editor-fold>
 

@@ -26,6 +26,7 @@ package speedith.diabelli.logic;
 
 import diabelli.logic.FormulaFormatDescriptor;
 import org.openide.util.NbBundle;
+import speedith.core.lang.SpiderDiagram;
 
 /**
  * The formula format descriptor for Speedith's formulae in the native form.
@@ -46,7 +47,7 @@ public class SpeedithFormatDescriptor extends FormulaFormatDescriptor {
     
     //<editor-fold defaultstate="collapsed" desc="Constructor">
     private SpeedithFormatDescriptor() {
-        super(SpeedithFormatName, Bundle.SFD_sd_format_pretty_name());
+        super(SpeedithFormatName, Bundle.SFD_sd_format_pretty_name(), SpiderDiagram.class);
     }
     //</editor-fold>
     

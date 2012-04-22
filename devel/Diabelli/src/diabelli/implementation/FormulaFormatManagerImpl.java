@@ -35,6 +35,8 @@ import diabelli.logic.FormulaTranslator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.openide.util.NbBundle;
 
 /**
@@ -135,12 +137,20 @@ class FormulaFormatManagerImpl implements FormulaFormatManager, ManagerInternals
         // Register all available formula formats and translations:
         for (DiabelliComponent diabelliComponent : diabelli.getRegisteredComponents()) {
             if (diabelliComponent instanceof FormulaFormatsProvider) {
-                FormulaFormatsProvider formulaFormatProvider = (FormulaFormatsProvider) diabelliComponent;
-                registerFormulaFormats(formulaFormatProvider.getFormulaFormats(), formulaFormatProvider);
+                    FormulaFormatsProvider formulaFormatProvider = (FormulaFormatsProvider) diabelliComponent;
+                try {
+                    registerFormulaFormats(formulaFormatProvider.getFormulaFormats(), formulaFormatProvider);
+                } catch (Exception e) {
+                    Logger.getLogger(FormulaFormatManagerImpl.class.getName()).log(Level.SEVERE, String.format("The component '%s' failed to provide its formula formats.", diabelliComponent.getName()), e);
+                }
             }
             if (diabelliComponent instanceof FormulaTranslationsProvider) {
                 FormulaTranslationsProvider ftp = (FormulaTranslationsProvider) diabelliComponent;
-                registerFormulaTranslators(ftp.getFormulaTranslators(), ftp);
+                try {
+                    registerFormulaTranslators(ftp.getFormulaTranslators(), ftp);
+                } catch (Exception e) {
+                    Logger.getLogger(FormulaFormatManagerImpl.class.getName()).log(Level.SEVERE, String.format("The component '%s' failed to provide its formula translators.", diabelliComponent.getName()), e);
+                }
             }
         }
     }

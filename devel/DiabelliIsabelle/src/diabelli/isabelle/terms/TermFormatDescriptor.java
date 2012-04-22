@@ -45,7 +45,7 @@ public class TermFormatDescriptor extends FormulaFormatDescriptor {
     
     //<editor-fold defaultstate="collapsed" desc="Constructor">
     private TermFormatDescriptor() {
-        super(TermFormatName, Bundle.TFD_term_format_pretty_name());
+        super(TermFormatName, Bundle.TFD_term_format_pretty_name(), isabelle.Term.Term.class);
     }
     //</editor-fold>
     

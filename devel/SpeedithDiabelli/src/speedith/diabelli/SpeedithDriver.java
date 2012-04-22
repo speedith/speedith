@@ -24,6 +24,7 @@
  */
 package speedith.diabelli;
 
+import speedith.diabelli.logic.IsabelleToSpidersTranslator;
 import speedith.diabelli.logic.SpeedithFormatDescriptor;
 import diabelli.components.DiabelliComponent;
 import diabelli.components.FormulaFormatsProvider;
@@ -53,7 +54,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 @ServiceProvider(service = DiabelliComponent.class)
-public class SpeedithDriver extends BareGoalProvidingReasoner implements FormulaFormatsProvider {
+public class SpeedithDriver extends BareGoalProvidingReasoner implements FormulaFormatsProvider, FormulaTranslationsProvider {
 
     @Override
     public String getName() {
@@ -80,6 +81,16 @@ public class SpeedithDriver extends BareGoalProvidingReasoner implements Formula
     //<editor-fold defaultstate="collapsed" desc="Formula Translations Provider">
     public Collection<FormulaTranslator> getFormulaTranslators() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    private static class FormulaTranslatorsContainer {
+        private static final List<FormulaTranslator> SpeedithTranslator;
+        
+        static {
+            ArrayList<FormulaTranslator> tmp = new ArrayList<FormulaTranslator>();
+            tmp.add(IsabelleToSpidersTranslator.getInstance());
+            SpeedithTranslator = Collections.unmodifiableList(tmp);
+        }
     }
     //</editor-fold>
 }
