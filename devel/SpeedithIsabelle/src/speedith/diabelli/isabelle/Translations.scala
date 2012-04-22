@@ -292,27 +292,14 @@ object Translations {
     }
   }
 
-  def extractHabitatTermsForSpider(spiderIndex: Int, conjuncts: Buffer[Term], habitatTerms: ArrayBuffer[Term] = ArrayBuffer()): ArrayBuffer[Term] = {
-    var i = conjuncts.length - 1;
-    while (i >= 0) {
-      conjuncts(i) match {
-        case App(App(Const(HOLSetMember, _), Bound(boundIndex)), region) if boundIndex == spiderIndex => habitatTerms += region; conjuncts.remove(i);
-        case App(Const(HOLNot, _), App(App(Const(HOLSetMember, _), Bound(boundIndex)), region)) if boundIndex == spiderIndex => habitatTerms += App(Const(HOLSetComplement, null), region); conjuncts.remove(i);
-        case _ =>
-      }
-      i = i - 1;
-    }
-    habitatTerms;
-  }
-
   private def isaSetsToNormalForms(term: Term): Formula[Free] = {
     term match {
-      case App(App(Const(HOLSetUnion, _), lhs), rhs) => Sup(isaSetsToNormalForms(lhs), isaSetsToNormalForms(rhs))
-      case App(App(Const(HOLSetIntersection, _), lhs), rhs) => Inf(isaSetsToNormalForms(lhs), isaSetsToNormalForms(rhs))
-      case App(Const(HOLSetComplement, _), lhs) => Neg(isaSetsToNormalForms(lhs))
-      case App(App(Const(HOLSetDifference, _), lhs), rhs) => Inf(isaSetsToNormalForms(lhs), Neg(isaSetsToNormalForms(rhs)))
-      case t @ Free(_, _) => Atom(t)
-      case _ => throw new ReadingException("The habitat specification of a spider contains an unknown term '%s'.".format(term))
+      case App(App(Const(HOLSetUnion, _), lhs), rhs) => Sup(isaSetsToNormalForms(lhs), isaSetsToNormalForms(rhs));
+      case App(App(Const(HOLSetIntersection, _), lhs), rhs) => Inf(isaSetsToNormalForms(lhs), isaSetsToNormalForms(rhs));
+      case App(Const(HOLSetComplement, _), lhs) => Neg(isaSetsToNormalForms(lhs));
+      case App(App(Const(HOLSetDifference, _), lhs), rhs) => Inf(isaSetsToNormalForms(lhs), Neg(isaSetsToNormalForms(rhs)));
+      case t @ Free(_, _) => Atom(t);
+      case _ => null;
     }
   }
 
@@ -338,6 +325,47 @@ object Translations {
     }
     new Region(zones);
   }
+  
+  private def isaHabitatSpecifiersToFormulaTerm(spiderIndex: Int, term: Term): Formula[Free] = {
+    term match {
+        case App(App(Const(HOLConjunction, _), lhs), rhs) => {
+          val flhs = isaHabitatSpecifiersToFormulaTerm(spiderIndex, lhs);
+          if (flhs == null) return null;
+          val frhs = isaHabitatSpecifiersToFormulaTerm(spiderIndex, rhs);
+          if (frhs == null) return null;
+          Inf(flhs, frhs); 
+        }
+        case App(App(Const(HOLDisjunction, _), lhs), rhs) => {
+          val flhs = isaHabitatSpecifiersToFormulaTerm(spiderIndex, lhs);
+          if (flhs == null) return null;
+          val frhs = isaHabitatSpecifiersToFormulaTerm(spiderIndex, rhs);
+          if (frhs == null) return null;
+          Sup(flhs, frhs);
+        }
+        case App(Const(HOLNot, _), region) => {
+          val f = isaHabitatSpecifiersToFormulaTerm(spiderIndex, region);
+          if (f == null) null else Neg(f);
+        }
+        case App(App(Const(HOLSetMember, _), Bound(boundIndex)), region) if boundIndex == spiderIndex => {
+          isaSetsToNormalForms(region);
+        }
+        case _ => null;
+    }
+  }
+  
+  private def isaHabitatSpecifiersToFormula(spiderIndex: Int, conjuncts: Buffer[Term]): Formula[Free] = {
+    var formulae = ArrayBuffer[Formula[Free]]();
+    var i = conjuncts.length - 1;
+    while (i >= 0) {
+      val f = isaHabitatSpecifiersToFormulaTerm(spiderIndex, conjuncts(i));
+      if (f != null) {
+        formulae += f;
+        conjuncts.remove(i);
+      }
+      i = i - 1;
+    }
+    if (formulae.length == 0) null else toConjuncts(formulae, (f:Formula[Free]) => f);
+  }
 
   private def extractHabitats(conjuncts: Buffer[Term], spiders: Buffer[Free], contours: HashSet[Free], spiderType: Typ, habitats: java.util.HashMap[String, Region] = new java.util.HashMap()): (java.util.HashMap[String, Region], Typ) = {
     // For each spider, find all the terms that talk about its set membership:
@@ -345,14 +373,14 @@ object Translations {
       // This set will contain all zones of this spider's habitat:
       val inZones = new HashSet[HashSet[Free]]();
       // First fetch all the 'habitat-specifying' terms for this spider:
-      val habitatTerms = extractHabitatTermsForSpider(spiderIndex, conjuncts);
+      val habitatTerms = isaHabitatSpecifiersToFormula(spiderIndex, conjuncts);
       // If there are no habitat-specifying terms, then the spider can live anywhere:
-      if (habitatTerms.length == 0) {
+      if (habitatTerms == null) {
         addSubsetsFromTo(contours.toSeq, HashSet.empty, inZones);
       } else {
         // There are some habitat-specifying terms. Put them together into one
         // big formula and calculate the disjunctive normal form of that formula:
-        val disjuncts = extractDistincsDisjuncts(toDNF(toConjuncts(habitatTerms, isaSetsToNormalForms))).map(d => NormalForms.extractDistincsConjuncts(d));
+        val disjuncts = extractDistincsDisjuncts(toDNF(habitatTerms)).map(d => NormalForms.extractDistincsConjuncts(d));
         // Remove all self-contradicting disjuncts:
         disjuncts.retain(d => d.forall(c => c match { case Neg(s) => !d.contains(s); case _ => true; }));
 
@@ -372,7 +400,7 @@ object Translations {
           addSubsetsFromTo(other.toBuffer, positive, inZones);
         }
       }
-      //println("Habitat of spider %s: %s".format(getSpiderWithBoundIndex(spiderIndex, spiders).name, inZones.map(a => a.map(b => b.name))));
+      println("Habitat of spider %s: %s".format(getSpiderWithBoundIndex(spiderIndex, spiders).name, inZones.map(a => a.map(b => b.name))));
       habitats.put(getSpiderWithBoundIndex(spiderIndex, spiders).name, fromInZonesToSDRegion(inZones, contours));
     }
     (habitats, spiderType);
