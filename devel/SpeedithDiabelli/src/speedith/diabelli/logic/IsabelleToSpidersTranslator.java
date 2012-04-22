@@ -93,8 +93,8 @@ public class IsabelleToSpidersTranslator extends FormulaTranslator {
         if (isaRepresentations[0].getFormula() instanceof Term.Term) {
             Term.Term term = (Term.Term) isaRepresentations[0].getFormula();
             try {
-                SpiderDiagram sd = speedith.diabelli.isabelle.Translations.fromTermToSpiderDiagram(term);
-                if (sd == null) {
+                SpiderDiagram sd = speedith.diabelli.isabelle.Translations.termToSpiderDiagram(term);
+                if (sd == null || !sd.isValid()) {
                     throw new TranslationException(Bundle.ISAtoSDTrans_translation_error_null_sd_returned());
                 }
                 return new Formula(new FormulaRepresentation<SpiderDiagram>(sd, SpeedithFormatDescriptor.getInstance()), formula.getRole());
