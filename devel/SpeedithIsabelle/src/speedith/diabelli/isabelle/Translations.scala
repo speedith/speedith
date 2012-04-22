@@ -16,6 +16,9 @@ import scala.collection.mutable.Buffer
 import scala.collection.LinearSeq
 import speedith.core.lang.PrimarySpiderDiagram
 import diabelli.isabelle.pure.lib.TermUtils
+import scala.collection.immutable.TreeSet
+import NormalForms._
+import speedith.core.lang.Zone
 
 object Translations {
 
@@ -23,14 +26,13 @@ object Translations {
    * This main method is used only for testing.
    */
   def main(args: Array[String]): Unit = {
-    var sd: SpiderDiagram = termToSpiderDiagram(parseYXML(Example6_unescapedYXML));
-    println(sd);
-    sd = termToSpiderDiagram(parseYXML(Example7_unescapedYXML));
-    sd = termToSpiderDiagram(parseYXML(Example4_unescapedYXML));
-    sd = termToSpiderDiagram(parseYXML(Example5_unescapedYXML));
-    sd = termToSpiderDiagram(parseYXML(Example3_unescapedYXML));
-    sd = termToSpiderDiagram(parseYXML(Example2_unescapedYXML));
-    sd = termToSpiderDiagram(parseYXML(Example1_unescapedYXML));
+    termToSpiderDiagram(parseYXML(Example6_unescapedYXML));
+    termToSpiderDiagram(parseYXML(Example7_unescapedYXML));
+    termToSpiderDiagram(parseYXML(Example4_unescapedYXML));
+    termToSpiderDiagram(parseYXML(Example5_unescapedYXML));
+    termToSpiderDiagram(parseYXML(Example3_unescapedYXML));
+    termToSpiderDiagram(parseYXML(Example2_unescapedYXML));
+    termToSpiderDiagram(parseYXML(Example1_unescapedYXML));
   }
 
   /**
@@ -39,7 +41,9 @@ object Translations {
   @throws(classOf[ReadingException])
   def termToSpiderDiagram(t: Term): SpiderDiagram = {
     println(t);
-    recognise(t, null)._1;
+    val sd =recognise(t, null)._1;
+    println("Done...");
+    sd;
   }
 
   // Everything below here is just translation implementation detail.
@@ -55,7 +59,7 @@ object Translations {
       orElse recogniseTrueprop
       orElse recogniseExistential
       orElse recogniseNegation
-      orElse { case _ => throw new RuntimeException("Could not convert the formula to a spider diagram. Not an SNF formula.") }: Recogniser)(x)
+      orElse { case _ => throw new ReadingException("Not an SNF formula. Found an unknown term '%s'.".format(x)); }: Recogniser)(x)
   }
 
   private val recogniseBinaryHOLOperator: Recogniser = {
@@ -231,7 +235,7 @@ object Translations {
     if (spiders != null && spiders.length > 1) {
       // We need spider inequalities only if there are at least two spiders...
       // Is there a distinct term present?
-      
+
       val inequalitiesPresent = extractSpiderInequalities(conjuncts, spiders);
       // If the user specified inequalities, then that's fine. But if
       // inequalities are not specified, then let's look for the distinct clause:
@@ -291,6 +295,7 @@ object Translations {
     while (i >= 0) {
       conjuncts(i) match {
         case App(App(Const(HOLSetMember, _), Bound(boundIndex)), region) if boundIndex == spiderIndex => habitatTerms += region; conjuncts.remove(i);
+        case App(Const(HOLNot, _), App(App(Const(HOLSetMember, _), Bound(boundIndex)), region)) if boundIndex == spiderIndex => habitatTerms += App(Const(HOLSetComplement, null), region); conjuncts.remove(i);
         case _ =>
       }
       i = i - 1;
@@ -298,10 +303,75 @@ object Translations {
     habitatTerms;
   }
 
-  private def extractHabitats(conjuncts: Buffer[Term], spiders: Buffer[Free], contours: HashSet[Free], spiderType: Typ, habitats: HashMap[Free, Region] = HashMap()): (HashMap[Free, Region], Typ) = {
+  private def isaSetsToNormalForms(term: Term): Formula[Free] = {
+    term match {
+      case App(App(Const(HOLSetUnion, _), lhs), rhs) => Sup(isaSetsToNormalForms(lhs), isaSetsToNormalForms(rhs))
+      case App(App(Const(HOLSetIntersection, _), lhs), rhs) => Inf(isaSetsToNormalForms(lhs), isaSetsToNormalForms(rhs))
+      case App(Const(HOLSetComplement, _), lhs) => Neg(isaSetsToNormalForms(lhs))
+      case App(App(Const(HOLSetDifference, _), lhs), rhs) => Inf(isaSetsToNormalForms(lhs), Neg(isaSetsToNormalForms(rhs)))
+      case t @ Free(_, _) => Atom(t)
+      case _ => throw new ReadingException("The habitat specification of a spider contains an unknown term '%s'.".format(term))
+    }
+  }
+
+  private def addSubsetsFromTo[A](fromSet: Seq[A], mustContain: HashSet[A], toSet: HashSet[HashSet[A]], out: HashSet[A] = HashSet[A](), startIndex: Int = 0): Unit = {
+    var i = startIndex;
+    toSet += mustContain ++ out;
+    while (i < fromSet.length) {
+      out += fromSet(i);
+      addSubsetsFromTo(fromSet, mustContain, toSet, out, i + 1);
+      out -= fromSet(i);
+      i = i + 1;
+    }
+  }
+  
+  private def fromInZonesToSDRegion(inZones: HashSet[HashSet[Free]], contours: HashSet[Free]): Region = {
+    val zones = new java.util.TreeSet[Zone]();
+    for (z <- inZones) {
+      val inContours = new java.util.TreeSet[String]();
+      val outContours = new java.util.TreeSet[String]();
+      z.foreach(contour => inContours.add(contour.name));
+      contours.foreach(contour => if (!z.contains(contour)) outContours.add(contour.name));
+      zones.add(new Zone(inContours, outContours));
+    }
+    new Region(zones);
+  }
+
+  private def extractHabitats(conjuncts: Buffer[Term], spiders: Buffer[Free], contours: HashSet[Free], spiderType: Typ, habitats: java.util.HashMap[String, Region] = new java.util.HashMap()): (java.util.HashMap[String, Region], Typ) = {
     // For each spider, find all the terms that talk about its set membership:
     for (spiderIndex <- 0 to spiders.length - 1) {
+      // This set will contain all zones of this spider's habitat:
+      val inZones = new HashSet[HashSet[Free]]();
+      // First fetch all the 'habitat-specifying' terms for this spider:
       val habitatTerms = extractHabitatTermsForSpider(spiderIndex, conjuncts);
+      // If there are no habitat-specifying terms, then the spider can live anywhere:
+      if (habitatTerms.length == 0) {
+        addSubsetsFromTo(contours.toSeq, HashSet.empty, inZones);
+      } else {
+        // There are some habitat-specifying terms. Put them together into one
+        // big formula and calculate the disjunctive normal form of that formula:
+        val disjuncts = extractDistincsDisjuncts(toDNF(toConjuncts(habitatTerms, isaSetsToNormalForms))).map(d => NormalForms.extractDistincsConjuncts(d));
+        // Remove all self-contradicting disjuncts:
+        disjuncts.retain(d => d.forall(c => c match { case Neg(s) => !d.contains(s); case _ => true; }));
+
+        // A disjunct may not be fully specified (which means that in each clause
+        // some contours might be missing). In this case, we have to calculate
+        // for each clause all its fully-specified zones that are its subsets:
+        for (d <- disjuncts) {
+          // We calculate the fully-specified zones in the following way:
+          //	-	if 'specified' contains all contours that are mentioned in the clause 'd',
+          //		'positive' is the set of all positive contour literals in
+          //		'd', and 'other' are all contours not mentioned in 'd',
+          //		then '{x in P(other) | positive union x}' is the set of all
+          //		sub zones of the region specified in clause 'd':
+          val positive = d.filter(a => a match { case Atom(s) => true; case _ => false; }).map(a => a match { case Atom(s) => s;case _ => throw new RuntimeException("Found an unknown term in a set which should contain only contour atoms."); });
+          val specified = d.map(a => a match { case Atom(s) => s; case Neg(Atom(s)) => s; case _ => throw new RuntimeException("Found an unknown term in a set which should contain only contour literals."); })
+          val other = contours.filter(a => !specified.contains(a));
+          addSubsetsFromTo(other.toBuffer, positive, inZones);
+        }
+      }
+      //println("Habitat of spider %s: %s".format(getSpiderWithBoundIndex(spiderIndex, spiders).name, inZones.map(a => a.map(b => b.name))));
+      habitats.put(getSpiderWithBoundIndex(spiderIndex, spiders).name, fromInZonesToSDRegion(inZones, contours));
     }
     (habitats, spiderType);
   }
@@ -314,13 +384,13 @@ object Translations {
     // predicates are of this form:
     //		Free(B,Type(fun,List(<spiderType>, Type(HOL.bool,List()))))
     val (contours, spiderType1) = findContours(conjuncts, spiderType);
-    
-    println(contours.map(f => f.name));
 
     // Get spider habitats:
     val (habitats, spiderType2) = extractHabitats(conjuncts, spiders, contours, spiderType1);
+    
+    // TODO: Handle shaded zones.
 
-    (SpiderDiagrams.createNullSD(), spiderType1);
+    (SpiderDiagrams.createPrimarySD(new java.util.TreeSet[String](scala.collection.JavaConversions.asCollection(spiders.map(s => s.name))), habitats, null, null), spiderType1);
   }
 
 }
