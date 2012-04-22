@@ -37,16 +37,11 @@ object Translations {
 
   /**
    * Takes an Isabelle term and tries to translate it to a spider diagram.
-   * 
-   * @throws an exception is thrown if the translation fails for any reason. 
+   *
+   * @throws an exception is thrown if the translation fails for any reason.
    */
   @throws(classOf[ReadingException])
-  def termToSpiderDiagram(t: Term): SpiderDiagram = {
-    println(t);
-    val sd =recognise(t, null)._1;
-    println("Done...");
-    sd;
-  }
+  def termToSpiderDiagram(t: Term): SpiderDiagram = recognise(t, null)._1;
 
   // Everything below here is just implementation detail.
 
@@ -313,7 +308,7 @@ object Translations {
       i = i + 1;
     }
   }
-  
+
   private def fromInZonesToSDRegion(inZones: HashSet[HashSet[Free]], contours: HashSet[Free]): Region = {
     val zones = new java.util.TreeSet[Zone]();
     for (z <- inZones) {
@@ -325,34 +320,34 @@ object Translations {
     }
     new Region(zones);
   }
-  
+
   private def isaHabitatSpecifiersToFormulaTerm(spiderIndex: Int, term: Term): Formula[Free] = {
     term match {
-        case App(App(Const(HOLConjunction, _), lhs), rhs) => {
-          val flhs = isaHabitatSpecifiersToFormulaTerm(spiderIndex, lhs);
-          if (flhs == null) return null;
-          val frhs = isaHabitatSpecifiersToFormulaTerm(spiderIndex, rhs);
-          if (frhs == null) return null;
-          Inf(flhs, frhs); 
-        }
-        case App(App(Const(HOLDisjunction, _), lhs), rhs) => {
-          val flhs = isaHabitatSpecifiersToFormulaTerm(spiderIndex, lhs);
-          if (flhs == null) return null;
-          val frhs = isaHabitatSpecifiersToFormulaTerm(spiderIndex, rhs);
-          if (frhs == null) return null;
-          Sup(flhs, frhs);
-        }
-        case App(Const(HOLNot, _), region) => {
-          val f = isaHabitatSpecifiersToFormulaTerm(spiderIndex, region);
-          if (f == null) null else Neg(f);
-        }
-        case App(App(Const(HOLSetMember, _), Bound(boundIndex)), region) if boundIndex == spiderIndex => {
-          isaSetsToNormalForms(region);
-        }
-        case _ => null;
+      case App(App(Const(HOLConjunction, _), lhs), rhs) => {
+        val flhs = isaHabitatSpecifiersToFormulaTerm(spiderIndex, lhs);
+        if (flhs == null) return null;
+        val frhs = isaHabitatSpecifiersToFormulaTerm(spiderIndex, rhs);
+        if (frhs == null) return null;
+        Inf(flhs, frhs);
+      }
+      case App(App(Const(HOLDisjunction, _), lhs), rhs) => {
+        val flhs = isaHabitatSpecifiersToFormulaTerm(spiderIndex, lhs);
+        if (flhs == null) return null;
+        val frhs = isaHabitatSpecifiersToFormulaTerm(spiderIndex, rhs);
+        if (frhs == null) return null;
+        Sup(flhs, frhs);
+      }
+      case App(Const(HOLNot, _), region) => {
+        val f = isaHabitatSpecifiersToFormulaTerm(spiderIndex, region);
+        if (f == null) null else Neg(f);
+      }
+      case App(App(Const(HOLSetMember, _), Bound(boundIndex)), region) if boundIndex == spiderIndex => {
+        isaSetsToNormalForms(region);
+      }
+      case _ => null;
     }
   }
-  
+
   private def isaHabitatSpecifiersToFormula(spiderIndex: Int, conjuncts: Buffer[Term]): Formula[Free] = {
     var formulae = ArrayBuffer[Formula[Free]]();
     var i = conjuncts.length - 1;
@@ -364,7 +359,7 @@ object Translations {
       }
       i = i - 1;
     }
-    if (formulae.length == 0) null else toConjuncts(formulae, (f:Formula[Free]) => f);
+    if (formulae.length == 0) null else toConjuncts(formulae, (f: Formula[Free]) => f);
   }
 
   private def extractHabitats(conjuncts: Buffer[Term], spiders: Buffer[Free], contours: HashSet[Free], spiderType: Typ, habitats: java.util.HashMap[String, Region] = new java.util.HashMap()): (java.util.HashMap[String, Region], Typ) = {
@@ -372,14 +367,16 @@ object Translations {
     for (spiderIndex <- 0 to spiders.length - 1) {
       // This set will contain all zones of this spider's habitat:
       val inZones = new HashSet[HashSet[Free]]();
-      // First fetch all the 'habitat-specifying' terms for this spider:
+      // First fetch all the 'habitat-specifying' terms for this spider and
+      // convert them into a 'set-lattice' formula, which we will normalise:
       val habitatTerms = isaHabitatSpecifiersToFormula(spiderIndex, conjuncts);
       // If there are no habitat-specifying terms, then the spider can live anywhere:
       if (habitatTerms == null) {
         addSubsetsFromTo(contours.toSeq, HashSet.empty, inZones);
       } else {
-        // There are some habitat-specifying terms. Put them together into one
-        // big formula and calculate the disjunctive normal form of that formula:
+        // There are some habitat-specifying terms. Calculate the disjunctive
+        // normal form of the habitat-specifying formula (this makes it then
+        // easy to find all zones of the habitat):
         val disjuncts = extractDistincsDisjuncts(toDNF(habitatTerms)).map(d => NormalForms.extractDistincsConjuncts(d));
         // Remove all self-contradicting disjuncts:
         disjuncts.retain(d => d.forall(c => c match { case Neg(s) => !d.contains(s); case _ => true; }));
@@ -394,13 +391,13 @@ object Translations {
           //		'd', and 'other' are all contours not mentioned in 'd',
           //		then '{x in P(other) | positive union x}' is the set of all
           //		sub zones of the region specified in clause 'd':
-          val positive = d.filter(a => a match { case Atom(s) => true; case _ => false; }).map(a => a match { case Atom(s) => s;case _ => throw new RuntimeException("Found an unknown term in a set which should contain only contour atoms."); });
+          val positive = d.filter(a => a match { case Atom(s) => true; case _ => false; }).map(a => a match { case Atom(s) => s; case _ => throw new RuntimeException("Found an unknown term in a set which should contain only contour atoms."); });
           val specified = d.map(a => a match { case Atom(s) => s; case Neg(Atom(s)) => s; case _ => throw new RuntimeException("Found an unknown term in a set which should contain only contour literals."); })
           val other = contours.filter(a => !specified.contains(a));
           addSubsetsFromTo(other.toBuffer, positive, inZones);
         }
       }
-      println("Habitat of spider %s: %s".format(getSpiderWithBoundIndex(spiderIndex, spiders).name, inZones.map(a => a.map(b => b.name))));
+      //println("Habitat of spider %s: %s".format(getSpiderWithBoundIndex(spiderIndex, spiders).name, inZones.map(a => a.map(b => b.name))));
       habitats.put(getSpiderWithBoundIndex(spiderIndex, spiders).name, fromInZonesToSDRegion(inZones, contours));
     }
     (habitats, spiderType);
@@ -417,9 +414,9 @@ object Translations {
 
     // Get spider habitats:
     val (habitats, spiderType2) = extractHabitats(conjuncts, spiders, contours, spiderType1);
-    
+
     // TODO: Handle shaded zones.
-    
+
     // Check that no other terms are left in the conjuncts. Otherwise the translation must fail:
     if (conjuncts.length != 0) throw new ReadingException("The formula is not in the SNF form. There is an unknown term in the specification of a unitary spider diagram: %s".format(conjuncts(0)));
 
