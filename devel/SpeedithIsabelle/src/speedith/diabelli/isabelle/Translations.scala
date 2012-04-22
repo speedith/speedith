@@ -37,6 +37,8 @@ object Translations {
 
   /**
    * Takes an Isabelle term and tries to translate it to a spider diagram.
+   * 
+   * @throws an exception is thrown if the translation fails for any reason. 
    */
   @throws(classOf[ReadingException])
   def termToSpiderDiagram(t: Term): SpiderDiagram = {
@@ -46,7 +48,7 @@ object Translations {
     sd;
   }
 
-  // Everything below here is just translation implementation detail.
+  // Everything below here is just implementation detail.
 
   // RECOGNISERS: Just functions of a special type that convert Isabelle terms to spider diagrams.
   private type RecogniserIn = ( /*term:*/ Term, /*spiderType:*/ Typ);
@@ -389,6 +391,9 @@ object Translations {
     val (habitats, spiderType2) = extractHabitats(conjuncts, spiders, contours, spiderType1);
     
     // TODO: Handle shaded zones.
+    
+    // Check that no other terms are left in the conjuncts. Otherwise the translation must fail:
+    if (conjuncts.length != 0) throw new ReadingException("The formula is not in the SNF form. There is an unknown term in the specification of a unitary spider diagram: %s".format(conjuncts(0)));
 
     (SpiderDiagrams.createPrimarySD(new java.util.TreeSet[String](scala.collection.JavaConversions.asCollection(spiders.map(s => s.name))), habitats, null, null), spiderType1);
   }
