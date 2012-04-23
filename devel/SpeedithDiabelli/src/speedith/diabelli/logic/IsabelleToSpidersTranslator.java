@@ -44,14 +44,14 @@ import speedith.core.lang.reader.ReadingException;
 @NbBundle.Messages({
     "ISAtoSDTrans_internal_name=IsabelleTerms_to_SpiderDiagrams"
 })
-public class IsabelleToSpidersTranslator extends FormulaTranslator {
+public class IsabelleToSpidersTranslator extends FormulaTranslator<Term.Term, SpiderDiagram> {
 
     // <editor-fold defaultstate="collapsed" desc="Singleton stuff">
     private IsabelleToSpidersTranslator() {
         super(TermFormatDescriptor.getInstance(), SpeedithFormatDescriptor.getInstance(), TranslationType.ToEquivalent, Bundle.ISAtoSDTrans_internal_name());
     }
 
-    public static FormulaTranslator getInstance() {
+    public static IsabelleToSpidersTranslator getInstance() {
         return SingletonContainer.Instance;
     }
 
@@ -84,7 +84,7 @@ public class IsabelleToSpidersTranslator extends FormulaTranslator {
         "ISAtoSDTrans_translation_error_isa_formula_not_a_term=The Isabelle driver might be faulty. It returned an Isabelle term formula that is not a Term.Term.",
         "ISAtoSDTrans_translation_error_null_sd_returned=The translation failed to produce a valid spider diagram."
     })
-    public Formula translate(Formula formula) throws TranslationException {
+    public Formula<SpiderDiagram> translate(Formula<Term.Term> formula) throws TranslationException {
         FormulaRepresentation[] isaRepresentations = formula.fetchRepresentations(TermFormatDescriptor.getInstance());
         if (isaRepresentations == null || isaRepresentations.length == 0) {
             throw new TranslationException(Bundle.ISAtoSDTrans_translation_error_no_isa_term());
@@ -96,7 +96,7 @@ public class IsabelleToSpidersTranslator extends FormulaTranslator {
                 if (sd == null || !sd.isValid()) {
                     throw new TranslationException(Bundle.ISAtoSDTrans_translation_error_null_sd_returned());
                 }
-                return new Formula(new FormulaRepresentation<SpiderDiagram>(sd, SpeedithFormatDescriptor.getInstance()), formula.getRole());
+                return new Formula<SpiderDiagram>(new FormulaRepresentation<SpiderDiagram>(sd, SpeedithFormatDescriptor.getInstance()), formula.getRole());
             } catch (ReadingException ex) {
                 throw new TranslationException(Bundle.ISAtoSDTrans_translation_error_reading_failed(), ex);
             }
@@ -106,7 +106,7 @@ public class IsabelleToSpidersTranslator extends FormulaTranslator {
     }
 
     @Override
-    public ArrayList<Formula> translate(List<Formula> formulae) throws TranslationException {
+    public ArrayList<Formula<SpiderDiagram>> translate(List<Formula<Term.Term>> formulae) throws TranslationException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

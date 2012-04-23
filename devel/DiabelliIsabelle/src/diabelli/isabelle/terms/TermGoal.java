@@ -34,6 +34,7 @@ import java.util.List;
 
 /**
  * A Diabelli goal in the form of Isabelle terms.
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class TermGoal extends Goal {
@@ -44,7 +45,9 @@ public class TermGoal extends Goal {
 
     //<editor-fold defaultstate="collapsed" desc="Constructor">
     TermGoal(ArrayList<Free> variables, ArrayList<Term> premises, Term conclusion, Term term) {
-        super(TermsToDiabelli.toFormulae(premises, Formula.FormulaRole.Premise), TermsToDiabelli.toFormula(conclusion, Formula.FormulaRole.Conclusion), TermsToDiabelli.toFormula(term, Formula.FormulaRole.Goal));
+        super(TermsToDiabelli.toFormulae(premises, Formula.FormulaRole.Premise),
+                TermsToDiabelli.toFormula(conclusion, Formula.FormulaRole.Conclusion),
+                TermsToDiabelli.toFormula(term, Formula.FormulaRole.Goal));
         this.variables = variables;
     }
     //</editor-fold>
@@ -56,7 +59,7 @@ public class TermGoal extends Goal {
      * (where the binding index 0 references the last variable in the list).
      * When the formula is passed back to Isabelle, these quantified variables
      * should be put back into the top of the term.
-     * 
+     *
      * <p><span style="font-weight:bold">Note</span>: this method will return {@code null}
      * to indicate that there are no globally meta-quantified variables in this
      * goal.</p>
@@ -66,10 +69,11 @@ public class TermGoal extends Goal {
     public List<Free> getVariables() {
         return variables == null || variables.isEmpty() ? null : Collections.unmodifiableList(variables);
     }
-    
+
     /**
      * Returns the number of {@link TermGoal#getVariables() globally
      * meta-quantified variables} in this goal.
+     *
      * @return the number of {@link TermGoal#getVariables() globally
      * meta-quantified variables} in this goal.
      */

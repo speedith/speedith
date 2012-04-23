@@ -88,15 +88,15 @@ public class IsabelleDriver extends BareGoalProvidingReasoner implements Formula
     
     // <editor-fold defaultstate="collapsed" desc="Formula Format Provider">
     @Override
-    public Collection<FormulaFormat> getFormulaFormats() {
+    public Collection<FormulaFormat<?>> getFormulaFormats() {
         return FormulaFormatsContainer.IsabelleFormats;
     }
     
     private static class FormulaFormatsContainer {
-        private static final List<FormulaFormat> IsabelleFormats;
+        private static final List<FormulaFormat<?>> IsabelleFormats;
         
         static {
-            ArrayList<FormulaFormat> tmp = new ArrayList<FormulaFormat>();
+            ArrayList<FormulaFormat<?>> tmp = new ArrayList<FormulaFormat<?>>();
             tmp.add(TermFormatDescriptor.getInstance());
             IsabelleFormats = Collections.unmodifiableList(tmp);
         }

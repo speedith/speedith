@@ -64,15 +64,15 @@ public class SpeedithDriver extends BareGoalProvidingReasoner implements Formula
     
     // <editor-fold defaultstate="collapsed" desc="Formula Format Provider">
     @Override
-    public Collection<FormulaFormat> getFormulaFormats() {
+    public Collection<FormulaFormat<?>> getFormulaFormats() {
         return FormulaFormatsContainer.SpeedithFormats;
     }
     
     private static class FormulaFormatsContainer {
-        private static final List<FormulaFormat> SpeedithFormats;
+        private static final List<FormulaFormat<?>> SpeedithFormats;
         
         static {
-            ArrayList<FormulaFormat> tmp = new ArrayList<FormulaFormat>();
+            ArrayList<FormulaFormat<?>> tmp = new ArrayList<FormulaFormat<?>>();
             tmp.add(SpeedithFormatDescriptor.getInstance());
             SpeedithFormats = Collections.unmodifiableList(tmp);
         }
@@ -81,15 +81,15 @@ public class SpeedithDriver extends BareGoalProvidingReasoner implements Formula
 
     //<editor-fold defaultstate="collapsed" desc="Formula Translations Provider">
     @Override
-    public Collection<FormulaTranslator> getFormulaTranslators() {
+    public Collection<FormulaTranslator<?, ?>> getFormulaTranslators() {
         return FormulaTranslatorsContainer.SpeedithTranslator;
     }
     
     private static class FormulaTranslatorsContainer {
-        private static final List<FormulaTranslator> SpeedithTranslator;
+        private static final List<FormulaTranslator<?, ?>> SpeedithTranslator;
         
         static {
-            ArrayList<FormulaTranslator> tmp = new ArrayList<FormulaTranslator>();
+            ArrayList<FormulaTranslator<?, ?>> tmp = new ArrayList<FormulaTranslator<?, ?>>();
             tmp.add(IsabelleToSpidersTranslator.getInstance());
             SpeedithTranslator = Collections.unmodifiableList(tmp);
         }

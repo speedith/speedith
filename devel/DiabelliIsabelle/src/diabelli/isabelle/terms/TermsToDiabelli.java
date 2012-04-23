@@ -76,8 +76,8 @@ public final class TermsToDiabelli {
      * @return a Diabelli formula (containing the term and a description of the
      * term format).
      */
-    public static Formula toFormula(Term.Term term, Formula.FormulaRole role) {
-        return new Formula(new FormulaRepresentation<Term.Term>(term, TermFormatDescriptor.getInstance()), role);
+    public static Formula<Term.Term> toFormula(Term.Term term, Formula.FormulaRole role) {
+        return new Formula<Term.Term>(new FormulaRepresentation<Term.Term>(term, TermFormatDescriptor.getInstance()), role);
     }
 
     /**
@@ -88,9 +88,9 @@ public final class TermsToDiabelli {
      * @return a bunch of Diabelli formulae (containing the terms and
      * descriptions of the term format).
      */
-    public static ArrayList<Formula> toFormulae(Collection<Term.Term> terms, Formula.FormulaRole role) {
+    public static ArrayList<Formula<Term.Term>> toFormulae(Collection<Term.Term> terms, Formula.FormulaRole role) {
         if (terms != null) {
-            ArrayList<Formula> formulae = new ArrayList<Formula>();
+            ArrayList<Formula<Term.Term>> formulae = new ArrayList<Formula<Term.Term>>();
             for (Term.Term term : terms) {
                 formulae.add(toFormula(term, role));
             }

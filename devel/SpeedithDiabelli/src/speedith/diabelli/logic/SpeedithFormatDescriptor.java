@@ -35,7 +35,7 @@ import speedith.core.lang.SpiderDiagram;
 @NbBundle.Messages({
     "SFD_sd_format_pretty_name=Spider diagram"
 })
-public class SpeedithFormatDescriptor extends FormulaFormatDescriptor {
+public class SpeedithFormatDescriptor extends FormulaFormatDescriptor<SpiderDiagram> {
     
     //<editor-fold defaultstate="collapsed" desc="Fields">
     /**

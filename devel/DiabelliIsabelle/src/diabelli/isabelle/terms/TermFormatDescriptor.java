@@ -25,6 +25,7 @@
 package diabelli.isabelle.terms;
 
 import diabelli.logic.FormulaFormatDescriptor;
+import isabelle.Term;
 import org.openide.util.NbBundle;
 
 /**
@@ -34,7 +35,7 @@ import org.openide.util.NbBundle;
 @NbBundle.Messages({
     "TFD_term_format_pretty_name=Isabelle term"
 })
-public class TermFormatDescriptor extends FormulaFormatDescriptor {
+public class TermFormatDescriptor extends FormulaFormatDescriptor<Term.Term> {
     
     //<editor-fold defaultstate="collapsed" desc="Fields">
     /**
