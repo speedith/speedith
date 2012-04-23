@@ -54,4 +54,35 @@ lemma assumes p1: "B' \<Longrightarrow> B" and p2: "A \<Longrightarrow> B' \<or>
   shows "A \<Longrightarrow> B \<or> C"
   by (metis p1 p2)
 
+
+(* Placeholders Theory *)
+typedecl diabelli_var
+consts Diabelli :: "diabelli_var list \<Rightarrow> string \<Rightarrow> bool"
+  Dvars :: "'a list \<Rightarrow> diabelli_var"
+
+(* Placeholders testing: Blocksworld *)
+consts LeftOf :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
+  RightOf :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
+  Dodec :: "'a \<Rightarrow> bool"
+  Tet :: "'a \<Rightarrow> bool"
+  Box :: "'a \<Rightarrow> bool"
+
+(* The problem is when we are talking about constants. The example below demonstrates
+how we are mislead to believe that Parent is a constant in our theory and that Child
+tells something about Parent. *)
+axioms Test1: "Diabelli[Dvars[x,y], Dvars[Parent::'a \<Rightarrow> 'a \<Rightarrow> bool]] ''Child y x'' \<Longrightarrow> Parent x y"
+
+(* The lemma below is true even though we expect it not to be. In fact, Parent has to be
+a constant in our theory so that it is not a free variable. *)
+lemma "Diabelli [Dvars[x,y], Dvars[Child::'a \<Rightarrow> 'a \<Rightarrow> bool]] ''Child y x'' \<Longrightarrow> Child x y"
+  by(simp add: Test1)
+
+(* What we want is this: *)
+consts Parent :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
+axioms Test2: "Diabelli[Dvars[x,y]] ''Child y x'' \<Longrightarrow> Parent x y"
+lemma "Diabelli [Dvars[x,y]] ''Child y x'' \<Longrightarrow> Child x y"
+  oops
+lemma "Diabelli [Dvars[x,y]] ''Child y x'' \<Longrightarrow> Parent x y"
+  by(simp add: Test2)
+
 end
