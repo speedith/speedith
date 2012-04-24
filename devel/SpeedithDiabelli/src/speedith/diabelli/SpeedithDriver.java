@@ -72,7 +72,7 @@ public class SpeedithDriver extends BareGoalProvidingReasoner implements Formula
         private static final List<FormulaFormat<?>> SpeedithFormats;
         
         static {
-            ArrayList<FormulaFormat<?>> tmp = new ArrayList<FormulaFormat<?>>();
+            ArrayList<FormulaFormat<?>> tmp = new ArrayList<>();
             tmp.add(SpeedithFormatDescriptor.getInstance());
             SpeedithFormats = Collections.unmodifiableList(tmp);
         }
@@ -89,7 +89,7 @@ public class SpeedithDriver extends BareGoalProvidingReasoner implements Formula
         private static final List<FormulaTranslator<?, ?>> SpeedithTranslator;
         
         static {
-            ArrayList<FormulaTranslator<?, ?>> tmp = new ArrayList<FormulaTranslator<?, ?>>();
+            ArrayList<FormulaTranslator<?, ?>> tmp = new ArrayList<>();
             tmp.add(IsabelleToSpidersTranslator.getInstance());
             SpeedithTranslator = Collections.unmodifiableList(tmp);
         }

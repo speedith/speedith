@@ -96,7 +96,7 @@ public class IsabelleDriver extends BareGoalProvidingReasoner implements Formula
         private static final List<FormulaFormat<?>> IsabelleFormats;
         
         static {
-            ArrayList<FormulaFormat<?>> tmp = new ArrayList<FormulaFormat<?>>();
+            ArrayList<FormulaFormat<?>> tmp = new ArrayList<>();
             tmp.add(TermFormatDescriptor.getInstance());
             IsabelleFormats = Collections.unmodifiableList(tmp);
         }
@@ -213,7 +213,7 @@ public class IsabelleDriver extends BareGoalProvidingReasoner implements Formula
             try {
                 Message[] results = inj.getResults();
                 if (results != null) {
-                    ArrayList<Goal> goals = new ArrayList<Goal>();
+                    ArrayList<Goal> goals = new ArrayList<>();
                     for (Message message : results) {
                         if (message.getText() != null && message.getText().startsWith(DIABELLI_ISABELLE_RESPONSE_GOAL)) {
                             String escapedYXML = message.getText().substring(DIABELLI_ISABELLE_RESPONSE_GOAL.length());

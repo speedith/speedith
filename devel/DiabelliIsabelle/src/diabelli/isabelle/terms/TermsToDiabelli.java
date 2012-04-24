@@ -61,8 +61,8 @@ public final class TermsToDiabelli {
         if (term == null) {
             throw new IllegalArgumentException(Bundle.TTDG_term_null());
         }
-        ArrayList<Term.Term> premises = new ArrayList<Term.Term>();
-        ArrayList<Term.Free> variables = new ArrayList<Term.Free>();
+        ArrayList<Term.Term> premises = new ArrayList<>();
+        ArrayList<Term.Free> variables = new ArrayList<>();
         Term.Term body = TermUtils.findQuantifiedVarsAndBody(term, variables);
         Term.Term conclusion = TermUtils.findPremisesAndConclusion(body, premises);
         return new TermGoal(variables, premises, conclusion, term);
@@ -77,7 +77,7 @@ public final class TermsToDiabelli {
      * term format).
      */
     public static Formula<Term.Term> toFormula(Term.Term term, Formula.FormulaRole role) {
-        return new Formula<Term.Term>(new FormulaRepresentation<Term.Term>(term, TermFormatDescriptor.getInstance()), role);
+        return new Formula<>(new FormulaRepresentation<>(term, TermFormatDescriptor.getInstance()), role);
     }
 
     /**
@@ -90,7 +90,7 @@ public final class TermsToDiabelli {
      */
     public static ArrayList<Formula<Term.Term>> toFormulae(Collection<Term.Term> terms, Formula.FormulaRole role) {
         if (terms != null) {
-            ArrayList<Formula<Term.Term>> formulae = new ArrayList<Formula<Term.Term>>();
+            ArrayList<Formula<Term.Term>> formulae = new ArrayList<>();
             for (Term.Term term : terms) {
                 formulae.add(toFormula(term, role));
             }

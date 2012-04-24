@@ -96,7 +96,7 @@ public class IsabelleToSpidersTranslator extends FormulaTranslator<Term.Term, Sp
                 if (sd == null || !sd.isValid()) {
                     throw new TranslationException(Bundle.ISAtoSDTrans_translation_error_null_sd_returned());
                 }
-                return new Formula<SpiderDiagram>(new FormulaRepresentation<SpiderDiagram>(sd, SpeedithFormatDescriptor.getInstance()), formula.getRole());
+                return new Formula<>(new FormulaRepresentation<>(sd, SpeedithFormatDescriptor.getInstance()), formula.getRole());
             } catch (ReadingException ex) {
                 throw new TranslationException(Bundle.ISAtoSDTrans_translation_error_reading_failed(), ex);
             }
