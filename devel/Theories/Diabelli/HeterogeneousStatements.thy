@@ -4,6 +4,8 @@ uses
   "GoalsExport.ML"
 begin
 
+section {* Diabelli test examples *}
+
 (* Spider Diagram translation test. *)
 lemma test1: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
               \<longrightarrow> (\<exists>t1 t2. distinct[t1, t2] \<and> t1 \<in> A \<and> t2 \<in> B) \<and> (A \<inter> B) \<noteq> {}"
@@ -29,6 +31,7 @@ lemma test4: "(\<exists>s1 s2 s3. s1 \<noteq> s2 \<and> s1 \<noteq> s3 \<and> s2
 
 
 
+section {* Verification of Diabelli's proof concepts *}
 (* ================== Diabelli Heterogeneous Proof Verification ================== *)
 
 (* Lemma 1: If we have formula A' that is entailed by a premise A, and B'
@@ -60,79 +63,118 @@ lemma assumes p1: "B' \<Longrightarrow> B" and p2: "A \<Longrightarrow> B' \<or>
   by (metis p1 p2)
 
 
-(* ================== Placeholders Theory ================== *)
-(* This is all that is needed for supporting placeholders. *)
+section {* Placeholders Theory *}
+
+text {* These are all the definitions that are needed for supporting placeholders: *}
+
 typedecl diabelli_var
 consts Dbli :: "diabelli_var list \<Rightarrow> string \<Rightarrow> bool"
   Diabelli :: "string \<Rightarrow> bool"
   Dvars :: "'a list \<Rightarrow> diabelli_var"
   About :: "'a list \<Rightarrow> diabelli_var"
-  AndAlso :: "'a list \<Rightarrow> diabelli_var"
+  AndAbout :: "'a list \<Rightarrow> diabelli_var"
+defs About_def: "About \<equiv> Dvars"
+  AndAbout_def: "AndAbout \<equiv> Dvars"
 
-(* However, typically, placeholders will also need some surrounding theory (like
-constants, functions, relations etc.) which the target external reasoner talks
-about. First we demonstrate the problem, then we provide a solution, and finally
-an actual example (Blocksworld): *)
+subsection {* Example 1 *}
 
-(** THE PROBLEM **)
-(* The problem is when we are talking about constants. The example below demonstrates
-how we are mislead to believe that Parent is a constant in our theory and that Child
-tells something about Parent. *)
+text {* Typically, placeholders will need some surrounding theory (like
+constants, functions, relations etc.) which the external reasoner of the placeholder
+talks about. Without properly connecting the content of the placeholder with the
+logic and theory of the hosting reasoner, confusions and invalid inferences might
+occur. We demonstrate some of these problems problems and also provide solutions: *}
+
+text {* One problem arises when the placeholder is talking about constants which are in fact
+treated as free variables and are thus universally quantified. The example below
+demonstrates the problem. It shows an inference step, which misleads us to believe
+that the natural language payload is talking about ``Child of'' and ``Parent of''
+relations between two persons. Particularly, it says that if Ann is a child of Bob,
+then they are in the Isabelle/HOL relation @{text "Child Ann Bob"}. However, the predicate
+symbol @{text "Child"} is not a constant, but a free variable. It is thus universally
+quantified, which means that the predicate symbol @{text "Child"} is merely a name that
+talks about all relations (and not a particular relation, which we might intuitively
+expect). *}
 axiomatization where
-  Test1: "Dbli[Dvars[x,y], Dvars[Parent::'a \<Rightarrow> 'a \<Rightarrow> bool]] ''Child y x'' \<Longrightarrow> Parent x y"
+  Inference1: "Dbli[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Child Ann Bob"
 
-(* The lemma below is true even though we expect it not to be. In fact, Parent has to be
-a constant in our theory so that it is not a free variable. *)
-lemma "Dbli [Dvars[x,y], Dvars[Child::'a \<Rightarrow> 'a \<Rightarrow> bool]] ''Child y x'' \<Longrightarrow> Child x y"
-  by(simp add: Test1)
+text {* Given the above inference step, let us try to prove a lemma that exposes the problem.
+The lemma merely changes the name of the predicate @{text "Child"} into @{text "Parent"}. The proof
+succeeds, as the substitution of @{text "Child"} into @{text "Parent"} yields a unification with the
+@{text "Inference1"} axiom and thus produces a ``valid'' proof. *}
+lemma "Dbli[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Ann Bob"
+  by(simp add: Inference1)
 
 (** THE SOLUTION **)
-(* What we want: *)
-(* We define a constant, which will prevent Isabelle to treat references to 'Parent' as
-a free variable. *)
-consts Parent :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
-(* Again, we simulate the inference step that would be provided by an external reasoner: *)
+text {* Let us define a constant, which will prevent Isabelle to treat references to @{text "Child"} as
+a free variables: *}
+consts Child :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
+text {* Again, we simulate the inference step that would be otherwise provided by an external reasoner: *}
 axiomatization where
-  Test2: "Dbli[Dvars[x,y]] ''Child y x'' \<Longrightarrow> Parent x y"
+  Inference2: "Dbli[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Child Ann Bob"
 
-(* Now the following become unprovable (as should be): *)
-lemma "Dbli [Dvars[x,y]] ''Child y x'' \<Longrightarrow> Child x y"
+text {* Now the following become unprovable (as expected): *}
+lemma "Dbli[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Ann Bob"
   oops
 
-(* And the following is provable: *)
-lemma "Dbli [Dvars[x,y]] ''Child y x'' \<Longrightarrow> Parent x y"
-  by(simp add: Test2)
+text {* Additionally, we may provide another constant @{text "Parent"} and define it in terms of @{text "Child"}: *}
+consts Parent :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
+defs Parent_def: "Parent x y \<equiv> Child y x"
 
-(* A natural language example. Over the sets of humans. *)
+text {* After this, we can perform the desired reasoning: *}
+lemma "Dbli[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Bob Ann"
+  by(simp add: Inference2 Parent_def)
+
+text {* Furthermore, the following is still not provable: *}
+lemma "Dbli[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Ann Bob"
+  oops
+
+subsection {* Example 2: Theory without referenced variables *}
+text {* A natural language example. Over the sets of humans. *}
 locale HumanParents =
   fixes Humans :: "'a set" and
   Owner :: "'a \<Rightarrow> 'b \<Rightarrow> bool" and
   Dogs :: "'a set"
-  assumes Test3: "Diabelli ''NatLang: Every human has a parent.'' \<Longrightarrow> \<forall>h \<in> Humans. (\<exists>p \<in> Humans. Parent p h)"
+  assumes Inference3: "Diabelli ''NatLang: Every human has a parent.'' \<Longrightarrow> \<forall>h \<in> Humans. (\<exists>p \<in> Humans. Parent p h)"
 begin
 lemma "Diabelli ''NatLang: Every human has a parent.''
        \<and> h \<in> Humans
        \<longrightarrow> (\<exists>p \<in> Humans. Parent p h)"
-  by (auto simp add: Test3)
+  by (auto simp add: Inference3)
 end
 
-(* Similar example without a surrounding theory. *)
-axiomatization where
-  Test4: "Dbli [About[Humans, Mortal]] ''NatLang: All humans are mortal'' \<Longrightarrow> \<forall>h \<in> Humans. Mortal h" and
-  Test5: "Dbli [About[Humans, Greeks]] ''NatLang: All Greeks are human.'' \<Longrightarrow> \<forall>g \<in> Greeks. g \<in> Humans"
+subsection {* Example 3: Referenced variables without a theory *}
 
+text {* Similar example without a surrounding theory, only referenced variables: *}
+axiomatization where
+  Inference4: "Dbli [About[Humans, Mortal]] ''NatLang: All humans are mortal'' \<Longrightarrow> \<forall>h \<in> Humans. Mortal h" and
+  Inference5: "Dbli [About[Greeks, Humans]] ''NatLang: All Greeks are human.'' \<Longrightarrow> \<forall>g \<in> Greeks. g \<in> Humans"
+
+text {* As expected, we can prove lemmata of the following form:  *}
 lemma "Dbli [About[Humans, Mortal]] ''NatLang: All humans are mortal''
-       \<and> Dbli [About[Humans, Greeks]] ''NatLang: All Greeks are human.''
+       \<and> Dbli [About[Greeks, Humans]] ''NatLang: All Greeks are human.''
        \<and> g \<in> Greeks
        \<longrightarrow> Mortal g"
   apply(rule impI)
   apply(erule conjE)+
-  apply(drule Test4 Test5)+
+  apply(drule Inference4 Inference5)+
   by(auto)
 
+text {* Note, however, that the predicates @{text "Humans"}, @{text "Mortal"}, and @{text "Greeks"} are
+again free variables. Therefore, thay can be exchanged with any other predicate symbols: *}
+lemma "Dbli [About[Mortal, Greeks]] ''NatLang: All humans are mortal''
+       \<and> Dbli [About[Humans, Mortal]] ''NatLang: All Greeks are human.''
+       \<and> h \<in> Humans
+       \<longrightarrow> Greeks h"
+  apply(rule impI)
+  apply(erule conjE)+
+  apply(drule Inference4 Inference5)+
+  by(auto)
 
-(** THE EXAMPLE **)
-(* Blocksworld: *)
+text {* The above statement is true because we @{text "Inference4"}
+and @{text "Inference5"} are merely schematic axioms which establishes
+a relation between three variables---regardless of what their names are. *}
+
+subsection {* Example 4: Blocksworld *}
 consts LeftOf :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
   RightOf :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
   Dodec :: "'a \<Rightarrow> bool"
