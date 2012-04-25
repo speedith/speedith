@@ -53,7 +53,7 @@ public class SelectionPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private SelectionSequenceMutable selection;
     private int curStep = -1;
-    private final DefaultListModel selectionListModel = new DefaultListModel();
+    private final DefaultListModel<String> selectionListModel = new DefaultListModel<String>();
     private ArrayList<ActionListener> actionListeners;
     /**
      * This value is given as the {@link ActionEvent#getID() action ID} in the
