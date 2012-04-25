@@ -27,7 +27,6 @@
 package speedith.ui.selection;
 
 import speedith.core.reasoning.args.selection.SelectionSequence;
-import speedith.ui.CirclesPanel2;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;

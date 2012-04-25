@@ -211,12 +211,12 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     /**
      * Returns the set of flags that determines which elements of the diagram
      * may be highlighted with the mouse. <p>This flag can be a (binary)
-     * combination of the following flags: <ul> <li>{@link CirclesPanel2#Spiders}:
+     * combination of the following flags: <ul> <li>{@link SpeedithCirclesPanel#Spiders}:
      * which indicates that spiders will be highlighted when the user hovers
-     * over them.</li> <li>{@link CirclesPanel2#Zones}: which indicates that
-     * zones will be highlighted when the user hovers over them.</li> <li>{@link CirclesPanel2#Contours}:
+     * over them.</li> <li>{@link SpeedithCirclesPanel#Zones}: which indicates that
+     * zones will be highlighted when the user hovers over them.</li> <li>{@link SpeedithCirclesPanel#Contours}:
      * which indicates that circle contours will be highlighted when the user
-     * hovers over them.</li> </ul></p> <p> The {@link CirclesPanel2#All} and {@link CirclesPanel2#None}
+     * hovers over them.</li> </ul></p> <p> The {@link SpeedithCirclesPanel#All} and {@link SpeedithCirclesPanel#None}
      * flags can also be used. These indicate that all diagram or no elements
      * (respectively) can be highlighted with the mouse.</p>
      *
@@ -388,8 +388,8 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
      * @param nextSubdiagramIndex
      */
     private JPanel registerSubdiagramClickListener(JPanel diagramPanel, final int nextSubdiagramIndex) {
-        if (diagramPanel instanceof CirclesPanel2) {
-            CirclesPanel2 cp = (CirclesPanel2) diagramPanel;
+        if (diagramPanel instanceof SpeedithCirclesPanel) {
+            SpeedithCirclesPanel cp = (SpeedithCirclesPanel) diagramPanel;
             cp.addDiagramClickListener(new DiagramClickListener() {
 
                 public void spiderClicked(SpiderClickedEvent e) {
@@ -514,15 +514,15 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
 
     /**
      * This method applies the currently set {@link SpiderDiagramPanel#setHighlightMode(int)
-     * highlight mode} to the underlying {@link CirclesPanel2 diagram presentation panels}.
+     * highlight mode} to the underlying {@link SpeedithCirclesPanel diagram presentation panels}.
      * <p>This method has to be invoked whenever the highlight mode changes or
      * when the current diagram changes.</p>
      */
     private void applyHighlightModeToPanels() {
         if (this.diagram != null) {
             for (Component component : this.diagrams.getComponents()) {
-                if (component instanceof CirclesPanel2) {
-                    ((CirclesPanel2) component).setHighlightMode(highlightMode);
+                if (component instanceof SpeedithCirclesPanel) {
+                    ((SpeedithCirclesPanel) component).setHighlightMode(highlightMode);
                 } else if (component instanceof SpiderDiagramPanel) {
                     ((SpiderDiagramPanel) component).setHighlightMode(highlightMode);
                 } else if (component instanceof OperatorPanel) {

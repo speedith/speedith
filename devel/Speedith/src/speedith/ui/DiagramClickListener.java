@@ -37,7 +37,7 @@ import java.util.EventListener;
 
 /**
  * Listeners of this type can listen for user click events on particular diagrammatic
- * elements of a {@link ConcreteDiagram diagram} in a {@link CirclesPanel2 circles
+ * elements of a {@link ConcreteDiagram diagram} in a {@link SpeedithCirclesPanel circles
  * panel}.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */

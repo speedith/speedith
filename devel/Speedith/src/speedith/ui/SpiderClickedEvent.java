@@ -26,7 +26,6 @@
  */
 package speedith.ui;
 
-import speedith.ui.CirclesPanel2;
 import icircles.concreteDiagram.ConcreteDiagram;
 import icircles.concreteDiagram.ConcreteSpiderFoot;
 import icircles.concreteDiagram.ConcreteZone;
@@ -52,7 +51,7 @@ public class SpiderClickedEvent extends DiagramClickEvent {
      * Creates the descriptor of the {@link DiagramClickListener#spiderClicked(icircles.gui.SpiderClickedEvent)
      * spider clicked event}.
      *
-     * @param source the {@link CirclesPanel2 circles panel} that is the origin
+     * @param source the {@link SpeedithCirclesPanel circles panel} that is the origin
      * of this event.
      * @param foot the spider's foot that has been clicked.
      * @param diagram the diagram which has been clicked.
@@ -61,7 +60,7 @@ public class SpiderClickedEvent extends DiagramClickEvent {
      * @param diagramCoordinates the coordinates of the click in diagram's local
      * coordinates.
      */
-    public SpiderClickedEvent(CirclesPanel2 source, ConcreteDiagram diagram, MouseEvent clickInfo, Point diagramCoordinates, ConcreteSpiderFoot foot) {
+    public SpiderClickedEvent(SpeedithCirclesPanel source, ConcreteDiagram diagram, MouseEvent clickInfo, Point diagramCoordinates, ConcreteSpiderFoot foot) {
         super(source, diagram, clickInfo, diagramCoordinates);
         if (foot == null) {
             throw new IllegalArgumentException(icircles.i18n.Translations.i18n("GERR_NULL_ARGUMENT", "foot"));

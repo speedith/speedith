@@ -26,7 +26,6 @@
  */
 package speedith.ui;
 
-import speedith.ui.CirclesPanel2;
 import icircles.concreteDiagram.ConcreteDiagram;
 import icircles.concreteDiagram.ConcreteZone;
 import java.awt.Point;
@@ -50,7 +49,7 @@ public class ZoneClickedEvent extends DiagramClickEvent {
      * Creates the descriptor of the {@link DiagramClickListener#zoneClicked(icircles.gui.ZoneClickedEvent)
      * zone clicked event}.
      *
-     * @param source the {@link CirclesPanel2 circles panel} that is the origin
+     * @param source the {@link SpeedithCirclesPanel circles panel} that is the origin
      * of this event.
      * @param zone the zone that has been clicked.
      * @param diagram the diagram which has been clicked.
@@ -59,7 +58,7 @@ public class ZoneClickedEvent extends DiagramClickEvent {
      * @param diagramCoordinates the coordinates of the click in diagram's local
      * coordinates.
      */
-    public ZoneClickedEvent(CirclesPanel2 source, ConcreteDiagram diagram, MouseEvent clickInfo, Point diagramCoordinates, ConcreteZone zone) {
+    public ZoneClickedEvent(SpeedithCirclesPanel source, ConcreteDiagram diagram, MouseEvent clickInfo, Point diagramCoordinates, ConcreteZone zone) {
         super(source, diagram, clickInfo, diagramCoordinates);
         if (zone == null) {
             throw new IllegalArgumentException(icircles.i18n.Translations.i18n("GERR_NULL_ARGUMENT", "zone"));

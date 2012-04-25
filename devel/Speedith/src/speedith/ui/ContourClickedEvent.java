@@ -26,7 +26,6 @@
  */
 package speedith.ui;
 
-import speedith.ui.CirclesPanel2;
 import icircles.concreteDiagram.CircleContour;
 import icircles.concreteDiagram.ConcreteDiagram;
 import java.awt.Point;
@@ -50,7 +49,7 @@ public class ContourClickedEvent extends DiagramClickEvent {
      * Creates the descriptor of the {@link DiagramClickListener#contourClicked(icircles.gui.ContourClickedEvent) 
      * contour clicked event}.
      *
-     * @param source the {@link CirclesPanel2 circles panel} that is the origin
+     * @param source the {@link SpeedithCirclesPanel circles panel} that is the origin
      * of this event.
      * @param contour the contour that has been clicked.
      * @param diagram the diagram which has been clicked.
@@ -59,7 +58,7 @@ public class ContourClickedEvent extends DiagramClickEvent {
      * @param diagramCoordinates the coordinates of the click in diagram's local
      * coordinates.
      */
-    public ContourClickedEvent(CirclesPanel2 source, ConcreteDiagram diagram, MouseEvent clickInfo, Point diagramCoordinates, CircleContour contour) {
+    public ContourClickedEvent(SpeedithCirclesPanel source, ConcreteDiagram diagram, MouseEvent clickInfo, Point diagramCoordinates, CircleContour contour) {
         super(source, diagram, clickInfo, diagramCoordinates);
         if (contour == null) {
             throw new IllegalArgumentException(icircles.i18n.Translations.i18n("GERR_NULL_ARGUMENT", "contour"));

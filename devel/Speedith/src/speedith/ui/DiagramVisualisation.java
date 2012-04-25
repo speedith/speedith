@@ -265,7 +265,7 @@ public final class DiagramVisualisation {
      * @throws CannotDrawException this exception is thrown if the diagram cannot
      * be drawn for any reason.
      */
-    public static CirclesPanel2 getSpiderDiagramPanel(PrimarySpiderDiagram sd) throws CannotDrawException {
+    public static SpeedithCirclesPanel getSpiderDiagramPanel(PrimarySpiderDiagram sd) throws CannotDrawException {
         return getSpiderDiagramPanel(sd, DefaultDiagramSize);
     }
 
@@ -317,9 +317,9 @@ public final class DiagramVisualisation {
      * @return
      * @throws CannotDrawException
      */
-    static CirclesPanel2 getSpiderDiagramPanel(AbstractDescription ad, int size) throws CannotDrawException {
+    static SpeedithCirclesPanel getSpiderDiagramPanel(AbstractDescription ad, int size) throws CannotDrawException {
         ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(ad, size);
-        return new CirclesPanel2(cd);
+        return new SpeedithCirclesPanel(cd);
     }
 
     /**
@@ -329,9 +329,9 @@ public final class DiagramVisualisation {
      * @return
      * @throws CannotDrawException
      */
-    static CirclesPanel2 getSpiderDiagramPanel(PrimarySpiderDiagram diagram, int size) throws CannotDrawException {
+    static SpeedithCirclesPanel getSpiderDiagramPanel(PrimarySpiderDiagram diagram, int size) throws CannotDrawException {
         ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(getAbstractDescription(diagram), size);
-        return new CirclesPanel2(cd);
+        return new SpeedithCirclesPanel(cd);
     }
 
     private static int getZoneInMask(String[] allContours, Zone zone) {

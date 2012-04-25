@@ -26,7 +26,6 @@
  */
 package speedith.ui;
 
-import speedith.ui.CirclesPanel2;
 import icircles.concreteDiagram.ConcreteDiagram;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -49,7 +48,7 @@ public class DiagramClickEvent extends EventObject {
      * into the diagram's own coordinate system}.</p>
      */
     private final MouseEvent clickInfo;
-    private CirclesPanel2 cp;
+    private SpeedithCirclesPanel cp;
     private final Point diagramCoordinates;
     private final ConcreteDiagram diagram;
 
@@ -64,7 +63,7 @@ public class DiagramClickEvent extends EventObject {
      * @param diagramCoordinates the coordinates of the click in diagram's local
      * coordinates.
      */
-    public DiagramClickEvent(CirclesPanel2 source, ConcreteDiagram diagram, MouseEvent clickInfo, Point diagramCoordinates) {
+    public DiagramClickEvent(SpeedithCirclesPanel source, ConcreteDiagram diagram, MouseEvent clickInfo, Point diagramCoordinates) {
         super(source);
         if (source == null) {
             throw new IllegalArgumentException(icircles.i18n.Translations.i18n("GERR_NULL_ARGUMENT", "source"));
@@ -88,9 +87,9 @@ public class DiagramClickEvent extends EventObject {
      * Gets the additional mouse click information (the underlying mouse event
      * that triggered this diagram click event). <p><span
      * style="font-weight:bold">Note</span>: the mouse point coordinates are
-     * given in the coordinate system of the {@link CirclesPanel2
-     * circles panel}. In order to query the {@link CirclesPanel2#getDiagram()
-     * diagram} for additional elements, you have to first {@link CirclesPanel2#toDiagramCoordinates(java.awt.Point) transform the point
+     * given in the coordinate system of the {@link SpeedithCirclesPanel
+     * circles panel}. In order to query the {@link SpeedithCirclesPanel#getDiagram()
+     * diagram} for additional elements, you have to first {@link SpeedithCirclesPanel#toDiagramCoordinates(java.awt.Point) transform the point
      * into the diagram's own coordinate system}.</p>
      *
      * @return the additional mouse click information (the underlying mouse
@@ -101,7 +100,7 @@ public class DiagramClickEvent extends EventObject {
     }
 
     @Override
-    public CirclesPanel2 getSource() {
+    public SpeedithCirclesPanel getSource() {
         return cp;
     }
 
