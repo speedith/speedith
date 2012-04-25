@@ -1,0 +1,13 @@
+Here is the build process on my personal computer (running Fedora 16, all the
+dependencies are available in the regular repository):
+
+    ant -Dlibs.ANTLRv3.classpath=/usr/share/java/antlr3-runtime.jar \
+        -Dantlr3.tool.executable=antlr3 \
+        -Dlibs.JakartaCLI.classpath=/usr/share/java/commons-cli.jar \
+        -f devel/Speedith/build.xml jar
+
+The I ran:
+
+    java -cp "/usr/share/java/commons-cli.jar:/usr/share/java/antlr3-runtime.jar:./devel/Speedith.Core/dist/Speedith.Core.jar:../inductive_circles/devel/iCircles/dist/iCircles.jar:./devel/Speedith/dist/Speedith.jar" speedith.Main
+
+    java -cp "./devel/Speedith.Core/dist/Speedith.Core.jar:/usr/share/java/antlr3-runtime.jar:/usr/share/java/commons-cli.jar:./devel/Speedith/dist/Speedith.jar:../inductive_circles/devel/iCircles/dist/iCircles.jar" speedith.Main

@@ -1,0 +1,46 @@
+<?xml version="1.1" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <Properties>
+    <Property name="defaultCloseOperation" type="int" value="3"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="compoundSpiderDiagramPanel2" alignment="0" pref="796" max="32767" attributes="0"/>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="compoundSpiderDiagramPanel2" alignment="1" pref="453" max="32767" attributes="1"/>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Component class="speedith.ui.SpiderDiagramPanel" name="compoundSpiderDiagramPanel2">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+            <LineBorder roundedCorners="true"/>
+          </Border>
+        </Property>
+        <Property name="diagramString" type="java.lang.String" value="BinarySD {&#xa;&#x9;operator = &quot;op --&gt;&quot;,&#xa;&#x9;arg1 = BinarySD {&#xa;&#x9;&#x9;operator = &quot;op &amp;&quot;,&#xa;&#x9;&#x9;arg1 = PrimarySD {spiders = [&quot;s1&quot;, &quot;s2&quot;, &quot;s3&quot;], habitats = [(&quot;s1&quot;, [([&quot;A&quot;], [&quot;B&quot;, &quot;C&quot;]), ([&quot;A&quot;, &quot;B&quot;], [&quot;C&quot;]), ([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;], [])]), (&quot;s2&quot;, [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])]), (&quot;s3&quot;, [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])])], sh_zones = [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])]},&#xa;&#x9;&#x9;arg2 = NullSD {}&#xa;&#x9;},&#xa;&#x9;arg2 = PrimarySD {spiders = [&quot;s1&quot;, &quot;s2&quot;, &quot;s3&quot;], habitats = [(&quot;s1&quot;, [([&quot;A&quot;], [&quot;B&quot;, &quot;C&quot;]), ([&quot;A&quot;, &quot;B&quot;], [&quot;C&quot;]), ([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;], [])]), (&quot;s2&quot;, [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])]), (&quot;s3&quot;, [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])])], sh_zones = [([&quot;B&quot;], [&quot;A&quot;, &quot;C&quot;])]}&#xa;}"/>
+      </Properties>
+    </Component>
+  </SubComponents>
+</Form>

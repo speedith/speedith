@@ -1,0 +1,12 @@
+BinarySD {
+    arg1 = PrimarySD {
+        spiders = ["s", "s'"],
+        habitats = [("s", [(["A", "B"], [])]), ("s'", [(["A"], ["B"]), (["B"], ["A"])])],
+        sh_zones = [
+        },
+    arg2 = PrimarySD {
+        spiders = ["s", "s'"],
+        habitats = [("s", [(["A"], [])]), ("s'", [(["B"], [])])],
+        sh_zones = []
+        },
+    operator = "op -->"
