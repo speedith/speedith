@@ -56,7 +56,7 @@ import static speedith.i18n.Translations.*;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public final class DiagramVisualisation {
-    private static final int DefaultDiagramSize = 200;
+    private static final int DefaultDiagramSize = 500;
 
     // <editor-fold defaultstate="collapsed" desc="Deprecated Methods">
 //    @Deprecated
@@ -230,6 +230,8 @@ public final class DiagramVisualisation {
                 ad.addSpider(new AbstractSpider(feet, habitat.getKey()));
             }
         }
+        
+        System.out.println(ad.makeForTesting());
 
         return ad;
     }

@@ -133,7 +133,7 @@
         <Component class="speedith.ui.ProofPanel" name="proofPanel1">
           <Properties>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[750, 300]"/>
+              <Dimension value="[500, 300]"/>
             </Property>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[750, 300]"/>

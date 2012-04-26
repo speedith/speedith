@@ -55,6 +55,13 @@ import static speedith.i18n.Translations.i18n;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SpiderDiagramPanel extends javax.swing.JPanel {
+    
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    /**
+     * The default size of the {@link SpeedithCirclesPanel circle panels}.
+     */
+    private static final Dimension PrimaryDiagramSize = new Dimension(100, 100);
+    // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
@@ -390,6 +397,8 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     private JPanel registerSubdiagramClickListener(JPanel diagramPanel, final int nextSubdiagramIndex) {
         if (diagramPanel instanceof SpeedithCirclesPanel) {
             SpeedithCirclesPanel cp = (SpeedithCirclesPanel) diagramPanel;
+            cp.setPreferredSize(PrimaryDiagramSize);
+            cp.setMinimumSize(PrimaryDiagramSize);
             cp.addDiagramClickListener(new DiagramClickListener() {
 
                 public void spiderClicked(SpiderClickedEvent e) {
