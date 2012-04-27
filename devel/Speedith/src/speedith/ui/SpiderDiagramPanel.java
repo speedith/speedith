@@ -493,7 +493,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             throw new AssertionError(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
         } else {
             diagrams.setLayout(new GridBagLayout());
-            GridBagConstraints gbc = new java.awt.GridBagConstraints();
+            GridBagConstraints gbc = getSubdiagramLayoutConstraints(0, true, 1, 1);
             diagrams.add(registerSubdiagramClickListener(DiagramVisualisation.getSpiderDiagramPanel(psd), 0), gbc);
             refreshPrefSize();
         }
