@@ -26,28 +26,14 @@
  */
 package speedith.ui;
 
-import java.util.SortedSet;
-import icircles.abstractDescription.AbstractBasicRegion;
-import icircles.abstractDescription.AbstractCurve;
-import icircles.abstractDescription.AbstractDescription;
-import icircles.abstractDescription.AbstractSpider;
-import icircles.abstractDescription.CurveLabel;
+import icircles.abstractDescription.*;
 import icircles.concreteDiagram.ConcreteDiagram;
-import icircles.gui.CirclesPanel;
 import icircles.util.CannotDrawException;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeSet;
+import java.util.*;
 import javax.swing.JPanel;
-import speedith.core.lang.CompoundSpiderDiagram;
-import speedith.core.lang.NullSpiderDiagram;
-import speedith.core.lang.PrimarySpiderDiagram;
-import speedith.core.lang.Region;
-import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.Zone;
-import static speedith.i18n.Translations.*;
+import speedith.core.lang.*;
+import static speedith.i18n.Translations.i18n;
 
 /**
  * This is a utility class providing the functionality to visualise {@link
@@ -231,8 +217,6 @@ public final class DiagramVisualisation {
             }
         }
         
-        System.out.println(ad.makeForTesting());
-
         return ad;
     }
 
