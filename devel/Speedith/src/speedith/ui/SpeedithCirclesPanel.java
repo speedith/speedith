@@ -246,7 +246,7 @@ public class SpeedithCirclesPanel extends CirclesPanelEx {
 
                 // Check if the mouse hovers over a spider:
                 if ((getHighlightMode() & SelectionStep.Spiders) == SelectionStep.Spiders) {
-                    ConcreteSpiderFoot foot = getDiagram().getSpiderFootAtPoint(p);
+                    ConcreteSpiderFoot foot = getDiagram().getSpiderFootAtPoint(p, getScaleFactor());
                     if (foot != null) {
                         setHighlightedFoot(foot);
                         return;
