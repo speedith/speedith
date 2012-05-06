@@ -197,7 +197,7 @@ public class SpeedithCirclesPanel extends CirclesPanelEx {
 //                }
 
 //                if ((getHighlightMode() & Spiders) == Spiders) {
-                ConcreteSpiderFoot foot = getDiagram().getSpiderFootAtPoint(p);
+                ConcreteSpiderFoot foot = getDiagram().getSpiderFootAtPoint(p, getScaleFactor());
                 if (foot != null) {
                     fireSpiderClickedEvent(foot, e);
                     return;
