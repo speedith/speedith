@@ -74,12 +74,6 @@ exception SD_GERROR of (string * exn list);
 
 
 
-val diabelli_response_prefix   = "DiabelliResponse: ";
-val diabelli_response_goal     = "Goal: ";
-val diabelli_response_no_goals = "No Goals: ";
-
-
-
 
 (*==============================================================================
   = Utility functions
@@ -107,15 +101,28 @@ fun get_goal_terms _ =
   = I3P Communication Routines
   ============================================================================*)
 
+
+
+val diabelli_response_prefix   = "DiabelliResponse: ";
+val diabelli_response_goal     = "Goal: ";
+val diabelli_response_goal_str = "Goal string: ";
+val diabelli_response_no_goals = "No Goals: ";
+
 fun i3p_write_sds_goals _ =
   let
-      val (terms, _) = get_goal_terms ()
+      val (terms, proof_state) = get_goal_terms ();
+      val context = Proof.context_of proof_state;
       (* This YXML shit works... But I have problems making it work for XML. *)
       fun print_yxml_term t = (PolyML.makestring (Term_XML.Decode.term [(YXML.parse (YXML.string_of (hd (Term_XML.Encode.term t))))]))
       fun print_term t = YXML.string_of_body (Term_XML.Encode.term t) |> YXML.embed_controls
-      (*fun print_term t = "aaa" ^ (PolyML.makestring (Term_XML.Decode.term [(XML.parse (XML.string_of (hd (Term_XML.Encode.term t))))]))*)
       fun print_terms [] = ()
-        | print_terms ((t:term) :: (ts:term list)) = let val _ = tracing (diabelli_response_prefix ^ diabelli_response_goal ^ (print_term t)); in print_terms ts end;
+        | print_terms ((t:term) :: (ts:term list)) =
+          let 
+              val _ = tracing (diabelli_response_prefix ^ diabelli_response_goal ^ (print_term t));
+              val _ = tracing (Syntax.string_of_term context t);
+          in
+              print_terms ts
+          end;
   in
       case terms of
           [] => tracing (diabelli_response_prefix ^ diabelli_response_no_goals)
