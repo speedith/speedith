@@ -32,7 +32,6 @@
  */
 package speedith.ui;
 
-import icircles.gui.*;
 import icircles.util.CannotDrawException;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -60,7 +59,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     /**
      * The default size of the {@link SpeedithCirclesPanel circle panels}.
      */
-    private static final Dimension PrimaryDiagramSize = new Dimension(200, 200);
+    private static final Dimension PrimaryDiagramSize = new Dimension(150, 150);
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
