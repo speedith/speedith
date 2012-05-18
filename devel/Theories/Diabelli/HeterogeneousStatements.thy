@@ -184,5 +184,26 @@ consts LeftOf :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
   Tet :: "'a \<Rightarrow> bool"
   Box :: "'a \<Rightarrow> bool"
 
+section {* Placeholders---caveats  *}
+
+axiomatization where
+  ErrInference1: "Diabelli ''x is greater than y'' \<Longrightarrow> x > y" and
+  OkayInference1: "Dbli [About[x, y]] ''x is greater than y'' \<Longrightarrow> x > y"
+
+lemma err1: "Diabelli ''x is greater than y'' \<Longrightarrow> (0::int) > 1"
+  by(fast intro: ErrInference1)
+
+lemma "Diabelli ''x is greater than y'' = False"
+  apply(insert err1)
+  by(fastforce)
+
+lemma "Dbli [About[x, y]] ''x is greater than y'' \<Longrightarrow> (0::int) > 1"
+  apply(auto simp add: OkayInference1)
+  oops
+
+lemma "Dbli [About[(0::int), 1]] ''x is greater than y'' \<Longrightarrow> (0::int) > 1"
+  apply(insert OkayInference1 [of "0::int" "1::int"])
+  by fast
+
 
 end
