@@ -51,21 +51,14 @@ import java.util.*;
  * or {@link MovableArrayList#moveTo(speedith.core.util.MovableArrayList) moving}
  * is performed (as this may change the backing array while it is being accessed
  * in any way).</p>
- * 
- * <p>TODO: the {@link MovableArrayList#iterator() }, {@link MovableArrayList#listIterator()},
- * and {@link MovableArrayList#listIterator(int) } all leak a reference to the
- * backing array. What should we do?
- * 
- * <ul>
- * 
- * <li>Create wrappers for iterators and make them read-only?</li>
- * 
- * <li>Wrap the backing array into an unmodifiable list first and then return
- * the iterator?</li>
- * 
- * </ul>
- * 
- * </p>
+ *
+ * <p>To prevent a leaked reference from the {@link MovableArrayList#iterator()
+ * }, {@link MovableArrayList#listIterator()}, and {@link MovableArrayList#listIterator(int)
+ * } methods, we implement a custom iterator. The iterator is a naive
+ * implementation and does not check for concurrent modifications or
+ * similar.</p>
+ *
+ * <p>This class is <span style="font-weight:bold">not thread-safe</span>.</p>
  *
  * @param <E> the type of elements stored in this collection.
  * @author Matej Urbas [matej.urbas@gmail.com]
@@ -89,20 +82,24 @@ public final class MovableArrayList<E> implements List<E>, RandomAccess {
         store = new ArrayList<E>(initialCapacity);
     }
 
-    public MovableArrayList(MovableArrayList<? extends E> c) {
-        store = new ArrayList<E>(c);
+    public MovableArrayList(MovableArrayList<? extends E> c, boolean move) {
+        if (move) {
+            move(c, this);
+        } else {
+            store = new ArrayList<E>(c.store);
+        }
     }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Move Semantics">
     /**
      * Moves the contents (the backing array) of this list to {@code destination}.
-     * 
+     *
      * <p>This collection will be empty after this operation finishes.</p>
      *
      * <p><span style="font-weight:bold">Important</span>: this method is not
      * thread-safe.</p>
-     * 
+     *
      * @param destination
      */
     public void moveTo(MovableArrayList<? super E> destination) {
@@ -114,7 +111,7 @@ public final class MovableArrayList<E> implements List<E>, RandomAccess {
      *
      * <p><span style="font-weight:bold">Important</span>: this method is not
      * thread-safe.</p>
-     * 
+     *
      * @param other the other list with which to swap contents.
      */
     public void swapWith(MovableArrayList<E> other) {
@@ -180,16 +177,9 @@ public final class MovableArrayList<E> implements List<E>, RandomAccess {
         return store.contains(o);
     }
 
-    /**
-     * This method leaks a reference to the backing array! What to do?
-     * 
-     * See TODO note in class documentation.
-     * 
-     * @return 
-     */
     @Override
     public Iterator<E> iterator() {
-        return store.iterator();
+        return new ListIteratorImpl(0);
     }
 
     @Override
@@ -272,35 +262,84 @@ public final class MovableArrayList<E> implements List<E>, RandomAccess {
         return store.lastIndexOf(o);
     }
 
-    /**
-     * This method leaks a reference to the backing array! What to do?
-     * 
-     * See TODO note in class documentation.
-     * 
-     * @param index
-     * @return 
-     */
     @Override
     public ListIterator<E> listIterator() {
-        return store.listIterator();
+        return new ListIteratorImpl(0);
     }
 
-    /**
-     * This method leaks a reference to the backing array! What to do?
-     * 
-     * See TODO note in class documentation.
-     * 
-     * @param index
-     * @return 
-     */
     @Override
-    public ListIterator<E> listIterator(int index) {
-        return store.listIterator(index);
+    public ListIterator<E> listIterator(final int index) {
+        return new ListIteratorImpl(index);
     }
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
         return store.subList(fromIndex, toIndex);
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Iterator">
+    private class ListIteratorImpl implements ListIterator<E> {
+
+        private int curIdx;
+
+        public ListIteratorImpl(int index) {
+            this.curIdx = index;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return curIdx >= 0 && curIdx < MovableArrayList.this.size() - 1;
+        }
+
+        @Override
+        public E next() {
+            if (curIdx < MovableArrayList.this.size() - 1) {
+                return MovableArrayList.this.get(++curIdx);
+            } else {
+                throw new NoSuchElementException();
+            }
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return curIdx > 0;
+        }
+
+        @Override
+        public E previous() {
+            if (hasPrevious()) {
+                return MovableArrayList.this.get(--curIdx);
+            } else {
+                throw new NoSuchElementException();
+            }
+        }
+
+        @Override
+        public int nextIndex() {
+            return curIdx + 1;
+        }
+
+        @Override
+        public int previousIndex() {
+            return curIdx - 1;
+        }
+
+        @Override
+        public void remove() {
+            MovableArrayList.this.remove(curIdx);
+        }
+
+        @Override
+        public void set(E e) {
+            MovableArrayList.this.set(curIdx, e);
+        }
+
+        @Override
+        public void add(E e) {
+            MovableArrayList.this.add(curIdx, e);
+            ++curIdx;
+        }
     }
     //</editor-fold>
 }
