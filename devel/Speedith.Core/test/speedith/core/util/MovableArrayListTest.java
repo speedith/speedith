@@ -26,7 +26,7 @@
  */
 package speedith.core.util;
 
-import java.util.Arrays;
+import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -43,6 +43,15 @@ public class MovableArrayListTest {
     private final Number[] initDestinationNum = new Number[]{3.6, 3f};
     private final Double[] initSourceDbl = new Double[]{24.0, -98.1, 7.3, -54.6, 32.7};
     private final Double[] initDestinationDbl = new Double[]{3.6, -32.982};
+    private final ArrayList<Object[]> allArrays = new ArrayList<>(Arrays.asList(new Object[][]{
+                empty,
+                initDestinationDbl,
+                initDestinationInt,
+                initDestinationNum,
+                initSourceDbl,
+                initSourceInt,
+                initSourceNum
+            }));
 
     public MovableArrayListTest() {
     }
@@ -170,8 +179,8 @@ public class MovableArrayListTest {
         assertEquals(true, new MovableArrayList<>().isEmpty());
         assertEquals(true, new MovableArrayList<>(54).isEmpty());
         assertEquals(true, new MovableArrayList<>(Arrays.asList(empty)).isEmpty());
-        
-        
+
+
         MovableArrayList<Integer> source = new MovableArrayList<>(Arrays.asList(initSourceInt));
         MovableArrayList<Number> destination = new MovableArrayList<Number>(source, true);
         assertEquals(true, source.isEmpty());
@@ -195,14 +204,13 @@ public class MovableArrayListTest {
      */
     @Test
     public void testContains() {
-//        System.out.println("contains");
-//        Object o = null;
-//        MovableArrayList instance = new MovableArrayList();
-//        boolean expResult = false;
-//        boolean result = instance.contains(o);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
+        for (Object[] arr : allArrays) {
+            MovableArrayList<Object> a = new MovableArrayList<>(Arrays.asList(arr));
+            for (int i = 0; i < arr.length; i++) {
+                Object o = arr[i];
+                assertTrue(a.contains(o));
+            }
+        }
     }
 
     /**
@@ -210,13 +218,93 @@ public class MovableArrayListTest {
      */
     @Test
     public void testIterator() {
-//        System.out.println("iterator");
-//        MovableArrayList instance = new MovableArrayList();
-//        Iterator expResult = null;
-//        Iterator result = instance.iterator();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
+        // Forward iterator:
+        for (Object[] arr : allArrays) {
+            MovableArrayList<Object> a = new MovableArrayList<>(Arrays.asList(arr));
+            int c = 0;
+            for (Object o : a) {
+                assertEquals(arr[c++], o);
+            }
+            assertEquals(arr.length, c);
+        }
+    }
+
+    /**
+     * Test of listIterator method, of class MovableArrayList.
+     */
+    @Test
+    public void testListIterator_0args() {
+        Random rnd = new Random(0xff8c983846dfe0f9L);
+        double probJumpBack = 0.2;
+        iteratorTraversalTest(rnd, probJumpBack);
+        iteratorTraversalTest(new Random(), probJumpBack);
+    }
+
+    private void iteratorTraversalTest(Random rnd, double probJumpBack) {
+        for (Object[] arr : allArrays) {
+            MovableArrayList<Object> a = new MovableArrayList<>(Arrays.asList(arr));
+            ListIterator<Object> lIter = a.listIterator();
+            int idx = 0;
+            while (true) {
+                if (rnd.nextDouble() < probJumpBack) {
+                    if (lIter.hasPrevious()) {
+                        Object cur = lIter.previous();
+                        assertEquals(arr[--idx], cur);
+                    } else {
+                        break;
+                    }
+                } else {
+                    if (lIter.hasNext()) {
+                        Object cur = lIter.next();
+                        assertEquals(arr[idx++], cur);
+                    } else {
+                        break;
+                    }
+                }
+            }
+            assertTrue(String.format("`idx` should be either %d or %d, was %d.", 0, arr.length - 1, idx), arr.length == idx || idx == 0);
+        }
+    }
+
+    private void iteratorFromTraversalTest(Random rnd, double probJumpBack, int iterations) {
+        for (Object[] arr : allArrays) {
+            MovableArrayList<Object> a = new MovableArrayList<>(Arrays.asList(arr));
+            for (int i = 0; i < iterations; i++) {
+                int fromIndex = arr.length > 0 ? rnd.nextInt(arr.length) : 0;
+                ListIterator<Object> lIter = a.listIterator(fromIndex);
+                int idx = fromIndex;
+                while (true) {
+                    if (rnd.nextDouble() < probJumpBack) {
+                        if (lIter.hasPrevious()) {
+                            Object cur = lIter.previous();
+                            assertEquals(arr[--idx], cur);
+                        } else {
+                            break;
+                        }
+                    } else {
+                        if (lIter.hasNext()) {
+                            Object cur = lIter.next();
+                            assertEquals(arr[idx++], cur);
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                assertTrue(String.format("`idx` should be either %d or %d, was %d.", 0, arr.length - 1, idx), arr.length == idx || idx == 0);
+            }
+        }
+    }
+
+    /**
+     * Test of listIterator method, of class MovableArrayList.
+     */
+    @Test
+    public void testListIterator_int() {
+        Random rnd = new Random(0xff8c983846dfe0f9L);
+        double probJumpBack = 0.2;
+        int iterations = 10;
+        iteratorFromTraversalTest(rnd, probJumpBack, iterations);
+        iteratorFromTraversalTest(new Random(), probJumpBack, iterations);
     }
 
     /**
@@ -224,13 +312,10 @@ public class MovableArrayListTest {
      */
     @Test
     public void testToArray_0args() {
-//        System.out.println("toArray");
-//        MovableArrayList instance = new MovableArrayList();
-//        Object[] expResult = null;
-//        Object[] result = instance.toArray();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
+        for (Object[] arr : allArrays) {
+            MovableArrayList<Object> a = new MovableArrayList<>(Arrays.asList(arr));
+            assertArrayEquals(arr, a.toArray());
+        }
     }
 
     /**
@@ -238,14 +323,10 @@ public class MovableArrayListTest {
      */
     @Test
     public void testToArray_GenericType() {
-//        System.out.println("toArray");
-//        T[] a = null;
-//        MovableArrayList instance = new MovableArrayList();
-//        Object[] expResult = null;
-//        Object[] result = instance.toArray(a);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
+        for (Object[] arr : allArrays) {
+            MovableArrayList<Object> a = new MovableArrayList<>(Arrays.asList(arr));
+            assertArrayEquals(arr, a.toArray(new Object[]{}));
+        }
     }
 
     /**
@@ -253,14 +334,18 @@ public class MovableArrayListTest {
      */
     @Test
     public void testAdd_GenericType() {
-//        System.out.println("add");
-//        Object e = null;
-//        MovableArrayList instance = new MovableArrayList();
-//        boolean expResult = false;
-//        boolean result = instance.add(e);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
+        final Object added = "Test";
+        for (Object[] arr : allArrays) {
+            MovableArrayList<Object> a = new MovableArrayList<>(Arrays.asList(arr));
+            a.add(added);
+            assertEquals(arr.length + 1, a.size());
+            assertEquals(added, a.get(arr.length));
+            if (arr.length > 0) {
+                assertEquals(arr[arr.length - 1], a.get(arr.length - 1));
+            }
+            a.remove(arr.length);
+            assertArrayEquals(arr, a.toArray());
+        }
     }
 
     /**
@@ -268,14 +353,20 @@ public class MovableArrayListTest {
      */
     @Test
     public void testRemove_Object() {
-//        System.out.println("remove");
-//        Object o = null;
-//        MovableArrayList instance = new MovableArrayList();
-//        boolean expResult = false;
-//        boolean result = instance.remove(o);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
+        Object removed;
+        Random rnd = new Random(0xff8c983846dfe0f9L);
+        for (Object[] arr : allArrays) {
+            if (arr.length < 1) {
+                continue;
+            }
+            MovableArrayList<Object> a = new MovableArrayList<>(Arrays.asList(arr));
+            int rmIdx = rnd.nextInt(arr.length);
+            removed = a.remove(rmIdx);
+            assertEquals(arr.length - 1, a.size());
+            assertEquals(removed, arr[rmIdx]);
+            a.add(rmIdx, removed);
+            assertArrayEquals(arr, a.toArray());
+        }
     }
 
     /**
@@ -283,14 +374,13 @@ public class MovableArrayListTest {
      */
     @Test
     public void testContainsAll() {
-//        System.out.println("containsAll");
-//        Collection<?> c = null;
-//        MovableArrayList instance = new MovableArrayList();
-//        boolean expResult = false;
-//        boolean result = instance.containsAll(c);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
+        for (Object[] arr : allArrays) {
+            final List<Object> asList = Arrays.asList(arr);
+            MovableArrayList<Object> a = new MovableArrayList<>(asList);
+            assertTrue(a.containsAll(a));
+            assertTrue(a.containsAll(asList));
+            assertTrue(asList.containsAll(a));
+        }
     }
 
     /**
@@ -451,35 +541,6 @@ public class MovableArrayListTest {
 //        MovableArrayList instance = new MovableArrayList();
 //        int expResult = 0;
 //        int result = instance.lastIndexOf(o);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of listIterator method, of class MovableArrayList.
-     */
-    @Test
-    public void testListIterator_0args() {
-//        System.out.println("listIterator");
-//        MovableArrayList instance = new MovableArrayList();
-//        ListIterator expResult = null;
-//        ListIterator result = instance.listIterator();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of listIterator method, of class MovableArrayList.
-     */
-    @Test
-    public void testListIterator_int() {
-//        System.out.println("listIterator");
-//        int index = 0;
-//        MovableArrayList instance = new MovableArrayList();
-//        ListIterator expResult = null;
-//        ListIterator result = instance.listIterator(index);
 //        assertEquals(expResult, result);
 //        // TODO review the generated test code and remove the default call to fail.
 //        fail("The test case is a prototype.");

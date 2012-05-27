@@ -70,23 +70,58 @@ public final class MovableArrayList<E> implements List<E>, RandomAccess {
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
+    /**
+     * Creates a new empty movable array list.
+     */
     public MovableArrayList() {
-        store = new ArrayList<E>();
+        store = new ArrayList<>();
     }
 
+    /**
+     * Creates an instance of the movable array list and copies the contents of
+     * the given {@link Collection} to this instance.
+     *
+     * @param c the collection from which to copy the contents.
+     */
     public MovableArrayList(Collection<? extends E> c) {
-        store = new ArrayList<E>(c);
+        store = new ArrayList<>(c);
     }
 
+    /**
+     * Creates an instance of the movable array list and initialises its backing
+     * array list to the given capacity.
+     *
+     * @param initialCapacity the initial capacity of the backing {@link ArrayList}.
+     */
     public MovableArrayList(int initialCapacity) {
-        store = new ArrayList<E>(initialCapacity);
+        store = new ArrayList<>(initialCapacity);
     }
 
+    /**
+     * Creates an instance of the movable array list and either copies or moves
+     * the contents of the given {@link MovableArrayList} to this instance.
+     *
+     * <p>The new and the given instance will <span
+     * style="font-weight:bold">not</span> share the same backing store. In
+     * fact, two movable array lists will never share the same backing
+     * store.</p>
+     *
+     * @param c the other movable array list from which to either copy or move
+     * the contents.
+     *
+     * @param move indicates whether the contents of the given movable array
+     * list should be copied or moved.
+     */
     public MovableArrayList(MovableArrayList<? extends E> c, boolean move) {
         if (move) {
+            // NOTE: Here we are passing the uninitialised `this` reference to
+            // the `move` method, which does not leak the reference further and
+            // initialises the backing store. It doesn't call any other method
+            // or constructor which could further leak the reference, so it's
+            // okay.
             move(c, this);
         } else {
-            store = new ArrayList<E>(c.store);
+            store = new ArrayList<>(c.store);
         }
     }
     //</editor-fold>
@@ -127,7 +162,6 @@ public final class MovableArrayList<E> implements List<E>, RandomAccess {
      * <p><span style="font-weight:bold">Important</span>: this method is not
      * thread-safe.</p>
      *
-     * @param <TSource> the type of elements stored in {@code source}.
      * @param <TDestination> the type of elements stored in {@code destination}.
      * @param source the collection from which to remove the backing array and
      * put it into {@code destination}.
@@ -281,64 +315,80 @@ public final class MovableArrayList<E> implements List<E>, RandomAccess {
     //<editor-fold defaultstate="collapsed" desc="Iterator">
     private class ListIteratorImpl implements ListIterator<E> {
 
-        private int curIdx;
+        /**
+         * Index of the next element to return.
+         */
+        private int nextIdx;
+        /**
+         * Index of last element returned. Has value of -1 if no such.
+         */
+        private int lastIdx = -1;
 
-        public ListIteratorImpl(int index) {
-            this.curIdx = index;
+        public ListIteratorImpl() {
+            this(0);
+        }
+
+        public ListIteratorImpl(int nextIndex) {
+            this.nextIdx = nextIndex;
         }
 
         @Override
         public boolean hasNext() {
-            return curIdx >= 0 && curIdx < MovableArrayList.this.size() - 1;
+            return nextIdx < MovableArrayList.this.size();
         }
 
         @Override
         public E next() {
-            if (curIdx < MovableArrayList.this.size() - 1) {
-                return MovableArrayList.this.get(++curIdx);
-            } else {
-                throw new NoSuchElementException();
-            }
+            E tmp = MovableArrayList.this.get(nextIdx);
+            lastIdx = nextIdx;
+            ++nextIdx;
+            return tmp;
         }
 
         @Override
         public boolean hasPrevious() {
-            return curIdx > 0;
+            return nextIdx > 0;
         }
 
         @Override
         public E previous() {
-            if (hasPrevious()) {
-                return MovableArrayList.this.get(--curIdx);
-            } else {
-                throw new NoSuchElementException();
-            }
+            int i = nextIdx - 1;
+            E tmp = MovableArrayList.this.get(i);
+            nextIdx = i;
+            lastIdx = i;
+            return tmp;
         }
 
         @Override
         public int nextIndex() {
-            return curIdx + 1;
+            return nextIdx;
         }
 
         @Override
         public int previousIndex() {
-            return curIdx - 1;
+            return nextIdx - 1;
         }
 
         @Override
         public void remove() {
-            MovableArrayList.this.remove(curIdx);
+            MovableArrayList.this.remove(lastIdx);
+            nextIdx = lastIdx;
+            lastIdx = -1;
         }
 
         @Override
         public void set(E e) {
-            MovableArrayList.this.set(curIdx, e);
+            if (lastIdx < 0) {
+                throw new IllegalStateException();
+            }
+            MovableArrayList.this.set(lastIdx, e);
         }
 
         @Override
         public void add(E e) {
-            MovableArrayList.this.add(curIdx, e);
-            ++curIdx;
+            MovableArrayList.this.add(nextIdx, e);
+            ++nextIdx;
+            lastIdx = -1;
         }
     }
     //</editor-fold>
