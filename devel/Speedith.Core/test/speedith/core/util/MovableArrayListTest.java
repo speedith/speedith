@@ -383,182 +383,87 @@ public class MovableArrayListTest {
         }
     }
 
-    /**
-     * Test of addAll method, of class MovableArrayList.
-     */
-    @Test
-    public void testAddAll_Collection() {
-//        System.out.println("addAll");
-//        Collection<? extends E> c = null;
-//        MovableArrayList instance = new MovableArrayList();
-//        boolean expResult = false;
-//        boolean result = instance.addAll(c);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of addAll method, of class MovableArrayList.
-     */
-    @Test
-    public void testAddAll_int_Collection() {
-//        System.out.println("addAll");
-//        int index = 0;
-//        Collection<? extends E> c = null;
-//        MovableArrayList instance = new MovableArrayList();
-//        boolean expResult = false;
-//        boolean result = instance.addAll(index, c);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of removeAll method, of class MovableArrayList.
-     */
-    @Test
-    public void testRemoveAll() {
-//        System.out.println("removeAll");
-//        Collection<?> c = null;
-//        MovableArrayList instance = new MovableArrayList();
-//        boolean expResult = false;
-//        boolean result = instance.removeAll(c);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of retainAll method, of class MovableArrayList.
-     */
-    @Test
-    public void testRetainAll() {
-//        System.out.println("retainAll");
-//        Collection<?> c = null;
-//        MovableArrayList instance = new MovableArrayList();
-//        boolean expResult = false;
-//        boolean result = instance.retainAll(c);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of clear method, of class MovableArrayList.
-     */
-    @Test
-    public void testClear() {
-//        System.out.println("clear");
-//        MovableArrayList instance = new MovableArrayList();
-//        instance.clear();
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of get method, of class MovableArrayList.
-     */
-    @Test
-    public void testGet() {
-//        System.out.println("get");
-//        int index = 0;
-//        MovableArrayList instance = new MovableArrayList();
-//        Object expResult = null;
-//        Object result = instance.get(index);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of set method, of class MovableArrayList.
-     */
-    @Test
-    public void testSet() {
-//        System.out.println("set");
-//        int index = 0;
-//        Object element = null;
-//        MovableArrayList instance = new MovableArrayList();
-//        Object expResult = null;
-//        Object result = instance.set(index, element);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of add method, of class MovableArrayList.
-     */
-    @Test
-    public void testAdd_int_GenericType() {
-//        System.out.println("add");
-//        int index = 0;
-//        Object element = null;
-//        MovableArrayList instance = new MovableArrayList();
-//        instance.add(index, element);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of remove method, of class MovableArrayList.
-     */
-    @Test
-    public void testRemove_int() {
-//        System.out.println("remove");
-//        int index = 0;
-//        MovableArrayList instance = new MovableArrayList();
-//        Object expResult = null;
-//        Object result = instance.remove(index);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of indexOf method, of class MovableArrayList.
-     */
-    @Test
-    public void testIndexOf() {
-//        System.out.println("indexOf");
-//        Object o = null;
-//        MovableArrayList instance = new MovableArrayList();
-//        int expResult = 0;
-//        int result = instance.indexOf(o);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of lastIndexOf method, of class MovableArrayList.
-     */
-    @Test
-    public void testLastIndexOf() {
-//        System.out.println("lastIndexOf");
-//        Object o = null;
-//        MovableArrayList instance = new MovableArrayList();
-//        int expResult = 0;
-//        int result = instance.lastIndexOf(o);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of subList method, of class MovableArrayList.
-     */
-    @Test
-    public void testSubList() {
-//        System.out.println("subList");
-//        int fromIndex = 0;
-//        int toIndex = 0;
-//        MovableArrayList instance = new MovableArrayList();
-//        List expResult = null;
-//        List result = instance.subList(fromIndex, toIndex);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
+//    /**
+//     * Test of addAll method, of class MovableArrayList.
+//     */
+//    @Test
+//    public void testAddAll_Collection() {
+//    }
+//
+//    /**
+//     * Test of addAll method, of class MovableArrayList.
+//     */
+//    @Test
+//    public void testAddAll_int_Collection() {
+//    }
+//
+//    /**
+//     * Test of removeAll method, of class MovableArrayList.
+//     */
+//    @Test
+//    public void testRemoveAll() {
+//    }
+//
+//    /**
+//     * Test of retainAll method, of class MovableArrayList.
+//     */
+//    @Test
+//    public void testRetainAll() {
+//    }
+//
+//    /**
+//     * Test of clear method, of class MovableArrayList.
+//     */
+//    @Test
+//    public void testClear() {
+//    }
+//
+//    /**
+//     * Test of get method, of class MovableArrayList.
+//     */
+//    @Test
+//    public void testGet() {
+//    }
+//
+//    /**
+//     * Test of set method, of class MovableArrayList.
+//     */
+//    @Test
+//    public void testSet() {
+//    }
+//
+//    /**
+//     * Test of add method, of class MovableArrayList.
+//     */
+//    @Test
+//    public void testAdd_int_GenericType() {
+//    }
+//
+//    /**
+//     * Test of remove method, of class MovableArrayList.
+//     */
+//    @Test
+//    public void testRemove_int() {
+//    }
+//
+//    /**
+//     * Test of indexOf method, of class MovableArrayList.
+//     */
+//    @Test
+//    public void testIndexOf() {
+//    }
+//
+//    /**
+//     * Test of lastIndexOf method, of class MovableArrayList.
+//     */
+//    @Test
+//    public void testLastIndexOf() {
+//    }
+//
+//    /**
+//     * Test of subList method, of class MovableArrayList.
+//     */
+//    @Test
+//    public void testSubList() {
+//    }
 }
