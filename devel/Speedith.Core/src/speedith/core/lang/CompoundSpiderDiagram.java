@@ -28,8 +28,6 @@ package speedith.core.lang;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import static speedith.core.i18n.Translations.i18n;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 

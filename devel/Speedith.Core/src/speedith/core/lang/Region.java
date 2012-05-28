@@ -32,8 +32,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import speedith.core.util.Sets;
 import static speedith.core.i18n.Translations.i18n;
 

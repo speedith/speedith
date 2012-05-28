@@ -195,6 +195,22 @@ public final class MovableArrayList<E> implements List<E>, RandomAccess {
     }
     //</editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Other Public Interface">
+    /**
+     * Returns an unmodifiable view of the backing store (which is an {@link ArrayList}).
+     *
+     * <p>The list returned by this method wraps the backing store directly.
+     * Thus, if the backing store changes in this movable array, this does not
+     * affect the returned list (i.e., the returned list will still wrap the old
+     * backing store).</p>
+     *
+     * @return an unmodifiable view of the backing store (which is an {@link ArrayList}).
+     */
+    public List<E> getReadOnlyStore() {
+        return Collections.unmodifiableList(store);
+    }
+    // </editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="List implementation">
     @Override
     public int size() {
