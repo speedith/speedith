@@ -71,6 +71,23 @@
     nbproject/build-impl.xml file. 
 
     -->
+
+    <!-- Use wildcards in pattern definition -->
+    <!-- to be independent of antlr versions -->
+    <patternset id="antlr.libs">
+        <include name="antlr3*.jar" />
+        <include name="stringtemplate*.jar" />
+    </patternset>
+    
+    <!-- Looking for archives in ANTLR_HOME directory -->
+    <path id="antlr.path">
+        <fileset dir="/usr/share/java" casesensitive="yes">
+            <patternset refid="antlr.libs" />
+        </fileset>
+    </path>
+    
+    
+    
     <target name="-pre-compile">
         <antcall target="-compile-speedith-grammar" />
     </target>
@@ -92,20 +109,12 @@
 
     <target name="-compile-speedith-grammar" depends="-check-grammar-uptodate,-clean-antlrworks-output" unless="speedith.grammar.isUptodate">
         <echo message="Compiling the speedith grammar: ${speedith.grammar}.g" level="info" />
-        <fail message="You have to set at least one of these properties (e.g.: in `./nbproject/private/private.properties`): 'antlr3.tool.executable' or 'antlr3.tool.jar'">
-            <condition>
-                <and>
-                    <not>
-                        <isset property="antlr3.tool.executable"/>
-                    </not>
-                    <not>
-                        <isset property="antlr3.tool.jar"/>
-                    </not>
-                </and>
-            </condition>
-        </fail>
-        <antcall target="-compile-speedith-grammar-with-jar" />
-        <antcall target="-compile-speedith-grammar-with-executable" />
+        <antlr:ant-antlr3 xmlns:antlr="antlib:org/apache/tools/ant/antlr" 
+                          target="${speedith.grammar}.g">
+            <classpath>
+                <path refid="antlr.path"/>
+            </classpath>
+        </antlr:ant-antlr3>
         <antcall target="-clean-generated-token-files" />
     </target>
     
