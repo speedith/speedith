@@ -61,6 +61,11 @@ public class InferenceRules {
         registerProvider(Idempotency.class);
         registerProvider(ImplicationTautology.class);
         registerProvider(DischargeNullGoal.class);
+        registerProvider(ConjunctionElimination.class);
+        registerProvider(CopyContour.class);
+        registerProvider(CopyShading.class);
+        registerProvider(CopySpider.class);
+        registerProvider(RemoveContour.class);
     }
 
     /**
