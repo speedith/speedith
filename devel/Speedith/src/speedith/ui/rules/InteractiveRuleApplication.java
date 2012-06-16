@@ -174,9 +174,8 @@ public final class InteractiveRuleApplication {
 
     /**
      * Applies the inference rule with the given name on the provided spider
-     * diagram. This method interactively asks the user to provide
-     * additional information for the inference rule (if the inference rule
-     * requires it).
+     * diagram. This method interactively asks the user to provide additional
+     * information for the inference rule (if the inference rule requires it).
      *
      * @param rule the inference rule to apply.
      * @param diagram the diagram on which to apply the inference rule.
@@ -189,6 +188,29 @@ public final class InteractiveRuleApplication {
     public static RuleApplicationResult applyRuleInteractively(String rule, SpiderDiagram diagram) throws RuleApplicationException {
         return applyRuleInteractively(null, InferenceRules.getInferenceRule(rule), 0, null, Goals.createGoalsFrom(diagram));
     }
+
+    public static RuleArg collectArgument(JFrame window, InferenceRule<? extends RuleArg> rule, int subgoalIndex, Goals goals) {
+        RuleArg ruleArg;
+        RuleApplicationInstruction<? extends RuleArg> instructions = rule.getProvider().getInstructions();
+
+        // Get the inference rule arguments, if the inference rule needs any.
+        if (instructions == null) {
+            ruleArg = new SubgoalIndexArg(subgoalIndex);
+        } else {
+            // Ask the user for additional parameters to the inference rule.
+            SelectionDialog dsd = new SelectionDialog(window, true, goals.getGoalAt(subgoalIndex), instructions.getSelectionSteps());
+            dsd.pack();
+            dsd.setVisible(true);
+
+            if (dsd.isCancelled()) {
+                throw new RuntimeException("User Cancelled");
+            } else {
+                ruleArg = instructions.extractRuleArg(dsd.getSelection(), subgoalIndex);
+            }
+        }
+
+        return ruleArg;
+    }
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Private Helper Stuff">
@@ -196,13 +218,14 @@ public final class InteractiveRuleApplication {
      * <p><span style="font-weight:bold">Caveat</span>: exactly one of the
      * arguments 'proof' and 'goals' must be given (i.e. non-{@code null}).
      * Otherwise an exception will be thrown.</p>
+     *
      * @param window
      * @param rule
      * @param subgoalIndex
      * @param proof
      * @param goals
      * @return
-     * @throws RuleApplicationException 
+     * @throws RuleApplicationException
      */
     @SuppressWarnings("unchecked")
     private static RuleApplicationResult applyRuleInteractively(JFrame window, InferenceRule<? extends RuleArg> rule, int subgoalIndex, Proof proof, Goals goals) throws RuleApplicationException {
@@ -215,21 +238,21 @@ public final class InteractiveRuleApplication {
             if (proof != null) {
                 goals = proof.getLastGoals();
             }
-            
+
             // Now check if the goals aren't empty... We cannot apply a rule on
             // empty goals...
             if (goals == null || goals.isEmpty()) {
                 throw new RuleApplicationException(speedith.i18n.Translations.i18n("RULE_APP_EMPTY_GOALS"));
             }
-            
+
             RuleArg ruleArg;
-            
+
             try {
-            	ruleArg = collectArgument(window, rule, subgoalIndex, goals);
+                ruleArg = collectArgument(window, rule, subgoalIndex, goals);
             } catch (RuntimeException e) {
-            	return null;
+                return null;
             }
-            
+
             // Finally, apply the inference rule.
             if (proof != null) {
                 return proof.applyRule((InferenceRule<RuleArg>) rule, ruleArg);
@@ -241,27 +264,4 @@ public final class InteractiveRuleApplication {
         }
     }
     // </editor-fold>
-
-	public static RuleArg collectArgument(JFrame window, InferenceRule<? extends RuleArg> rule, int subgoalIndex, Goals goals) {
-		RuleArg ruleArg;
-		RuleApplicationInstruction<? extends RuleArg> instructions = rule.getProvider().getInstructions();
-		
-		// Get the inference rule arguments, if the inference rule needs any.
-		if (instructions == null) {
-		    ruleArg = new SubgoalIndexArg(subgoalIndex);
-		} else {
-		    // Ask the user for additional parameters to the inference rule.
-		    SelectionDialog dsd = new SelectionDialog(window, true, goals.getGoalAt(subgoalIndex), instructions.getSelectionSteps());
-		    dsd.pack();
-		    dsd.setVisible(true);
-		    
-		    if (dsd.isCancelled()) {
-		        throw new RuntimeException("User Cancelled");
-		    } else {
-		        ruleArg = instructions.extractRuleArg(dsd.getSelection(), subgoalIndex);
-		    }
-		}
-		
-		return ruleArg;
-	}
 }
