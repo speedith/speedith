@@ -62,6 +62,7 @@ public class NullSpiderDiagramPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form NullSpiderDiagramPanel
+     *
      * @param font the font to use to display the top symbol with.
      */
     public NullSpiderDiagramPanel(Font font) {
@@ -138,7 +139,6 @@ public class NullSpiderDiagramPanel extends javax.swing.JPanel {
     }
     // </editor-fold>
 
-    
     // <editor-fold defaultstate="collapsed" desc="Overrides">
     @Override
     public void setFont(Font font) {
@@ -166,7 +166,9 @@ public class NullSpiderDiagramPanel extends javax.swing.JPanel {
         }
         defaultFont = font.deriveFont(24f);
         highlightFont = font.deriveFont(Font.BOLD, 26f);
-        lblNullSD.setFont(defaultFont);
+        if (lblNullSD != null) {
+            lblNullSD.setFont(defaultFont);
+        }
     }
     // </editor-fold>
 }
