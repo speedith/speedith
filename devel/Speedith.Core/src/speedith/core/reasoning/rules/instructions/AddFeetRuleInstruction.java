@@ -36,7 +36,7 @@ import speedith.core.reasoning.args.selection.SelectZonesStep;
 import speedith.core.reasoning.args.selection.SelectionSequence;
 import speedith.core.reasoning.args.selection.SelectionStep;
 import speedith.core.reasoning.rules.AddFeet;
-import speedith.core.util.Maps;
+import propity.util.Maps;
 
 /**
  * Instructions on how to get arguments for the {@link AddFeet add feet}

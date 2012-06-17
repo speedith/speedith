@@ -26,18 +26,18 @@
  */
 package speedith.core.lang.reader;
 
-import java.util.Map.Entry;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeSet;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.ANTLRInputStream;
@@ -47,18 +47,18 @@ import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
+import static speedith.core.i18n.Translations.i18n;
+import speedith.core.lang.CompoundSpiderDiagram;
+import static speedith.core.lang.CompoundSpiderDiagram.*;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.PrimarySpiderDiagram;
-import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.CompoundSpiderDiagram;
-import speedith.core.lang.Zone;
+import static speedith.core.lang.PrimarySpiderDiagram.*;
 import speedith.core.lang.Region;
+import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.SpiderDiagrams;
+import speedith.core.lang.Zone;
 import speedith.core.lang.reader.SpiderDiagramsParser.list_return;
 import speedith.core.lang.reader.SpiderDiagramsParser.spiderDiagram_return;
-import static speedith.core.i18n.Translations.i18n;
-import static speedith.core.lang.PrimarySpiderDiagram.*;
-import static speedith.core.lang.CompoundSpiderDiagram.*;
 
 /**
  * This class provides static methods for reading spider diagrams (in a textual

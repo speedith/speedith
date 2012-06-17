@@ -32,8 +32,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static speedith.core.i18n.Translations.i18n;
-import speedith.core.util.Sets;
-import static speedith.core.util.Sets.equal;
+import propity.util.Sets;
+import static propity.util.Sets.equal;
 
 /**
  * Represents a unitary spider diagram. For a complete and formal description of

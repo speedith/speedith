@@ -33,7 +33,7 @@ import java.awt.LayoutManager;
 import java.util.List;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.Goals;
-import speedith.core.util.Strings;
+import propity.util.Strings;
 
 /**
  *

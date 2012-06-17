@@ -35,7 +35,7 @@ import java.util.TreeSet;
 import static org.junit.Assert.*;
 import org.junit.*;
 import speedith.core.lang.*;
-import speedith.core.util.Maps;
+import propity.util.Maps;
 
 /**
  *

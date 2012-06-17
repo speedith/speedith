@@ -38,7 +38,7 @@ import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.Operator;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
-import speedith.core.util.Sequences;
+import propity.util.Sequences;
 
 /**
  * This selection step asks the user to select an operator (a compound

@@ -26,6 +26,7 @@
  */
 package speedith.core.util;
 
+import propity.util.MovableArrayList;
 import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;

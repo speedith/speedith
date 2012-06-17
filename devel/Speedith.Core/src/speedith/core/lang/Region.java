@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import speedith.core.util.Sets;
+import propity.util.Sets;
 import static speedith.core.i18n.Translations.i18n;
 
 /**

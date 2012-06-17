@@ -34,9 +34,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import speedith.core.util.Sets;
+import propity.util.Sets;
 import static speedith.core.i18n.Translations.i18n;
-import static speedith.core.util.Sets.equal;
+import static propity.util.Sets.equal;
 
 /**
  * Represents a zone from the theory of spider diagrams.

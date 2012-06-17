@@ -31,8 +31,8 @@ import java.io.Writer;
 import java.util.*;
 import static speedith.core.i18n.Translations.*;
 import speedith.core.lang.*;
-import speedith.core.util.Sequences;
-import speedith.core.util.Sets;
+import propity.util.Sequences;
+import propity.util.Sets;
 
 /**
  * The provider for exporting spider diagrams to Isabelle 2011 formulae.

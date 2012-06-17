@@ -35,7 +35,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import speedith.core.util.Sets;
+import propity.util.Sets;
 import static org.junit.Assert.*;
 
 /**

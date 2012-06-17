@@ -48,7 +48,7 @@ import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
-import speedith.core.util.Strings;
+import propity.util.Strings;
 import speedith.ui.SpeedithMainForm;
 import static speedith.i18n.Translations.*;
 import static speedith.logging.Logger.*;
