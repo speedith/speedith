@@ -146,6 +146,24 @@ usable in a plain NetBeans platform (without I3P modules).
 
 --------------------------------------------------------------------------------
 
+## Troubleshooting
+
+### __Q1__: Speedith doesn't build. It fails with the following error `Problem: failed to create task or type antlib:org/apache/tools/ant/antlr:ant-antlr3`.
+
+Your `Ant` tool is missing the `antlr3` task. You'll have to install it.
+
+Under Ubuntu you'll have to download and extract the following file:
+
+    http://antlr.org/share/1169924912745/antlr3-task.zip
+
+Configure Ant to find the extracted `ant-antlr3.jar` file:
+
+    ant -lib `path/to/ant-antlr3.jar`
+
+
+
+--------------------------------------------------------------------------------
+
 # Using _Hyperblocks_ #
 
 The Blocksworld component requires an past version of JOGL (both the Java JAR

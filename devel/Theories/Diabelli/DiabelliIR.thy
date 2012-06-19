@@ -413,7 +413,7 @@ method_setup sd_tac = {*
           in
               ((Scan.lift (get_rule_and_args)) >> (fn args => (fn ctxt => (Method.SIMPLE_METHOD' (Diabelli.sd_tac args ctxt))))) xs
           end)
-*} "A no-op tactic for testing the translation from SNF to spider diagrams and communication with Speedith."
+*} "Applies spider-diagrammatic inference rules on the first subgoal."
 
 
 (*lemma testB: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"

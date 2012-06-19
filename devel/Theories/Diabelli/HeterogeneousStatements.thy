@@ -4,11 +4,18 @@ uses
   "GoalsExport.ML"
 begin
 
+method_setup diabelli = {*
+(fn xs => let
+          in
+              ((Scan.lift (Parse.string)) >> (fn args => (fn ctxt => (Method.SIMPLE_METHOD' (GoalsExport.replace_subgoal_tac args ctxt))))) xs
+          end)
+*} "This tactic takes the formula 'A' (the only argument), tries to prove 'A ==> B', where 'B' is the first goal, and replaces 'A' with 'B'."
+
 section {* Diabelli test examples *}
 
 (* Spider Diagram translation test. *)
 lemma test1: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>t1 t2. distinct[t1, t2] \<and> t1 \<in> A \<and> t2 \<in> B) \<and> (A \<inter> B) \<noteq> {}"
-  ML_prf {* GoalsExport.i3p_write_sds_goals () *}
+(*  ML_prf {* GoalsExport.i3p_write_sds_goals () *} *)
   apply(auto)
   oops
 
@@ -21,8 +28,12 @@ lemma test2: "\<lbrakk> \<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<int
 (* Spider Diagram translation test. *)
 lemma test4: "(\<exists>s1 s2 s3. s1 \<noteq> s2 \<and> s1 \<noteq> s3 \<and> s2 \<noteq> s3
               \<and> s1 \<in> A \<and> s1 \<in> B \<union> -C \<and> s1 \<notin> D
-              \<and> s3 \<in> (A \<inter> B) - (C \<union> D))
+              \<and> s3 \<in> (B \<inter> C) - (A \<union> D)
+              \<and> s2 \<in> D \<and> s2 \<in> A)
               \<longrightarrow> (\<exists>t1 t2. distinct[t1, t2] \<and> t1 \<in> A \<and> t2 \<in> B)"
+  by(auto)
+
+lemma test5: "(\<exists>s1 s2 s3. distinct[s1, s2, s3] \<and> s1 \<in> A \<and> s1 \<in> B \<union> -C \<and> s1 \<notin> D \<and> s3 \<in> (B \<inter> C) - (A \<union> D) \<and> s2 \<in> D \<and> s2 \<in> A) \<longrightarrow> (\<exists>t1 t2. distinct[t1, t2] \<and> t1 \<in> A \<and> t2 \<in> B)"
   by(auto)
 
 (* Spider Diagram translation test. *)
@@ -184,6 +195,9 @@ consts LeftOf :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
   Tet :: "'a \<Rightarrow> bool"
   Box :: "'a \<Rightarrow> bool"
 
+
+
+
 section {* Placeholders---caveats  *}
 
 axiomatization where
@@ -204,6 +218,21 @@ lemma "Dbli [About[x, y]] ''x is greater than y'' \<Longrightarrow> (0::int) > 1
 lemma "Dbli [About[(0::int), 1]] ''x is greater than y'' \<Longrightarrow> (0::int) > 1"
   apply(insert OkayInference1 [of "0::int" "1::int"])
   by fast
+
+
+
+
+section {* Backward and forward reasoning in Diabelli *}
+
+lemma backward_step:
+      assumes premise: "\<lbrakk>A; B'\<rbrakk> \<Longrightarrow> B" and rule: "B' \<Longrightarrow> B" and rest: "A \<Longrightarrow> B'"
+      shows concl:     "A \<Longrightarrow> B"
+proof -
+  assume a: "A"
+  show ?thesis using a premise rule rest
+    by auto
+qed
+
 
 
 end

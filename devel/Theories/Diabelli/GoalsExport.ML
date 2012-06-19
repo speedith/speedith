@@ -58,6 +58,8 @@ sig
 
      *)
   val i3p_write_sds_goals: unit -> unit
+  
+  val replace_subgoal_tac: string -> Proof.context -> int -> tactic
 end
 
 
@@ -128,8 +130,29 @@ fun i3p_write_sds_goals _ =
           [] => tracing (diabelli_response_prefix ^ diabelli_response_no_goals)
         | t => print_terms terms
   end;
-  
-  
-  
-  
-  end
+
+
+
+
+
+fun replace_subgoal_tac formula ctxt i st = SUBGOAL (fn (subgoal, _) =>
+   let
+       fun mk_trueprop_if (t as (Const ("HOL.Trueprop", _) $ _)) = t
+         | mk_trueprop_if (t as (Const ("==>", _) $ _ $ _)) = t
+         | mk_trueprop_if (t as (Const ("all", _) $ _)) = t
+         | mk_trueprop_if (t as (Const ("==", _) $ _ $ _)) = t
+         | mk_trueprop_if t = HOLogic.mk_Trueprop t
+
+       val thy = ProofContext.theory_of ctxt;
+       val formulaTerm = Syntax.read_term_global thy formula
+       val intert = Logic.mk_implies (mk_trueprop_if formulaTerm, subgoal)
+       val _ = tracing ("Have " ^ Syntax.string_of_term @{context} intert)
+       val intert_cterm = Thm.cterm_of thy intert
+       val interThm = Goal.prove_internal [] intert_cterm (K ((auto_tac ctxt) THEN (ALLGOALS (Intuitionistic.prover_tac ctxt NONE))))
+       val _ = tracing ("Interm: " ^ Display.string_of_thm @{context} interThm)
+   in
+       compose_tac (false, interThm, 1) i
+   end) i st
+
+
+end
