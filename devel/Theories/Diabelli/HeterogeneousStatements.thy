@@ -23,7 +23,10 @@ lemma test1: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<a
 lemma test2: "\<lbrakk> \<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A) \<rbrakk>
             \<Longrightarrow> (\<exists>t1 t2. distinct[t1, t2] \<and> t1 \<in> A \<and> t2 \<in> B)"
   apply(auto)
-  oops
+  apply (diabelli "(EX s1 s2. distinct[s1, s2] & s1 : (A Int B) Un (B - A) & s2 : A - B) --> (EX t1 t2. distinct[t1, t2] & t1 : (A - B) Un (A Int B) & t2 : (A Int B) Un (B - A))")
+  apply (diabelli "(EX s1 s2. distinct[s1, s2] & s1 : (A Int B) Un (B - A) & s2 : (A - B) Un (A Int B)) --> (EX t1 t2. distinct[t1, t2] & t1 : (A - B) Un (A Int B) & t2 : (A Int B) Un (B - A))")
+  apply (diabelli "True")
+oops
 
 (* Spider Diagram translation test. *)
 lemma test4: "(\<exists>s1 s2 s3. s1 \<noteq> s2 \<and> s1 \<noteq> s3 \<and> s2 \<noteq> s3
