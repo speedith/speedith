@@ -52,6 +52,7 @@ import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.ui.selection.SelectionDialog;
 import static speedith.i18n.Translations.*;
+import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
 
 /**
@@ -116,6 +117,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
         drawMenu = new javax.swing.JMenu();
+        miTextInput = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
@@ -180,6 +182,17 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
         drawMenu.setMnemonic('D');
         drawMenu.setText("Draw");
+
+        miTextInput.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK));
+        miTextInput.setMnemonic(java.util.ResourceBundle.getBundle("speedith/i18n/strings").getString("MAIN_FORM_TEXT_INPUT_MNEMONIC").charAt(0));
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("speedith/i18n/strings"); // NOI18N
+        miTextInput.setText(bundle.getString("MAIN_FORM_TEXT_INPUT")); // NOI18N
+        miTextInput.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onTextInputClicked(evt);
+            }
+        });
+        drawMenu.add(miTextInput);
 
         jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem1.setMnemonic(i18n("MAIN_FORM_USE_EXAMPLE1_MNEMONIC").charAt(0));
@@ -253,12 +266,22 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         if (evt.getClickCount() == 2) {
             if (!proofPanel1.isFinished()) {
                 int index = lstAppliedRules.locationToIndex(evt.getPoint());
-                DefaultComboBoxModel model = (DefaultComboBoxModel) lstAppliedRules.getModel();
+                DefaultComboBoxModel<?> model = (DefaultComboBoxModel) lstAppliedRules.getModel();
                 InfRuleListItem selectedRule = (InfRuleListItem) model.getElementAt(index);
                 applyRule(selectedRule);
             }
         }
     }//GEN-LAST:event_onRuleItemClicked
+
+    private void onTextInputClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onTextInputClicked
+        TextSDInputDialog dialog = new TextSDInputDialog(this, true);
+        if (proofPanel1.getLastGoals() != null && !proofPanel1.getLastGoals().isEmpty())
+            dialog.setSpiderDiagramText(proofPanel1.getLastGoals().getGoalAt(0));
+        dialog.setVisible(true);
+        if (!dialog.isCancelled() && dialog.getSpiderDiagram() != null) {
+            proofPanel1.newProof(Goals.createGoalsFrom(dialog.getSpiderDiagram()));
+        }
+    }//GEN-LAST:event_onTextInputClicked
 
     /**
      * @param args the command line arguments
@@ -311,6 +334,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     private javax.swing.JLabel lblAppliedRules;
     private javax.swing.JList lstAppliedRules;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuItem miTextInput;
     private javax.swing.JPanel pnlRulesSidePane;
     private speedith.ui.ProofPanel proofPanel1;
     private javax.swing.JMenu rulesMenu;
