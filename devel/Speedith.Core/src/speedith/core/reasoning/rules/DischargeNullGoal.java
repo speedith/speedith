@@ -28,16 +28,12 @@
 package speedith.core.reasoning.rules;
 
 import java.util.Locale;
+import static speedith.core.i18n.Translations.*;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
-import speedith.core.reasoning.BasicInferenceRule;
-import speedith.core.reasoning.Goals;
-import speedith.core.reasoning.RuleApplicationException;
-import speedith.core.reasoning.RuleApplicationResult;
+import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
-import static speedith.core.i18n.Translations.*;
-import speedith.core.reasoning.*;
 
 /**
  * This inference rule removes a {@link NullSpiderDiagram null-subgoal} from the

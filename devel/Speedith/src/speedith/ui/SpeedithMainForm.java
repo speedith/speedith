@@ -275,8 +275,11 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     private void onTextInputClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onTextInputClicked
         TextSDInputDialog dialog = new TextSDInputDialog(this, true);
-        if (proofPanel1.getLastGoals() != null && !proofPanel1.getLastGoals().isEmpty())
+        if (proofPanel1.getLastGoals() != null && !proofPanel1.getLastGoals().isEmpty()) {
             dialog.setSpiderDiagramText(proofPanel1.getLastGoals().getGoalAt(0));
+        } else {
+            dialog.setSpiderDiagramText(getExampleA());
+        }
         dialog.setVisible(true);
         if (!dialog.isCancelled() && dialog.getSpiderDiagram() != null) {
             proofPanel1.newProof(Goals.createGoalsFrom(dialog.getSpiderDiagram()));
@@ -318,7 +321,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
          * Create and display the form
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
-
             public void run() {
                 new SpeedithMainForm().setVisible(true);
             }

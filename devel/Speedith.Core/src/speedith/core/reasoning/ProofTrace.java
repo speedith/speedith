@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import static speedith.core.i18n.Translations.i18n;
+import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.args.RuleArg;
 
@@ -54,9 +55,9 @@ public class ProofTrace implements Proof {
      * Creates a new proof trace with the given initial goals.
      *
      * @param initialGoals the initial goals (the theorem we want to prove).
-     * <p><span style="font-weight:bold">Note</span>: this parameter may be {@code null}
-     * in which case no goals will be there to prove and no proof steps will be
-     * applicable.</p>
+     * <p><span style="font-weight:bold">Note</span>: this parameter may be
+     * {@code null} in which case no goals will be there to prove and no proof
+     * steps will be applicable.</p>
      */
     public ProofTrace(Goals initialGoals) {
         // Add the initial goals to the list of all goals
@@ -76,9 +77,9 @@ public class ProofTrace implements Proof {
      * Creates a new proof trace with the given initial goals.
      *
      * @param initialGoals the initial goals (the theorem we want to prove).
-     * <p><span style="font-weight:bold">Note</span>: this parameter may be {@code null}
-     * in which case no goals will be there to prove and no proof steps will be
-     * applicable.</p>
+     * <p><span style="font-weight:bold">Note</span>: this parameter may be
+     * {@code null} in which case no goals will be there to prove and no proof
+     * steps will be applicable.</p>
      */
     public ProofTrace(SpiderDiagram... initialGoals) {
         this(Goals.createGoalsFrom(initialGoals));
@@ -88,9 +89,9 @@ public class ProofTrace implements Proof {
      * Creates a new proof trace with the given initial goals.
      *
      * @param initialGoals the initial goals (the theorem we want to prove).
-     * <p><span style="font-weight:bold">Note</span>: this parameter may be {@code null}
-     * in which case no goals will be there to prove and no proof steps will be
-     * applicable.</p>
+     * <p><span style="font-weight:bold">Note</span>: this parameter may be
+     * {@code null} in which case no goals will be there to prove and no proof
+     * steps will be applicable.</p>
      */
     public ProofTrace(List<SpiderDiagram> initialGoals) {
         this(Goals.createGoalsFrom(initialGoals));
@@ -101,7 +102,7 @@ public class ProofTrace implements Proof {
     public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<TRuleArg> rule) throws RuleApplicationException {
         return applyRule(rule, null);
     }
-    
+
     public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException {
         if (isFinished()) {
             throw new RuleApplicationException(i18n("PROOF_TRACE_FINISHED"));
@@ -110,48 +111,61 @@ public class ProofTrace implements Proof {
         if (appResult == null) {
             throw new IllegalStateException(i18n("SRK_RULE_MUST_RETURN_NONNULL_RESULT", rule.getProvider().getInferenceRuleName()));
         }
+        // Discharge any null-spider diagrams automatically.
+        Goals newGoals = appResult.getGoals();
+        if (!newGoals.isEmpty()) {
+            ArrayList<SpiderDiagram> remainingGoals = new ArrayList<>();
+            NullSpiderDiagram nsd = NullSpiderDiagram.getInstance();
+            for (SpiderDiagram goal : newGoals.getGoals()) {
+                if (!nsd.equalsSemantically(goal)) {
+                    remainingGoals.add(goal);
+                }
+            }
+            newGoals = Goals.createGoalsFrom(remainingGoals);
+        }
         ruleApplications.add(new RuleApplication(rule, args));
-        goals.add(appResult.getGoals());
+//        goals.add(appResult.getGoals());
+        goals.add(newGoals);
         return appResult;
     }
-    
+
     public Goals getGoalsAt(int index) {
         return goals.get(index);
     }
-    
+
     public int getGoalsCount() {
         return goals.size();
     }
-    
+
     public Goals getInitialGoals() {
         return goals.isEmpty() ? null : goals.get(0);
     }
-    
+
     public Goals getLastGoals() {
         return goals.isEmpty() ? null : goals.get(goals.size() - 1);
     }
-    
+
     public List<Goals> getGoals() {
         return Collections.unmodifiableList(goals);
     }
-    
+
     public List<RuleApplication> getRuleApplications() {
         return Collections.unmodifiableList(ruleApplications);
     }
-    
+
     public RuleApplication getRuleApplicationAt(int index) {
         return ruleApplications.get(index);
     }
-    
+
     public int getRuleApplicationCount() {
         return ruleApplications.size();
     }
-    
+
     public boolean isFinished() {
         final Goals lastGoals = getLastGoals();
         return lastGoals == null || lastGoals.isEmpty();
     }
-    
+
     public boolean undoStep() {
         if (getRuleApplicationCount() > 0) {
             goals.remove(goals.size() - 1);
