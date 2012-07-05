@@ -114,7 +114,7 @@ public class ProofTrace implements Proof {
         // Discharge any null-spider diagrams automatically.
         Goals newGoals = appResult.getGoals();
         if (!newGoals.isEmpty()) {
-            ArrayList<SpiderDiagram> remainingGoals = new ArrayList<>();
+            ArrayList<SpiderDiagram> remainingGoals = new ArrayList<SpiderDiagram>();
             NullSpiderDiagram nsd = NullSpiderDiagram.getInstance();
             for (SpiderDiagram goal : newGoals.getGoals()) {
                 if (!nsd.equalsSemantically(goal)) {

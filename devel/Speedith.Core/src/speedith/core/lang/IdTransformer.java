@@ -26,7 +26,7 @@
  */
 package speedith.core.lang;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * A simple convenience implementation of the {@link Transformer} interface. All
@@ -46,18 +46,22 @@ public class IdTransformer implements Transformer {
      */
     protected boolean done = false;
 
-    public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+    @Override
+    public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
         return null;
     }
 
-    public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+    @Override
+    public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
         return null;
     }
 
-    public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+    @Override
+    public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
         return null;
     }
 
+    @Override
     public boolean isDone() {
         return done;
     }

@@ -26,6 +26,7 @@
  */
 package speedith.core.reasoning.rules;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Locale;
 import speedith.core.lang.CompoundSpiderDiagram;
@@ -117,7 +118,7 @@ public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg
         }
 
         @Override
-        public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+        public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
             // Transform only the target sub-diagram
             if (diagramIndex == arg.getSubDiagramIndex()) {
                 // The compound diagram must be an implication:

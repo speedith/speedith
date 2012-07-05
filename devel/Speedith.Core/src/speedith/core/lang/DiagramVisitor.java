@@ -26,6 +26,7 @@
  */
 package speedith.core.lang;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -63,7 +64,7 @@ public interface DiagramVisitor<T> {
      * @param parents the parents of this sub-diagram (may be {@code null} to
      * indicate that there are no parents).
      */
-    void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents);
+    void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices);
     
     /**
      * Indicates that this visitor has done all the visiting it

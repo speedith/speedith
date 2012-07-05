@@ -26,6 +26,7 @@
  */
 package speedith.core.lang;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -87,7 +88,7 @@ public interface Transformer {
      * @throws TransformationException thrown if the transformation failed for
      * any reason.
      */
-    public SpiderDiagram transform(PrimarySpiderDiagram sd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) throws TransformationException;
+    public SpiderDiagram transform(PrimarySpiderDiagram sd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) throws TransformationException;
     /**
      * This function is called by the spider diagrams' {@link
      * SpiderDiagram#transform(speedith.core.lang.Transformer) transform
@@ -134,7 +135,7 @@ public interface Transformer {
      * @throws TransformationException thrown if the transformation failed for
      * any reason.
      */
-    public SpiderDiagram transform(NullSpiderDiagram sd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) throws TransformationException;
+    public SpiderDiagram transform(NullSpiderDiagram sd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) throws TransformationException;
     /**
      * This function is called by the spider diagrams' {@link
      * SpiderDiagram#transform(speedith.core.lang.Transformer) transform
@@ -181,7 +182,7 @@ public interface Transformer {
      * @throws TransformationException thrown if the transformation failed for
      * any reason.
      */
-    public SpiderDiagram transform(CompoundSpiderDiagram sd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) throws TransformationException;
+    public SpiderDiagram transform(CompoundSpiderDiagram sd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) throws TransformationException;
     /**
      * Indicates that this transformer has done all the transformations it
      * intends to do.

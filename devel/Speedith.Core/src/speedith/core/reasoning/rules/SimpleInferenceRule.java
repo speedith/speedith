@@ -26,8 +26,12 @@
  */
 package speedith.core.reasoning.rules;
 
+import java.util.ArrayList;
 import java.util.Locale;
+import speedith.core.i18n.Translations;
 import static speedith.core.i18n.Translations.i18n;
+import speedith.core.lang.CompoundSpiderDiagram;
+import speedith.core.lang.Operator;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
@@ -154,6 +158,83 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
             }
             return sd;
         }
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Helper Methods (public static)">
+    public static boolean isForwardApplicable(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int childIndex) {
+        if (parents == null) {
+            throw new IllegalArgumentException(Translations.i18n("RULE_PARENTS_NEEDED_FOR_FORWARD_CHECK"));
+        }
+        
+        // There must be an implication on the toplevel.
+        if (parents.size() < 1) {
+            return false;
+        }
+
+        // Check that there is really an implication on the toplevel:
+        if (!Operator.Implication.equals(parents.get(0).getOperator())) {
+            return false;
+        }
+
+        // If there is only one parent then this diagram should be the direct
+        // left child of the toplevel implication.
+        if (parents.size() == 1) {
+            return childIndex == 0;
+        } else if (childIndices.get(1) != 0) {
+            return false;
+        }
+
+        // There are some more parents. They all must be conjunctions and
+        // disjunctions:
+        for (int i = parents.size() - 1; i > 0; --i) {
+            Operator parentOperator = parents.get(i).getOperator();
+            if (!Operator.Conjunction.equals(parentOperator) || !Operator.Disjunction.equals(parentOperator)) {
+                return false;
+            }
+        }
+
+        // Seems like all requirements are satisfied. This diagram can be
+        // applied forward style.
+        return true;
+    }
+
+    public static boolean isBackwardApplicable(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int childIndex) {
+        if (parents == null) {
+            throw new IllegalArgumentException(Translations.i18n("RULE_PARENTS_NEEDED_FOR_BACKWARD_CHECK"));
+        }
+        
+        // If this spider diagram is toplevel, it can be applied backwards on:
+        if (parents.size() < 1) {
+            return true;
+        }
+        
+        // If there is an implication at the toplevel, we should be in its right
+        // side:
+        int checkDisjConjParentsFrom = 0;
+        if (Operator.Implication.equals(parents.get(0).getOperator())) {
+            if (parents.size() == 1) {
+                return childIndex == 1;
+            } else if (childIndices.get(1) != 1) {
+                return false;
+            }
+            // Okay, we are in the RHS of an implication. This means that all
+            // other nested parents must be disjunctions and conjunctions
+            checkDisjConjParentsFrom = 1;
+        }
+
+        // There are some more parents. They all must be conjunctions and
+        // disjunctions:
+        for (int i = parents.size() - 1; i >= checkDisjConjParentsFrom; --i) {
+            Operator parentOperator = parents.get(i).getOperator();
+            if (!Operator.Conjunction.equals(parentOperator) || !Operator.Disjunction.equals(parentOperator)) {
+                return false;
+            }
+        }
+
+        // Seems like all requirements are satisfied. This diagram can be
+        // applied backward style.
+        return true;
     }
     // </editor-fold>
 }

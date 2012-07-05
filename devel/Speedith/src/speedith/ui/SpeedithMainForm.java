@@ -266,7 +266,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         if (evt.getClickCount() == 2) {
             if (!proofPanel1.isFinished()) {
                 int index = lstAppliedRules.locationToIndex(evt.getPoint());
-                DefaultComboBoxModel<?> model = (DefaultComboBoxModel) lstAppliedRules.getModel();
+                DefaultComboBoxModel model = (DefaultComboBoxModel) lstAppliedRules.getModel();
                 InfRuleListItem selectedRule = (InfRuleListItem) model.getElementAt(index);
                 applyRule(selectedRule);
             }
@@ -551,7 +551,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="UI Refresh Methods">
-    private ComboBoxModel<InfRuleListItem> getRulesComboList() {
+    private ComboBoxModel getRulesComboList() {
         Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules();
         InfRuleListItem[] infRules = new InfRuleListItem[knownInferenceRules.size()];
         int i = 0;
@@ -559,10 +559,10 @@ public class SpeedithMainForm extends javax.swing.JFrame {
             infRules[i++] = new InfRuleListItem(InferenceRules.getProvider(providerName));
         }
         Arrays.sort(infRules);
-        return new DefaultComboBoxModel<InfRuleListItem>(infRules);
+        return new DefaultComboBoxModel(infRules);
     }
 
-    private ListModel<InfRuleListItem> getRulesList() {
+    private ListModel getRulesList() {
         Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules();
         InfRuleListItem[] infRules = new InfRuleListItem[knownInferenceRules.size()];
         int i = 0;
@@ -570,7 +570,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
             infRules[i++] = new InfRuleListItem(InferenceRules.getProvider(providerName));
         }
         Arrays.sort(infRules);
-        return new DefaultComboBoxModel<InfRuleListItem>(infRules);
+        return new DefaultComboBoxModel(infRules);
 
     }
 

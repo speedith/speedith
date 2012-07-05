@@ -75,8 +75,8 @@
     <!-- Use wildcards in pattern definition -->
     <!-- to be independent of antlr versions -->
     <patternset id="antlr.libs">
-        <include name="antlr3*.jar" />
-        <include name="stringtemplate*.jar" />
+        <include name="antlr*.jar" />
+        <include name="stringtemplate.jar" />
     </patternset>
     
     <!-- Looking for archives in ANTLR_HOME directory -->
@@ -111,9 +111,7 @@
         <echo message="Compiling the speedith grammar: ${speedith.grammar}.g" level="info" />
         <antlr:ant-antlr3 xmlns:antlr="antlib:org/apache/tools/ant/antlr" 
                           target="${speedith.grammar}.g">
-            <classpath>
-                <path refid="antlr.path"/>
-            </classpath>
+            <classpath refid="antlr.path"/>
         </antlr:ant-antlr3>
         <antcall target="-clean-generated-token-files" />
     </target>

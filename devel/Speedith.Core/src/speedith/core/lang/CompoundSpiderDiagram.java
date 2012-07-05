@@ -237,7 +237,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         if (t == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "t"));
         }
-        return transform(t, this, 0, 0, trackParents ? new LinkedList<CompoundSpiderDiagram>() : null);
+        return transform(t, this, 0, 0, trackParents ? new ArrayList<CompoundSpiderDiagram>() : null, trackParents ? new ArrayList<Integer>() : null);
     }
 
     @Override
@@ -247,7 +247,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         }
         visitor.init(this);
         if (!visitor.isDone()) {
-            __visitCompoundSD(visitor, this, 0, 0, trackParents ? new LinkedList<CompoundSpiderDiagram>() : null);
+            __visitCompoundSD(visitor, this, 0, 0, trackParents ? new ArrayList<CompoundSpiderDiagram>() : null, trackParents ? new ArrayList<Integer>() : null);
         }
         visitor.end();
         return visitor.getResult();
@@ -466,9 +466,9 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     }
 
     @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
-    private static SpiderDiagram transform(Transformer t, CompoundSpiderDiagram curSD, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+    private static SpiderDiagram transform(Transformer t, CompoundSpiderDiagram curSD, int subDiagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
         // Try to transform this sub-diagram.
-        SpiderDiagram transformedSD = t.transform(curSD, subDiagramIndex, childIndex, parents);
+        SpiderDiagram transformedSD = t.transform(curSD, subDiagramIndex, childIndex, parents, childIndices);
         // What did the transformer return? Is it done yet?
         if (transformedSD != null) {
             // The transformer either changed the diagram, or it indicated that
@@ -481,7 +481,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
             // spider diagram.
             return curSD;
         } else {
-            pushParent(parents, curSD);
+            pushParent(parents, childIndices, curSD, childIndex);
             // This array will hold the children (if at least one of them was
             // transformed).
             ArrayList<SpiderDiagram> transformedChildren = null;
@@ -490,7 +490,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
                 SpiderDiagram childSD = curSD.operands.get(childIndex);
                 int subDiagramCount = childSD.getSubDiagramCount();
                 // Transform the child
-                transformedSD = __applyTransform(childSD, t, subDiagramIndex + 1, childIndex, parents);
+                transformedSD = __applyTransform(childSD, t, subDiagramIndex + 1, childIndex, parents, childIndices);
                 // If the child was actually transformed, put it into the list
                 // of transformed children.
                 if (transformedSD != null && !transformedSD.equals(childSD)) {
@@ -510,7 +510,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
                 // one only (naturally).
                 subDiagramIndex += subDiagramCount;
             }
-            popParent(parents);
+            popParent(parents, childIndices);
             // Did any of the children change? If none changed, we must return
             // the unchanged diagram. But if at least one changed, we have to
             // create a new one.
@@ -529,13 +529,13 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * @param parents
      * @return
      */
-    private static SpiderDiagram __applyTransform(SpiderDiagram sd, Transformer t, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+    private static SpiderDiagram __applyTransform(SpiderDiagram sd, Transformer t, int subDiagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
         if (sd instanceof CompoundSpiderDiagram) {
-            return transform(t, (CompoundSpiderDiagram) sd, subDiagramIndex, childIndex, parents);
+            return transform(t, (CompoundSpiderDiagram) sd, subDiagramIndex, childIndex, parents, childIndices);
         } else if (sd instanceof PrimarySpiderDiagram) {
-            return t.transform((PrimarySpiderDiagram) sd, subDiagramIndex, childIndex, parents);
+            return t.transform((PrimarySpiderDiagram) sd, subDiagramIndex, childIndex, parents, childIndices);
         } else {
-            return t.transform((NullSpiderDiagram) sd, subDiagramIndex, childIndex, parents);
+            return t.transform((NullSpiderDiagram) sd, subDiagramIndex, childIndex, parents, childIndices);
         }
     }
 
@@ -551,14 +551,14 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * @param parents
      * @return
      */
-    private static <T> boolean __visitCompoundSD(DiagramVisitor<T> visitor, CompoundSpiderDiagram curSD, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+    private static <T> boolean __visitCompoundSD(DiagramVisitor<T> visitor, CompoundSpiderDiagram curSD, int subDiagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
         // Visit the current spider diagram.
-        visitor.visit(curSD, subDiagramIndex++, childIndex, parents);
+        visitor.visit(curSD, subDiagramIndex++, childIndex, parents, childIndices);
 
         // Now visit the child spider diagrams, if it is not finished yet
         // and if there are actually any child spider diagrams.
         if (curSD.getOperandCount() > 0 && !visitor.isDone()) {
-            pushParent(parents, curSD);
+            pushParent(parents, childIndices, curSD, childIndex);
 
             // Visit all the children.
             for (childIndex = 0; childIndex < curSD.operands.size(); ++childIndex) {
@@ -566,7 +566,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
                 int subDiagramCount = childSD.getSubDiagramCount();
                 // Apply the visitor to the current spider diagram and return
                 // if it's finished.
-                if (__visitSD(childSD, visitor, subDiagramIndex, childIndex, parents)) {
+                if (__visitSD(childSD, visitor, subDiagramIndex, childIndex, parents, childIndices)) {
                     return true;
                 }
                 // When continuing to the next child, we have to increase its
@@ -575,7 +575,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
                 // one only (naturally).
                 subDiagramIndex += subDiagramCount;
             }
-            popParent(parents);
+            popParent(parents, childIndices);
         }
         return visitor.isDone();
     }
@@ -592,11 +592,11 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * @param parents
      * @return
      */
-    private static <T> boolean __visitSD(SpiderDiagram sd, DiagramVisitor<T> visitor, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+    private static <T> boolean __visitSD(SpiderDiagram sd, DiagramVisitor<T> visitor, int subDiagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
         if (sd instanceof CompoundSpiderDiagram) {
-            return __visitCompoundSD(visitor, (CompoundSpiderDiagram) sd, subDiagramIndex, childIndex, parents);
+            return __visitCompoundSD(visitor, (CompoundSpiderDiagram) sd, subDiagramIndex, childIndex, parents, childIndices);
         } else {
-            visitor.visit(sd, subDiagramIndex, childIndex, parents);
+            visitor.visit(sd, subDiagramIndex, childIndex, parents, childIndices);
             return visitor.isDone();
         }
     }
@@ -624,19 +624,23 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         return false;
     }
 
-    private static void popParent(LinkedList<CompoundSpiderDiagram> parents) {
+    private static void popParent(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
         // We have finished traversing the children of the current compound
         // diagram. Remove it from the stack of parents.
         if (parents != null) {
-            parents.pop();
+            final int remIdx = parents.size() - 1;
+            parents.remove(remIdx);
+            childIndices.remove(remIdx);
+            
         }
     }
 
-    private static void pushParent(LinkedList<CompoundSpiderDiagram> parents, CompoundSpiderDiagram curSD) {
+    private static void pushParent(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, CompoundSpiderDiagram curSD, int parentIndexInParent) {
         // If we want to process the children of the current SD, make
         // this one the bottom-most parent.
         if (parents != null) {
-            parents.push(curSD);
+            parents.add(curSD);
+            childIndices.add(parentIndexInParent);
         }
     }
     // </editor-fold>

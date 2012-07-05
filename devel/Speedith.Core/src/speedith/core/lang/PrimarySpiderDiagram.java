@@ -27,13 +27,11 @@
 package speedith.core.lang;
 
 import java.io.IOException;
-import java.util.Map.Entry;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import static speedith.core.i18n.Translations.i18n;
+import java.util.Map.Entry;
 import propity.util.Sets;
 import static propity.util.Sets.equal;
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * Represents a unitary spider diagram. For a complete and formal description of
@@ -318,7 +316,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         if (t == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "t"));
         }
-        SpiderDiagram curTransform = t.transform(this, 0, 0, null);
+        SpiderDiagram curTransform = t.transform(this, 0, 0, null, null);
         return curTransform == null ? this : curTransform;
     }
 

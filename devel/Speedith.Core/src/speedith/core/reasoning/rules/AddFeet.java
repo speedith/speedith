@@ -26,9 +26,10 @@
  */
 package speedith.core.reasoning.rules;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Locale;
+import speedith.core.i18n.Translations;
 import static speedith.core.i18n.Translations.*;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.IdTransformer;
@@ -36,6 +37,7 @@ import speedith.core.lang.Operator;
 import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagram;
+import speedith.core.lang.SpiderDiagrams;
 import speedith.core.lang.TransformationException;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
@@ -43,19 +45,19 @@ import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.rules.instructions.AddFeetRuleInstruction;
 
 /**
- * The implementation of the 'add feet' inference rule.
- * <p>The argument to this inference rule is a {@link SpiderRegionArg
+ * The implementation of the 'add feet' inference rule. <p>The argument to this
+ * inference rule is a {@link SpiderRegionArg
  * spider-region argument}, which tells the rule into which zones to add new
  * feet of a particular spider.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg> {
+public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg>, ForwardRule<SpiderRegionArg> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
-     * The name of this inference rule.
-     * <p>This value is returned by the {@link AddFeet#getInferenceRuleName()}
-     * method.</p>
+     * The name of this inference rule. <p>This value is returned by the
+     * {@link AddFeet#getInferenceRuleName()} method.</p>
      */
     public static final String InferenceRuleName = "add_feet";
     // </editor-fold>
@@ -69,27 +71,40 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
     }
     //</editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="ForwardRule Implementation">
+    @Override
+    public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
+        return apply(args, goals);
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="InferenceRuleProvider Implementation">
+    @Override
     public AddFeet getInferenceRule() {
         return this;
     }
 
+    @Override
     public String getInferenceRuleName() {
         return InferenceRuleName;
     }
 
+    @Override
     public String getDescription(Locale locale) {
         return i18n(locale, "ADD_FEET_DESCRIPTION");
     }
 
+    @Override
     public String getPrettyName(Locale locale) {
         return i18n(locale, "ADD_FEET_PRETTY_NAME");
     }
 
+    @Override
     public Class<SpiderRegionArg> getArgumentType() {
         return SpiderRegionArg.class;
     }
 
+    @Override
     public RuleApplicationInstruction<SpiderRegionArg> getInstructions() {
         return AddFeetRuleInstruction.getInstance();
     }
@@ -105,7 +120,7 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
         }
 
         @Override
-        public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+        public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
             // Transform only the target diagram
             if (diagramIndex == arg.getSubDiagramIndex()) {
                 // Okay, we are at the diagram we want to change. Now make some
@@ -120,27 +135,9 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
                 if (!psd.containsSpider(arg.getSpider())) {
                     throw new IllegalArgumentException(i18n("ERR_SPIDER_NOT_IN_DIAGRAM", arg.getSpider()));
                 }
-                // This diagram must be in a conjunctive or disjunctive parent,
-                // which in turn is a child of the root implication compound
-                // diagram.
-                // TODO: It also works if this diagram is the only antecedent in
-                // the outermost implication.
-                if (parents.size() == 1) {
-                    if (!parents.getFirst().getOperator().equals(Operator.Implication)) {
-                        throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
-                    }
-                } else if (parents.size() == 2) {
-                    Iterator<CompoundSpiderDiagram> dit = parents.iterator();
-                    CompoundSpiderDiagram parent = dit.next();
-                    if (!parent.getOperator().equals(Operator.Conjunction) && !parent.getOperator().equals(Operator.Disjunction)) {
-                        throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
-                    }
-                    parent = dit.next();
-                    if (!parent.getOperator().equals(Operator.Implication)) {
-                        throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
-                    }
-                } else {
-                    throw new TransformationException(i18n("ADD_FEET_INVALID_APPLICATION_POINT"));
+                // This is a forward rule.
+                if (!isForwardApplicable(parents, childIndices, childIndex)) {
+                    throw new TransformationException(i18n("FORWARD_RULE_DIAGRAM_POSITION"));
                 }
                 // Now make sure that the spider actually exists in the diagram:
                 Region existingFeet = psd.getSpiderHabitat(arg.getSpider());

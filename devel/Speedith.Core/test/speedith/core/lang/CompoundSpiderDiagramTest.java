@@ -28,7 +28,6 @@ package speedith.core.lang;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import static org.junit.Assert.*;
 import org.junit.*;
 import speedith.core.lang.reader.ReadingException;
@@ -124,16 +123,18 @@ public class CompoundSpiderDiagramTest {
     public void testTransform() throws ReadingException {
         CompoundSpiderDiagram sd = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
         SpiderDiagram transformedSD = sd.transform(new Transformer() {
-
-            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, psd, childIndex);
                 return SpiderDiagrams.createNullSD();
             }
 
-            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, nsd, childIndex);
                 return nsd;
             }
 
-            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, csd, childIndex);
                 return null;
             }
 
@@ -163,19 +164,21 @@ public class CompoundSpiderDiagramTest {
     public void testTransform2() throws ReadingException {
         CompoundSpiderDiagram sd = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
         SpiderDiagram transformedSD = sd.transform(new Transformer() {
-
             private boolean done = false;
 
-            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, psd, childIndex);
                 done = true;
                 return SpiderDiagrams.createNullSD();
             }
 
-            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, nsd, childIndex);
                 return nsd;
             }
 
-            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, csd, childIndex);
                 return null;
             }
 
@@ -205,8 +208,8 @@ public class CompoundSpiderDiagramTest {
     public void testTransform3() throws ReadingException {
         CompoundSpiderDiagram sd = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
         SpiderDiagram transformedSD = sd.transform(new Transformer() {
-
-            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, psd, childIndex);
                 if (childIndex == 1) {
                     return SpiderDiagrams.createNullSD();
                 } else {
@@ -214,11 +217,13 @@ public class CompoundSpiderDiagramTest {
                 }
             }
 
-            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, nsd, childIndex);
                 return nsd;
             }
 
-            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, csd, childIndex);
                 return null;
             }
 
@@ -248,8 +253,8 @@ public class CompoundSpiderDiagramTest {
     public void testTransform4() throws ReadingException {
         CompoundSpiderDiagram sd = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
         SpiderDiagram transformedSD = sd.transform(new Transformer() {
-
-            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, psd, childIndex);
                 if (diagramIndex == 2) {
                     return SpiderDiagrams.createNullSD();
                 } else {
@@ -257,11 +262,13 @@ public class CompoundSpiderDiagramTest {
                 }
             }
 
-            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, nsd, childIndex);
                 return nsd;
             }
 
-            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, csd, childIndex);
                 return null;
             }
 
@@ -291,16 +298,18 @@ public class CompoundSpiderDiagramTest {
     public void testTransform5() throws ReadingException {
         CompoundSpiderDiagram sd = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
         SpiderDiagram transformedSD = sd.transform(new Transformer() {
-
-            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, psd, childIndex);
                 return psd;
             }
 
-            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, nsd, childIndex);
                 return nsd;
             }
 
-            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, csd, childIndex);
                 return null;
             }
 
@@ -321,16 +330,18 @@ public class CompoundSpiderDiagramTest {
     public void testTransform6() throws ReadingException {
         CompoundSpiderDiagram sd = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
         SpiderDiagram transformedSD = sd.transform(new Transformer() {
-
-            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, psd, childIndex);
                 return null;
             }
 
-            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, nsd, childIndex);
                 return nsd;
             }
 
-            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, csd, childIndex);
                 return null;
             }
 
@@ -351,16 +362,18 @@ public class CompoundSpiderDiagramTest {
     public void testTransform7() throws ReadingException {
         CompoundSpiderDiagram sd = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
         SpiderDiagram transformedSD = sd.transform(new Transformer() {
-
-            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, psd, childIndex);
                 return SpiderDiagrams.createNullSD();
             }
 
-            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, nsd, childIndex);
                 return nsd;
             }
 
-            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, csd, childIndex);
                 return csd;
             }
 
@@ -381,7 +394,6 @@ public class CompoundSpiderDiagramTest {
     public void testVisit1() throws ReadingException {
         CompoundSpiderDiagram sd = (CompoundSpiderDiagram) SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1);
         int retVal = sd.visit(new DiagramVisitor<Integer>() {
-
             int count = 0;
 
             public void init(SpiderDiagram root) {
@@ -390,7 +402,8 @@ public class CompoundSpiderDiagramTest {
             public void end() {
             }
 
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, subDiagram, childIndex);
                 ++count;
             }
 
@@ -444,7 +457,8 @@ public class CompoundSpiderDiagramTest {
 
     /**
      * Test of iterator method, of class CompoundSpiderDiagram.
-     * @throws ReadingException 
+     *
+     * @throws ReadingException
      */
     @Test
     public void testIterator() throws ReadingException {
@@ -472,25 +486,25 @@ public class CompoundSpiderDiagramTest {
         for (int i = 0; i < sd.getSubDiagramCount(); i++) {
             final int targetSD = i;
             SpiderDiagram retVal = sd.visit(new DiagramVisitor<SpiderDiagram>() {
-                
                 private SpiderDiagram sd = null;
-                
+
                 public void init(SpiderDiagram root) {
                 }
-                
+
                 public void end() {
                 }
-                
-                public void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+
+                public void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                    checkChildIndices(parents, childIndices, subDiagram, childIndex);
                     if (subDiagramIndex == targetSD) {
                         sd = subDiagram;
                     }
                 }
-                
+
                 public boolean isDone() {
                     return sd != null;
                 }
-                
+
                 public SpiderDiagram getResult() {
                     return sd;
                 }
@@ -498,27 +512,27 @@ public class CompoundSpiderDiagramTest {
             assertEquals(sd.getSubDiagramAt(targetSD), retVal);
         }
     }
-    
+
     private static void checkSDCollection(SpiderDiagram sd) {
         ArrayList<SpiderDiagram> retVal = sd.visit(new DiagramVisitor<ArrayList<SpiderDiagram>>() {
-            
             private ArrayList<SpiderDiagram> collectedSDs = new ArrayList<SpiderDiagram>();
-            
+
             public void init(SpiderDiagram root) {
             }
-            
+
             public void end() {
             }
-            
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                checkChildIndices(parents, childIndices, subDiagram, childIndex);
                 assertEquals(collectedSDs.size(), subDiagramIndex);
                 collectedSDs.add(subDiagram);
             }
-            
+
             public boolean isDone() {
                 return false;
             }
-            
+
             public ArrayList<SpiderDiagram> getResult() {
                 return collectedSDs;
             }
@@ -534,6 +548,17 @@ public class CompoundSpiderDiagramTest {
             assertSame(sd.getSubDiagramAt(i++), ssd);
         }
         assertEquals(i, sd.getSubDiagramCount());
+    }
+
+    private static void checkChildIndices(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, SpiderDiagram curSD, int childIndex) {
+        if (parents != null && parents.size() > 0) {
+            assertEquals(childIndices.get(0), (Integer) 0);
+            for (int i = 1; i < childIndices.size(); i++) {
+                Integer parentChildIndex = childIndices.get(i);
+                assertSame(parents.get(i - 1).getOperand(parentChildIndex), parents.get(i));
+            }
+            assertSame(parents.get(parents.size() - 1).getOperand(childIndex), curSD);
+        }
     }
     //</editor-fold>
 }

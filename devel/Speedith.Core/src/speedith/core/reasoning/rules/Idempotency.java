@@ -26,6 +26,7 @@
  */
 package speedith.core.reasoning.rules;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Locale;
 import speedith.core.lang.CompoundSpiderDiagram;
@@ -116,7 +117,7 @@ public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> impleme
         }
 
         @Override
-        public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+        public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
             // Transform only the target diagram
             if (diagramIndex == arg.getSubDiagramIndex()) {
                 // Is the compound diagram a conjunction or a disjunction?

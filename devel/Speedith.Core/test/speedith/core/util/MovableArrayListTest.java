@@ -44,7 +44,7 @@ public class MovableArrayListTest {
     private final Number[] initDestinationNum = new Number[]{3.6, 3f};
     private final Double[] initSourceDbl = new Double[]{24.0, -98.1, 7.3, -54.6, 32.7};
     private final Double[] initDestinationDbl = new Double[]{3.6, -32.982};
-    private final ArrayList<Object[]> allArrays = new ArrayList<>(Arrays.asList(new Object[][]{
+    private final ArrayList<Object[]> allArrays = new ArrayList<Object[]>(Arrays.asList(new Object[][]{
                 empty,
                 initDestinationDbl,
                 initDestinationInt,
@@ -78,8 +78,8 @@ public class MovableArrayListTest {
      */
     @Test
     public void testMoveTo() {
-        MovableArrayList<Integer> source = new MovableArrayList<>(Arrays.asList(initSourceInt));
-        MovableArrayList<Number> destination = new MovableArrayList<>(Arrays.asList(initDestinationNum));
+        MovableArrayList<Integer> source = new MovableArrayList<Integer>(Arrays.asList(initSourceInt));
+        MovableArrayList<Number> destination = new MovableArrayList<Number>(Arrays.asList(initDestinationNum));
 
         assertArrayEquals(initSourceInt, source.toArray());
         assertArrayEquals(initDestinationNum, destination.toArray());
@@ -95,8 +95,8 @@ public class MovableArrayListTest {
      */
     @Test
     public void testMoveTo1() {
-        MovableArrayList<Number> destination = new MovableArrayList<>(Arrays.asList(initDestinationNum));
-        MovableArrayList<Double> source = new MovableArrayList<>(Arrays.asList(initSourceDbl));
+        MovableArrayList<Number> destination = new MovableArrayList<Number>(Arrays.asList(initDestinationNum));
+        MovableArrayList<Double> source = new MovableArrayList<Double>(Arrays.asList(initSourceDbl));
 
         assertArrayEquals(initSourceDbl, source.toArray());
         assertArrayEquals(initDestinationNum, destination.toArray());
@@ -112,8 +112,8 @@ public class MovableArrayListTest {
      */
     @Test
     public void testSwapWith() {
-        MovableArrayList<Number> source = new MovableArrayList<>(Arrays.asList(initSourceNum));
-        MovableArrayList<Number> destination = new MovableArrayList<>(Arrays.asList(initDestinationNum));
+        MovableArrayList<Number> source = new MovableArrayList<Number>(Arrays.asList(initSourceNum));
+        MovableArrayList<Number> destination = new MovableArrayList<Number>(Arrays.asList(initDestinationNum));
 
         assertArrayEquals(initSourceNum, source.toArray());
         assertArrayEquals(initDestinationNum, destination.toArray());
@@ -129,8 +129,8 @@ public class MovableArrayListTest {
      */
     @Test
     public void testMove() {
-        MovableArrayList<Integer> source = new MovableArrayList<>(Arrays.asList(initSourceInt));
-        MovableArrayList<Number> destination = new MovableArrayList<>(Arrays.asList(initDestinationNum));
+        MovableArrayList<Integer> source = new MovableArrayList<Integer>(Arrays.asList(initSourceInt));
+        MovableArrayList<Number> destination = new MovableArrayList<Number>(Arrays.asList(initDestinationNum));
 
         assertArrayEquals(initSourceInt, source.toArray());
         assertArrayEquals(initDestinationNum, destination.toArray());
@@ -146,8 +146,8 @@ public class MovableArrayListTest {
      */
     @Test
     public void testSwap() {
-        MovableArrayList<Number> source = new MovableArrayList<>(Arrays.asList(initSourceNum));
-        MovableArrayList<Number> destination = new MovableArrayList<>(Arrays.asList(initDestinationNum));
+        MovableArrayList<Number> source = new MovableArrayList<Number>(Arrays.asList(initSourceNum));
+        MovableArrayList<Number> destination = new MovableArrayList<Number>(Arrays.asList(initDestinationNum));
 
         assertArrayEquals(initSourceNum, source.toArray());
         assertArrayEquals(initDestinationNum, destination.toArray());
@@ -163,8 +163,8 @@ public class MovableArrayListTest {
      */
     @Test
     public void testSize() {
-        MovableArrayList<Number> destination = new MovableArrayList<>(Arrays.asList(initDestinationNum));
-        MovableArrayList<Integer> source = new MovableArrayList<>(Arrays.asList(initSourceInt));
+        MovableArrayList<Number> destination = new MovableArrayList<Number>(Arrays.asList(initDestinationNum));
+        MovableArrayList<Integer> source = new MovableArrayList<Integer>(Arrays.asList(initSourceInt));
 
         assertEquals(initSourceInt.length, source.size());
         assertEquals(initDestinationNum.length, destination.size());
@@ -182,7 +182,7 @@ public class MovableArrayListTest {
         assertEquals(true, new MovableArrayList<>(Arrays.asList(empty)).isEmpty());
 
 
-        MovableArrayList<Integer> source = new MovableArrayList<>(Arrays.asList(initSourceInt));
+        MovableArrayList<Integer> source = new MovableArrayList<Integer>(Arrays.asList(initSourceInt));
         MovableArrayList<Number> destination = new MovableArrayList<Number>(source, true);
         assertEquals(true, source.isEmpty());
         assertEquals(false, destination.isEmpty());

@@ -26,6 +26,10 @@
  */
 package speedith.core.reasoning;
 
+import java.util.ArrayList;
+import speedith.core.i18n.Translations;
+import speedith.core.lang.CompoundSpiderDiagram;
+import speedith.core.lang.Operator;
 import speedith.core.reasoning.args.RuleArg;
 
 /**
@@ -37,5 +41,4 @@ import speedith.core.reasoning.args.RuleArg;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public interface BasicInferenceRule <TRuleArg extends RuleArg> extends InferenceRule<TRuleArg> {
-    // TODO: Specify the interface. Might even be empty.
 }

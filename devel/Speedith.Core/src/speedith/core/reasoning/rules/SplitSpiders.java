@@ -26,7 +26,6 @@
  */
 package speedith.core.reasoning.rules;
 
-import speedith.core.reasoning.rules.instructions.SelectFeetOfSpiderInstruction;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Locale;
@@ -35,13 +34,14 @@ import speedith.core.lang.*;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
+import speedith.core.reasoning.rules.instructions.SelectFeetOfSpiderInstruction;
 
 /**
  * The implementation of the 'split spiders' diagrammatic inference rule.
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg> {
+public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg>, ForwardRule<SpiderRegionArg>, BackwardRule<SpiderRegionArg> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
@@ -86,6 +86,20 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="ForwardRule Implementation">
+    @Override
+    public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
+        return apply(args, goals);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="BackwardRule Implementation">
+    @Override
+    public RuleApplicationResult applyBackwards(RuleArg args, Goals goals) throws RuleApplicationException {
+        return apply(args, goals);
+    }
+    // </editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
     private class SplitSpiderTransformer extends IdTransformer {
 
@@ -96,7 +110,7 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
         }
 
         @Override
-        public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+        public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
             // Transform only the target diagram
             if (diagramIndex == arg.getSubDiagramIndex()) {
                 // Okay, we are at the diagram we want to change. Now make some

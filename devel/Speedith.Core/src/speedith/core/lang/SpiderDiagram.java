@@ -27,6 +27,7 @@
 package speedith.core.lang;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -176,7 +177,7 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
         }
         visitor.init(this);
         if (!visitor.isDone()) {
-            visitor.visit(this, 0, 0, null);
+            visitor.visit(this, 0, 0, null, null);
         }
         visitor.end();
         return visitor.getResult();
@@ -217,22 +218,27 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
 
             private int foundIndex = -1;
 
+            @Override
             public void init(SpiderDiagram root) {
             }
 
+            @Override
             public void end() {
             }
 
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, LinkedList<CompoundSpiderDiagram> parents) {
+            @Override
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
                 if (subDiagram.equals(sd)) {
                     foundIndex = subDiagramIndex;
                 }
             }
 
+            @Override
             public boolean isDone() {
                 return foundIndex != -1;
             }
 
+            @Override
             public Integer getResult() {
                 return foundIndex;
             }
