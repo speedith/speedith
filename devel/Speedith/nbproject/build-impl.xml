@@ -878,7 +878,7 @@ is divided into following sections:
             <param name="call.built.properties" value="${built-jar.properties}"/>
             <param location="${project.iCircles}" name="call.subproject"/>
             <param location="${project.iCircles}/build.xml" name="call.script"/>
-            <param name="call.target" value="jar"/>
+            <param name="call.target" value="compile"/>
             <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
         </antcall>
     </target>
