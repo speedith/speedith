@@ -4,7 +4,6 @@
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>Speedith</name>
-            <explicit-platform explicit-source-supported="true"/>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>
@@ -32,10 +31,10 @@
             <reference>
                 <foreign-project>iCircles</foreign-project>
                 <artifact-type>jar</artifact-type>
-                <script>${project.iCircles}/build.xml</script>
-                <target>compile</target>
+                <script>${project.iCircles}/nbproject/nbjdk.xml</script>
+                <target>dist</target>
                 <clean-target>clean</clean-target>
-                <id>compile</id>
+                <id>dist</id>
             </reference>
         </references>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">

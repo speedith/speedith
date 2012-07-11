@@ -76,7 +76,7 @@
     <!-- to be independent of antlr versions -->
     <patternset id="antlr.libs">
         <include name="antlr*.jar" />
-        <include name="stringtemplate.jar" />
+        <include name="stringtemplate*.jar" />
     </patternset>
     
     <!-- Looking for archives in ANTLR_HOME directory -->
