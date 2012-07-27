@@ -154,11 +154,13 @@ Your `Ant` tool is missing the `antlr3` task. You'll have to install it.
 
 Under Ubuntu you'll have to download and extract the following file:
 
-    http://antlr.org/share/1169924912745/antlr3-task.zip
+    [http://antlr.org/share/1169924912745/antlr3-task.zip](http://antlr.org/share/1169924912745/antlr3-task.zip)
 
 Configure Ant to find the extracted `ant-antlr3.jar` file:
 
     ant -lib `path/to/ant-antlr3.jar`
+
+The above file can also be found on [this list](http://antlr.org/share/list) (which is probably where updates should be posted).
 
 
 
