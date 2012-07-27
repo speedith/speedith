@@ -27,7 +27,6 @@
 package speedith.core.reasoning.rules;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Locale;
 import static speedith.core.i18n.Translations.*;
 import speedith.core.lang.*;
@@ -110,7 +109,7 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
         }
 
         @Override
-        public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+        public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
             // Transform only the target diagram
             if (diagramIndex == arg.getSubDiagramIndex()) {
                 // Okay, we are at the diagram we want to change. Now make some

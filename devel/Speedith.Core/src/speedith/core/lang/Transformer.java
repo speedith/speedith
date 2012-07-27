@@ -46,6 +46,7 @@ public interface Transformer {
      * This function is called by the spider diagrams' {@link
      * SpiderDiagram#transform(speedith.core.lang.Transformer) transform
      * method} while it traverses the spider diagram expression tree.
+     * 
      * <p>This function takes a spider diagram (that is currently traversed) and
      * returns either:
      *  <ul>
@@ -54,6 +55,7 @@ public interface Transformer {
      *      <li>the one it got as an input argument.</li>
      *  </ul>
      * </p>
+     * 
      * <p>The calling <span style="font-style:italic;">transform</span> method
      * will perform one of the following for each of the above cases
      * (respectively):
@@ -69,30 +71,44 @@ public interface Transformer {
      *          sibling/uncle etc.</li>
      *  </ul>
      * </p>
+     * 
      * <p>Immediately after the above the calling
      * <span style="font-style:italic;">transform</span> method calls the {@link
      * Transformer transformer's} {@link Transformer#isDone()} method. If the
      * latter returns {@code null}, the whole transformation process stops (no
      * more descends are made and the final transformed spider diagram is
      * constructed).</p>
+     * 
      * @param sd the current spider diagram to transform.
-     * @param diagramIndex the sub-diagram index of the current spider diagram.
-     * @param childIndex the child index of this spider diagram (if it has a
-     * compound spider diagram parent).
+     * 
+     * @param diagramIndex the (sequential) sub-diagram index of the current spider diagram.
+     * 
      * @param parents the stack of parents (if any).
      * <span style="font-weight:bold">Note</span>: this value might be {@code
      * null} or empty, which indicates that the current spider diagram does not
      * have any parents.
+     * 
+     * @param childIndices contains the child indices for the current diagram as
+     * well as each parent. The value {@code childIndices.get(i)} is the
+     * operand index at which parent {@code i + 1} appears within parent {@code i}.
+     * The last value in this list is the operand index of the current spider
+     * diagram within the last parent. The size of this list is the same as the
+     * {@code parents} list. <span style="font-weight:bold">Note</span>:
+     * this list is {@code null} exactly when the {@code parents} list is 
+     * {@code null}.
+     * 
      * @return a transformed spider diagram, {@code null}, or the same spider
      * diagram as was given as the input argument.
+     * 
      * @throws TransformationException thrown if the transformation failed for
      * any reason.
      */
-    public SpiderDiagram transform(PrimarySpiderDiagram sd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) throws TransformationException;
+    public SpiderDiagram transform(PrimarySpiderDiagram sd, int diagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) throws TransformationException;
     /**
      * This function is called by the spider diagrams' {@link
      * SpiderDiagram#transform(speedith.core.lang.Transformer) transform
      * method} while it traverses the spider diagram expression tree.
+     * 
      * <p>This function takes a spider diagram (that is currently traversed) and
      * returns either:
      *  <ul>
@@ -101,6 +117,7 @@ public interface Transformer {
      *      <li>the one it got as an input argument.</li>
      *  </ul>
      * </p>
+     * 
      * <p>The calling <span style="font-style:italic;">transform</span> method
      * will perform one of the following for each of the above cases
      * (respectively):
@@ -116,30 +133,44 @@ public interface Transformer {
      *          sibling/uncle etc.</li>
      *  </ul>
      * </p>
+     * 
      * <p>Immediately after the above the calling
      * <span style="font-style:italic;">transform</span> method calls the {@link
      * Transformer transformer's} {@link Transformer#isDone()} method. If the
      * latter returns {@code null}, the whole transformation process stops (no
      * more descends are made and the final transformed spider diagram is
      * constructed).</p>
+     * 
      * @param sd the current spider diagram to transform.
-     * @param diagramIndex the sub-diagram index of the current spider diagram.
-     * @param childIndex the child index of this spider diagram (if it has a
-     * compound spider diagram parent).
+     * 
+     * @param diagramIndex the (sequential) sub-diagram index of the current spider diagram.
+     * 
      * @param parents the stack of parents (if any).
      * <span style="font-weight:bold">Note</span>: this value might be {@code
      * null} or empty, which indicates that the current spider diagram does not
      * have any parents.
+     * 
+     * @param childIndices contains the child indices for the current diagram as
+     * well as each parent. The value {@code childIndices.get(i)} is the
+     * operand index at which parent {@code i + 1} appears within parent {@code i}.
+     * The last value in this list is the operand index of the current spider
+     * diagram within the last parent. The size of this list is the same as the
+     * {@code parents} list. <span style="font-weight:bold">Note</span>:
+     * this list is {@code null} exactly when the {@code parents} list is 
+     * {@code null}.
+     * 
      * @return a transformed spider diagram, {@code null}, or the same spider
      * diagram as was given as the input argument.
+     * 
      * @throws TransformationException thrown if the transformation failed for
      * any reason.
      */
-    public SpiderDiagram transform(NullSpiderDiagram sd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) throws TransformationException;
+    public SpiderDiagram transform(NullSpiderDiagram sd, int diagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) throws TransformationException;
     /**
      * This function is called by the spider diagrams' {@link
      * SpiderDiagram#transform(speedith.core.lang.Transformer) transform
      * method} while it traverses the spider diagram expression tree.
+     * 
      * <p>This function takes a spider diagram (that is currently traversed) and
      * returns either:
      *  <ul>
@@ -148,6 +179,7 @@ public interface Transformer {
      *      <li>the one it got as an input argument.</li>
      *  </ul>
      * </p>
+     * 
      * <p>The calling <span style="font-style:italic;">transform</span> method
      * will perform one of the following for each of the above cases
      * (respectively):
@@ -163,26 +195,39 @@ public interface Transformer {
      *          sibling/uncle etc.</li>
      *  </ul>
      * </p>
+     * 
      * <p>Immediately after the above the calling
      * <span style="font-style:italic;">transform</span> method calls the {@link
      * Transformer transformer's} {@link Transformer#isDone()} method. If the
      * latter returns {@code null}, the whole transformation process stops (no
      * more descends are made and the final transformed spider diagram is
      * constructed).</p>
+     * 
      * @param sd the current spider diagram to transform.
-     * @param diagramIndex the sub-diagram index of the current spider diagram.
-     * @param childIndex the child index of this spider diagram (if it has a
-     * compound spider diagram parent).
+     * 
+     * @param diagramIndex the (sequential) sub-diagram index of the current spider diagram.
+     * 
      * @param parents the stack of parents (if any).
      * <span style="font-weight:bold">Note</span>: this value might be {@code
      * null} or empty, which indicates that the current spider diagram does not
      * have any parents.
+     * 
+     * @param childIndices contains the child indices for the current diagram as
+     * well as each parent. The value {@code childIndices.get(i)} is the
+     * operand index at which parent {@code i + 1} appears within parent {@code i}.
+     * The last value in this list is the operand index of the current spider
+     * diagram within the last parent. The size of this list is the same as the
+     * {@code parents} list. <span style="font-weight:bold">Note</span>:
+     * this list is {@code null} exactly when the {@code parents} list is 
+     * {@code null}.
+     * 
      * @return a transformed spider diagram, {@code null}, or the same spider
      * diagram as was given as the input argument.
+     * 
      * @throws TransformationException thrown if the transformation failed for
      * any reason.
      */
-    public SpiderDiagram transform(CompoundSpiderDiagram sd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) throws TransformationException;
+    public SpiderDiagram transform(CompoundSpiderDiagram sd, int diagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) throws TransformationException;
     /**
      * Indicates that this transformer has done all the transformations it
      * intends to do.

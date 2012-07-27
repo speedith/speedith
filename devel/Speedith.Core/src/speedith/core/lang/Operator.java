@@ -27,8 +27,8 @@
 package speedith.core.lang;
 
 import java.util.Collections;
-import java.util.Set;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Represents the logical connectives in {@link CompoundSpiderDiagram}s.

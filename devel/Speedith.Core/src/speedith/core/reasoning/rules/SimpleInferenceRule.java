@@ -40,6 +40,7 @@ import speedith.core.reasoning.args.SubgoalIndexArg;
 /**
  * This simple abstract class provides some helper methods commonly used in
  * inference rules. For example
+ *
  * @param <TArgs> the type of arguments the provided inference rule expects. Use
  * the type {@link RuleArg} to specify that the inference rule does not expect
  * any specific arguments.
@@ -64,9 +65,10 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
     }
 
     /**
-     * This is the default implementation of the {@link InferenceRuleProvider#getInferenceRuleType()}.
-     * It returns {@code this.getClass()}.
-     * 
+     * This is the default implementation of the
+     * {@link InferenceRuleProvider#getInferenceRuleType()}. It returns
+     * {@code this.getClass()}.
+     *
      * @return {@code this.getClass()}.
      */
     @SuppressWarnings("unchecked")
@@ -85,7 +87,7 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
         return BackwardRule.class.isAssignableFrom(getInferenceRuleType());
     }
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
     public InferenceRuleProvider<TArgs> getProvider() {
         return this;
@@ -96,13 +98,13 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
     /**
      * This method checks if the given arguments are of the type expected by
      * this inference rule (the expected type is provided by the {@link
-     * InferenceRuleProvider#getArgumentType()} method).
-     * <p>If the expected type is not given or is {@link RuleArg} then this
-     * method simply returns {@code null}.</p>
-     * <p>If, however, the {@link SimpleInferenceRule#getArgumentType() expected
+     * InferenceRuleProvider#getArgumentType()} method). <p>If the expected type
+     * is not given or is {@link RuleArg} then this method simply returns
+     * {@code null}.</p> <p>If, however, the {@link SimpleInferenceRule#getArgumentType() expected
      * type} is a proper sub-type of {@link RuleArg}, then this method will
      * check whether the given argument is of that type and cast it too. In this
      * case the returned value will be non-{@code null}.</p>
+     *
      * @param args the arguments to check for type.
      * @return the arguments cast to the expected type (may be {@code null}, but
      * only if the inference rule does not expect any arguments).
@@ -124,23 +126,20 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
 
     /**
      * This method returns the subgoal at the given index.
+     *
      * @param args the subgoal index arguments.
      * @param goals the goals from which to get the one at the given index.
      * @return a non-{@code null} spider diagram (the subgoal at the given
-     * index).
-     * <p><span style="font-weight:bold">Note</span>: it is guaranteed that the
-     * returned spider diagram will be non-{@code null} (if no exception is
-     * thrown).</p>
+     * index). <p><span style="font-weight:bold">Note</span>: it is guaranteed
+     * that the returned spider diagram will be non-{@code null} (if no
+     * exception is thrown).</p>
      * @throws RuleApplicationException this exception is thrown if one of the
-     * following occurs:
-     *  <ul>
-     *      <li>the given arguments are {@code null} or not of type {@link 
-     *          SubgoalIndexArg},</li>
-     *      <li>the given arguments are not of the type given in the parameter
-     *          {@code expectedArgsType},</li>
-     *      <li>the index is out of range, or</li>
-     *      <li>the subgoal at the given index is {@code null}.</li>
-     *  </ul>
+     * following occurs: <ul> <li>the given arguments are {@code null} or not of
+     * type {@link
+     *          SubgoalIndexArg},</li> <li>the given arguments are not of the type given
+     * in the parameter {@code expectedArgsType},</li> <li>the index is out of
+     * range, or</li> <li>the subgoal at the given index is {@code null}.</li>
+     * </ul>
      */
     protected static SpiderDiagram getSubgoal(SubgoalIndexArg args, Goals goals) throws RuleApplicationException {
         if (goals == null) {
@@ -160,81 +159,201 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
         }
     }
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Helper Methods (public static)">
-    public static boolean isForwardApplicable(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int childIndex) {
-        if (parents == null) {
-            throw new IllegalArgumentException(Translations.i18n("RULE_PARENTS_NEEDED_FOR_FORWARD_CHECK"));
-        }
-        
-        // There must be an implication on the toplevel.
-        if (parents.size() < 1) {
-            return false;
-        }
-
-        // Check that there is really an implication on the toplevel:
-        if (!Operator.Implication.equals(parents.get(0).getOperator())) {
-            return false;
-        }
-
-        // If there is only one parent then this diagram should be the direct
-        // left child of the toplevel implication.
-        if (parents.size() == 1) {
-            return childIndex == 0;
-        } else if (childIndices.get(1) != 0) {
-            return false;
-        }
-
-        // There are some more parents. They all must be conjunctions and
-        // disjunctions:
-        for (int i = parents.size() - 1; i > 0; --i) {
-            Operator parentOperator = parents.get(i).getOperator();
-            if (!Operator.Conjunction.equals(parentOperator) || !Operator.Disjunction.equals(parentOperator)) {
-                return false;
-            }
-        }
-
-        // Seems like all requirements are satisfied. This diagram can be
-        // applied forward style.
-        return true;
+    /**
+     * Checks whether a spider diagram (the one that is at the last child index
+     * in {@code childIndices} of the last parent in {@code parents}) appears at
+     * a negative position within the outermost compound spider diagram (the
+     * goal). For example, a spider diagram that appears as a premise (on the
+     * left side of an implication) is considered to be at a negative position.
+     *
+     * <p>This method is particularly useful if we want to determine whether a
+     * forward rule can be applied on the goal on the target spider diagram.</p>
+     *
+     * @param parents the parents of the child we're inspecting.
+     * @param childIndices the indices of the child and child's parents.
+     * @return {@code true} iff the observed spider diagram is in a negative
+     * position within the outermost formula.
+     */
+//    public static boolean isAtNegativePositionInGoal(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+//        // Now take the left-hand side and check that the observed spider
+//        // diagram is at a positive position relative to the left-hand side's
+//        // topmost spider diagram:
+//        return isAtNegativePosition(parents, childIndices);
+//    }
+//    public static boolean isBackwardApplicable(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int childIndex) {
+//        if (parents == null) {
+//            throw new IllegalArgumentException(Translations.i18n("RULE_PARENTS_NEEDED_FOR_BACKWARD_CHECK"));
+//        }
+//
+//        // If this spider diagram is toplevel, it can be applied backwards on:
+//        if (parents.size() < 1) {
+//            return true;
+//        }
+//
+//        // If there is an implication at the toplevel, we should be in its right
+//        // side:
+//        int checkDisjConjParentsFrom = 0;
+//        if (Operator.Implication.equals(parents.get(0).getOperator())) {
+//            if (parents.size() == 1) {
+//                return childIndex == 1;
+//            } else if (childIndices.get(1) != 1) {
+//                return false;
+//            }
+//            // Okay, we are in the RHS of an implication. This means that all
+//            // other nested parents must be disjunctions and conjunctions
+//            checkDisjConjParentsFrom = 1;
+//        }
+//
+//        // There are some more parents. They all must be conjunctions and
+//        // disjunctions:
+//        for (int i = parents.size() - 1; i >= checkDisjConjParentsFrom; --i) {
+//            Operator parentOperator = parents.get(i).getOperator();
+//            if (!Operator.Conjunction.equals(parentOperator) || !Operator.Disjunction.equals(parentOperator)) {
+//                return false;
+//            }
+//        }
+//
+//        // Seems like all requirements are satisfied. This diagram can be
+//        // applied backward style.
+//        return true;
+//    }
+    public static boolean isAtPositivePosition(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+        return getPositionType(parents, childIndices, -1, parents.size()) == PositivePosition;
     }
 
-    public static boolean isBackwardApplicable(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int childIndex) {
+    public static boolean isAtPositivePosition(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int sourceParent) {
+        return getPositionType(parents, childIndices, sourceParent, parents.size()) == PositivePosition;
+    }
+
+    public static boolean isAtNegativePosition(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+        return getPositionType(parents, childIndices, -1, parents.size()) == NegativePosition;
+    }
+
+    public static boolean isAtNegativePosition(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int sourceParent) {
+        return getPositionType(parents, childIndices, sourceParent, parents.size()) == NegativePosition;
+    }
+
+    public static int getPositionType(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int sourceParent) {
+        return getPositionType(parents, childIndices, sourceParent, parents.size());
+    }
+
+    public static int getPositionType(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+        return getPositionType(parents, childIndices, -1, parents.size());
+    }
+    public static final int PositivePosition = 0x1;
+    public static final int NegativePosition = 0x2;
+    public static final int EquivalencePosition = PositivePosition & NegativePosition;
+
+    /**
+     * This method gets the position type of the target child as it appears
+     * within the source parent. For example, if we have <span
+     * style="font-style:italic;">A ⇒ B</span> then <span
+     * style="font-style:italic;">A</span> appears positively within the
+     * left-hand side of the implication (that is, it appears positively
+     * relative to parent {@code 0}), however, <span
+     * style="font-style:italic;">A</span> appears negatively within relative to
+     * the whole formula (that is, relative to the parent {@code -1}).
+     *
+     * <p>The list of position types:
+     *
+     * <ul>
+     *
+     * <li>{@link SimpleInferenceRule#PositivePosition},</li>
+     *
+     * <li>{@link SimpleInferenceRule#NegativePosition}, and</li>
+     *
+     * <li>{@link SimpleInferenceRule#EquivalencePosition}.</li>
+     *
+     * </ul>
+     *
+     * </p>
+     *
+     * @param parents the stack of parents (each parent is a child of the parent
+     * at the previous position in this list).
+     *
+     * @param childIndices contains the child indices for the current diagram
+     * (not present in the {@code parents} list) as well as each parent in the
+     * {@code parents} list (except for the first one). The value
+     * {@code childIndices.get(i)} is the operand index at which parent
+     * {@code i + 1} appears within the parent {@code i}. The last value in this
+     * list is the operand index of the current spider diagram within the last
+     * parent.
+     *
+     * @param sourceParent from {@code -1} to {@code parents.size() - 1}.
+     * Indicates which parent should be taken as the topmost one (relative to
+     * which the position type is being determined). {@code -1} indicates that
+     * the context just above the first parent should be the relative search
+     * point (that is, we are interested in the position type of the target
+     * child relative to the whole formula). {@code 0} indicates that we are
+     * interested in the position type of the target child relative to the first
+     * parent. For example, if we have <span style="font-style:italic;">A ⇒
+     * B</span> then <span style="font-style:italic;">A</span> appears
+     * positively within parent {@code 0} (that is, within the implication),
+     * however, <span style="font-style:italic;">A</span> appears negatively
+     * within parent {@code -1} (the whole formula).
+     *
+     * @param targetChild the level of the child for which we are interested in
+     * its position type (can be any value from {@code 0} to {@code parents.size()} (both bounds inclusive).
+     *
+     * @return one of the position types:
+     *
+     * <ul>
+     *
+     * <li>{@link SimpleInferenceRule#PositivePosition},</li>
+     *
+     * <li>{@link SimpleInferenceRule#NegativePosition}, and</li>
+     *
+     * <li>{@link SimpleInferenceRule#EquivalencePosition}.</li>
+     *
+     * </ul>
+     */
+    public static int getPositionType(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int sourceParent, int targetChild) {
+        // This method requires valid lists of parents and child indices to work:
+        if (childIndices == null) {
+            throw new IllegalArgumentException();
+        }
         if (parents == null) {
-            throw new IllegalArgumentException(Translations.i18n("RULE_PARENTS_NEEDED_FOR_BACKWARD_CHECK"));
+            throw new IllegalArgumentException();
         }
-        
-        // If this spider diagram is toplevel, it can be applied backwards on:
-        if (parents.size() < 1) {
-            return true;
+        // Check that the check bounds are valid:
+        // 1.) the 'targetChild' must be within the 'sourceParent'
+        if (sourceParent >= targetChild) {
+            throw new IllegalArgumentException();
         }
-        
-        // If there is an implication at the toplevel, we should be in its right
-        // side:
-        int checkDisjConjParentsFrom = 0;
-        if (Operator.Implication.equals(parents.get(0).getOperator())) {
-            if (parents.size() == 1) {
-                return childIndex == 1;
-            } else if (childIndices.get(1) != 1) {
-                return false;
-            }
-            // Okay, we are in the RHS of an implication. This means that all
-            // other nested parents must be disjunctions and conjunctions
-            checkDisjConjParentsFrom = 1;
+        // 2.) none of the indices must be out of bounds:
+        if (sourceParent < -1) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (targetChild < 0 || targetChild > parents.size() || targetChild > childIndices.size()) {
+            throw new IndexOutOfBoundsException();
         }
 
-        // There are some more parents. They all must be conjunctions and
-        // disjunctions:
-        for (int i = parents.size() - 1; i >= checkDisjConjParentsFrom; --i) {
-            Operator parentOperator = parents.get(i).getOperator();
-            if (!Operator.Conjunction.equals(parentOperator) || !Operator.Disjunction.equals(parentOperator)) {
-                return false;
+        // Now go through all the parents and find out the position type.
+        boolean posType = true;
+        for (int curParent = sourceParent + 1; curParent < targetChild; curParent++) {
+            CompoundSpiderDiagram parent = parents.get(curParent);
+            switch (parent.getOperator()) {
+                case Negation:
+                    posType = !posType;
+                    break;
+                case Conjunction:
+                    break;
+                case Disjunction:
+                    break;
+                case Implication:
+                    if (childIndices.get(curParent) == 0) {
+                        posType = !posType;
+                    }
+                    break;
+                case Equivalence:
+                    return EquivalencePosition;
+                default:
+                    throw new AssertionError();
             }
         }
-
-        // Seems like all requirements are satisfied. This diagram can be
-        // applied backward style.
-        return true;
+        return posType ? PositivePosition : NegativePosition;
     }
     // </editor-fold>
 }

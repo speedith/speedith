@@ -27,17 +27,13 @@
 package speedith.core.reasoning.rules;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Locale;
-import speedith.core.i18n.Translations;
 import static speedith.core.i18n.Translations.*;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.IdTransformer;
-import speedith.core.lang.Operator;
 import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.SpiderDiagrams;
 import speedith.core.lang.TransformationException;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
@@ -120,7 +116,7 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
         }
 
         @Override
-        public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+        public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
             // Transform only the target diagram
             if (diagramIndex == arg.getSubDiagramIndex()) {
                 // Okay, we are at the diagram we want to change. Now make some
@@ -135,8 +131,8 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
                 if (!psd.containsSpider(arg.getSpider())) {
                     throw new IllegalArgumentException(i18n("ERR_SPIDER_NOT_IN_DIAGRAM", arg.getSpider()));
                 }
-                // This is a forward rule.
-                if (!isForwardApplicable(parents, childIndices, childIndex)) {
+                // This is a forward rule. So the child mustn't be at a positive position:
+                if (isAtPositivePosition(parents, childIndices)) {
                     throw new TransformationException(i18n("FORWARD_RULE_DIAGRAM_POSITION"));
                 }
                 // Now make sure that the spider actually exists in the diagram:

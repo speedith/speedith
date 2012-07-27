@@ -59,12 +59,20 @@ public interface DiagramVisitor<T> {
      * @param subDiagram the currently visited sub-diagram.
      * @param subDiagramIndex the index of the sub-diagram (relative to the
      * root).
-     * @param childIndex the child index of the current diagram (if it is the
-     * direct child of a compound spider diagram).
+     * 
+     * @param childIndices contains the child indices for the current diagram as
+     * well as each parent. The value {@code childIndices.get(i)} is the
+     * operand index at which parent {@code i + 1} appears within parent {@code i}.
+     * The last value in this list is the operand index of the current spider
+     * diagram within the last parent. The size of this list is the same as the
+     * {@code parents} list. <span style="font-weight:bold">Note</span>:
+     * this list is {@code null} exactly when the {@code parents} list is 
+     * {@code null}.
+     * 
      * @param parents the parents of this sub-diagram (may be {@code null} to
      * indicate that there are no parents).
      */
-    void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices);
+    void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices);
     
     /**
      * Indicates that this visitor has done all the visiting it

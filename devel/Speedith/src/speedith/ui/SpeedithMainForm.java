@@ -47,10 +47,8 @@ import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
-import speedith.core.reasoning.args.SubgoalIndexArg;
 import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
-import speedith.ui.selection.SelectionDialog;
 import static speedith.i18n.Translations.*;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
@@ -594,6 +592,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
             return infRuleProvider.getPrettyName();
         }
 
+        @Override
         public int compareTo(InfRuleListItem o) {
             return infRuleProvider.toString().compareToIgnoreCase(o.toString());
         }

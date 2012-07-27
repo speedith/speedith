@@ -47,17 +47,17 @@ public class IdTransformer implements Transformer {
     protected boolean done = false;
 
     @Override
-    public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+    public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
         return null;
     }
 
     @Override
-    public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+    public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
         return null;
     }
 
     @Override
-    public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+    public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
         return null;
     }
 

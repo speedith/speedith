@@ -177,7 +177,7 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
         }
         visitor.init(this);
         if (!visitor.isDone()) {
-            visitor.visit(this, 0, 0, null, null);
+            visitor.visit(this, 0, trackParents ? new ArrayList<CompoundSpiderDiagram>() : null, trackParents ? new ArrayList<Integer>() : null);
         }
         visitor.end();
         return visitor.getResult();
@@ -227,7 +227,7 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
             }
 
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, int childIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
                 if (subDiagram.equals(sd)) {
                     foundIndex = subDiagramIndex;
                 }
