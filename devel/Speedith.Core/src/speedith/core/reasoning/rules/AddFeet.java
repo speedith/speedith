@@ -28,6 +28,7 @@ package speedith.core.reasoning.rules;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import speedith.core.i18n.Translations;
 import static speedith.core.i18n.Translations.*;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.IdTransformer;
@@ -60,17 +61,13 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
 
     //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
-        SpiderRegionArg arg = getTypedRuleArgs(args);
-        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
-        newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(new AddFeetTransformer(arg));
-        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
+        return apply(args, goals, false);
     }
-    //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="ForwardRule Implementation">
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
-        return apply(args, goals);
+        return apply(args, goals, true);
     }
     // </editor-fold>
 
@@ -105,14 +102,24 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
         return AddFeetRuleInstruction.getInstance();
     }
     // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="The general 'apply' method">
+    private RuleApplicationResult apply(final RuleArg args, Goals goals, boolean applyForward) throws RuleApplicationException {
+        SpiderRegionArg arg = getTypedRuleArgs(args);
+        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
+        newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(new AddFeetTransformer(arg, applyForward));
+        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
+    }
 
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
     private class AddFeetTransformer extends IdTransformer {
 
         private final SpiderRegionArg arg;
+        private final boolean applyForward;
 
-        public AddFeetTransformer(SpiderRegionArg arg) {
+        public AddFeetTransformer(SpiderRegionArg arg, boolean applyForward) {
             this.arg = arg;
+            this.applyForward = applyForward;
         }
 
         @Override
@@ -131,9 +138,11 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
                 if (!psd.containsSpider(arg.getSpider())) {
                     throw new IllegalArgumentException(i18n("ERR_SPIDER_NOT_IN_DIAGRAM", arg.getSpider()));
                 }
-                // This is a forward rule. So the child mustn't be at a positive position:
-                if (isAtPositivePosition(parents, childIndices)) {
-                    throw new TransformationException(i18n("FORWARD_RULE_DIAGRAM_POSITION"));
+                // Are we applying this rule in a forward way or backward way?
+                if (applyForward
+                        ? !isAtPositivePosition(parents, childIndices)
+                        : !isAtNegativePosition(parents, childIndices)) {
+                    throw new TransformationException(Translations.i18n("GERR_RULE_WRONG_POSITION"));
                 }
                 // Now make sure that the spider actually exists in the diagram:
                 Region existingFeet = psd.getSpiderHabitat(arg.getSpider());
@@ -149,4 +158,5 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
         }
     }
     //</editor-fold>
+    // </editor-fold>
 }
