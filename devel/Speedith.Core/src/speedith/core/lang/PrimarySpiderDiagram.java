@@ -40,9 +40,8 @@ import static speedith.core.i18n.Translations.i18n;
  * title="10.1112/S1461157000000942"> Spider Diagrams (2005)</a>. <p>It contains
  * all necessary information about the habitats of spiders, shaded zones,
  * contour names, zones etc.</p> <p>You can construct new primary spider
- * diagrams via the static methods in
- * {@link SpiderDiagrams}.</p> <p>Instances of this class (and its derived
- * classes) are immutable.</p>
+ * diagrams via the static methods in {@link SpiderDiagrams}.</p> <p>Instances
+ * of this class (and its derived classes) are immutable.</p>
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
@@ -54,7 +53,8 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     /**
      * The identifier of the primary (unitary) spider diagram in the textual
      * representation of spider diagrams. <p>This value is used in the textual
-     * representation of spider diagrams (see {@link SpiderDiagram#toString()}).</p>
+     * representation of spider diagrams (see
+     * {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextPrimaryId = "PrimarySD";
     /**
@@ -71,9 +71,10 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     public static final String SDTextShadedZonesAttribute = "sh_zones";
     /**
      * The attribute key name for the list of zones that are present in the
-     * primary spider diagram (see {@link PrimarySpiderDiagram#getPresentZones()}).
-     * <p>This value is used in the textual representation of spider diagrams
-     * (see {@link SpiderDiagram#toString()}).</p>
+     * primary spider diagram (see
+     * {@link PrimarySpiderDiagram#getPresentZones()}). <p>This value is used in
+     * the textual representation of spider diagrams (see
+     * {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextPresentZonesAttribute = "present_zones";
     /**
@@ -84,11 +85,20 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     public static final String SDTextSpidersAttribute = "spiders";
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
-    private TreeSet<String> spiders;
-    private TreeMap<String, Region> habitats;
-    private TreeSet<Zone> shadedZones;
+    private final TreeSet<String> spiders;
+    private final TreeMap<String, Region> spiderHabitatsMap;
+//    /**
+//     * This array is used to quickly compare primary spider diagrams up to
+//     * S-equivalence.
+//     *
+//     * <p>For example, for S-equivalence it is required (but not sufficient)
+//     * that two spider diagrams have the same number of habitats and that all
+//     * both lists of habitats, when sorted, are the same. </p>
+//     */
+//    private Region[] habitats;
+    private final TreeSet<Zone> shadedZones;
     private TreeSet<String> contours;
-    private TreeSet<Zone> presentZones;
+    private final TreeSet<Zone> presentZones;
     private boolean hashInvalid = true;
     private int hash;
     private Boolean valid;
@@ -99,6 +109,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * Creates an empty primary (unitary) spider diagram.
      */
     PrimarySpiderDiagram() {
+        this(null, null, null, null);
     }
 
     /**
@@ -145,8 +156,8 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         // 'spiders'.
         // If there aren't any spiders, then there should not be any habitats
         // too.
-        if (spiders == null || spiders.size() < 1) {
-            if (habitats != null && habitats.size() > 0) {
+        if (spiders == null || spiders.isEmpty()) {
+            if (habitats != null && !habitats.isEmpty()) {
                 throw new IllegalArgumentException(i18n("ERR_SD_HABITATS_WITHOUT_SPIDERS"));
             }
         } else if (habitats != null) {
@@ -158,7 +169,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         }
 
         this.spiders = spiders;
-        this.habitats = habitats;
+        this.spiderHabitatsMap = habitats;
         this.shadedZones = shadedZones;
         this.presentZones = presentZones;
     }
@@ -167,13 +178,14 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
      * Returns an unmodifiable key-value map of spiders with their corresponding
-     * {@link Region habitats}. <p>Note: this method may return {@code null}.</p>
+     * {@link Region habitats}. <p>Note: this method may return
+     * {@code null}.</p>
      *
      * @return an unmodifiable key-value map of spiders with their corresponding
      * {@link Region habitats}.
      */
     public SortedMap<String, Region> getHabitats() {
-        return habitats == null ? null : Collections.unmodifiableSortedMap(habitats);
+        return spiderHabitatsMap == null ? null : Collections.unmodifiableSortedMap(spiderHabitatsMap);
     }
 
     /**
@@ -184,7 +196,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * specified in this primary spider diagram.
      */
     public int getHabitatsCount() {
-        return habitats == null ? 0 : habitats.size();
+        return spiderHabitatsMap == null ? 0 : spiderHabitatsMap.size();
     }
 
     /**
@@ -217,7 +229,8 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * shaded intersection zone). This set indicates whether or not to draw such
      * zones.</p>
      *
-     * @return a set of zones that should be drawn in the diagram. <p>May return {@code null}.</p>
+     * @return a set of zones that should be drawn in the diagram. <p>May return
+     * {@code null}.</p>
      */
     public SortedSet<Zone> getPresentZones() {
         return presentZones == null ? null : Collections.unmodifiableSortedSet(presentZones);
@@ -225,9 +238,9 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     /**
      * Returns the number of zones in the <span
-     * style="font-style:italic;">explicit present zones set</span>. <p>See {@link PrimarySpiderDiagram#getPresentZones()}
-     * for a description on what <span style="font-style:italic;">present
-     * zones</span> are.</p>
+     * style="font-style:italic;">explicit present zones set</span>. <p>See
+     * {@link PrimarySpiderDiagram#getPresentZones()} for a description on what
+     * <span style="font-style:italic;">present zones</span> are.</p>
      *
      * @return the number of explicitly present zones.
      */
@@ -264,7 +277,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * @return the habitat of the given spider.
      */
     public Region getSpiderHabitat(String spider) {
-        return habitats == null ? null : habitats.get(spider);
+        return spiderHabitatsMap == null ? null : spiderHabitatsMap.get(spider);
     }
 
     /**
@@ -286,8 +299,9 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * this method returns the set of all contours only if this primary spider
      * diagram is {@link
      * PrimarySpiderDiagram#isValid() valid}, otherwise an {@link UnsupportedOperationException
-     * exception} is thrown.</p> <p>Note: this method never returns {@code null}.
-     * If there are no contours then this method will return an empty set.</p>
+     * exception} is thrown.</p> <p>Note: this method never returns
+     * {@code null}. If there are no contours then this method will return an
+     * empty set.</p>
      *
      * @return an {@link Collections#unmodifiableSortedSet(java.util.SortedSet)
      * unmodifiable sorted set} of all contours that are mentioned in this
@@ -384,14 +398,14 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     }
 
     @Override
-    public boolean equalsSemantically(SpiderDiagram other) {
+    public boolean isSEquivalentTo(SpiderDiagram other) {
         if (equals(other)) {
             return true;
         }
         // Well, firstly, the diagrams have to be of the same type:
         if (other instanceof PrimarySpiderDiagram) {
             PrimarySpiderDiagram psd = (PrimarySpiderDiagram) other;
-            // Let's say the primary spider diagrams have the same number of spiders:
+            // The primary spider diagrams must have the same number of spiders:
             if (getSpidersCount() != psd.getSpidersCount()) {
                 return false;
             }
@@ -413,7 +427,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     public int hashCode() {
         if (hashInvalid) {
             hash = (spiders == null ? 0 : spiders.hashCode())
-                    + (habitats == null ? 0 : habitats.hashCode())
+                    + (spiderHabitatsMap == null ? 0 : spiderHabitatsMap.hashCode())
                     + (shadedZones == null ? 0 : shadedZones.hashCode())
                     + (presentZones == null ? 0 : presentZones.hashCode());
             hashInvalid = false;
@@ -436,7 +450,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      */
     public PrimarySpiderDiagram addSpider(String spider, Region habitat) {
         // Add the habitat to the map of spiders and their habitats.
-        TreeMap<String, Region> newHabitats = (habitats == null) ? new TreeMap<String, Region>() : new TreeMap<String, Region>(habitats);
+        TreeMap<String, Region> newHabitats = (spiderHabitatsMap == null) ? new TreeMap<String, Region>() : new TreeMap<String, Region>(spiderHabitatsMap);
         newHabitats.put(spider, habitat);
         // Now add the spider to the set of all spiders. Maybe we can reuse the 
         // set if it already contains the spider.
@@ -515,8 +529,8 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     private void printHabitats(Appendable sb) throws IOException {
         sb.append(SDTextHabitatsAttribute).append(" = ");
         sb.append('[');
-        if (habitats != null && !habitats.isEmpty()) {
-            Iterator<Entry<String, Region>> spIterator = habitats.entrySet().iterator();
+        if (spiderHabitatsMap != null && !spiderHabitatsMap.isEmpty()) {
+            Iterator<Entry<String, Region>> spIterator = spiderHabitatsMap.entrySet().iterator();
             if (spIterator.hasNext()) {
                 Entry<String, Region> habitat = spIterator.next();
                 printHabitat(sb, habitat.getKey(), habitat.getValue());
@@ -569,7 +583,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     private boolean __isPsdEqual(PrimarySpiderDiagram psd) {
         return hashCode() == psd.hashCode()
                 && equal(spiders, psd.spiders)
-                && equal(habitats == null ? null : habitats.entrySet(), psd.habitats == null ? null : psd.habitats.entrySet())
+                && equal(spiderHabitatsMap == null ? null : spiderHabitatsMap.entrySet(), psd.spiderHabitatsMap == null ? null : psd.spiderHabitatsMap.entrySet())
                 && equal(shadedZones, psd.shadedZones)
                 && equal(presentZones, psd.presentZones);
     }
@@ -590,8 +604,8 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         }
         // There are some habitats. We have to make sure that they are exactly
         // the same if both are sorted:
-        Object[] habitatsA = habitats.values().toArray();
-        Object[] habitatsB = psd.habitats.values().toArray();
+        Object[] habitatsA = spiderHabitatsMap.values().toArray();
+        Object[] habitatsB = psd.spiderHabitatsMap.values().toArray();
         Arrays.sort(habitatsA);
         Arrays.sort(habitatsB);
         for (int i = 0; i < habitatsA.length; i++) {
@@ -619,7 +633,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     private boolean extractContoursFromHabitats() {
         if (getHabitatsCount() > 0) {
-            Region region = habitats.firstEntry().getValue();
+            Region region = spiderHabitatsMap.firstEntry().getValue();
             if (region.getZonesCount() > 0) {
                 Zone zone = region.getZones().first();
                 if (zone.getInContoursCount() > 0) {
@@ -704,8 +718,8 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     }
 
     private boolean areHabitatZonesValid(SortedSet<String> contours) {
-        if (habitats != null) {
-            for (Region region : this.habitats.values()) {
+        if (spiderHabitatsMap != null) {
+            for (Region region : this.spiderHabitatsMap.values()) {
                 if (region.getZonesCount() > 0) {
                     for (Zone zone : region.getZones()) {
                         if (!zone.isValid(contours)) {

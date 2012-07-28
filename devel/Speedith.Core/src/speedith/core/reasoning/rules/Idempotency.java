@@ -28,6 +28,7 @@ package speedith.core.reasoning.rules;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import static speedith.core.i18n.Translations.*;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.IdTransformer;
 import speedith.core.lang.NullSpiderDiagram;
@@ -35,14 +36,9 @@ import speedith.core.lang.Operator;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.SpiderDiagrams;
 import speedith.core.lang.TransformationException;
-import speedith.core.reasoning.BasicInferenceRule;
-import speedith.core.reasoning.Goals;
-import speedith.core.reasoning.RuleApplicationException;
-import speedith.core.reasoning.RuleApplicationResult;
+import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
-import static speedith.core.i18n.Translations.*;
-import speedith.core.reasoning.*;
 import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
 
 /**
@@ -55,7 +51,7 @@ import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstructio
  * equivalence} operators).</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg> {
+public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg>, ForwardRule<SubDiagramIndexArg>, BackwardRule<SubDiagramIndexArg> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
@@ -102,6 +98,20 @@ public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> impleme
     }
     // </editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Forward Rule">
+    @Override
+    public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
+        return apply(args, goals);
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Backward Rule">
+    @Override
+    public RuleApplicationResult applyBackwards(RuleArg args, Goals goals) throws RuleApplicationException {
+        return apply(args, goals);
+    }
+    //</editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
     private static final class SingletonContainer {
         private static final SelectSingleOperatorInstruction Instruction = new SelectSingleOperatorInstruction(Operator.Conjunction, Operator.Disjunction);
@@ -122,11 +132,11 @@ public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> impleme
                 // Is the compound diagram a conjunction or a disjunction?
                 // Is it an implication or an equivalence?
                 if (Operator.Conjunction.equals(csd.getOperator()) || Operator.Disjunction.equals(csd.getOperator())) {
-                    if (csd.getOperand(0).equalsSemantically(csd.getOperand(1))) {
+                    if (csd.getOperand(0).isSEquivalentTo(csd.getOperand(1))) {
                         return csd.getOperand(1);
                     }
                 } else if (Operator.Equivalence.equals(csd.getOperator()) || Operator.Implication.equals(csd.getOperator())) {
-                    if (csd.getOperand(0).equalsSemantically(csd.getOperand(1))) {
+                    if (csd.getOperand(0).isSEquivalentTo(csd.getOperand(1))) {
                         return SpiderDiagrams.createNullSD();
                     }
                 }

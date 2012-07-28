@@ -49,7 +49,7 @@ import speedith.core.reasoning.rules.instructions.AddFeetRuleInstruction;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg>, ForwardRule<SpiderRegionArg> {
+public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg>, ForwardRule<SpiderRegionArg>, BackwardRule<SpiderRegionArg> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
@@ -60,6 +60,7 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
+    @Override
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
         return apply(args, goals, false);
     }
@@ -68,6 +69,13 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
         return apply(args, goals, true);
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Backward Rule Implementation">
+    @Override
+    public RuleApplicationResult applyBackwards(RuleArg args, Goals goals) throws RuleApplicationException {
+        return apply(args, goals, false);
     }
     // </editor-fold>
 

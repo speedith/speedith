@@ -104,8 +104,8 @@ public class IdempotencyTest {
         assertTrue(!sd.equals(transformedSD));
         assertTrue(transformedSD.equals(sd.getSubDiagramAt(2)));
         assertTrue(!transformedSD.equals(sd.getSubDiagramAt(1)));
-        assertTrue(transformedSD.equalsSemantically(sd.getSubDiagramAt(2)));
-        assertTrue(transformedSD.equalsSemantically(sd.getSubDiagramAt(1)));
+        assertTrue(transformedSD.isSEquivalentTo(sd.getSubDiagramAt(2)));
+        assertTrue(transformedSD.isSEquivalentTo(sd.getSubDiagramAt(1)));
         assertTrue(transformedSD != (sd.getSubDiagramAt(1)));
         assertTrue(transformedSD == (sd.getSubDiagramAt(2)));
         
@@ -115,8 +115,8 @@ public class IdempotencyTest {
         assertTrue(!sd.equals(transformedSD));
         assertTrue(transformedSD.equals(sd.getSubDiagramAt(2)));
         assertTrue(!transformedSD.equals(sd.getSubDiagramAt(1)));
-        assertTrue(transformedSD.equalsSemantically(sd.getSubDiagramAt(2)));
-        assertTrue(transformedSD.equalsSemantically(sd.getSubDiagramAt(1)));
+        assertTrue(transformedSD.isSEquivalentTo(sd.getSubDiagramAt(2)));
+        assertTrue(transformedSD.isSEquivalentTo(sd.getSubDiagramAt(1)));
         assertTrue(transformedSD != (sd.getSubDiagramAt(1)));
         assertTrue(transformedSD == (sd.getSubDiagramAt(2)));
         
@@ -125,13 +125,13 @@ public class IdempotencyTest {
         transformedSD = applyRule(rule, subDiagramIndex, sd);
         assertTrue(!sd.equals(transformedSD));
         assertEquals(sd.getSubDiagramAt(3), transformedSD.getSubDiagramAt(1));
-        assertTrue(sd.getSubDiagramAt(2).equalsSemantically(transformedSD.getSubDiagramAt(1)));
+        assertTrue(sd.getSubDiagramAt(2).isSEquivalentTo(transformedSD.getSubDiagramAt(1)));
         CompoundSpiderDiagram csd = (CompoundSpiderDiagram)sd;
         CompoundSpiderDiagram newCsd = SpiderDiagrams.createCompoundSD(csd.getOperator(), csd.getSubDiagramAt(3), csd.getSubDiagramAt(4));
         assertEquals(newCsd, transformedSD);
         assertSame(newCsd, transformedSD);
         newCsd = SpiderDiagrams.createCompoundSD(csd.getOperator(), csd.getSubDiagramAt(2), csd.getSubDiagramAt(4));
-        assertTrue(newCsd.equalsSemantically(transformedSD));
+        assertTrue(newCsd.isSEquivalentTo(transformedSD));
         assertTrue(!newCsd.equals(transformedSD));
     }
 

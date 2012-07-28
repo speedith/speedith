@@ -117,7 +117,7 @@ public class ProofTrace implements Proof {
             ArrayList<SpiderDiagram> remainingGoals = new ArrayList<SpiderDiagram>();
             NullSpiderDiagram nsd = NullSpiderDiagram.getInstance();
             for (SpiderDiagram goal : newGoals.getGoals()) {
-                if (!nsd.equalsSemantically(goal)) {
+                if (!nsd.isSEquivalentTo(goal)) {
                     remainingGoals.add(goal);
                 }
             }

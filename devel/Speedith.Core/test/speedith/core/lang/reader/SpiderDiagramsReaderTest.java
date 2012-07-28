@@ -183,9 +183,9 @@ public class SpiderDiagramsReaderTest {
         assertTrue(sd.equals(sd2));
         assertTrue(sd2.equals(sd));
         assertTrue(sd == sd2);
-        assertTrue(sd.equalsSemantically(sd2));
-        assertTrue(sd2.equalsSemantically(sd));
-        assertTrue(sd.equalsSemantically(sd));
+        assertTrue(sd.isSEquivalentTo(sd2));
+        assertTrue(sd2.isSEquivalentTo(sd));
+        assertTrue(sd.isSEquivalentTo(sd));
         assertEquals(isValid, sd.isValid());
         return sd;
     }
@@ -232,9 +232,9 @@ public class SpiderDiagramsReaderTest {
         assertEquals(sd, sd2);
         assertTrue(sd == sd2);
         
-        assertTrue(sd.equalsSemantically(sd2));
-        assertTrue(sd2.equalsSemantically(sd));
-        assertTrue(sd.equalsSemantically(sd));
+        assertTrue(sd.isSEquivalentTo(sd2));
+        assertTrue(sd2.isSEquivalentTo(sd));
+        assertTrue(sd.isSEquivalentTo(sd));
     }
 
     /**
@@ -264,9 +264,9 @@ public class SpiderDiagramsReaderTest {
         assertEquals(sd, sd2);
         assertTrue(sd == sd2);
         
-        assertTrue(sd.equalsSemantically(sd2));
-        assertTrue(sd2.equalsSemantically(sd));
-        assertTrue(sd.equalsSemantically(sd));
+        assertTrue(sd.isSEquivalentTo(sd2));
+        assertTrue(sd2.isSEquivalentTo(sd));
+        assertTrue(sd.isSEquivalentTo(sd));
     }
 
     /**
@@ -296,9 +296,9 @@ public class SpiderDiagramsReaderTest {
         assertEquals(sd, sd2);
         assertTrue(sd == sd2);
         
-        assertTrue(sd.equalsSemantically(sd2));
-        assertTrue(sd2.equalsSemantically(sd));
-        assertTrue(sd.equalsSemantically(sd));
+        assertTrue(sd.isSEquivalentTo(sd2));
+        assertTrue(sd2.isSEquivalentTo(sd));
+        assertTrue(sd.isSEquivalentTo(sd));
     }
 
     /**

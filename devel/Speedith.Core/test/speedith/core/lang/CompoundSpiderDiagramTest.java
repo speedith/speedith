@@ -152,9 +152,9 @@ public class CompoundSpiderDiagramTest {
         assertTrue(sd1.equals(transformedSD));
         assertTrue(sd1 == transformedSD);
 
-        assertTrue(sd1.equalsSemantically(transformedSD));
-        assertTrue(!sd1.equalsSemantically(sd));
-        assertTrue(!sd.equalsSemantically(transformedSD));
+        assertTrue(sd1.isSEquivalentTo(transformedSD));
+        assertTrue(!sd1.isSEquivalentTo(sd));
+        assertTrue(!sd.isSEquivalentTo(transformedSD));
     }
 
     /**
@@ -196,9 +196,9 @@ public class CompoundSpiderDiagramTest {
         assertTrue(sd1.equals(transformedSD));
         assertTrue(sd1 == transformedSD);
 
-        assertTrue(sd1.equalsSemantically(transformedSD));
-        assertTrue(!sd1.equalsSemantically(sd));
-        assertTrue(!sd.equalsSemantically(transformedSD));
+        assertTrue(sd1.isSEquivalentTo(transformedSD));
+        assertTrue(!sd1.isSEquivalentTo(sd));
+        assertTrue(!sd.isSEquivalentTo(transformedSD));
     }
 
     /**
@@ -241,9 +241,9 @@ public class CompoundSpiderDiagramTest {
         assertTrue(sd1.equals(transformedSD));
         assertTrue(sd1 == transformedSD);
 
-        assertTrue(sd1.equalsSemantically(transformedSD));
-        assertTrue(!sd1.equalsSemantically(sd));
-        assertTrue(!sd.equalsSemantically(transformedSD));
+        assertTrue(sd1.isSEquivalentTo(transformedSD));
+        assertTrue(!sd1.isSEquivalentTo(sd));
+        assertTrue(!sd.isSEquivalentTo(transformedSD));
     }
 
     /**
@@ -286,9 +286,9 @@ public class CompoundSpiderDiagramTest {
         assertTrue(sd1.equals(transformedSD));
         assertTrue(sd1 == transformedSD);
 
-        assertTrue(sd1.equalsSemantically(transformedSD));
-        assertTrue(!sd1.equalsSemantically(sd));
-        assertTrue(!sd.equalsSemantically(transformedSD));
+        assertTrue(sd1.isSEquivalentTo(transformedSD));
+        assertTrue(!sd1.isSEquivalentTo(sd));
+        assertTrue(!sd.isSEquivalentTo(transformedSD));
     }
 
     /**
@@ -320,7 +320,7 @@ public class CompoundSpiderDiagramTest {
         assertTrue(sd.equals(transformedSD));
         assertTrue(sd == transformedSD);
 
-        assertTrue(sd.equalsSemantically(transformedSD));
+        assertTrue(sd.isSEquivalentTo(transformedSD));
     }
 
     /**
@@ -352,7 +352,7 @@ public class CompoundSpiderDiagramTest {
         assertTrue(sd.equals(transformedSD));
         assertTrue(sd == transformedSD);
 
-        assertTrue(sd.equalsSemantically(transformedSD));
+        assertTrue(sd.isSEquivalentTo(transformedSD));
     }
 
     /**
@@ -384,7 +384,7 @@ public class CompoundSpiderDiagramTest {
         assertTrue(sd.equals(transformedSD));
         assertTrue(sd == transformedSD);
 
-        assertTrue(sd.equalsSemantically(transformedSD));
+        assertTrue(sd.isSEquivalentTo(transformedSD));
     }
 
     /**

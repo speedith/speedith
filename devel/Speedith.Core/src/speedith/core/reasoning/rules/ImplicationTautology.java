@@ -53,7 +53,7 @@ import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstructio
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg> {
+public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg>, ForwardRule<SubDiagramIndexArg>, BackwardRule<SubDiagramIndexArg> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
@@ -74,6 +74,20 @@ public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg
         newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(new IdempotencyTransformer(arg), false);
         // Finally return the changed goals.
         return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Forward Rule">
+    @Override
+    public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
+        return apply(args, goals);
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Backward Rule">
+    @Override
+    public RuleApplicationResult applyBackwards(RuleArg args, Goals goals) throws RuleApplicationException {
+        return apply(args, goals);
     }
     //</editor-fold>
 
@@ -122,7 +136,7 @@ public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg
             if (diagramIndex == arg.getSubDiagramIndex()) {
                 // The compound diagram must be an implication:
                 if (Operator.Implication.equals(csd.getOperator())) {
-                    if (csd.getOperand(0).equalsSemantically(csd.getOperand(1))) {
+                    if (csd.getOperand(0).isSEquivalentTo(csd.getOperand(1))) {
                         return SpiderDiagrams.createNullSD();
                     } else {
                         throw new TransformationException(i18n("RULE_IMPLICATION_TAUTOLOGY_NOT_APPLICABLE_SEM"));

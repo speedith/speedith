@@ -360,7 +360,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     }
 
     @Override
-    public boolean equalsSemantically(SpiderDiagram other) {
+    public boolean isSEquivalentTo(SpiderDiagram other) {
         if (equals(other)) {
             return true;
         }
@@ -617,7 +617,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         // Firstly, the operands have to be equally many.
         if (operands.size() == other.operands.size()) {
             while (itThis.hasNext()) {
-                if (!itThis.next().equalsSemantically(itOther.next())) {
+                if (!itThis.next().isSEquivalentTo(itOther.next())) {
                     return false;
                 }
             }

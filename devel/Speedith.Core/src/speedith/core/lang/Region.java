@@ -46,7 +46,7 @@ import static speedith.core.i18n.Translations.i18n;
 public class Region implements Comparable<Region>, SpiderDiagramElement {
 
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
-    private TreeSet<Zone> zones;
+    private final TreeSet<Zone> zones;
     private boolean hashInvalid = true;
     private int hash;
     // </editor-fold>
@@ -188,6 +188,7 @@ public class Region implements Comparable<Region>, SpiderDiagramElement {
         return hash;
     }
 
+    @Override
     public int compareTo(Region other) {
         if (other == null) {
             throw new NullPointerException();
