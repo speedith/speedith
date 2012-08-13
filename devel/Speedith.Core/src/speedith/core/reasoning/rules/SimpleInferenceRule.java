@@ -185,7 +185,7 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
      * @return
      */
     public static boolean isAtPositivePosition(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
-        return getPositionType(parents, childIndices, -1, parents.size()) == PositivePosition;
+        return getPositionType(parents, childIndices, -1, parents == null ? 0 : parents.size()) == PositivePosition;
     }
 
     /**
@@ -215,7 +215,7 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
      * @return
      */
     public static boolean isAtPositivePosition(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int sourceParent) {
-        return getPositionType(parents, childIndices, sourceParent, parents.size()) == PositivePosition;
+        return getPositionType(parents, childIndices, sourceParent, parents == null ? 0 : parents.size()) == PositivePosition;
     }
 
     /**
@@ -244,7 +244,7 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
      * @return
      */
     public static boolean isAtNegativePosition(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
-        return getPositionType(parents, childIndices, -1, parents.size()) == NegativePosition;
+        return getPositionType(parents, childIndices, -1, parents == null ? 0 : parents.size()) == NegativePosition;
     }
 
     /**
@@ -274,7 +274,7 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
      * @return
      */
     public static boolean isAtNegativePosition(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int sourceParent) {
-        return getPositionType(parents, childIndices, sourceParent, parents.size()) == NegativePosition;
+        return getPositionType(parents, childIndices, sourceParent, parents == null ? 0 : parents.size()) == NegativePosition;
     }
 
     /**
@@ -304,7 +304,7 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
      * @return
      */
     public static int getPositionType(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int sourceParent) {
-        return getPositionType(parents, childIndices, sourceParent, parents.size());
+        return getPositionType(parents, childIndices, sourceParent, parents == null ? 0 : parents.size());
     }
 
     /**
@@ -333,7 +333,7 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
      * @return
      */
     public static int getPositionType(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
-        return getPositionType(parents, childIndices, -1, parents.size());
+        return getPositionType(parents, childIndices, -1, parents == null ? 0 : parents.size());
     }
     
     public static final int PositivePosition = 0x1;
@@ -405,11 +405,11 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
      * </ul>
      */
     public static int getPositionType(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int sourceParent, int targetChild) {
-        // This method requires valid lists of parents and child indices to work:
-        if (childIndices == null) {
-            throw new IllegalArgumentException();
-        }
-        if (parents == null) {
+        // If both `parents` and `childIndices` are `null` we assume that the
+        // target diagram has no parents:
+        int numOfIndices = childIndices == null ? 0 : childIndices.size();
+        int numOfParents = parents == null ? 0 : parents.size();
+        if (numOfIndices != numOfParents) {
             throw new IllegalArgumentException();
         }
         // Check that the check bounds are valid:
@@ -421,7 +421,7 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
         if (sourceParent < -1) {
             throw new IndexOutOfBoundsException();
         }
-        if (targetChild < 0 || targetChild > parents.size() || targetChild > childIndices.size()) {
+        if (targetChild < 0 || targetChild > numOfParents || targetChild > numOfIndices) {
             throw new IndexOutOfBoundsException();
         }
 

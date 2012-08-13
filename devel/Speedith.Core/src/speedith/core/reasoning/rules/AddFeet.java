@@ -64,6 +64,7 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
         return apply(args, goals, false);
     }
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="ForwardRule Implementation">
     @Override
@@ -118,6 +119,7 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
         newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(new AddFeetTransformer(arg, applyForward));
         return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
     }
+    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
     private class AddFeetTransformer extends IdTransformer {
@@ -166,5 +168,4 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
         }
     }
     //</editor-fold>
-    // </editor-fold>
 }
