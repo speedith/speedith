@@ -143,7 +143,7 @@ fun replace_subgoal_tac formula ctxt i st = SUBGOAL (fn (subgoal, _) =>
          | mk_trueprop_if (t as (Const ("==", _) $ _ $ _)) = t
          | mk_trueprop_if t = HOLogic.mk_Trueprop t
 
-       val thy = ProofContext.theory_of ctxt;
+       val thy = Proof_Context.theory_of ctxt;
        val formulaTerm = Syntax.read_term_global thy formula
        val intert = Logic.mk_implies (mk_trueprop_if formulaTerm, subgoal)
        val _ = tracing ("Have " ^ Syntax.string_of_term @{context} intert)
