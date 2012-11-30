@@ -67,53 +67,29 @@ public interface InferenceRuleProvider<TArgs extends RuleArg> {
      * {@link InferenceRuleProvider#getInferenceRule()}.
      */
     Class<? extends InferenceRule<TArgs>> getInferenceRuleType();
-    
+
     /**
      * Indicates whether the inference rule returned by
      * {@link InferenceRuleProvider#getInferenceRule()} is a <span
      * style="font-style:italic;">forward-style</span> rule.
-     * 
+     *
      * <p>Forward-style rules are the ones which take a spider diagram <span
-     * style="font-style:italic;">A</span> and produce an entailed spider diagram
-     *  <span style="font-style:italic;">A'</span>.
-     * 
+     * style="font-style:italic;">A</span> and produce an entailed spider
+     * diagram <span style="font-style:italic;">A'</span>.
+     *
      * <div><span style="font-style:italic;">A</span> &#x27F9; <span
      * style="font-style:italic;">A'</span></div>
-     * 
+     *
      * </p>
-     * 
-     * <p>An {@link InferenceRule inference rule} is forward-style if it 
+     *
+     * <p>An {@link InferenceRule inference rule} is forward-style if it
      * implements the {@link ForwardRule} interface.</p>
-     * 
+     *
      * @return a value that indicates whether the inference rule returned by
      * {@link InferenceRuleProvider#getInferenceRule()} is a <span
      * style="font-style:italic;">forward-style</span> rule.
      */
     boolean isForwardRule();
-    
-    /**
-     * Indicates whether the inference rule returned by
-     * {@link InferenceRuleProvider#getInferenceRule()} is a <span
-     * style="font-style:italic;">backward-style</span> rule.
-     * 
-     * <p>Backward-style rules are the ones which take a spider diagram <span
-     * style="font-style:italic;">A</span> and produce a spider diagram
-     *  <span style="font-style:italic;">A'</span> which entails <span
-     * style="font-style:italic;">A</span>.
-     * 
-     * <div><span style="font-style:italic;">A'</span> &#x27F9; <span
-     * style="font-style:italic;">A</span></div>
-     * 
-     * </p>
-     * 
-     * <p>An {@link InferenceRule inference rule} is backward-style if it 
-     * implements the {@link BackwardRule} interface.</p>
-     * 
-     * @return a value that indicates whether the inference rule returned by
-     * {@link InferenceRuleProvider#getInferenceRule()} is a <span
-     * style="font-style:italic;">backward-style</span> rule.
-     */
-    boolean isBackwardRule();
 
     /**
      * Returns the name of the {@link InferenceRule} this provider provides.
@@ -167,6 +143,25 @@ public interface InferenceRuleProvider<TArgs extends RuleArg> {
      * rule.
      */
     String getPrettyName(Locale locale);
+
+    /**
+     * Returns a pretty human-readable short name of the category of the
+     * provided inference rule.
+     *
+     * @return a pretty human-readable short name of the category of the
+     * provided inference rule.
+     */
+    String getCategory();
+
+    /**
+     * Returns a pretty human-readable short name of the category of the
+     * provided inference rule.
+     *
+     * @param locale the locale to which to translate the returned string.
+     * @return a pretty human-readable short name of the category of the
+     * provided inference rule.
+     */
+    String getCategory(Locale locale);
 
     /**
      * Returns the type of the argument the provided inference rule requires.

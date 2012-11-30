@@ -195,6 +195,7 @@ public final class SpiderDiagramsReader {
     public static Region readRegion(String input) throws ReadingException {
         return readElement(new ANTLRStringStream(input), new ElementReader<Region>() {
 
+            @Override
             public Region readElement(SpiderDiagramsParser parser) throws ReadingException, RecognitionException {
                 list_return list = parser.list();
                 if (list == null || list.tree == null) {

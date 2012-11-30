@@ -557,10 +557,10 @@ public class SpeedithMainForm extends javax.swing.JFrame {
             infRules[i++] = new InfRuleListItem(InferenceRules.getProvider(providerName));
         }
         Arrays.sort(infRules);
-        return new DefaultComboBoxModel(infRules);
+        return new DefaultComboBoxModel<>(infRules);
     }
 
-    private ListModel getRulesList() {
+    private ListModel<InfRuleListItem> getRulesList() {
         Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules();
         InfRuleListItem[] infRules = new InfRuleListItem[knownInferenceRules.size()];
         int i = 0;
@@ -568,7 +568,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
             infRules[i++] = new InfRuleListItem(InferenceRules.getProvider(providerName));
         }
         Arrays.sort(infRules);
-        return new DefaultComboBoxModel(infRules);
+        return new DefaultComboBoxModel<>(infRules);
 
     }
 

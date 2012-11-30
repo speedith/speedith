@@ -28,6 +28,7 @@ package speedith.core.reasoning.rules;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import speedith.core.i18n.Translations;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.IdTransformer;
 import speedith.core.lang.NullSpiderDiagram;
@@ -53,7 +54,7 @@ import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstructio
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg>, ForwardRule<SubDiagramIndexArg>, BackwardRule<SubDiagramIndexArg> {
+public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg>, ForwardRule<SubDiagramIndexArg> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
@@ -64,6 +65,7 @@ public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
+    @Override
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
         // Check that the arguments to this rule are of the correct type.
         SubDiagramIndexArg arg = getTypedRuleArgs(args);
@@ -84,34 +86,38 @@ public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg
     }
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Backward Rule">
-    @Override
-    public RuleApplicationResult applyBackwards(RuleArg args, Goals goals) throws RuleApplicationException {
-        return apply(args, goals);
-    }
-    //</editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="InferenceRuleProvider Implementation">
+    @Override
     public ImplicationTautology getInferenceRule() {
         return this;
     }
 
+    @Override
     public String getInferenceRuleName() {
         return InferenceRuleName;
     }
 
+    @Override
     public String getDescription(Locale locale) {
         return i18n(locale, "IMPLICATION_TAUTOLOGY_DESCRIPTION");
     }
 
+    @Override
+    public String getCategory(Locale locale) {
+        return Translations.i18n(locale, "INF_RULE_CATEGORY_PURELY_SENTENTIAL");
+    }
+
+    @Override
     public String getPrettyName(Locale locale) {
         return i18n(locale, "IMPLICATION_TAUTOLOGY_PRETTY_NAME");
     }
 
+    @Override
     public Class<SubDiagramIndexArg> getArgumentType() {
         return SubDiagramIndexArg.class;
     }
 
+    @Override
     public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
         return SingletonContainer.Instruction;
     }

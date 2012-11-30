@@ -49,7 +49,7 @@ import speedith.core.reasoning.rules.instructions.AddFeetRuleInstruction;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg>, ForwardRule<SpiderRegionArg>, BackwardRule<SpiderRegionArg> {
+public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg>, ForwardRule<SpiderRegionArg> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
@@ -72,13 +72,6 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
         return apply(args, goals, true);
     }
     // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Backward Rule Implementation">
-    @Override
-    public RuleApplicationResult applyBackwards(RuleArg args, Goals goals) throws RuleApplicationException {
-        return apply(args, goals, false);
-    }
-    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="InferenceRuleProvider Implementation">
     @Override
@@ -94,6 +87,11 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
     @Override
     public String getDescription(Locale locale) {
         return i18n(locale, "ADD_FEET_DESCRIPTION");
+    }
+
+    @Override
+    public String getCategory(Locale locale) {
+        return i18n(locale, "INF_RULE_CATEGORY_PURELY_DIAGRAMMATIC");
     }
 
     @Override

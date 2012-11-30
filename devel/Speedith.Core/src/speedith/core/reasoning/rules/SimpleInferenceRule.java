@@ -58,6 +58,11 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
     }
 
     @Override
+    public String getCategory() {
+        return getCategory(Locale.getDefault());
+    }
+
+    @Override
     public String toString() {
         return getPrettyName();
     }
@@ -77,16 +82,12 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
 
     @Override
     public boolean isForwardRule() {
-        return ForwardRule.class.isAssignableFrom(getInferenceRuleType());
-    }
-
-    @Override
-    public boolean isBackwardRule() {
-        return BackwardRule.class.isAssignableFrom(getInferenceRuleType());
+        return isForwardRule(this);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
+    @Override
     public InferenceRuleProvider<TArgs> getProvider() {
         return this;
     }
@@ -159,6 +160,26 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Helper Methods (public static)">
+    /**
+     * See {@link InferenceRuleProvider#isForwardRule() }
+     *
+     * @param infRuleType
+     * @return
+     */
+    public static boolean isForwardRule(Class<? extends InferenceRule<?>> infRuleType) {
+        return ForwardRule.class.isAssignableFrom(infRuleType);
+    }
+
+    /**
+     * See {@link InferenceRuleProvider#isForwardRule() }
+     *
+     * @param infRuleType
+     * @return
+     */
+    public static boolean isForwardRule(InferenceRuleProvider<?> infRuleProvider) {
+        return isForwardRule(infRuleProvider.getInferenceRuleType());
+    }
+
     /**
      * <p>This method calls the {@link SimpleInferenceRule#getPositionType(java.util.ArrayList, java.util.ArrayList, int, int)
      * }
@@ -335,7 +356,6 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
     public static int getPositionType(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
         return getPositionType(parents, childIndices, -1, parents == null ? 0 : parents.size());
     }
-    
     public static final int PositivePosition = 0x1;
     public static final int NegativePosition = 0x2;
     public static final int EquivalencePosition = PositivePosition & NegativePosition;

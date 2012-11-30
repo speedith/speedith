@@ -257,6 +257,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Iterable Implementation">
+    @Override
     public Iterator<SpiderDiagram> iterator() {
         return new CompoundSpiderDiagramIterator(this);
     }
@@ -273,6 +274,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
             iterationStack.add(new CompoundSDIterationCursor(csdToIterateThrough, -1));
         }
 
+        @Override
         public boolean hasNext() {
             // If there are no unfinished cursors on the stack then there is
             // nothing left to iterate over.
@@ -312,6 +314,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
             return cur;
         }
 
+        @Override
         public SpiderDiagram next() {
             CompoundSDIterationCursor nextCur = getLatestUnfinishedCursor();
             if (nextCur == null) {
@@ -330,6 +333,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
             return next;
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException(i18n("SD_ITER_REMOVE_NOT_SUPPORTED"));
         }

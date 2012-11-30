@@ -52,10 +52,12 @@ public class SelectFeetOfSpiderInstruction implements RuleApplicationInstruction
         return SingletonContainer.Instructions;
     }
 
+    @Override
     public List<? extends SelectionStep> getSelectionSteps() {
         return Collections.unmodifiableList(steps);
     }
 
+    @Override
     public SpiderRegionArg extractRuleArg(SelectionSequence selectionSequence, int subgoalIndex) {
         List<RuleArg> sel = selectionSequence.getAcceptedSelectionsForStepAt(0);
         SpiderZoneArg firstSelection = (SpiderZoneArg) sel.get(0);
@@ -73,10 +75,12 @@ public class SelectFeetOfSpiderInstruction implements RuleApplicationInstruction
         return new Region(zones);
     }
 
+    @Override
     public Map<String, Class<?>> getSupportedObjectNames() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public SpiderRegionArg extractRuleArg(Map<String, Object> objects) throws RuleArgExtractionException {
         throw new UnsupportedOperationException("Not supported yet.");
     }

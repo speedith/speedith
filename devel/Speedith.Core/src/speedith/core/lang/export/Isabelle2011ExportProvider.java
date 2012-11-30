@@ -474,6 +474,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         // <editor-fold defaultstate="collapsed" desc="Helper Classes">
         private class EqOperatorPrinter implements PrintCallback {
 
+            @Override
             public void print(Writer output) throws IOException {
                 printEquiv(output);
             }
@@ -481,6 +482,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         private class OrOperatorPrinter implements PrintCallback {
 
+            @Override
             public void print(Writer output) throws IOException {
                 printOr(output);
             }
@@ -488,6 +490,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         private class AndOperatorPrinter implements PrintCallback {
 
+            @Override
             public void print(Writer output) throws IOException {
                 printAnd(output);
             }
@@ -495,6 +498,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
 
         private class ImpOperatorPrinter implements PrintCallback {
 
+            @Override
             public void print(Writer output) throws IOException {
                 printImp(output);
             }

@@ -350,6 +350,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Iterable Implementation">
+    @Override
     public Iterator<SpiderDiagram> iterator() {
         return new AtomicSpiderDiagramIterator(this);
     }
@@ -366,10 +367,12 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
             this.sd = sd;
         }
 
+        @Override
         public boolean hasNext() {
             return atStart;
         }
 
+        @Override
         public SpiderDiagram next() {
             if (atStart) {
                 atStart = false;
@@ -379,6 +382,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
             }
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException(i18n("SD_ITER_REMOVE_NOT_SUPPORTED"));
         }

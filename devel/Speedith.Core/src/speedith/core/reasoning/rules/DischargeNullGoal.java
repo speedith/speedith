@@ -28,6 +28,7 @@
 package speedith.core.reasoning.rules;
 
 import java.util.Locale;
+import speedith.core.i18n.Translations;
 import static speedith.core.i18n.Translations.*;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
@@ -52,6 +53,7 @@ public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> impl
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
+    @Override
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
         // Check that the arguments to this rule are of the correct type.
         SubgoalIndexArg arg = getTypedRuleArgs(args);
@@ -76,26 +78,37 @@ public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> impl
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="InferenceRuleProvider Implementation">
+    @Override
     public DischargeNullGoal getInferenceRule() {
         return this;
     }
 
+    @Override
     public String getInferenceRuleName() {
         return InferenceRuleName;
     }
 
+    @Override
     public String getDescription(Locale locale) {
         return i18n(locale, "DISCHARGE_NULL_GOAL_DESCRIPTION");
     }
 
+    @Override
+    public String getCategory(Locale locale) {
+        return Translations.i18n(locale, "INF_RULE_CATEGORY_PURELY_SENTENTIAL");
+    }
+
+    @Override
     public String getPrettyName(Locale locale) {
         return i18n(locale, "DISCHARGE_NULL_GOAL_PRETTY_NAME");
     }
 
+    @Override
     public Class<SubgoalIndexArg> getArgumentType() {
         return SubgoalIndexArg.class;
     }
 
+    @Override
     public RuleApplicationInstruction<SubgoalIndexArg> getInstructions() {
         return null;
     }

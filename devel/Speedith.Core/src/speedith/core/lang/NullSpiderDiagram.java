@@ -92,6 +92,7 @@ public class NullSpiderDiagram extends SpiderDiagram {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Iterable Implementation">
+    @Override
     public Iterator<SpiderDiagram> iterator() {
         return new PrimarySpiderDiagram.AtomicSpiderDiagramIterator(this);
     }

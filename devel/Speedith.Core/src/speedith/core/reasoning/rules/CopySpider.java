@@ -69,6 +69,11 @@ public class CopySpider extends SimpleInferenceRule<MultipleRuleArgs> {
     public String getDescription(Locale locale) {
         return Translations.i18n(locale, "COPY_SPIDER_DESCRIPTION");
     }
+
+    @Override
+    public String getCategory(Locale locale) {
+        return Translations.i18n(locale, "INF_RULE_CATEGORY_HETEROGENEOUS");
+    }
     
     @Override
     public String getPrettyName(Locale locale) {

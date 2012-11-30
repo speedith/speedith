@@ -45,19 +45,23 @@ public class SelectSingleOperatorInstruction implements RuleApplicationInstructi
         step = Collections.unmodifiableList(Arrays.asList(new SelectOperatorStep(false, allowedOperators)));
     }
 
+    @Override
     public List<? extends SelectionStep> getSelectionSteps() {
         return step;
     }
 
+    @Override
     public SubDiagramIndexArg extractRuleArg(SelectionSequence selectionSequence, int subgoalIndex) {
         SubDiagramIndexArg sza = (SubDiagramIndexArg) selectionSequence.getAcceptedSelectionsForStepAt(0).get(0);
         return new SubDiagramIndexArg(subgoalIndex, sza.getSubDiagramIndex());
     }
 
+    @Override
     public Map<String, Class<?>> getSupportedObjectNames() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public SubDiagramIndexArg extractRuleArg(Map<String, Object> objects) throws RuleArgExtractionException {
         throw new UnsupportedOperationException("Not supported yet.");
     }

@@ -99,10 +99,12 @@ public class ProofTrace implements Proof {
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Proof Interface Implementation">
+    @Override
     public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<TRuleArg> rule) throws RuleApplicationException {
         return applyRule(rule, null);
     }
 
+    @Override
     public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException {
         if (isFinished()) {
             throw new RuleApplicationException(i18n("PROOF_TRACE_FINISHED"));
@@ -129,43 +131,53 @@ public class ProofTrace implements Proof {
         return appResult;
     }
 
+    @Override
     public Goals getGoalsAt(int index) {
         return goals.get(index);
     }
 
+    @Override
     public int getGoalsCount() {
         return goals.size();
     }
 
+    @Override
     public Goals getInitialGoals() {
         return goals.isEmpty() ? null : goals.get(0);
     }
 
+    @Override
     public Goals getLastGoals() {
         return goals.isEmpty() ? null : goals.get(goals.size() - 1);
     }
 
+    @Override
     public List<Goals> getGoals() {
         return Collections.unmodifiableList(goals);
     }
 
+    @Override
     public List<RuleApplication> getRuleApplications() {
         return Collections.unmodifiableList(ruleApplications);
     }
 
+    @Override
     public RuleApplication getRuleApplicationAt(int index) {
         return ruleApplications.get(index);
     }
 
+    @Override
     public int getRuleApplicationCount() {
         return ruleApplications.size();
     }
 
+    @Override
     public boolean isFinished() {
         final Goals lastGoals = getLastGoals();
         return lastGoals == null || lastGoals.isEmpty();
     }
 
+    @Override
     public boolean undoStep() {
         if (getRuleApplicationCount() > 0) {
             goals.remove(goals.size() - 1);

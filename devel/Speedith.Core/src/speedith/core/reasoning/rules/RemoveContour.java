@@ -69,6 +69,11 @@ public class RemoveContour extends SimpleInferenceRule<ContourArg> {
     public String getDescription(Locale locale) {
         return Translations.i18n(locale, "REMOVE_CONTOUR_DESCRIPTION");
     }
+
+    @Override
+    public String getCategory(Locale locale) {
+        return Translations.i18n(locale, "INF_RULE_CATEGORY_PURELY_DIAGRAMMATIC");
+    }
     
     @Override
     public String getPrettyName(Locale locale) {

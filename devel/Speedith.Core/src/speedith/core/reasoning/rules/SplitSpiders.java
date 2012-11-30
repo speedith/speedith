@@ -28,6 +28,7 @@ package speedith.core.reasoning.rules;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import speedith.core.i18n.Translations;
 import static speedith.core.i18n.Translations.*;
 import speedith.core.lang.*;
 import speedith.core.reasoning.*;
@@ -40,7 +41,7 @@ import speedith.core.reasoning.rules.instructions.SelectFeetOfSpiderInstruction;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg>, ForwardRule<SpiderRegionArg>, BackwardRule<SpiderRegionArg> {
+public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg>, ForwardRule<SpiderRegionArg> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
@@ -51,6 +52,7 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
+    @Override
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
         SpiderRegionArg arg = getTypedRuleArgs(args);
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
@@ -60,26 +62,37 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="InferenceRuleProvider Implementation">
+    @Override
     public SplitSpiders getInferenceRule() {
         return this;
     }
 
+    @Override
     public String getInferenceRuleName() {
         return InferenceRuleName;
     }
 
+    @Override
     public String getDescription(Locale locale) {
         return i18n(locale, "SPLIT_SPIDERS_DESCRIPTION");
     }
 
+    @Override
+    public String getCategory(Locale locale) {
+        return Translations.i18n(locale, "INF_RULE_CATEGORY_HETEROGENEOUS");
+    }
+
+    @Override
     public String getPrettyName(Locale locale) {
         return i18n(locale, "SPLIT_SPIDERS_PRETTY_NAME");
     }
 
+    @Override
     public Class<SpiderRegionArg> getArgumentType() {
         return SpiderRegionArg.class;
     }
 
+    @Override
     public RuleApplicationInstruction<SpiderRegionArg> getInstructions() {
         return SelectFeetOfSpiderInstruction.getInstance();
     }
@@ -88,13 +101,6 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
     // <editor-fold defaultstate="collapsed" desc="ForwardRule Implementation">
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
-        return apply(args, goals);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="BackwardRule Implementation">
-    @Override
-    public RuleApplicationResult applyBackwards(RuleArg args, Goals goals) throws RuleApplicationException {
         return apply(args, goals);
     }
     // </editor-fold>

@@ -156,6 +156,7 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
      * alphabetically smaller, equal, or larger (respectively) than the other
      * zone.
      */
+    @Override
     public int compareTo(Zone other) {
         if (other == null) {
             throw new NullPointerException();

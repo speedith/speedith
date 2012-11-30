@@ -391,6 +391,7 @@ public class OpenproofExportProvider extends SDExportProvider {
 
             static final EqOperatorPrinter Instance = new EqOperatorPrinter();
 
+            @Override
             public void print(Writer output) throws IOException {
                 printEquiv(output);
             }
@@ -400,6 +401,7 @@ public class OpenproofExportProvider extends SDExportProvider {
 
             static final OrOperatorPrinter Instance = new OrOperatorPrinter();
 
+            @Override
             public void print(Writer output) throws IOException {
                 printOr(output);
             }
@@ -409,6 +411,7 @@ public class OpenproofExportProvider extends SDExportProvider {
 
             static final AndOperatorPrinter Instance = new AndOperatorPrinter();
 
+            @Override
             public void print(Writer output) throws IOException {
                 printAnd(output);
             }
@@ -418,6 +421,7 @@ public class OpenproofExportProvider extends SDExportProvider {
 
             static final ImpOperatorPrinter Instance = new ImpOperatorPrinter();
 
+            @Override
             public void print(Writer output) throws IOException {
                 printImp(output);
             }

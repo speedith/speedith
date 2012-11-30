@@ -80,6 +80,7 @@ public class SetsTest {
         }
         public static MyStringComparator Instance = new MyStringComparator();
 
+        @Override
         public int compare(String o1, String o2) {
             return o1 == o2 ? 0 : (o1 == null ? o2.compareTo(o1) : -o1.compareTo(o2));
         }

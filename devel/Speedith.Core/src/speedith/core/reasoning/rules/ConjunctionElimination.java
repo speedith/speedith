@@ -69,6 +69,11 @@ public class ConjunctionElimination extends SimpleInferenceRule<SubDiagramIndexA
     public String getDescription(Locale locale) {
         return Translations.i18n(locale, "CONJUNCTION_ELIMINATION_DESCRIPTION");
     }
+
+    @Override
+    public String getCategory(Locale locale) {
+        return Translations.i18n(locale, "INF_RULE_CATEGORY_PURELY_SENTENTIAL");
+    }
     
     @Override
     public String getPrettyName(Locale locale) {
