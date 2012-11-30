@@ -32,7 +32,9 @@ import speedith.core.i18n.Translations;
 import static speedith.core.i18n.Translations.*;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.IdTransformer;
+import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.Operator;
+import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.SpiderDiagrams;
 import speedith.core.lang.TransformationException;
@@ -44,7 +46,7 @@ import speedith.core.reasoning.args.SubDiagramIndexArg;
 /**
  * The base class for all forward inference rules that take one spider diagram
  * and produce an entailed new one.
- * 
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public abstract class UnaryForwardRule
@@ -54,10 +56,10 @@ public abstract class UnaryForwardRule
     //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
     @Override
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
-        return apply(args, goals, true);
+        return apply(args, goals, ApplyStyle.GoalBased);
     }
 
-    protected RuleApplicationResult apply(final RuleArg args, Goals goals, boolean applyForward) throws RuleApplicationException {
+    protected RuleApplicationResult apply(final RuleArg args, Goals goals, ApplyStyle applyStyle) throws RuleApplicationException {
         SubDiagramIndexArg arg = getTypedRuleArgs(args);
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
         newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(getSententialTransformer(arg));
@@ -89,43 +91,77 @@ public abstract class UnaryForwardRule
     //<editor-fold defaultstate="collapsed" desc="Forward Rule">
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
-        return apply(args, goals, true);
+        return apply(args, goals, ApplyStyle.Forward);
     }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
-    private class UnaryForwardTransformer extends IdTransformer {
+    protected static abstract class UnaryForwardTransformer extends IdTransformer {
 
         private final SubDiagramIndexArg arg;
+        private final ApplyStyle applyStyle;
 
-        public UnaryForwardTransformer(SubDiagramIndexArg arg) {
+        public UnaryForwardTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
             this.arg = arg;
+            this.applyStyle = applyStyle;
         }
 
         @Override
         public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
             // Transform only the target diagram.
             if (diagramIndex == arg.getSubDiagramIndex()) {
-                // The diagram must appear as a positive term:
-                if (SimpleInferenceRule.isAtPositivePosition(parents, childIndices)) {
-                    // TODO: Apply the transformation
+                // The diagram must appear at a fitting position (depending on the application style):
+                if (SimpleInferenceRule.isAtFittingPosition(parents, childIndices, applyStyle, true)) {
+                    return apply(csd);
                 } else {
                     throw new TransformationException(i18n("RULE_NOT_POSITIVE_POSITION"));
                 }
-                // Is the compound diagram a conjunction or a disjunction?
-                // Is it an implication or an equivalence?
-                if (Operator.Conjunction.equals(csd.getOperator()) || Operator.Disjunction.equals(csd.getOperator())) {
-                    if (csd.getOperand(0).isSEquivalentTo(csd.getOperand(1))) {
-                        return csd.getOperand(1);
-                    }
-                } else if (Operator.Equivalence.equals(csd.getOperator()) || Operator.Implication.equals(csd.getOperator())) {
-                    if (csd.getOperand(0).isSEquivalentTo(csd.getOperand(1))) {
-                        return SpiderDiagrams.createNullSD();
-                    }
-                }
-                throw new TransformationException(i18n("RULE_IDEMPOTENCY_NOT_APPLICABLE"));
             }
             return null;
+        }
+
+        @Override
+        public SpiderDiagram transform(NullSpiderDiagram nsd, int diagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            // Transform only the target diagram.
+            if (diagramIndex == arg.getSubDiagramIndex()) {
+                // The diagram must appear as a positive term:
+                if (SimpleInferenceRule.isAtFittingPosition(parents, childIndices, applyStyle, true)) {
+                    return apply(nsd);
+                } else {
+                    throw new TransformationException(i18n("RULE_NOT_POSITIVE_POSITION"));
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public SpiderDiagram transform(PrimarySpiderDiagram psd, int diagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            // Transform only the target diagram.
+            if (diagramIndex == arg.getSubDiagramIndex()) {
+                // The diagram must appear as a positive term:
+                if (SimpleInferenceRule.isAtFittingPosition(parents, childIndices, applyStyle, true)) {
+                    return apply(psd);
+                } else {
+                    throw new TransformationException(i18n("RULE_NOT_POSITIVE_POSITION"));
+                }
+            }
+            return null;
+        }
+
+        public SubDiagramIndexArg getArg() {
+            return arg;
+        }
+
+        protected SpiderDiagram apply(CompoundSpiderDiagram sd) {
+            return sd;
+        }
+
+        protected SpiderDiagram apply(PrimarySpiderDiagram sd) {
+            return sd;
+        }
+
+        protected SpiderDiagram apply(NullSpiderDiagram sd) {
+            return sd;
         }
     }
     //</editor-fold>

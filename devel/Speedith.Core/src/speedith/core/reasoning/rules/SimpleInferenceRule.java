@@ -299,6 +299,41 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
     }
 
     /**
+     * Indicates whether the current subdiagram appears at the right position to
+     * be a target of an inference rule application.
+     *
+     * @return a flag that indicates whether the current subdiagram appears at
+     * the right position to be a target of an inference rule application.
+     */
+    public static boolean isAtFittingPosition(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ApplyStyle applyStyle, boolean isForwardRule) {
+        return isAtFittingPosition(parents, childIndices, -1, applyStyle, isForwardRule);
+    }
+
+    /**
+     * Indicates whether the current subdiagram appears at the right position to
+     * be a target of an inference rule application.
+     *
+     * @return a flag that indicates whether the current subdiagram appears at
+     * the right position to be a target of an inference rule application.
+     */
+    public static boolean isAtFittingPosition(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int sourceParent, ApplyStyle applyStyle, boolean isForwardRule) {
+        int positionType = getPositionType(parents, childIndices, sourceParent);
+        if (isForwardRule) {
+            if (applyStyle == ApplyStyle.Forward) {
+                return positionType == PositivePosition;
+            } else {
+                return positionType == NegativePosition;
+            }
+        } else {
+            if (applyStyle == ApplyStyle.Forward) {
+                return positionType == NegativePosition;
+            } else {
+                return positionType == PositivePosition;
+            }
+        }
+    }
+
+    /**
      * <p>This method calls the {@link SimpleInferenceRule#getPositionType(java.util.ArrayList, java.util.ArrayList, int, int)
      * }
      * method with the following arguments:
