@@ -25,6 +25,9 @@ lemma test2: "\<lbrakk> \<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<int
   apply(auto)
   oops
 
+
+
+
 (* Spider Diagram translation test. *)
 lemma test4: "(\<exists>s1 s2 s3. s1 \<noteq> s2 \<and> s1 \<noteq> s3 \<and> s2 \<noteq> s3
               \<and> s1 \<in> A \<and> s1 \<in> B \<union> -C \<and> s1 \<notin> D
@@ -36,11 +39,16 @@ lemma test4: "(\<exists>s1 s2 s3. s1 \<noteq> s2 \<and> s1 \<noteq> s3 \<and> s2
 lemma test5: "(\<exists>s1 s2 s3. distinct[s1, s2, s3] \<and> s1 \<in> A \<and> s1 \<in> B \<union> -C \<and> s1 \<notin> D \<and> s3 \<in> (B \<inter> C) - (A \<union> D) \<and> s2 \<in> D \<and> s2 \<in> A) \<longrightarrow> (\<exists>t1 t2. distinct[t1, t2] \<and> t1 \<in> A \<and> t2 \<in> B)"
   by(auto)
 
+
+
+
 (* Spider Diagram translation test. *)
 lemma test3: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
               \<longrightarrow> (\<exists>t1 t2. distinct[t1, t2] \<and> t1 \<in> A \<and> t2 \<in> B) \<and> A \<inter> B \<noteq> {}"
   apply(rule impI)
   apply(rule conjI)
+
+
   oops
 
 
@@ -84,11 +92,10 @@ text {* These are all the definitions that are needed for supporting placeholder
 typedecl diabelli_var
 consts Dbli :: "diabelli_var list \<Rightarrow> string \<Rightarrow> bool"
   Diabelli :: "string \<Rightarrow> bool"
-  Dvars :: "'a list \<Rightarrow> diabelli_var"
   About :: "'a list \<Rightarrow> diabelli_var"
-  AndAbout :: "'a list \<Rightarrow> diabelli_var"
-defs About_def: "About \<equiv> Dvars"
-  AndAbout_def: "AndAbout \<equiv> Dvars"
+
+lemma "Dbli [About[Ann, Bob]] ''NatLang: Ann is a child of Bob.''"
+  oops
 
 subsection {* Example 1 *}
 
@@ -109,7 +116,7 @@ quantified, which means that the predicate symbol @{text "Child"} is merely a na
 talks about all relations (and not a particular relation, which we might intuitively
 expect). *}
 axiomatization where
-  Inference1: "Dbli[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Child Ann Bob"
+  Inference1: "Dbli [About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Child Ann Bob"
 
 text {* Given the above inference step, let us try to prove a lemma that exposes the problem.
 The lemma merely changes the name of the predicate @{text "Child"} into @{text "Parent"}. The proof
@@ -160,14 +167,14 @@ subsection {* Example 3: Referenced variables without a theory *}
 
 text {* Similar example without a surrounding theory, only referenced variables: *}
 axiomatization where
-  Inference4: "Dbli [About[Humans, Mortal]] ''NatLang: All humans are mortal'' \<Longrightarrow> \<forall>h \<in> Humans. Mortal h" and
+  Inference4: "Dbli [About[Humans, Mortal]] ''NatLang: All humans are mortal'' \<Longrightarrow> \<forall>h \<in> Humans. h \<in> Mortal" and
   Inference5: "Dbli [About[Greeks, Humans]] ''NatLang: All Greeks are human.'' \<Longrightarrow> \<forall>g \<in> Greeks. g \<in> Humans"
 
 text {* As expected, we can prove lemmata of the following form:  *}
 lemma "Dbli [About[Humans, Mortal]] ''NatLang: All humans are mortal''
        \<and> Dbli [About[Greeks, Humans]] ''NatLang: All Greeks are human.''
        \<and> g \<in> Greeks
-       \<longrightarrow> Mortal g"
+       \<longrightarrow> g \<in> Mortal"
   apply(rule impI)
   apply(erule conjE)+
   apply(drule Inference4 Inference5)+
@@ -178,7 +185,7 @@ again free variables. Therefore, thay can be exchanged with any other predicate 
 lemma "Dbli [About[Mortal, Greeks]] ''NatLang: All humans are mortal''
        \<and> Dbli [About[Humans, Mortal]] ''NatLang: All Greeks are human.''
        \<and> h \<in> Humans
-       \<longrightarrow> Greeks h"
+       \<longrightarrow> h \<in> Greeks"
   apply(rule impI)
   apply(erule conjE)+
   apply(drule Inference4 Inference5)+
