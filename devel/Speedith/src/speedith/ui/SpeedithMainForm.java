@@ -197,7 +197,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         jMenuItem1.setText(i18n("MAIN_FORM_USE_EXAMPLE1")); // NOI18N
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                onExample1(evt);
             }
         });
         drawMenu.add(jMenuItem1);
@@ -207,7 +207,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         jMenuItem2.setText(i18n("MAIN_FORM_USE_EXAMPLE2")); // NOI18N
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                onExample2(evt);
             }
         });
         drawMenu.add(jMenuItem2);
@@ -217,7 +217,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         jMenuItem3.setText(i18n("MAIN_FORM_USE_EXAMPLE3")); // NOI18N
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
+                onExample3(evt);
             }
         });
         drawMenu.add(jMenuItem3);
@@ -248,17 +248,17 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void onExample1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onExample1
         proofPanel1.newProof(Goals.createGoalsFrom(getExampleA()));
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_onExample1
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+    private void onExample2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onExample2
         proofPanel1.newProof(Goals.createGoalsFrom(getExampleB()));
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+    }//GEN-LAST:event_onExample2
 
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+    private void onExample3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onExample3
         proofPanel1.newProof(Goals.createGoalsFrom(getExampleC()));
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
+    }//GEN-LAST:event_onExample3
 
     private void onRuleItemClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onRuleItemClicked
         if (evt.getClickCount() == 2) {

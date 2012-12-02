@@ -26,9 +26,15 @@
  */
 package speedith.ui.input;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.prefs.Preferences;
+import javax.swing.DefaultListModel;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.i18n.Translations;
+import static speedith.i18n.Translations.*;
 
 /**
  *
@@ -39,6 +45,7 @@ public class TextSDInputDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private boolean cancelled = true;
     private SpiderDiagram spiderDiagram = null;
+    private DefaultListModel<String> storedSDs;
     // </editor-fold>
 
     /**
@@ -64,6 +71,10 @@ public class TextSDInputDialog extends javax.swing.JDialog {
         btnOk = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
         lblErrorMessage = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        lstStoredSDs = new javax.swing.JList();
+        btnStore = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("speedith/i18n/strings"); // NOI18N
@@ -73,6 +84,7 @@ public class TextSDInputDialog extends javax.swing.JDialog {
 
         taInputText.setColumns(20);
         taInputText.setRows(5);
+        taInputText.setTabSize(4);
         spInputText.setViewportView(taInputText);
 
         btnOk.setMnemonic(java.util.ResourceBundle.getBundle("speedith/i18n/strings").getString("TEXT_INPUT_DIALOG_OK_MNEMONIC").charAt(0));
@@ -94,6 +106,31 @@ public class TextSDInputDialog extends javax.swing.JDialog {
         lblErrorMessage.setFont(new java.awt.Font("Dialog", 2, 12)); // NOI18N
         lblErrorMessage.setForeground(new java.awt.Color(204, 0, 0));
 
+        lstStoredSDs.setModel(this.getStoredSDList());
+        lstStoredSDs.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        lstStoredSDs.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                onItemClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(lstStoredSDs);
+
+        btnStore.setMnemonic(i18n("TEXT_INPUT_DIALOG_STORE_MNEMONIC").charAt(0));
+        btnStore.setText(i18n("TEXT_INPUT_DIALOG_STORE")); // NOI18N
+        btnStore.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onStoreSD(evt);
+            }
+        });
+
+        btnDelete.setMnemonic(i18n("TEXT_INPUT_DIALOG_DELETE_MNEMONIC").charAt(0));
+        btnDelete.setText(i18n("TEXT_INPUT_DIALOG_DELETE")); // NOI18N
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onDeleteSD(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -101,16 +138,22 @@ public class TextSDInputDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(spInputText, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblErrorMessage, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)
+                        .addGap(66, 66, 66)
+                        .addComponent(btnCancel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnOk))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblInputText)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(lblErrorMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(spInputText)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCancel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnOk)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(btnStore, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -119,7 +162,14 @@ public class TextSDInputDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(lblInputText)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spInputText, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(spInputText, javax.swing.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnStore)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDelete)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOk)
@@ -145,6 +195,28 @@ public class TextSDInputDialog extends javax.swing.JDialog {
             lblErrorMessage.setText(Translations.i18n("TEXT_INPUT_DIALOG_INVALID_SD_TEXT", ex.getLocalizedMessage()));
         }
     }//GEN-LAST:event_btnOkActionPerformed
+
+    private void onStoreSD(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onStoreSD
+        String sd = taInputText.getText();
+        storedSDs.addElement(sd);
+        storeCurrentSDs();
+    }//GEN-LAST:event_onStoreSD
+
+    private void onDeleteSD(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onDeleteSD
+        if (!lstStoredSDs.getSelectionModel().isSelectionEmpty()) {
+            storedSDs.removeElementAt(lstStoredSDs.getSelectedIndex());
+            storeCurrentSDs();
+        }
+    }//GEN-LAST:event_onDeleteSD
+
+    private void onItemClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onItemClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            if (!lstStoredSDs.getSelectionModel().isSelectionEmpty()) {
+                taInputText.setText(storedSDs.elementAt(lstStoredSDs.getSelectedIndex()));
+            }
+        }
+    }//GEN-LAST:event_onItemClicked
 
     /**
      * @param args the command line arguments
@@ -189,9 +261,13 @@ public class TextSDInputDialog extends javax.swing.JDialog {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnOk;
+    private javax.swing.JButton btnStore;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblErrorMessage;
     private javax.swing.JLabel lblInputText;
+    private javax.swing.JList lstStoredSDs;
     private javax.swing.JScrollPane spInputText;
     private javax.swing.JTextArea taInputText;
     // End of variables declaration//GEN-END:variables
@@ -246,5 +322,55 @@ public class TextSDInputDialog extends javax.swing.JDialog {
      */
     public SpiderDiagram getSpiderDiagram() {
         return spiderDiagram;
+    }
+    private static final String StoredSDsPrefKey = "stored-input-sds";
+
+    public static void storeSpiderDiagrams(List<String> sds) {
+        Preferences prefs = Preferences.userNodeForPackage(TextSDInputDialog.class);
+        for (int i = 0; i < sds.size(); i++) {
+            String sd = sds.get(i);
+            prefs.put(getStoredSDPrefKey(i), sd == null ? "" : sd);
+        }
+        prefs.remove(getStoredSDPrefKey(sds.size()));
+    }
+
+    public static List<String> loadSpiderDiagrams() {
+        Preferences prefs = Preferences.userNodeForPackage(TextSDInputDialog.class);
+
+        ArrayList<String> sds = new ArrayList<>();
+
+        for (int i = 0; true; i++) {
+            String sd = prefs.get(getStoredSDPrefKey(i), null);
+            if (sd == null) {
+                break;
+            } else {
+                sds.add(sd);
+            }
+        }
+
+        return sds;
+    }
+
+    private static String getStoredSDPrefKey(int idx) {
+        return StoredSDsPrefKey + "-" + Integer.toString(idx);
+    }
+
+    private DefaultListModel<String> getStoredSDList() {
+        storedSDs = new DefaultListModel<>();
+        List<String> sds = loadSpiderDiagrams();
+        for (String sd : sds) {
+            storedSDs.addElement(sd);
+        }
+        return storedSDs;
+    }
+
+    private void storeCurrentSDs() {
+        if (storedSDs != null) {
+            ArrayList<String> sds = new ArrayList<>();
+            for (int i = 0; i < storedSDs.size(); i++) {
+                sds.add(storedSDs.elementAt(i));
+            }
+            storeSpiderDiagrams(sds);
+        }
     }
 }
