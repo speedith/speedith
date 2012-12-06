@@ -28,6 +28,7 @@ package speedith.core.lang.reader;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
@@ -72,9 +73,7 @@ public class SpiderDiagramsReaderTest {
     public static final String SD_EXAMPLE_ERR_8 = "BinarySD aq {operator = \"\", arg1 = NullSD {}, arg2 = NullSD {}";
     public static final String SD_EXAMPLE_ERR_9 = "BinarySD {operator = \"op |\", arg1 = NullSD {}, arg2 = NullSD {}, arg3 = NullSD {} }";
     public static final String SD_EXAMPLE_ERR_10 = "BinarySD {operator = \"op |\", arg1 = NullSD {}, arg2 = NullSD {}, dsaj = NullSD {} }";
-    
     public static final String SD_IMPLICATION_1 = "BinarySD {operator = \"op |\", arg1 = NullSD {}, arg2 = NullSD {}, dsaj = NullSD {} }";
-    
     public static final String REGION_EXAMPLE_1 = "[([\"A\"], [\"B\"]), ([\"C\"], [\"D\"])]";
     public static final String REGION_EXAMPLE_2 = "[]";
     public static final String REGION_EXAMPLE_3 = "[([], [\"B\"]), ([\"C\"], [])]";
@@ -101,6 +100,7 @@ public class SpiderDiagramsReaderTest {
 
     /**
      * Test of readSpiderDiagram method, of class SpiderDiagramsReader.
+     *
      * @throws Exception
      */
     @Test
@@ -193,12 +193,13 @@ public class SpiderDiagramsReaderTest {
 
     /**
      * Test of readSpiderDiagram method, of class SpiderDiagramsReader.
+     *
      * @throws Exception
      */
     @Test
     public void testReadSpiderDiagram_String_Err() throws Exception {
         checkSDExample_Err(SD_EXAMPLE_ERR_1, 1, 30);
-        checkSDExample_Err(SD_EXAMPLE_ERR_2, 0, -1);
+        checkSDExample_Err(SD_EXAMPLE_ERR_2, 1, 0);
         checkSDExample_Err(SD_EXAMPLE_ERR_3, 1, 0);
         checkSDExample_Err(SD_EXAMPLE_ERR_4, 1, 7);
         checkSDExample_Err(SD_EXAMPLE_ERR_5, 1, 26);
@@ -222,6 +223,7 @@ public class SpiderDiagramsReaderTest {
 
     /**
      * Test of readSpiderDiagram method, of class SpiderDiagramsReader.
+     *
      * @throws Exception
      */
     @Test
@@ -232,7 +234,7 @@ public class SpiderDiagramsReaderTest {
         assertEquals(str1, sd2.toString());
         assertEquals(sd, sd2);
         assertTrue(sd == sd2);
-        
+
         assertTrue(sd.isSEquivalentTo(sd2));
         assertTrue(sd2.isSEquivalentTo(sd));
         assertTrue(sd.isSEquivalentTo(sd));
@@ -240,6 +242,7 @@ public class SpiderDiagramsReaderTest {
 
     /**
      * Test of readSpiderDiagram method, of class SpiderDiagramsReader.
+     *
      * @throws Exception
      */
     @Test
@@ -247,13 +250,14 @@ public class SpiderDiagramsReaderTest {
         try {
             SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(new StringReader(SD_EXAMPLE_ERR_2));
         } catch (ReadingException readingException) {
-            assertEquals(readingException.getLineNumber(), 0);
-            assertEquals(readingException.getCharIndex(), -1);
+            assertEquals(readingException.getLineNumber(), 1);
+            assertEquals(readingException.getCharIndex(), 0);
         }
     }
 
     /**
      * Test of readSpiderDiagram method, of class SpiderDiagramsReader.
+     *
      * @throws Exception
      */
     @Test
@@ -264,7 +268,7 @@ public class SpiderDiagramsReaderTest {
         assertEquals(str1, sd2.toString());
         assertEquals(sd, sd2);
         assertTrue(sd == sd2);
-        
+
         assertTrue(sd.isSEquivalentTo(sd2));
         assertTrue(sd2.isSEquivalentTo(sd));
         assertTrue(sd.isSEquivalentTo(sd));
@@ -272,6 +276,7 @@ public class SpiderDiagramsReaderTest {
 
     /**
      * Test of readSpiderDiagram method, of class SpiderDiagramsReader.
+     *
      * @throws Exception
      */
     @Test
@@ -286,6 +291,7 @@ public class SpiderDiagramsReaderTest {
 
     /**
      * Test of readSpiderDiagram method, of class SpiderDiagramsReader.
+     *
      * @throws Exception
      */
     @Test
@@ -296,7 +302,7 @@ public class SpiderDiagramsReaderTest {
         assertEquals(str1, sd2.toString());
         assertEquals(sd, sd2);
         assertTrue(sd == sd2);
-        
+
         assertTrue(sd.isSEquivalentTo(sd2));
         assertTrue(sd2.isSEquivalentTo(sd));
         assertTrue(sd.isSEquivalentTo(sd));
@@ -304,6 +310,7 @@ public class SpiderDiagramsReaderTest {
 
     /**
      * Test of readSpiderDiagram method, of class SpiderDiagramsReader.
+     *
      * @throws Exception
      */
     @Test
@@ -370,7 +377,7 @@ public class SpiderDiagramsReaderTest {
         assertEquals(expected, r);
         expected = new Region(Arrays.asList(new Zone[]{}));
         assertEquals(expected, r);
-        expected = new Region((Collection<Zone>)null);
+        expected = new Region((Collection<Zone>) null);
         assertEquals(expected, r);
         expected = new Region(Zone.fromInContours("A"), Zone.fromInContours("C").withOutContours("D"));
         assertFalse(expected.equals(r));
@@ -388,7 +395,7 @@ public class SpiderDiagramsReaderTest {
     @Test
     public void testReadRegion_4() throws ReadingException {
         Region r = checkRegionExample(REGION_EXAMPLE_4);
-        Region expected = new Region(Zone.fromOutContours("A","B"), Zone.fromInContours("D", "C"));
+        Region expected = new Region(Zone.fromOutContours("A", "B"), Zone.fromInContours("D", "C"));
         assertEquals(expected, r);
         expected = new Region(Zone.fromInContours("A"), Zone.fromInContours("C").withOutContours("D"));
         assertFalse(expected.equals(r));
@@ -397,5 +404,32 @@ public class SpiderDiagramsReaderTest {
     private Region checkRegionExample(String example) throws ReadingException {
         Region region = SpiderDiagramsReader.readRegion(example);
         return region;
+    }
+
+    @Test
+    public void testFileReading() throws ReadingException, IOException {
+        for (int i = 0; i < testFilesCount(); i++) {
+            readFromTestFile(i);
+        }
+    }
+    private static String[] FileCorrectSDT = {
+        "ParserExample1.sd",
+        "ParserExample2.sd",
+        "ParserExample3.sd",    // Proof: idempotency, imp tautology
+        "ParserExample4.sd",
+        "ParserExample5.sd"     // TODO: This one produces a bug in iCircles.
+    };
+
+    public static int testFilesCount() {
+        return FileCorrectSDT.length;
+    }
+
+    public static SpiderDiagram readFromTestFile(int fileIdx) throws ReadingException, IOException {
+        return readFromTestFile(FileCorrectSDT[fileIdx]);
+    }
+
+    public static SpiderDiagram readFromTestFile(String fileTitle) throws ReadingException, IOException {
+        String fullPath = "./test/speedith/core/lang/reader/" + fileTitle;
+        return SpiderDiagramsReader.readSpiderDiagram(new File(fullPath));
     }
 }

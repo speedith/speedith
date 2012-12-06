@@ -99,9 +99,9 @@ public class SpiderDiagramClickEvent extends EventObject {
      */
     public static StringBuilder toString(StringBuilder sb, DiagramClickEvent event) {
         if (event instanceof SpiderClickedEvent) {
-            ICirclesToSpeedith.convert(((SpiderClickedEvent) event).getZoneOfFoot()).toString(sb.append("Spider: ").append(((SpiderClickedEvent) event).getFoot().getSpider().as.get_name()).append(". Zone: "));
+            ICirclesToSpeedith.convert(((SpiderClickedEvent) event).getZoneOfFoot()).toString(sb.append("Spider: ").append(((SpiderClickedEvent) event).getFoot().getSpider().as.getName()).append(". Zone: "));
         } else if (event instanceof ContourClickedEvent) {
-            sb.append("Contour: ").append(((ContourClickedEvent) event).getContour().ac.getLabel().getLabel());
+            sb.append("Contour: ").append(((ContourClickedEvent) event).getContour().ac.getLabel());
         } else if (event instanceof ZoneClickedEvent) {
             ICirclesToSpeedith.convert(((ZoneClickedEvent) event).getZone()).toString(sb.append("Zone: "));
         } else if (event != null) {

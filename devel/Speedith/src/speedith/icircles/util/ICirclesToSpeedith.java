@@ -46,14 +46,14 @@ public final class ICirclesToSpeedith {
         ArrayList<String> inContours = new ArrayList<String>();
         if (zone.getContainingContours() != null) {
             for (CircleContour inContour : zone.getContainingContours()) {
-                inContours.add(inContour.ac.getLabel().getLabel());
+                inContours.add(inContour.ac.getLabel());
             }
         }
         // Gather all out-contours
         ArrayList<String> outContours = new ArrayList<String>();
         if (zone.getExcludingContours() != null) {
             for (CircleContour outContour : zone.getExcludingContours()) {
-                outContours.add(outContour.ac.getLabel().getLabel());
+                outContours.add(outContour.ac.getLabel());
             }
         }
         // Return the corresponding zone.

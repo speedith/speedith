@@ -80,6 +80,6 @@ public class ContourClickedEvent extends DiagramClickEvent {
      * @return the name of the contour.
      */
     public String getContourLabel() {
-        return contour.ac.getLabel().getLabel();
+        return contour.ac.getLabel();
     }
 }

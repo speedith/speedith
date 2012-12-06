@@ -31,7 +31,7 @@
             <reference>
                 <foreign-project>iCircles</foreign-project>
                 <artifact-type>jar</artifact-type>
-                <script>${project.iCircles}/nbproject/nbjdk.xml</script>
+                <script>${project.iCircles}/build.xml</script>
                 <target>dist</target>
                 <clean-target>clean</clean-target>
                 <id>dist</id>

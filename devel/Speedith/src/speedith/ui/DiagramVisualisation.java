@@ -100,7 +100,7 @@ public final class DiagramVisualisation {
 
         // Get all contours in any way mentioned in the primary spider diagram:
         for (String contour : contourStrings) {
-            final AbstractCurve abstractCurve = new AbstractCurve(CurveLabel.get(contour));
+            final AbstractCurve abstractCurve = new AbstractCurve(contour);
             contourMap.put(contour, abstractCurve);
             contours.add(abstractCurve);
         }
@@ -252,7 +252,8 @@ public final class DiagramVisualisation {
      * @throws CannotDrawException
      */
     static SpeedithCirclesPanel getSpiderDiagramPanel(PrimarySpiderDiagram diagram, int size) throws CannotDrawException {
-        ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(getAbstractDescription(diagram), size);
+        final AbstractDescription ad = getAbstractDescription(diagram);
+        ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(ad, size);
         return new SpeedithCirclesPanel(cd);
     }
 
