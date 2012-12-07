@@ -19,6 +19,7 @@ imports
 uses
   ("diabelli.ML")
   "$ISABELLE_HOME/src/Pure/Concurrent/bash_sequential.ML"
+  "GoalsExport.ML"
 begin
 
 

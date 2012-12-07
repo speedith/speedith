@@ -1045,7 +1045,7 @@ fun print_subgoals _ =
                      SOME (Context.Proof pctx) => pctx
                    | _ => raise (SD_ERROR "Could not get the proof context. Are you inside a proof?"))
       val _ = tracing "is this tracing? or is this love?"
-      val _ = tracing (PolyML.makestring (ProofContext.print_lthms ctxt))
+      val _ = tracing (PolyML.makestring (Proof_Context.print_lthms ctxt))
   in
       "tralala"
   end;
@@ -1073,7 +1073,7 @@ fun sd_tac args ctxt i st = SUBGOAL (fn (subgoal, _) =>
        (*val inter1Thm = (Goal.prove ctxt [] [] inter1 (K (auto_tac (clasimpset_of ctxt))))*)
        (*val _ = tracing ("Intermediate theorem: " ^ (PolyML.makestring inter1Thm))*)
 
-       val thy = ProofContext.theory_of ctxt;
+       val thy = Proof_Context.theory_of ctxt;
        val speedithTerm = speedith_batch_apply subgoal (SOME thy) args
        val intert = Logic.mk_implies (mk_trueprop_if speedithTerm, subgoal)
        val _ = tracing ("Have "^Syntax.string_of_term @{context} intert)
