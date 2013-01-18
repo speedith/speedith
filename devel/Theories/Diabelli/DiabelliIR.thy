@@ -416,6 +416,14 @@ method_setup sd_tac = {*
           end)
 *} "Applies spider-diagrammatic inference rules on the first subgoal."
 
+method_setup diabelli = {*
+(fn xs => let
+          in
+              ((Scan.lift (Parse.string)) >> (fn args => (fn ctxt => (Method.SIMPLE_METHOD' (GoalsExport.replace_subgoal_tac args ctxt))))) xs
+          end)
+*} "This tactic takes the formula 'A' (the only argument), tries to prove 'A ==> B', where 'B' is the first goal, and replaces 'A' with 'B'."
+
+
 
 (*lemma testB: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
   apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
@@ -465,7 +473,8 @@ lemma our: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and
   apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
   apply (sd_tac add_feet sdi: 2 sp: "s2" r: "[([\"A\", \"B\"],[])]")
   apply (sd_tac add_feet sdi: 2 sp: "s1" r: "[([\"B\"],[\"A\"])]")
-  apply (sd_tac add_feet sdi: 3 sp: "s2" r: "[([\"A\", \"B\"],[])]")
+  apply (diabelli "(EX s1 s2. distinct[s1, s2] & s1 : (A Int B) Un (B - A) & s2 : (A - B) Un (A Int B)) | (EX s1 s2. distinct[s1, s2] & s1 : (A - B) Un (A Int B) & s2 : B - A) --> (EX t1 t2. distinct[t1, t2] & t1 : (A - B) Un (A Int B) & t2 : (A Int B) Un (B - A))")
+apply (sd_tac add_feet sdi: 3 sp: "s2" r: "[([\"A\", \"B\"],[])]")
   apply (sd_tac add_feet sdi: 3 sp: "s1" r: "[([\"A\"],[\"B\"])]")
   apply (sd_tac idempotency sdi: 1)
   apply (sd_tac implication_tautology sdi: 0)

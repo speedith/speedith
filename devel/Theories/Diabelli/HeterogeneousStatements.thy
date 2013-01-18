@@ -1,15 +1,6 @@
 theory HeterogeneousStatements
-imports Main
-uses
-  "GoalsExport.ML"
+imports IsaDia
 begin
-
-method_setup diabelli = {*
-(fn xs => let
-          in
-              ((Scan.lift (Parse.string)) >> (fn args => (fn ctxt => (Method.SIMPLE_METHOD' (GoalsExport.replace_subgoal_tac args ctxt))))) xs
-          end)
-*} "This tactic takes the formula 'A' (the only argument), tries to prove 'A ==> B', where 'B' is the first goal, and replaces 'A' with 'B'."
 
 section {* Diabelli test examples *}
 
@@ -20,13 +11,16 @@ lemma test1: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<a
   oops
 
 (* Spider Diagram translation test. *)
-lemma test2: "\<lbrakk> \<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A) \<rbrakk>
-            \<Longrightarrow> (\<exists>t1 t2. distinct[t1, t2] \<and> t1 \<in> A \<and> t2 \<in> B)"
+lemma test2: "\<lbrakk> \<exists>t1 t2. distinct[t1, t2] \<and> t1 \<in> A \<inter> B \<and> t2 \<in> (A - B) \<union> (B - A) \<rbrakk>
+            \<Longrightarrow> (\<exists>u1 u2. distinct[u1, u2] \<and> u1 \<in> A \<and> u2 \<in> B)"
   apply(auto)
-  oops
+  apply (diabelli "(EX t1 t2. distinct[t1, t2] & t1 : (A Int B) Un (B - A) & t2 : A - B) --> (EX u1 u2. distinct[u1, u2] & u1 : (A - B) Un (A Int B) & u2 : (A Int B) Un (B - A))")
+  apply (diabelli "(EX t1 t2. distinct[t1, t2] & t1 : (A Int B) Un (B - A) & t2 : (A - B) Un (A Int B)) --> (EX u1 u2. distinct[u1, u2] & u1 : (A - B) Un (A Int B) & u2 : (A Int B) Un (B - A))")
+  apply (diabelli "True")
+  by (auto)
 
-
-
+(* Spider Diagram translation test. *)
+lemma test2: "\<exists>s1 s2 s3. distinct[s1, s2, s3] \<and> s1 \<in> A \<and> s2 \<in> B \<and> s3 \<in> (C \<union> D)"
 
 (* Spider Diagram translation test. *)
 lemma test4: "(\<exists>s1 s2 s3. s1 \<noteq> s2 \<and> s1 \<noteq> s3 \<and> s2 \<noteq> s3
@@ -89,13 +83,36 @@ section {* Placeholders Theory *}
 
 text {* These are all the definitions that are needed for supporting placeholders: *}
 
-typedecl diabelli_var
-consts Dbli :: "diabelli_var list \<Rightarrow> string \<Rightarrow> bool"
-  Diabelli :: "string \<Rightarrow> bool"
+(*typedecl diabelli_var
+consts
   About :: "'a list \<Rightarrow> diabelli_var"
 
-lemma "Dbli [About[Ann, Bob]] ''NatLang: Ann is a child of Bob.''"
-  oops
+consts
+  DiabelliVars :: "diabelli_var list \<Rightarrow> string \<Rightarrow> bool"
+  Diabelli :: "string \<Rightarrow> bool"*)
+
+typedecl person
+consts
+  Ann :: person
+  Bob :: person
+  ParentOf :: "person \<Rightarrow> person \<Rightarrow> bool"
+
+axiomatization where
+  Relation1: "ParentOf Ann Bob"
+
+
+lemma "Diabelli ''NatLang: Ann is a child of Bob.''"
+  apply (diabelliOracle "Diabelli ''NatLang: Bob is a parent of Ann.''")
+  apply (diabelliOracle "ParentOf Ann Bob")
+  by (simp add: Relation1)
+
+
+lemma "DiabelliVars [About[Ann, Bob]] ''NatLang: Ann is a child of Bob.''" og
+  apply (diabelliOracle "Diabelli ''NatLang: Test.''")
+oops
+
+
+lemma "Diabelli ''TPTP:fof(empty_is_sorted, axiom, sorted(nil)).''"
 
 subsection {* Example 1 *}
 
@@ -116,13 +133,13 @@ quantified, which means that the predicate symbol @{text "Child"} is merely a na
 talks about all relations (and not a particular relation, which we might intuitively
 expect). *}
 axiomatization where
-  Inference1: "Dbli [About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Child Ann Bob"
+  Inference1: "DiabelliVars [About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Child Ann Bob"
 
 text {* Given the above inference step, let us try to prove a lemma that exposes the problem.
 The lemma merely changes the name of the predicate @{text "Child"} into @{text "Parent"}. The proof
 succeeds, as the substitution of @{text "Child"} into @{text "Parent"} yields a unification with the
 @{text "Inference1"} axiom and thus produces a ``valid'' proof. *}
-lemma "Dbli[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Ann Bob"
+lemma "DiabelliVars[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Ann Bob"
   by(simp add: Inference1)
 
 (** THE SOLUTION **)
@@ -131,10 +148,10 @@ a free variables: *}
 consts Child :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
 text {* Again, we simulate the inference step that would be otherwise provided by an external reasoner: *}
 axiomatization where
-  Inference2: "Dbli[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Child Ann Bob"
+  Inference2: "DiabelliVars[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Child Ann Bob"
 
 text {* Now the following become unprovable (as expected): *}
-lemma "Dbli[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Ann Bob"
+lemma "DiabelliVars[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Ann Bob"
   oops
 
 text {* Additionally, we may provide another constant @{text "Parent"} and define it in terms of @{text "Child"}: *}
@@ -142,11 +159,11 @@ consts Parent :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
 defs Parent_def: "Parent x y \<equiv> Child y x"
 
 text {* After this, we can perform the desired reasoning: *}
-lemma "Dbli[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Bob Ann"
+lemma "DiabelliVars[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Bob Ann"
   by(simp add: Inference2 Parent_def)
 
 text {* Furthermore, the following is still not provable: *}
-lemma "Dbli[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Ann Bob"
+lemma "DiabelliVars[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Ann Bob"
   oops
 
 subsection {* Example 2: Theory without referenced variables *}
@@ -167,12 +184,12 @@ subsection {* Example 3: Referenced variables without a theory *}
 
 text {* Similar example without a surrounding theory, only referenced variables: *}
 axiomatization where
-  Inference4: "Dbli [About[Humans, Mortal]] ''NatLang: All humans are mortal'' \<Longrightarrow> \<forall>h \<in> Humans. h \<in> Mortal" and
-  Inference5: "Dbli [About[Greeks, Humans]] ''NatLang: All Greeks are human.'' \<Longrightarrow> \<forall>g \<in> Greeks. g \<in> Humans"
+  Inference4: "DiabelliVars [About[Humans, Mortal]] ''NatLang: All humans are mortal'' \<Longrightarrow> \<forall>h \<in> Humans. h \<in> Mortal" and
+  Inference5: "DiabelliVars [About[Greeks, Humans]] ''NatLang: All Greeks are human.'' \<Longrightarrow> \<forall>g \<in> Greeks. g \<in> Humans"
 
 text {* As expected, we can prove lemmata of the following form:  *}
-lemma "Dbli [About[Humans, Mortal]] ''NatLang: All humans are mortal''
-       \<and> Dbli [About[Greeks, Humans]] ''NatLang: All Greeks are human.''
+lemma "DiabelliVars [About[Humans, Mortal]] ''NatLang: All humans are mortal''
+       \<and> DiabelliVars [About[Greeks, Humans]] ''NatLang: All Greeks are human.''
        \<and> g \<in> Greeks
        \<longrightarrow> g \<in> Mortal"
   apply(rule impI)
@@ -182,8 +199,8 @@ lemma "Dbli [About[Humans, Mortal]] ''NatLang: All humans are mortal''
 
 text {* Note, however, that the predicates @{text "Humans"}, @{text "Mortal"}, and @{text "Greeks"} are
 again free variables. Therefore, thay can be exchanged with any other predicate symbols: *}
-lemma "Dbli [About[Mortal, Greeks]] ''NatLang: All humans are mortal''
-       \<and> Dbli [About[Humans, Mortal]] ''NatLang: All Greeks are human.''
+lemma "DiabelliVars [About[Mortal, Greeks]] ''NatLang: All humans are mortal''
+       \<and> DiabelliVars [About[Humans, Mortal]] ''NatLang: All Greeks are human.''
        \<and> h \<in> Humans
        \<longrightarrow> h \<in> Greeks"
   apply(rule impI)
@@ -209,7 +226,7 @@ section {* Placeholders---caveats  *}
 
 axiomatization where
   ErrInference1: "Diabelli ''x is greater than y'' \<Longrightarrow> x > y" and
-  OkayInference1: "Dbli [About[x, y]] ''x is greater than y'' \<Longrightarrow> x > y"
+  OkayInference1: "DiabelliVars [About[x, y]] ''x is greater than y'' \<Longrightarrow> x > y"
 
 lemma err1: "Diabelli ''x is greater than y'' \<Longrightarrow> (0::int) > 1"
   by(fast intro: ErrInference1)
@@ -218,11 +235,11 @@ lemma "Diabelli ''x is greater than y'' = False"
   apply(insert err1)
   by(fastforce)
 
-lemma "Dbli [About[x, y]] ''x is greater than y'' \<Longrightarrow> (0::int) > 1"
+lemma "DiabelliVars [About[x, y]] ''x is greater than y'' \<Longrightarrow> (0::int) > 1"
   apply(auto simp add: OkayInference1)
   oops
 
-lemma "Dbli [About[(0::int), 1]] ''x is greater than y'' \<Longrightarrow> (0::int) > 1"
+lemma "DiabelliVars [About[(0::int), 1]] ''x is greater than y'' \<Longrightarrow> (0::int) > 1"
   apply(insert OkayInference1 [of "0::int" "1::int"])
   by fast
 

@@ -60,6 +60,19 @@ sig
   val i3p_write_sds_goals: unit -> unit
   
   val replace_subgoal_tac: string -> Proof.context -> int -> tactic
+  
+  (* Replaces a subgoal with an arbitrary term.
+
+     @param  1 the arbitrary formula with which to replace sugoal '@param 2'.
+
+     @param  2 the subgoal (its number) we would like to replace.
+
+     @param  3 the theorem. This argument is provided by the 'apply'
+               mechanism (omit it when using apply), e.g.:
+
+         apply (tactic {* Diabelli.make_subgoal_tac @{term "Trueprop True"} 1 *})
+  *)
+  val make_subgoal_tac: string -> Proof.context -> int -> thm -> thm Seq.seq
 end
 
 
@@ -102,7 +115,8 @@ fun get_goal_terms _ =
 (*==============================================================================
   = I3P Communication Routines
   ============================================================================*)
-
+  
+val _ = tracing "Something...";
 
 
 val diabelli_response_prefix   = "DiabelliResponse: ";
@@ -131,17 +145,14 @@ fun i3p_write_sds_goals _ =
         | t => print_terms terms
   end;
 
-
-
-
+fun mk_trueprop_if (t as (Const ("HOL.Trueprop", _) $ _)) = t
+  | mk_trueprop_if (t as (Const ("==>", _) $ _ $ _)) = t
+  | mk_trueprop_if (t as (Const ("all", _) $ _)) = t
+  | mk_trueprop_if (t as (Const ("==", _) $ _ $ _)) = t
+  | mk_trueprop_if t = HOLogic.mk_Trueprop t
 
 fun replace_subgoal_tac formula ctxt i st = SUBGOAL (fn (subgoal, _) =>
    let
-       fun mk_trueprop_if (t as (Const ("HOL.Trueprop", _) $ _)) = t
-         | mk_trueprop_if (t as (Const ("==>", _) $ _ $ _)) = t
-         | mk_trueprop_if (t as (Const ("all", _) $ _)) = t
-         | mk_trueprop_if (t as (Const ("==", _) $ _ $ _)) = t
-         | mk_trueprop_if t = HOLogic.mk_Trueprop t
 
        val thy = Proof_Context.theory_of ctxt;
        val formulaTerm = Syntax.read_term_global thy formula
@@ -153,6 +164,21 @@ fun replace_subgoal_tac formula ctxt i st = SUBGOAL (fn (subgoal, _) =>
    in
        compose_tac (false, interThm, 1) i
    end) i st
+
+(*==============================================================================
+  = make_subgoal_tac
+  ============================================================================*)
+
+fun make_subgoal_tac formula ctxt i st = SUBGOAL (fn (subgoal, _) =>
+   let
+     val thy = Proof_Context.theory_of ctxt;
+     val formulaTerm = Syntax.read_term_global thy formula
+     val intert = Logic.mk_implies (mk_trueprop_if formulaTerm, subgoal)
+     (*val thy = Thm.theory_of_thm st;*)
+     val adhoc_rule = Skip_Proof.make_thm thy intert;
+   in
+     compose_tac (false, adhoc_rule, 1) i
+   end) i st;
 
 
 end
