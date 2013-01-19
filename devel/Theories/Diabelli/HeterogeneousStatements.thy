@@ -2,7 +2,7 @@ theory HeterogeneousStatements
 imports IsaDia
 begin
 
-section {* Diabelli test examples *}
+section {* MixR test examples *}
 
 (* Spider Diagram translation test. *)
 lemma test1: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>t1 t2. distinct[t1, t2] \<and> t1 \<in> A \<and> t2 \<in> B) \<and> (A \<inter> B) \<noteq> {}"
@@ -14,9 +14,9 @@ lemma test1: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<a
 lemma test2: "\<lbrakk> \<exists>t1 t2. distinct[t1, t2] \<and> t1 \<in> A \<inter> B \<and> t2 \<in> (A - B) \<union> (B - A) \<rbrakk>
             \<Longrightarrow> (\<exists>u1 u2. distinct[u1, u2] \<and> u1 \<in> A \<and> u2 \<in> B)"
   apply(auto)
-  apply (diabelli "(EX t1 t2. distinct[t1, t2] & t1 : (A Int B) Un (B - A) & t2 : A - B) --> (EX u1 u2. distinct[u1, u2] & u1 : (A - B) Un (A Int B) & u2 : (A Int B) Un (B - A))")
-  apply (diabelli "(EX t1 t2. distinct[t1, t2] & t1 : (A Int B) Un (B - A) & t2 : (A - B) Un (A Int B)) --> (EX u1 u2. distinct[u1, u2] & u1 : (A - B) Un (A Int B) & u2 : (A Int B) Un (B - A))")
-  apply (diabelli "True")
+  apply (mixr "(EX t1 t2. distinct[t1, t2] & t1 : (A Int B) Un (B - A) & t2 : A - B) --> (EX u1 u2. distinct[u1, u2] & u1 : (A - B) Un (A Int B) & u2 : (A Int B) Un (B - A))")
+  apply (mixr "(EX t1 t2. distinct[t1, t2] & t1 : (A Int B) Un (B - A) & t2 : (A - B) Un (A Int B)) --> (EX u1 u2. distinct[u1, u2] & u1 : (A - B) Un (A Int B) & u2 : (A Int B) Un (B - A))")
+  apply (mixr "True")
   by (auto)
 
 (* Spider Diagram translation test. *)
@@ -47,8 +47,8 @@ lemma test3: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<a
 
 
 
-section {* Verification of Diabelli's proof concepts *}
-(* ================== Diabelli Heterogeneous Proof Verification ================== *)
+section {* Verification of MixR's proof concepts *}
+(* ================== MixR Heterogeneous Proof Verification ================== *)
 
 (* Lemma 1: If we have formula A' that is entailed by a premise A, and B'
   entails the conclusion B, then by proving A' \<Longrightarrow> B', we also prove A \<Longrightarrow> B. *)
@@ -83,13 +83,13 @@ section {* Placeholders Theory *}
 
 text {* These are all the definitions that are needed for supporting placeholders: *}
 
-(*typedecl diabelli_var
+(*typedecl mixr_var
 consts
-  About :: "'a list \<Rightarrow> diabelli_var"
+  About :: "'a list \<Rightarrow> mixr_var"
 
 consts
-  DiabelliVars :: "diabelli_var list \<Rightarrow> string \<Rightarrow> bool"
-  Diabelli :: "string \<Rightarrow> bool"*)
+  MixRVars :: "mixr_var list \<Rightarrow> string \<Rightarrow> bool"
+  MixR :: "string \<Rightarrow> bool"*)
 
 typedecl person
 consts
@@ -101,18 +101,18 @@ axiomatization where
   Relation1: "ParentOf Ann Bob"
 
 
-lemma "Diabelli ''NatLang: Ann is a child of Bob.''"
-  apply (diabelliOracle "Diabelli ''NatLang: Bob is a parent of Ann.''")
-  apply (diabelliOracle "ParentOf Ann Bob")
+lemma "MixR ''NatLang: Ann is a child of Bob.''"
+  apply (mixrOracle "MixR ''NatLang: Bob is a parent of Ann.''")
+  apply (mixrOracle "ParentOf Ann Bob")
   by (simp add: Relation1)
 
 
-lemma "DiabelliVars [About[Ann, Bob]] ''NatLang: Ann is a child of Bob.''" og
-  apply (diabelliOracle "Diabelli ''NatLang: Test.''")
+lemma "MixRVars [About[Ann, Bob]] ''NatLang: Ann is a child of Bob.''" og
+  apply (mixrOracle "MixR ''NatLang: Test.''")
 oops
 
 
-lemma "Diabelli ''TPTP:fof(empty_is_sorted, axiom, sorted(nil)).''"
+lemma "MixR ''TPTP:fof(empty_is_sorted, axiom, sorted(nil)).''"
 
 subsection {* Example 1 *}
 
@@ -133,13 +133,13 @@ quantified, which means that the predicate symbol @{text "Child"} is merely a na
 talks about all relations (and not a particular relation, which we might intuitively
 expect). *}
 axiomatization where
-  Inference1: "DiabelliVars [About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Child Ann Bob"
+  Inference1: "MixRVars [About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Child Ann Bob"
 
 text {* Given the above inference step, let us try to prove a lemma that exposes the problem.
 The lemma merely changes the name of the predicate @{text "Child"} into @{text "Parent"}. The proof
 succeeds, as the substitution of @{text "Child"} into @{text "Parent"} yields a unification with the
 @{text "Inference1"} axiom and thus produces a ``valid'' proof. *}
-lemma "DiabelliVars[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Ann Bob"
+lemma "MixRVars[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Ann Bob"
   by(simp add: Inference1)
 
 (** THE SOLUTION **)
@@ -148,10 +148,10 @@ a free variables: *}
 consts Child :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
 text {* Again, we simulate the inference step that would be otherwise provided by an external reasoner: *}
 axiomatization where
-  Inference2: "DiabelliVars[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Child Ann Bob"
+  Inference2: "MixRVars[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Child Ann Bob"
 
 text {* Now the following become unprovable (as expected): *}
-lemma "DiabelliVars[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Ann Bob"
+lemma "MixRVars[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Ann Bob"
   oops
 
 text {* Additionally, we may provide another constant @{text "Parent"} and define it in terms of @{text "Child"}: *}
@@ -159,11 +159,11 @@ consts Parent :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
 defs Parent_def: "Parent x y \<equiv> Child y x"
 
 text {* After this, we can perform the desired reasoning: *}
-lemma "DiabelliVars[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Bob Ann"
+lemma "MixRVars[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Bob Ann"
   by(simp add: Inference2 Parent_def)
 
 text {* Furthermore, the following is still not provable: *}
-lemma "DiabelliVars[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Ann Bob"
+lemma "MixRVars[About[Ann, Bob]] ''Ann is a child of Bob.'' \<Longrightarrow> Parent Ann Bob"
   oops
 
 subsection {* Example 2: Theory without referenced variables *}
@@ -172,9 +172,9 @@ locale HumanParents =
   fixes Humans :: "'a set" and
   Owner :: "'a \<Rightarrow> 'b \<Rightarrow> bool" and
   Dogs :: "'a set"
-  assumes Inference3: "Diabelli ''NatLang: Every human has a parent.'' \<Longrightarrow> \<forall>h \<in> Humans. (\<exists>p \<in> Humans. Parent p h)"
+  assumes Inference3: "MixR ''NatLang: Every human has a parent.'' \<Longrightarrow> \<forall>h \<in> Humans. (\<exists>p \<in> Humans. Parent p h)"
 begin
-lemma "Diabelli ''NatLang: Every human has a parent.''
+lemma "MixR ''NatLang: Every human has a parent.''
        \<and> h \<in> Humans
        \<longrightarrow> (\<exists>p \<in> Humans. Parent p h)"
   by (auto simp add: Inference3)
@@ -184,12 +184,12 @@ subsection {* Example 3: Referenced variables without a theory *}
 
 text {* Similar example without a surrounding theory, only referenced variables: *}
 axiomatization where
-  Inference4: "DiabelliVars [About[Humans, Mortal]] ''NatLang: All humans are mortal'' \<Longrightarrow> \<forall>h \<in> Humans. h \<in> Mortal" and
-  Inference5: "DiabelliVars [About[Greeks, Humans]] ''NatLang: All Greeks are human.'' \<Longrightarrow> \<forall>g \<in> Greeks. g \<in> Humans"
+  Inference4: "MixRVars [About[Humans, Mortal]] ''NatLang: All humans are mortal'' \<Longrightarrow> \<forall>h \<in> Humans. h \<in> Mortal" and
+  Inference5: "MixRVars [About[Greeks, Humans]] ''NatLang: All Greeks are human.'' \<Longrightarrow> \<forall>g \<in> Greeks. g \<in> Humans"
 
 text {* As expected, we can prove lemmata of the following form:  *}
-lemma "DiabelliVars [About[Humans, Mortal]] ''NatLang: All humans are mortal''
-       \<and> DiabelliVars [About[Greeks, Humans]] ''NatLang: All Greeks are human.''
+lemma "MixRVars [About[Humans, Mortal]] ''NatLang: All humans are mortal''
+       \<and> MixRVars [About[Greeks, Humans]] ''NatLang: All Greeks are human.''
        \<and> g \<in> Greeks
        \<longrightarrow> g \<in> Mortal"
   apply(rule impI)
@@ -199,8 +199,8 @@ lemma "DiabelliVars [About[Humans, Mortal]] ''NatLang: All humans are mortal''
 
 text {* Note, however, that the predicates @{text "Humans"}, @{text "Mortal"}, and @{text "Greeks"} are
 again free variables. Therefore, thay can be exchanged with any other predicate symbols: *}
-lemma "DiabelliVars [About[Mortal, Greeks]] ''NatLang: All humans are mortal''
-       \<and> DiabelliVars [About[Humans, Mortal]] ''NatLang: All Greeks are human.''
+lemma "MixRVars [About[Mortal, Greeks]] ''NatLang: All humans are mortal''
+       \<and> MixRVars [About[Humans, Mortal]] ''NatLang: All Greeks are human.''
        \<and> h \<in> Humans
        \<longrightarrow> h \<in> Greeks"
   apply(rule impI)
@@ -225,28 +225,28 @@ consts LeftOf :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
 section {* Placeholders---caveats  *}
 
 axiomatization where
-  ErrInference1: "Diabelli ''x is greater than y'' \<Longrightarrow> x > y" and
-  OkayInference1: "DiabelliVars [About[x, y]] ''x is greater than y'' \<Longrightarrow> x > y"
+  ErrInference1: "MixR ''x is greater than y'' \<Longrightarrow> x > y" and
+  OkayInference1: "MixRVars [About[x, y]] ''x is greater than y'' \<Longrightarrow> x > y"
 
-lemma err1: "Diabelli ''x is greater than y'' \<Longrightarrow> (0::int) > 1"
+lemma err1: "MixR ''x is greater than y'' \<Longrightarrow> (0::int) > 1"
   by(fast intro: ErrInference1)
 
-lemma "Diabelli ''x is greater than y'' = False"
+lemma "MixR ''x is greater than y'' = False"
   apply(insert err1)
   by(fastforce)
 
-lemma "DiabelliVars [About[x, y]] ''x is greater than y'' \<Longrightarrow> (0::int) > 1"
+lemma "MixRVars [About[x, y]] ''x is greater than y'' \<Longrightarrow> (0::int) > 1"
   apply(auto simp add: OkayInference1)
   oops
 
-lemma "DiabelliVars [About[(0::int), 1]] ''x is greater than y'' \<Longrightarrow> (0::int) > 1"
+lemma "MixRVars [About[(0::int), 1]] ''x is greater than y'' \<Longrightarrow> (0::int) > 1"
   apply(insert OkayInference1 [of "0::int" "1::int"])
   by fast
 
 
 
 
-section {* Backward and forward reasoning in Diabelli *}
+section {* Backward and forward reasoning in MixR *}
 
 lemma backward_step:
       assumes premise: "\<lbrakk>A; B'\<rbrakk> \<Longrightarrow> B" and rule: "B' \<Longrightarrow> B" and rest: "A \<Longrightarrow> B'"

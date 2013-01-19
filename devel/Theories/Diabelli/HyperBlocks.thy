@@ -5,7 +5,7 @@ uses
   "GoalsExport.ML"
 begin
 
-lemma "\<And> B a b. \<lbrakk> A; B; Diabelli(''hyperblocks'', ''data''); C \<rbrakk> \<Longrightarrow> Tet(a) \<and> Tet(b)"
+lemma "\<And> B a b. \<lbrakk> A; B; MixR(''hyperblocks'', ''data''); C \<rbrakk> \<Longrightarrow> Tet(a) \<and> Tet(b)"
   apply (rule conjI)
   ML_prf {* GoalsExport.get_goal_terms () *}
   ML_prf {* GoalsExport.i3p_write_sds_goals () *}

@@ -1,7 +1,7 @@
-(*  Title:      diabelli.ML
+(*  Title:      mixr.ML
     Author:     Matej Urbas
 
-Diabelli: provides the necessary infrastructure for heterogeneous reasoning
+MixR: provides the necessary infrastructure for heterogeneous reasoning
           with Spider diagrams in Isabelle.
 *)
 
@@ -96,7 +96,7 @@ sig
 
                   @{term "(∃s1 s2. distinct[s1, s2] ∧ s1 ∈ A ∩ B ∧ s2 ∈ (A - B) ∪ (B - A)) ⟶ (∃s1 s2. distinct[s1, s2] ∧ s1 ∈ A ∧ s2 ∈ B)"}
 
-   @returns  A record of type 'Diabelli.sd'. Containing the term translated to
+   @returns  A record of type 'MixR.sd'. Containing the term translated to
              a spider diagram notation suitable for export to the external
              reasoner.
 
@@ -114,7 +114,7 @@ sig
 
                   @{term "⋀s1 s2. ⟦s1 ≠ s2; s1 ∈ A; s1 ∈ B; s2 ∈ A; s2 ∉ B⟧ ⟹ ∃s1 s2. s1 ≠ s2 ∧ s1 ∈ A ∧ s2 ∈ B"}
 
-   @returns  A record of type 'Diabelli.sd'. Containing the term translated to
+   @returns  A record of type 'MixR.sd'. Containing the term translated to
              a spider diagram notation suitable for export to the external
              reasoner.
 
@@ -132,7 +132,7 @@ sig
 
                     @{term "(∃f. sd [s, s'] f (f s ∈ A ∩ B ∧ f s' ∈ (A - B) ∪ (B - A)))"}
 
-     @returns  A record of type 'Diabelli.sd'. Containing the term translated to
+     @returns  A record of type 'MixR.sd'. Containing the term translated to
                a spider diagram notation suitable for export to the external
                reasoner.
 
@@ -223,14 +223,14 @@ sig
      @param  3 the theorem. This argument is provided by the 'apply'
                mechanism (omit it when using apply), e.g.:
 
-         apply (tactic {* Diabelli.make_subgoal_tac @{term "Trueprop True"} 1 *})
+         apply (tactic {* MixR.make_subgoal_tac @{term "Trueprop True"} 1 *})
   *)
   val make_subgoal_tac: term -> int -> thm -> thm Seq.seq
 
 
 
 (*==============================================================================
-  = Diabelli Reasoning Tactics
+  = MixR Reasoning Tactics
   ============================================================================*)
   
   val sd_tac: (string*string) list -> Proof.context -> int -> tactic
@@ -238,7 +238,7 @@ end;
 
 
 
-structure Diabelli: DIABELLI =
+structure MixR: DIABELLI =
 struct
 
 (*==============================================================================

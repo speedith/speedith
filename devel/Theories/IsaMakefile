@@ -1,9 +1,9 @@
 
 ## targets
 
-default: Diabelli
+default: MixR
 images: 
-test: Diabelli
+test: MixR
 
 all: images test
 
@@ -17,15 +17,15 @@ LOG = $(OUT)/log
 USEDIR = $(ISABELLE_TOOL) usedir -v true -i true -d pdf -D generated
 
 
-## Diabelli
+## MixR
 
-Diabelli: $(LOG)/HOL-Diabelli.gz
+MixR: $(LOG)/HOL-MixR.gz
 
-$(LOG)/HOL-Diabelli.gz: ## Diabelli/ROOT.ML Diabelli/document/root.tex Diabelli/*.thy
-	@$(USEDIR) HOL Diabelli
+$(LOG)/HOL-MixR.gz: ## MixR/ROOT.ML MixR/document/root.tex MixR/*.thy
+	@$(USEDIR) HOL MixR
 
 
 ## clean
 
 clean:
-	@rm -f $(LOG)/HOL-Diabelli.gz
+	@rm -f $(LOG)/HOL-MixR.gz

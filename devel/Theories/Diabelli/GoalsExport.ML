@@ -70,7 +70,7 @@ sig
      @param  3 the theorem. This argument is provided by the 'apply'
                mechanism (omit it when using apply), e.g.:
 
-         apply (tactic {* Diabelli.make_subgoal_tac @{term "Trueprop True"} 1 *})
+         apply (tactic {* MixR.make_subgoal_tac @{term "Trueprop True"} 1 *})
   *)
   val make_subgoal_tac: string -> Proof.context -> int -> thm -> thm Seq.seq
 end
@@ -119,10 +119,10 @@ fun get_goal_terms _ =
 val _ = tracing "Something...";
 
 
-val diabelli_response_prefix   = "DiabelliResponse: ";
-val diabelli_response_goal     = "Goal: ";
-val diabelli_response_goal_str = "Goal string: ";
-val diabelli_response_no_goals = "No Goals: ";
+val mixr_response_prefix   = "MixRResponse: ";
+val mixr_response_goal     = "Goal: ";
+val mixr_response_goal_str = "Goal string: ";
+val mixr_response_no_goals = "No Goals: ";
 
 fun i3p_write_sds_goals _ =
   let
@@ -134,14 +134,14 @@ fun i3p_write_sds_goals _ =
       fun print_terms [] = ()
         | print_terms ((t:term) :: (ts:term list)) =
           let 
-              val _ = tracing (diabelli_response_prefix ^ diabelli_response_goal ^ (print_term t));
+              val _ = tracing (mixr_response_prefix ^ mixr_response_goal ^ (print_term t));
               val _ = tracing (Syntax.string_of_term context t);
           in
               print_terms ts
           end;
   in
       case terms of
-          [] => tracing (diabelli_response_prefix ^ diabelli_response_no_goals)
+          [] => tracing (mixr_response_prefix ^ mixr_response_no_goals)
         | t => print_terms terms
   end;
 

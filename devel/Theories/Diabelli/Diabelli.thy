@@ -1,5 +1,5 @@
-theory Diabelli
-imports DiabelliIR
+theory MixR
+imports MixRIR
 begin
 
 
