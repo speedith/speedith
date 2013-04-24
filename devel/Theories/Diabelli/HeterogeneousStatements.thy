@@ -21,6 +21,7 @@ lemma test2: "\<lbrakk> \<exists>t1 t2. distinct[t1, t2] \<and> t1 \<in> A \<int
 
 (* Spider Diagram translation test. *)
 lemma test2: "\<exists>s1 s2 s3. distinct[s1, s2, s3] \<and> s1 \<in> A \<and> s2 \<in> B \<and> s3 \<in> (C \<union> D)"
+  oops
 
 (* Spider Diagram translation test. *)
 lemma test4: "(\<exists>s1 s2 s3. s1 \<noteq> s2 \<and> s1 \<noteq> s3 \<and> s2 \<noteq> s3
@@ -45,7 +46,20 @@ lemma test3: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<a
 
   oops
 
+subsection {* PicProc test examples *}
 
+typedecl PicProcImage
+typedecl ShapeType
+consts   AreaOf :: "PicProcImage \<Rightarrow> nat" ShapeOf :: "PicProcImage \<Rightarrow> ShapeType"
+         Triangle :: "ShapeType" Square :: "ShapeType" Circle :: "ShapeType"
+         ShapeA :: "PicProcImage"
+lemma "MixR ''ImgUrl:file:///home/matej/Pictures/ShapeA.png'' \<Longrightarrow> ShapeOf ShapeA = Square"
+  apply (mixrOracle "[| ShapeOf ShapeA = Square |] ==> ShapeOf ShapeA = Square")
+  by (auto)
+
+lemma "MixR ''ImgUrl:file:///home/matej/Pictures/ShapeA.png'' \<Longrightarrow> AreaOf ShapeA > 5000"
+  apply (mixrOracle "[| AreaOf ShapeA = 5733 |] ==> 5000 < AreaOf ShapeA")
+  by (auto)
 
 section {* Verification of MixR's proof concepts *}
 (* ================== MixR Heterogeneous Proof Verification ================== *)
@@ -107,9 +121,14 @@ lemma "MixR ''NatLang: Ann is a child of Bob.''"
   by (simp add: Relation1)
 
 
-lemma "MixRVars [About[Ann, Bob]] ''NatLang: Ann is a child of Bob.''" og
-  apply (mixrOracle "MixR ''NatLang: Test.''")
-oops
+lemma "MixRVars [About[Ann, Bob]] ''NatLang: Ann is a child of Bob.''"
+  apply (mixrOracle "ParentOf Ann Bob")
+  oops
+
+
+
+
+
 
 
 lemma "MixR ''TPTP:fof(empty_is_sorted, axiom, sorted(nil)).''"
