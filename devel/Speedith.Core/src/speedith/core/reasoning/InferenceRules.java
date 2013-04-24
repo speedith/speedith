@@ -56,16 +56,34 @@ public class InferenceRules {
     // <editor-fold defaultstate="collapsed" desc="Constructors">
     static {
         // Register built-in inference rules.
-        registerProvider(SplitSpiders.class);
         registerProvider(AddFeet.class);
-        registerProvider(Idempotency.class);
-        registerProvider(ImplicationTautology.class);
+        registerProvider(EraseSpider.class);
+        registerProvider(IntroContour.class);
+        registerProvider(RemoveContour.class);
+        registerProvider(RemoveShading.class);
+        registerProvider(IntroShadedZone.class);
         registerProvider(DischargeNullGoal.class);
-        registerProvider(ConjunctionElimination.class);
+        
+        registerProvider(Combining.class);
+        registerProvider(CopySpider.class);
         registerProvider(CopyContour.class);
         registerProvider(CopyShading.class);
-        registerProvider(CopySpider.class);
-        registerProvider(RemoveContour.class);
+        registerProvider(SplitSpiders.class);
+        registerProvider(ExcludedMiddle.class);
+        
+        registerProvider(ModusPonens.class);
+        registerProvider(ModusTolens.class);
+        registerProvider(Idempotency.class);
+        registerProvider(GeneralTautology.class);
+        registerProvider(ImplicationTautology.class);
+        registerProvider(ConjunctionElimination.class);
+        registerProvider(ConjunctionIntroduction.class);
+        registerProvider(DisjunctionElimination.class);
+        registerProvider(DisjunctionIntroduction.class);
+        registerProvider(EquivalenceElimination.class);
+        registerProvider(EquivalenceIntroduction.class);
+        registerProvider(DoubleNegationElimination.class);
+        registerProvider(DoubleNegationIntroduction.class);
     }
 
     /**

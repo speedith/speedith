@@ -37,7 +37,7 @@ import speedith.core.reasoning.args.SubgoalIndexArg;
 
 /**
  * This simple abstract class provides some helper methods commonly used in
- * inference rules. For example
+ * inference rules.
  *
  * @param <TArgs> the type of arguments the provided inference rule expects. Use
  * the type {@link RuleArg} to specify that the inference rule does not expect
