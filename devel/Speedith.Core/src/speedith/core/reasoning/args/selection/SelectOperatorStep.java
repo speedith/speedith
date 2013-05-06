@@ -71,9 +71,8 @@ public class SelectOperatorStep extends SelectionStep {
     }
 
     private static boolean isFinished(List<RuleArg> sels) {
-        // This selection step is finished if all the following conditions are satisfied:
-        return sels != null
-                && sels.size() == 1 // If a single element has been selected.
+        // This selection step is finished if all of the following conditions are satisfied:
+        return sels != null && sels.size() == 1 // If a single element has been selected.
                 && sels.get(0) instanceof SubDiagramIndexArg; // And that element is a subdiagram.
     }
 

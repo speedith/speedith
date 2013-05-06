@@ -46,8 +46,6 @@ import static speedith.core.i18n.Translations.i18n;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class PrimarySpiderDiagram extends SpiderDiagram {
-    // TODO: Provide a way to easily extract names of contours (perhaps maintain
-    // a set of contour names, which is filled when it is first accessed).
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     /**
@@ -313,6 +311,44 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         } else {
             throw new UnsupportedOperationException();
         }
+    }
+    
+    /**
+     * Returns the number of spider that have a foot in the given zone.
+     * 
+     * @param z
+     * 
+     * @return the number of spider that have a foot in the given zone.
+     */
+    public int getSpiderCountInZone(Zone z) {
+        int count = 0;
+        if (getHabitatsCount() > 0) {
+            for (Region region : getHabitats().values()) {
+                if (region.contains(z)) {
+                    ++count;
+                }
+            }
+        }
+        return count;
+    }
+    
+    /**
+     * Returns the spiders that have a foot in the given zone.
+     * 
+     * @param z
+     * 
+     * @return the spiders that have a foot in the given zone.
+     */
+    public TreeSet<String> getSpidersInZone(Zone z) {
+        TreeSet<String> count = new TreeSet<>();
+        if (getHabitatsCount() > 0) {
+            for (Entry<String, Region> habitat : getHabitats().entrySet()) {
+                if (habitat.getValue().contains(z)) {
+                    count.add(habitat.getKey());
+                }
+            }
+        }
+        return count;
     }
 
     @Override
@@ -730,6 +766,8 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
                             return false;
                         }
                     }
+                } else {
+                    return false;
                 }
             }
         }
@@ -739,13 +777,19 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     /**
      * <p><span style="font-weight:bold">Important</span>: this method returns
      * the set of all contours only if this primary spider diagram is {@link
-     * PrimarySpiderDiagram#isValid() valid}.</p> <p>Returns a set of contours
-     * that are mentioned in a randomly chosen zone of this primary spider
-     * diagram.</p> <p><span style="font-weight:bold">Q: </span>Why a <span
-     * style="font-style:italic;">randomly chosen</span> zone?</p> <p><span
-     * style="font-weight:bold">A: </span>Because all zones in a valid primary
-     * spider diagram</p> <p>Note: this method never returns {@code null}. If
-     * there are no contours then this method will return an empty set.</p>
+     * PrimarySpiderDiagram#isValid() valid}.</p>
+     *
+     * <p>Returns a set of contours that are mentioned in a randomly chosen zone
+     * of this primary spider diagram.</p>
+     *
+     * <p><span style="font-weight:bold">Q: </span>Why a <span
+     * style="font-style:italic;">randomly chosen</span> zone?</p>
+     *
+     * <p><span style="font-weight:bold">A: </span>Because in a valid diagram
+     * the unions of in- and out-contour sets of all zones are the same.</p>
+     *
+     * <p>Note: this method never returns {@code null}. If there are no contours
+     * then this method will return an empty set.</p>
      *
      * @return an {@link Collections#unmodifiableSortedSet(java.util.SortedSet)
      * unmodifiable sorted set} of contours that are mentioned in a randomly

@@ -31,9 +31,9 @@ import speedith.core.i18n.Translations;
 import speedith.core.reasoning.args.RuleArg;
 
 /**
- * This class is used in diagram selection dialogs and element selection user interfaces
- * to guide the user through the diagram element selection and also make sure
- * that the exact selection is made.
+ * This class is used in diagram selection dialogs and element selection user
+ * interfaces to guide the user through the diagram element selection and also
+ * make sure that the exact selection is made.
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
@@ -98,7 +98,7 @@ public abstract class SelectionStep {
     // <editor-fold defaultstate="collapsed" desc="Rejection Explanation Classes">
     /**
      * This class provides an explanation on why a click was rejected in {@link
-     * SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int) 
+     * SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)
      * }. <p>To issue a rejection without an explanation, you may want to use
      * {@link SelectionStep#EmptyClickRejection}.</p>
      */
@@ -106,7 +106,7 @@ public abstract class SelectionStep {
 
         /**
          * Returns the internationalise explanation of the rejection in {@link
-         * SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int) 
+         * SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)
          * }.
          *
          * @return the internationalise explanation of the rejection in {@link
@@ -141,7 +141,8 @@ public abstract class SelectionStep {
          * Creates an internationalised explanation of the click rejection.
          *
          * @param i18nKey the internationalisation key to use for the message.
-         * It will be looked up through {@link Translations#i18n(java.lang.String)}.
+         * It will be looked up through
+         * {@link Translations#i18n(java.lang.String)}.
          * @param i18nStrArgs the internationalisation arguments (may be empty).
          */
         public I18NSelectionRejectionExplanation(String i18nKey, Object... i18nStrArgs) {
@@ -164,18 +165,21 @@ public abstract class SelectionStep {
 
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
-     * This function is called at the start of this step. Still, the selection
+     * This function is called at the start of this step. The selection sequence
      * might already contain some elements. This method should check it and
      * produce an explanation if the elements do not adhere to the requirements
      * of this step. Otherwise, if everything is alright, this method should
-     * simply return {@code null}. <p>This function is also called when the user
-     * hits the <span style="font-style:italic;">previous</span> button and this
-     * brings the user back to this selection step.</p>
+     * simply return {@code null}.
+     *
+     * <p>This function is also called when the user hits the <span
+     * style="font-style:italic;">previous</span> button and this brings the
+     * user back to this selection step.</p>
      *
      * @param selection the selection sequence in which this selection step
      * participates. This object contains currently {@link SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)
      * approved} selections.
-     * @param thisIndex the index of this step in the given {@link SelectionSequence}.
+     * @param thisIndex the index of this step in the given
+     * {@link SelectionSequence}.
      * @return {@code null} if the selection is valid, and a non-{@code null}
      * object otherwise.
      */
@@ -183,13 +187,16 @@ public abstract class SelectionStep {
 
     /**
      * Indicates whether this selection step is finished. If it is, then the
-     * user interface must proceed to the next step. <p>This value can change
-     * only after the calls to {@link
-     * SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)} and {@link
-     * SelectionStep#init(speedith.core.reasoning.args.selection.SelectionSequence, int)}. The
-     * user interface will acceptSelection this function before the first click
-     * event in this step and after every click event (i.e. after every call to
-     * the {@link SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)}
+     * instructions dialog will proceed to the next step.
+     *
+     * <p>This value can change only after the calls to {@link
+     * SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)}
+     * and {@link
+     * SelectionStep#init(speedith.core.reasoning.args.selection.SelectionSequence, int)}.
+     * The user interface will acceptSelection this function before the first
+     * click event in this step and after every click event (i.e. after every
+     * call to the
+     * {@link SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)}
      * function).</p>
      *
      * @param selection a list of selection steps and their accepted clicks.
@@ -199,13 +206,16 @@ public abstract class SelectionStep {
     public abstract boolean isFinished(SelectionSequence selection, int thisIndex);
 
     /**
-     * Returns a value that indicates whether this step can be skipped. <p>This
-     * value can change only after the calls to {@link
-     * SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)} and {@link
-     * SelectionStep#init(speedith.core.reasoning.args.selection.SelectionSequence, int)}. The
-     * user interface will acceptSelection this function before the first click
-     * event in this step and after every click event (i.e. after every call to
-     * the {@link SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)}
+     * Returns a value that indicates whether this step can be skipped.
+     *
+     * <p>This value can change only after the calls to {@link
+     * SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)}
+     * and {@link
+     * SelectionStep#init(speedith.core.reasoning.args.selection.SelectionSequence, int)}.
+     * The user interface will acceptSelection this function before the first
+     * click event in this step and after every click event (i.e. after every
+     * call to the
+     * {@link SelectionStep#acceptSelection(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.args.selection.SelectionSequence, int)}
      * function).</p>
      *
      * @param selection a list of selection steps and their accepted clicks.
@@ -241,10 +251,12 @@ public abstract class SelectionStep {
     public abstract String getInstruction(Locale locale, SelectionSequence selection, int thisIndex);
 
     /**
-     * This method is invoked by the element
-     * selection user interfaces whenever the user clicks on the diagram. <p>If this
-     * method returns {@code null} then the click is accepted and is added to
-     * the list of accepted click events of this step in the given {@link SelectionSequence
+     * This method is invoked by the element selection user interfaces whenever
+     * the user clicks on the diagram.
+     *
+     * <p>If this method returns {@code null} then the click is accepted and is
+     * added to the list of accepted click events of this step in the given
+     * {@link SelectionSequence
      * selection sequence}. If any non-{@code null} value is returned, the click
      * is rejected and a message is displayed to the user.</p>
      *
@@ -252,9 +264,10 @@ public abstract class SelectionStep {
      * selected in this step.
      * @param selectionSeq a list of selection steps and their accepted clicks.
      * @param thisIndex the index of this step within the selection sequence.
-     * @return {@code null} if the click should be accepted, and a non-{@code null}
-     * value if the click should be rejected. In the latter case the returned
-     * object should also contain a message explaining the reason for rejection.
+     * @return {@code null} if the click should be accepted, and a
+     * non-{@code null} value if the click should be rejected. In the latter
+     * case the returned object should also contain a message explaining the
+     * reason for rejection.
      */
     public abstract SelectionRejectionExplanation acceptSelection(RuleArg selection, SelectionSequence selectionSeq, int thisIndex);
 
@@ -274,8 +287,12 @@ public abstract class SelectionStep {
 
     /**
      * Returns a value that indicates which elements of the diagram should be
-     * selectable for this step. <p>This is a binary combination of: <ul> <li>{@link SelectionStep#Spiders},</li> <li>{@link SelectionStep#Zones},</li> <li>{@link SelectionStep#Contours},</li> <li>{@link SelectionStep#Operators},
-     * and</li> <li>{@link SelectionStep#NullSpiderDiagrams}.</li> </ul></p>
+     * selectable for this step. <p>This is a binary combination of: <ul>
+     * <li>{@link SelectionStep#Spiders},</li>
+     * <li>{@link SelectionStep#Zones},</li>
+     * <li>{@link SelectionStep#Contours},</li>
+     * <li>{@link SelectionStep#Operators}, and</li>
+     * <li>{@link SelectionStep#NullSpiderDiagrams}.</li> </ul></p>
      * <p>The value {@link SelectionStep#All} can be used to indicate that all
      * diagrammatic elements should be selectable.</p>
      *

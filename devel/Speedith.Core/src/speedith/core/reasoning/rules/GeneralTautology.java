@@ -66,7 +66,7 @@ public class GeneralTautology extends UnaryForwardRule {
 
     @Override
     public String getPrettyName(Locale locale) {
-        return "General Tautology";
+        return "Tautology";
     }
 
     @Override

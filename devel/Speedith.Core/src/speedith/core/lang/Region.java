@@ -121,6 +121,18 @@ public class Region implements Comparable<Region>, SpiderDiagramElement {
     }
 
     /**
+     * Returns {@code true} iff the given zone is within the set of zones of
+     * this region.
+     * 
+     * @param z
+     * @return {@code true} iff the given zone is within the set of zones of
+     * this region.
+     */
+    boolean contains(Zone z) {
+        return zones != null && zones.contains(z);
+    }
+
+    /**
      * Returns {@code true} iff this region is contained within the other
      * region.
      *
