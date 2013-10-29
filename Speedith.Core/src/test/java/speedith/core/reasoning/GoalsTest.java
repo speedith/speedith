@@ -28,6 +28,7 @@ package speedith.core.reasoning;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -71,7 +72,7 @@ public class GoalsTest {
      */
     @Test
     public void testGetGoals() throws ReadingException, IOException {
-        SpiderDiagram sd1 = SpiderDiagramsReader.readSpiderDiagram(new File("./test/speedith/core/lang/reader/SpiderDiagramExample_1.sd"));
+        SpiderDiagram sd1 = SpiderDiagramsReader.readSpiderDiagram(getSpiderDiagramTestFile("/speedith/core/lang/reader/SpiderDiagramExample_1.sd"));
         Goals instance = Goals.createGoalsFrom(sd1);
         assertEquals(1, instance.getGoalsCount());
         assertSame(instance.getGoalAt(0), sd1);
@@ -104,8 +105,8 @@ public class GoalsTest {
      */
     @Test
     public void testCreateGoalsFrom_List() throws ReadingException, IOException {
-        SpiderDiagram sd1 = SpiderDiagramsReader.readSpiderDiagram(new File("./test/speedith/core/lang/reader/SpiderDiagramExample_1.sd"));
-        SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(new File("./test/speedith/core/lang/reader/SpiderDiagramExample_2.sd"));
+        SpiderDiagram sd1 = SpiderDiagramsReader.readSpiderDiagram(getSpiderDiagramTestFile("/speedith/core/lang/reader/SpiderDiagramExample_1.sd"));
+        SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(getSpiderDiagramTestFile("/speedith/core/lang/reader/SpiderDiagramExample_2.sd"));
         Goals instance = Goals.createGoalsFrom(Arrays.asList(sd1, sd2));
         assertEquals(2, instance.getGoalsCount());
         assertSame(instance.getGoalAt(0), sd1);
@@ -125,8 +126,9 @@ public class GoalsTest {
      */
     @Test
     public void testCreateGoalsFrom_SpiderDiagramArr() throws ReadingException, IOException {
-        SpiderDiagram sd1 = SpiderDiagramsReader.readSpiderDiagram(new File("./test/speedith/core/lang/reader/SpiderDiagramExample_1.sd"));
-        SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(new File("./test/speedith/core/lang/reader/SpiderDiagramExample_2.sd"));
+        String spiderDiagramFile1 = "/speedith/core/lang/reader/SpiderDiagramExample_1.sd";
+        SpiderDiagram sd1 = SpiderDiagramsReader.readSpiderDiagram(getSpiderDiagramTestFile(spiderDiagramFile1));
+        SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(getSpiderDiagramTestFile("/speedith/core/lang/reader/SpiderDiagramExample_2.sd"));
         Goals instance = Goals.createGoalsFrom(sd1, sd2);
         assertEquals(2, instance.getGoalsCount());
         assertSame(instance.getGoalAt(0), sd1);
@@ -141,13 +143,21 @@ public class GoalsTest {
         }
     }
 
+    public static InputStream getSpiderDiagramTestFile(String absolutePath) {
+        InputStream spiderDiagramFileStream = GoalsTest.class.getResourceAsStream(absolutePath);
+        if (spiderDiagramFileStream == null) {
+            throw new RuntimeException("Could not open file: " + absolutePath);
+        }
+        return spiderDiagramFileStream;
+    }
+
     /**
      * Test of createGoalsFrom method, of class Goals.
      */
     @Test
     public void testCreateGoalsFrom_ArrayList() throws ReadingException, IOException {
-        SpiderDiagram sd1 = SpiderDiagramsReader.readSpiderDiagram(new File("./test/speedith/core/lang/reader/SpiderDiagramExample_1.sd"));
-        SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(new File("./test/speedith/core/lang/reader/SpiderDiagramExample_2.sd"));
+        SpiderDiagram sd1 = SpiderDiagramsReader.readSpiderDiagram(getSpiderDiagramTestFile("/speedith/core/lang/reader/SpiderDiagramExample_1.sd"));
+        SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(getSpiderDiagramTestFile("/speedith/core/lang/reader/SpiderDiagramExample_2.sd"));
         Goals instance = Goals.createGoalsFrom(new ArrayList<SpiderDiagram>(Arrays.asList(sd1, sd2)));
         assertEquals(2, instance.getGoalsCount());
         assertSame(instance.getGoalAt(0), sd1);

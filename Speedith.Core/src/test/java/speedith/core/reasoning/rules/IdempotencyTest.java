@@ -37,10 +37,7 @@ import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.SpiderDiagrams;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.lang.reader.SpiderDiagramsReaderTest;
-import speedith.core.reasoning.Goals;
-import speedith.core.reasoning.InferenceRule;
-import speedith.core.reasoning.InferenceRules;
-import speedith.core.reasoning.RuleApplicationException;
+import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import static org.junit.Assert.*;
@@ -120,7 +117,7 @@ public class IdempotencyTest {
         assertTrue(transformedSD != (sd.getSubDiagramAt(1)));
         assertTrue(transformedSD == (sd.getSubDiagramAt(2)));
         
-        sd = SpiderDiagramsReader.readSpiderDiagram(new File("./test/speedith/core/lang/reader/SpiderDiagramExample_1.sd"));
+        sd = SpiderDiagramsReader.readSpiderDiagram(GoalsTest.getSpiderDiagramTestFile("/speedith/core/lang/reader/SpiderDiagramExample_1.sd"));
         subDiagramIndex = 1;
         transformedSD = applyRule(rule, subDiagramIndex, sd);
         assertTrue(!sd.equals(transformedSD));

@@ -37,6 +37,7 @@ import static org.junit.Assert.*;
 import org.junit.*;
 import speedith.core.lang.*;
 import propity.util.Maps;
+import speedith.core.reasoning.GoalsTest;
 
 /**
  *
@@ -262,7 +263,7 @@ public class SpiderDiagramsReaderTest {
      */
     @Test
     public void testReadSpiderDiagram_InputStream() throws Exception {
-        SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(new FileInputStream("./test/speedith/core/lang/reader/ParserExample1.sd"));
+        SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(GoalsTest.getSpiderDiagramTestFile("/speedith/core/lang/reader/ParserExample1.sd"));
         String str1 = sd.toString();
         SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(str1);
         assertEquals(str1, sd2.toString());
@@ -282,7 +283,7 @@ public class SpiderDiagramsReaderTest {
     @Test
     public void testReadSpiderDiagram_InputStream2() throws Exception {
         try {
-            SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(new FileInputStream("./test/speedith/core/lang/reader/ParserExample1_1.sd"));
+            SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(GoalsTest.getSpiderDiagramTestFile("/speedith/core/lang/reader/ParserExample1_1.sd"));
         } catch (ReadingException readingException) {
             assertEquals(readingException.getLineNumber(), 6);
             assertEquals(readingException.getCharIndex(), 8);
@@ -296,7 +297,7 @@ public class SpiderDiagramsReaderTest {
      */
     @Test
     public void testReadSpiderDiagram_File() throws Exception {
-        SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(new File("./test/speedith/core/lang/reader/ParserExample1.sd"));
+        SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(GoalsTest.getSpiderDiagramTestFile("/speedith/core/lang/reader/ParserExample1.sd"));
         String str1 = sd.toString();
         SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(str1);
         assertEquals(str1, sd2.toString());
@@ -316,7 +317,7 @@ public class SpiderDiagramsReaderTest {
     @Test
     public void testReadSpiderDiagram_File2() throws Exception {
         try {
-            SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(new File("./test/speedith/core/lang/reader/ParserExample1_1.sd"));
+            SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(GoalsTest.getSpiderDiagramTestFile("/speedith/core/lang/reader/ParserExample1_1.sd"));
         } catch (ReadingException readingException) {
             assertEquals(readingException.getLineNumber(), 6);
             assertEquals(readingException.getCharIndex(), 8);
@@ -429,7 +430,7 @@ public class SpiderDiagramsReaderTest {
     }
 
     public static SpiderDiagram readFromTestFile(String fileTitle) throws ReadingException, IOException {
-        String fullPath = "./test/speedith/core/lang/reader/" + fileTitle;
-        return SpiderDiagramsReader.readSpiderDiagram(new File(fullPath));
+        String fullPath = "/speedith/core/lang/reader/" + fileTitle;
+        return SpiderDiagramsReader.readSpiderDiagram(GoalsTest.getSpiderDiagramTestFile(fullPath));
     }
 }

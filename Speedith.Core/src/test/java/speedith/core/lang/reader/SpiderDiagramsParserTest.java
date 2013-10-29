@@ -28,6 +28,7 @@
 package speedith.core.lang.reader;
 
 import org.antlr.runtime.ANTLRFileStream;
+import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -35,6 +36,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import speedith.core.lang.reader.SpiderDiagramsParser.spiderDiagram_return;
+import speedith.core.reasoning.GoalsTest;
+
 import static org.junit.Assert.*;
 
 /**
@@ -68,7 +71,7 @@ public class SpiderDiagramsParserTest {
      */
     @Test
     public void testSpiderDiagram() throws Exception {
-        SpiderDiagramsLexer lexer = new SpiderDiagramsLexer(new ANTLRFileStream("./test/speedith/core/lang/reader/ParserExample1.sd"));
+        SpiderDiagramsLexer lexer = new SpiderDiagramsLexer(new ANTLRInputStream(GoalsTest.getSpiderDiagramTestFile("/speedith/core/lang/reader/ParserExample1.sd")));
         SpiderDiagramsParser parser = new SpiderDiagramsParser(new CommonTokenStream(lexer));
         spiderDiagram_return sd = parser.spiderDiagram();
     }
@@ -79,7 +82,7 @@ public class SpiderDiagramsParserTest {
      */
     @Test
     public void testSpiderDiagram1() throws Exception {
-        SpiderDiagramsLexer lexer = new SpiderDiagramsLexer(new ANTLRFileStream("./test/speedith/core/lang/reader/ParserExample1_1.sd"));
+        SpiderDiagramsLexer lexer = new SpiderDiagramsLexer(new ANTLRInputStream(GoalsTest.getSpiderDiagramTestFile("/speedith/core/lang/reader/ParserExample1_1.sd")));
         SpiderDiagramsParser parser = new SpiderDiagramsParser(new CommonTokenStream(lexer));
         spiderDiagram_return sd = null;
         try {
