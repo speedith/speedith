@@ -90,11 +90,6 @@ public class Region implements Comparable<Region>, SpiderDiagramElement {
      * <p>This argument may be {@code null}. This indicates an empty region.</p>
      */
     public Region(TreeSet<Zone> zones) {
-        // TODO: Is there a way to quickly check if there are any null elements
-        // in a set?
-//        if (zones != null && zones.contains(null)) {
-//            throw new RuntimeException(i18n("ERR_NULL_ZONE_IN_REGION"));
-//        }
         this.zones = zones;
     }
     // </editor-fold>
