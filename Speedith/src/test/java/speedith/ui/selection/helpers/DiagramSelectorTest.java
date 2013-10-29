@@ -26,15 +26,16 @@
  */
 package speedith.ui.selection.helpers;
 
-import java.awt.Frame;
-import java.util.Collection;
-import java.util.Set;
 import org.junit.*;
-import static org.junit.Assert.*;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.args.selection.SelectionSequence;
+
+import java.awt.*;
+import java.util.Collection;
+
+import static org.junit.Assert.*;
 
 /**
  *
