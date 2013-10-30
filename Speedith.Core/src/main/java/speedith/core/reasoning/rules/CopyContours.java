@@ -1,0 +1,138 @@
+/*
+ *   Project: Speedith.Core
+ * 
+ * File name: CopyContour.java
+ *    Author: Matej Urbas [matej.urbas@gmail.com]
+ * 
+ *  Copyright © 2012 Matej Urbas
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+package speedith.core.reasoning.rules;
+
+import speedith.core.i18n.Translations;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.*;
+import speedith.core.reasoning.args.ContourArg;
+import speedith.core.reasoning.args.MultipleRuleArgs;
+import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.rules.transformers.CopyContoursTransformer;
+
+import java.util.ArrayList;
+import java.util.Locale;
+
+/**
+ * @author Matej Urbas [matej.urbas@gmail.com]
+ */
+public class CopyContours extends SimpleInferenceRule<MultipleRuleArgs> {
+
+    /**
+     * The name of this inference rule.
+     */
+    private static final String InferenceRuleName = "copy_contours";
+
+    @Override
+    public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
+        ArrayList<ContourArg> contourArgs = getContourArgsFrom(args);
+        return apply(contourArgs, goals);
+    }
+
+    ArrayList<ContourArg> getContourArgsFrom(RuleArg args) throws RuleApplicationException {
+        MultipleRuleArgs multipleRuleArgs = getTypedRuleArgs(args);
+        if (multipleRuleArgs.isEmpty()) {
+            throw new RuleApplicationException("No contours were specified.");
+        }
+        ArrayList<ContourArg> contourArgs = new ArrayList<>();
+        int subDiagramIndex = -1;
+        int goalIndex = -1;
+        for (RuleArg ruleArg : multipleRuleArgs) {
+            ContourArg contourArg = getContourArgFrom(ruleArg);
+            subDiagramIndex = assertSameSubDiagramIndices(subDiagramIndex, contourArg);
+            goalIndex = assertSameGoalIndices(goalIndex, contourArg);
+            contourArgs.add(contourArg);
+        }
+        return contourArgs;
+    }
+
+    private int assertSameGoalIndices(int goalIndex, ContourArg contourArg) throws RuleApplicationException {
+        if (goalIndex != -1 && goalIndex != contourArg.getSubgoalIndex()) {
+            throw new RuleApplicationException("The unitary diagrams must be in the same goal.");
+        } else {
+            goalIndex = contourArg.getSubgoalIndex();
+        }
+        return goalIndex;
+    }
+
+    private ContourArg getContourArgFrom(RuleArg ruleArg) throws RuleApplicationException {
+        if (!(ruleArg instanceof ContourArg)) {
+            throw new RuleApplicationException("The copy contours rule takes only contours as arguments.");
+        }
+        return (ContourArg)ruleArg;
+    }
+
+    private int assertSameSubDiagramIndices(int previousSubDiagramIndex, ContourArg contourArg) throws RuleApplicationException {
+        if (previousSubDiagramIndex != -1 && previousSubDiagramIndex != contourArg.getSubDiagramIndex()) {
+            throw new RuleApplicationException("The contours must be from the same unitary spider diagram.");
+        } else {
+            previousSubDiagramIndex = contourArg.getSubDiagramIndex();
+        }
+        return previousSubDiagramIndex;
+    }
+
+    private RuleApplicationResult apply(ArrayList<ContourArg> contourArgs, Goals goals) throws RuleApplicationException {
+        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
+        newSubgoals[contourArgs.get(0).getSubgoalIndex()] = getSubgoal(contourArgs.get(0), goals).transform(new CopyContoursTransformer());
+        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
+    }
+
+    @Override
+    public InferenceRule<MultipleRuleArgs> getInferenceRule() {
+        return this;
+    }
+
+    @Override
+    public String getInferenceRuleName() {
+        return InferenceRuleName;
+    }
+
+    @Override
+    public String getDescription(Locale locale) {
+        return Translations.i18n(locale, "COPY_CONTOURS_DESCRIPTION");
+    }
+
+    @Override
+    public String getCategory(Locale locale) {
+        return Translations.i18n(locale, "INF_RULE_CATEGORY_HETEROGENEOUS");
+    }
+
+    @Override
+    public String getPrettyName(Locale locale) {
+        return Translations.i18n(locale, "COPY_CONTOURS_PRETTY_NAME");
+    }
+
+    @Override
+    public Class<MultipleRuleArgs> getArgumentType() {
+        return MultipleRuleArgs.class;
+    }
+
+    @Override
+    public RuleApplicationInstruction<MultipleRuleArgs> getInstructions() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+}

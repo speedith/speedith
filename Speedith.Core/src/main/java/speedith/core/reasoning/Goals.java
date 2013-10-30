@@ -31,7 +31,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
 import speedith.core.lang.SpiderDiagram;
+
 import static speedith.core.i18n.Translations.*;
 
 /**
@@ -39,15 +41,13 @@ import static speedith.core.i18n.Translations.*;
  * <p>This list represents the goals that have to be proved in a {@link Proof}
  * by applying {@link InferenceRule inference rules} on them.</p>
  * <p>Instances of this class (and its derived classes) are immutable.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class Goals {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private ArrayList<SpiderDiagram> goals;
-    // </editor-fold>
+    private final ArrayList<SpiderDiagram> goals;
 
-    //<editor-fold defaultstate="collapsed" desc="Constructor">
     /**
      * Initialises an instance of this class with a list of spider diagrams (the
      * goals/proof obligations).
@@ -57,11 +57,12 @@ public class Goals {
      * Be warned, however, that you <span style="font-weight:bold">must not</span>
      * change the contents of the list of spider diagrams afterwards or you
      * risk erroneous behaviour.</p>
+     *
      * @param goals the list of spider diagrams which represent the proof goals
-     * (proof obligations).
+     *              (proof obligations).
      */
     public Goals(Collection<SpiderDiagram> goals) {
-        this(goals == null || goals.isEmpty() ? null : new ArrayList<SpiderDiagram>(goals));
+        this(goals == null || goals.isEmpty() ? null : new ArrayList<>(goals));
     }
 
     /**
@@ -70,8 +71,9 @@ public class Goals {
      * <p><span style="font-weight:bold">Warning</span>: this method does not
      * make a copy of the list. Make sure you do not change the contents of the
      * list afterwards.</p>
+     *
      * @param goals the list of spider diagrams which represent the proof goals
-     * (proof obligations).
+     *              (proof obligations).
      */
     Goals(ArrayList<SpiderDiagram> goals) {
         this.goals = goals;
@@ -83,24 +85,24 @@ public class Goals {
      * <p><span style="font-weight:bold">Warning</span>: this method does not
      * make a copy of the list. Make sure you do not change the contents of the
      * list afterwards.</p>
+     *
      * @param goals the list of spider diagrams which represent the proof goals
-     * (proof obligations).
+     *              (proof obligations).
      */
     Goals(SpiderDiagram[] goals) {
         this(goals == null || goals.length < 1 ? null : Arrays.asList(goals));
     }
-    //</editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Public Properties">
     /**
      * Returns an unmodifiable list of spider diagrams that represent the proof
      * goals (proof obligations).
      * <p>Note: this method may return {@code null} to indicate that there are
      * not goals (proof obligations) left.</p>
+     *
      * @return an unmodifiable list of spider diagrams that represent the proof
-     * goals (proof obligations).
-     * <p>Note: this method may return {@code null} to indicate that there are
-     * not goals (proof obligations) left.</p>
+     *         goals (proof obligations).
+     *         <p>Note: this method may return {@code null} to indicate that there are
+     *         not goals (proof obligations) left.</p>
      */
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public List<SpiderDiagram> getGoals() {
@@ -112,6 +114,7 @@ public class Goals {
      * <p>Note: you should check the number of goals before calling this
      * function.</p>
      * <p>To iterate over goals, see the method {@link Goals#getGoals()}.</p>
+     *
      * @param index the index of the goal to return.
      * @return a spider diagram (the goal at the given index).
      */
@@ -124,31 +127,32 @@ public class Goals {
 
     /**
      * Returns the number of goals in this list.
+     *
      * @return the number of goals in this list.
      */
     public int getGoalsCount() {
         return goals == null || goals.isEmpty() ? 0 : goals.size();
     }
-    
+
     /**
      * Indicates whether this collection of goals is empty.
+     *
      * @return a flag that indicates whether this collection of goals is empty.
      */
     public boolean isEmpty() {
         return goals == null || goals.isEmpty();
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Factory Methods">
     /**
      * Creates a new instance of the {@link Goals} class with the given list of
      * spider diagrams as the proof goals (proof obligations).
      * <p><span style="font-weight:bold">Warning</span>: this method does not
      * make a copy of the list. Make sure you do not change the contents of the
      * list afterwards.</p>
+     *
      * @param goals the list of spider diagrams which represent the proof goals
-     * (proof obligations).
-     * @return the new instance of the {@link Goals} class. 
+     *              (proof obligations).
+     * @return the new instance of the {@link Goals} class.
      */
     public static Goals createGoalsFrom(List<SpiderDiagram> goals) {
         return new Goals(goals);
@@ -160,9 +164,10 @@ public class Goals {
      * <p><span style="font-weight:bold">Warning</span>: this method does not
      * make a copy of the list. Make sure you do not change the contents of the
      * list afterwards.</p>
+     *
      * @param goals the list of spider diagrams which represent the proof goals
-     * (proof obligations).
-     * @return the new instance of the {@link Goals} class. 
+     *              (proof obligations).
+     * @return the new instance of the {@link Goals} class.
      */
     public static Goals createGoalsFrom(SpiderDiagram... goals) {
         return new Goals(goals);
@@ -176,12 +181,32 @@ public class Goals {
      * list afterwards.</p>
      * <p><span style="font-weight:bold">Note</span>: this is a bit of an unsafe
      * method. Use it with care.</p>
+     *
      * @param goals the list of spider diagrams which represent the proof goals
-     * (proof obligations).
-     * @return the new instance of the {@link Goals} class. 
+     *              (proof obligations).
+     * @return the new instance of the {@link Goals} class.
      */
     public static Goals createGoalsFrom(ArrayList<SpiderDiagram> goals) {
         return new Goals(goals);
     }
-    // </editor-fold>
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Goals goals1 = (Goals) o;
+
+        return !(goals != null ? !goals.equals(goals1.goals) : goals1.goals != null);
+    }
+
+    @Override
+    public int hashCode() {
+        return goals != null ? goals.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Goals(" + goals + ')';
+    }
 }

@@ -26,12 +26,34 @@
  */
 package speedith.core.reasoning.args;
 
-import speedith.core.reasoning.args.RuleArg;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
- *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class MultipleRuleArgs implements RuleArg {
-    
+public class MultipleRuleArgs implements RuleArg, Iterable<RuleArg> {
+
+    private final ArrayList<RuleArg> ruleArgs;
+
+    public MultipleRuleArgs(List<? extends RuleArg> ruleArgs) {
+        this.ruleArgs = new ArrayList<>(ruleArgs);
+    }
+
+    public RuleArg get(int index) {
+        return ruleArgs.get(index);
+    }
+
+    public Iterator<RuleArg> iterator() {
+        return ruleArgs.iterator();
+    }
+
+    public int size() {
+        return ruleArgs.size();
+    }
+
+    public boolean isEmpty() {
+        return ruleArgs.isEmpty();
+    }
 }
