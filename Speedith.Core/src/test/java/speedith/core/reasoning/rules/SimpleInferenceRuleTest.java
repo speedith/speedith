@@ -46,7 +46,7 @@ public class SimpleInferenceRuleTest {
     public void testPositions() throws ReadingException {
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_1).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0 || subDiagramIndex == 2) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else if (subDiagramIndex == 1) {
@@ -59,7 +59,7 @@ public class SimpleInferenceRuleTest {
 
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_2).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0 || subDiagramIndex == 2) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else if (subDiagramIndex == 1 || subDiagramIndex == 3) {
@@ -72,7 +72,7 @@ public class SimpleInferenceRuleTest {
 
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_3).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else if (subDiagramIndex == 1 || subDiagramIndex == 2 || subDiagramIndex == 3) {
@@ -85,7 +85,7 @@ public class SimpleInferenceRuleTest {
 
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_4).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else {
@@ -96,7 +96,7 @@ public class SimpleInferenceRuleTest {
         
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_5).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else {
@@ -107,7 +107,7 @@ public class SimpleInferenceRuleTest {
         
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_6).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else if (subDiagramIndex == 1) {
@@ -120,7 +120,7 @@ public class SimpleInferenceRuleTest {
 
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_7).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0 || subDiagramIndex == 1 || subDiagramIndex == 2) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else {
@@ -131,7 +131,7 @@ public class SimpleInferenceRuleTest {
 
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_8).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0 || subDiagramIndex == 2) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else if (subDiagramIndex == 1) {
@@ -144,7 +144,7 @@ public class SimpleInferenceRuleTest {
 
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_9).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0 || subDiagramIndex == 2) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else if (subDiagramIndex == 1) {
@@ -157,7 +157,7 @@ public class SimpleInferenceRuleTest {
 
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_10).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0 || subDiagramIndex == 2) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else if (subDiagramIndex == 1) {
@@ -170,7 +170,7 @@ public class SimpleInferenceRuleTest {
 
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_11).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0 || subDiagramIndex == 2) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else if (subDiagramIndex == 1) {
@@ -183,7 +183,7 @@ public class SimpleInferenceRuleTest {
 
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_12).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else if (subDiagramIndex == 1 || subDiagramIndex == 2) {
@@ -196,7 +196,7 @@ public class SimpleInferenceRuleTest {
 
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_13).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0 || subDiagramIndex == 1 || subDiagramIndex == 2) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else {
@@ -207,7 +207,7 @@ public class SimpleInferenceRuleTest {
 
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_14).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0 || subDiagramIndex == 1 || subDiagramIndex == 2) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else {
@@ -218,7 +218,7 @@ public class SimpleInferenceRuleTest {
 
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_15).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0 || subDiagramIndex == 2) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else if (subDiagramIndex == 1) {
@@ -231,7 +231,7 @@ public class SimpleInferenceRuleTest {
         
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_16).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else {
@@ -242,7 +242,7 @@ public class SimpleInferenceRuleTest {
         
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_17).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else {
@@ -253,7 +253,7 @@ public class SimpleInferenceRuleTest {
         
         SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_18).visit(new DiagramVisitorImpl() {
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagramIndex == 0) {
                     assertEquals(SimpleInferenceRule.getPositionType(parents, childIndices), SimpleInferenceRule.PositivePosition);
                 } else {

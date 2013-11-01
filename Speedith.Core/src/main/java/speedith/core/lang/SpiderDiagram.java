@@ -31,7 +31,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+
 import speedith.core.reasoning.args.SubDiagramIndexArg;
+
 import static speedith.core.i18n.Translations.i18n;
 
 /**
@@ -47,21 +49,22 @@ import static speedith.core.i18n.Translations.i18n;
 public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDiagramElement {
 
     // <editor-fold defaultstate="collapsed" desc="Public Methods">
+
     /**
      * Compares this spider diagram with another and returns {@code true} iff
      * they are equivalent up to spider renaming and region reordering.
-     * 
+     * <p/>
      * <p>The default implementation of this
      * method simply calls the {@link
      * SpiderDiagram#equals(java.lang.Object) syntactical equality method}.</p>
-     * 
+     * <p/>
      * <p>If this method returns {@code true} then this spider diagram equals
      * semantically to the other. However, if this method returns {@code false}
      * it does not mean anything.</p>
      *
      * @param other the other spider diagram to compare this one against.
      * @return {@code true} if the semantic equivalence could have been
-     * established. Otherwise it returns {@code false}.
+     *         established. Otherwise it returns {@code false}.
      */
     public boolean isSEquivalentTo(SpiderDiagram other) {
         return equals(other);
@@ -74,22 +77,22 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
      * one.</p> <p>For two spider diagrams to be syntactically equivalent, they
      * have to conform to the following criteria: <ul> <li>any {@link NullSpiderDiagram}
      * instance equals to another {@link
-     *          NullSpiderDiagram} instance (in fact, the {@link
-     *          NullSpiderDiagram} is a singleton),</li> <li>an instance of an {@link CompoundSpiderDiagram}
+     * NullSpiderDiagram} instance (in fact, the {@link
+     * NullSpiderDiagram} is a singleton),</li> <li>an instance of an {@link CompoundSpiderDiagram}
      * equals to another if: <ul> <li>both have the same operator (an equality
      * comparison on {@link CompoundSpiderDiagram#getOperator()}) and</li>
      * <li>both have the same operands (an equality comparison on all {@link CompoundSpiderDiagram#getOperands()}).</li>
      * </ul> </li> <li>a {@link PrimarySpiderDiagram} equals (syntactically) to
      * another iff: <ul> <li>they have the same {@link PrimarySpiderDiagram#getSpiders()
-     *          spiders},</li> <li>they have the same {@link PrimarySpiderDiagram#getShadedZones()
-     *                  shaded zones}, and</li> <li>they have the same {@link PrimarySpiderDiagram#getHabitats()
-     *                  habitats}.</li> </ul> <span style="font-weight:bold">Note</span>: the
+     * spiders},</li> <li>they have the same {@link PrimarySpiderDiagram#getShadedZones()
+     * shaded zones}, and</li> <li>they have the same {@link PrimarySpiderDiagram#getHabitats()
+     * habitats}.</li> </ul> <span style="font-weight:bold">Note</span>: the
      * above <span style="font-style:italic;">collection comparisons</span> are
      * all element-wise equality comparisons. </li> </ul> </p>
      *
      * @param other the other spider diagram to compare this one against.
      * @return {@code true} iff the two spider diagrams are syntactically the
-     * same.
+     *         same.
      */
     @Override
     public abstract boolean equals(Object other);
@@ -98,12 +101,12 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
      * All spider diagrams should produce a hash code that conforms the
      * following semantics: let <span style="font-style:italic;">A</span> and
      * <span style="font-style:italic;">B</span> be two spider diagrams, then if
-     * <span style="font-style:italic;">A</span>{@code .equals(}<span style="font-style:italic;">B</span>{@code )},
+     * <span style="font-style:italic;">A</span>{@code .equals(}<span style="font-style:italic;">B</span>{@code)},
      * then <span style="font-style:italic;">A</span>{@code .hashCode() ==
      * }<span style="font-style:italic;">B</span>{@code .hashCode()}.
      *
      * @return an integer satisfying the <span style="font-style:italic;">hash
-     * property</span>.
+     *         property</span>.
      */
     @Override
     public abstract int hashCode();
@@ -135,12 +138,12 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
      * <p>Note: this function does not descend into spider diagrams returned by
      * the given {@link Transformer transformer}.</p>
      *
-     * @param t the object that transforms particular sub-diagrams.
+     * @param t            the object that transforms particular sub-diagrams.
      * @param trackParents indicates whether the parents of the visited
-     * sub-diagrams should be tracked. If this parameter is set to {@code false}
-     * then the transformer's {@link Transformer#transform(speedith.core.lang.CompoundSpiderDiagram, int, int, java.util.LinkedList)
-     * transform methods} will be called with the parent stack set to {@code
-     * null}.
+     *                     sub-diagrams should be tracked. If this parameter is set to {@code false}
+     *                     then the transformer's {@link Transformer#transform(speedith.core.lang.CompoundSpiderDiagram, int, int, java.util.LinkedList)
+     *                     transform methods} will be called with the parent stack set to {@code
+     *                     null}.
      * @return the transformed spider diagram.
      */
     public abstract SpiderDiagram transform(Transformer t, boolean trackParents);
@@ -151,9 +154,9 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
      * simply calls the {@link SpiderDiagram#visit(speedith.core.lang.DiagramVisitor, boolean) full visit}
      * function with parent tracking enabled.</p>
      *
-     * @param <T> the type of the result produced by the visitor.
+     * @param <T>     the type of the result produced by the visitor.
      * @param visitor the object that will receive calls upon visiting
-     * particular elements.
+     *                particular elements.
      * @return the result produced by the visitor.
      */
     public <T> T visit(DiagramVisitor<T> visitor) {
@@ -164,14 +167,14 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
      * Visits every sub-diagram in this diagram and calls the appropriate
      * methods of the given {@link DiagramVisitor visitor}.
      *
-     * @param <T> the type of the result produced by the visitor.
-     * @param visitor the object that will receive calls upon visiting
-     * particular elements.
+     * @param <T>          the type of the result produced by the visitor.
+     * @param visitor      the object that will receive calls upon visiting
+     *                     particular elements.
      * @param trackParents indicates whether the parents of the visited
-     * sub-diagrams should be tracked. If this parameter is set to {@code false}
-     * then the visitor's {@link DiagramVisitor#visit(speedith.core.lang.SpiderDiagram, int, int, java.util.LinkedList)
-     * visit method} will be called with the parent stack set to {@code
-     * null}.
+     *                     sub-diagrams should be tracked. If this parameter is set to {@code false}
+     *                     then the visitor's {@link DiagramVisitor#visit(speedith.core.lang.SpiderDiagram, int, int, java.util.LinkedList)
+     *                     visit method} will be called with the parent stack set to {@code
+     *                     null}.
      * @return the result produced by the visitor.
      */
     public <T> T visit(DiagramVisitor<T> visitor, boolean trackParents) {
@@ -180,7 +183,13 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
         }
         visitor.init(this);
         if (!visitor.isDone()) {
-            visitor.visit(this, 0, trackParents ? new ArrayList<CompoundSpiderDiagram>() : null, trackParents ? new ArrayList<Integer>() : null);
+            visitor.visit(
+                    this,
+                    0,
+                    trackParents ? new ArrayList<CompoundSpiderDiagram>() : null,
+                    trackParents ? new ArrayList<Integer>() : null,
+                    trackParents ? new ArrayList<Integer>() : null
+            );
         }
         visitor.end();
         return visitor.getResult();
@@ -196,9 +205,9 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
      * NullSpiderDiagram null} spider diagrams do not have any sub-diagrams.</p>
      *
      * @param index the index of the spider sub-diagram in this spider diagram
-     * to return.
+     *              to return.
      * @return the spider sub-diagram at the given index (as it appears in this
-     * spider diagram from left to right).
+     *         spider diagram from left to right).
      */
     public abstract SpiderDiagram getSubDiagramAt(int index);
 
@@ -207,12 +216,13 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
      * children of the children and also counting the diagram itself).
      *
      * @return the number of all sub-diagrams in this diagram (counting all the
-     * children of the children and also counting the diagram itself).
+     *         children of the children and also counting the diagram itself).
      */
     public abstract int getSubDiagramCount();
 
     /**
      * Returns the first index of the given spider diagram.
+     *
      * @param sd the sub-diagram for which we want to look up the index
      * @return the first index of the given spider diagram.
      */
@@ -230,7 +240,7 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
             }
 
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 if (subDiagram.equals(sd)) {
                     foundIndex = subDiagramIndex;
                 }
@@ -258,12 +268,13 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
      * compound spider diagram are valid.</li> </ul> </p>
      *
      * @return {@code true} if and only if the diagram is valid according to the
-     * above rules.
+     *         above rules.
      */
     public abstract boolean isValid();
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
+
     /**
      * Converts this spider diagram to its textual representation (see {@link speedith.core.lang.reader.SpiderDiagramsReader#readSpiderDiagram(java.lang.String)}
      * for an explanation on how to read spider diagrams from this textual
@@ -278,7 +289,7 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
      * representation.
      *
      * @param sb the string builder into which to put the textual representation
-     * of this spider diagram (must not be {@code null}).
+     *           of this spider diagram (must not be {@code null}).
      * @throws IOException thrown if the string builder throws an exception.
      */
     public abstract void toString(Appendable sb) throws IOException;
@@ -313,6 +324,43 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
             }
         }
         sb.append(']');
+    }
+
+    public int getParentIndexOf(final int childIndex) {
+        return visit(new DiagramVisitor<Integer>() {
+            private static final int PARENT_NOT_YET_NDETERMINED = -2;
+            private static final int HAS_NO_PARENT = -1;
+            public int parentIndex = PARENT_NOT_YET_NDETERMINED;
+
+            @Override
+            public void init(SpiderDiagram root) {
+            }
+
+            @Override
+            public void end() {
+            }
+
+            @Override
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
+                if (subDiagramIndex == childIndex) {
+                    if (parents == null || parents.size() < 1) {
+                        parentIndex = HAS_NO_PARENT;
+                    } else {
+                        parentIndex = parentIndices.get(parentIndices.size() - 1);
+                    }
+                }
+            }
+
+            @Override
+            public boolean isDone() {
+                return parentIndex != PARENT_NOT_YET_NDETERMINED;
+            }
+
+            @Override
+            public Integer getResult() {
+                return parentIndex;
+            }
+        });
     }
     // </editor-fold>
 }

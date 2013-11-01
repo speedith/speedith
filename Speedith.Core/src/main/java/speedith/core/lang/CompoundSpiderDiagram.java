@@ -28,7 +28,9 @@ package speedith.core.lang;
 
 import java.io.IOException;
 import java.util.*;
+
 import static speedith.core.i18n.Translations.i18n;
+
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 
 /**
@@ -43,7 +45,6 @@ import speedith.core.reasoning.args.SubDiagramIndexArg;
  */
 public class CompoundSpiderDiagram extends SpiderDiagram {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
     /**
      * The identifier of the unary spider diagram in the textual representation
      * of spider diagrams. <p>This value is used in the textual representation
@@ -75,8 +76,6 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * diagrams (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextOperatorAttribute = "operator";
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
      * The operator which to apply on the {@link CompoundSpiderDiagram#getOperands()
      * operands}. <p>See {@link Operator#knownOperatorNames()} for a list of all
@@ -91,17 +90,16 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     private boolean hashInvalid = true;
     private int hash;
     private int subDiagramCount = -1;
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Constructors">
+
     /**
      * Initialises a new n-ary spider diagram.
      *
      * @param operator the {@link CompoundSpiderDiagram#getOperator() n-ary
-     * operator} that operates over {@link CompoundSpiderDiagram#getOperands()
-     * operands} of this n-ary spider diagram.
+     *                 operator} that operates over {@link CompoundSpiderDiagram#getOperands()
+     *                 operands} of this n-ary spider diagram.
      * @param operands the {@link CompoundSpiderDiagram#getOperands() operands}
-     * to the {@link CompoundSpiderDiagram#getOperator() operator}.
+     *                 to the {@link CompoundSpiderDiagram#getOperator() operator}.
      */
     CompoundSpiderDiagram(String operator, Collection<SpiderDiagram> operands) {
         this(Operator.fromString(operator), operands == null ? null : new ArrayList<SpiderDiagram>(operands));
@@ -113,10 +111,10 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * make a copy of the given array list. Take heed on how you use it.</p>
      *
      * @param operator the {@link CompoundSpiderDiagram#getOperator() n-ary
-     * operator} that operates over {@link CompoundSpiderDiagram#getOperands()
-     * operands} of this n-ary spider diagram.
+     *                 operator} that operates over {@link CompoundSpiderDiagram#getOperands()
+     *                 operands} of this n-ary spider diagram.
      * @param operands the {@link CompoundSpiderDiagram#getOperands() operands}
-     * to the {@link CompoundSpiderDiagram#getOperator() operator}.
+     *                 to the {@link CompoundSpiderDiagram#getOperator() operator}.
      */
     CompoundSpiderDiagram(Operator operator, ArrayList<SpiderDiagram> operands) {
         if (operator == null) {
@@ -136,17 +134,16 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         this.operator = operator;
         this.operands = operands;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Public Properties">
+
     /**
      * Returns the n-ary operator that binds the
      * {@link CompoundSpiderDiagram#getOperands() operands} in this n-ary spider
      * diagram.
      *
      * @return the n-ary operator that binds the
-     * {@link CompoundSpiderDiagram#getOperands() operands} in this n-ary spider
-     * diagram.
+     *         {@link CompoundSpiderDiagram#getOperands() operands} in this n-ary spider
+     *         diagram.
      */
     public Operator getOperator() {
         return operator;
@@ -157,7 +154,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * operator} in this n-ary spider diagram.
      *
      * @return the operands of the {@link CompoundSpiderDiagram#getOperator()
-     * operator} in this n-ary spider diagram.
+     *         operator} in this n-ary spider diagram.
      */
     public List<SpiderDiagram> getOperands() {
         return Collections.unmodifiableList(operands);
@@ -181,9 +178,8 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     public SpiderDiagram getOperand(int index) {
         return operands.get(index);
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+
     /**
      * Returns the spider diagram at the given index. <p>This index indicates
      * the number of appearance (from left to right) of a sub-diagram within
@@ -191,9 +187,9 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * info on the <span style="font-style:italic;">diagram indices</span>.</p>
      *
      * @param index the index of the spider sub-diagram in this compound diagram
-     * to return.
+     *              to return.
      * @return the spider sub-diagram at the given index (as it appears in this
-     * compound diagram from left to right).
+     *         compound diagram from left to right).
      */
     @Override
     public SpiderDiagram getSubDiagramAt(int index) {
@@ -249,14 +245,19 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         }
         visitor.init(this);
         if (!visitor.isDone()) {
-            __visitCompoundSD(visitor, this, 0, trackParents ? new ArrayList<CompoundSpiderDiagram>() : null, trackParents ? new ArrayList<Integer>() : null);
+            __visitCompoundSD(
+                    visitor,
+                    this,
+                    0,
+                    trackParents ? new ArrayList<CompoundSpiderDiagram>() : null,
+                    trackParents ? new ArrayList<Integer>() : null,
+                    trackParents ? new ArrayList<Integer>() : null
+            );
         }
         visitor.end();
         return visitor.getResult();
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Iterable Implementation">
     @Override
     public Iterator<SpiderDiagram> iterator() {
         return new CompoundSpiderDiagramIterator(this);
@@ -349,9 +350,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
             this.nextChildIndex = nextChildIndex;
         }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Equality">
     @Override
     public boolean equals(Object other) {
         if (other == this) {
@@ -394,9 +393,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         }
         return hash;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
     @Override
     public void toString(Appendable sb) throws IOException {
         if (sb == null) {
@@ -453,17 +450,15 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
             throw new RuntimeException(ex);
         }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Private Methods">
+
     /**
      * Compares the other non-{
      *
-     * @ null} {@link CompoundSpiderDiagram} to this one and returns
-     * {@code true} iff they share the same operand and the same operators.
-     *
      * @param other
      * @return
+     * @ null} {@link CompoundSpiderDiagram} to this one and returns
+     * {@code true} iff they share the same operand and the same operators.
      */
     @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
     private boolean __isCsdEqual(CompoundSpiderDiagram other) {
@@ -520,7 +515,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
                 // one only (naturally).
                 subDiagramIndex += childSD.getSubDiagramCount();
             }
-            popParent(parents, childIndices);
+            popParent(parents);
             // Did any of the children change? If none changed, we must return
             // the unchanged diagram. But if at least one changed, we have to
             // create a new one.
@@ -531,13 +526,6 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     /**
      * Applies the transformer on the given spider diagram based on the type of
      * the spider diagram.
-     *
-     * @param sd
-     * @param t
-     * @param subDiagramIndex
-     * @param childIndex
-     * @param parents
-     * @return
      */
     private static SpiderDiagram __applyTransform(SpiderDiagram sd, Transformer t, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
         if (sd instanceof CompoundSpiderDiagram) {
@@ -553,22 +541,18 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * Applies the visit function of the visitor on the given spider diagram.
      * This method returns {@code true} if and only if the visitor is done and
      * no further calls to visit must be made.
-     *
-     * @param curSD
-     * @param visitor
-     * @param subDiagramIndex
-     * @param childIndex
-     * @param parents
-     * @return
      */
-    private static <T> boolean __visitCompoundSD(DiagramVisitor<T> visitor, CompoundSpiderDiagram curSD, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+    private static <T> boolean __visitCompoundSD(DiagramVisitor<T> visitor, CompoundSpiderDiagram curSD, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
         // Visit the current spider diagram.
-        visitor.visit(curSD, subDiagramIndex++, parents, childIndices);
+        visitor.visit(curSD, subDiagramIndex, parents, childIndices, parentIndices);
 
         // Now visit the child spider diagrams, if it is not finished yet
         // and if there are actually any child spider diagrams.
         if (curSD.getOperandCount() > 0 && !visitor.isDone()) {
             pushParent(parents, curSD);
+            pushParentIndex(parentIndices, subDiagramIndex);
+
+            subDiagramIndex++;
 
             // Visit all the children.
             for (int childIndex = 0; childIndex < curSD.operands.size(); ++childIndex) {
@@ -577,7 +561,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
                 // Apply the visitor to the current spider diagram and return
                 // if it's finished.
                 pushChildIndex(childIndices, childIndex);
-                final boolean visitResult = __visitSD(childSD, visitor, subDiagramIndex, parents, childIndices);
+                final boolean visitResult = __visitSD(childSD, visitor, subDiagramIndex, parents, childIndices, parentIndices);
                 popChildIndex(childIndices);
                 if (visitResult) {
                     return true;
@@ -588,9 +572,22 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
                 // one only (naturally).
                 subDiagramIndex += subDiagramCount;
             }
-            popParent(parents, childIndices);
+            popParent(parents);
+            popParentIndex(parentIndices);
         }
         return visitor.isDone();
+    }
+
+    private static void popParentIndex(ArrayList<Integer> parentIndices) {
+        if (parentIndices != null) {
+            parentIndices.remove(parentIndices.size() - 1);
+        }
+    }
+
+    private static void pushParentIndex(ArrayList<Integer> parentIndices, int subDiagramIndex) {
+        if (parentIndices != null) {
+            parentIndices.add(subDiagramIndex);
+        }
     }
 
     /**
@@ -598,11 +595,11 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * This method returns {@code true} if and only if the visitor is done and
      * no further calls to visit must be made.
      */
-    private static <T> boolean __visitSD(SpiderDiagram sd, DiagramVisitor<T> visitor, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+    private static <T> boolean __visitSD(SpiderDiagram sd, DiagramVisitor<T> visitor, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
         if (sd instanceof CompoundSpiderDiagram) {
-            return __visitCompoundSD(visitor, (CompoundSpiderDiagram) sd, subDiagramIndex, parents, childIndices);
+            return __visitCompoundSD(visitor, (CompoundSpiderDiagram) sd, subDiagramIndex, parents, childIndices, parentIndices);
         } else {
-            visitor.visit(sd, subDiagramIndex, parents, childIndices);
+            visitor.visit(sd, subDiagramIndex, parents, childIndices, parentIndices);
             return visitor.isDone();
         }
     }
@@ -611,9 +608,6 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * Compares the operands of this and the other compound diagram. <p>This
      * method returns {@code true} iff they have the same number of operands and
      * if the operands at the same indices are semantically equivalent.</p>
-     *
-     * @param other
-     * @return
      */
     private boolean operandsSemanticallyEquivalent(CompoundSpiderDiagram other) {
         Iterator<SpiderDiagram> itThis = operands.iterator();
@@ -630,7 +624,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
         return false;
     }
 
-    private static void popParent(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+    private static void popParent(ArrayList<CompoundSpiderDiagram> parents) {
         // We have finished traversing the children of the current compound
         // diagram. Remove it from the stack of parents.
         if (parents != null) {
@@ -657,5 +651,4 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
             childIndices.remove(childIndices.size() - 1);
         }
     }
-    // </editor-fold>
 }

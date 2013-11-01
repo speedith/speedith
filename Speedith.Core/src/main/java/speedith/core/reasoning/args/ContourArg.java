@@ -64,7 +64,7 @@ public class ContourArg extends SubDiagramIndexArg {
      *
      * @return name of the spider that should be passed to an inference rule.
      */
-    public String getSpider() {
+    public String getContour() {
         return contour;
     }
     // </editor-fold>

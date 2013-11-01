@@ -433,7 +433,7 @@ public class CompoundSpiderDiagramTest {
             }
 
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 checkChildIndices(parents, childIndices, subDiagram);
                 ++count;
             }
@@ -530,7 +530,7 @@ public class CompoundSpiderDiagramTest {
                 }
 
                 @Override
-                public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+                public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                     checkChildIndices(parents, childIndices, subDiagram);
                     if (subDiagramIndex == targetSD) {
                         sd = subDiagram;
@@ -564,7 +564,7 @@ public class CompoundSpiderDiagramTest {
             }
 
             @Override
-            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+            public void visit(SpiderDiagram subDiagram, int subDiagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, ArrayList<Integer> parentIndices) {
                 checkChildIndices(parents, childIndices, subDiagram);
                 assertEquals(collectedSDs.size(), subDiagramIndex);
                 collectedSDs.add(subDiagram);

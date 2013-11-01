@@ -26,17 +26,13 @@
  */
 package speedith.core.lang;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import propity.util.Sets;
-import static speedith.core.i18n.Translations.i18n;
+
+import java.io.IOException;
+import java.util.*;
+
 import static propity.util.Sets.equal;
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * Represents a zone from the theory of spider diagrams.
@@ -44,6 +40,7 @@ import static propity.util.Sets.equal;
  * <a href="http://journals.cambridge.org/action/displayAbstract?fromPage=online&aid=6564924" title="10.1112/S1461157000000942">
  * Spider Diagrams (2005)</a>.</p>
  * <p>Instances of this class (and its derived classes) are immutable.</p>
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class Zone implements Comparable<Zone>, SpiderDiagramElement {
@@ -53,29 +50,34 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
     private TreeSet<String> outContours;
     private boolean hashInvalid = true;
     private int hash;
+    private SortedSet<String> allContours;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
+
     /**
      * Creates a new zone with the given in-contours and no out-contours.
+     *
      * @param inContours the contours which contain this zone.
      */
-    public Zone(String ... inContours) {
+    public Zone(String... inContours) {
         this(Arrays.asList(inContours), null);
     }
+
     /**
      * Creates a new zone and initialises it with the two given collections of
      * contour names.
-     * @param inContours the collection of names of contours which contain this
-     * new zone.
-     * <p>Note that duplicated contour names will be ignored.</p>
+     *
+     * @param inContours  the collection of names of contours which contain this
+     *                    new zone.
+     *                    <p>Note that duplicated contour names will be ignored.</p>
      * @param outContours the collection of names of contours which lie entirely
-     * outside this new zone.
-     * <p>Note that duplicated contour names will be ignored.</p>
+     *                    outside this new zone.
+     *                    <p>Note that duplicated contour names will be ignored.</p>
      */
     public Zone(Collection<String> inContours, Collection<String> outContours) {
         this(inContours == null ? null : new TreeSet<String>(inContours),
-                outContours == null ? null : new TreeSet<String>(outContours));
+             outContours == null ? null : new TreeSet<String>(outContours));
     }
 
     /**
@@ -87,12 +89,13 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
      * contract for the {@link Zone#hashCode()} method might be broken). So,
      * make sure that you do not change the given sets after creating this zone
      * with them.</p>
-     * @param inContours the collection of names of contours which contain this
-     * new zone.
-     * <p>Note that duplicated contour names will be ignored.</p>
+     *
+     * @param inContours  the collection of names of contours which contain this
+     *                    new zone.
+     *                    <p>Note that duplicated contour names will be ignored.</p>
      * @param outContours the collection of names of contours which lie entirely
-     * outside this new zone.
-     * <p>Note that duplicated contour names will be ignored.</p>
+     *                    outside this new zone.
+     *                    <p>Note that duplicated contour names will be ignored.</p>
      */
     Zone(TreeSet<String> inContours, TreeSet<String> outContours) {
         this.inContours = inContours;
@@ -101,13 +104,35 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Public Properties">
+
+    /**
+     * Creates a new zone with the given in-contours only (no out-contours).
+     *
+     * @param inContours the in-contours to put into the new zone.
+     * @return a new zone with the given in-contours only (no out-contours).
+     */
+    public static Zone fromInContours(String... inContours) {
+        return new Zone(Arrays.asList(inContours), null);
+    }
+
+    /**
+     * Creates a new zone with the given out-contours only (no in-contours).
+     *
+     * @param outContours the in-contours to put into the new zone.
+     * @return a new zone with the given out-contours only (no in-contours).
+     */
+    public static Zone fromOutContours(String... outContours) {
+        return new Zone(null, Arrays.asList(outContours));
+    }
+
     /**
      * Returns a read-only set of contour names.
      * <p>These are the contours that contain this zone.</p>
      * <p>Note: this method may return {@code null}, which indicates that this
      * zone is contained in no contour.</p>
+     *
      * @return a read-only set of contour names.
-     * <p>These are the contours that contain this zone.</p>
+     *         <p>These are the contours that contain this zone.</p>
      */
     public SortedSet<String> getInContours() {
         return inContours == null || inContours.isEmpty() ? null : Collections.unmodifiableSortedSet(inContours);
@@ -115,19 +140,24 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
 
     /**
      * Returns the number of {@link Zone#getInContours() in-contours}.
+     *
      * @return the number of {@link Zone#getInContours() in-contours}.
      */
     public int getInContoursCount() {
         return inContours == null ? 0 : inContours.size();
     }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Public Methods">
 
     /**
      * Returns a read-only set of contour names.
      * <p>These are the contours that lie outside this zone.</p>
      * <p>Note: this method may return {@code null}, which indicates that this
      * zone does not lie outside any contour.</p>
+     *
      * @return a read-only set of contour names.
-     * <p>These are the contours that lie outside this zone.</p>
+     *         <p>These are the contours that lie outside this zone.</p>
      */
     public SortedSet<String> getOutContours() {
         return outContours == null || outContours.isEmpty() ? null : Collections.unmodifiableSortedSet(outContours);
@@ -135,14 +165,13 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
 
     /**
      * Returns the number of {@link Zone#getOutContours() out-contours}.
+     *
      * @return the number of {@link Zone#getOutContours() out-contours}.
      */
     public int getOutContoursCount() {
         return outContours == null ? 0 : outContours.size();
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
      * Compares (lexicographically) this zone to another and returns {@code -1},
      * {@code 0}, or {@code 1} if this zone is alphabetically smaller, equal, or
@@ -151,10 +180,11 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
      * <p>Note: this method uses the
      * {@link Sets#compareNaturally(java.util.SortedSet, java.util.SortedSet) }
      * method internally (to compare the contour names with each other).</p>
+     *
      * @param other the other zone with which to compare this one.
      * @return {@code -1}, {@code 0}, or {@code 1} if this zone is
-     * alphabetically smaller, equal, or larger (respectively) than the other
-     * zone.
+     *         alphabetically smaller, equal, or larger (respectively) than the other
+     *         zone.
      */
     @Override
     public int compareTo(Zone other) {
@@ -176,10 +206,11 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
      * Two zones are equal if they have exactly the same {@link
      * Zone#getInContours() in countours} and {@link Zone#getOutContours() out
      * countours}.
+     *
      * @param obj the object with which to compare this zone.
      * @return {@code true} if and only if {@code obj} is a region and it has
-     * exactly the same {@link Zone#getInContours() in countours} and {@link
-     * Zone#getOutContours() out countours}.
+     *         exactly the same {@link Zone#getInContours() in countours} and {@link
+     *         Zone#getOutContours() out countours}.
      */
     @Override
     public boolean equals(Object obj) {
@@ -196,7 +227,7 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
     public int hashCode() {
         if (hashInvalid) {
             hash = (inContours == null || inContours.isEmpty() ? 0 : inContours.hashCode())
-                    + (outContours == null || outContours.isEmpty() ? 0 : outContours.hashCode());
+                   + (outContours == null || outContours.isEmpty() ? 0 : outContours.hashCode());
             hashInvalid = false;
         }
         return hash;
@@ -205,9 +236,10 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
     /**
      * Takes this zone and creates a copy of it with in-contours replaced with
      * the given ones.
+     *
      * @param inContours the in-contours to put into the new zone.
      * @return a copy of this zone with in-contours replaced with the given
-     * ones.
+     *         ones.
      */
     public Zone withInContours(String... inContours) {
         return new Zone(inContours == null ? null : new TreeSet<String>(Arrays.asList(inContours)), this.outContours);
@@ -216,30 +248,13 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
     /**
      * Takes this zone and creates a copy of it with out-contours replaced with
      * the given ones.
+     *
      * @param outContours the out-contours to put into the new zone.
      * @return a copy of this zone with out-contours replaced with the given
-     * ones.
+     *         ones.
      */
     public Zone withOutContours(String... outContours) {
         return new Zone(this.inContours, outContours == null ? null : new TreeSet<String>(Arrays.asList(outContours)));
-    }
-
-    /**
-     * Creates a new zone with the given in-contours only (no out-contours).
-     * @param inContours the in-contours to put into the new zone.
-     * @return a new zone with the given in-contours only (no out-contours).
-     */
-    public static Zone fromInContours(String... inContours) {
-        return new Zone(Arrays.asList(inContours), null);
-    }
-
-    /**
-     * Creates a new zone with the given out-contours only (no in-contours).
-     * @param outContours the in-contours to put into the new zone.
-     * @return a new zone with the given out-contours only (no in-contours).
-     */
-    public static Zone fromOutContours(String... outContours) {
-        return new Zone(null, Arrays.asList(outContours));
     }
 
     /**
@@ -247,30 +262,33 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
      * contours).
      * <p>This method also checks whether the set of in- and out- contours are
      * disjoint.</p>
+     *
      * @param contours the set of contours against which to validate this zone.
      * @return {@code true} if and only if this zone has:
-     * <ul>
-     *      <li>disjoint in- and out-contours sets, and</li>
-     *      <li>contains all the contours.</li>
-     * </ul>
+     *         <ul>
+     *         <li>disjoint in- and out-contours sets, and</li>
+     *         <li>contains all the contours.</li>
+     *         </ul>
      */
     public boolean isValid(SortedSet<String> contours) {
         // NOTE: Maybe we can check whether the disjoint sum of 'inCountours'
         // and 'outContours' equals to 'contours' in a different, more efficient
         // way.
         return Sets.naturallyDisjoint(this.inContours, this.outContours)
-                && Sets.isNaturalSubset(this.inContours, contours)
-                && Sets.isNaturalSubset(this.outContours, contours)
-                && contours.size() == this.getInContoursCount() + this.getOutContoursCount();
+               && Sets.isNaturalSubset(this.inContours, contours)
+               && Sets.isNaturalSubset(this.outContours, contours)
+               && contours.size() == this.getInContoursCount() + this.getOutContoursCount();
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
+
     /**
      * Puts the string representation of this zone into the provided string
      * builder.
+     *
      * @param sb the string builder into which to write the string representation
-     * of this zone.
+     *           of this zone.
      */
     public void toString(Appendable sb) {
         try {
@@ -292,6 +310,20 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
         StringBuilder sb = new StringBuilder();
         toString(sb);
         return sb.toString();
+    }
+
+    public SortedSet<String> getAllContours() {
+        if (allContours == null) {
+            TreeSet<String> contours = new TreeSet<>();
+            if (getInContoursCount() > 0) {
+                contours.addAll(getInContours());
+            }
+            if (getOutContoursCount() > 0) {
+                contours.addAll(getOutContours());
+            }
+            allContours = Collections.unmodifiableSortedSet(contours);
+        }
+        return allContours;
     }
     // </editor-fold>
 }

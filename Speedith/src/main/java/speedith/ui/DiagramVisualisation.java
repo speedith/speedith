@@ -97,6 +97,7 @@ public final class DiagramVisualisation {
         byte[] allZones = new byte[allZonesCount];
         final byte IsShaded = 1;
         final byte IsInHabitat = 2;
+        final byte IsPresent = 4;
 
         // Get all contours in any way mentioned in the primary spider diagram:
         for (String contour : contourStrings) {
@@ -115,6 +116,13 @@ public final class DiagramVisualisation {
             }
         }
 
+        // Mark all present zones:
+        if (psd.getPresentZonesCount() > 0) {
+            for (Zone zone : psd.getPresentZones()) {
+                markZone(allZones, allContours, zone, IsPresent);
+            }
+        }
+
         // Finally, get the shaded zones:
         if (psd.getShadedZonesCount() > 0) {
             for (Zone zone : psd.getShadedZones()) {
@@ -129,8 +137,8 @@ public final class DiagramVisualisation {
                 // The zone is not shaded. Put it into the list of non-shaded zones.
                 final AbstractBasicRegion abr = constructABR(allContours, i, contourMap);
                 allVisibleZones.add(abr);
-            } else if ((b & IsInHabitat) != 0) {
-                // The zone is shaded and it is also in a habitat of a spider.
+            } else if ((b & IsInHabitat) != 0 || (b & IsPresent) != 0) {
+                // The zone is shaded and it is also in a habitat of a spider or just forced to be present.
                 // This means that we have to specify it as a shaded zone (to
                 // force it being drawn).
                 final AbstractBasicRegion abr = constructABR(allContours, i, contourMap);

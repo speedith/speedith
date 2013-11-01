@@ -501,4 +501,11 @@ public class ZoneTest {
         boolean result = instance.isValid(contours);
         assertEquals(expResult, result);
     }
+
+    @Test
+    public void getAllContours_should_return_the_union_of_in_and_out_contours() {
+        Zone zone = Zone.fromInContours("Foo", "Bar").withOutContours("Zar");
+        TreeSet<String> expectedContours = new TreeSet<>(Arrays.asList("Foo", "Bar", "Zar"));
+        assertEquals(expectedContours, zone.getAllContours());
+    }
 }

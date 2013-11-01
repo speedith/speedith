@@ -37,15 +37,14 @@ public class CopyContoursTest {
     }
 
     @Test
-    public void apply_should_return_the_same_goals_when_copying_a_contour_that_already_exists_in_the_conjunct_unitary_diagram() throws RuleApplicationException {
-        PrimarySpiderDiagram leftAndRightUnitaryDiagram = SpiderDiagrams.createPrimarySD()
-                                                                        .addSpider("s", new Region(Zone.fromInContours("A")));
+    public void apply_should_return_the_same_goals_when_copying_a_contour_that_already_exists_in_the_other_unitary_diagram() throws RuleApplicationException {
+        PrimarySpiderDiagram leftAndRightUnitaryDiagram = SpiderDiagrams.createPrimarySD().addSpider("s", new Region(Zone.fromInContours("A")));
         CompoundSpiderDiagram conjunctiveCompoundDiagram = SpiderDiagrams.createCompoundSD(Operator.Conjunction, leftAndRightUnitaryDiagram, leftAndRightUnitaryDiagram);
-        Goals expectedGoal = Goals.createGoalsFrom(conjunctiveCompoundDiagram);
+        Goals expectedGoals = Goals.createGoalsFrom(conjunctiveCompoundDiagram);
 
-        RuleApplicationResult applicationResult = copyContours.apply(new MultipleRuleArgs(Arrays.asList(new ContourArg(0, 2, "D"))), expectedGoal);
+        RuleApplicationResult applicationResult = copyContours.apply(new MultipleRuleArgs(Arrays.asList(new ContourArg(0, 2, "A"))), expectedGoals);
 
-        assertEquals(expectedGoal, applicationResult.getGoals());
+        assertEquals(expectedGoals, applicationResult.getGoals());
     }
 
     @Test(expected = RuleApplicationException.class)

@@ -47,7 +47,6 @@ import static speedith.core.i18n.Translations.i18n;
  */
 public class PrimarySpiderDiagram extends SpiderDiagram {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
     /**
      * The identifier of the primary (unitary) spider diagram in the textual
      * representation of spider diagrams. <p>This value is used in the textual
@@ -81,28 +80,15 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * diagrams (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextSpidersAttribute = "spiders";
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="Private Fields">
     private final TreeSet<String> spiders;
     private final TreeMap<String, Region> spiderHabitatsMap;
-//    /**
-//     * This array is used to quickly compare primary spider diagrams up to
-//     * S-equivalence.
-//     *
-//     * <p>For example, for S-equivalence it is required (but not sufficient)
-//     * that two spider diagrams have the same number of habitats and that all
-//     * both lists of habitats, when sorted, are the same. </p>
-//     */
-//    private Region[] habitats;
     private final TreeSet<Zone> shadedZones;
     private TreeSet<String> contours;
     private final TreeSet<Zone> presentZones;
     private boolean hashInvalid = true;
     private int hash;
     private Boolean valid;
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Constructors">
     /**
      * Creates an empty primary (unitary) spider diagram.
      */
@@ -171,9 +157,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         this.shadedZones = shadedZones;
         this.presentZones = presentZones;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
      * Returns an unmodifiable key-value map of spiders with their corresponding
      * {@link Region habitats}. <p>Note: this method may return
@@ -312,12 +296,12 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
             throw new UnsupportedOperationException();
         }
     }
-    
+
     /**
      * Returns the number of spider that have a foot in the given zone.
-     * 
+     *
      * @param z
-     * 
+     *
      * @return the number of spider that have a foot in the given zone.
      */
     public int getSpiderCountInZone(Zone z) {
@@ -331,12 +315,12 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         }
         return count;
     }
-    
+
     /**
      * Returns the spiders that have a foot in the given zone.
-     * 
+     *
      * @param z
-     * 
+     *
      * @return the spiders that have a foot in the given zone.
      */
     public TreeSet<String> getSpidersInZone(Zone z) {
@@ -358,9 +342,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         }
         return valid;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="SpiderDiagram Implementation">
     @Override
     public SpiderDiagram transform(Transformer t, boolean trackParents) {
         if (t == null) {
@@ -383,9 +365,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
             throw new IndexOutOfBoundsException(i18n("GERR_INDEX_OUT_OF_BOUNDS"));
         }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Iterable Implementation">
     @Override
     public Iterator<SpiderDiagram> iterator() {
         return new AtomicSpiderDiagramIterator(this);
@@ -423,9 +403,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
             throw new UnsupportedOperationException(i18n("SD_ITER_REMOVE_NOT_SUPPORTED"));
         }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Equality">
     @Override
     public boolean equals(Object other) {
         if (other == this) {
@@ -474,9 +452,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         }
         return hash;
     }
-    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Transformation Methods">
     /**
      * Creates a copy of this primary spider diagram that contains the given
      * spider and its habitat. <p>If the original primary spider diagram already
@@ -510,9 +486,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         // the spiders, habitats, and shaded zones collections).
         return SpiderDiagrams.createPrimarySD(newSpiders, newHabitats, shadedZones, presentZones, false);
     }
-    //</editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
     @Override
     public void toString(Appendable sb) throws IOException {
         if (sb == null) {
@@ -610,9 +584,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
             throw new RuntimeException(ex);
         }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Equality Comparison Methods">
     /**
      * Checks for syntactical and
      *
@@ -655,9 +627,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         }
         return true;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Contour Names Extraction">
     /**
      * Traverses all zones mentioned in this primary spider diagram and collects
      * all names of contours mentioned in these zones.
@@ -715,9 +685,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         }
         return false;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Validity Check Methods">
     /**
      * Checks whether this primary spider diagram is valid according to the
      * rules described in {@link PrimarySpiderDiagram#isValid()}.
@@ -799,5 +767,4 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         extractContours();
         return Collections.unmodifiableSortedSet(contours);
     }
-    // </editor-fold>
 }
