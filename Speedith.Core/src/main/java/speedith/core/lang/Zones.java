@@ -32,20 +32,26 @@ public final class Zones {
         return zonesInsideContours;
     }
 
-    public static SortedSet<Zone> extendRegionWithNewContour(Collection<Zone> region, String newContour) {
+    public static SortedSet<Zone> extendRegionWithNewContour(Collection<Zone> region, String newContour, Collection<String> allContoursInInitialRegion) {
         if (region == null || region.isEmpty()) {
-            return new TreeSet<>(Arrays.asList(Zone.fromInContours(newContour)));
+            return new TreeSet<>(sameRegionWithNewContours(Arrays.asList(Zone.fromInContours(newContour)), allContoursInInitialRegion));
         } else {
             List<Zone> extendedRegion = sameRegionWithNewContours(region, newContour);
-            SortedSet<String> allContours = region.iterator().next().getAllContours();
-            extendedRegion.addAll(sameRegionWithNewContours(Arrays.asList(Zone.fromInContours(newContour)), allContours.toArray(new String[allContours.size()])));
+            Collection<String> allContours = allContoursInInitialRegion == null ? region.iterator().next().getAllContours() : allContoursInInitialRegion;
+            extendedRegion.addAll(sameRegionWithNewContours(Arrays.asList(Zone.fromInContours(newContour)), allContours));
             return new TreeSet<>(extendedRegion);
         }
     }
 
     public static ArrayList<Zone> sameRegionWithNewContours(Collection<Zone> region, String... newContours) {
+        return sameRegionWithNewContours(region, Arrays.asList(newContours));
+    }
+
+    private static ArrayList<Zone> sameRegionWithNewContours(Collection<Zone> region, Collection<String> newContours) {
         if (region == null) {
             return new ArrayList<>();
+        } else if (newContours == null || newContours.isEmpty()) {
+            return new ArrayList<>(region);
         }
         ArrayList<Zone> updatedRegion = new ArrayList<>(region);
         for (String newContour : newContours) {
@@ -99,5 +105,4 @@ public final class Zones {
         newContours.add(contour);
         return newContours;
     }
-
 }

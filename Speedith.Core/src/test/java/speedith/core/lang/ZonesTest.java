@@ -5,8 +5,7 @@ import org.junit.Test;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
-import static speedith.core.lang.Zones.allZonesForContours;
-import static speedith.core.lang.Zones.sameRegionWithNewContours;
+import static speedith.core.lang.Zones.*;
 
 public class ZonesTest {
 
@@ -54,11 +53,6 @@ public class ZonesTest {
     }
 
     @Test
-    public void testExtendRegionWithNewContour() throws Exception {
-
-    }
-
-    @Test
     public void sameRegionWithNewContour_should_return_an_empty_region_when_the_initial_region_is_empty() throws Exception {
         assertEquals(
                 new ArrayList<Zone>(),
@@ -87,6 +81,26 @@ public class ZonesTest {
         assertEquals(
                 new TreeSet<>(Zones.getZonesInsideContours(allZonesForContours("A", "B", "C"), "B")),
                 new TreeSet<>(sameRegionWithNewContours(Arrays.asList(Zone.fromInContours("B")), "A", "C"))
+        );
+    }
+
+    @Test
+    public void extendRegionWithNewContour_should_return_the_zone_of_the_contour_when_initial_region_is_empty() {
+        assertEquals(
+                new TreeSet<>(Arrays.asList(Zone.fromInContours("B"))),
+                extendRegionWithNewContour(new ArrayList<Zone>(), "B", null)
+        );
+    }
+
+    @Test
+    public void extendRegionWithNewContour_should_return_a_union_of_regions_when_initial_region_is_not_empty() {
+        assertEquals(
+                new TreeSet<>(Arrays.asList(
+                        zoneA_B,
+                        zoneB_A,
+                        zoneAB
+                )),
+                extendRegionWithNewContour(Arrays.asList(Zone.fromInContours("A")), "B", null)
         );
     }
 }

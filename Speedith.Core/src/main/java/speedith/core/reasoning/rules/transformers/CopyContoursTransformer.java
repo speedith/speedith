@@ -3,9 +3,9 @@ package speedith.core.reasoning.rules.transformers;
 import speedith.core.lang.*;
 import speedith.core.reasoning.args.ContourArg;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+
+import static speedith.core.lang.Zones.sameRegionWithNewContours;
 
 public class CopyContoursTransformer extends IdTransformer {
 
@@ -21,19 +21,20 @@ public class CopyContoursTransformer extends IdTransformer {
     }
 
     public static PrimarySpiderDiagram addContoursToDiagram(PrimarySpiderDiagram diagram,
-                                                            List<String> contours) {
-        if (diagram.getAllContours().containsAll(contours)) {
+                                                            List<String> newContours) {
+        SortedSet<String> oldContours = diagram.getAllContours();
+        if (oldContours.containsAll(newContours)) {
             return diagram;
-        } else if (contours.size() == 1) {
-            String newContour = contours.get(0);
+        } else if (newContours.size() == 1) {
+            String newContour = newContours.get(0);
             return SpiderDiagrams.createPrimarySD(
                     diagram.getSpiders(),
-                    diagram.getHabitats(),
+                    getHabitatsWithAddedContours(diagram, newContour),
                     Zones.sameRegionWithNewContours(diagram.getShadedZones(), newContour),
-                    Zones.extendRegionWithNewContour(diagram.getPresentZones(), newContour)
+                    Zones.extendRegionWithNewContour(diagram.getPresentZones(), newContour, oldContours)
             );
         }
-        return SpiderDiagrams.createPrimarySD(diagram.getSpiders(), diagram.getHabitats(), diagram.getShadedZones(), Arrays.asList(Zone.fromInContours(contours.get(0))));
+        return SpiderDiagrams.createPrimarySD(diagram.getSpiders(), diagram.getHabitats(), diagram.getShadedZones(), Arrays.asList(Zone.fromInContours(newContours.get(0))));
     }
 
     @Override
@@ -50,7 +51,7 @@ public class CopyContoursTransformer extends IdTransformer {
 
             assertDiagramContainsTargetContours(diagramWithContour);
 
-            return copyContours(diagramWithContour, diagramWithoutContour);
+            return copyContours(diagramWithContour);
         }
         return null;
     }
@@ -73,7 +74,19 @@ public class CopyContoursTransformer extends IdTransformer {
         return null;
     }
 
-    private SpiderDiagram copyContours(PrimarySpiderDiagram diagramWithContour, PrimarySpiderDiagram diagramWithoutContour) {
+    private static SortedMap<String, Region> getHabitatsWithAddedContours(PrimarySpiderDiagram diagram, String newContour) {
+        SortedMap<String, Region> habitats = diagram.getHabitats();
+        if (habitats == null || habitats.isEmpty()) {
+            return habitats;
+        }
+        TreeMap<String, Region> extendedHabitats = new TreeMap<>(habitats);
+        for (Map.Entry<String, Region> spiderRegion : extendedHabitats.entrySet()) {
+            spiderRegion.setValue(new Region(sameRegionWithNewContours(spiderRegion.getValue().getZones(), newContour)));
+        }
+        return extendedHabitats;
+    }
+
+    private SpiderDiagram copyContours(PrimarySpiderDiagram diagramWithContour) {
         PrimarySpiderDiagram transformedDiagram = addContoursToDiagram(diagramWithContour, getTargetContours());
         if (isContourInLeftDiagram()) {
             return SpiderDiagrams.createCompoundSD(Operator.Conjunction, diagramWithContour, transformedDiagram);

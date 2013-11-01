@@ -26,21 +26,20 @@
  */
 package speedith.core.lang.reader;
 
-import java.io.File;
-import java.io.FileInputStream;
+import org.junit.*;
+import propity.util.Maps;
+import speedith.core.lang.*;
+import speedith.core.reasoning.GoalsTest;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.TreeSet;
+
 import static org.junit.Assert.*;
-import org.junit.*;
-import speedith.core.lang.*;
-import propity.util.Maps;
-import speedith.core.reasoning.GoalsTest;
 
 /**
- *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SpiderDiagramsReaderTest {
@@ -79,6 +78,13 @@ public class SpiderDiagramsReaderTest {
     public static final String REGION_EXAMPLE_2 = "[]";
     public static final String REGION_EXAMPLE_3 = "[([], [\"B\"]), ([\"C\"], [])]";
     public static final String REGION_EXAMPLE_4 = "[([], [\"B\", \"A\"]), ([\"C\", \"D\"], [])]";
+    private static String[] FileCorrectSDT = {
+            "ParserExample1.sd",
+            "ParserExample2.sd",
+            "ParserExample3.sd",    // Proof: idempotency, imp tautology
+            "ParserExample4.sd",
+            "ParserExample5.sd"     // TODO: This one produces a bug in iCircles.
+    };
 
     public SpiderDiagramsReaderTest() {
     }
@@ -175,23 +181,6 @@ public class SpiderDiagramsReaderTest {
         assertEquals(Maps.createTreeMap(Arrays.asList("s1", "s2"), Arrays.asList(new Region(Zone.fromInContours("A").withOutContours("B")), new Region(Zone.fromInContours("B").withOutContours("A")))), psd.getHabitats());
     }
 
-    private SpiderDiagram checkSDExample(String example, boolean isValid) throws ReadingException {
-        SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(example);
-        String str1 = sd.toString();
-        SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(str1);
-        assertEquals(str1, sd2.toString());
-        assertEquals(sd, sd2);
-        assertEquals(sd2, sd);
-        assertTrue(sd.equals(sd2));
-        assertTrue(sd2.equals(sd));
-        assertTrue(sd == sd2);
-        assertTrue(sd.isSEquivalentTo(sd2));
-        assertTrue(sd2.isSEquivalentTo(sd));
-        assertTrue(sd.isSEquivalentTo(sd));
-        assertEquals(isValid, sd.isValid());
-        return sd;
-    }
-
     /**
      * Test of readSpiderDiagram method, of class SpiderDiagramsReader.
      *
@@ -209,17 +198,6 @@ public class SpiderDiagramsReaderTest {
         checkSDExample_Err(SD_EXAMPLE_ERR_8, 1, 9);
         checkSDExample_Err(SD_EXAMPLE_ERR_9, 1, 65);
         checkSDExample_Err(SD_EXAMPLE_ERR_10, 1, 65);
-    }
-
-    private void checkSDExample_Err(String example, int errorLine, int errorCharIndex) {
-        SpiderDiagram sd = null;
-        try {
-            sd = SpiderDiagramsReader.readSpiderDiagram(example);
-            fail("An exception should have been thrown.");
-        } catch (ReadingException readingException) {
-            assertEquals(errorLine, readingException.getLineNumber());
-            assertEquals(errorCharIndex, readingException.getCharIndex());
-        }
     }
 
     /**
@@ -324,42 +302,6 @@ public class SpiderDiagramsReaderTest {
         }
     }
 
-    private void testGetSubDiagramAt_sd1(CompoundSpiderDiagram csd) {
-        assertTrue(csd.getOperands().get(1).equals(csd.getSubDiagramAt(2)));
-        assertTrue(csd.getOperands().get(1) == csd.getSubDiagramAt(2));
-        assertTrue(csd.getOperands().get(0).equals(csd.getSubDiagramAt(1)));
-        assertTrue(csd.getOperands().get(0) == csd.getSubDiagramAt(1));
-        assertTrue(csd.equals(csd.getSubDiagramAt(0)));
-        assertTrue(csd == csd.getSubDiagramAt(0));
-        assertTrue(null == csd.getSubDiagramAt(3));
-    }
-
-    private void testGetSubDiagramAt_sd2(CompoundSpiderDiagram csd) {
-        assertTrue(((CompoundSpiderDiagram) csd.getOperand(0)).getOperand(1).equals(csd.getSubDiagramAt(3)));
-        assertTrue(((CompoundSpiderDiagram) csd.getOperand(0)).getOperand(1) == (csd.getSubDiagramAt(3)));
-
-        assertTrue(((CompoundSpiderDiagram) csd.getOperand(0)).getOperand(0).equals(csd.getSubDiagramAt(2)));
-        assertTrue(((CompoundSpiderDiagram) csd.getOperand(0)).getOperand(0) == (csd.getSubDiagramAt(2)));
-
-        assertTrue(csd.getOperand(0).equals(csd.getSubDiagramAt(1)));
-        assertTrue(csd.getOperand(0) == csd.getSubDiagramAt(1));
-
-        assertTrue(csd.equals(csd.getSubDiagramAt(0)));
-        assertTrue(csd == csd.getSubDiagramAt(0));
-
-        assertTrue(null == csd.getSubDiagramAt(4));
-    }
-
-    private void testGetSubDiagramAt_sd6(CompoundSpiderDiagram csd) {
-        assertTrue(csd.getOperand(0).equals(csd.getSubDiagramAt(1)));
-        assertTrue(csd.getOperand(0) == csd.getSubDiagramAt(1));
-
-        assertTrue(csd.equals(csd.getSubDiagramAt(0)));
-        assertTrue(csd == csd.getSubDiagramAt(0));
-
-        assertTrue(null == csd.getSubDiagramAt(2));
-    }
-
     @Test
     public void testReadRegion_1() throws ReadingException {
         Region r = checkRegionExample(REGION_EXAMPLE_1);
@@ -402,24 +344,12 @@ public class SpiderDiagramsReaderTest {
         assertFalse(expected.equals(r));
     }
 
-    private Region checkRegionExample(String example) throws ReadingException {
-        Region region = SpiderDiagramsReader.readRegion(example);
-        return region;
-    }
-
     @Test
     public void testFileReading() throws ReadingException, IOException {
         for (int i = 0; i < testFilesCount(); i++) {
             readFromTestFile(i);
         }
     }
-    private static String[] FileCorrectSDT = {
-        "ParserExample1.sd",
-        "ParserExample2.sd",
-        "ParserExample3.sd",    // Proof: idempotency, imp tautology
-        "ParserExample4.sd",
-        "ParserExample5.sd"     // TODO: This one produces a bug in iCircles.
-    };
 
     public static int testFilesCount() {
         return FileCorrectSDT.length;
@@ -432,5 +362,73 @@ public class SpiderDiagramsReaderTest {
     public static SpiderDiagram readFromTestFile(String fileTitle) throws ReadingException, IOException {
         String fullPath = "/speedith/core/lang/reader/" + fileTitle;
         return SpiderDiagramsReader.readSpiderDiagram(GoalsTest.getSpiderDiagramTestFile(fullPath));
+    }
+
+    private SpiderDiagram checkSDExample(String example, boolean isValid) throws ReadingException {
+        SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(example);
+        String str1 = sd.toString();
+        SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(str1);
+        assertEquals(str1, sd2.toString());
+        assertEquals(sd, sd2);
+        assertEquals(sd2, sd);
+        assertTrue(sd.equals(sd2));
+        assertTrue(sd2.equals(sd));
+        assertTrue(sd == sd2);
+        assertTrue(sd.isSEquivalentTo(sd2));
+        assertTrue(sd2.isSEquivalentTo(sd));
+        assertTrue(sd.isSEquivalentTo(sd));
+        assertEquals(isValid, sd.isValid());
+        return sd;
+    }
+
+    private void checkSDExample_Err(String example, int errorLine, int errorCharIndex) {
+        SpiderDiagram sd = null;
+        try {
+            sd = SpiderDiagramsReader.readSpiderDiagram(example);
+            fail("An exception should have been thrown.");
+        } catch (ReadingException readingException) {
+            assertEquals(errorLine, readingException.getLineNumber());
+            assertEquals(errorCharIndex, readingException.getCharIndex());
+        }
+    }
+
+    private void testGetSubDiagramAt_sd1(CompoundSpiderDiagram csd) {
+        assertTrue(csd.getOperands().get(1).equals(csd.getSubDiagramAt(2)));
+        assertTrue(csd.getOperands().get(1) == csd.getSubDiagramAt(2));
+        assertTrue(csd.getOperands().get(0).equals(csd.getSubDiagramAt(1)));
+        assertTrue(csd.getOperands().get(0) == csd.getSubDiagramAt(1));
+        assertTrue(csd.equals(csd.getSubDiagramAt(0)));
+        assertTrue(csd == csd.getSubDiagramAt(0));
+        assertTrue(null == csd.getSubDiagramAt(3));
+    }
+
+    private void testGetSubDiagramAt_sd2(CompoundSpiderDiagram csd) {
+        assertTrue(((CompoundSpiderDiagram) csd.getOperand(0)).getOperand(1).equals(csd.getSubDiagramAt(3)));
+        assertTrue(((CompoundSpiderDiagram) csd.getOperand(0)).getOperand(1) == (csd.getSubDiagramAt(3)));
+
+        assertTrue(((CompoundSpiderDiagram) csd.getOperand(0)).getOperand(0).equals(csd.getSubDiagramAt(2)));
+        assertTrue(((CompoundSpiderDiagram) csd.getOperand(0)).getOperand(0) == (csd.getSubDiagramAt(2)));
+
+        assertTrue(csd.getOperand(0).equals(csd.getSubDiagramAt(1)));
+        assertTrue(csd.getOperand(0) == csd.getSubDiagramAt(1));
+
+        assertTrue(csd.equals(csd.getSubDiagramAt(0)));
+        assertTrue(csd == csd.getSubDiagramAt(0));
+
+        assertTrue(null == csd.getSubDiagramAt(4));
+    }
+
+    private void testGetSubDiagramAt_sd6(CompoundSpiderDiagram csd) {
+        assertTrue(csd.getOperand(0).equals(csd.getSubDiagramAt(1)));
+        assertTrue(csd.getOperand(0) == csd.getSubDiagramAt(1));
+
+        assertTrue(csd.equals(csd.getSubDiagramAt(0)));
+        assertTrue(csd == csd.getSubDiagramAt(0));
+
+        assertTrue(null == csd.getSubDiagramAt(2));
+    }
+
+    private Region checkRegionExample(String example) throws ReadingException {
+        return SpiderDiagramsReader.readRegion(example);
     }
 }
