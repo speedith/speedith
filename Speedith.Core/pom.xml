@@ -64,6 +64,9 @@
                             <goal>antlr</goal>
                         </goals>
                         <configuration>
+                            <outputDirectory>
+                                ${project.build.directory}/generated-sources/antlr3/speedith/core/lang/reader
+                            </outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
