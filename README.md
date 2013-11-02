@@ -19,7 +19,7 @@ These requirements have to be checked only once. After you make sure you have
 these, you can build Speedith at any time.
 
 *   __iCircles sources__: You can get the sources of iCircles from
-    [GitHub](http://gitorious.org/speedith/inductive_circles).
+    [GitHub](https://github.com/urbas/iCircles).
 
     You may simply want to execute this in the command line:
 
