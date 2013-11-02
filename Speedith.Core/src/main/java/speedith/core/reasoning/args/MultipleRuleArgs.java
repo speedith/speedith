@@ -27,6 +27,7 @@
 package speedith.core.reasoning.args;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -55,5 +56,9 @@ public class MultipleRuleArgs implements RuleArg, Iterable<RuleArg> {
 
     public boolean isEmpty() {
         return ruleArgs.isEmpty();
+    }
+
+    public List<RuleArg> getRuleArgs() {
+        return Collections.unmodifiableList(ruleArgs);
     }
 }

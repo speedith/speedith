@@ -9,13 +9,15 @@ import speedith.core.reasoning.RuleApplicationResult;
 import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.ZoneArg;
+import speedith.core.reasoning.rules.instructions.SelectContoursInstruction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
+import static org.junit.Assert.*;
 
 public class CopyContoursTest {
 
@@ -79,5 +81,29 @@ public class CopyContoursTest {
         List<ContourArg> expectedContourArgs = Arrays.asList(new ContourArg(0, 0, "A"), new ContourArg(0, 0, "B"));
         ArrayList<ContourArg> contourArgs = copyContours.getContourArgsFrom(new MultipleRuleArgs(expectedContourArgs));
         assertEquals(expectedContourArgs, contourArgs);
+    }
+
+    @Test
+    public void getInstructions_should_return_the_contours_selection_instructions() {
+        assertThat(
+                copyContours.getInstructions(),
+                instanceOf(SelectContoursInstruction.class)
+        );
+    }
+
+    @Test
+    public void getArgumentType_should_return_the_multiple_args_class() {
+        assertThat(
+                copyContours.getArgumentType(),
+                equalTo(MultipleRuleArgs.class)
+        );
+    }
+
+    @Test
+    public void user_facing_functions_should_return_some_strings() {
+        assertThat(copyContours.getInferenceRuleName(), not(isEmptyOrNullString()));
+        assertThat(copyContours.getDescription(), not(isEmptyOrNullString()));
+        assertThat(copyContours.getCategory(), not(isEmptyOrNullString()));
+        assertThat(copyContours.getPrettyName(), not(isEmptyOrNullString()));
     }
 }

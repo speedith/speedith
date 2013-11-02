@@ -26,12 +26,13 @@
  */
 package speedith.core.reasoning.args.selection;
 
+import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.ZoneArg;
+
 import java.util.List;
 import java.util.Locale;
-import speedith.core.reasoning.args.RuleArg;
-import speedith.core.reasoning.args.SpiderZoneArg;
+
 import static speedith.core.i18n.Translations.i18n;
-import speedith.core.reasoning.args.ZoneArg;
 
 /**
  * This selection step asks the user to select zones.
@@ -120,10 +121,6 @@ public class SelectZonesStep extends SelectionStep {
     /**
      * Indicates whether a zone has already been selected (whether it is present
      * in the given selection).
-     *
-     * @param sels
-     * @param sel
-     * @return
      */
     private static boolean isAlreadySelected(List<RuleArg> sels, ZoneArg sel) {
         for (RuleArg oldSel : sels) {

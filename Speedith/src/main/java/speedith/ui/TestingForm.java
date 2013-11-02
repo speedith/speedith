@@ -30,7 +30,6 @@ import speedith.core.lang.*;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.rules.AddFeet;
-import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.ui.selection.SelectionDialog;
 
 /**
@@ -296,14 +295,4 @@ public class TestingForm extends javax.swing.JFrame {
         return Zone.fromInContours("B").withOutContours("A");
     }
     // </editor-fold>
-//    private Region getRegionFromFeetSelection(List<SpiderDiagramClickEvent> selection) {
-//        ArrayList<Zone> zones = new ArrayList<Zone>();
-//        for (SpiderDiagramClickEvent sel : selection) {
-//            if (sel.getDetailedInfo() instanceof SpiderClickedEvent) {
-//                SpiderClickedEvent curSp = (SpiderClickedEvent) sel.getDetailedInfo();
-//                zones.add(ICirclesToSpeedith.convert(curSp.getZoneOfFoot()));
-//            }
-//        }
-//        return new Region(zones);
-//    }
 }

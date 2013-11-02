@@ -4,7 +4,10 @@ import org.junit.Test;
 
 import java.util.*;
 
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static speedith.core.lang.Zones.*;
 
 public class ZonesTest {
@@ -22,9 +25,9 @@ public class ZonesTest {
 
     @Test
     public void allZonesForContours_should_return_a_single_zone_when_given_a_single_contour() throws Exception {
-        assertEquals(
-                Arrays.asList(Zone.fromInContours("A"), Zone.fromOutContours("A")),
-                Zones.allZonesForContours("A")
+        assertThat(
+                Zones.allZonesForContours("A"),
+                containsInAnyOrder(Zone.fromOutContours("A"), Zone.fromInContours("A"))
         );
     }
 
@@ -79,28 +82,24 @@ public class ZonesTest {
     @Test
     public void sameRegionWithNewContours_when_given_two_contours_should_return_the_initial_region_expressed_with_the_extended_contours() {
         assertEquals(
-                new TreeSet<>(Zones.getZonesInsideContours(allZonesForContours("A", "B", "C"), "B")),
-                new TreeSet<>(sameRegionWithNewContours(Arrays.asList(Zone.fromInContours("B")), "A", "C"))
+                Zones.getZonesInsideContours(allZonesForContours("A", "B", "C"), "B"),
+                sameRegionWithNewContours(Arrays.asList(Zone.fromInContours("B")), "A", "C")
         );
     }
 
     @Test
     public void extendRegionWithNewContour_should_return_the_zone_of_the_contour_when_initial_region_is_empty() {
-        assertEquals(
-                new TreeSet<>(Arrays.asList(Zone.fromInContours("B"))),
-                extendRegionWithNewContour(new ArrayList<Zone>(), "B", null)
+        assertThat(
+                extendRegionWithNewContour(new ArrayList<Zone>(), "B", null),
+                contains(Zone.fromInContours("B"))
         );
     }
 
     @Test
     public void extendRegionWithNewContour_should_return_a_union_of_regions_when_initial_region_is_not_empty() {
-        assertEquals(
-                new TreeSet<>(Arrays.asList(
-                        zoneA_B,
-                        zoneB_A,
-                        zoneAB
-                )),
-                extendRegionWithNewContour(Arrays.asList(Zone.fromInContours("A")), "B", null)
+        assertThat(
+                extendRegionWithNewContour(Arrays.asList(Zone.fromInContours("A")), "B", null),
+                containsInAnyOrder(zoneA_B, zoneB_A, zoneAB)
         );
     }
 }

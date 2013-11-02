@@ -55,10 +55,10 @@ public abstract class SelectionSequence {
      * @param selectionSteps the selection steps (which will guide the user
      * through the selection process).
      */
-    public SelectionSequence(SpiderDiagram diagram, Collection<SelectionStep> selectionSteps) {
+    public SelectionSequence(SpiderDiagram diagram, Collection<? extends SelectionStep> selectionSteps) {
         this(diagram, selectionSteps == null || selectionSteps.isEmpty()
                 ? null
-                : new ArrayList<SelectionStep>(selectionSteps));
+                : new ArrayList<>(selectionSteps));
     }
 
     /**

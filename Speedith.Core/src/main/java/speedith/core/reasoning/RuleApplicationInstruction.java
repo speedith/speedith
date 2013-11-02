@@ -27,7 +27,6 @@
 package speedith.core.reasoning;
 
 import speedith.core.reasoning.args.RuleArg;
-import speedith.core.reasoning.args.RuleArgExtractor;
 
 /**
  * Instances of this type provide information on how to apply an inference rule
@@ -36,5 +35,5 @@ import speedith.core.reasoning.args.RuleArgExtractor;
  * @param <T> the type of arguments to be used in the inference rule.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface RuleApplicationInstruction<T extends RuleArg> extends SelectionInstructions, SelectionToRuleArgExtractor<T>, RuleArgExtractor<T> {
+public interface RuleApplicationInstruction<T extends RuleArg> extends SelectionInstructions, SelectionToRuleArgExtractor<T> {
 }

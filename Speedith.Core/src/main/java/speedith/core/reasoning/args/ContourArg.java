@@ -33,11 +33,8 @@ package speedith.core.reasoning.args;
  */
 public class ContourArg extends SubDiagramIndexArg {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
     private final String contour;
-    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Constructor">
     /**
      * Initialises an argument object for a spider-diagrammatic inference rule.
      *
@@ -54,9 +51,7 @@ public class ContourArg extends SubDiagramIndexArg {
         }
         this.contour = contour;
     }
-    //</editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Public Properties">
     /**
      * The name of the contour that should be passed to an inference rule.
      * <p>This property is guaranteed to return a non-null and non-empty
@@ -67,5 +62,4 @@ public class ContourArg extends SubDiagramIndexArg {
     public String getContour() {
         return contour;
     }
-    // </editor-fold>
 }

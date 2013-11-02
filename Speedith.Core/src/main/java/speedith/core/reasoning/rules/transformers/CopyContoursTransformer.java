@@ -51,7 +51,7 @@ public class CopyContoursTransformer extends IdTransformer {
 
             assertDiagramContainsTargetContours(diagramWithContour);
 
-            return copyContours(diagramWithContour);
+            return copyContours(diagramWithContour, diagramWithoutContour);
         }
         return null;
     }
@@ -86,8 +86,8 @@ public class CopyContoursTransformer extends IdTransformer {
         return extendedHabitats;
     }
 
-    private SpiderDiagram copyContours(PrimarySpiderDiagram diagramWithContour) {
-        PrimarySpiderDiagram transformedDiagram = addContoursToDiagram(diagramWithContour, getTargetContours());
+    private SpiderDiagram copyContours(PrimarySpiderDiagram diagramWithContour, PrimarySpiderDiagram diagramWithoutContour) {
+        PrimarySpiderDiagram transformedDiagram = addContoursToDiagram(diagramWithoutContour, getTargetContours());
         if (isContourInLeftDiagram()) {
             return SpiderDiagrams.createCompoundSD(Operator.Conjunction, diagramWithContour, transformedDiagram);
         } else {

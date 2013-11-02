@@ -140,7 +140,6 @@ public class CopyContoursTransformerTest {
         );
 
         assertEquals(expectedDiagram, addContoursToDiagram(diagramWithASpider, asList("B")));
-
     }
 
     private static Map<String, Region> getSpiderInRegion(String spider, Region habitat) {

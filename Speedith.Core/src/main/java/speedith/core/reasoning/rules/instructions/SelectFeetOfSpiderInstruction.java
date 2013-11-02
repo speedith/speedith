@@ -31,7 +31,6 @@ import speedith.core.lang.Region;
 import speedith.core.lang.Zone;
 import speedith.core.reasoning.RuleApplicationInstruction;
 import speedith.core.reasoning.args.RuleArg;
-import speedith.core.reasoning.args.RuleArgExtractionException;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.args.SpiderZoneArg;
 import speedith.core.reasoning.args.selection.SelectSpiderFeetStep;
@@ -65,7 +64,7 @@ public class SelectFeetOfSpiderInstruction implements RuleApplicationInstruction
     }
 
     private static Region getRegionFromFeetSelection(List<RuleArg> selection) {
-        ArrayList<Zone> zones = new ArrayList<Zone>();
+        ArrayList<Zone> zones = new ArrayList<>();
         for (RuleArg sel : selection) {
             if (sel instanceof SpiderZoneArg) {
                 SpiderZoneArg curSel = (SpiderZoneArg) sel;
@@ -73,16 +72,6 @@ public class SelectFeetOfSpiderInstruction implements RuleApplicationInstruction
             }
         }
         return new Region(zones);
-    }
-
-    @Override
-    public Map<String, Class<?>> getSupportedObjectNames() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public SpiderRegionArg extractRuleArg(Map<String, Object> objects) throws RuleArgExtractionException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     // <editor-fold defaultstate="collapsed" desc="Singleton Container Helper">

@@ -81,7 +81,7 @@ public class AddFeetRuleInstruction implements RuleApplicationInstruction<Spider
     public SpiderRegionArg extractRuleArg(SelectionSequence selectionSequence, int subgoalIndex) {
         SpiderZoneArg sza = (SpiderZoneArg) selectionSequence.getAcceptedSelectionsForStepAt(0).get(0);
         String spider = sza.getSpider();
-        TreeSet<Zone> addFeetZones = new TreeSet<Zone>();
+        TreeSet<Zone> addFeetZones = new TreeSet<>();
         for (RuleArg ruleArg : selectionSequence.getAcceptedSelectionsForStepAt(1)) {
             ZoneArg zoneArg = (ZoneArg) ruleArg;
             addFeetZones.add(zoneArg.getZone());
@@ -89,15 +89,6 @@ public class AddFeetRuleInstruction implements RuleApplicationInstruction<Spider
         return new SpiderRegionArg(subgoalIndex, sza.getSubDiagramIndex(), spider, new Region(addFeetZones));
     }
 
-    @Override
-    public Map<String, Class<?>> getSupportedObjectNames() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public SpiderRegionArg extractRuleArg(Map<String, Object> objects) throws RuleArgExtractionException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
