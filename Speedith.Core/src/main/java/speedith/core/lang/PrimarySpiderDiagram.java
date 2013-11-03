@@ -272,7 +272,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * spider diagram.
      */
     public boolean containsSpider(String spider) {
-        return spiders == null ? false : spiders.contains(spider);
+        return spiders != null && spiders.contains(spider);
     }
 
     /**
@@ -561,10 +561,6 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * Outputs a single habitat into the {@link StringBuilder}. <p>The format of
      * the habitat is '{@code (spider, region)}' (it is a simple pair
      * tuple).</p>
-     *
-     * @param sb
-     * @param spider
-     * @param region
      */
     private static void printHabitat(Appendable sb, String spider, Region region) throws IOException {
         sb.append('(');
@@ -587,9 +583,6 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     /**
      * Checks for syntactical and
-     *
-     * @param psd
-     * @return
      */
     @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
     private boolean __isPsdEqual(PrimarySpiderDiagram psd) {

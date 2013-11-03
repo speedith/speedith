@@ -1,5 +1,11 @@
 package speedith.core.reasoning.util
 
-class PrimaryDiagramZoneTransfer {
-  // TODO: implement some algorithms for transfering zones between two diagrams.
+import speedith.core.lang.PrimarySpiderDiagram
+import scala.collection.JavaConversions._
+
+class PrimaryDiagramZoneTransfer(sourceDiagram: PrimarySpiderDiagram, destinationDiagram: PrimarySpiderDiagram) {
+  // TODO: implement some algorithms for transferring zones between two diagrams.
+  def missingContoursInTarget(): java.util.Set[String] = {
+    sourceDiagram.getAllContours.diff(destinationDiagram.getAllContours)
+  }
 }

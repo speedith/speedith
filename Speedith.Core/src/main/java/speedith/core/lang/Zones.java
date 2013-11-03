@@ -53,17 +53,17 @@ public final class Zones {
         } else if (newContours == null || newContours.isEmpty()) {
             return new ArrayList<>(region);
         }
-        ArrayList<Zone> updatedRegion = new ArrayList<>(region);
+        ArrayList<Zone> regionToAddContour = new ArrayList<>(region);
         for (String newContour : newContours) {
-            int currentRegionSize = updatedRegion.size();
+            int currentRegionSize = regionToAddContour.size();
             for (int i = 0; i < currentRegionSize; i++) {
-                Zone zone = updatedRegion.get(i);
+                Zone zoneToAddContour = regionToAddContour.get(i);
 
-                updatedRegion.set(i, createZoneWithAddedInContour(newContour, zone));
-                updatedRegion.add(createZoneWithAddedOutContour(newContour, zone));
+                regionToAddContour.set(i, createZoneWithAddedInContour(newContour, zoneToAddContour));
+                regionToAddContour.add(createZoneWithAddedOutContour(newContour, zoneToAddContour));
             }
         }
-        return updatedRegion;
+        return regionToAddContour;
     }
 
     private static boolean isZonePartOfAnyContour(Zone zone, String[] contours) {
