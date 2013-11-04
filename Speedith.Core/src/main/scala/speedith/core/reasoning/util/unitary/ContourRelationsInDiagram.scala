@@ -1,4 +1,4 @@
-package speedith.core.reasoning.util.primary
+package speedith.core.reasoning.util.unitary
 
 import speedith.core.lang.{Zone, Zones, PrimarySpiderDiagram}
 import scala.collection.JavaConversions._

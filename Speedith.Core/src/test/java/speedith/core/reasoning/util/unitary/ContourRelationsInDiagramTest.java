@@ -1,4 +1,4 @@
-package speedith.core.reasoning.util.primary;
+package speedith.core.reasoning.util.unitary;
 
 import org.junit.Test;
 import speedith.core.lang.*;
