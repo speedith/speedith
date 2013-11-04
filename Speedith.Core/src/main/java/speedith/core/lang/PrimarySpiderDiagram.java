@@ -152,10 +152,10 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
             }
         }
 
-        this.spiders = spiders;
-        this.spiderHabitatsMap = habitats;
-        this.shadedZones = shadedZones;
-        this.presentZones = presentZones;
+        this.spiders = spiders == null ? new TreeSet<String>() : spiders;
+        this.spiderHabitatsMap = habitats == null ? new TreeMap<String, Region>() : habitats;
+        this.shadedZones = shadedZones == null ? new TreeSet<Zone>() : shadedZones;
+        this.presentZones = presentZones == null ? new TreeSet<Zone>() : presentZones;
     }
 
     /**
@@ -167,7 +167,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * {@link Region habitats}.
      */
     public SortedMap<String, Region> getHabitats() {
-        return spiderHabitatsMap == null ? null : Collections.unmodifiableSortedMap(spiderHabitatsMap);
+        return Collections.unmodifiableSortedMap(spiderHabitatsMap);
     }
 
     /**
@@ -178,7 +178,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * specified in this primary spider diagram.
      */
     public int getHabitatsCount() {
-        return spiderHabitatsMap == null ? 0 : spiderHabitatsMap.size();
+        return spiderHabitatsMap.size();
     }
 
     /**
@@ -188,7 +188,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * @return a set of shaded {@link Zone zones} in this spider diagram..
      */
     public SortedSet<Zone> getShadedZones() {
-        return shadedZones == null ? null : Collections.unmodifiableSortedSet(shadedZones);
+        return Collections.unmodifiableSortedSet(shadedZones);
     }
 
     /**
@@ -199,7 +199,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * zones} specified in this primary spider diagram.
      */
     public int getShadedZonesCount() {
-        return shadedZones == null ? 0 : shadedZones.size();
+        return shadedZones.size();
     }
 
     /**
@@ -215,7 +215,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * {@code null}.</p>
      */
     public SortedSet<Zone> getPresentZones() {
-        return presentZones == null ? null : Collections.unmodifiableSortedSet(presentZones);
+        return Collections.unmodifiableSortedSet(presentZones);
     }
 
     /**
@@ -227,7 +227,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * @return the number of explicitly present zones.
      */
     public int getPresentZonesCount() {
-        return presentZones == null ? 0 : presentZones.size();
+        return presentZones.size();
     }
 
     /**
@@ -238,7 +238,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * diagram.
      */
     public SortedSet<String> getSpiders() {
-        return spiders == null ? null : Collections.unmodifiableSortedSet(spiders);
+        return Collections.unmodifiableSortedSet(spiders);
     }
 
     /**
@@ -249,7 +249,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * specified in this primary spider diagram.
      */
     public int getSpidersCount() {
-        return spiders == null ? 0 : spiders.size();
+        return spiders.size();
     }
 
     /**
@@ -259,7 +259,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * @return the habitat of the given spider.
      */
     public Region getSpiderHabitat(String spider) {
-        return spiderHabitatsMap == null ? null : spiderHabitatsMap.get(spider);
+        return spiderHabitatsMap.get(spider);
     }
 
     /**
@@ -272,7 +272,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * spider diagram.
      */
     public boolean containsSpider(String spider) {
-        return spiders != null && spiders.contains(spider);
+        return spiders.contains(spider);
     }
 
     /**
@@ -666,7 +666,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     }
 
     private boolean extractContoursFromPresentZones() {
-        if (this.presentZones != null) {
+        if (getPresentZonesCount() > 0) {
             Zone zone = presentZones.first();
             if (zone.getInContoursCount() > 0) {
                 contours.addAll(zone.getInContours());

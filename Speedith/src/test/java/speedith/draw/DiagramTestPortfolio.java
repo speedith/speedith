@@ -6,6 +6,7 @@ import speedith.core.lang.Zone;
 import speedith.core.lang.Zones;
 import speedith.core.lang.reader.SpiderDiagramsReaderTest;
 import speedith.core.reasoning.rules.transformers.CopyContoursTransformerTest;
+import speedith.core.reasoning.util.primary.ContourRelationsInDiagramTest;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,6 +26,9 @@ public class DiagramTestPortfolio implements Serializable {
 
     public DiagramTestPortfolio() {
         this.spiderDiagrams = new ArrayList<>(asList(
+                ContourRelationsInDiagramTest.getVennABCDiagramWithPartlyShadedBAndSpiderInZoneBC_A(),
+                ContourRelationsInDiagramTest.getVennABCDiagramWithPartlyShadedB(),
+                ContourRelationsInDiagramTest.getVennABCDiagramWithShadedBC(),
                 diagramWithASpider,
                 addContoursToDiagram(diagramWithASpider, asList("G")),
                 shadedBInsideA,

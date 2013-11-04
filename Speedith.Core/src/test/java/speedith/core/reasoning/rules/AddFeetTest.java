@@ -54,7 +54,6 @@ public class AddFeetTest {
         AddFeet addFeet = (AddFeet) InferenceRules.getInferenceRule(AddFeet.InferenceRuleName);
         SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_17);
         RuleApplicationResult result = addFeet.applyForwards(new SpiderRegionArg(0, 0, "s1", new Region(new Zone("A", "B"))), Goals.createGoalsFrom(sd));
-        System.out.println(result.getGoals().getGoalAt(0));
         SpiderDiagram expectedResult = SpiderDiagramsReader.readSpiderDiagram(SpiderDiagramsReaderTest.SD_EXAMPLE_19);
         assertSame(expectedResult, result.getGoals().getGoalAt(0));
     }

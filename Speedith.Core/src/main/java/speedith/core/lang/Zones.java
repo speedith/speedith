@@ -22,7 +22,7 @@ public final class Zones {
         return zonesOutsideContours;
     }
 
-    public static ArrayList<Zone> getZonesInsideContours(ArrayList<Zone> region, String... contours) {
+    public static ArrayList<Zone> getZonesInsideAnyContour(Collection<Zone> region, String... contours) {
         ArrayList<Zone> zonesInsideContours = new ArrayList<>();
         for (Zone zone : region) {
             if (isZonePartOfAnyContour(zone, contours)) {
@@ -47,6 +47,26 @@ public final class Zones {
         return sameRegionWithNewContours(region, Arrays.asList(newContours));
     }
 
+    public static ArrayList<Zone> getZonesInsideAllContours(Collection<Zone> zones, String... contours) {
+        if (contours.length == 1) {
+            return getZonesInsideAnyContour(zones, contours);
+        } else if (contours.length == 0) {
+            return new ArrayList<>(zones);
+        } else {
+            ArrayList<Zone> zonesInsideContours = new ArrayList<>();
+            for (Zone zone : zones) {
+                if (isZonePartOfAllContours(zone, contours)) {
+                    zonesInsideContours.add(zone);
+                }
+            }
+            return zonesInsideContours;
+        }
+    }
+
+    public static String someMethod(int someNumber) {
+        return "What a big number! " + someNumber;
+    }
+
     private static ArrayList<Zone> sameRegionWithNewContours(Collection<Zone> region, Collection<String> newContours) {
         if (region == null) {
             return new ArrayList<>();
@@ -54,6 +74,11 @@ public final class Zones {
             return new ArrayList<>(region);
         }
         ArrayList<Zone> regionToAddContour = new ArrayList<>(region);
+        addContoursToRegion(newContours, regionToAddContour);
+        return regionToAddContour;
+    }
+
+    private static void addContoursToRegion(Collection<String> newContours, ArrayList<Zone> regionToAddContour) {
         for (String newContour : newContours) {
             int currentRegionSize = regionToAddContour.size();
             for (int i = 0; i < currentRegionSize; i++) {
@@ -63,7 +88,22 @@ public final class Zones {
                 regionToAddContour.add(createZoneWithAddedOutContour(newContour, zoneToAddContour));
             }
         }
-        return regionToAddContour;
+    }
+
+    public static boolean isZonePartOfAllContours(Zone zone, String... contours) {
+        return zone.getInContoursCount() > 0 &&
+               zone.getInContours().containsAll(Arrays.asList(contours));
+    }
+
+    public static boolean isZoneOutsideContours(Zone zone, String... contours) {
+        if (zone.getInContoursCount() > 0) {
+            for (String contour : contours) {
+                if (zone.getInContours().contains(contour)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private static boolean isZonePartOfAnyContour(Zone zone, String[] contours) {
