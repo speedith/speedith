@@ -15,13 +15,13 @@ import static speedith.core.lang.Zones.getZonesInsideAllContours;
 
 public class ContourRelationsInDiagramTest {
 
+    private static final ArrayList<Zone> vennABCZones = Zones.allZonesForContours("A", "B", "C");
     private final Zone zoneAB = Zone.fromInContours("A", "B");
     private final Zone zoneB_A = Zone.fromInContours("B").withOutContours("A");
     private final ArrayList<Zone> powerRegionAB = allZonesForContours("A", "B");
     private final PrimarySpiderDiagram diagramWithContoursAB = SpiderDiagrams.createPrimarySD(null, null, null, powerRegionAB);
     private final PrimarySpiderDiagram diagramWithShadedB = SpiderDiagrams.createPrimarySD(null, null, asList(zoneB_A, zoneAB), powerRegionAB);
     private final PrimarySpiderDiagram diagramWithShadedIntersection = SpiderDiagrams.createPrimarySD(null, null, asList(zoneAB), powerRegionAB);
-    private static final ArrayList<Zone> vennABCZones = Zones.allZonesForContours("A", "B", "C");
 
     @Test
     public void areContoursDisjoint_should_return_false_in_a_Venn_diagram() {

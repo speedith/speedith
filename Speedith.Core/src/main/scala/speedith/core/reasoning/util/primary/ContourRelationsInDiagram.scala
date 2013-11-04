@@ -7,37 +7,36 @@ class ContourRelationsInDiagram(diagram: PrimarySpiderDiagram) {
 
   def areContoursDisjoint(contourA: String, contourB: String): Boolean = {
     assertContoursPresentInDiagram(contourA, contourB)
-    if (diagram.getShadedZonesCount == 0) {
-      false
-    } else {
-      allSharedContoursAreShaded(contourA, contourB) && noSharedContoursHaveSpiders(contourA, contourB)
-    }
+    allSharedContoursAreShaded(contourA, contourB) && noSharedContoursHaveSpiders(contourA, contourB)
   }
 
   def contourContainsAnother(containerContour: String, otherContour: String): Boolean = {
     assertContoursPresentInDiagram(containerContour, otherContour)
-    val spiderInOtherContourExists = diagram.getHabitats.values().flatMap(_.getZones).exists(habitatZone =>
-      isZoneInAButNotB(habitatZone, otherContour, containerContour)
-    )
-    if (spiderInOtherContourExists) {
-      false
-    } else {
-      val numberOfShadedZonesOutsideContainer = diagram.getShadedZones.count(shadedZone =>
-        isZoneInAButNotB(shadedZone, otherContour, containerContour)
-      )
-      val numberOfAllPossibleShadedZonesOutsideContainer = 1 << (diagram.getAllContours.size() - 2)
-      numberOfShadedZonesOutsideContainer == numberOfAllPossibleShadedZonesOutsideContainer
-    }
+    allZonesOfAOutsideBAreShaded(otherContour, containerContour) &&
+      !spiderExistsInAButOutsideB(otherContour, containerContour)
+
   }
 
+  private def allZonesOfAOutsideBAreShaded(contourA: String, contourB: String): Boolean = {
+    val numberOfShadedZonesOutsideContainer = diagram.getShadedZones.count(shadedZone =>
+      isZoneInAButNotB(shadedZone, contourA, contourB)
+    )
+    val numberOfAllPossibleShadedZonesOutsideContainer = 1 << (diagram.getAllContours.size() - 2)
+    numberOfShadedZonesOutsideContainer == numberOfAllPossibleShadedZonesOutsideContainer
+  }
+
+  private def spiderExistsInAButOutsideB(contourA: String, contourB: String): Boolean = {
+    diagram.getHabitats.values().flatMap(_.getZones).exists(habitatZone =>
+      isZoneInAButNotB(habitatZone, contourA, contourB)
+    )
+  }
 
   private def isZoneInAButNotB(shadedZone: Zone, contourA: String, contourB: String): Boolean = {
     Zones.isZonePartOfAllContours(shadedZone, contourA) && Zones.isZoneOutsideContours(shadedZone, contourB)
   }
 
   private def noSharedContoursHaveSpiders(contourA: String, contourB: String): Boolean = {
-    val habitats = if (diagram.getHabitatsCount == 0) Nil else diagram.getHabitats.values().toIterable
-    val allZonesWithSpiders = habitats.flatMap(_.getZones).toIterable
+    val allZonesWithSpiders = diagram.getHabitats.values().flatMap(_.getZones).toIterable
     allZonesWithSpiders.forall(zoneWithSpider => !Zones.isZonePartOfAllContours(zoneWithSpider, contourA, contourB))
   }
 
