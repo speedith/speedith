@@ -17,7 +17,7 @@ class ZoneTransfer(sourceDiagram: PrimarySpiderDiagram, destinationDiagram: Prim
 
   def destinationZonesForSourceContour(sourceContour: String): ZoneDestinations = {
     if (!contoursOnlyInSource().contains(sourceContour)) {
-      throw new IllegalArgumentException(s"The contour '$sourceDiagram' is not present only in the source diagram.")
+      throw new IllegalArgumentException("The contour '" + sourceDiagram + "' is not present only in the source diagram.")
     }
     val allZonesInSource = sourceDiagram.getPresentZones ++ sourceDiagram.getHabitats.values().flatMap(_.getZones)
 

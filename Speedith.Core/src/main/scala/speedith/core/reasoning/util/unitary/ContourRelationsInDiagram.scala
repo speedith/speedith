@@ -43,7 +43,7 @@ class ContourRelationsInDiagram(diagram: PrimarySpiderDiagram) {
   private def assertContoursPresentInDiagram(contourA: String, contourB: String) {
     val allContours = diagram.getAllContours
     if (!allContours.contains(contourA) || !allContours.contains(contourB)) {
-      throw new IllegalArgumentException(s"Both contours '$contourA' and '$contourB' must be present in the diagram.")
+      throw new IllegalArgumentException("Both contours '" + contourA + "' and '$contourB' must be present in the diagram.")
     }
   }
 
