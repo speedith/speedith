@@ -76,8 +76,8 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
      *                    <p>Note that duplicated contour names will be ignored.</p>
      */
     public Zone(Collection<String> inContours, Collection<String> outContours) {
-        this(inContours == null ? null : new TreeSet<String>(inContours),
-             outContours == null ? null : new TreeSet<String>(outContours));
+        this(inContours == null ? null : new TreeSet<>(inContours),
+             outContours == null ? null : new TreeSet<>(outContours));
     }
 
     /**
@@ -98,8 +98,8 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
      *                    <p>Note that duplicated contour names will be ignored.</p>
      */
     Zone(TreeSet<String> inContours, TreeSet<String> outContours) {
-        this.inContours = inContours;
-        this.outContours = outContours;
+        this.inContours = inContours == null ? new TreeSet<String>() : inContours;
+        this.outContours = outContours == null ? new TreeSet<String>() : outContours;
     }
     // </editor-fold>
 
@@ -135,7 +135,7 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
      *         <p>These are the contours that contain this zone.</p>
      */
     public SortedSet<String> getInContours() {
-        return inContours == null || inContours.isEmpty() ? null : Collections.unmodifiableSortedSet(inContours);
+        return Collections.unmodifiableSortedSet(inContours);
     }
 
     /**
@@ -144,7 +144,7 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
      * @return the number of {@link Zone#getInContours() in-contours}.
      */
     public int getInContoursCount() {
-        return inContours == null ? 0 : inContours.size();
+        return inContours.size();
     }
     // </editor-fold>
 
@@ -160,7 +160,7 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
      *         <p>These are the contours that lie outside this zone.</p>
      */
     public SortedSet<String> getOutContours() {
-        return outContours == null || outContours.isEmpty() ? null : Collections.unmodifiableSortedSet(outContours);
+        return Collections.unmodifiableSortedSet(outContours);
     }
 
     /**
@@ -169,7 +169,7 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
      * @return the number of {@link Zone#getOutContours() out-contours}.
      */
     public int getOutContoursCount() {
-        return outContours == null ? 0 : outContours.size();
+        return outContours.size();
     }
 
     /**
@@ -242,7 +242,7 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
      *         ones.
      */
     public Zone withInContours(String... inContours) {
-        return new Zone(inContours == null ? null : new TreeSet<String>(Arrays.asList(inContours)), this.outContours);
+        return new Zone(inContours == null ? null : new TreeSet<>(Arrays.asList(inContours)), this.outContours);
     }
 
     /**
@@ -254,7 +254,7 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
      *         ones.
      */
     public Zone withOutContours(String... outContours) {
-        return new Zone(this.inContours, outContours == null ? null : new TreeSet<String>(Arrays.asList(outContours)));
+        return new Zone(this.inContours, outContours == null ? null : new TreeSet<>(Arrays.asList(outContours)));
     }
 
     /**

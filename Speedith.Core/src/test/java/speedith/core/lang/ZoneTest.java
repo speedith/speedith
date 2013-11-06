@@ -38,6 +38,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 
 /**
@@ -194,13 +196,13 @@ public class ZoneTest {
         assertEquals(m_zone2.getInContours(), m_inContours4);
         assertEquals(m_zone1.getInContours(), m_inContours4);
         assertEquals(m_zone5.getInContours(), m_inContours5);
-        assertEquals(m_zone6.getInContours(), null);
+        assertThat(m_zone6.getInContours(), hasSize(0));
         assertEquals(m_zone7.getInContours(), m_inContours7);
-        assertEquals(m_zone8.getInContours(), null);
-        assertEquals(m_zone9.getInContours(), null);
-        assertEquals(m_zone10.getInContours(), null);
-        assertEquals(m_zone11.getInContours(), null);
-        assertEquals(m_zone12.getInContours(), null);
+        assertThat(m_zone8.getInContours(), hasSize(0));
+        assertThat(m_zone9.getInContours(), hasSize(0));
+        assertThat(m_zone10.getInContours(), hasSize(0));
+        assertThat(m_zone11.getInContours(), hasSize(0));
+        assertThat(m_zone12.getInContours(), hasSize(0));
     }
 
     /**
@@ -235,12 +237,12 @@ public class ZoneTest {
         assertEquals(m_zone2.getOutContours(), m_outContours4);
         assertEquals(m_zone1.getOutContours(), m_outContours4);
         assertEquals(m_zone6.getOutContours(), m_outContours6);
-        assertEquals(m_zone7.getOutContours(), null);
-        assertEquals(m_zone8.getOutContours(), null);
-        assertEquals(m_zone9.getOutContours(), null);
-        assertEquals(m_zone10.getOutContours(), null);
-        assertEquals(m_zone11.getOutContours(), null);
-        assertEquals(m_zone12.getOutContours(), null);
+        assertThat(m_zone7.getOutContours(), hasSize(0));
+        assertThat(m_zone8.getOutContours(), hasSize(0));
+        assertThat(m_zone9.getOutContours(), hasSize(0));
+        assertThat(m_zone10.getOutContours(), hasSize(0));
+        assertThat(m_zone11.getOutContours(), hasSize(0));
+        assertThat(m_zone12.getOutContours(), hasSize(0));
     }
 
     /**

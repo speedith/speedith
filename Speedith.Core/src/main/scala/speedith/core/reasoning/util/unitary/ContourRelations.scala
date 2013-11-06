@@ -3,7 +3,7 @@ package speedith.core.reasoning.util.unitary
 import speedith.core.lang.{Zone, Zones, PrimarySpiderDiagram}
 import scala.collection.JavaConversions._
 
-class ContourRelationsInDiagram(diagram: PrimarySpiderDiagram) {
+class ContourRelations(diagram: PrimarySpiderDiagram) {
 
   def areContoursDisjoint(contourA: String, contourB: String): Boolean = {
     assertContoursPresentInDiagram(contourA, contourB)

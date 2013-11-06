@@ -1,6 +1,6 @@
 package speedith.core.reasoning.util.unitary
 
-import speedith.core.lang.{Zones, Zone, PrimarySpiderDiagram}
+import speedith.core.lang.{Zone, PrimarySpiderDiagram}
 import scala.collection.JavaConversions._
 
 case class ZoneDestinations(sourceDiagram: PrimarySpiderDiagram,
@@ -11,17 +11,24 @@ case class ZoneDestinations(sourceDiagram: PrimarySpiderDiagram,
 
 class ZoneTransfer(sourceDiagram: PrimarySpiderDiagram, destinationDiagram: PrimarySpiderDiagram) {
 
-  def contoursOnlyInSource(): java.util.Set[String] = {
+  val contoursOnlyInSource: java.util.Set[String] = {
     sourceDiagram.getAllContours.diff(destinationDiagram.getAllContours)
   }
 
-  def destinationZonesForSourceContour(sourceContour: String): ZoneDestinations = {
-    if (!contoursOnlyInSource().contains(sourceContour)) {
-      throw new IllegalArgumentException("The contour '" + sourceDiagram + "' is not present only in the source diagram.")
+  def zonesInDestinationOutsideContour(sourceContour: String): java.util.Set[Zone] = {
+    if (!contoursOnlyInSource.contains(sourceContour)) {
+      throw new IllegalArgumentException("The contour '" + sourceContour + "' must be present only in the source diagram.")
     }
-    val allZonesInSource = sourceDiagram.getPresentZones ++ sourceDiagram.getHabitats.values().flatMap(_.getZones)
 
-    ZoneDestinations(sourceDiagram, sourceContour, Set.empty[Zone], Set.empty[Zone], Set.empty[Zone])
+    val zonesInDestinationDiagram = destinationDiagram.getPresentZones ++ destinationDiagram.getHabitats.values().flatMap(_.getZones)
+    val sourceContourRelations = new ContourRelations(sourceDiagram)
+    val allContoursInSource = sourceDiagram.getAllContours
+
+    zonesInDestinationDiagram.filter(destinationZone =>
+      allContoursInSource.exists(commonContour =>
+        destinationZone.getInContours.contains(commonContour) && sourceContourRelations.areContoursDisjoint(sourceContour, commonContour) ||
+          destinationZone.getOutContours.contains(commonContour) && sourceContourRelations.contourContainsAnother(sourceContour, commonContour)
+      ))
   }
 
 }
