@@ -27,6 +27,7 @@ public class DiagramTestPortfolio implements Serializable {
 
     public DiagramTestPortfolio() {
         this.spiderDiagrams = new ArrayList<>(asList(
+                ZoneTransferTest.diagramABC_shadedSetC_A,
                 ZoneTransferTest.diagramABC_shadedSetAC,
                 ContourRelationsInDiagramTest.getVennABCDiagramWithPartlyShadedBAndSpiderInZoneBC_A(),
                 ContourRelationsInDiagramTest.getVennABCDiagramWithPartlyShadedB(),

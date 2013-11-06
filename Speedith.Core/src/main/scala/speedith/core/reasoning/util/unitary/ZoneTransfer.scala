@@ -3,12 +3,6 @@ package speedith.core.reasoning.util.unitary
 import speedith.core.lang.{Zone, PrimarySpiderDiagram}
 import scala.collection.JavaConversions._
 
-case class ZoneDestinations(sourceDiagram: PrimarySpiderDiagram,
-                            referenceContour: String,
-                            outZones: java.util.Set[Zone],
-                            inZones: java.util.Set[Zone],
-                            splitZones: java.util.Set[Zone])
-
 class ZoneTransfer(sourceDiagram: PrimarySpiderDiagram, destinationDiagram: PrimarySpiderDiagram) {
 
   val contoursOnlyInSource: java.util.Set[String] = {
@@ -26,8 +20,8 @@ class ZoneTransfer(sourceDiagram: PrimarySpiderDiagram, destinationDiagram: Prim
 
     zonesInDestinationDiagram.filter(destinationZone =>
       allContoursInSource.exists(commonContour =>
-        destinationZone.getInContours.contains(commonContour) && sourceContourRelations.areContoursDisjoint(sourceContour, commonContour) ||
-          destinationZone.getOutContours.contains(commonContour) && sourceContourRelations.contourContainsAnother(sourceContour, commonContour)
+        (destinationZone.getInContours.contains(commonContour) && sourceContourRelations.areContoursDisjoint(sourceContour, commonContour)) ||
+          (destinationZone.getOutContours.contains(commonContour) && sourceContourRelations.contourContainsAnother(commonContour, sourceContour))
       ))
   }
 

@@ -20,6 +20,7 @@ public class ZoneTransferTest {
     public static final PrimarySpiderDiagram vennABDDiagram = createPrimarySD(null, null, null, vennABDZones);
     private static final ArrayList<Zone> intersectionAC = Zones.getZonesInsideAllContours(vennABCZones, "A", "C");
     public static final PrimarySpiderDiagram diagramABC_shadedSetAC = createPrimarySD(null, null, intersectionAC, vennABCZones);
+    public static final PrimarySpiderDiagram diagramABC_shadedSetC_A = createPrimarySD(null, null, Zones.getZonesOutsideContours(Zones.getZonesInsideAnyContour(vennABCZones, "A", "C"), "A"), vennABCZones);
     private final PrimarySpiderDiagram diagramWithABZones = createPrimarySD(null, null, null, asList(Zone.fromInContours("A", "B")));
     private final PrimarySpiderDiagram diagramWithBCZones = createPrimarySD(null, null, null, asList(Zone.fromOutContours("B", "C")));
 
@@ -66,6 +67,15 @@ public class ZoneTransferTest {
         assertThat(
                 zoneTransfer.zonesInDestinationOutsideContour("C"),
                 containsInAnyOrder(Zones.getZonesInsideAllContours(vennABDZones, "A").toArray())
+        );
+    }
+
+    @Test
+    public void zonesInDestinationOutsideContour_should_return_all_zones_outside_A_when_A_is_contains_C() {
+        ZoneTransfer zoneTransfer = new ZoneTransfer(diagramABC_shadedSetC_A, vennABDDiagram);
+        assertThat(
+                zoneTransfer.zonesInDestinationOutsideContour("C"),
+                containsInAnyOrder(Zones.getZonesOutsideContours(vennABDZones, "A").toArray())
         );
     }
 }
