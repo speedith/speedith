@@ -24,6 +24,7 @@ public class ZoneTransferTest {
     private static final ArrayList<Zone> intersectionAC = Zones.getZonesInsideAllContours(vennABCZones, "A", "C");
     public static final PrimarySpiderDiagram diagramABC_shadedSetAC = createPrimarySD(null, null, intersectionAC, vennABCZones);
     public static final PrimarySpiderDiagram diagramABC_shadedSetC_A = createPrimarySD(null, null, Zones.getZonesOutsideContours(Zones.getZonesInsideAnyContour(vennABCZones, "A", "C"), "A"), vennABCZones);
+
     private final PrimarySpiderDiagram diagramWithABZones = getDiagramWithABZones();
     private final PrimarySpiderDiagram diagramWithBCZones = getDiagramWithBCZones();
 
@@ -96,15 +97,76 @@ public class ZoneTransferTest {
         );
     }
 
+    @Test
+    public void zonesInDestinationInsideContour_should_return_an_empty_region_in_a_venn2_diagram() {
+        ZoneTransfer zoneTransfer = new ZoneTransfer(vennABCDiagram, vennABDDiagram);
+        assertThat(
+                zoneTransfer.zonesInDestinationInsideContour("C"),
+                hasSize(0)
+        );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void zonesInDestinationInsideContour_should_throw_an_exception_if_the_contour_is_not_only_in_the_source_diagram() {
+        new ZoneTransfer(vennABCDiagram, vennABDDiagram).zonesInDestinationInsideContour("A");
+    }
+    @Test
+    public void zonesInDestinationInsideContour_should_return_an_empty_region_in_a_venn2_diagram1() {
+        ZoneTransfer zoneTransfer = new ZoneTransfer(vennABCDiagram, vennABDDiagram);
+        assertThat(
+                zoneTransfer.zonesInDestinationInsideContour("C"),
+                hasSize(0)
+        );
+    }
+    @Test
+    public void zonesInDestinationInsideContour_should_return_zones_inside_A() {
+        ZoneTransfer zoneTransfer = new ZoneTransfer(getDiagramABCWhereCContainsA(), vennABDDiagram);
+        assertThat(
+                zoneTransfer.zonesInDestinationInsideContour("C"),
+                containsInAnyOrder(
+                        Zone.fromInContours("A").withOutContours("B", "D"),
+                        Zone.fromInContours("A", "B").withOutContours("D"),
+                        Zone.fromInContours("A", "D").withOutContours("B"),
+                        Zone.fromInContours("A", "B", "D").withOutContours()
+                )
+        );
+    }
+
+    @Test
+    public void zonesInDestinationInsideContour_when_transfering_contour_E_in_diagrams_from_speedith_paper_should_return_zones_inside_AC() {
+        ZoneTransfer zoneTransfer = new ZoneTransfer(getDiagramSpeedithPaperD2(), getDiagramSpeedithPaperD1());
+        assertThat(
+                zoneTransfer.zonesInDestinationInsideContour("E"),
+                containsInAnyOrder(
+                        Zone.fromInContours("A", "C").withOutContours("B", "D")
+                )
+        );
+    }
+
+    @Test
+    public void zonesInDestinationInsideContour_when_transfering_contour_E_in_a_diagram_where_E_contains_A_and_C_should_return_all_zones_inside_A() {
+        ZoneTransfer zoneTransfer = new ZoneTransfer(getDiagramSpeedithPaperD2("E", "A"), getDiagramSpeedithPaperD1());
+        assertThat(
+                zoneTransfer.zonesInDestinationInsideContour("E"),
+                containsInAnyOrder(
+                        Zone.fromInContours("A", "C").withOutContours("B", "D"),
+                        Zone.fromInContours("A", "D").withOutContours("B", "C"),
+                        Zone.fromInContours("A").withOutContours("B", "C", "D")
+                )
+        );
+    }
+
     public static PrimarySpiderDiagram getDiagramSpeedithPaperD2() {
-        String contourA = "A";
+        return getDiagramSpeedithPaperD2("A", "E");
+    }
+
+    public static PrimarySpiderDiagram getDiagramSpeedithPaperD2(String outsideContour, String insideContour) {
         String contourC = "C";
-        String contourE = "E";
         String contourF = "F";
-        ArrayList<Zone> abcdPowerRegion = Zones.allZonesForContours(contourA, contourF, contourC, contourE);
-        ArrayList<Zone> shaded_E_A = Zones.getZonesInsideAllContours(Zones.getZonesOutsideContours(abcdPowerRegion, contourA), contourE);
+        ArrayList<Zone> abcdPowerRegion = Zones.allZonesForContours(outsideContour, contourF, contourC, insideContour);
+        ArrayList<Zone> shaded_E_A = Zones.getZonesInsideAllContours(Zones.getZonesOutsideContours(abcdPowerRegion, outsideContour), insideContour);
         ArrayList<Zone> shaded_C = Zones.getZonesInsideAllContours(abcdPowerRegion, contourC);
-        ArrayList<Zone> shaded_F_ACE = Zones.getZonesInsideAnyContour(Zones.getZonesInsideAllContours(abcdPowerRegion, contourF), contourA, contourC, contourE);
+        ArrayList<Zone> shaded_F_ACE = Zones.getZonesInsideAnyContour(Zones.getZonesInsideAllContours(abcdPowerRegion, contourF), outsideContour, contourC, insideContour);
 
         TreeSet<Zone> presentZones = new TreeSet<>(abcdPowerRegion);
         presentZones.removeAll(shaded_E_A);
@@ -117,14 +179,14 @@ public class ZoneTransferTest {
         shadedZones.addAll(shaded_F_ACE);
 
         TreeMap<String, Region> habitats = new TreeMap<>();
-        habitats.put("s1", new Region(Zone.fromInContours(contourA, contourE, contourC).withOutContours(contourF)));
+        habitats.put("s1", new Region(Zone.fromInContours(outsideContour, insideContour, contourC).withOutContours(contourF)));
         habitats.put("s2", new Region(
-                Zone.fromInContours(contourF).withOutContours(contourA, contourC, contourE),
-                Zone.fromOutContours(contourA, contourC, contourE, contourF)
+                Zone.fromInContours(contourF).withOutContours(outsideContour, contourC, insideContour),
+                Zone.fromOutContours(outsideContour, contourC, insideContour, contourF)
         ));
         habitats.put("s3", new Region(
-                Zone.fromInContours(contourF).withOutContours(contourA, contourC, contourE),
-                Zone.fromOutContours(contourA, contourC, contourE, contourF)
+                Zone.fromInContours(contourF).withOutContours(outsideContour, contourC, insideContour),
+                Zone.fromOutContours(outsideContour, contourC, insideContour, contourF)
         ));
 
         return createPrimarySD(habitats.keySet(), habitats, shadedZones, presentZones);
@@ -164,5 +226,14 @@ public class ZoneTransferTest {
         ));
 
         return createPrimarySD(habitats.keySet(), habitats, shadedZones, presentZones);
+    }
+
+    public static PrimarySpiderDiagram getDiagramABCWhereCContainsA() {
+        ArrayList<Zone> zonesInsideAC_outsideC = Zones.getZonesOutsideContours(Zones.getZonesInsideAnyContour(vennABCZones, "A", "C"), "C");
+
+        TreeSet<Zone> presentZones = new TreeSet<>(vennABCZones);
+        presentZones.removeAll(zonesInsideAC_outsideC);
+
+        return createPrimarySD(null, null, zonesInsideAC_outsideC, presentZones);
     }
 }

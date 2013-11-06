@@ -27,8 +27,10 @@ public class DiagramTestPortfolio implements Serializable {
 
     public DiagramTestPortfolio() {
         this.spiderDiagrams = new ArrayList<>(asList(
+                ZoneTransferTest.getDiagramABCWhereCContainsA(),
                 ZoneTransferTest.getDiagramSpeedithPaperD2(),
                 ZoneTransferTest.getDiagramSpeedithPaperD1(),
+                ZoneTransferTest.getDiagramABCWhereCContainsA(),
                 ZoneTransferTest.diagramABC_shadedSetC_A,
                 ZoneTransferTest.diagramABC_shadedSetAC,
                 ContourRelationsInDiagramTest.getVennABCDiagramWithPartlyShadedBAndSpiderInZoneBC_A(),
@@ -59,6 +61,10 @@ public class DiagramTestPortfolio implements Serializable {
 
     public SpiderDiagram getDiagramAt(int spiderDiagramIndex) {
         return getSpiderDiagrams().get(spiderDiagramIndex);
+    }
+
+    public static void main(String[] args) {
+        new LotsOfDiagramsForm().setVisible(true);
     }
 
     private void loadFromTestFiles() {
