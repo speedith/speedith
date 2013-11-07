@@ -6,7 +6,7 @@ import speedith.core.lang.Zone;
 import speedith.core.lang.Zones;
 import speedith.core.lang.reader.SpiderDiagramsReaderTest;
 import speedith.core.reasoning.rules.transformers.CopyContoursTransformerTest;
-import speedith.core.reasoning.util.unitary.ContourRelationsInDiagramTest;
+import speedith.core.reasoning.util.unitary.ContourRelationsTest;
 import speedith.core.reasoning.util.unitary.ZoneTransferTest;
 
 import java.io.Serializable;
@@ -33,9 +33,9 @@ public class DiagramTestPortfolio implements Serializable {
                 ZoneTransferTest.getDiagramABCWhereCContainsA(),
                 ZoneTransferTest.diagramABC_shadedSetC_A,
                 ZoneTransferTest.diagramABC_shadedSetAC,
-                ContourRelationsInDiagramTest.getVennABCDiagramWithPartlyShadedBAndSpiderInZoneBC_A(),
-                ContourRelationsInDiagramTest.getVennABCDiagramWithPartlyShadedB(),
-                ContourRelationsInDiagramTest.getVennABCDiagramWithShadedBC(),
+                ContourRelationsTest.getVennABCDiagramWithPartlyShadedBAndSpiderInZoneBC_A(),
+                ContourRelationsTest.getVennABCDiagramWithPartlyShadedB(),
+                ContourRelationsTest.getVennABCDiagramWithShadedBC(),
                 diagramWithASpider,
                 addContoursToDiagram(diagramWithASpider, asList("G")),
                 shadedBInsideA,

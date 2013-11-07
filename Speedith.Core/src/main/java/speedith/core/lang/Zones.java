@@ -63,10 +63,6 @@ public final class Zones {
         }
     }
 
-    public static String someMethod(int someNumber) {
-        return "What a big number! " + someNumber;
-    }
-
     private static ArrayList<Zone> sameRegionWithNewContours(Collection<Zone> region, Collection<String> newContours) {
         if (region == null) {
             return new ArrayList<>();

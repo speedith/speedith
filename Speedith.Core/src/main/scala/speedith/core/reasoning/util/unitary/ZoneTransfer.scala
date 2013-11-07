@@ -23,10 +23,6 @@ class ZoneTransfer(sourceDiagram: PrimarySpiderDiagram, destinationDiagram: Prim
   }
 
 
-  private val allZonesInDestinationDiagram: Set[Zone] = {
-    (destinationDiagram.getPresentZones ++ destinationDiagram.getHabitats.values().flatMap(_.getZones)).toSet
-  }
-
   def zonesInDestinationInsideContour(sourceContour: String): java.util.Set[Zone] = {
     assertContourOnlyInSource(sourceContour)
 
@@ -35,6 +31,10 @@ class ZoneTransfer(sourceDiagram: PrimarySpiderDiagram, destinationDiagram: Prim
         destinationZone.getInContours.contains(contour) && sourceContourRelations.contourContainsAnother(sourceContour, contour)
       )
     )
+  }
+
+  private val allZonesInDestinationDiagram: Set[Zone] = {
+    (destinationDiagram.getPresentZones ++ destinationDiagram.getHabitats.values().flatMap(_.getZones)).toSet
   }
 
 

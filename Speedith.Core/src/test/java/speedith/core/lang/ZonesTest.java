@@ -115,12 +115,6 @@ public class ZonesTest {
     }
 
     @Test
-    public void someMethod_should_return_a_good_string_when_given_a_large_number() {
-        String result = Zones.someMethod(9001);
-        assertEquals("What a big number! 9001", result);
-    }
-
-    @Test
     public void isZoneOutsideContours_should_return_false_when_zone_is_in_the_contour() {
         assertFalse(Zones.isZoneOutsideContours(zoneAB_CD, "A"));
     }
