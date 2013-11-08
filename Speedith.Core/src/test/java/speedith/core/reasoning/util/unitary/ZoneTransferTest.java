@@ -19,14 +19,13 @@ public class ZoneTransferTest {
 
     private static final ArrayList<Zone> vennABCZones = Zones.allZonesForContours("A", "B", "C");
     private static final ArrayList<Zone> vennABDZones = Zones.allZonesForContours("A", "B", "D");
+    private static final ArrayList<Zone> intersectionAC = Zones.getZonesInsideAllContours(vennABCZones, "A", "C");
+    private static final PrimarySpiderDiagram diagramWithABZones = getDiagramWithABZones();
+    private static final PrimarySpiderDiagram diagramWithBCZones = getDiagramWithBCZones();
     public static final PrimarySpiderDiagram vennABCDiagram = createPrimarySD(null, null, null, vennABCZones);
     public static final PrimarySpiderDiagram vennABDDiagram = createPrimarySD(null, null, null, vennABDZones);
-    private static final ArrayList<Zone> intersectionAC = Zones.getZonesInsideAllContours(vennABCZones, "A", "C");
     public static final PrimarySpiderDiagram diagramABC_shadedSetAC = createPrimarySD(null, null, intersectionAC, vennABCZones);
     public static final PrimarySpiderDiagram diagramABC_shadedSetC_A = createPrimarySD(null, null, Zones.getZonesOutsideContours(Zones.getZonesInsideAnyContour(vennABCZones, "A", "C"), "A"), vennABCZones);
-
-    private final PrimarySpiderDiagram diagramWithABZones = getDiagramWithABZones();
-    private final PrimarySpiderDiagram diagramWithBCZones = getDiagramWithBCZones();
 
     @Test
     public void contoursOnlyInSource_returns_the_contour_that_is_present_in_the_source_diagram_but_not_in_the_destination_diagram() throws Exception {
@@ -110,6 +109,7 @@ public class ZoneTransferTest {
     public void zonesInDestinationInsideContour_should_throw_an_exception_if_the_contour_is_not_only_in_the_source_diagram() {
         new ZoneTransfer(vennABCDiagram, vennABDDiagram).zonesInDestinationInsideContour("A");
     }
+
     @Test
     public void zonesInDestinationInsideContour_should_return_an_empty_region_in_a_venn2_diagram1() {
         ZoneTransfer zoneTransfer = new ZoneTransfer(vennABCDiagram, vennABDDiagram);
@@ -118,6 +118,7 @@ public class ZoneTransferTest {
                 hasSize(0)
         );
     }
+
     @Test
     public void zonesInDestinationInsideContour_should_return_zones_inside_A() {
         ZoneTransfer zoneTransfer = new ZoneTransfer(getDiagramABCWhereCContainsA(), vennABDDiagram);
@@ -153,6 +154,42 @@ public class ZoneTransferTest {
                         Zone.fromInContours("A", "D").withOutContours("B", "C"),
                         Zone.fromInContours("A").withOutContours("B", "C", "D")
                 )
+        );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void transferContour_should_throw_an_exception_if_the_source_diagram_does_not_contain_the_contour_to_transfer() {
+        new ZoneTransfer(diagramWithABZones, createPrimarySD()).transferContour("C");
+    }
+
+    @Test
+    public void transferContour_into_an_empty_primary_diagram_should_return_a_diagram_with_a_single_zone() {
+        ZoneTransfer zoneTransfer = new ZoneTransfer(getVenn2Diagram("A", "B"), getVenn2Diagram("B", "C"));
+        assertThat(
+                zoneTransfer.transferContour("A"),
+                equalTo(createPrimarySD(null, null, null, Zones.allZonesForContours("A", "B", "C")))
+        );
+    }
+
+    @Test
+    public void transferContour_when_adding_a_contour_to_a_venn_diagram_should_produce_the_same_diagram() {
+        ZoneTransfer zoneTransfer = new ZoneTransfer(getDiagramABCWhereCContainsA(), getVenn2Diagram("B", "C"));
+        assertThat(
+                zoneTransfer.transferContour("A"),
+                equalTo(getDiagramABCWhereCContainsA())
+        );
+    }
+
+    @Test
+    public void transferContour_should_create_some_shading() {
+        ZoneTransfer zoneTransfer = new ZoneTransfer(getDiagramABCWhereCContainsA(), vennABDDiagram);
+        ArrayList<Zone> vennABCDZones = Zones.allZonesForContours("A", "B", "C", "D");
+        ArrayList<Zone> presentZones = new ArrayList<>(Zones.sameRegionWithNewContours(vennABDZones, "C"));
+        presentZones.removeAll(Zones.getZonesInsideAllContours(Zones.getZonesOutsideContours(presentZones, "C"), "A"));
+        ArrayList<Zone> shadedZones = Zones.getZonesInsideAllContours(Zones.getZonesOutsideContours(vennABCDZones, "C"), "A");
+        assertThat(
+                zoneTransfer.transferContour("C"),
+                equalTo(createPrimarySD(null, null, shadedZones, presentZones))
         );
     }
 
@@ -192,14 +229,6 @@ public class ZoneTransferTest {
         return createPrimarySD(habitats.keySet(), habitats, shadedZones, presentZones);
     }
 
-    private PrimarySpiderDiagram getDiagramWithBCZones() {
-        return createPrimarySD(null, null, null, asList(Zone.fromOutContours("B", "C")));
-    }
-
-    private PrimarySpiderDiagram getDiagramWithABZones() {
-        return createPrimarySD(null, null, null, asList(Zone.fromInContours("A", "B")));
-    }
-
     public static PrimarySpiderDiagram getDiagramSpeedithPaperD1() {
         ArrayList<Zone> abcdPowerRegion = Zones.allZonesForContours("A", "B", "C", "D");
         ArrayList<Zone> shaded_C_A = Zones.getZonesInsideAllContours(Zones.getZonesOutsideContours(abcdPowerRegion, "A"), "C");
@@ -235,5 +264,21 @@ public class ZoneTransferTest {
         presentZones.removeAll(zonesInsideAC_outsideC);
 
         return createPrimarySD(null, null, zonesInsideAC_outsideC, presentZones);
+    }
+
+    public static PrimarySpiderDiagram getVenn2Diagram(String contour1, String contour2) {
+        return createPrimarySD(null, null, null, Zones.allZonesForContours(contour1, contour2));
+    }
+
+    public static PrimarySpiderDiagram getVenn3Diagram(String contour1, String contour2, String contour3) {
+        return createPrimarySD(null, null, null, Zones.allZonesForContours(contour1, contour2, contour3));
+    }
+
+    private static PrimarySpiderDiagram getDiagramWithBCZones() {
+        return createPrimarySD(null, null, null, asList(Zone.fromOutContours("B", "C")));
+    }
+
+    private static PrimarySpiderDiagram getDiagramWithABZones() {
+        return createPrimarySD(null, null, null, asList(Zone.fromInContours("A", "B")));
     }
 }
