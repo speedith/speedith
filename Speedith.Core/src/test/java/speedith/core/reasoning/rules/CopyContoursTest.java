@@ -10,6 +10,7 @@ import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.rules.instructions.SelectContoursInstruction;
+import speedith.core.reasoning.util.unitary.TestSpiderDiagrams;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,15 +39,13 @@ public class CopyContoursTest {
         copyContours.apply(new MultipleRuleArgs(new ArrayList<ContourArg>()), null);
     }
 
-    @Test
-    public void apply_should_return_the_same_goals_when_copying_a_contour_that_already_exists_in_the_other_unitary_diagram() throws RuleApplicationException {
+    @Test(expected = TransformationException.class)
+    public void apply_should_throw_an_exception_when_copying_a_contour_that_already_exists_in_the_other_unitary_diagram() throws RuleApplicationException {
         PrimarySpiderDiagram leftAndRightUnitaryDiagram = SpiderDiagrams.createPrimarySD().addSpider("s", new Region(Zone.fromInContours("A")));
         CompoundSpiderDiagram conjunctiveCompoundDiagram = SpiderDiagrams.createCompoundSD(Operator.Conjunction, leftAndRightUnitaryDiagram, leftAndRightUnitaryDiagram);
-        Goals expectedGoals = Goals.createGoalsFrom(conjunctiveCompoundDiagram);
+        Goals targetOfInference = Goals.createGoalsFrom(conjunctiveCompoundDiagram);
 
-        RuleApplicationResult applicationResult = copyContours.apply(new MultipleRuleArgs(Arrays.asList(new ContourArg(0, 2, "A"))), expectedGoals);
-
-        assertEquals(expectedGoals, applicationResult.getGoals());
+        copyContours.apply(new MultipleRuleArgs(new ContourArg(0, 2, "A")), targetOfInference);
     }
 
     @Test(expected = RuleApplicationException.class)
@@ -88,6 +87,20 @@ public class CopyContoursTest {
         assertThat(
                 copyContours.getInstructions(),
                 instanceOf(SelectContoursInstruction.class)
+        );
+    }
+
+    @Test
+    public void apply_on_the_speedith_D1_D2_example_should_return_D1Prime_D2() throws RuleApplicationException {
+        SpiderDiagram conjunctiveCompoundDiagram = SpiderDiagrams.createCompoundSD(Operator.Conjunction, TestSpiderDiagrams.getDiagramSpeedithPaperD2(), TestSpiderDiagrams.getDiagramSpeedithPaperD1());
+        Goals targetOfInference = Goals.createGoalsFrom(conjunctiveCompoundDiagram);
+
+        SpiderDiagram expectedGoal = SpiderDiagrams.createCompoundSD(Operator.Conjunction, TestSpiderDiagrams.getDiagramSpeedithPaperD2(), TestSpiderDiagrams.getDiagramD1PrimeFromSpeedithPaper());
+
+        RuleApplicationResult applicationResult = copyContours.apply(new MultipleRuleArgs(new ContourArg(0, 1, "E")), targetOfInference);
+        assertThat(
+                applicationResult.getGoals().getGoalAt(0),
+                equalTo(expectedGoal)
         );
     }
 

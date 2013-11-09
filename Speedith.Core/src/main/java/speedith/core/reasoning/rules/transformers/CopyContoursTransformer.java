@@ -2,10 +2,10 @@ package speedith.core.reasoning.rules.transformers;
 
 import speedith.core.lang.*;
 import speedith.core.reasoning.args.ContourArg;
+import speedith.core.reasoning.util.unitary.ZoneTransfer;
 
-import java.util.*;
-
-import static speedith.core.lang.Zones.sameRegionWithNewContours;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CopyContoursTransformer extends IdTransformer {
 
@@ -18,23 +18,6 @@ public class CopyContoursTransformer extends IdTransformer {
         }
         this.indexOfParent = indexOfParent;
         this.targetContours = targetContours;
-    }
-
-    public static PrimarySpiderDiagram addContoursToDiagram(PrimarySpiderDiagram diagram,
-                                                            List<String> newContours) {
-        SortedSet<String> oldContours = diagram.getAllContours();
-        if (oldContours.containsAll(newContours)) {
-            return diagram;
-        } else if (newContours.size() == 1) {
-            String newContour = newContours.get(0);
-            return SpiderDiagrams.createPrimarySD(
-                    diagram.getSpiders(),
-                    getHabitatsWithAddedContours(diagram, newContour),
-                    Zones.sameRegionWithNewContours(diagram.getShadedZones(), newContour),
-                    Zones.extendRegionWithNewContour(diagram.getPresentZones(), newContour, oldContours)
-            );
-        }
-        return SpiderDiagrams.createPrimarySD(diagram.getSpiders(), diagram.getHabitats(), diagram.getShadedZones(), Arrays.asList(Zone.fromInContours(newContours.get(0))));
     }
 
     @Override
@@ -74,24 +57,16 @@ public class CopyContoursTransformer extends IdTransformer {
         return null;
     }
 
-    private static SortedMap<String, Region> getHabitatsWithAddedContours(PrimarySpiderDiagram diagram, String newContour) {
-        SortedMap<String, Region> habitats = diagram.getHabitats();
-        if (habitats == null || habitats.isEmpty()) {
-            return habitats;
-        }
-        TreeMap<String, Region> extendedHabitats = new TreeMap<>(habitats);
-        for (Map.Entry<String, Region> spiderRegion : extendedHabitats.entrySet()) {
-            spiderRegion.setValue(new Region(sameRegionWithNewContours(spiderRegion.getValue().getZones(), newContour)));
-        }
-        return extendedHabitats;
-    }
-
     private SpiderDiagram copyContours(PrimarySpiderDiagram diagramWithContour, PrimarySpiderDiagram diagramWithoutContour) {
-        PrimarySpiderDiagram transformedDiagram = addContoursToDiagram(diagramWithoutContour, getTargetContours());
-        if (isContourInLeftDiagram()) {
-            return SpiderDiagrams.createCompoundSD(Operator.Conjunction, diagramWithContour, transformedDiagram);
-        } else {
-            return SpiderDiagrams.createCompoundSD(Operator.Conjunction, transformedDiagram, diagramWithContour);
+        try {
+            PrimarySpiderDiagram transformedDiagram = new ZoneTransfer(diagramWithContour, diagramWithoutContour).transferContour(getTargetContours().get(0));
+            if (isContourInLeftDiagram()) {
+                return SpiderDiagrams.createCompoundSD(Operator.Conjunction, diagramWithContour, transformedDiagram);
+            } else {
+                return SpiderDiagrams.createCompoundSD(Operator.Conjunction, transformedDiagram, diagramWithContour);
+            }
+        } catch (Exception e) {
+            throw new TransformationException("Could not copy the contour. " + e.getMessage(), e);
         }
     }
 

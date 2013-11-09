@@ -7,6 +7,7 @@ import speedith.core.lang.Zones;
 import speedith.core.lang.reader.SpiderDiagramsReaderTest;
 import speedith.core.reasoning.rules.transformers.CopyContoursTransformerTest;
 import speedith.core.reasoning.util.unitary.ContourRelationsTest;
+import speedith.core.reasoning.util.unitary.TestSpiderDiagrams;
 import speedith.core.reasoning.util.unitary.ZoneTransfer;
 import speedith.core.reasoning.util.unitary.ZoneTransferTest;
 
@@ -18,7 +19,6 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static speedith.core.lang.SpiderDiagrams.createPrimarySD;
 import static speedith.core.lang.Zones.*;
-import static speedith.core.reasoning.rules.transformers.CopyContoursTransformer.addContoursToDiagram;
 import static speedith.core.reasoning.rules.transformers.CopyContoursTransformerTest.diagramWithASpider;
 import static speedith.draw.SpiderDiagramPanelTest.*;
 
@@ -28,25 +28,23 @@ public class DiagramTestPortfolio implements Serializable {
 
     public DiagramTestPortfolio() {
         this.spiderDiagrams = new ArrayList<>(asList(
-                new ZoneTransfer(ZoneTransferTest.getDiagramSpeedithPaperD2(), ZoneTransferTest.getDiagramSpeedithPaperD1()).transferContour("E"),
-                new ZoneTransfer(ZoneTransferTest.getDiagramABCWhereCContainsA(), ZoneTransferTest.getVenn3Diagram("A", "B", "D")).transferContour("C"),
-                ZoneTransferTest.getDiagramABCWhereCContainsA(),
-                ZoneTransferTest.getDiagramSpeedithPaperD2(),
-                ZoneTransferTest.getDiagramSpeedithPaperD1(),
+                TestSpiderDiagrams.getDiagramD1PrimeFromSpeedithPaper(),
+                new ZoneTransfer(TestSpiderDiagrams.getDiagramABCWhereCContainsA(), TestSpiderDiagrams.getVenn3Diagram("A", "B", "D")).transferContour("C"),
+                TestSpiderDiagrams.getDiagramABCWhereCContainsA(),
+                TestSpiderDiagrams.getDiagramSpeedithPaperD2(),
+                TestSpiderDiagrams.getDiagramSpeedithPaperD1(),
                 ZoneTransferTest.diagramABC_shadedSetC_A,
                 ZoneTransferTest.diagramABC_shadedSetAC,
                 ContourRelationsTest.getVennABCDiagramWithPartlyShadedBAndSpiderInZoneBC_A(),
                 ContourRelationsTest.getVennABCDiagramWithPartlyShadedB(),
                 ContourRelationsTest.getVennABCDiagramWithShadedBC(),
                 diagramWithASpider,
-                addContoursToDiagram(diagramWithASpider, asList("G")),
                 shadedBInsideA,
                 createPrimarySD(null, null, sameRegionWithNewContours(extendRegionWithNewContour(asList(Zone.fromInContours("A")), "B", null), "C"), Zones.allZonesForContours("A", "B", "C")),
                 createPrimarySD(null, null, sameRegionWithNewContours(asList(Zone.fromInContours("B")), "A", "C"), Zones.allZonesForContours("A", "B", "C")),
                 createPrimarySD(null, null, sameRegionWithNewContours(asList(Zone.fromInContours("B")), "A"), Zones.sameRegionWithNewContours(asList(Zone.fromInContours("B")), "A")),
                 createPrimarySD(null, null, getZonesOutsideContours(Zones.allZonesForContours("A", "B", "C", "D"), "C", "B"), Zones.allZonesForContours("A", "B", "C", "D")),
                 getSDExample1(),
-                addContoursToDiagram(getSDExample1(), asList("C")),
                 getSDExample2(),
                 getSDExample3()
         ));

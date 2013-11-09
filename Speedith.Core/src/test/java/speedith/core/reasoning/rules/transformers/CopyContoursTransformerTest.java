@@ -11,14 +11,12 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static speedith.core.lang.SpiderDiagrams.createCompoundSD;
 import static speedith.core.lang.SpiderDiagrams.createPrimarySD;
-import static speedith.core.reasoning.rules.transformers.CopyContoursTransformer.addContoursToDiagram;
 
 public class CopyContoursTransformerTest {
 
     public static final Zone zoneBAndA = Zone.fromInContours("B", "A");
     public static final Zone zoneBMinusA = Zone.fromInContours("B").withOutContours("A");
     public static final Zone zoneAMinusB = Zone.fromInContours("A").withOutContours("B");
-    public static final PrimarySpiderDiagram diagramWithShadedContourB = createPrimarySD(null, null, asList(Zone.fromInContours("B")), null);
     public static final CompoundSpiderDiagram conjunctiveNullDiagrams = createConjunction(NullSpiderDiagram.getInstance(), NullSpiderDiagram.getInstance());
     public static final PrimarySpiderDiagram diagramWithContourA = createPrimarySD(null, null, null, asList(Zone.fromInContours("A")));
     public static final PrimarySpiderDiagram diagramWithASpider = createPrimarySD(asList("s"), getSpiderInRegion("s", new Region(Zone.fromInContours("A"))), null, null);
@@ -71,14 +69,10 @@ public class CopyContoursTransformerTest {
         applyCopyContoursTransform(diagramWithContourA, new ContourArg(0, 0, "A"));
     }
 
-    @Test
+    @Test(expected = TransformationException.class)
     public void should_not_transform_the_diagram_if_they_share_the_same_contour() {
         CompoundSpiderDiagram conjunctiveCompoundDiagram = createConjunction(diagramWithContourA, diagramWithContourA);
-
-        assertEquals(
-                conjunctiveCompoundDiagram,
-                applyCopyContoursTransform(conjunctiveCompoundDiagram)
-        );
+        applyCopyContoursTransform(conjunctiveCompoundDiagram);
     }
 
     @Test(expected = TransformationException.class)
@@ -92,54 +86,16 @@ public class CopyContoursTransformerTest {
     }
 
     @Test
-    public void should_transform_the_non_root_target_diagram() {
+    public void should_not_copy_the_contour_to_the_empty_primary_diagram() {
         CompoundSpiderDiagram nestedConjunction = createConjunction(createPrimarySD(), diagramWithContourA);
         CompoundSpiderDiagram outerConjunction = createConjunction(conjunctiveNullDiagrams, createConjunction(nestedConjunction, nestedConjunction));
-        CompoundSpiderDiagram expectedResult = createConjunction(conjunctiveNullDiagrams, createConjunction(nestedConjunction, createConjunction(diagramWithContourA, diagramWithContourA)));
+        String contourToCopy = "A";
+        CompoundSpiderDiagram expectedResult = createConjunction(conjunctiveNullDiagrams, createConjunction(nestedConjunction, createConjunction(createPrimarySD(), diagramWithContourA)));
 
         assertEquals(
                 expectedResult,
-                applyCopyContoursTransform(outerConjunction, new ContourArg(0, 10, "A"))
+                applyCopyContoursTransform(outerConjunction, new ContourArg(0, 10, contourToCopy))
         );
-    }
-
-    @Test
-    public void addContoursToDiagram_should_copy_the_single_contour_to_the_empty_spider_diagram() {
-        PrimarySpiderDiagram expectedDiagram = createPrimarySD(null, null, null, asList(Zone.fromInContours("A")));
-
-        PrimarySpiderDiagram transformedDiagram = CopyContoursTransformer.addContoursToDiagram(
-                createPrimarySD(),
-                asList("A")
-        );
-
-        assertEquals(
-                expectedDiagram,
-                transformedDiagram
-        );
-    }
-
-    @Test
-    public void addContoursToDiagram_should_update_shaded_zones_with_the_new_contour() {
-        PrimarySpiderDiagram expectedDiagram = createPrimarySD(
-                null,
-                null,
-                asList(zoneBMinusA, zoneBAndA),
-                asList(zoneBAndA, zoneAMinusB)
-        );
-
-        assertEquals(expectedDiagram, CopyContoursTransformer.addContoursToDiagram(diagramWithShadedContourB, asList("A")));
-    }
-
-    @Test
-    public void addContoursToDiagram_should_split_zones_of_spider_habitats() {
-        PrimarySpiderDiagram expectedDiagram = createPrimarySD(
-                asList("s"),
-                getSpiderInRegion("s", new Region(zoneAMinusB, zoneBAndA)),
-                null,
-                asList(zoneBAndA, zoneBMinusA)
-        );
-
-        assertEquals(expectedDiagram, addContoursToDiagram(diagramWithASpider, asList("B")));
     }
 
     private static Map<String, Region> getSpiderInRegion(String spider, Region habitat) {

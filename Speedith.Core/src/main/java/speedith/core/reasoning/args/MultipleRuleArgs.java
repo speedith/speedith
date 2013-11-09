@@ -31,6 +31,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
@@ -40,6 +42,10 @@ public class MultipleRuleArgs implements RuleArg, Iterable<RuleArg> {
 
     public MultipleRuleArgs(List<? extends RuleArg> ruleArgs) {
         this.ruleArgs = new ArrayList<>(ruleArgs);
+    }
+
+    public MultipleRuleArgs(RuleArg... ruleArgs) {
+        this(asList(ruleArgs));
     }
 
     public RuleArg get(int index) {
