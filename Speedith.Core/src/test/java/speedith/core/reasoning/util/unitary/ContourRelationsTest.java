@@ -12,10 +12,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static speedith.core.lang.Zones.allZonesForContours;
 import static speedith.core.lang.Zones.getZonesInsideAllContours;
+import static speedith.core.reasoning.util.unitary.TestSpiderDiagrams.POWER_REGION_ABC;
+import static speedith.core.reasoning.util.unitary.TestSpiderDiagrams.POWER_REGION_ABCD;
 
 public class ContourRelationsTest {
 
-    private static final ArrayList<Zone> vennABCZones = Zones.allZonesForContours("A", "B", "C");
     private final Zone zoneAB = Zone.fromInContours("A", "B");
     private final Zone zoneB_A = Zone.fromInContours("B").withOutContours("A");
     private final ArrayList<Zone> powerRegionAB = allZonesForContours("A", "B");
@@ -42,13 +43,13 @@ public class ContourRelationsTest {
 
     @Test
     public void areContoursDisjoint_should_return_false_when_not_all_shared_zones_are_shaded() {
-        ContourRelations contourRelations = new ContourRelations(SpiderDiagrams.createPrimarySD(null, null, getZonesInsideAllContours(allZonesForContours("A", "B", "C", "D"), "A", "B", "C"), null));
+        ContourRelations contourRelations = new ContourRelations(SpiderDiagrams.createPrimarySD(null, null, getZonesInsideAllContours(POWER_REGION_ABCD, "A", "B", "C"), null));
         assertFalse(contourRelations.areContoursDisjoint("A", "D"));
     }
 
     @Test
     public void areContoursDisjoint_should_return_true_when_there_are_multiple_zones_and_all_shared_zones_are_shaded() {
-        ContourRelations contourRelations = new ContourRelations(SpiderDiagrams.createPrimarySD(null, null, getZonesInsideAllContours(allZonesForContours("A", "B", "C", "D"), "A", "D"), null));
+        ContourRelations contourRelations = new ContourRelations(SpiderDiagrams.createPrimarySD(null, null, getZonesInsideAllContours(POWER_REGION_ABCD, "A", "D"), null));
         assertTrue(contourRelations.areContoursDisjoint("A", "D"));
     }
 
@@ -57,7 +58,7 @@ public class ContourRelationsTest {
         TreeMap<String, Region> habitats = new TreeMap<>();
         String spider = "s";
         habitats.put(spider, new Region(Zone.fromInContours("A", "C", "D").withOutContours("B")));
-        PrimarySpiderDiagram diagramWithASpiderInTheIntersection = SpiderDiagrams.createPrimarySD(asList(spider), habitats, getZonesInsideAllContours(allZonesForContours("A", "B", "C", "D"), "A", "D"), null);
+        PrimarySpiderDiagram diagramWithASpiderInTheIntersection = SpiderDiagrams.createPrimarySD(asList(spider), habitats, getZonesInsideAllContours(POWER_REGION_ABCD, "A", "D"), null);
         ContourRelations contourRelations = new ContourRelations(diagramWithASpiderInTheIntersection);
         assertFalse(contourRelations.areContoursDisjoint("A", "D"));
     }
@@ -67,7 +68,7 @@ public class ContourRelationsTest {
         TreeMap<String, Region> habitats = new TreeMap<>();
         String spider = "s";
         habitats.put(spider, new Region(Zone.fromInContours("A", "C").withOutContours("B", "D")));
-        PrimarySpiderDiagram diagramWithASpiderInTheIntersection = SpiderDiagrams.createPrimarySD(asList(spider), habitats, getZonesInsideAllContours(allZonesForContours("A", "B", "C", "D"), "A", "D"), null);
+        PrimarySpiderDiagram diagramWithASpiderInTheIntersection = SpiderDiagrams.createPrimarySD(asList(spider), habitats, getZonesInsideAllContours(POWER_REGION_ABCD, "A", "D"), null);
         ContourRelations contourRelations = new ContourRelations(diagramWithASpiderInTheIntersection);
         assertTrue(contourRelations.areContoursDisjoint("A", "D"));
     }
@@ -115,14 +116,14 @@ public class ContourRelationsTest {
     }
 
     public static PrimarySpiderDiagram getVennABCDiagramWithPartlyShadedB() {
-        ArrayList<Zone> zonesBC = Zones.getZonesInsideAllContours(vennABCZones, "B");
+        ArrayList<Zone> zonesBC = Zones.getZonesInsideAllContours(POWER_REGION_ABC, "B");
         zonesBC.remove(Zone.fromInContours("A", "B", "C"));
-        return SpiderDiagrams.createPrimarySD(null, null, zonesBC, vennABCZones);
+        return SpiderDiagrams.createPrimarySD(null, null, zonesBC, POWER_REGION_ABC);
     }
 
     public static PrimarySpiderDiagram getVennABCDiagramWithShadedBC() {
-        ArrayList<Zone> zonesBC = Zones.getZonesInsideAllContours(vennABCZones, "B", "C");
-        return SpiderDiagrams.createPrimarySD(null, null, zonesBC, vennABCZones);
+        ArrayList<Zone> zonesBC = Zones.getZonesInsideAllContours(POWER_REGION_ABC, "B", "C");
+        return SpiderDiagrams.createPrimarySD(null, null, zonesBC, POWER_REGION_ABC);
     }
 
     public static PrimarySpiderDiagram getVennABCDiagramWithPartlyShadedBAndSpiderInZoneBC_A() {

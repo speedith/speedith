@@ -30,6 +30,7 @@ import org.junit.*;
 import propity.util.Maps;
 import speedith.core.lang.*;
 import speedith.core.reasoning.GoalsTest;
+import speedith.core.reasoning.util.unitary.TestSpiderDiagrams;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -73,18 +74,10 @@ public class SpiderDiagramsReaderTest {
     public static final String SD_EXAMPLE_ERR_8 = "BinarySD aq {operator = \"\", arg1 = NullSD {}, arg2 = NullSD {}";
     public static final String SD_EXAMPLE_ERR_9 = "BinarySD {operator = \"op |\", arg1 = NullSD {}, arg2 = NullSD {}, arg3 = NullSD {} }";
     public static final String SD_EXAMPLE_ERR_10 = "BinarySD {operator = \"op |\", arg1 = NullSD {}, arg2 = NullSD {}, dsaj = NullSD {} }";
-    public static final String SD_IMPLICATION_1 = "BinarySD {operator = \"op |\", arg1 = NullSD {}, arg2 = NullSD {}, dsaj = NullSD {} }";
     public static final String REGION_EXAMPLE_1 = "[([\"A\"], [\"B\"]), ([\"C\"], [\"D\"])]";
     public static final String REGION_EXAMPLE_2 = "[]";
     public static final String REGION_EXAMPLE_3 = "[([], [\"B\"]), ([\"C\"], [])]";
     public static final String REGION_EXAMPLE_4 = "[([], [\"B\", \"A\"]), ([\"C\", \"D\"], [])]";
-    private static String[] FileCorrectSDT = {
-            "ParserExample1.sd",
-            "ParserExample2.sd",
-            "ParserExample3.sd",    // Proof: idempotency, imp tautology
-            "ParserExample4.sd",
-            "ParserExample5.sd"     // TODO: This one produces a bug in iCircles.
-    };
 
     public SpiderDiagramsReaderTest() {
     }
@@ -164,8 +157,8 @@ public class SpiderDiagramsReaderTest {
         assertEquals(1, psd.getHabitatsCount());
         assertEquals(1, psd.getShadedZonesCount());
         assertEquals(1, sd.getSubDiagramCount());
-        assertEquals(new TreeSet<String>(Arrays.asList("s'")), psd.getSpiders());
-        assertEquals(new TreeSet<Zone>(Arrays.asList(Zone.fromInContours("A", "B").withOutContours("C", "D"))), psd.getShadedZones());
+        assertEquals(new TreeSet<>(Arrays.asList("s'")), psd.getSpiders());
+        assertEquals(new TreeSet<>(Arrays.asList(Zone.fromInContours("A", "B").withOutContours("C", "D"))), psd.getShadedZones());
         assertEquals(Maps.createTreeMap(Arrays.asList("s'"), Arrays.asList(new Region(Zone.fromInContours("A").withOutContours("B", "C", "D"), Zone.fromInContours("A", "D").withOutContours("B", "C")))), psd.getHabitats());
 
         sd = checkSDExample(SD_EXAMPLE_17, true);
@@ -175,9 +168,9 @@ public class SpiderDiagramsReaderTest {
         assertEquals(1, psd.getShadedZonesCount());
         assertEquals(1, psd.getPresentZonesCount());
         assertEquals(1, sd.getSubDiagramCount());
-        assertEquals(new TreeSet<String>(Arrays.asList("s1", "s2")), psd.getSpiders());
-        assertEquals(new TreeSet<Zone>(Arrays.asList(Zone.fromInContours("A", "B"))), psd.getShadedZones());
-        assertEquals(new TreeSet<Zone>(Arrays.asList(Zone.fromInContours("A", "B"))), psd.getPresentZones());
+        assertEquals(new TreeSet<>(Arrays.asList("s1", "s2")), psd.getSpiders());
+        assertEquals(new TreeSet<>(Arrays.asList(Zone.fromInContours("A", "B"))), psd.getShadedZones());
+        assertEquals(new TreeSet<>(Arrays.asList(Zone.fromInContours("A", "B"))), psd.getPresentZones());
         assertEquals(Maps.createTreeMap(Arrays.asList("s1", "s2"), Arrays.asList(new Region(Zone.fromInContours("A").withOutContours("B")), new Region(Zone.fromInContours("B").withOutContours("A")))), psd.getHabitats());
     }
 
@@ -227,7 +220,7 @@ public class SpiderDiagramsReaderTest {
     @Test
     public void testReadSpiderDiagram_Reader2() throws Exception {
         try {
-            SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(new StringReader(SD_EXAMPLE_ERR_2));
+            SpiderDiagramsReader.readSpiderDiagram(new StringReader(SD_EXAMPLE_ERR_2));
         } catch (ReadingException readingException) {
             assertEquals(readingException.getLineNumber(), 1);
             assertEquals(readingException.getCharIndex(), 0);
@@ -261,7 +254,7 @@ public class SpiderDiagramsReaderTest {
     @Test
     public void testReadSpiderDiagram_InputStream2() throws Exception {
         try {
-            SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(GoalsTest.getSpiderDiagramTestFile("/speedith/core/lang/reader/ParserExample1_1.sd"));
+            SpiderDiagramsReader.readSpiderDiagram(GoalsTest.getSpiderDiagramTestFile("/speedith/core/lang/reader/ParserExample1_1.sd"));
         } catch (ReadingException readingException) {
             assertEquals(readingException.getLineNumber(), 6);
             assertEquals(readingException.getCharIndex(), 8);
@@ -295,7 +288,7 @@ public class SpiderDiagramsReaderTest {
     @Test
     public void testReadSpiderDiagram_File2() throws Exception {
         try {
-            SpiderDiagram sd = SpiderDiagramsReader.readSpiderDiagram(GoalsTest.getSpiderDiagramTestFile("/speedith/core/lang/reader/ParserExample1_1.sd"));
+            SpiderDiagramsReader.readSpiderDiagram(GoalsTest.getSpiderDiagramTestFile("/speedith/core/lang/reader/ParserExample1_1.sd"));
         } catch (ReadingException readingException) {
             assertEquals(readingException.getLineNumber(), 6);
             assertEquals(readingException.getCharIndex(), 8);
@@ -346,22 +339,9 @@ public class SpiderDiagramsReaderTest {
 
     @Test
     public void testFileReading() throws ReadingException, IOException {
-        for (int i = 0; i < testFilesCount(); i++) {
-            readFromTestFile(i);
+        for (int i = 0; i < TestSpiderDiagrams.getSpiderDiagramSDTFilesCount(); i++) {
+            TestSpiderDiagrams.readSpiderDiagramFromSDTFile(i);
         }
-    }
-
-    public static int testFilesCount() {
-        return FileCorrectSDT.length;
-    }
-
-    public static SpiderDiagram readFromTestFile(int fileIdx) throws ReadingException, IOException {
-        return readFromTestFile(FileCorrectSDT[fileIdx]);
-    }
-
-    public static SpiderDiagram readFromTestFile(String fileTitle) throws ReadingException, IOException {
-        String fullPath = "/speedith/core/lang/reader/" + fileTitle;
-        return SpiderDiagramsReader.readSpiderDiagram(GoalsTest.getSpiderDiagramTestFile(fullPath));
     }
 
     private SpiderDiagram checkSDExample(String example, boolean isValid) throws ReadingException {
@@ -382,9 +362,8 @@ public class SpiderDiagramsReaderTest {
     }
 
     private void checkSDExample_Err(String example, int errorLine, int errorCharIndex) {
-        SpiderDiagram sd = null;
         try {
-            sd = SpiderDiagramsReader.readSpiderDiagram(example);
+            SpiderDiagramsReader.readSpiderDiagram(example);
             fail("An exception should have been thrown.");
         } catch (ReadingException readingException) {
             assertEquals(errorLine, readingException.getLineNumber());

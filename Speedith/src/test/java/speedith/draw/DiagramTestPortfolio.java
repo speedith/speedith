@@ -4,7 +4,6 @@ import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Zone;
 import speedith.core.lang.Zones;
-import speedith.core.lang.reader.SpiderDiagramsReaderTest;
 import speedith.core.reasoning.rules.transformers.CopyContoursTransformerTest;
 import speedith.core.reasoning.util.unitary.ContourRelationsTest;
 import speedith.core.reasoning.util.unitary.TestSpiderDiagrams;
@@ -20,6 +19,7 @@ import static java.util.Arrays.asList;
 import static speedith.core.lang.SpiderDiagrams.createPrimarySD;
 import static speedith.core.lang.Zones.*;
 import static speedith.core.reasoning.rules.transformers.CopyContoursTransformerTest.diagramWithASpider;
+import static speedith.core.reasoning.util.unitary.TestSpiderDiagrams.*;
 import static speedith.draw.SpiderDiagramPanelTest.*;
 
 public class DiagramTestPortfolio implements Serializable {
@@ -28,9 +28,18 @@ public class DiagramTestPortfolio implements Serializable {
 
     public DiagramTestPortfolio() {
         this.spiderDiagrams = new ArrayList<>(asList(
+                new ZoneTransfer(getDiagramFromSpeedithPaper_Fig7_2nd(), getDiagramFromSpeedithPaper_Fig7_1st()).transferContour("D"),
+                TestSpiderDiagrams.getDiagramFromSpeedithPaper_Fig7_1st(),
+                TestSpiderDiagrams.getDiagramFromSpeedithPaper_Fig7_2nd(),
+                TestSpiderDiagrams.getDiagramFromSpeedithPaper_Fig7_3rd(),
+                TestSpiderDiagrams.getDiagramSpeedithPaperD2("E", "A"),
+                TestSpiderDiagrams.diagramSpeedithPaperD1,
+                new ZoneTransfer(TestSpiderDiagrams.getDiagramSpeedithPaperD2("E", "A"), TestSpiderDiagrams.diagramSpeedithPaperD1).transferContour("E"),
+                new ZoneTransfer(TestSpiderDiagrams.getDiagramABCWhereCContainsA(), TestSpiderDiagrams.getVenn2Diagram("B", "C")).transferContour("A"),
+                TestSpiderDiagrams.getDiagramABCWhereCContainsA(),
+                TestSpiderDiagrams.getVenn2Diagram("B", "C"),
                 TestSpiderDiagrams.getDiagramD1PrimeFromSpeedithPaper(),
                 new ZoneTransfer(TestSpiderDiagrams.getDiagramABCWhereCContainsA(), TestSpiderDiagrams.getVenn3Diagram("A", "B", "D")).transferContour("C"),
-                TestSpiderDiagrams.getDiagramABCWhereCContainsA(),
                 TestSpiderDiagrams.getDiagramSpeedithPaperD2(),
                 TestSpiderDiagrams.getDiagramSpeedithPaperD1(),
                 ZoneTransferTest.diagramABC_shadedSetC_A,
@@ -40,10 +49,10 @@ public class DiagramTestPortfolio implements Serializable {
                 ContourRelationsTest.getVennABCDiagramWithShadedBC(),
                 diagramWithASpider,
                 shadedBInsideA,
-                createPrimarySD(null, null, sameRegionWithNewContours(extendRegionWithNewContour(asList(Zone.fromInContours("A")), "B", null), "C"), Zones.allZonesForContours("A", "B", "C")),
-                createPrimarySD(null, null, sameRegionWithNewContours(asList(Zone.fromInContours("B")), "A", "C"), Zones.allZonesForContours("A", "B", "C")),
+                createPrimarySD(null, null, sameRegionWithNewContours(extendRegionWithNewContour(asList(Zone.fromInContours("A")), "B", null), "C"), POWER_REGION_ABC),
+                createPrimarySD(null, null, sameRegionWithNewContours(asList(Zone.fromInContours("B")), "A", "C"), POWER_REGION_ABC),
                 createPrimarySD(null, null, sameRegionWithNewContours(asList(Zone.fromInContours("B")), "A"), Zones.sameRegionWithNewContours(asList(Zone.fromInContours("B")), "A")),
-                createPrimarySD(null, null, getZonesOutsideContours(Zones.allZonesForContours("A", "B", "C", "D"), "C", "B"), Zones.allZonesForContours("A", "B", "C", "D")),
+                createPrimarySD(null, null, getZonesOutsideContours(POWER_REGION_ABCD, "C", "B"), POWER_REGION_ABCD),
                 getSDExample1(),
                 getSDExample2(),
                 getSDExample3()
@@ -68,9 +77,9 @@ public class DiagramTestPortfolio implements Serializable {
     }
 
     private void loadFromTestFiles() {
-        for (int i = 0; i < SpiderDiagramsReaderTest.testFilesCount(); i++) {
+        for (int i = 0; i < TestSpiderDiagrams.getSpiderDiagramSDTFilesCount(); i++) {
             try {
-                spiderDiagrams.add(SpiderDiagramsReaderTest.readFromTestFile(i));
+                spiderDiagrams.add(TestSpiderDiagrams.readSpiderDiagramFromSDTFile(i));
             } catch (Exception e) {
                 e.printStackTrace();
             }

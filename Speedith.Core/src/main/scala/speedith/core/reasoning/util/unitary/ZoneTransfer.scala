@@ -8,14 +8,16 @@ class ZoneTransfer(sourceDiagram: PrimarySpiderDiagram, destinationDiagram: Prim
 
   val contoursOnlyInSource: java.util.Set[String] = sourceDiagram.getAllContours.diff(destinationDiagram.getAllContours)
   private val sourceContourRelations = new ContourRelations(sourceDiagram)
-  private val contoursInBothDiagrams: Set[String] = sourceDiagram.getAllContours.toSet
+  private val contoursInSourceDiagram: Set[String] = sourceDiagram.getAllContours.toSet
+  private val allVisibleZonesInDestinationDiagram: Set[Zone] = (destinationDiagram.getPresentZones ++ destinationDiagram.getHabitats.values().flatMap(_.getZones)).toSet
+  private val allPossibleZonesInDestinationDiagram: Set[Zone] = Zones.allZonesForContours(destinationDiagram.getAllContours.toSeq:_*).toSet
 
   def transferContour(contourFromSource: String): PrimarySpiderDiagram = {
     assertContourOnlyInSource(contourFromSource)
 
     val zonesIn = zonesInDestinationInsideContour(contourFromSource)
     val zonesOut = zonesInDestinationOutsideContour(contourFromSource)
-    val splitZones = allZonesInDestinationDiagram -- (zonesOut ++ zonesIn)
+    val splitZones = allVisibleZonesInDestinationDiagram -- (zonesOut ++ zonesIn)
 
     val spiderHabitats = destinationDiagram.getHabitats.map {
       case (spider, habitat) => (spider, new Region(
@@ -28,8 +30,8 @@ class ZoneTransfer(sourceDiagram: PrimarySpiderDiagram, destinationDiagram: Prim
       zonesOut.map(addInContourToZone(_, contourFromSource)) ++
       zonesIn.map(addOutContourToZone(_, contourFromSource))
 
-    val presentZones = (zonesOut ++ splitZones).map(zone => addOutContourToZone(zone, contourFromSource)) ++
-      (zonesIn ++ splitZones).map(zone => addInContourToZone(zone, contourFromSource))
+    val presentZones = (zonesOut.intersect(allVisibleZonesInDestinationDiagram) ++ splitZones).map(zone => addOutContourToZone(zone, contourFromSource)) ++
+      (zonesIn.intersect(allVisibleZonesInDestinationDiagram) ++ splitZones).map(zone => addInContourToZone(zone, contourFromSource))
 
     createPrimarySD(spiderHabitats.keySet, spiderHabitats, shadedZones, presentZones)
   }
@@ -38,8 +40,8 @@ class ZoneTransfer(sourceDiagram: PrimarySpiderDiagram, destinationDiagram: Prim
   def zonesInDestinationOutsideContour(sourceContour: String): java.util.Set[Zone] = {
     assertContourOnlyInSource(sourceContour)
 
-    allZonesInDestinationDiagram.filter(destinationZone =>
-      contoursInBothDiagrams.exists(commonContour =>
+    allPossibleZonesInDestinationDiagram.filter(destinationZone =>
+      contoursInSourceDiagram.exists(commonContour =>
         (destinationZone.getInContours.contains(commonContour) && sourceContourRelations.areContoursDisjoint(sourceContour, commonContour)) ||
           (destinationZone.getOutContours.contains(commonContour) && sourceContourRelations.contourContainsAnother(commonContour, sourceContour))
       ))
@@ -48,8 +50,8 @@ class ZoneTransfer(sourceDiagram: PrimarySpiderDiagram, destinationDiagram: Prim
   def zonesInDestinationInsideContour(sourceContour: String): java.util.Set[Zone] = {
     assertContourOnlyInSource(sourceContour)
 
-    allZonesInDestinationDiagram.filter(destinationZone =>
-      contoursInBothDiagrams.exists(contour =>
+    allPossibleZonesInDestinationDiagram.filter(destinationZone =>
+      contoursInSourceDiagram.exists(contour =>
         destinationZone.getInContours.contains(contour) && sourceContourRelations.contourContainsAnother(sourceContour, contour)
       )
     )
@@ -61,10 +63,6 @@ class ZoneTransfer(sourceDiagram: PrimarySpiderDiagram, destinationDiagram: Prim
 
   private def addOutContourToZone(zone: Zone, contourFromSource: String): Zone = {
     zone.withOutContours((zone.getOutContours + contourFromSource).toSeq: _*)
-  }
-
-  private val allZonesInDestinationDiagram: Set[Zone] = {
-    (destinationDiagram.getPresentZones ++ destinationDiagram.getHabitats.values().flatMap(_.getZones)).toSet
   }
 
   private def assertContourOnlyInSource(sourceContour: String) {

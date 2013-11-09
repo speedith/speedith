@@ -28,9 +28,6 @@ package speedith.core.lang;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeSet;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -39,7 +36,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import speedith.core.lang.reader.ReadingException;
-import speedith.core.lang.reader.SpiderDiagramsReaderTest;
+import speedith.core.reasoning.util.unitary.TestSpiderDiagrams;
 
 /**
  *
@@ -71,13 +68,13 @@ public class PrimarySpiderDiagramTest {
      */
     @Test
     public void testGetAllContours() throws ReadingException, IOException {
-        CompoundSpiderDiagram csd = (CompoundSpiderDiagram) SpiderDiagramsReaderTest.readFromTestFile(0);
+        CompoundSpiderDiagram csd = (CompoundSpiderDiagram) TestSpiderDiagrams.readSpiderDiagramFromSDTFile(0);
         PrimarySpiderDiagram psd = (PrimarySpiderDiagram) csd.getOperand(0);
         TreeSet<String> contoursAB = new TreeSet<>(Arrays.asList("A", "B"));
         assertEquals(contoursAB, psd.getAllContours());
 
         TreeSet<String> contoursABC = new TreeSet<>(Arrays.asList("A", "B", "C"));
-        csd = (CompoundSpiderDiagram) SpiderDiagramsReaderTest.readFromTestFile(1);
+        csd = (CompoundSpiderDiagram) TestSpiderDiagrams.readSpiderDiagramFromSDTFile(1);
         psd = (PrimarySpiderDiagram) csd.getOperand(0);
         assertEquals(contoursABC, psd.getAllContours());
 
@@ -86,7 +83,7 @@ public class PrimarySpiderDiagramTest {
         assertEquals(contoursB, psd.getAllContours());
 
         TreeSet<String> contoursBD = new TreeSet<>(Arrays.asList("B", "D"));
-        csd = (CompoundSpiderDiagram) SpiderDiagramsReaderTest.readFromTestFile(2);
+        csd = (CompoundSpiderDiagram) TestSpiderDiagrams.readSpiderDiagramFromSDTFile(2);
         psd = (PrimarySpiderDiagram) csd.getOperand(1);
         assertEquals(contoursBD, psd.getAllContours());
     }
@@ -96,13 +93,13 @@ public class PrimarySpiderDiagramTest {
      */
     @Test
     public void testGetSpiderCountInZone() throws ReadingException, IOException {
-        CompoundSpiderDiagram csd = (CompoundSpiderDiagram) SpiderDiagramsReaderTest.readFromTestFile(0);
+        CompoundSpiderDiagram csd = (CompoundSpiderDiagram) TestSpiderDiagrams.readSpiderDiagramFromSDTFile(0);
         PrimarySpiderDiagram psd = (PrimarySpiderDiagram) csd.getOperand(0);
         Zone z = Zone.fromInContours("A", "B");
         assertEquals(1, psd.getSpiderCountInZone(z));
         assertEquals(0, psd.getSpiderCountInZone(Zone.fromOutContours("A", "B")));
 
-        csd = (CompoundSpiderDiagram) SpiderDiagramsReaderTest.readFromTestFile(1);
+        csd = (CompoundSpiderDiagram) TestSpiderDiagrams.readSpiderDiagramFromSDTFile(1);
         psd = (PrimarySpiderDiagram) csd.getOperand(0);
         assertEquals(2, psd.getSpiderCountInZone(Zone.fromInContours("B").withOutContours("A", "C")));
         psd = (PrimarySpiderDiagram) csd.getOperand(1);
@@ -114,13 +111,13 @@ public class PrimarySpiderDiagramTest {
      */
     @Test
     public void testGetSpidersInZone() throws ReadingException, IOException {
-        CompoundSpiderDiagram csd = (CompoundSpiderDiagram) SpiderDiagramsReaderTest.readFromTestFile(0);
+        CompoundSpiderDiagram csd = (CompoundSpiderDiagram) TestSpiderDiagrams.readSpiderDiagramFromSDTFile(0);
         PrimarySpiderDiagram psd = (PrimarySpiderDiagram) csd.getOperand(0);
         Zone z = Zone.fromInContours("A", "B");
         assertEquals(new TreeSet<>(Arrays.asList("s")), psd.getSpidersInZone(z));
-        assertEquals(new TreeSet<>(), psd.getSpidersInZone(Zone.fromOutContours("A", "B")));
+        assertEquals(new TreeSet<String>(), psd.getSpidersInZone(Zone.fromOutContours("A", "B")));
 
-        csd = (CompoundSpiderDiagram) SpiderDiagramsReaderTest.readFromTestFile(1);
+        csd = (CompoundSpiderDiagram) TestSpiderDiagrams.readSpiderDiagramFromSDTFile(1);
         psd = (PrimarySpiderDiagram) csd.getOperand(0);
         assertEquals(new TreeSet<>(Arrays.asList("s1", "s2")), psd.getSpidersInZone(Zone.fromInContours("B").withOutContours("A", "C")));
         psd = (PrimarySpiderDiagram) csd.getOperand(1);
