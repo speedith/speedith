@@ -16,6 +16,9 @@ import static speedith.core.lang.Zones.getZonesOutsideContours;
 public class TestSpiderDiagrams {
     public static final List<Zone> POWER_REGION_ABCD = unmodifiableList(Zones.allZonesForContours("A", "B", "C", "D"));
     public static final List<Zone> POWER_REGION_ABC = unmodifiableList(Zones.allZonesForContours("A", "B", "C"));
+    public static final List<Zone> POWER_REGION_ABD = unmodifiableList(Zones.allZonesForContours("A", "B", "D"));
+    public static final PrimarySpiderDiagram VENN_3_ABC_DIAGRAM = createPrimarySD(null, null, null, POWER_REGION_ABC);
+    public static final PrimarySpiderDiagram VENN_3_ABD_DIAGRAM = createPrimarySD(null, null, null, POWER_REGION_ABD);
     private static final String[] VALID_SPIDER_DIAGRAM_SDT_FILES = {
             "ParserExample1.sd",
             "ParserExample2.sd",
@@ -23,40 +26,14 @@ public class TestSpiderDiagrams {
             "ParserExample4.sd",
             "ParserExample5.sd"
     };
-    public static final PrimarySpiderDiagram diagramSpeedithPaperD1 = getDiagramSpeedithPaperD1();
-    public static final PrimarySpiderDiagram diagramSpeedithPaperD2 = getDiagramSpeedithPaperD2();
+    public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG2_D1 = getDiagramSpeedithPaper_Fig2_D1();
+    public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG2_D2 = getDiagramSpeedithPaper_Fig2_D2();
+    public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG2_D1Prime = getDiagramSpeedithPaper_Fig2_D1Prime();
+    public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG7_1 = getDiagramFromSpeedithPaper_Fig7_1st();
+    public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG7_2 = getDiagramFromSpeedithPaper_Fig7_2nd();
+    public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG7_3 = getDiagramFromSpeedithPaper_Fig7_3rd();
 
-    public static PrimarySpiderDiagram getDiagramD1PrimeFromSpeedithPaper() {
-        SortedSet<Zone> initialPresentZones = diagramSpeedithPaperD1.getPresentZones();
-        ArrayList<Zone> presentZones = Zones.sameRegionWithNewContours(initialPresentZones, "E");
-        presentZones.removeAll(Zones.getZonesInsideAllContours(Zones.getZonesOutsideContours(presentZones, "A"), "E"));
-        presentZones.remove(Zone.fromInContours("A", "C").withOutContours("B", "D", "E"));
-
-        ArrayList<Zone> vennABCDEZones = Zones.allZonesForContours("A", "B", "C", "D", "E");
-        TreeSet<Zone> shadedZones = new TreeSet<>();
-        shadedZones.addAll(Zones.getZonesInsideAllContours(Zones.getZonesOutsideContours(vennABCDEZones, "E"), "C"));
-        shadedZones.addAll(Zones.getZonesInsideAllContours(Zones.getZonesOutsideContours(vennABCDEZones, "A"), "E"));
-        shadedZones.addAll(Zones.getZonesInsideAllContours(vennABCDEZones, "A", "B"));
-        shadedZones.addAll(Zones.getZonesInsideAllContours(vennABCDEZones, "B", "C"));
-        shadedZones.addAll(Zones.getZonesInsideAllContours(vennABCDEZones, "C", "D"));
-
-        TreeSet<Zone> spider2Region = new TreeSet<>();
-        spider2Region.addAll(Zones.getZonesInsideAllContours(presentZones, "B"));
-        spider2Region.add(Zone.fromOutContours("A", "B", "C", "D", "E"));
-        spider2Region.add(Zone.fromOutContours("A", "B", "C", "E").withInContours("D"));
-
-        Map<String, Region> habitats = new TreeMap<>();
-        habitats.put("s1", new Region(Zones.getZonesInsideAllContours(presentZones, "C")));
-        habitats.put("s2", new Region(spider2Region));
-
-        return SpiderDiagrams.createPrimarySD(habitats.keySet(), habitats, shadedZones, presentZones);
-    }
-
-    public static PrimarySpiderDiagram getDiagramSpeedithPaperD2() {
-        return getDiagramSpeedithPaperD2("A", "E");
-    }
-
-    public static PrimarySpiderDiagram getDiagramSpeedithPaperD2(String outsideContour, String insideContour) {
+    public static PrimarySpiderDiagram getDiagramSpeedithPaper_Fig2_D2(String outsideContour, String insideContour) {
         String contourC = "C";
         String contourF = "F";
         ArrayList<Zone> power4Region = Zones.allZonesForContours(outsideContour, contourF, contourC, insideContour);
@@ -76,68 +53,14 @@ public class TestSpiderDiagrams {
 
         TreeMap<String, Region> habitats = new TreeMap<>();
         habitats.put("s1", new Region(Zone.fromInContours(outsideContour, insideContour, contourC).withOutContours(contourF)));
-        habitats.put("s2", new Region(
+        Region spider_2_and_3_region = new Region(
                 Zone.fromInContours(contourF).withOutContours(outsideContour, contourC, insideContour),
                 Zone.fromOutContours(outsideContour, contourC, insideContour, contourF)
-        ));
-        habitats.put("s3", new Region(
-                Zone.fromInContours(contourF).withOutContours(outsideContour, contourC, insideContour),
-                Zone.fromOutContours(outsideContour, contourC, insideContour, contourF)
-        ));
+        );
+        habitats.put("s2", spider_2_and_3_region);
+        habitats.put("s3", spider_2_and_3_region);
 
         return SpiderDiagrams.createPrimarySD(habitats.keySet(), habitats, shadedZones, presentZones);
-    }
-
-    public static PrimarySpiderDiagram getDiagramSpeedithPaperD1() {
-        ArrayList<Zone> shaded_C_A = Zones.getZonesInsideAllContours(Zones.getZonesOutsideContours(POWER_REGION_ABCD, "A"), "C");
-        ArrayList<Zone> shaded_CBD = Zones.getZonesInsideAnyContour(Zones.getZonesInsideAnyContour(POWER_REGION_ABCD, "B", "D"), "C");
-        ArrayList<Zone> shaded_AB = Zones.getZonesInsideAllContours(POWER_REGION_ABCD, "A", "B");
-
-        TreeSet<Zone> presentZones = new TreeSet<>(POWER_REGION_ABCD);
-        presentZones.removeAll(shaded_C_A);
-        presentZones.removeAll(shaded_CBD);
-        presentZones.removeAll(shaded_AB);
-        presentZones.removeAll(shaded_AB);
-
-        TreeSet<Zone> shadedZones = new TreeSet<>(shaded_C_A);
-        shadedZones.addAll(shaded_CBD);
-        shadedZones.addAll(shaded_AB);
-
-        TreeMap<String, Region> habitats = new TreeMap<>();
-        habitats.put("s1", new Region(Zone.fromInContours("A", "C").withOutContours("B", "D")));
-        habitats.put("s2", new Region(
-                Zone.fromInContours("B", "D").withOutContours("A", "C"),
-                Zone.fromInContours("D").withOutContours("B", "A", "C"),
-                Zone.fromInContours("B").withOutContours("D", "A", "C"),
-                Zone.fromOutContours("B", "D", "A", "C")
-        ));
-
-        return SpiderDiagrams.createPrimarySD(habitats.keySet(), habitats, shadedZones, presentZones);
-    }
-
-    public static PrimarySpiderDiagram getDiagramFromSpeedithPaper_Fig7_1st() {
-        return (PrimarySpiderDiagram) tryReadSpiderDiagramFromSDTFile(3).getSubDiagramAt(2);
-    }
-
-    public static PrimarySpiderDiagram getDiagramFromSpeedithPaper_Fig7_2nd() {
-        ArrayList<Zone> shadedZones = new ArrayList<>();
-        ArrayList<Zone> powerRegionCD = Zones.allZonesForContours("C", "D");
-        shadedZones.addAll(getZonesOutsideContours(getZonesInsideAllContours(powerRegionCD, "C"), "D"));
-        shadedZones.addAll(getZonesInsideAllContours(getZonesOutsideContours(powerRegionCD, "C"), "D"));
-
-        ArrayList<Zone> presentZones = new ArrayList<>(powerRegionCD);
-        presentZones.removeAll(shadedZones);
-
-        TreeMap<String, Region> habitats = new TreeMap<>();
-        habitats.put("s2", new Region(
-                Zone.fromInContours("C", "D"),
-                Zone.fromInContours("C").withOutContours("D")
-        ));
-        habitats.put("s1", new Region(
-                Zone.fromOutContours("C", "D")
-        ));
-
-        return createPrimarySD(habitats.keySet(), habitats, shadedZones, presentZones);
     }
 
     public static PrimarySpiderDiagram getDiagramFromSpeedithPaper_Fig7_3rd() {
@@ -203,5 +126,87 @@ public class TestSpiderDiagrams {
 
     public static int getSpiderDiagramSDTFilesCount() {
         return VALID_SPIDER_DIAGRAM_SDT_FILES.length;
+    }
+
+    private static PrimarySpiderDiagram getDiagramFromSpeedithPaper_Fig7_1st() {
+        return (PrimarySpiderDiagram) tryReadSpiderDiagramFromSDTFile(3).getSubDiagramAt(2);
+    }
+
+    private static PrimarySpiderDiagram getDiagramFromSpeedithPaper_Fig7_2nd() {
+        ArrayList<Zone> shadedZones = new ArrayList<>();
+        ArrayList<Zone> powerRegionCD = Zones.allZonesForContours("C", "D");
+        shadedZones.addAll(getZonesOutsideContours(getZonesInsideAllContours(powerRegionCD, "C"), "D"));
+        shadedZones.addAll(getZonesInsideAllContours(getZonesOutsideContours(powerRegionCD, "C"), "D"));
+
+        ArrayList<Zone> presentZones = new ArrayList<>(powerRegionCD);
+        presentZones.removeAll(shadedZones);
+
+        TreeMap<String, Region> habitats = new TreeMap<>();
+        habitats.put("s2", new Region(
+                Zone.fromInContours("C", "D"),
+                Zone.fromInContours("C").withOutContours("D")
+        ));
+        habitats.put("s1", new Region(
+                Zone.fromOutContours("C", "D")
+        ));
+
+        return createPrimarySD(habitats.keySet(), habitats, shadedZones, presentZones);
+    }
+
+    private static PrimarySpiderDiagram getDiagramSpeedithPaper_Fig2_D1Prime() {
+        SortedSet<Zone> initialPresentZones = DIAGRAM_SPEEDITH_PAPER_FIG2_D1.getPresentZones();
+        ArrayList<Zone> presentZones = Zones.sameRegionWithNewContours(initialPresentZones, "E");
+        presentZones.removeAll(Zones.getZonesInsideAllContours(Zones.getZonesOutsideContours(presentZones, "A"), "E"));
+        presentZones.remove(Zone.fromInContours("A", "C").withOutContours("B", "D", "E"));
+
+        ArrayList<Zone> vennABCDEZones = Zones.allZonesForContours("A", "B", "C", "D", "E");
+        TreeSet<Zone> shadedZones = new TreeSet<>();
+        shadedZones.addAll(Zones.getZonesInsideAllContours(Zones.getZonesOutsideContours(vennABCDEZones, "E"), "C"));
+        shadedZones.addAll(Zones.getZonesInsideAllContours(Zones.getZonesOutsideContours(vennABCDEZones, "A"), "E"));
+        shadedZones.addAll(Zones.getZonesInsideAllContours(vennABCDEZones, "A", "B"));
+        shadedZones.addAll(Zones.getZonesInsideAllContours(vennABCDEZones, "B", "C"));
+        shadedZones.addAll(Zones.getZonesInsideAllContours(vennABCDEZones, "C", "D"));
+
+        TreeSet<Zone> spider2Region = new TreeSet<>();
+        spider2Region.addAll(Zones.getZonesInsideAllContours(presentZones, "B"));
+        spider2Region.add(Zone.fromOutContours("A", "B", "C", "D", "E"));
+        spider2Region.add(Zone.fromOutContours("A", "B", "C", "E").withInContours("D"));
+
+        Map<String, Region> habitats = new TreeMap<>();
+        habitats.put("s1", new Region(Zones.getZonesInsideAllContours(presentZones, "C")));
+        habitats.put("s2", new Region(spider2Region));
+
+        return SpiderDiagrams.createPrimarySD(habitats.keySet(), habitats, shadedZones, presentZones);
+    }
+
+    private static PrimarySpiderDiagram getDiagramSpeedithPaper_Fig2_D2() {
+        return getDiagramSpeedithPaper_Fig2_D2("A", "E");
+    }
+
+    private static PrimarySpiderDiagram getDiagramSpeedithPaper_Fig2_D1() {
+        ArrayList<Zone> shaded_C_A = Zones.getZonesInsideAllContours(Zones.getZonesOutsideContours(POWER_REGION_ABCD, "A"), "C");
+        ArrayList<Zone> shaded_CBD = Zones.getZonesInsideAnyContour(Zones.getZonesInsideAnyContour(POWER_REGION_ABCD, "B", "D"), "C");
+        ArrayList<Zone> shaded_AB = Zones.getZonesInsideAllContours(POWER_REGION_ABCD, "A", "B");
+
+        TreeSet<Zone> presentZones = new TreeSet<>(POWER_REGION_ABCD);
+        presentZones.removeAll(shaded_C_A);
+        presentZones.removeAll(shaded_CBD);
+        presentZones.removeAll(shaded_AB);
+        presentZones.removeAll(shaded_AB);
+
+        TreeSet<Zone> shadedZones = new TreeSet<>(shaded_C_A);
+        shadedZones.addAll(shaded_CBD);
+        shadedZones.addAll(shaded_AB);
+
+        TreeMap<String, Region> habitats = new TreeMap<>();
+        habitats.put("s1", new Region(Zone.fromInContours("A", "C").withOutContours("B", "D")));
+        habitats.put("s2", new Region(
+                Zone.fromInContours("B", "D").withOutContours("A", "C"),
+                Zone.fromInContours("D").withOutContours("B", "A", "C"),
+                Zone.fromInContours("B").withOutContours("D", "A", "C"),
+                Zone.fromOutContours("B", "D", "A", "C")
+        ));
+
+        return SpiderDiagrams.createPrimarySD(habitats.keySet(), habitats, shadedZones, presentZones);
     }
 }

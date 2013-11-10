@@ -18,12 +18,9 @@ import static speedith.core.reasoning.util.unitary.TestSpiderDiagrams.*;
 
 public class ZoneTransferTest {
 
-    private static final ArrayList<Zone> vennABDZones = Zones.allZonesForContours("A", "B", "D");
     private static final ArrayList<Zone> intersectionAC = Zones.getZonesInsideAllContours(POWER_REGION_ABC, "A", "C");
     private static final PrimarySpiderDiagram diagramWithABZones = getDiagramWithABZones();
     private static final PrimarySpiderDiagram diagramWithBCZones = getDiagramWithBCZones();
-    public static final PrimarySpiderDiagram vennABCDiagram = createPrimarySD(null, null, null, POWER_REGION_ABC);
-    public static final PrimarySpiderDiagram vennABDDiagram = createPrimarySD(null, null, null, vennABDZones);
     public static final PrimarySpiderDiagram diagramABC_shadedSetAC = createPrimarySD(null, null, intersectionAC, POWER_REGION_ABC);
     public static final PrimarySpiderDiagram diagramABC_shadedSetC_A = createPrimarySD(null, null, Zones.getZonesOutsideContours(Zones.getZonesInsideAnyContour(POWER_REGION_ABC, "A", "C"), "A"), POWER_REGION_ABC);
 
@@ -57,7 +54,7 @@ public class ZoneTransferTest {
 
     @Test
     public void zonesInDestinationOutsideContour_should_return_an_empty_set_for_two_Venn_diagrams() {
-        ZoneTransfer zoneTransfer = new ZoneTransfer(vennABCDiagram, vennABDDiagram);
+        ZoneTransfer zoneTransfer = new ZoneTransfer(VENN_3_ABC_DIAGRAM, VENN_3_ABD_DIAGRAM);
         assertThat(
                 zoneTransfer.zonesInDestinationOutsideContour("C"),
                 hasSize(0)
@@ -66,25 +63,25 @@ public class ZoneTransferTest {
 
     @Test
     public void zonesInDestinationOutsideContour_should_return_all_zones_inside_A_when_A_is_disjoint_to_C() {
-        ZoneTransfer zoneTransfer = new ZoneTransfer(diagramABC_shadedSetAC, vennABDDiagram);
+        ZoneTransfer zoneTransfer = new ZoneTransfer(diagramABC_shadedSetAC, VENN_3_ABD_DIAGRAM);
         assertThat(
                 zoneTransfer.zonesInDestinationOutsideContour("C"),
-                containsInAnyOrder(Zones.getZonesInsideAllContours(vennABDZones, "A").toArray())
+                containsInAnyOrder(Zones.getZonesInsideAllContours(POWER_REGION_ABD, "A").toArray())
         );
     }
 
     @Test
     public void zonesInDestinationOutsideContour_should_return_all_zones_outside_A_when_A_is_contains_C() {
-        ZoneTransfer zoneTransfer = new ZoneTransfer(diagramABC_shadedSetC_A, vennABDDiagram);
+        ZoneTransfer zoneTransfer = new ZoneTransfer(diagramABC_shadedSetC_A, VENN_3_ABD_DIAGRAM);
         assertThat(
                 zoneTransfer.zonesInDestinationOutsideContour("C"),
-                containsInAnyOrder(Zones.getZonesOutsideContours(vennABDZones, "A").toArray())
+                containsInAnyOrder(Zones.getZonesOutsideContours(POWER_REGION_ABD, "A").toArray())
         );
     }
 
     @Test
     public void zonesInDestinationOutsideContour_when_using_diagrams_from_speedith_paper_should_return_zones_outside_E() {
-        ZoneTransfer zoneTransfer = new ZoneTransfer(TestSpiderDiagrams.diagramSpeedithPaperD2, TestSpiderDiagrams.diagramSpeedithPaperD1);
+        ZoneTransfer zoneTransfer = new ZoneTransfer(TestSpiderDiagrams.DIAGRAM_SPEEDITH_PAPER_FIG2_D2, TestSpiderDiagrams.DIAGRAM_SPEEDITH_PAPER_FIG2_D1);
         assertThat(
                 zoneTransfer.zonesInDestinationOutsideContour("E"),
                 containsInAnyOrder(Zones.getZonesOutsideContours(POWER_REGION_ABCD, "A").toArray())
@@ -93,7 +90,7 @@ public class ZoneTransferTest {
 
     @Test
     public void zonesInDestinationInsideContour_should_return_an_empty_region_in_a_venn2_diagram() {
-        ZoneTransfer zoneTransfer = new ZoneTransfer(vennABCDiagram, vennABDDiagram);
+        ZoneTransfer zoneTransfer = new ZoneTransfer(VENN_3_ABC_DIAGRAM, VENN_3_ABD_DIAGRAM);
         assertThat(
                 zoneTransfer.zonesInDestinationInsideContour("C"),
                 hasSize(0)
@@ -102,12 +99,12 @@ public class ZoneTransferTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void zonesInDestinationInsideContour_should_throw_an_exception_if_the_contour_is_not_only_in_the_source_diagram() {
-        new ZoneTransfer(vennABCDiagram, vennABDDiagram).zonesInDestinationInsideContour("A");
+        new ZoneTransfer(VENN_3_ABC_DIAGRAM, VENN_3_ABD_DIAGRAM).zonesInDestinationInsideContour("A");
     }
 
     @Test
     public void zonesInDestinationInsideContour_should_return_an_empty_region_in_a_venn2_diagram1() {
-        ZoneTransfer zoneTransfer = new ZoneTransfer(vennABCDiagram, vennABDDiagram);
+        ZoneTransfer zoneTransfer = new ZoneTransfer(VENN_3_ABC_DIAGRAM, VENN_3_ABD_DIAGRAM);
         assertThat(
                 zoneTransfer.zonesInDestinationInsideContour("C"),
                 hasSize(0)
@@ -116,7 +113,7 @@ public class ZoneTransferTest {
 
     @Test
     public void zonesInDestinationInsideContour_should_return_zones_inside_A() {
-        ZoneTransfer zoneTransfer = new ZoneTransfer(TestSpiderDiagrams.getDiagramABCWhereCContainsA(), vennABDDiagram);
+        ZoneTransfer zoneTransfer = new ZoneTransfer(TestSpiderDiagrams.getDiagramABCWhereCContainsA(), VENN_3_ABD_DIAGRAM);
         assertThat(
                 zoneTransfer.zonesInDestinationInsideContour("C"),
                 containsInAnyOrder(
@@ -130,7 +127,7 @@ public class ZoneTransferTest {
 
     @Test
     public void zonesInDestinationInsideContour_when_transferring_contour_E_in_diagrams_from_speedith_paper_should_return_zones_inside_AC() {
-        ZoneTransfer zoneTransfer = new ZoneTransfer(TestSpiderDiagrams.diagramSpeedithPaperD2, TestSpiderDiagrams.diagramSpeedithPaperD1);
+        ZoneTransfer zoneTransfer = new ZoneTransfer(TestSpiderDiagrams.DIAGRAM_SPEEDITH_PAPER_FIG2_D2, TestSpiderDiagrams.DIAGRAM_SPEEDITH_PAPER_FIG2_D1);
         assertThat(
                 zoneTransfer.zonesInDestinationInsideContour("E"),
                 containsInAnyOrder(
@@ -142,7 +139,7 @@ public class ZoneTransferTest {
 
     @Test
     public void zonesInDestinationInsideContour_when_transferring_contour_E_in_a_diagram_where_E_contains_A_and_C_should_return_all_zones_inside_A() {
-        ZoneTransfer zoneTransfer = new ZoneTransfer(TestSpiderDiagrams.getDiagramSpeedithPaperD2("E", "A"), TestSpiderDiagrams.diagramSpeedithPaperD1);
+        ZoneTransfer zoneTransfer = new ZoneTransfer(TestSpiderDiagrams.getDiagramSpeedithPaper_Fig2_D2("E", "A"), TestSpiderDiagrams.DIAGRAM_SPEEDITH_PAPER_FIG2_D1);
         assertThat(
                 zoneTransfer.zonesInDestinationInsideContour("E"),
                 containsInAnyOrder(Zones.getZonesInsideAnyContour(POWER_REGION_ABCD, "A", "C").toArray())
@@ -159,7 +156,7 @@ public class ZoneTransferTest {
         ZoneTransfer zoneTransfer = new ZoneTransfer(TestSpiderDiagrams.getVenn2Diagram("A", "B"), TestSpiderDiagrams.getVenn2Diagram("B", "C"));
         assertThat(
                 zoneTransfer.transferContour("A"),
-                equalTo(createPrimarySD(null, null, null, POWER_REGION_ABC))
+                equalTo(VENN_3_ABC_DIAGRAM)
         );
     }
 
@@ -174,8 +171,8 @@ public class ZoneTransferTest {
 
     @Test
     public void transferContour_should_create_some_shading() {
-        ZoneTransfer zoneTransfer = new ZoneTransfer(TestSpiderDiagrams.getDiagramABCWhereCContainsA(), vennABDDiagram);
-        ArrayList<Zone> presentZones = new ArrayList<>(Zones.sameRegionWithNewContours(vennABDZones, "C"));
+        ZoneTransfer zoneTransfer = new ZoneTransfer(TestSpiderDiagrams.getDiagramABCWhereCContainsA(), VENN_3_ABD_DIAGRAM);
+        ArrayList<Zone> presentZones = new ArrayList<>(Zones.sameRegionWithNewContours(POWER_REGION_ABD, "C"));
         presentZones.removeAll(Zones.getZonesInsideAllContours(Zones.getZonesOutsideContours(presentZones, "C"), "A"));
         ArrayList<Zone> shadedZones = Zones.getZonesInsideAllContours(Zones.getZonesOutsideContours(POWER_REGION_ABCD, "C"), "A");
         assertThat(
@@ -186,10 +183,10 @@ public class ZoneTransferTest {
 
     @Test
     public void transferContour_should_create_replicate_the_example_in_Fig2() throws ReadingException, IOException {
-        ZoneTransfer zoneTransfer = new ZoneTransfer(getDiagramFromSpeedithPaper_Fig7_2nd(),
-                                                     getDiagramFromSpeedithPaper_Fig7_1st());
+        ZoneTransfer zoneTransfer = new ZoneTransfer(DIAGRAM_SPEEDITH_PAPER_FIG7_2,
+                                                     DIAGRAM_SPEEDITH_PAPER_FIG7_1);
 
-        PrimarySpiderDiagram expectedDiagram = getDiagramFromSpeedithPaper_Fig7_3rd();
+        PrimarySpiderDiagram expectedDiagram = DIAGRAM_SPEEDITH_PAPER_FIG7_3;
 
         PrimarySpiderDiagram diagramWithTransferredContour = zoneTransfer.transferContour("D");
 

@@ -10,7 +10,6 @@ import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.rules.instructions.SelectContoursInstruction;
-import speedith.core.reasoning.util.unitary.TestSpiderDiagrams;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +18,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 import static org.junit.Assert.*;
+import static speedith.core.reasoning.util.unitary.TestSpiderDiagrams.*;
 
 public class CopyContoursTest {
 
@@ -92,10 +92,10 @@ public class CopyContoursTest {
 
     @Test
     public void apply_on_the_speedith_D1_D2_example_should_return_D1Prime_D2() throws RuleApplicationException {
-        SpiderDiagram conjunctiveCompoundDiagram = SpiderDiagrams.createCompoundSD(Operator.Conjunction, TestSpiderDiagrams.getDiagramSpeedithPaperD2(), TestSpiderDiagrams.getDiagramSpeedithPaperD1());
+        SpiderDiagram conjunctiveCompoundDiagram = SpiderDiagrams.createCompoundSD(Operator.Conjunction, DIAGRAM_SPEEDITH_PAPER_FIG2_D2, DIAGRAM_SPEEDITH_PAPER_FIG2_D1);
         Goals targetOfInference = Goals.createGoalsFrom(conjunctiveCompoundDiagram);
 
-        SpiderDiagram expectedGoal = SpiderDiagrams.createCompoundSD(Operator.Conjunction, TestSpiderDiagrams.getDiagramSpeedithPaperD2(), TestSpiderDiagrams.getDiagramD1PrimeFromSpeedithPaper());
+        SpiderDiagram expectedGoal = SpiderDiagrams.createCompoundSD(Operator.Conjunction, DIAGRAM_SPEEDITH_PAPER_FIG2_D2, DIAGRAM_SPEEDITH_PAPER_FIG2_D1Prime);
 
         RuleApplicationResult applicationResult = copyContours.apply(new MultipleRuleArgs(new ContourArg(0, 1, "E")), targetOfInference);
         assertThat(
