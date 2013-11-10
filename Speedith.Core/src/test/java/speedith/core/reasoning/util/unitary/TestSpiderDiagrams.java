@@ -14,9 +14,11 @@ import static speedith.core.lang.Zones.getZonesInsideAllContours;
 import static speedith.core.lang.Zones.getZonesOutsideContours;
 
 public class TestSpiderDiagrams {
-    public static final List<Zone> POWER_REGION_ABCD = unmodifiableList(Zones.allZonesForContours("A", "B", "C", "D"));
+    public static final List<Zone> POWER_REGION_AB = unmodifiableList(Zones.allZonesForContours("A", "B"));
     public static final List<Zone> POWER_REGION_ABC = unmodifiableList(Zones.allZonesForContours("A", "B", "C"));
     public static final List<Zone> POWER_REGION_ABD = unmodifiableList(Zones.allZonesForContours("A", "B", "D"));
+    public static final List<Zone> POWER_REGION_ABCD = unmodifiableList(Zones.allZonesForContours("A", "B", "C", "D"));
+    public static final PrimarySpiderDiagram VENN_2_AB_DIAGRAM = createPrimarySD(null, null, null, POWER_REGION_AB);
     public static final PrimarySpiderDiagram VENN_3_ABC_DIAGRAM = createPrimarySD(null, null, null, POWER_REGION_ABC);
     public static final PrimarySpiderDiagram VENN_3_ABD_DIAGRAM = createPrimarySD(null, null, null, POWER_REGION_ABD);
     private static final String[] VALID_SPIDER_DIAGRAM_SDT_FILES = {

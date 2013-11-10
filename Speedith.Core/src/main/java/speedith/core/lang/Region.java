@@ -45,13 +45,10 @@ import static speedith.core.i18n.Translations.i18n;
  */
 public class Region implements Comparable<Region>, SpiderDiagramElement {
 
-    // <editor-fold defaultstate="collapsed" desc="Private Fields">
-    private final TreeSet<Zone> zones;
+    private final SortedSet<Zone> zones;
     private boolean hashInvalid = true;
     private int hash;
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Constructors">
     /**
      * Creates a new region from the given collection of zones. The resulting
      * region will constitute of these zones. <p>Note that duplicate zones in
@@ -61,7 +58,7 @@ public class Region implements Comparable<Region>, SpiderDiagramElement {
      * <p>This argument may be {@code null}. This indicates an empty region.</p>
      */
     public Region(Collection<Zone> zones) {
-        this(zones == null ? null : new TreeSet<Zone>(zones));
+        this(zones == null ? null : new TreeSet<>(zones));
     }
 
     /**
@@ -73,7 +70,7 @@ public class Region implements Comparable<Region>, SpiderDiagramElement {
      * <p>This argument may be {@code null}. This indicates an empty region.</p>
      */
     public Region(Zone... zones) {
-        this(zones == null ? null : new TreeSet<Zone>(Arrays.asList(zones)));
+        this(zones == null ? null : new TreeSet<>(Arrays.asList(zones)));
     }
 
     /**
@@ -90,11 +87,9 @@ public class Region implements Comparable<Region>, SpiderDiagramElement {
      * <p>This argument may be {@code null}. This indicates an empty region.</p>
      */
     public Region(TreeSet<Zone> zones) {
-        this.zones = zones;
+        this.zones = Collections.unmodifiableSortedSet(zones == null ? new TreeSet<Zone>() : zones);
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Public Methods">
     /**
      * Returns a set of {@link Zone zones} which make up this region. <p>Note:
      * this method may return {@code null}, which indicates an empty region.</p>
@@ -103,7 +98,7 @@ public class Region implements Comparable<Region>, SpiderDiagramElement {
      * this method may return {@code null}, which indicates an empty region.</p>
      */
     public SortedSet<Zone> getZones() {
-        return zones == null || zones.isEmpty() ? null : Collections.unmodifiableSortedSet(zones);
+        return zones;
     }
 
     /**
@@ -112,14 +107,10 @@ public class Region implements Comparable<Region>, SpiderDiagramElement {
      * @return the number of {@link Region#getZones() zones} in this region.
      */
     public int getZonesCount() {
-        return zones == null ? 0 : zones.size();
+        return zones.size();
     }
 
     /**
-     * Returns {@code true} iff the given zone is within the set of zones of
-     * this region.
-     * 
-     * @param z
      * @return {@code true} iff the given zone is within the set of zones of
      * this region.
      */
@@ -149,7 +140,7 @@ public class Region implements Comparable<Region>, SpiderDiagramElement {
      * and not by the other.
      */
     public Region subtract(Region other) {
-        TreeSet<Zone> newZones = new TreeSet<Zone>(zones);
+        TreeSet<Zone> newZones = new TreeSet<>(zones);
         newZones.removeAll(other.zones);
         return new Region(newZones);
     }
@@ -162,13 +153,11 @@ public class Region implements Comparable<Region>, SpiderDiagramElement {
      * @return the union of zones from this and the other regions.
      */
     public Region union(Region other) {
-        TreeSet<Zone> newZones = new TreeSet<Zone>(zones);
+        TreeSet<Zone> newZones = new TreeSet<>(zones);
         newZones.addAll(other.zones);
         return new Region(newZones);
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Equality">
     /**
      * Two regions equal if they constitute of the same zones.
      *
@@ -202,9 +191,7 @@ public class Region implements Comparable<Region>, SpiderDiagramElement {
         }
         return (this == other) ? 0 : Sets.compareNaturally(zones, other.zones);
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Text Conversion Methods">
     /**
      * Puts the string representation of this region into the provided string
      * builder.
@@ -230,5 +217,4 @@ public class Region implements Comparable<Region>, SpiderDiagramElement {
             throw new RuntimeException(ex);
         }
     }
-    // </editor-fold>
 }
