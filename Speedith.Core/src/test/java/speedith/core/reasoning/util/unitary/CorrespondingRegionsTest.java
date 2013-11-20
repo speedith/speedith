@@ -1,14 +1,21 @@
 package speedith.core.reasoning.util.unitary;
 
+import org.junit.Ignore;
 import org.junit.Test;
+import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.Region;
+import speedith.core.lang.SpiderDiagrams;
 import speedith.core.lang.Zone;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static speedith.core.lang.SpiderDiagrams.createPrimarySD;
 import static speedith.core.reasoning.util.unitary.TestSpiderDiagrams.*;
 
 public class CorrespondingRegionsTest {
+
+    public static final PrimarySpiderDiagram SINGLE_CONTOUR_A_DIAGRAM = createPrimarySD(null, null, null, asList(Zone.fromInContours("A")));
 
     @Test(expected = IllegalArgumentException.class)
     public void correspondingRegion_should_throw_an_exception_if_any_of_the_zones_has_a_contour_not_in_source_diagram() {
@@ -42,5 +49,23 @@ public class CorrespondingRegionsTest {
                 correspondingRegion,
                 equalTo(expectedRegion)
         );
+    }
+
+    @Test
+    @Ignore
+    public void correspondingRegion_of_the_outside_of_a_single_contour_must_return_every_zone_outside_that_contour_in_the_other_diagram() {
+        Region correspondingRegion = new CorrespondingRegions(SINGLE_CONTOUR_A_DIAGRAM, VENN_3_ABC_DIAGRAM).correspondingRegion(new Region(
+                Zone.fromOutContours("A")
+        ));
+
+        Region expectedRegion = new Region(
+                Zone.fromInContours("B", "C").withOutContours("A"),
+                Zone.fromInContours("B").withOutContours("A", "C"),
+                Zone.fromInContours("C").withOutContours("A", "B"),
+                Zone.fromOutContours("A", "B", "C")
+        );
+
+        assertThat(correspondingRegion, equalTo(expectedRegion));
+
     }
 }

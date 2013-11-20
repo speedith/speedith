@@ -6,15 +6,15 @@ import speedith.core.lang.Zones.allZonesForContours
 
 class CorrespondingRegions(sourceDiagram: PrimarySpiderDiagram, destinationDiagram: PrimarySpiderDiagram) {
 
+  val allPossibleZonesInDestination = allZonesForContours(destinationDiagram.getAllContours.toIterable.toSeq: _*)
+
   def correspondingRegion(regionInSourceDiagram: Region): Region = {
     assertContoursOfRegionMatchSourceDiagram(regionInSourceDiagram)
-
-    val allPossibleZonesInDestination = allZonesForContours(destinationDiagram.getAllContours.toIterable.toSeq: _*)
 
     new Region(allPossibleZonesInDestination.filter(destinationZone =>
       regionInSourceDiagram.getZones.exists(sourceZone =>
         destinationZone.getInContours.subsetOf(sourceZone.getInContours) &&
-        destinationZone.getOutContours.subsetOf(sourceZone.getOutContours)
+          destinationZone.getOutContours.subsetOf(sourceZone.getOutContours)
       )
     ))
   }
