@@ -4,18 +4,38 @@ import org.junit.Ignore;
 import org.junit.Test;
 import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.Region;
-import speedith.core.lang.SpiderDiagrams;
 import speedith.core.lang.Zone;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static speedith.core.lang.SpiderDiagrams.createPrimarySD;
 import static speedith.core.reasoning.util.unitary.TestSpiderDiagrams.*;
 
 public class CorrespondingRegionsTest {
 
     public static final PrimarySpiderDiagram SINGLE_CONTOUR_A_DIAGRAM = createPrimarySD(null, null, null, asList(Zone.fromInContours("A")));
+
+    @Test
+    public void areRegionsCorresponding_should_return_true_for_empty_regions() {
+        CorrespondingRegions correspondingRegions = new CorrespondingRegions(VENN_3_ABC_DIAGRAM, VENN_2_AB_DIAGRAM);
+        assertTrue(correspondingRegions.areRegionsCorresponding(new Region(), new Region()));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void areRegionsCorresponding_should_throw_an_exception_if_the_source_region_contains_unknown_contours() {
+        CorrespondingRegions correspondingRegions = new CorrespondingRegions(VENN_3_ABC_DIAGRAM, VENN_2_AB_DIAGRAM);
+        Region regionA = new Region(Zone.fromInContours("D"));
+        correspondingRegions.areRegionsCorresponding(regionA, new Region());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void areRegionsCorresponding_should_throw_an_exception_if_the_destination_region_contains_unknown_contours() {
+        CorrespondingRegions correspondingRegions = new CorrespondingRegions(VENN_3_ABC_DIAGRAM, VENN_2_AB_DIAGRAM);
+        Region regionB = new Region(Zone.fromOutContours("C"));
+        correspondingRegions.areRegionsCorresponding(new Region(), regionB);
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void correspondingRegion_should_throw_an_exception_if_any_of_the_zones_has_a_contour_not_in_source_diagram() {
@@ -54,7 +74,8 @@ public class CorrespondingRegionsTest {
     @Test
     @Ignore
     public void correspondingRegion_of_the_outside_of_a_single_contour_must_return_every_zone_outside_that_contour_in_the_other_diagram() {
-        Region correspondingRegion = new CorrespondingRegions(SINGLE_CONTOUR_A_DIAGRAM, VENN_3_ABC_DIAGRAM).correspondingRegion(new Region(
+        CorrespondingRegions correspondingRegions = new CorrespondingRegions(SINGLE_CONTOUR_A_DIAGRAM, VENN_3_ABC_DIAGRAM);
+        Region correspondingRegion = correspondingRegions.correspondingRegion(new Region(
                 Zone.fromOutContours("A")
         ));
 
