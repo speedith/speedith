@@ -38,12 +38,23 @@ these, you can build Speedith at any time.
 
 --------------------------------------------------------------------------------
 
-## Building and developing
+## Building Speedith
 
-Use Maven to build Speedith:
+Use Maven to build Speedith (in the root directory of your cloned Speedith repository):
 
-    cd Speedith
     mvn install
+
+--------------------------------------------------------------------------------
+
+## Running Speedith
+
+After a successful build, you can run Speedith by firstly entering the `Speedith.Gui` directory:
+
+    cd Speedith.Gui
+
+and then running:
+
+    mvn exec:java -Dexec.mainClass=speedith.Main
 
 --------------------------------------------------------------------------------
 

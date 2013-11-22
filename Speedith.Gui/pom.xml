@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>speedith</groupId>
-    <artifactId>speedith</artifactId>
+    <artifactId>speedith-gui</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>speedith</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>speedith-core</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
@@ -38,7 +38,7 @@
 
         <dependency>
             <groupId>speedith</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>speedith-core</artifactId>
             <version>1.0-SNAPSHOT</version>
             <classifier>tests</classifier>
             <scope>test</scope>
