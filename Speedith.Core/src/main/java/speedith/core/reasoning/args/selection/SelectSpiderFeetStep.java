@@ -26,33 +26,34 @@
  */
 package speedith.core.reasoning.args.selection;
 
-import java.util.List;
-import java.util.Locale;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderZoneArg;
+
+import java.util.List;
+import java.util.Locale;
+
 import static speedith.core.i18n.Translations.i18n;
 
 /**
  * This selection step asks the user to select feet of a spider. This step
  * requires that all the selected feet belong to the same spider.
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SelectSpiderFeetStep extends SelectionStep {
-    
-    // <editor-fold defaultstate="collapsed" desc="Constructors">
+
     private SelectSpiderFeetStep() {
     }
-    // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Public Methods">
+
     /**
      * Returns the single instance of this step.
+     *
      * @return the single instance of this step.
      */
     public static SelectSpiderFeetStep getInstance() {
         return SingletonHolder.Instance;
     }
-    
+
     @Override
     public SelectionRejectionExplanation init(SelectionSequence selection, int thisIndex) {
         return getSelectionProblem(selection, thisIndex);
@@ -118,9 +119,7 @@ public class SelectSpiderFeetStep extends SelectionStep {
     public int getSelectableElements() {
         return SelectionStep.Spiders;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Private Methods">
     /**
      * Returns one of the following: <ul><li><span
      * style="font-weight:bold">0</span>: if the selection is valid,</li>
@@ -131,10 +130,9 @@ public class SelectSpiderFeetStep extends SelectionStep {
      * spider feet belong to the same spider.</li> </ul>
      *
      * @param selection the selection sequence in which this selection step
-     * participates. This object contains currently {@link SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent)
-     * approved} selections.
+     *                  participates. This object contains currently {@link SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent)
+     *                  approved} selections.
      * @param thisIndex the index of this step in the given {@link SelectionSequence}.
-     * @return
      */
     private static int isSelectionValid(SelectionSequence selection, int thisIndex) {
         List<RuleArg> sels = selection.getAcceptedSelectionsForStepAt(thisIndex);
@@ -163,10 +161,9 @@ public class SelectSpiderFeetStep extends SelectionStep {
      * } method.
      *
      * @param selection the selection sequence in which this selection step
-     * participates. This object contains currently {@link SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent)
-     * approved} selections.
+     *                  participates. This object contains currently {@link SelectionStep#acceptSelection(speedith.ui.SpiderDiagramClickEvent)
+     *                  approved} selections.
      * @param thisIndex the index of this step in the given {@link SelectionSequence}.
-     * @return
      */
     private static SelectionRejectionExplanation getSelectionProblem(SelectionSequence selection, int thisIndex) {
         switch (isSelectionValid(selection, thisIndex)) {
@@ -182,14 +179,10 @@ public class SelectSpiderFeetStep extends SelectionStep {
                 throw new IllegalStateException();
         }
     }
-    
+
     /**
      * Indicates whether a spider's foot has already been selected (whether it
      * is present in the given selection).
-     *
-     * @param sels
-     * @param sel
-     * @return
      */
     private static boolean isAlreadySelected(List<RuleArg> sels, SpiderZoneArg sel) {
         for (RuleArg oldSel : sels) {
@@ -202,11 +195,8 @@ public class SelectSpiderFeetStep extends SelectionStep {
         }
         return false;
     }
-    // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Singleton Holder Class">
+
     private static final class SingletonHolder {
         private static final SelectSpiderFeetStep Instance = new SelectSpiderFeetStep();
     }
-    // </editor-fold>
 }

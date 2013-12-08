@@ -28,6 +28,7 @@ package speedith.core.reasoning.args;
 
 import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.InferenceRule;
+import speedith.core.reasoning.RuleApplicationException;
 
 /**
  * Instances of this class provide the <span style="font-style:italic;">subgoal
@@ -88,6 +89,15 @@ public class SubgoalIndexArg implements Cloneable, RuleArg {
         } catch (CloneNotSupportedException ex) {
             throw new IllegalStateException(ex);
         }
+    }
+
+    public static int assertSameGoalIndices(int goalIndex, SubgoalIndexArg contourArg) throws RuleApplicationException {
+        if (goalIndex != -1 && goalIndex != contourArg.getSubgoalIndex()) {
+            throw new RuleApplicationException("The unitary diagrams must be in the same goal.");
+        } else {
+            goalIndex = contourArg.getSubgoalIndex();
+        }
+        return goalIndex;
     }
     //</editor-fold>
 }

@@ -78,7 +78,7 @@ public class CopyContoursTest {
     @Test
     public void getContourArgsFrom_should_return_a_list_of_contour_args() throws RuleApplicationException {
         List<ContourArg> expectedContourArgs = Arrays.asList(new ContourArg(0, 0, "A"), new ContourArg(0, 0, "B"));
-        ArrayList<ContourArg> contourArgs = copyContours.getContourArgsFrom(new MultipleRuleArgs(expectedContourArgs));
+        ArrayList<ContourArg> contourArgs = ContourArg.getContourArgsFrom(new MultipleRuleArgs(expectedContourArgs));
         assertEquals(expectedContourArgs, contourArgs);
     }
 

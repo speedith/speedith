@@ -26,7 +26,6 @@
  */
 package speedith.core.reasoning.rules.instructions;
 
-import java.util.*;
 import speedith.core.lang.Region;
 import speedith.core.lang.Zone;
 import speedith.core.reasoning.RuleApplicationInstruction;
@@ -37,15 +36,20 @@ import speedith.core.reasoning.args.selection.SelectSpiderFeetStep;
 import speedith.core.reasoning.args.selection.SelectionSequence;
 import speedith.core.reasoning.args.selection.SelectionStep;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
- *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SelectFeetOfSpiderInstruction implements RuleApplicationInstruction<SpiderRegionArg> {
 
+    private final List<? extends SelectionStep> steps = Arrays.asList(SelectSpiderFeetStep.getInstance());
+
     private SelectFeetOfSpiderInstruction() {
     }
-    private final List<? extends SelectionStep> steps = Arrays.asList(SelectSpiderFeetStep.getInstance());
 
     public static SelectFeetOfSpiderInstruction getInstance() {
         return SingletonContainer.Instructions;
@@ -74,10 +78,7 @@ public class SelectFeetOfSpiderInstruction implements RuleApplicationInstruction
         return new Region(zones);
     }
 
-    // <editor-fold defaultstate="collapsed" desc="Singleton Container Helper">
     private static final class SingletonContainer {
-
         private static final SelectFeetOfSpiderInstruction Instructions = new SelectFeetOfSpiderInstruction();
     }
-    // </editor-fold>
 }

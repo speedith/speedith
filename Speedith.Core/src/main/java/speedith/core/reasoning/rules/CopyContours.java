@@ -50,67 +50,7 @@ public class CopyContours extends SimpleInferenceRule<MultipleRuleArgs> {
 
     @Override
     public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
-        ArrayList<ContourArg> contourArgs = getContourArgsFrom(args);
-        return apply(contourArgs, goals);
-    }
-
-    private ArrayList<ContourArg> getContourArgsFrom(RuleArg args) throws RuleApplicationException {
-        MultipleRuleArgs multipleRuleArgs = getTypedRuleArgs(args);
-        assertArgumentsNotEmpty(multipleRuleArgs);
-        return getContourArgsFrom(multipleRuleArgs);
-    }
-
-    ArrayList<ContourArg> getContourArgsFrom(MultipleRuleArgs multipleRuleArgs) throws RuleApplicationException {
-        ArrayList<ContourArg> contourArgs = new ArrayList<>();
-        int subDiagramIndex = -1;
-        int goalIndex = -1;
-        for (RuleArg ruleArg : multipleRuleArgs) {
-            ContourArg contourArg = getContourArgFrom(ruleArg);
-            subDiagramIndex = assertSameSubDiagramIndices(subDiagramIndex, contourArg);
-            goalIndex = assertSameGoalIndices(goalIndex, contourArg);
-            contourArgs.add(contourArg);
-        }
-        return contourArgs;
-    }
-
-    private void assertArgumentsNotEmpty(MultipleRuleArgs multipleRuleArgs) throws RuleApplicationException {
-        if (multipleRuleArgs.isEmpty()) {
-            throw new RuleApplicationException("No contours were specified.");
-        }
-    }
-
-    private int assertSameGoalIndices(int goalIndex, ContourArg contourArg) throws RuleApplicationException {
-        if (goalIndex != -1 && goalIndex != contourArg.getSubgoalIndex()) {
-            throw new RuleApplicationException("The unitary diagrams must be in the same goal.");
-        } else {
-            goalIndex = contourArg.getSubgoalIndex();
-        }
-        return goalIndex;
-    }
-
-    private ContourArg getContourArgFrom(RuleArg ruleArg) throws RuleApplicationException {
-        if (!(ruleArg instanceof ContourArg)) {
-            throw new RuleApplicationException("The copy contours rule takes only contours as arguments.");
-        }
-        return (ContourArg)ruleArg;
-    }
-
-    private int assertSameSubDiagramIndices(int previousSubDiagramIndex, ContourArg contourArg) throws RuleApplicationException {
-        if (previousSubDiagramIndex != -1 && previousSubDiagramIndex != contourArg.getSubDiagramIndex()) {
-            throw new RuleApplicationException("The contours must be from the same unitary spider diagram.");
-        } else {
-            previousSubDiagramIndex = contourArg.getSubDiagramIndex();
-        }
-        return previousSubDiagramIndex;
-    }
-
-    private RuleApplicationResult apply(ArrayList<ContourArg> targetContours, Goals goals) throws RuleApplicationException {
-        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
-        ContourArg inferenceTarget = targetContours.get(0);
-        SpiderDiagram targetSubgoal = getSubgoal(inferenceTarget, goals);
-        int indexOfParent = targetSubgoal.getParentIndexOf(inferenceTarget.getSubDiagramIndex());
-        newSubgoals[inferenceTarget.getSubgoalIndex()] = targetSubgoal.transform(new CopyContoursTransformer(indexOfParent, targetContours));
-        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
+        return apply(getContourArgsFrom(args), goals);
     }
 
     @Override
@@ -146,5 +86,20 @@ public class CopyContours extends SimpleInferenceRule<MultipleRuleArgs> {
     @Override
     public RuleApplicationInstruction<MultipleRuleArgs> getInstructions() {
         return new SelectContoursInstruction();
+    }
+
+    private ArrayList<ContourArg> getContourArgsFrom(RuleArg args) throws RuleApplicationException {
+        MultipleRuleArgs multipleRuleArgs = getTypedRuleArgs(args);
+        MultipleRuleArgs.assertArgumentsNotEmpty(multipleRuleArgs);
+        return ContourArg.getContourArgsFrom(multipleRuleArgs);
+    }
+
+    private RuleApplicationResult apply(ArrayList<ContourArg> targetContours, Goals goals) throws RuleApplicationException {
+        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
+        ContourArg inferenceTarget = targetContours.get(0);
+        SpiderDiagram targetSubgoal = getSubgoal(inferenceTarget, goals);
+        int indexOfParent = targetSubgoal.getParentIndexOf(inferenceTarget.getSubDiagramIndex());
+        newSubgoals[inferenceTarget.getSubgoalIndex()] = targetSubgoal.transform(new CopyContoursTransformer(indexOfParent, targetContours));
+        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
     }
 }

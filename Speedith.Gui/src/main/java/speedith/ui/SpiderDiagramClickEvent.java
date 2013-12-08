@@ -26,14 +26,19 @@
  */
 package speedith.ui;
 
-import java.util.EventObject;
-import static speedith.core.i18n.Translations.i18n;
+import icircles.concreteDiagram.ConcreteZone;
+import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
+import speedith.core.lang.Zone;
 import speedith.core.reasoning.args.*;
 import speedith.icircles.util.ICirclesToSpeedith;
 
+import java.util.ArrayList;
+import java.util.EventObject;
+
+import static speedith.core.i18n.Translations.i18n;
+
 /**
- *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SpiderDiagramClickEvent extends EventObject {
@@ -47,10 +52,10 @@ public class SpiderDiagramClickEvent extends EventObject {
      * Initialises detailed event information of a {@link SpiderDiagramClickListener#spiderDiagramClicked(speedith.ui.SpiderDiagramClickEvent)
      * spider diagram click event}.
      *
-     * @param source the panel in which the mouse click event happened.
-     * @param diagram the diagram that was clicked.
-     * @param eventDetail contains the information on which element of the
-     * diagram was clicked (spider, zone, contour, or none).
+     * @param source          the panel in which the mouse click event happened.
+     * @param diagram         the diagram that was clicked.
+     * @param eventDetail     contains the information on which element of the
+     *                        diagram was clicked (spider, zone, contour, or none).
      * @param subDiagramIndex the index of the sub-diagram that was clicked.
      */
     public SpiderDiagramClickEvent(SpiderDiagramPanel source, SpiderDiagram diagram, DiagramClickEvent eventDetail, int subDiagramIndex) {
@@ -92,14 +97,18 @@ public class SpiderDiagramClickEvent extends EventObject {
     /**
      * Puts a string description of the event into the string builder.
      *
-     * @param sb the string builder into which to print the event description.
+     * @param sb    the string builder into which to print the event description.
      * @param event the event of which the description will be appended to the
-     * given string builder.
+     *              given string builder.
      * @return the given string builder (with the event description appended).
      */
     public static StringBuilder toString(StringBuilder sb, DiagramClickEvent event) {
         if (event instanceof SpiderClickedEvent) {
-            ICirclesToSpeedith.convert(((SpiderClickedEvent) event).getZoneOfFoot()).toString(sb.append("Spider: ").append(((SpiderClickedEvent) event).getFoot().getSpider().as.getName()).append(". Zone: "));
+            Zone zoneOfSpider = ICirclesToSpeedith.convert(((SpiderClickedEvent) event).getZoneOfFoot());
+            sb.append("Spider: ").append(((SpiderClickedEvent) event).getFoot().getSpider().as.getName());
+            if (zoneOfSpider != null) {
+                zoneOfSpider.toString(sb.append(". Zone: "));
+            }
         } else if (event instanceof ContourClickedEvent) {
             sb.append("Contour: ").append(((ContourClickedEvent) event).getContour().ac.getLabel());
         } else if (event instanceof ZoneClickedEvent) {
@@ -123,8 +132,6 @@ public class SpiderDiagramClickEvent extends EventObject {
     /**
      * Returns the index of the sub-diagram in which the click event occurred.
      * <p>To obtain a reference.</p>
-     *
-     * @return
      */
     public int getSubDiagramIndex() {
         return subDiagramIndex;
@@ -139,9 +146,9 @@ public class SpiderDiagramClickEvent extends EventObject {
      * and</li> <li>{@link ZoneClickedEvent zone click event}.</li> </ul> </p>
      *
      * @return an object detailing what exactly has been clicked in the diagram.
-     * This method may also return {@code null} to tell that no particular
-     * element in a diagram has been clicked, instead the diagram as a whole was
-     * clicked.
+     *         This method may also return {@code null} to tell that no particular
+     *         element in a diagram has been clicked, instead the diagram as a whole was
+     *         clicked.
      */
     public DiagramClickEvent getDetailedEvent() {
         return detailedEvent;
@@ -156,13 +163,13 @@ public class SpiderDiagramClickEvent extends EventObject {
      * instance will be returned for subsequent calls to this method.</p>
      *
      * @return a rule argument corresponding to the clicked diagrammatic
-     * element.
+     *         element.
      */
     public RuleArg toRuleArg() {
         if (ruleArg == null) {
             if (getDetailedEvent() instanceof SpiderClickedEvent) {
                 SpiderClickedEvent spiderClickedEvent = (SpiderClickedEvent) getDetailedEvent();
-                ruleArg = new SpiderZoneArg(-1, getSubDiagramIndex(), spiderClickedEvent.getSpiderName(), ICirclesToSpeedith.convert(spiderClickedEvent.getZoneOfFoot()));
+                ruleArg = new SpiderZoneArg(-1, getSubDiagramIndex(), spiderClickedEvent.getSpiderName(), getClickedZone(spiderClickedEvent));
             } else if (getDetailedEvent() instanceof ContourClickedEvent) {
                 ContourClickedEvent contourClickedEvent = (ContourClickedEvent) getDetailedEvent();
                 ruleArg = new ContourArg(-1, getSubDiagramIndex(), contourClickedEvent.getContourLabel());
@@ -176,5 +183,13 @@ public class SpiderDiagramClickEvent extends EventObject {
             }
         }
         return ruleArg;
+    }
+
+    private Zone getClickedZone(SpiderClickedEvent spiderClickedEvent) {
+        ConcreteZone concreteZone = spiderClickedEvent.getZoneOfFoot();
+        if (concreteZone == null) {
+            return new Zone(new ArrayList<String>(), ((PrimarySpiderDiagram) getDiagram()).getAllContours());
+        }
+        return ICirclesToSpeedith.convert(concreteZone);
     }
 }

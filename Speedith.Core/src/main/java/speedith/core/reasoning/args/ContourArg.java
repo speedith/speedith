@@ -26,6 +26,10 @@
  */
 package speedith.core.reasoning.args;
 
+import speedith.core.reasoning.RuleApplicationException;
+
+import java.util.ArrayList;
+
 /**
  * Contains the name of the contour that should be passed to an inference rule.
  *
@@ -61,5 +65,34 @@ public class ContourArg extends SubDiagramIndexArg {
      */
     public String getContour() {
         return contour;
+    }
+
+    public static int assertSameSubDiagramIndices(int previousSubDiagramIndex, ContourArg contourArg) throws RuleApplicationException {
+        if (previousSubDiagramIndex != -1 && previousSubDiagramIndex != contourArg.getSubDiagramIndex()) {
+            throw new RuleApplicationException("The contours must be from the same unitary spider diagram.");
+        } else {
+            previousSubDiagramIndex = contourArg.getSubDiagramIndex();
+        }
+        return previousSubDiagramIndex;
+    }
+
+    public static ContourArg getContourArgFrom(RuleArg ruleArg) throws RuleApplicationException {
+        if (!(ruleArg instanceof ContourArg)) {
+            throw new RuleApplicationException("The copy contours rule takes only contours as arguments.");
+        }
+        return (ContourArg)ruleArg;
+    }
+
+    public static ArrayList<ContourArg> getContourArgsFrom(MultipleRuleArgs multipleRuleArgs) throws RuleApplicationException {
+        ArrayList<ContourArg> contourArgs = new ArrayList<>();
+        int subDiagramIndex = -1;
+        int goalIndex = -1;
+        for (RuleArg ruleArg : multipleRuleArgs) {
+            ContourArg contourArg = getContourArgFrom(ruleArg);
+            subDiagramIndex = assertSameSubDiagramIndices(subDiagramIndex, contourArg);
+            goalIndex = assertSameGoalIndices(goalIndex, contourArg);
+            contourArgs.add(contourArg);
+        }
+        return contourArgs;
     }
 }

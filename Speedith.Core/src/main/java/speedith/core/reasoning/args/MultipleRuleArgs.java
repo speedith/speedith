@@ -26,6 +26,8 @@
  */
 package speedith.core.reasoning.args;
 
+import speedith.core.reasoning.RuleApplicationException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -66,5 +68,11 @@ public class MultipleRuleArgs implements RuleArg, Iterable<RuleArg> {
 
     public List<RuleArg> getRuleArgs() {
         return Collections.unmodifiableList(ruleArgs);
+    }
+
+    public static void assertArgumentsNotEmpty(MultipleRuleArgs multipleRuleArgs) throws RuleApplicationException {
+        if (multipleRuleArgs.isEmpty()) {
+            throw new RuleApplicationException("No inference rule arguments were specified.");
+        }
     }
 }

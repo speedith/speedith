@@ -2,6 +2,8 @@ package speedith.core.reasoning.rules.transformers;
 
 import speedith.core.lang.*;
 import speedith.core.reasoning.args.ContourArg;
+import speedith.core.reasoning.rules.transformers.util.InferenceTargetChecks;
+import speedith.core.reasoning.rules.transformers.util.InferenceTargetExtraction;
 import speedith.core.reasoning.util.unitary.ZoneTransfer;
 
 import java.util.ArrayList;
@@ -26,11 +28,11 @@ public class CopyContoursTransformer extends IdTransformer {
                                    ArrayList<CompoundSpiderDiagram> parents,
                                    ArrayList<Integer> childIndices) {
         if (diagramIndex == indexOfParent) {
-            assertIsConjunction(currentDiagram);
-            assertOperandsAreUnitary(currentDiagram);
+            InferenceTargetChecks.assertIsConjunction(currentDiagram);
+            InferenceTargetChecks.assertOperandsAreUnitary(currentDiagram);
 
-            PrimarySpiderDiagram diagramWithContour = getDiagramWithContour(currentDiagram);
-            PrimarySpiderDiagram diagramWithoutContour = getDiagramWithoutContour(currentDiagram);
+            PrimarySpiderDiagram diagramWithContour = InferenceTargetExtraction.getSourceOperand(currentDiagram, indexOfParent, targetContours.get(0));
+            PrimarySpiderDiagram diagramWithoutContour = InferenceTargetExtraction.getTargetOperand(currentDiagram, indexOfParent, targetContours.get(0));
 
             assertDiagramContainsTargetContours(diagramWithContour);
 
@@ -60,44 +62,15 @@ public class CopyContoursTransformer extends IdTransformer {
     private SpiderDiagram copyContours(PrimarySpiderDiagram diagramWithContour, PrimarySpiderDiagram diagramWithoutContour) {
         try {
             PrimarySpiderDiagram transformedDiagram = new ZoneTransfer(diagramWithContour, diagramWithoutContour).transferContour(getTargetContours().get(0));
-            if (isContourInLeftDiagram()) {
-                return SpiderDiagrams.createCompoundSD(Operator.Conjunction, diagramWithContour, transformedDiagram);
-            } else {
-                return SpiderDiagrams.createCompoundSD(Operator.Conjunction, transformedDiagram, diagramWithContour);
-            }
+            return InferenceTargetExtraction.createBinaryDiagram(Operator.Conjunction, diagramWithContour, transformedDiagram, targetContours.get(0), indexOfParent);
         } catch (Exception e) {
             throw new TransformationException("Could not copy the contour. " + e.getMessage(), e);
         }
     }
 
-    private PrimarySpiderDiagram getDiagramWithContour(CompoundSpiderDiagram currentDiagram) {
-        return (PrimarySpiderDiagram) currentDiagram.getOperand(isContourInLeftDiagram() ? 0 : 1);
-    }
-
-    private PrimarySpiderDiagram getDiagramWithoutContour(CompoundSpiderDiagram currentDiagram) {
-        return (PrimarySpiderDiagram) currentDiagram.getOperand(isContourInLeftDiagram() ? 1 : 0);
-    }
-
-    private boolean isContourInLeftDiagram() {
-        return getTargetSubDiagramIndex() == indexOfParent + 1;
-    }
-
     private void assertDiagramContainsTargetContours(PrimarySpiderDiagram currentDiagram) {
         if (!currentDiagram.getAllContours().containsAll(getTargetContours())) {
             throw new TransformationException("The target unitary diagram does not contain the target contour.");
-        }
-    }
-
-    private void assertIsConjunction(CompoundSpiderDiagram currentDiagram) {
-        if (currentDiagram.getOperator() != Operator.Conjunction) {
-            throw new TransformationException("The target unitary diagram is not conjunctively connected to another unitary diagram.");
-        }
-    }
-
-    private void assertOperandsAreUnitary(CompoundSpiderDiagram compoundSpiderDiagram) {
-        if (!(compoundSpiderDiagram.getOperand(0) instanceof PrimarySpiderDiagram) ||
-            !(compoundSpiderDiagram.getOperand(1) instanceof PrimarySpiderDiagram)) {
-            throw new TransformationException("The conjunctively connected spider diagrams are not unitary.");
         }
     }
 
@@ -113,9 +86,5 @@ public class CopyContoursTransformer extends IdTransformer {
         if (diagramIndex == indexOfParent) {
             throw new TransformationException("The target of the copy contour rule must be a conjunctive compound spider diagram.");
         }
-    }
-
-    private int getTargetSubDiagramIndex() {
-        return targetContours.get(0).getSubDiagramIndex();
     }
 }

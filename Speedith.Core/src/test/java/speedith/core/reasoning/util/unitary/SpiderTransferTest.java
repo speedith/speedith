@@ -10,7 +10,7 @@ import java.util.TreeMap;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static speedith.core.lang.SpiderDiagrams.createPrimarySD;
-import static speedith.core.reasoning.util.unitary.TestSpiderDiagrams.VENN_3_ABC_DIAGRAM;
+import static speedith.core.reasoning.util.unitary.TestSpiderDiagrams.*;
 
 public class SpiderTransferTest {
     @Test(expected = IllegalArgumentException.class)
@@ -33,7 +33,16 @@ public class SpiderTransferTest {
     }
 
     @Test
-    public void transferSpider_should_put_the_spider_into_the_corresponding_region() {
+    public void transferSpider_should_put_the_spider_into_the_corresponding_region_of_the_target_diagram() {
+        PrimarySpiderDiagram targetDiagram = DIAGRAM_SPEEDITH_PAPER_FIG7_3;
+        PrimarySpiderDiagram sourceDiagram = DIAGRAM_SPEEDITH_PAPER_FIG7_2;
+        PrimarySpiderDiagram expectedDiagram = DIAGRAM_SPEEDITH_PAPER_FIG7_5;
 
+        PrimarySpiderDiagram transformedDiagram = new SpiderTransfer(sourceDiagram, targetDiagram).transferSpider("s1");
+
+        assertThat(
+                transformedDiagram,
+                equalTo(expectedDiagram)
+        );
     }
 }

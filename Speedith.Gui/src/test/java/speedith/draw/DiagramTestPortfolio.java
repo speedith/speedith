@@ -29,6 +29,7 @@ public class DiagramTestPortfolio implements Serializable {
 
     public DiagramTestPortfolio() {
         this.spiderDiagrams = new ArrayList<>(asList(
+                DIAGRAM_SPEEDITH_PAPER_FIG7_5,
                 SINGLE_CONTOUR_A_DIAGRAM,
                 new ZoneTransfer(DIAGRAM_SPEEDITH_PAPER_FIG7_2, DIAGRAM_SPEEDITH_PAPER_FIG7_1).transferContour("D"),
                 DIAGRAM_SPEEDITH_PAPER_FIG7_1,
