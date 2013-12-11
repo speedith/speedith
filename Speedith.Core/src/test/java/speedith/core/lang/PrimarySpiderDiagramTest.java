@@ -26,41 +26,56 @@
  */
 package speedith.core.lang;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.TreeSet;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.reasoning.util.unitary.TestSpiderDiagrams;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static speedith.core.reasoning.util.unitary.TestSpiderDiagrams.DIAGRAM_SPEEDITH_PAPER_FIG2_D1;
+import static speedith.core.reasoning.util.unitary.TestSpiderDiagrams.DIAGRAM_SPEEDITH_PAPER_FIG2_D2;
+
 /**
- *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class PrimarySpiderDiagramTest {
 
-    public PrimarySpiderDiagramTest() {
+    @Test(expected = IllegalArgumentException.class)
+    public void addShading_should_throw_an_exception_if_adding_a_zone_that_does_not_have_the_right_contours() {
+        DIAGRAM_SPEEDITH_PAPER_FIG2_D1.addShading(
+                Zone.fromInContours("A", "E").withOutContours("B", "D")
+        );
     }
 
-    @BeforeClass
-    public static void setUpClass() {
+    @Test
+    public void addShading_should_return_the_same_diagram_when_the_zone_is_already_shaded() {
+        PrimarySpiderDiagram resultDiagram = DIAGRAM_SPEEDITH_PAPER_FIG2_D2.addShading(
+                Zone.fromInContours("A", "E", "C").withOutContours("F")
+        );
+
+        assertThat(
+                resultDiagram,
+                equalTo(DIAGRAM_SPEEDITH_PAPER_FIG2_D2)
+        );
     }
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+    @Test
+    public void addShading_should_return_diagram_with_new_shading() {
+        Zone newShadedZone = Zone.fromInContours("A", "E").withOutContours("F", "C");
+        PrimarySpiderDiagram resultDiagram = DIAGRAM_SPEEDITH_PAPER_FIG2_D2.addShading(newShadedZone);
+        SortedSet<Zone> expectedShadedZones = new TreeSet<>(DIAGRAM_SPEEDITH_PAPER_FIG2_D2.getShadedZones());
+        expectedShadedZones.add(newShadedZone);
 
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
+        assertThat(
+                resultDiagram.getShadedZones(),
+                equalTo(expectedShadedZones)
+        );
     }
 
     /**

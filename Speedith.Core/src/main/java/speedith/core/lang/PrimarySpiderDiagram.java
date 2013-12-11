@@ -90,13 +90,6 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     private Boolean valid;
 
     /**
-     * Creates an empty primary (unitary) spider diagram.
-     */
-    PrimarySpiderDiagram() {
-        this(null, null, null, null);
-    }
-
-    /**
      * Creates an instance of a primary spider diagram with the given spiders,
      * their habitats and shaded zones. <p>This method makes copies of the given
      * parameters.</p>
@@ -369,6 +362,26 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     @Override
     public Iterator<SpiderDiagram> iterator() {
         return new AtomicSpiderDiagramIterator(this);
+    }
+
+    public PrimarySpiderDiagram addShading(Zone... zones) {
+        return addShading(Arrays.asList(zones));
+    }
+
+    public PrimarySpiderDiagram addShading(Collection<Zone> zones) {
+        TreeSet<Zone> newShadedZones = new TreeSet<>(shadedZones);
+        for (Zone newShadedZone : zones) {
+            if (!newShadedZone.isValid(getAllContours())) {
+                throw new IllegalArgumentException("The zone '" + newShadedZone + "' is not valid in this diagram.");
+            }
+        }
+        newShadedZones.addAll(zones);
+        return new PrimarySpiderDiagram(
+                spiders,
+                spiderHabitatsMap,
+                newShadedZones,
+                presentZones
+        );
     }
 
     static class AtomicSpiderDiagramIterator implements Iterator<SpiderDiagram> {

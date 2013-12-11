@@ -35,6 +35,7 @@ public class TestSpiderDiagrams {
     public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG7_2 = getDiagramFromSpeedithPaper_Fig7_2nd();
     public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG7_3 = getDiagramFromSpeedithPaper_Fig7_3rd();
     public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG7_5 = getDiagramFromSpeedithPaper_Fig7_5th();
+    public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG7_3_SHADED_C = getDiagramFromSpeedithPaper_Fig7_3rd_shaded();
 
     public static PrimarySpiderDiagram getDiagramSpeedithPaper_Fig2_D2(String outsideContour, String insideContour) {
         String contourC = "C";
@@ -162,6 +163,13 @@ public class TestSpiderDiagrams {
         ));
 
         return createPrimarySD(habitats.keySet(), habitats, shadedZones, presentZones);
+    }
+
+    private static PrimarySpiderDiagram getDiagramFromSpeedithPaper_Fig7_3rd_shaded() {
+        PrimarySpiderDiagram diagramWithoutShading = getDiagramFromSpeedithPaper_Fig7_3rd();
+        return diagramWithoutShading.addShading(
+                Zone.fromInContours("C").withOutContours("A", "B", "D")
+        );
     }
 
     private static PrimarySpiderDiagram getDiagramSpeedithPaper_Fig2_D1Prime() {

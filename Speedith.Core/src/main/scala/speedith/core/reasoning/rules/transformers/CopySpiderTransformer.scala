@@ -18,7 +18,7 @@ case class CopySpiderTransformer(compoundDiagramIndex: Int, spiderArg: SpiderArg
     val diagramWithSpider = getSourceOperand(currentDiagram, compoundDiagramIndex, spiderArg)
     val diagramWithoutSpider = getTargetOperand(currentDiagram, compoundDiagramIndex, spiderArg)
 
-    assertSpiderIsInTargetDiagram(diagramWithSpider)
+    assertSpiderIsInSourceDiagram(diagramWithSpider)
     copySpider(diagramWithSpider, diagramWithoutSpider)
   }
 
@@ -35,7 +35,7 @@ case class CopySpiderTransformer(compoundDiagramIndex: Int, spiderArg: SpiderArg
   }
 
 
-  private def assertSpiderIsInTargetDiagram(diagramWithSpider: PrimarySpiderDiagram) {
+  private def assertSpiderIsInSourceDiagram(diagramWithSpider: PrimarySpiderDiagram) {
     if (!diagramWithSpider.getSpiders.contains(spiderArg.getSpider)) {
       throw new TransformationException("The target unitary diagram does not contain the spider '" + spiderArg.getSpider + "', which was to be copied.")
     }
