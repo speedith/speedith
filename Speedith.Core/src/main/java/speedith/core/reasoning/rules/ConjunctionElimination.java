@@ -28,6 +28,7 @@ package speedith.core.reasoning.rules;
 
 import java.util.Locale;
 import speedith.core.i18n.Translations;
+import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.RuleApplicationException;
@@ -35,6 +36,8 @@ import speedith.core.reasoning.RuleApplicationInstruction;
 import speedith.core.reasoning.RuleApplicationResult;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
+import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
+import speedith.core.reasoning.rules.transformers.ConjunctionEliminationTransformer;
 
 /**
  *
@@ -52,12 +55,15 @@ public class ConjunctionElimination extends SimpleInferenceRule<SubDiagramIndexA
     //<editor-fold defaultstate="collapsed" desc="Inference Rule Implementation">
     @Override
     public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        SubDiagramIndexArg subDiagramIndexArg = getTypedRuleArgs(args);
+        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
+        newSubgoals[subDiagramIndexArg.getSubgoalIndex()] = getSubgoal(subDiagramIndexArg, goals).transform(new ConjunctionEliminationTransformer(subDiagramIndexArg));
+        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
     }
     
     @Override
     public InferenceRule<SubDiagramIndexArg> getInferenceRule() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this;
     }
     
     @Override
@@ -87,7 +93,7 @@ public class ConjunctionElimination extends SimpleInferenceRule<SubDiagramIndexA
     
     @Override
     public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new SelectSingleOperatorInstruction();
     }
     //</editor-fold>
     

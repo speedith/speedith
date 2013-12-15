@@ -7,7 +7,7 @@ import speedith.core.reasoning.args.SpiderArg
 import speedith.core.reasoning.util.unitary.SpiderTransfer
 import speedith.core.reasoning.rules.transformers.util.InferenceTargetExtraction
 
-case class CopySpiderTransformer(compoundDiagramIndex: Int, spiderArg: SpiderArg) extends HeterogeneousTransformer(compoundDiagramIndex) {
+case class CopySpiderTransformer(compoundDiagramIndex: Int, spiderArg: SpiderArg) extends CompoundDiagramTransformer(compoundDiagramIndex) {
 
   override def transform(currentDiagram: CompoundSpiderDiagram,
                          parents: java.util.ArrayList[CompoundSpiderDiagram],

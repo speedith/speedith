@@ -10,7 +10,7 @@ import scala.collection.JavaConversions._
 
 case class CopyShadingTransformer(compoundDiagramIndex: Int,
                                   zoneArgsPlain: java.util.Collection[ZoneArg])
-  extends HeterogeneousTransformer(compoundDiagramIndex) {
+  extends CompoundDiagramTransformer(compoundDiagramIndex) {
 
   var zoneArgs = zoneArgsPlain.toList
 

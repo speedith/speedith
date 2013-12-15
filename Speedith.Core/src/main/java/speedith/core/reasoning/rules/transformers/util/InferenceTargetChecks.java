@@ -8,7 +8,7 @@ import speedith.core.lang.TransformationException;
 public class InferenceTargetChecks {
     public static void assertIsConjunction(CompoundSpiderDiagram currentDiagram) {
         if (currentDiagram.getOperator() != Operator.Conjunction) {
-            throw new TransformationException("The target unitary diagram is not conjunctively connected to another unitary diagram.");
+            throw new TransformationException("The target of the inference rule is not a conjunctive compound diagram.");
         }
     }
 

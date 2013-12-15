@@ -2,7 +2,7 @@ package speedith.core.reasoning.rules.transformers
 
 import speedith.core.lang._
 
-abstract class HeterogeneousTransformer(compoundDiagramIndex: Int) extends IdTransformer {
+abstract class CompoundDiagramTransformer(compoundDiagramIndex: Int) extends IdTransformer {
 
   if (compoundDiagramIndex < 0) {
     throw new TransformationException("The target sub-diagram is not in a conjunction.")
