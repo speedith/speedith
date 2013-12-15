@@ -26,21 +26,22 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.Locale;
 import speedith.core.i18n.Translations;
-import speedith.core.reasoning.Goals;
-import speedith.core.reasoning.InferenceRule;
-import speedith.core.reasoning.RuleApplicationException;
-import speedith.core.reasoning.RuleApplicationInstruction;
-import speedith.core.reasoning.RuleApplicationResult;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.ContourArg;
+import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.rules.instructions.SelectContoursInstruction;
+import speedith.core.reasoning.rules.transformers.RemoveContoursTransformer;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 /**
- *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class RemoveContour extends SimpleInferenceRule<ContourArg> {
+public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
@@ -52,19 +53,22 @@ public class RemoveContour extends SimpleInferenceRule<ContourArg> {
     //<editor-fold defaultstate="collapsed" desc="Inference Rule Implementation">
     @Override
     public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        ArrayList<ContourArg> contourArgs = ContourArg.getContourArgsFrom(getTypedRuleArgs(args));
+        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
+        newSubgoals[contourArgs.get(0).getSubgoalIndex()] = getSubgoal(contourArgs.get(0), goals).transform(new RemoveContoursTransformer(contourArgs));
+        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
     }
-    
+
     @Override
-    public InferenceRule<ContourArg> getInferenceRule() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public InferenceRule<MultipleRuleArgs> getInferenceRule() {
+        return this;
     }
-    
+
     @Override
     public String getInferenceRuleName() {
         return InferenceRuleName;
     }
-    
+
     @Override
     public String getDescription(Locale locale) {
         return Translations.i18n(locale, "REMOVE_CONTOUR_DESCRIPTION");
@@ -74,21 +78,21 @@ public class RemoveContour extends SimpleInferenceRule<ContourArg> {
     public String getCategory(Locale locale) {
         return Translations.i18n(locale, "INF_RULE_CATEGORY_PURELY_DIAGRAMMATIC");
     }
-    
+
     @Override
     public String getPrettyName(Locale locale) {
         return Translations.i18n(locale, "REMOVE_CONTOUR_PRETTY_NAME");
     }
-    
+
     @Override
-    public Class<ContourArg> getArgumentType() {
-        return ContourArg.class;
+    public Class<MultipleRuleArgs> getArgumentType() {
+        return MultipleRuleArgs.class;
     }
-    
+
     @Override
-    public RuleApplicationInstruction<ContourArg> getInstructions() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public RuleApplicationInstruction<MultipleRuleArgs> getInstructions() {
+        return new SelectContoursInstruction();
     }
     //</editor-fold>
-    
+
 }
