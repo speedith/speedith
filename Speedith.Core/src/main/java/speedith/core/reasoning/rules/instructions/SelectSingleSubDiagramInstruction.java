@@ -1,10 +1,10 @@
 /*
  *   Project: Speedith.Core
  * 
- * File name: GeneralTautology.java
+ * File name: Class.java
  *    Author: Matej Urbas [matej.urbas@gmail.com]
  * 
- *  Copyright © 2013 Matej Urbas
+ *  Copyright © 2012 Matej Urbas
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,46 +24,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package speedith.core.reasoning.rules;
+package speedith.core.reasoning.rules.instructions;
 
-import speedith.core.lang.Transformer;
-import speedith.core.reasoning.ApplyStyle;
 import speedith.core.reasoning.RuleApplicationInstruction;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
-import speedith.core.reasoning.rules.instructions.SelectSingleSubDiagramInstruction;
-import speedith.core.reasoning.rules.transformers.DoubleNegationIntroductionTransformer;
+import speedith.core.reasoning.args.selection.SelectSubDiagramStep;
+import speedith.core.reasoning.args.selection.SelectionSequence;
+import speedith.core.reasoning.args.selection.SelectionStep;
 
-import java.util.Locale;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
+ * Returns instructions for rules that require a single operator (anywhere in a
+ * spider diagram).
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class DoubleNegationIntroduction extends UnaryForwardRule {
+public class SelectSingleSubDiagramInstruction implements RuleApplicationInstruction<SubDiagramIndexArg> {
 
-    public static final String InferenceRuleName = "double_negation_introduction";
+    private List<? extends SelectionStep> step = Collections.unmodifiableList(Arrays.asList(new SelectSubDiagramStep(false)));
 
     @Override
-    public String getInferenceRuleName() {
-        return InferenceRuleName;
+    public List<? extends SelectionStep> getSelectionSteps() {
+        return step;
     }
 
     @Override
-    public String getDescription(Locale locale) {
-        return "";
+    public SubDiagramIndexArg extractRuleArg(SelectionSequence selectionSequence, int subgoalIndex) {
+        SubDiagramIndexArg sza = (SubDiagramIndexArg) selectionSequence.getAcceptedSelectionsForStepAt(0).get(0);
+        return new SubDiagramIndexArg(subgoalIndex, sza.getSubDiagramIndex());
     }
 
-    @Override
-    public String getPrettyName(Locale locale) {
-        return "Double Negation Introduction";
-    }
-
-    @Override
-    public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
-        return new SelectSingleSubDiagramInstruction();
-    }
-
-    @Override
-    protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
-        return new DoubleNegationIntroductionTransformer(arg.getSubDiagramIndex());
-    }
 }

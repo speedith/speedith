@@ -30,7 +30,7 @@ import speedith.core.lang.Transformer;
 import speedith.core.reasoning.ApplyStyle;
 import speedith.core.reasoning.RuleApplicationInstruction;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
-import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
+import speedith.core.reasoning.rules.instructions.SelectSingleSubDiagramInstruction;
 import speedith.core.reasoning.rules.transformers.DoubleNegationEliminationTransformer;
 
 import java.util.Locale;
@@ -59,7 +59,7 @@ public class DoubleNegationElimination extends UnaryForwardRule {
 
     @Override
     public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
-        return new SelectSingleOperatorInstruction();
+        return new SelectSingleSubDiagramInstruction();
     }
 
     @Override

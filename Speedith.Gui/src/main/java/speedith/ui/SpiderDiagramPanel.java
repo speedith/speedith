@@ -480,9 +480,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         if (csd != null && csd.getOperandCount() == 1) {
             diagrams.setLayout(new GridBagLayout());
             addOperatorPanel(csd, 0);
-//            diagrams.add(registerSubdiagramClickListener(new OperatorPanel(csd.getOperator(), getFont()), 0));
             addSpiderDiagramPanel(1, csd.getOperand(0), 1);
-//            diagrams.add(registerSubdiagramClickListener(DiagramVisualisation.getSpiderDiagramPanel(csd.getOperands().get(0)), 1));
         } else {
             throw new AssertionError(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
         }

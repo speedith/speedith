@@ -7,7 +7,7 @@ import speedith.core.i18n.Translations
 import speedith.core.lang.SpiderDiagram
 import scala.collection.JavaConversions._
 import speedith.core.reasoning.rules.transformers.CopyShadingTransformer
-import speedith.core.reasoning.rules.instructions.speedith.core.reasoning.rules.instructions.SelectZonesInstruction
+import speedith.core.reasoning.rules.instructions.SelectZonesInstruction
 
 class CopyShading extends SimpleInferenceRule[MultipleRuleArgs] {
   def getInferenceRule: InferenceRule[MultipleRuleArgs] = this

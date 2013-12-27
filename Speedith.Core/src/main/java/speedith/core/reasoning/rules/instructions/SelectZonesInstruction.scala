@@ -1,9 +1,9 @@
-package speedith.core.reasoning.rules.instructions.speedith.core.reasoning.rules.instructions
+package speedith.core.reasoning.rules.instructions
 
-import speedith.core.reasoning.RuleApplicationInstruction
-import speedith.core.reasoning.args.{ZoneArg, MultipleRuleArgs}
+import _root_.speedith.core.reasoning.args.{ZoneArg, MultipleRuleArgs}
+import _root_.speedith.core.reasoning.args.selection.{SelectionStep, SelectionSequence, SelectZonesStep}
+import _root_.speedith.core.reasoning.RuleApplicationInstruction
 import java.util
-import speedith.core.reasoning.args.selection.{SelectZonesStep, SelectionSequence, SelectionStep}
 import scala.collection.JavaConversions._
 
 class SelectZonesInstruction extends RuleApplicationInstruction[MultipleRuleArgs] {
