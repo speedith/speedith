@@ -26,11 +26,13 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.Locale;
-import speedith.core.lang.IdTransformer;
 import speedith.core.lang.Transformer;
+import speedith.core.reasoning.ApplyStyle;
 import speedith.core.reasoning.RuleApplicationInstruction;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
+import speedith.core.reasoning.rules.transformers.DoubleNegationEliminationTransformer;
+
+import java.util.Locale;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
@@ -38,11 +40,6 @@ import speedith.core.reasoning.args.SubDiagramIndexArg;
 public class DoubleNegationElimination extends UnaryForwardRule {
 
     public static final String InferenceRuleName = "double_negation_elimination";
-
-    @Override
-    protected Transformer getSententialTransformer(SubDiagramIndexArg arg) {
-        return new IdTransformer();
-    }
 
     @Override
     public String getInferenceRuleName() {
@@ -62,5 +59,10 @@ public class DoubleNegationElimination extends UnaryForwardRule {
     @Override
     public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
+        return new DoubleNegationEliminationTransformer(arg.getSubDiagramIndex());
     }
 }

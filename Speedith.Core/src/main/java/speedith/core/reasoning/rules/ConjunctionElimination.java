@@ -45,14 +45,11 @@ import speedith.core.reasoning.rules.transformers.ConjunctionEliminationTransfor
  */
 public class ConjunctionElimination extends SimpleInferenceRule<SubDiagramIndexArg> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
      * The name of this inference rule.
      */
     public static final String InferenceRuleName = "conjunction_elimination";
-    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Inference Rule Implementation">
     @Override
     public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
         SubDiagramIndexArg subDiagramIndexArg = getTypedRuleArgs(args);
@@ -95,6 +92,4 @@ public class ConjunctionElimination extends SimpleInferenceRule<SubDiagramIndexA
     public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
         return new SelectSingleOperatorInstruction();
     }
-    //</editor-fold>
-    
 }

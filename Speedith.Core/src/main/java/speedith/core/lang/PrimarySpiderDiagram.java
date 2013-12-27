@@ -341,7 +341,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         if (t == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "t"));
         }
-        SpiderDiagram curTransform = t.transform(this, 0, null, null);
+        SpiderDiagram curTransform = t.transform(this, 0, new ArrayList<CompoundSpiderDiagram>(), new ArrayList<Integer>());
         return curTransform == null ? this : curTransform;
     }
 

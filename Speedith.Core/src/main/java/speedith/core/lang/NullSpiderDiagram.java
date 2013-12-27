@@ -27,6 +27,7 @@
 package speedith.core.lang;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import static speedith.core.i18n.Translations.i18n;
 
@@ -67,7 +68,7 @@ public class NullSpiderDiagram extends SpiderDiagram {
         if (t == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "t"));
         }
-        SpiderDiagram curTransform = t.transform(this, 0, null, null);
+        SpiderDiagram curTransform = t.transform(this, 0, new ArrayList<CompoundSpiderDiagram>(), new ArrayList<Integer>());
         return curTransform == null ? this : curTransform;
     }
 

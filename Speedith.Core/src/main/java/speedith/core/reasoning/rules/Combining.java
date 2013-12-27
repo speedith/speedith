@@ -27,6 +27,7 @@
 package speedith.core.reasoning.rules;
 
 import speedith.core.lang.*;
+import speedith.core.reasoning.ApplyStyle;
 import speedith.core.reasoning.RuleApplicationInstruction;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
@@ -61,7 +62,7 @@ public class Combining extends UnaryForwardRule {
     }
 
     @Override
-    protected Transformer getSententialTransformer(SubDiagramIndexArg arg) {
+    protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
         return new IdTransformer();
     }
 

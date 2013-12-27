@@ -75,11 +75,11 @@ public abstract class UnaryForwardRule
     protected RuleApplicationResult apply(final RuleArg args, Goals goals, ApplyStyle applyStyle) throws RuleApplicationException {
         SubDiagramIndexArg arg = getTypedRuleArgs(args);
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
-        newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(getSententialTransformer(arg));
+        newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(getSententialTransformer(arg, applyStyle));
         return createRuleApplicationResult(newSubgoals);
     }
 
-    protected abstract Transformer getSententialTransformer(SubDiagramIndexArg arg);
+    protected abstract Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle);
 
     protected static abstract class UnaryForwardTransformer extends IdTransformer {
 

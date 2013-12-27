@@ -54,16 +54,13 @@ import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstructio
  */
 public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg>, ForwardRule<SubDiagramIndexArg> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
      * The name of this inference rule.
      * <p>This value is returned by the {@link Idempotency#getInferenceRuleName()}
      * method.</p>
      */
     public static final String InferenceRuleName = "idempotency";
-    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
     @Override
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
         SubDiagramIndexArg arg = getTypedRuleArgs(args);
@@ -71,9 +68,7 @@ public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> impleme
         newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(new IdempotencyTransformer(arg), false);
         return createRuleApplicationResult(newSubgoals);
     }
-    //</editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="InferenceRuleProvider Implementation">
     @Override
     public Idempotency getInferenceRule() {
         return this;
@@ -109,16 +104,12 @@ public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> impleme
         // This rule needs a subdiagram. In fact, it needs an OR or AND operator
         return SingletonContainer.Instruction;
     }
-    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Forward Rule">
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
         return apply(args, goals);
     }
-    //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Helper Classes">
     private static final class SingletonContainer {
         private static final SelectSingleOperatorInstruction Instruction = new SelectSingleOperatorInstruction(Operator.Conjunction, Operator.Disjunction);
     }
@@ -151,5 +142,4 @@ public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> impleme
             return null;
         }
     }
-    //</editor-fold>
 }

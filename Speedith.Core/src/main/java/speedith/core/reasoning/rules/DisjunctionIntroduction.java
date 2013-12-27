@@ -29,6 +29,7 @@ package speedith.core.reasoning.rules;
 import java.util.Locale;
 import speedith.core.lang.IdTransformer;
 import speedith.core.lang.Transformer;
+import speedith.core.reasoning.ApplyStyle;
 import speedith.core.reasoning.RuleApplicationInstruction;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 
@@ -40,7 +41,7 @@ public class DisjunctionIntroduction extends UnaryForwardRule {
     public static final String InferenceRuleName = "Disjunction Introduction";
 
     @Override
-    protected Transformer getSententialTransformer(SubDiagramIndexArg arg) {
+    protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
         return new IdTransformer();
     }
 

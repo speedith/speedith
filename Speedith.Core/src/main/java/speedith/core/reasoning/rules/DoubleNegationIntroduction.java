@@ -27,10 +27,12 @@
 package speedith.core.reasoning.rules;
 
 import java.util.Locale;
-import speedith.core.lang.IdTransformer;
+
 import speedith.core.lang.Transformer;
+import speedith.core.reasoning.ApplyStyle;
 import speedith.core.reasoning.RuleApplicationInstruction;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
+import speedith.core.reasoning.rules.transformers.DoubleNegationIntroductionTransformer;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
@@ -40,8 +42,8 @@ public class DoubleNegationIntroduction extends UnaryForwardRule {
     public static final String InferenceRuleName = "double_negation_introduction";
 
     @Override
-    protected Transformer getSententialTransformer(SubDiagramIndexArg arg) {
-        return new IdTransformer();
+    protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
+        return new DoubleNegationIntroductionTransformer(arg.getSubDiagramIndex());
     }
 
     @Override
