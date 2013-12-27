@@ -80,10 +80,10 @@ public final class DiagramVisualisation {
             throw new CannotDrawException(i18n("TOO_MANY_CONTOURS"));
         }
 
-        HashMap<String, AbstractCurve> contourMap = new HashMap<String, AbstractCurve>();
-        TreeSet<AbstractCurve> contours = new TreeSet<AbstractCurve>();
-        TreeSet<AbstractBasicRegion> shadedHabitatZones = new TreeSet<AbstractBasicRegion>();
-        TreeSet<AbstractBasicRegion> allVisibleZones = new TreeSet<AbstractBasicRegion>();
+        HashMap<String, AbstractCurve> contourMap = new HashMap<>();
+        TreeSet<AbstractCurve> contours = new TreeSet<>();
+        TreeSet<AbstractBasicRegion> shadedHabitatZones = new TreeSet<>();
+        TreeSet<AbstractBasicRegion> allVisibleZones = new TreeSet<>();
 
         String[] allContours = contourStrings.toArray(new String[contourStrings.size()]);
 
@@ -151,7 +151,7 @@ public final class DiagramVisualisation {
         if (psd.getHabitatsCount() > 0) {
             SortedMap<String, Region> habitats = psd.getHabitats();
             for (Entry<String, Region> habitat : habitats.entrySet()) {
-                TreeSet<AbstractBasicRegion> feet = new TreeSet<AbstractBasicRegion>();
+                TreeSet<AbstractBasicRegion> feet = new TreeSet<>();
                 for (Zone foot : habitat.getValue().getZones()) {
                     // A Speedith's zone can correspond to many zones. Hence we
                     // should add all the necessary feet:
@@ -214,7 +214,7 @@ public final class DiagramVisualisation {
             if (sd instanceof PrimarySpiderDiagram) {
                 return getSpiderDiagramPanel((PrimarySpiderDiagram) sd, size);
             } else if (sd instanceof CompoundSpiderDiagram) {
-                return new SpiderDiagramPanel((CompoundSpiderDiagram) sd);
+                return new SpiderDiagramPanel(sd);
             } else if (sd instanceof NullSpiderDiagram) {
                 return new NullSpiderDiagramPanel();
             } else {
@@ -240,25 +240,11 @@ public final class DiagramVisualisation {
         allZones[getZoneInMask(allContours, zone)] |= code;
     }
 
-    /**
-     * TODO: Document.
-     * @param ad
-     * @param size
-     * @return
-     * @throws CannotDrawException
-     */
     static SpeedithCirclesPanel getSpiderDiagramPanel(AbstractDescription ad, int size) throws CannotDrawException {
         ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(ad, size);
         return new SpeedithCirclesPanel(cd);
     }
 
-    /**
-     * TODO: Document.
-     * @param diagram
-     * @param size
-     * @return
-     * @throws CannotDrawException
-     */
     static SpeedithCirclesPanel getSpiderDiagramPanel(PrimarySpiderDiagram diagram, int size) throws CannotDrawException {
         final AbstractDescription ad = getAbstractDescription(diagram);
         ConcreteDiagram cd = ConcreteDiagram.makeConcreteDiagram(ad, size);
@@ -277,7 +263,7 @@ public final class DiagramVisualisation {
     }
 
     private static AbstractBasicRegion constructABR(String[] allContours, int zoneIndex, HashMap<String, AbstractCurve> contourMap) {
-        TreeSet<AbstractCurve> inContours = new TreeSet<AbstractCurve>();
+        TreeSet<AbstractCurve> inContours = new TreeSet<>();
         for (int i = 0; i < allContours.length; i++) {
             if ((zoneIndex & (1 << i)) != 0) {
                 inContours.add(contourMap.get(allContours[i]));
@@ -287,7 +273,7 @@ public final class DiagramVisualisation {
     }
 
     private static AbstractBasicRegion constructABR(Zone foot, HashMap<String, AbstractCurve> contourMap) {
-        TreeSet<AbstractCurve> inContours = new TreeSet<AbstractCurve>();
+        TreeSet<AbstractCurve> inContours = new TreeSet<>();
         if (foot.getInContoursCount() > 0) {
             for (String inContour : foot.getInContours()) {
                 inContours.add(contourMap.get(inContour));

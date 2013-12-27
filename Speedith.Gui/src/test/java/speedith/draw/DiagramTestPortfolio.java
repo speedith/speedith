@@ -19,6 +19,7 @@ import static java.util.Arrays.asList;
 import static speedith.core.lang.SpiderDiagrams.createPrimarySD;
 import static speedith.core.lang.Zones.*;
 import static speedith.core.reasoning.rules.transformers.CopyContoursTransformerTest.diagramWithASpider;
+import static speedith.core.reasoning.rules.transformers.DoubleNegationEliminationTransformerTest.doubleNegate;
 import static speedith.core.reasoning.util.unitary.CorrespondingRegionsTest.SINGLE_CONTOUR_A_DIAGRAM;
 import static speedith.core.reasoning.util.unitary.TestSpiderDiagrams.*;
 import static speedith.draw.SpiderDiagramPanelTest.*;
@@ -29,6 +30,7 @@ public class DiagramTestPortfolio implements Serializable {
 
     public DiagramTestPortfolio() {
         this.spiderDiagrams = new ArrayList<>(asList(
+                doubleNegate(SINGLE_CONTOUR_A_DIAGRAM),
                 DIAGRAM_SPEEDITH_PAPER_FIG7_5,
                 SINGLE_CONTOUR_A_DIAGRAM,
                 new ZoneTransfer(DIAGRAM_SPEEDITH_PAPER_FIG7_2, DIAGRAM_SPEEDITH_PAPER_FIG7_1).transferContour("D"),

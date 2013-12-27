@@ -33,12 +33,6 @@
 package speedith.ui;
 
 import icircles.util.CannotDrawException;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.Iterator;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.PrimarySpiderDiagram;
@@ -46,6 +40,13 @@ import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.reasoning.args.selection.SelectionStep;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.Iterator;
+
 import static speedith.i18n.Translations.i18n;
 
 /**
@@ -54,7 +55,7 @@ import static speedith.i18n.Translations.i18n;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class SpiderDiagramPanel extends javax.swing.JPanel {
-    
+
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
      * The default size of the {@link SpeedithCirclesPanel circle panels}.
@@ -63,6 +64,19 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel diagrams;
+    // End of variables declaration//GEN-END:variables
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Private Fields">
+    private SpiderDiagram diagram;
+    //</editor-fold>
+    /**
+     * Indicates which elements in the currently displayed diagram should be
+     * highlightable by the user.
+     */
+    private int highlightMode = SelectionStep.None;
+
     /**
      * Creates a new compound spider diagram panel with nothing displayed on it.
      * <p>You can set a diagram to be shown through {@link SpiderDiagramPanel#setDiagram(speedith.core.lang.SpiderDiagram)}.</p>
@@ -76,76 +90,19 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
      * spider diagram.
      *
      * @param diagram the diagram to display in this panel. <p>May be {@code null}
-     * in which case nothing will be displayed.</p>
+     *                in which case nothing will be displayed.</p>
      */
     public SpiderDiagramPanel(SpiderDiagram diagram) {
         initComponents();
         setDiagram(diagram);
     }
-    //</editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        diagrams = new javax.swing.JPanel();
-
-        setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
-
-        diagrams.setBackground(new java.awt.Color(255, 255, 255));
-        diagrams.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                onMouseClicked(evt);
-            }
-        });
-
-        javax.swing.GroupLayout diagramsLayout = new javax.swing.GroupLayout(diagrams);
-        diagrams.setLayout(diagramsLayout);
-        diagramsLayout.setHorizontalGroup(
-            diagramsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 330, Short.MAX_VALUE)
-        );
-        diagramsLayout.setVerticalGroup(
-            diagramsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 234, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(diagrams, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(diagrams, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void onMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMouseClicked
-        fireSpiderDiagramClicked(0, null);
-    }//GEN-LAST:event_onMouseClicked
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel diagrams;
-    // End of variables declaration//GEN-END:variables
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="Private Fields">
-    private SpiderDiagram diagram;
-    /**
-     * Indicates which elements in the currently displayed diagram should be
-     * highlightable by the user.
-     */
-    private int highlightMode = SelectionStep.None;
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Public Properties">
     /**
      * Returns the currently presented diagram. <p>May be {@code null}, which
      * indicates that the panel is empty.</p>
      *
      * @return the currently presented diagram, or {@code null} is no diagram is
-     * currently being shown.
+     *         currently being shown.
      */
     public SpiderDiagram getDiagram() {
         return diagram;
@@ -156,7 +113,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
      * that the panel should be empty.</p>
      *
      * @param diagram the new diagram to show, or {@code null} if no diagram is
-     * to be shown.
+     *                to be shown.
      */
     public final void setDiagram(SpiderDiagram diagram) {
         if (this.diagram != diagram) {
@@ -180,6 +137,9 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             repaint();
         }
     }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Public Properties">
 
     /**
      * Returns the string representation of the currently shown diagram.
@@ -201,10 +161,10 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
      * }</pre> </p>
      *
      * @param diagram the string representation of the diagram to present.
-     * @throws ReadingException thrown if the string does not represent a valid
-     * spider diagram.
+     * @throws ReadingException         thrown if the string does not represent a valid
+     *                                  spider diagram.
      * @throws IllegalArgumentException thrown if the string is a valid spider
-     * diagram but not a primary spider diagram.
+     *                                  diagram but not a primary spider diagram.
      */
     public void setDiagramString(String diagram) throws ReadingException {
         if (diagram == null || diagram.isEmpty()) {
@@ -227,7 +187,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
      * (respectively) can be highlighted with the mouse.</p>
      *
      * @return the set of flags that determines which elements of the diagram
-     * may be highlighted with the mouse.
+     *         may be highlighted with the mouse.
      */
     public int getHighlightMode() {
         return highlightMode;
@@ -237,8 +197,9 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
      * Sets the set of flags that determines which elements of the diagram may
      * be highlighted with the mouse. <p>See {@link SelectionStep#getSelectableElements()}
      * for a list of possible values.</p>
+     *
      * @param highlightMode the new set of flags that determines which elements
-     * of the diagram may be highlighted with the mouse.
+     *                      of the diagram may be highlighted with the mouse.
      */
     public void setHighlightMode(int highlightMode) {
         if (this.highlightMode != (highlightMode & SelectionStep.All)) {
@@ -246,9 +207,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             applyHighlightModeToPanels();
         }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Events">
     /**
      * Registers the given {@link SpiderDiagramClickListener diagram click listener}
      * to the events which are fired when the user clicks on particular diagram
@@ -273,17 +232,63 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     public void removeSpiderDiagramClickListener(SpiderDiagramClickListener l) {
         this.listenerList.remove(SpiderDiagramClickListener.class, l);
     }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Events">
 
     /**
      * Returns the array of all {@link SpiderDiagramPanel#addSpiderDiagramClickListener(icircles.gui.SpiderDiagramClickListener) registered}
      * {@link SpiderDiagramClickListener diagram click listeners}.
      *
      * @return the array of all {@link SpiderDiagramPanel#addSpiderDiagramClickListener(icircles.gui.SpiderDiagramClickListener) registered}
-     * {@link SpiderDiagramClickListener diagram click listeners}.
+     *         {@link SpiderDiagramClickListener diagram click listeners}.
      */
     public SpiderDiagramClickListener[] getSpiderDiagramClickListeners() {
         return listenerList.getListeners(SpiderDiagramClickListener.class);
     }
+
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        diagrams = new javax.swing.JPanel();
+
+        setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+
+        diagrams.setBackground(new java.awt.Color(255, 255, 255));
+        diagrams.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                onMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout diagramsLayout = new javax.swing.GroupLayout(diagrams);
+        diagrams.setLayout(diagramsLayout);
+        diagramsLayout.setHorizontalGroup(
+                diagramsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                              .addGap(0, 330, Short.MAX_VALUE)
+        );
+        diagramsLayout.setVerticalGroup(
+                diagramsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                              .addGap(0, 234, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                      .addComponent(diagrams, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                      .addComponent(diagrams, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void onMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMouseClicked
+        fireSpiderDiagramClicked(0, null);
+    }//GEN-LAST:event_onMouseClicked
 
     protected void fireSpiderDiagramClicked(int subDiagramIndex, DiagramClickEvent info) {
         SpiderDiagramClickListener[] ls = listenerList.getListeners(SpiderDiagramClickListener.class);
@@ -297,6 +302,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Private Helper Methods">
+
     /**
      * This method does not remove any components, it just adds an error label
      * saying 'Drawing failed'.
@@ -306,7 +312,6 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         errorLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         errorLabel.setText(i18n("PSD_LABEL_DISPLAY_ERROR"));
         diagrams.add(errorLabel);
-        refreshPrefSize();
     }
 
     /**
@@ -318,7 +323,6 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         noDiagramLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         noDiagramLbl.setText(i18n("CSD_PANEL_NO_DIAGRAM"));
         diagrams.add(noDiagramLbl);
-        refreshPrefSize();
     }
 
     /**
@@ -361,22 +365,21 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
 
             // Now start adding the panels of operand diagrams onto the surface
             Iterator<SpiderDiagram> sdIter = csd.getOperands().iterator();
-            nextSubdiagramIndex = addInfixSpiderDiagramPanel(nextSubdiagramIndex, sdIter.next(), gridx);
+            nextSubdiagramIndex = addSpiderDiagramPanel(nextSubdiagramIndex, sdIter.next(), gridx);
             while (sdIter.hasNext()) {
-                addInfixOperator(csd, ++gridx);
-                nextSubdiagramIndex = addInfixSpiderDiagramPanel(nextSubdiagramIndex, sdIter.next(), ++gridx);
+                addOperatorPanel(csd, ++gridx);
+                nextSubdiagramIndex = addSpiderDiagramPanel(nextSubdiagramIndex, sdIter.next(), ++gridx);
             }
-            refreshPrefSize();
         } else {
             throw new AssertionError(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
         }
     }
 
-    private void addInfixOperator(CompoundSpiderDiagram csd, int gridx) {
+    private void addOperatorPanel(CompoundSpiderDiagram csd, int gridx) {
         diagrams.add(registerSubdiagramClickListener(new OperatorPanel(csd.getOperator(), getFont()), 0), getSubdiagramLayoutConstraints(gridx, false, 0, 0));
     }
 
-    private int addInfixSpiderDiagramPanel(int nextSubdiagramIndex, SpiderDiagram curSD, int gridx) throws CannotDrawException {
+    private int addSpiderDiagramPanel(int nextSubdiagramIndex, SpiderDiagram curSD, int gridx) throws CannotDrawException {
         GridBagConstraints gridBagConstraints;
         JPanel sdp = registerSubdiagramClickListener(DiagramVisualisation.getSpiderDiagramPanel(curSD), nextSubdiagramIndex);
         gridBagConstraints = getSubdiagramLayoutConstraints(gridx, true, sdp.getPreferredSize().width, 1);
@@ -388,12 +391,8 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
      * This function registers a click listener to the given panel. The
      * registered listener will invoke the {@link SpiderDiagramPanel#addSpiderDiagramClickListener(speedith.ui.SpiderDiagramClickListener)
      * spider diagram click event} of this panel.
-     *
-     * @param diagramPanel
-     * @param sd
-     * @param nextSubdiagramIndex
      */
-    private JPanel registerSubdiagramClickListener(JPanel diagramPanel, final int nextSubdiagramIndex) {
+    private JPanel registerSubdiagramClickListener(JPanel diagramPanel, final int subdiagramIndex) {
         if (diagramPanel instanceof SpeedithCirclesPanel) {
             SpeedithCirclesPanel cp = (SpeedithCirclesPanel) diagramPanel;
             cp.setPreferredSize(PrimaryDiagramSize);
@@ -401,15 +400,15 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             cp.addDiagramClickListener(new DiagramClickListener() {
 
                 public void spiderClicked(SpiderClickedEvent e) {
-                    fireSpiderDiagramClicked(nextSubdiagramIndex, e);
+                    fireSpiderDiagramClicked(subdiagramIndex, e);
                 }
 
                 public void zoneClicked(ZoneClickedEvent e) {
-                    fireSpiderDiagramClicked(nextSubdiagramIndex, e);
+                    fireSpiderDiagramClicked(subdiagramIndex, e);
                 }
 
                 public void contourClicked(ContourClickedEvent e) {
-                    fireSpiderDiagramClicked(nextSubdiagramIndex, e);
+                    fireSpiderDiagramClicked(subdiagramIndex, e);
                 }
             });
         } else if (diagramPanel instanceof SpiderDiagramPanel) {
@@ -417,7 +416,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             sdp.addSpiderDiagramClickListener(new SpiderDiagramClickListener() {
 
                 public void spiderDiagramClicked(SpiderDiagramClickEvent e) {
-                    fireSpiderDiagramClicked(nextSubdiagramIndex + e.getSubDiagramIndex(), e.getDetailedEvent());
+                    fireSpiderDiagramClicked(subdiagramIndex + e.getSubDiagramIndex(), e.getDetailedEvent());
                 }
             });
         } else if (diagramPanel instanceof NullSpiderDiagramPanel) {
@@ -425,7 +424,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             diagramPanel.addMouseListener(new MouseListener() {
 
                 public void mouseClicked(MouseEvent e) {
-                    fireSpiderDiagramClicked(nextSubdiagramIndex, null);
+                    fireSpiderDiagramClicked(subdiagramIndex, null);
                 }
 
                 public void mousePressed(MouseEvent e) {
@@ -444,7 +443,7 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             diagramPanel.addMouseListener(new MouseListener() {
 
                 public void mouseClicked(MouseEvent e) {
-                    fireSpiderDiagramClicked(nextSubdiagramIndex, null);
+                    fireSpiderDiagramClicked(subdiagramIndex, null);
                 }
 
                 public void mousePressed(MouseEvent e) {
@@ -479,9 +478,11 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
 
     private void drawPrefixDiagram(CompoundSpiderDiagram csd) throws CannotDrawException {
         if (csd != null && csd.getOperandCount() == 1) {
-            diagrams.add(registerSubdiagramClickListener(new OperatorPanel(csd.getOperator(), getFont()), 0));
-            diagrams.add(registerSubdiagramClickListener(DiagramVisualisation.getSpiderDiagramPanel(csd.getOperands().get(0)), 1));
-            refreshPrefSize();
+            diagrams.setLayout(new GridBagLayout());
+            addOperatorPanel(csd, 0);
+//            diagrams.add(registerSubdiagramClickListener(new OperatorPanel(csd.getOperator(), getFont()), 0));
+            addSpiderDiagramPanel(1, csd.getOperand(0), 1);
+//            diagrams.add(registerSubdiagramClickListener(DiagramVisualisation.getSpiderDiagramPanel(csd.getOperands().get(0)), 1));
         } else {
             throw new AssertionError(speedith.core.i18n.Translations.i18n("GERR_ILLEGAL_STATE"));
         }
@@ -494,7 +495,6 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
             diagrams.setLayout(new GridBagLayout());
             GridBagConstraints gbc = getSubdiagramLayoutConstraints(0, true, 1, 1);
             diagrams.add(registerSubdiagramClickListener(DiagramVisualisation.getSpiderDiagramPanel(psd), 0), gbc);
-            refreshPrefSize();
         }
     }
 
@@ -502,22 +502,6 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
         diagrams.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new java.awt.GridBagConstraints();
         diagrams.add(registerSubdiagramClickListener(new NullSpiderDiagramPanel(getFont()), 0), gbc);
-        refreshPrefSize();
-    }
-
-    private void refreshPrefSize() {
-//        Dimension prefSize = new Dimension();
-//        for (Component component : diagrams.getComponents()) {
-//            final Dimension curPrefSize = component.getPreferredSize();
-//            prefSize.height = Math.max(prefSize.height, curPrefSize.height);
-//            prefSize.width += curPrefSize.width + 40;
-//        }
-//        
-//        prefSize.height += 10;
-//        prefSize.width += 10;
-//        setPreferredSize(prefSize);
-//        setMinimumSize(prefSize);
-//        invalidate();
     }
 
     /**
