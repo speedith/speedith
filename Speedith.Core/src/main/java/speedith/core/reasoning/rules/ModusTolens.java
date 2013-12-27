@@ -37,13 +37,7 @@ import speedith.core.reasoning.args.SubDiagramIndexArg;
  */
 public class ModusTolens extends UnaryForwardRule {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    /**
-     * The name of this inference rule. <p>This value is returned by the
-     * {@link ImplicationTautology#getInferenceRuleName()} method.</p>
-     */
     public static final String InferenceRuleName = "Modus Tolens";
-    // </editor-fold>
 
     @Override
     protected Transformer getSententialTransformer(SubDiagramIndexArg arg) {

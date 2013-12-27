@@ -37,10 +37,6 @@ import speedith.core.reasoning.args.SubDiagramIndexArg;
  */
 public class IntroShadedZone extends UnaryForwardRule {
 
-    /**
-     * The name of this inference rule. <p>This value is returned by the
-     * {@link ImplicationTautology#getInferenceRuleName()} method.</p>
-     */
     public static final String InferenceRuleName = "Introduce Shaded Zone";
 
     @Override

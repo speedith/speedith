@@ -26,41 +26,19 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import speedith.core.lang.CompoundSpiderDiagram;
-import speedith.core.lang.IdTransformer;
-import speedith.core.lang.Operator;
-import speedith.core.lang.PrimarySpiderDiagram;
-import speedith.core.lang.Region;
-import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.TransformationException;
-import speedith.core.lang.Transformer;
-import speedith.core.lang.Zone;
+import speedith.core.lang.*;
 import speedith.core.reasoning.RuleApplicationInstruction;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
+
+import java.util.*;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class Combining extends UnaryForwardRule {
 
-    /**
-     * The name of this inference rule. <p>This value is returned by the
-     * {@link ImplicationTautology#getInferenceRuleName()} method.</p>
-     */
     public static final String InferenceRuleName = "Combining";
-
-    @Override
-    protected Transformer getSententialTransformer(SubDiagramIndexArg arg) {
-        return new IdTransformer();
-    }
 
     @Override
     public String getInferenceRuleName() {
@@ -82,7 +60,28 @@ public class Combining extends UnaryForwardRule {
         return SingletonContainer.Instruction;
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Helper Classes">
+    @Override
+    protected Transformer getSententialTransformer(SubDiagramIndexArg arg) {
+        return new IdTransformer();
+    }
+
+    private static boolean allHabitatsSingleZoned(PrimarySpiderDiagram diagram) {
+        if (diagram.getSpidersCount() > 0) {
+            SortedSet<String> spiders = diagram.getSpiders();
+            for (String spider : spiders) {
+                Region hab = diagram.getSpiderHabitat(spider);
+                if (hab.getZonesCount() != 1) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean anyShadedZoneInOneWithLessSpidersThanOther(PrimarySpiderDiagram rhs, PrimarySpiderDiagram lhs) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     private static final class SingletonContainer {
 
         private static final SelectSingleOperatorInstruction Instruction = new SelectSingleOperatorInstruction(Operator.Conjunction);
@@ -102,8 +101,8 @@ public class Combining extends UnaryForwardRule {
             // two unitary diagrams.
             if (diagramIndex == arg.getSubDiagramIndex()) {
                 if (Operator.Conjunction.equals(csd.getOperator())
-                        && csd.getOperand(0) instanceof PrimarySpiderDiagram
-                        && csd.getOperand(1) instanceof PrimarySpiderDiagram) {
+                    && csd.getOperand(0) instanceof PrimarySpiderDiagram
+                    && csd.getOperand(1) instanceof PrimarySpiderDiagram) {
                     PrimarySpiderDiagram rhs = (PrimarySpiderDiagram) csd.getOperand(1);
                     PrimarySpiderDiagram lhs = (PrimarySpiderDiagram) csd.getOperand(0);
                     // The two unitary diagrams must have the same sets of contours:
@@ -117,7 +116,7 @@ public class Combining extends UnaryForwardRule {
                     // No shaded zone in one diagram may have less spiders
                     // than the same zone in the other:
                     if (anyShadedZoneInOneWithLessSpidersThanOther(lhs, rhs)
-                            || anyShadedZoneInOneWithLessSpidersThanOther(rhs, lhs)) {
+                        || anyShadedZoneInOneWithLessSpidersThanOther(rhs, lhs)) {
                         throw new TransformationException("Could not apply the 'combining' rule. A shaded zone in one diagram has less spiders than the same zone in the other diagram.");
                     }
                     // Okay, everything is satisfied. Create a new unitary diagram
@@ -134,22 +133,4 @@ public class Combining extends UnaryForwardRule {
             return null;
         }
     }
-
-    private static boolean allHabitatsSingleZoned(PrimarySpiderDiagram diagram) {
-        if (diagram.getSpidersCount() > 0) {
-            SortedSet<String> spiders = diagram.getSpiders();
-            for (String spider : spiders) {
-                Region hab = diagram.getSpiderHabitat(spider);
-                if (hab.getZonesCount() != 1) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private static boolean anyShadedZoneInOneWithLessSpidersThanOther(PrimarySpiderDiagram rhs, PrimarySpiderDiagram lhs) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    //</editor-fold>
 }

@@ -57,7 +57,7 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
         SpiderRegionArg arg = getTypedRuleArgs(args);
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
         newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(new SplitSpiderTransformer(arg), false);
-        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
+        return createRuleApplicationResult(newSubgoals);
     }
     //</editor-fold>
 
@@ -136,7 +136,7 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
                 if (splitRegion.isSubregionOf(habitat) && splitRegion.getZonesCount() < habitat.getZonesCount() && splitRegion.getZonesCount() > 0) {
                     // The checking of arguments is done. We may apply the rule.
                     done = true;
-                    ArrayList<SpiderDiagram> sds = new ArrayList<SpiderDiagram>();
+                    ArrayList<SpiderDiagram> sds = new ArrayList<>();
                     sds.add(psd.addSpider(arg.getSpider(), splitRegion));
                     sds.add(psd.addSpider(arg.getSpider(), habitat.subtract(splitRegion)));
                     return SpiderDiagrams.createCompoundSD(Operator.Disjunction, sds, false);

@@ -100,6 +100,6 @@ public class CopyContours extends SimpleInferenceRule<MultipleRuleArgs> {
         SpiderDiagram targetSubgoal = getSubgoal(inferenceTarget, goals);
         int indexOfParent = targetSubgoal.getParentIndexOf(inferenceTarget.getSubDiagramIndex());
         newSubgoals[inferenceTarget.getSubgoalIndex()] = targetSubgoal.transform(new CopyContoursTransformer(indexOfParent, targetContours));
-        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
+        return createRuleApplicationResult(newSubgoals);
     }
 }

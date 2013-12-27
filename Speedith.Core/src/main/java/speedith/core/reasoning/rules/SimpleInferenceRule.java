@@ -91,6 +91,10 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
     public InferenceRuleProvider<TArgs> getProvider() {
         return this;
     }
+
+    public static RuleApplicationResult createRuleApplicationResult(SpiderDiagram[] newSubgoals) {
+        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Protected Helper Methods">
@@ -162,9 +166,6 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
     // <editor-fold defaultstate="collapsed" desc="Helper Methods (public static)">
     /**
      * See {@link InferenceRuleProvider#isForwardRule() }
-     *
-     * @param infRuleType
-     * @return
      */
     public static boolean isForwardRule(Class<? extends InferenceRule<?>> infRuleType) {
         return ForwardRule.class.isAssignableFrom(infRuleType);
@@ -172,9 +173,6 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
 
     /**
      * See {@link InferenceRuleProvider#isForwardRule() }
-     *
-     * @param infRuleType
-     * @return
      */
     public static boolean isForwardRule(InferenceRuleProvider<?> infRuleProvider) {
         return isForwardRule(infRuleProvider.getInferenceRuleType());
@@ -200,10 +198,6 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
      * <p>See {@link SimpleInferenceRule#getPositionType(java.util.ArrayList, java.util.ArrayList, int, int)
      * }
      * for more info.</p>
-     *
-     * @param parents
-     * @param childIndices
-     * @return
      */
     public static boolean isAtPositivePosition(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
         return getPositionType(parents, childIndices, -1, parents == null ? 0 : parents.size()) == PositivePosition;
@@ -229,11 +223,6 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
      * <p>See {@link SimpleInferenceRule#getPositionType(java.util.ArrayList, java.util.ArrayList, int, int)
      * }
      * for more info.</p>
-     *
-     * @param parents
-     * @param childIndices
-     * @param sourceParent
-     * @return
      */
     public static boolean isAtPositivePosition(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int sourceParent) {
         return getPositionType(parents, childIndices, sourceParent, parents == null ? 0 : parents.size()) == PositivePosition;
@@ -259,10 +248,6 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
      * <p>See {@link SimpleInferenceRule#getPositionType(java.util.ArrayList, java.util.ArrayList, int, int)
      * }
      * for more info.</p>
-     *
-     * @param parents
-     * @param childIndices
-     * @return
      */
     public static boolean isAtNegativePosition(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
         return getPositionType(parents, childIndices, -1, parents == null ? 0 : parents.size()) == NegativePosition;
@@ -288,11 +273,6 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
      * <p>See {@link SimpleInferenceRule#getPositionType(java.util.ArrayList, java.util.ArrayList, int, int)
      * }
      * for more info.</p>
-     *
-     * @param parents
-     * @param childIndices
-     * @param sourceParent
-     * @return
      */
     public static boolean isAtNegativePosition(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int sourceParent) {
         return getPositionType(parents, childIndices, sourceParent, parents == null ? 0 : parents.size()) == NegativePosition;
@@ -353,11 +333,6 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
      * <p>See {@link SimpleInferenceRule#getPositionType(java.util.ArrayList, java.util.ArrayList, int, int)
      * }
      * for more info.</p>
-     *
-     * @param parents
-     * @param childIndices
-     * @param sourceParent
-     * @return
      */
     public static int getPositionType(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices, int sourceParent) {
         return getPositionType(parents, childIndices, sourceParent, parents == null ? 0 : parents.size());
@@ -383,10 +358,6 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
      * <p>See {@link SimpleInferenceRule#getPositionType(java.util.ArrayList, java.util.ArrayList, int, int)
      * }
      * for more info.</p>
-     *
-     * @param parents
-     * @param childIndices
-     * @return
      */
     public static int getPositionType(ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
         return getPositionType(parents, childIndices, -1, parents == null ? 0 : parents.size());

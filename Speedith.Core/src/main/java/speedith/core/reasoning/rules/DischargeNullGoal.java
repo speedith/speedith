@@ -43,16 +43,13 @@ import speedith.core.reasoning.args.SubgoalIndexArg;
  */
 public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> implements BasicInferenceRule<SubgoalIndexArg> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
      * The name of this inference rule.
      * <p>This value is returned by the {@link SimpleInferenceRule#getInferenceRuleName()}
      * method.</p>
      */
     public static final String InferenceRuleName = "discharge_goal";
-    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
     @Override
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
         // Check that the arguments to this rule are of the correct type.
@@ -60,24 +57,25 @@ public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> impl
         // Check if the subgoal is a NullSpiderDiagram
         SpiderDiagram targetGoal = getSubgoal(arg, goals);
         if (targetGoal instanceof NullSpiderDiagram) {
-            // This rule changes the number of goals (it reduces it by one--it
-            // removes the selected subgoal).
-            SpiderDiagram[] newSubgoals = new SpiderDiagram[goals.getGoalsCount() - 1];
-            int cursg = 0, sgcount = 0;
-            for (SpiderDiagram goal : goals.getGoals()) {
-                if (cursg++ != arg.getSubgoalIndex()) {
-                    newSubgoals[sgcount++] = goal;
-                }
-            }
-            // Finally return the changed goals.
-            return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
+            SpiderDiagram[] newSubgoals = getGoalsWithoutSubgoal(goals, arg.getSubgoalIndex());
+            return createRuleApplicationResult(newSubgoals);
         } else {
             throw new RuleApplicationException(i18n("RULE_DISCHARGE_NULL_GOAL_NOT_APPLICABLE"));
         }
     }
-    //</editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="InferenceRuleProvider Implementation">
+    private SpiderDiagram[] getGoalsWithoutSubgoal(Goals goals, int subgoalIndex) {
+        SpiderDiagram[] newSubgoals = new SpiderDiagram[goals.getGoalsCount() - 1];
+        int currentGoalIndex = 0;
+        int newGoalsCount = 0;
+        for (SpiderDiagram goal : goals.getGoals()) {
+            if (currentGoalIndex++ != subgoalIndex) {
+                newSubgoals[newGoalsCount++] = goal;
+            }
+        }
+        return newSubgoals;
+    }
+
     @Override
     public DischargeNullGoal getInferenceRule() {
         return this;
@@ -112,5 +110,4 @@ public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> impl
     public RuleApplicationInstruction<SubgoalIndexArg> getInstructions() {
         return null;
     }
-    // </editor-fold>
 }

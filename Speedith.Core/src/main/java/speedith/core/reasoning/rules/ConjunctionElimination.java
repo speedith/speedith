@@ -58,7 +58,7 @@ public class ConjunctionElimination extends SimpleInferenceRule<SubDiagramIndexA
         SubDiagramIndexArg subDiagramIndexArg = getTypedRuleArgs(args);
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
         newSubgoals[subDiagramIndexArg.getSubgoalIndex()] = getSubgoal(subDiagramIndexArg, goals).transform(new ConjunctionEliminationTransformer(subDiagramIndexArg));
-        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
+        return createRuleApplicationResult(newSubgoals);
     }
     
     @Override

@@ -26,25 +26,17 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.ArrayList;
-import java.util.Locale;
 import speedith.core.i18n.Translations;
-import speedith.core.lang.CompoundSpiderDiagram;
-import speedith.core.lang.IdTransformer;
-import speedith.core.lang.NullSpiderDiagram;
-import speedith.core.lang.Operator;
-import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.SpiderDiagrams;
-import speedith.core.lang.TransformationException;
-import speedith.core.reasoning.BasicInferenceRule;
-import speedith.core.reasoning.Goals;
-import speedith.core.reasoning.RuleApplicationException;
-import speedith.core.reasoning.RuleApplicationResult;
+import speedith.core.lang.*;
+import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
-import static speedith.core.i18n.Translations.*;
-import speedith.core.reasoning.*;
 import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
+
+import java.util.ArrayList;
+import java.util.Locale;
+
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * The implementation of the <span style="font-weight:bold">implication
@@ -56,15 +48,12 @@ import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstructio
  */
 public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg>, ForwardRule<SubDiagramIndexArg> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
      * The name of this inference rule. <p>This value is returned by the {@link ImplicationTautology#getInferenceRuleName()}
      * method.</p>
      */
     public static final String InferenceRuleName = "implication_tautology";
-    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
     @Override
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
         // Check that the arguments to this rule are of the correct type.
@@ -75,18 +64,14 @@ public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg
         // Now apply the rewrite on the chosen subgoal.
         newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(new IdempotencyTransformer(arg), false);
         // Finally return the changed goals.
-        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
+        return createRuleApplicationResult(newSubgoals);
     }
-    //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Forward Rule">
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
         return apply(args, goals);
     }
-    //</editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="InferenceRuleProvider Implementation">
     @Override
     public ImplicationTautology getInferenceRule() {
         return this;
@@ -121,10 +106,8 @@ public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg
     public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
         return SingletonContainer.Instruction;
     }
-    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Helper Classes">
-    private  static final class SingletonContainer {
+    private static final class SingletonContainer {
         private static final SelectSingleOperatorInstruction Instruction = new SelectSingleOperatorInstruction(Operator.Implication, Operator.Equivalence);
     }
 
@@ -154,5 +137,4 @@ public class ImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg
             return null;
         }
     }
-    //</editor-fold>
 }

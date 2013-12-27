@@ -56,7 +56,7 @@ public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> {
         ArrayList<ContourArg> contourArgs = ContourArg.getContourArgsFrom(getTypedRuleArgs(args));
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
         newSubgoals[contourArgs.get(0).getSubgoalIndex()] = getSubgoal(contourArgs.get(0), goals).transform(new RemoveContoursTransformer(contourArgs));
-        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
+        return createRuleApplicationResult(newSubgoals);
     }
 
     @Override

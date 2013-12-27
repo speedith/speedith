@@ -115,7 +115,7 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
         SpiderRegionArg arg = getTypedRuleArgs(args);
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
         newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(new AddFeetTransformer(arg, applyForward));
-        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
+        return createRuleApplicationResult(newSubgoals);
     }
     //</editor-fold>
 

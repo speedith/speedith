@@ -26,20 +26,16 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.ArrayList;
-import java.util.Locale;
 import speedith.core.i18n.Translations;
-import static speedith.core.i18n.Translations.*;
-import speedith.core.lang.CompoundSpiderDiagram;
-import speedith.core.lang.IdTransformer;
-import speedith.core.lang.NullSpiderDiagram;
-import speedith.core.lang.PrimarySpiderDiagram;
-import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.TransformationException;
-import speedith.core.lang.Transformer;
+import speedith.core.lang.*;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
+
+import java.util.ArrayList;
+import java.util.Locale;
+
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * The base class for all forward inference rules that take one spider diagram
@@ -51,25 +47,11 @@ public abstract class UnaryForwardRule
         extends SimpleInferenceRule<SubDiagramIndexArg>
         implements BasicInferenceRule<SubDiagramIndexArg>, ForwardRule<SubDiagramIndexArg> {
 
-    //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
     @Override
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
         return apply(args, goals, ApplyStyle.GoalBased);
     }
 
-    protected RuleApplicationResult apply(final RuleArg args, Goals goals, ApplyStyle applyStyle) throws RuleApplicationException {
-        SubDiagramIndexArg arg = getTypedRuleArgs(args);
-        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
-        newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(getSententialTransformer(arg));
-        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
-    }
-    //</editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Sentential Rule-Specific Stuff">
-    protected abstract Transformer getSententialTransformer(SubDiagramIndexArg arg);
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="InferenceRuleProvider Implementation">
     @Override
     public UnaryForwardRule getInferenceRule() {
         return this;
@@ -84,16 +66,21 @@ public abstract class UnaryForwardRule
     public Class<SubDiagramIndexArg> getArgumentType() {
         return SubDiagramIndexArg.class;
     }
-    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Forward Rule">
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
         return apply(args, goals, ApplyStyle.Forward);
     }
-    //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Helper Classes">
+    protected RuleApplicationResult apply(final RuleArg args, Goals goals, ApplyStyle applyStyle) throws RuleApplicationException {
+        SubDiagramIndexArg arg = getTypedRuleArgs(args);
+        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
+        newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(getSententialTransformer(arg));
+        return createRuleApplicationResult(newSubgoals);
+    }
+
+    protected abstract Transformer getSententialTransformer(SubDiagramIndexArg arg);
+
     protected static abstract class UnaryForwardTransformer extends IdTransformer {
 
         private final SubDiagramIndexArg arg;
@@ -162,5 +149,4 @@ public abstract class UnaryForwardRule
             return sd;
         }
     }
-    //</editor-fold>
 }

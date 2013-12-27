@@ -69,7 +69,7 @@ public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> impleme
         SubDiagramIndexArg arg = getTypedRuleArgs(args);
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
         newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(new IdempotencyTransformer(arg), false);
-        return new RuleApplicationResult(Goals.createGoalsFrom(newSubgoals));
+        return createRuleApplicationResult(newSubgoals);
     }
     //</editor-fold>
 
