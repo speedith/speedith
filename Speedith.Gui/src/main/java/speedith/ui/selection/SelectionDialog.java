@@ -43,12 +43,8 @@ import speedith.core.reasoning.args.selection.SelectionStepAny;
  */
 public class SelectionDialog extends javax.swing.JDialog {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
     private boolean cancelled = true;
-//    private boolean closeOnFinish = false;
-    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
      * Creates a new diagram selection dialog with a null diagram and a single
      * {@link SelectionStepAny select-any-element step}.
@@ -93,7 +89,6 @@ public class SelectionDialog extends javax.swing.JDialog {
         this(parent, modal);
         elementSelectionPanel.setDiagramAndSelectionSteps(diagram, selectionSteps);
     }
-    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Generated Code">
     /**
@@ -190,7 +185,6 @@ public class SelectionDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
     //</editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Public Properties">
     /**
      * Returns the current selection made by the user.
      *
@@ -210,27 +204,4 @@ public class SelectionDialog extends javax.swing.JDialog {
     public boolean isCancelled() {
         return cancelled;
     }
-
-//    /**
-//     * This value indicates whether the dialog should automatically close itself
-//     * when the selection finishes.
-//     *
-//     * @return value that indicates whether the dialog should automatically
-//     * close itself when the selection finishes.
-//     */
-//    public boolean isCloseOnFinish() {
-//        return closeOnFinish;
-//    }
-//
-//    /**
-//     * Sets a new value that indicates whether the dialog should automatically
-//     * close itself when the selection finishes.
-//     *
-//     * @param closeOnFinish the new value that indicates whether the dialog
-//     * should automatically close itself when the selection finishes.
-//     */
-//    public void setCloseOnFinish(boolean closeOnFinish) {
-//        this.closeOnFinish = closeOnFinish;
-//    }
-    // </editor-fold>
 }

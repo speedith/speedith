@@ -92,8 +92,7 @@ public class TestingForm extends javax.swing.JFrame {
         RuleApplicationInstruction<?> instructions = splitSpiders.getProvider().getInstructions();
         SelectionDialog dsd = new SelectionDialog(this, true, proofPanel1.getLastGoals().getGoalAt(0), instructions.getSelectionSteps());
         dsd.setVisible(true);
-        if (dsd.isCancelled()) {
-        } else {
+        if (!dsd.isCancelled()) {
             RuleArg ruleArg = instructions.extractRuleArg(dsd.getSelection(), 0);
             try {
                 proofPanel1.applyRule(splitSpiders, ruleArg);

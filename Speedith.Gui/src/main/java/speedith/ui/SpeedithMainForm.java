@@ -648,10 +648,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
 
     private void applyRule(InfRuleListItem selectedRule) {
-        Proof proof = proofPanel1;
         int subgoalIndex = 0;
         try {
-            InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proof);
+            InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proofPanel1);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
         }
