@@ -30,16 +30,16 @@ public class DiagramTestPortfolio implements Serializable {
 
     public DiagramTestPortfolio() {
         this.spiderDiagrams = new ArrayList<>(asList(
-                doubleNegate(SINGLE_CONTOUR_A_DIAGRAM),
-                DIAGRAM_SPEEDITH_PAPER_FIG7_5,
-                SINGLE_CONTOUR_A_DIAGRAM,
-                new ZoneTransfer(DIAGRAM_SPEEDITH_PAPER_FIG7_2, DIAGRAM_SPEEDITH_PAPER_FIG7_1).transferContour("D"),
+                DIAGRAM_SPEEDITH_PAPER_FIG2_D1,
+                DIAGRAM_SPEEDITH_PAPER_FIG2_D2,
                 DIAGRAM_SPEEDITH_PAPER_FIG7_1,
                 DIAGRAM_SPEEDITH_PAPER_FIG7_2,
                 DIAGRAM_SPEEDITH_PAPER_FIG7_3,
+                DIAGRAM_SPEEDITH_PAPER_FIG7_5,
+                doubleNegate(SINGLE_CONTOUR_A_DIAGRAM),
+                SINGLE_CONTOUR_A_DIAGRAM,
+                new ZoneTransfer(DIAGRAM_SPEEDITH_PAPER_FIG7_2, DIAGRAM_SPEEDITH_PAPER_FIG7_1).transferContour("D"),
                 TestSpiderDiagrams.getDiagramSpeedithPaper_Fig2_D2("E", "A"),
-                DIAGRAM_SPEEDITH_PAPER_FIG2_D1,
-                DIAGRAM_SPEEDITH_PAPER_FIG2_D2,
                 DIAGRAM_SPEEDITH_PAPER_FIG2_D1Prime,
                 new ZoneTransfer(TestSpiderDiagrams.getDiagramSpeedithPaper_Fig2_D2("E", "A"), TestSpiderDiagrams.DIAGRAM_SPEEDITH_PAPER_FIG2_D1).transferContour("E"),
                 new ZoneTransfer(TestSpiderDiagrams.getDiagramABCWhereCContainsA(), TestSpiderDiagrams.getVenn2Diagram("B", "C")).transferContour("A"),

@@ -129,7 +129,7 @@ public class PrimarySpiderDiagramTest {
         CompoundSpiderDiagram csd = (CompoundSpiderDiagram) TestSpiderDiagrams.readSpiderDiagramFromSDTFile(0);
         PrimarySpiderDiagram psd = (PrimarySpiderDiagram) csd.getOperand(0);
         Zone z = Zone.fromInContours("A", "B");
-        assertEquals(new TreeSet<>(Arrays.asList("s")), psd.getSpidersInZone(z));
+        assertEquals(new TreeSet<>(Arrays.asList("s1")), psd.getSpidersInZone(z));
         assertEquals(new TreeSet<String>(), psd.getSpidersInZone(Zone.fromOutContours("A", "B")));
 
         csd = (CompoundSpiderDiagram) TestSpiderDiagrams.readSpiderDiagramFromSDTFile(1);

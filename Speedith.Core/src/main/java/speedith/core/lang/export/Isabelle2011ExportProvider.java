@@ -26,16 +26,19 @@
  */
 package speedith.core.lang.export;
 
+import propity.util.Sequences;
+import propity.util.Sets;
+import speedith.core.lang.*;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
-import static speedith.core.i18n.Translations.*;
-import speedith.core.lang.*;
-import propity.util.Sequences;
-import propity.util.Sets;
+
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * The provider for exporting spider diagrams to Isabelle 2011 formulae.
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class Isabelle2011ExportProvider extends SDExportProvider {
@@ -74,6 +77,11 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         return i18n(locale, ParameterDescriptions.Parameters.get(parameter));
     }
 
+    private static interface PrintCallback {
+
+        void print(Writer output) throws IOException;
+    }
+
     /**
      * The actual exporter class. This class does the actual translation from
      * spider diagrams to Isabelle's formulas.
@@ -83,14 +91,11 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         // TODO: Maybe I should write a generic pretty
         // printer, which takes into account precedence order of operators in
         // Isabelle automatically?
-        // <editor-fold defaultstate="collapsed" desc="Fields">
         public static final String ISA_SYM_EX = "EX";
         public static final String ISA_XSYM_EXISTS = "∃";
         private boolean useXSymbols;
         private boolean useML;
-        // </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc="Constructors">
         public Exporter() {
             this(false, false);
         }
@@ -99,9 +104,20 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
             this.useXSymbols = useXSymbols;
             this.useML = useML;
         }
-        // </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc="Isabelle Symbol/Operator Print Methods">
+        @Override
+        public void exportTo(SpiderDiagram sd, Writer output) throws IOException, ExportException {
+            if (output == null) {
+                throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "output"));
+            }
+            if (useML) {
+                exportDiagramML(sd, output);
+            } else {
+                exportDiagram(sd, output);
+            }
+            output.flush();
+        }
+
         private Writer printAnd(Writer output) throws IOException {
             if (useXSymbols) {
                 return output.append(' ').append("\\<and>").append(' ');
@@ -233,21 +249,6 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
                 printAnd(output);
             }
         }
-        // </editor-fold>
-
-        // <editor-fold defaultstate="collapsed" desc="Export Methods">
-        @Override
-        public void exportTo(SpiderDiagram sd, Writer output) throws IOException, ExportException {
-            if (output == null) {
-                throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "output"));
-            }
-            if (useML) {
-                exportDiagramML(sd, output);
-            } else {
-                exportDiagram(sd, output);
-            }
-            output.flush();
-        }
 
         private void exportNullDiagram(Writer output) throws IOException {
             printTrue(output);
@@ -284,14 +285,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         private void exportPrimaryDiagram(PrimarySpiderDiagram psd, Writer output) throws IOException {
             output.append('(');
             SortedSet<String> spiders = psd.getSpiders();
-            if (psd.getSpidersCount() > 0) {
-                Iterator<String> itr = spiders.iterator();
-                printExists(output).append(itr.next());
-                while (itr.hasNext()) {
-                    output.append(' ').append(itr.next());
-                }
-                output.append(". ");
-            }
+            exportExistsHeader(psd, output, spiders);
             exportSpidersDistinct(psd, output, false);
             if (psd.getHabitatsCount() < 1 && psd.getShadedZonesCount() < 1) {
                 printTrue(output);
@@ -302,15 +296,33 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
             output.append(')');
         }
 
+        private void exportExistsHeader(PrimarySpiderDiagram psd, Writer output, SortedSet<String> spiders) throws IOException {
+            if (psd.getSpidersCount() > 0) {
+                Iterator<String> itr = spiders.iterator();
+                printExists(output).append(itr.next());
+                while (itr.hasNext()) {
+                    output.append(' ').append(itr.next());
+                }
+                output.append(". ");
+            }
+        }
+
         private void exportShadedZones(PrimarySpiderDiagram psd, Writer output, SortedSet<String> spiders) throws IOException {
             if (psd.getShadedZonesCount() > 0) {
                 SortedSet<Zone> shadedZones = psd.getShadedZones();
                 Iterator<Zone> itr = shadedZones.iterator();
-                Zone zone = itr.next();
-                exportZone(zone, output);
-                printSubsetEq(output);
-                Sets.printSet(spiders, output);
+                exportShadedZone(output, spiders, itr.next());
+                while (itr.hasNext()) {
+                    printHolOrMlAnd(output, useML);
+                    exportShadedZone(output, spiders, itr.next());
+                }
             }
+        }
+
+        private void exportShadedZone(Writer output, SortedSet<String> spiders, Zone zone) throws IOException {
+            exportZone(zone, output);
+            printSubsetEq(output);
+            Sets.printSet(spiders, output);
         }
 
         private void exportHabitats(PrimarySpiderDiagram psd, Writer output, boolean useML) throws IOException {
@@ -450,13 +462,13 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
                 if (needsParens) {
                     output.append(')');
                 }
-                if (someOuts) {
-                    output.append(" - ");
-                }
             }
             if (someOuts) {
+                printSpaceIfSomethingInFront(output, someIns);
+                output.append("-");
+                printSpaceIfSomethingInFront(output, someIns);
                 Iterator<String> itr = outContours.iterator();
-                boolean needsParens = someIns && outContours.size() > 1;
+                boolean needsParens = outContours.size() > 1;
                 if (needsParens) {
                     output.append('(');
                 }
@@ -469,9 +481,13 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
                 }
             }
         }
-        // </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc="Helper Classes">
+        private void printSpaceIfSomethingInFront(Writer output, boolean isSomethingInFront) throws IOException {
+            if (isSomethingInFront) {
+                output.append(" ");
+            }
+        }
+
         private class EqOperatorPrinter implements PrintCallback {
 
             @Override
@@ -503,26 +519,16 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
                 printImp(output);
             }
         }
-        // </editor-fold>
     }
 
-    // <editor-fold defaultstate="collapsed" desc="Parameter Descriptions">
     private static final class ParameterDescriptions {
 
         public static final TreeMap<String, String> Parameters;
 
         static {
-            Parameters = new TreeMap<String, String>();
+            Parameters = new TreeMap<>();
             Parameters.put(Parameter_UseXSymbols, "ISABELE_EXPORT_PAR_USE_X_SYMBOLS_DESCRIPTION");
             Parameters.put(Parameter_ML, "ISABELE_EXPORT_PAR_ML_DESCRIPTION");
         }
     }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Callback Interfaces">
-    private static interface PrintCallback {
-
-        void print(Writer output) throws IOException;
-    }
-    // </editor-fold>
 }
