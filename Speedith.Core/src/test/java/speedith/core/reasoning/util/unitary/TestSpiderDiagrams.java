@@ -37,6 +37,10 @@ public class TestSpiderDiagrams {
     public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG7_5 = getDiagramFromSpeedithPaper_Fig7_5th();
     public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG7_3_SHADED_C = getDiagramFromSpeedithPaper_Fig7_3rd_shaded();
 
+    public static SpiderDiagram diagramSpeedithPaperFig7Goal() {
+        return tryReadSpiderDiagramFromSDTFile(3);
+    }
+
     public static PrimarySpiderDiagram getDiagramSpeedithPaper_Fig2_D2(String outsideContour, String insideContour) {
         String contourC = "C";
         String contourF = "F";

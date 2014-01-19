@@ -2,15 +2,11 @@ package speedith.core.lang.export;
 
 import org.junit.Test;
 import speedith.core.lang.*;
+import speedith.core.reasoning.InferenceRuleProvider;
 import speedith.core.reasoning.InferenceRules;
 import speedith.core.reasoning.RuleApplicationException;
-import speedith.core.reasoning.args.RuleArg;
-import speedith.core.reasoning.args.SpiderRegionArg;
-import speedith.core.reasoning.args.SubDiagramIndexArg;
-import speedith.core.reasoning.rules.AddFeet;
-import speedith.core.reasoning.rules.Idempotency;
-import speedith.core.reasoning.rules.ImplicationTautology;
-import speedith.core.reasoning.rules.SplitSpiders;
+import speedith.core.reasoning.args.*;
+import speedith.core.reasoning.rules.*;
 import speedith.core.reasoning.util.unitary.TestSpiderDiagrams;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -18,6 +14,7 @@ import static org.junit.Assert.assertThat;
 import static speedith.core.lang.SpiderDiagrams.createCompoundSD;
 import static speedith.core.lang.SpiderDiagrams.createNullSD;
 import static speedith.core.reasoning.Goals.createGoalsFrom;
+import static speedith.core.reasoning.util.unitary.TestSpiderDiagrams.diagramSpeedithPaperFig7Goal;
 
 public class Isabelle2011ExportProviderTest {
 
@@ -57,33 +54,56 @@ public class Isabelle2011ExportProviderTest {
         assertInferenceStep(ImplicationTautology.InferenceRuleName, new SubDiagramIndexArg(0, 0), diagram7, "True");
     }
 
+    @Test
+    public void speedith_paper_fig7_proof() throws ExportException, RuleApplicationException {
+        SpiderDiagram initialGoal = assertFig7InitialGoal();
+        SpiderDiagram subgoal1 = assertInferenceStep(new CopyContours(), new MultipleRuleArgs(new ContourArg(0, 3, "D")), initialGoal, "(EX s. s : (C - (A Un B Un D)) Un ((C Int D) - (A Un B)) & (A Int B Int C) - D <= {s} & A Int B Int C Int D <= {s} & (A Int B Int D) - C <= {s} & (A Int C) - (B Un D) <= {s} & (A Int C Int D) - B <= {s} & (A Int D) - (B Un C) <= {s} & B - (A Un C Un D) <= {s} & (B Int C) - (A Un D) <= {s} & (B Int C Int D) - A <= {s} & (B Int D) - (A Un C) <= {s} & D - (A Un B Un C) <= {s}) & (EX s1 s2. distinct[s1, s2] & s1 : -(C Un D) & s2 : (C - D) Un (C Int D) & C - D <= {s1, s2} & D - C <= {s1, s2}) --> (EX s s1. distinct[s, s1] & s : (-(B Un D)) Un (D - B) & s1 : (-(B Un D)) Un (B - D) & B Int D <= {s, s1})");
+        SpiderDiagram subgoal2 = assertInferenceStep(new CopySpider(), new SpiderArg(0, 3, "s1"), subgoal1, "(EX s s1. distinct[s, s1] & s : (C - (A Un B Un D)) Un ((C Int D) - (A Un B)) & s1 : (-(A Un B Un C Un D)) Un (A - (B Un C Un D)) Un ((A Int B) - (C Un D)) & (A Int B Int C) - D <= {s, s1} & A Int B Int C Int D <= {s, s1} & (A Int B Int D) - C <= {s, s1} & (A Int C) - (B Un D) <= {s, s1} & (A Int C Int D) - B <= {s, s1} & (A Int D) - (B Un C) <= {s, s1} & B - (A Un C Un D) <= {s, s1} & (B Int C) - (A Un D) <= {s, s1} & (B Int C Int D) - A <= {s, s1} & (B Int D) - (A Un C) <= {s, s1} & D - (A Un B Un C) <= {s, s1}) & (EX s1 s2. distinct[s1, s2] & s1 : -(C Un D) & s2 : (C - D) Un (C Int D) & C - D <= {s1, s2} & D - C <= {s1, s2}) --> (EX s s1. distinct[s, s1] & s : (-(B Un D)) Un (D - B) & s1 : (-(B Un D)) Un (B - D) & B Int D <= {s, s1})");
+        SpiderDiagram subgoal3 = assertInferenceStep(new CopyShading(), new MultipleRuleArgs(new ZoneArg(0, 3, Zone.fromInContours("C").withOutContours("D"))), subgoal2, "(EX s s1. distinct[s, s1] & s : (C - (A Un B Un D)) Un ((C Int D) - (A Un B)) & s1 : (-(A Un B Un C Un D)) Un (A - (B Un C Un D)) Un ((A Int B) - (C Un D)) & (A Int B Int C) - D <= {s, s1} & A Int B Int C Int D <= {s, s1} & (A Int B Int D) - C <= {s, s1} & (A Int C) - (B Un D) <= {s, s1} & (A Int C Int D) - B <= {s, s1} & (A Int D) - (B Un C) <= {s, s1} & B - (A Un C Un D) <= {s, s1} & (B Int C) - (A Un D) <= {s, s1} & (B Int C Int D) - A <= {s, s1} & (B Int D) - (A Un C) <= {s, s1} & C - (A Un B Un D) <= {s, s1} & D - (A Un B Un C) <= {s, s1}) & (EX s1 s2. distinct[s1, s2] & s1 : -(C Un D) & s2 : (C - D) Un (C Int D) & C - D <= {s1, s2} & D - C <= {s1, s2}) --> (EX s s1. distinct[s, s1] & s : (-(B Un D)) Un (D - B) & s1 : (-(B Un D)) Un (B - D) & B Int D <= {s, s1})");
+        SpiderDiagram subgoal4 = assertInferenceStep(new ConjunctionElimination(), new SubDiagramIndexArg(0, 1), subgoal3, "(EX s s1. distinct[s, s1] & s : (C - (A Un B Un D)) Un ((C Int D) - (A Un B)) & s1 : (-(A Un B Un C Un D)) Un (A - (B Un C Un D)) Un ((A Int B) - (C Un D)) & (A Int B Int C) - D <= {s, s1} & A Int B Int C Int D <= {s, s1} & (A Int B Int D) - C <= {s, s1} & (A Int C) - (B Un D) <= {s, s1} & (A Int C Int D) - B <= {s, s1} & (A Int D) - (B Un C) <= {s, s1} & B - (A Un C Un D) <= {s, s1} & (B Int C) - (A Un D) <= {s, s1} & (B Int C Int D) - A <= {s, s1} & (B Int D) - (A Un C) <= {s, s1} & C - (A Un B Un D) <= {s, s1} & D - (A Un B Un C) <= {s, s1}) --> (EX s s1. distinct[s, s1] & s : (-(B Un D)) Un (D - B) & s1 : (-(B Un D)) Un (B - D) & B Int D <= {s, s1})");
+        assertInferenceStep(new RemoveContour(), new MultipleRuleArgs(new ContourArg(0, 1, "A"), new ContourArg(0, 1, "C")), subgoal4, "(EX s s1. distinct[s, s1] & s : (-(B Un D)) Un (D - B) & s1 : (-(B Un D)) Un (B - D) & B Int D <= {s, s1}) --> (EX s s1. distinct[s, s1] & s : (-(B Un D)) Un (D - B) & s1 : (-(B Un D)) Un (B - D) & B Int D <= {s, s1})");
+    }
+
+    private SpiderDiagram assertFig7InitialGoal() throws ExportException {
+        SpiderDiagram initialGoal = diagramSpeedithPaperFig7Goal();
+        String expectedIsaFormula = "(EX s. s : C - (A Un B) & A Int B Int C <= {s} & (A Int C) - B <= {s} & B - (A Un C) <= {s} & (B Int C) - A <= {s}) & (EX s1 s2. distinct[s1, s2] & s1 : -(C Un D) & s2 : (C - D) Un (C Int D) & C - D <= {s1, s2} & D - C <= {s1, s2}) --> (EX s s1. distinct[s, s1] & s : (-(B Un D)) Un (D - B) & s1 : (-(B Un D)) Un (B - D) & B Int D <= {s, s1})";
+        assertExport(initialGoal, expectedIsaFormula);
+        return initialGoal;
+    }
+
     private SpiderDiagram assertFig1InitialGoal() throws ExportException {
         SpiderDiagram diagram1 = TestSpiderDiagrams.tryReadSpiderDiagramFromSDTFile(0);
         String expectedIsaFormula1 = "(EX s1 s2. distinct[s1, s2] & s1 : A Int B & s2 : (A - B) Un (B - A)) --> (EX t1 t2. distinct[t1, t2] & t1 : (A - B) Un (A Int B) & t2 : (A Int B) Un (B - A))";
-        assertFormulaEquals(expectedIsaFormula1, isabelleExporter.export(diagram1));
-        return diagram1;
+        return assertExport(diagram1, expectedIsaFormula1);
     }
 
-    private SpiderDiagram assertFig1_Steps2_to_6_AddFoot(SpiderDiagram diagram, int subDiagramIndex, String spider, Zone zoneOfNewFoot, String exptecedIsaFormula) throws RuleApplicationException, ExportException {
-        return assertInferenceStep(AddFeet.InferenceRuleName, new SpiderRegionArg(0, subDiagramIndex, spider, new Region(zoneOfNewFoot)), diagram, exptecedIsaFormula);
+    private SpiderDiagram assertExport(SpiderDiagram diagram, String expectedIsaFormula) throws ExportException {
+        assertFormulaEquals(expectedIsaFormula, isabelleExporter.export(diagram));
+        return diagram;
     }
 
-    private SpiderDiagram assertInferenceStep(String inferenceRuleName, RuleArg ruleArg, SpiderDiagram diagram, String exptecedIsaFormula) throws RuleApplicationException, ExportException {
-        SpiderDiagram diagramWithNewFoot = applyRule(inferenceRuleName, diagram, ruleArg);
-        assertFormulaEquals(exptecedIsaFormula, isabelleExporter.export(diagramWithNewFoot));
-        return diagramWithNewFoot;
+    private SpiderDiagram assertFig1_Steps2_to_6_AddFoot(SpiderDiagram diagram, int subDiagramIndex, String spider, Zone zoneOfNewFoot, String expectedIsaFormula) throws RuleApplicationException, ExportException {
+        return assertInferenceStep(AddFeet.InferenceRuleName, new SpiderRegionArg(0, subDiagramIndex, spider, new Region(zoneOfNewFoot)), diagram, expectedIsaFormula);
     }
 
     private SpiderDiagram assertFig1Step1_SplitSpider(SpiderDiagram diagram) throws RuleApplicationException, ExportException {
         SpiderRegionArg regionOfSplit = new SpiderRegionArg(0, 1, "s2", new Region(zone_A_B));
         SpiderDiagram diagram2 = applyRule(SplitSpiders.InferenceRuleName, diagram, regionOfSplit);
         String expectedIsaFormula2 = "(EX s1 s2. distinct[s1, s2] & s1 : A Int B & s2 : A - B) | (EX s1 s2. distinct[s1, s2] & s1 : A Int B & s2 : B - A) --> (EX t1 t2. distinct[t1, t2] & t1 : (A - B) Un (A Int B) & t2 : (A Int B) Un (B - A))";
-        assertFormulaEquals(expectedIsaFormula2, isabelleExporter.export(diagram2));
-        return diagram2;
+        return assertExport(diagram2, expectedIsaFormula2);
     }
 
     private SpiderDiagram applyRule(String inferenceRuleName, SpiderDiagram inferenceTarget, RuleArg ruleArguments) throws RuleApplicationException {
         return InferenceRules.getInferenceRule(inferenceRuleName).apply(ruleArguments, createGoalsFrom(inferenceTarget)).getGoals().getGoalAt(0);
+    }
+
+    private SpiderDiagram assertInferenceStep(String inferenceRuleName, RuleArg ruleArg, SpiderDiagram diagram, String expectedIsaFormula) throws RuleApplicationException, ExportException {
+        SpiderDiagram diagramWithNewFoot = applyRule(inferenceRuleName, diagram, ruleArg);
+        return assertExport(diagramWithNewFoot, expectedIsaFormula);
+    }
+
+    private <T extends RuleArg> SpiderDiagram assertInferenceStep(InferenceRuleProvider<T> inferenceRule, T ruleArg, SpiderDiagram diagram, String expectedIsaFormula) throws RuleApplicationException, ExportException {
+        return assertInferenceStep(inferenceRule.getInferenceRuleName(), ruleArg, diagram, expectedIsaFormula);
     }
 
     private void assertFormulaEquals(String expectedIsaFormula, String isaFormula) {

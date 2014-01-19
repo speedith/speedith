@@ -46,7 +46,7 @@ public class CopyContours extends SimpleInferenceRule<MultipleRuleArgs> {
     /**
      * The name of this inference rule.
      */
-    private static final String InferenceRuleName = "copy_contours";
+    public static final String InferenceRuleName = "copy_contours";
 
     @Override
     public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
