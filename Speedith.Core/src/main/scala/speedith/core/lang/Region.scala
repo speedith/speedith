@@ -3,6 +3,7 @@ package speedith.core.lang
 import scala.collection.JavaConversions.{setAsJavaSet, asJavaCollection, iterableAsScalaIterable, asScalaSet}
 import propity.util.Sets
 import java.util.Collections
+import java.lang.StringBuilder
 
 case class Region(zones: Set[Zone]) extends Comparable[Region] {
 
@@ -52,11 +53,6 @@ case class Region(zones: Set[Zone]) extends Comparable[Region] {
     zones.contains(zone)
   }
 
-  def toString(stringBuilder: Appendable): Appendable = {
-    SpiderDiagram.printZoneList(stringBuilder, sortedZones)
-    stringBuilder
-  }
-
   def getZonesCount: Int = {
     zones.size
   }
@@ -71,5 +67,14 @@ case class Region(zones: Set[Zone]) extends Comparable[Region] {
 
   def compareTo(otherRegion: Region): Int = {
     Sets.compareNaturally(sortedZones, otherRegion.sortedZones)
+  }
+
+  def toString(stringBuilder: Appendable): Appendable = {
+    SpiderDiagram.printZoneList(stringBuilder, sortedZones)
+    stringBuilder
+  }
+
+  override def toString: String = {
+    toString(new StringBuilder()).toString
   }
 }
