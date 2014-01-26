@@ -34,7 +34,7 @@ case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) ex
         SpiderDiagrams.createPrimarySD(
           psd.getSpiders,
           psd.getHabitats.map {
-            case (spider, habitat) => (spider, new Region(regionWithoutContours(habitat.getZones)))
+            case (spider, habitat) => (spider, new Region(regionWithoutContours(habitat.zones)))
           },
           shadedRegionWithoutContours(psd.getShadedZones.toSet),
           regionWithoutContours(psd.getPresentZones)

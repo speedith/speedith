@@ -26,7 +26,7 @@ class ContourRelations(diagram: PrimarySpiderDiagram) {
   }
 
   private def spiderExistsInAButOutsideB(contourA: String, contourB: String): Boolean = {
-    diagram.getHabitats.values().flatMap(_.getZones).exists(habitatZone =>
+    diagram.getHabitats.values().flatMap(_.zones).exists(habitatZone =>
       isZoneInAButNotB(habitatZone, contourA, contourB)
     )
   }
@@ -36,7 +36,7 @@ class ContourRelations(diagram: PrimarySpiderDiagram) {
   }
 
   private def noSharedContoursHaveSpiders(contourA: String, contourB: String): Boolean = {
-    val allZonesWithSpiders = diagram.getHabitats.values().flatMap(_.getZones).toIterable
+    val allZonesWithSpiders = diagram.getHabitats.values().flatMap(_.zones).toIterable
     allZonesWithSpiders.forall(zoneWithSpider => !Zones.isZonePartOfAllContours(zoneWithSpider, contourA, contourB))
   }
 

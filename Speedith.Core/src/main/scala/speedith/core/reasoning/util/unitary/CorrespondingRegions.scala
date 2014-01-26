@@ -32,7 +32,7 @@ case class CorrespondingRegions(sourceDiagram: PrimarySpiderDiagram, destination
   private def getRegionWhenSourceContoursAreSubset(regionInSourceDiagram: Region): mutable.Buffer[Zone] = {
     allPossibleZonesInDestination.filter {
       destinationZone =>
-        regionInSourceDiagram.getZones.exists {
+        regionInSourceDiagram.zones.exists {
           sourceZone =>
             sourceZone.getInContours.subsetOf(destinationZone.getInContours) &&
               sourceZone.getOutContours.subsetOf(destinationZone.getOutContours)
@@ -46,7 +46,7 @@ case class CorrespondingRegions(sourceDiagram: PrimarySpiderDiagram, destination
       destinationZone =>
         destinationDiagram.getShadedZones.contains(destinationZone) &&
           !destinationDiagram.getHabitats.exists {
-            case (spider, habitat) => habitat.getZones.contains(destinationZone)
+            case (spider, habitat) => habitat.zones.contains(destinationZone)
           }
     }
   }
@@ -54,7 +54,7 @@ case class CorrespondingRegions(sourceDiagram: PrimarySpiderDiagram, destination
   private def getRegionWhenDestinationContoursAreSubset(regionInSourceDiagram: Region): mutable.Buffer[Zone] = {
     allPossibleZonesInDestination.filter {
       destinationZone =>
-        regionInSourceDiagram.getZones.exists {
+        regionInSourceDiagram.zones.exists {
           sourceZone =>
             destinationZone.getInContours.subsetOf(sourceZone.getInContours) &&
               destinationZone.getOutContours.subsetOf(sourceZone.getOutContours)
@@ -63,7 +63,7 @@ case class CorrespondingRegions(sourceDiagram: PrimarySpiderDiagram, destination
   }
 
   private def assertContoursOfRegionMatchContoursInDiagram(regionInSourceDiagram: Region, diagram: PrimarySpiderDiagram) {
-    if (!regionInSourceDiagram.getZones.forall(zone => zone.getAllContours == diagram.getAllContours)) {
+    if (!regionInSourceDiagram.zones.forall(zone => zone.getAllContours == diagram.getAllContours)) {
       throw new IllegalArgumentException("The contours of the given region do not match the contours in the source diagram.")
     }
   }

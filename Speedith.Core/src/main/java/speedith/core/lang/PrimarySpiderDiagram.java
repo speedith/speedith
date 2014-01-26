@@ -83,8 +83,8 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     private final TreeSet<String> spiders;
     private final TreeMap<String, Region> spiderHabitatsMap;
     private final TreeSet<Zone> shadedZones;
-    private TreeSet<String> contours;
     private final TreeSet<Zone> presentZones;
+    private TreeSet<String> contours;
     private boolean hashInvalid = true;
     private int hash;
     private Boolean valid;
@@ -103,10 +103,10 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * if possible (see {@link PrimarySpiderDiagram#getPresentZones()}).
      */
     PrimarySpiderDiagram(Collection<String> spiders, Map<String, Region> habitats, Collection<Zone> shadedZones, Collection<Zone> presentZones) {
-        this(spiders == null ? null : new TreeSet<String>(spiders),
-                habitats == null ? null : new TreeMap<String, Region>(habitats),
-                shadedZones == null ? null : new TreeSet<Zone>(shadedZones),
-                presentZones == null ? null : new TreeSet<Zone>(presentZones));
+        this(spiders == null ? null : new TreeSet<>(spiders),
+                habitats == null ? null : new TreeMap<>(habitats),
+                shadedZones == null ? null : new TreeSet<>(shadedZones),
+                presentZones == null ? null : new TreeSet<>(presentZones));
     }
 
     /**
@@ -293,8 +293,6 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     /**
      * Returns the number of spider that have a foot in the given zone.
      *
-     * @param z
-     *
      * @return the number of spider that have a foot in the given zone.
      */
     public int getSpiderCountInZone(Zone z) {
@@ -311,8 +309,6 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
 
     /**
      * Returns the spiders that have a foot in the given zone.
-     *
-     * @param z
      *
      * @return the spiders that have a foot in the given zone.
      */
@@ -384,48 +380,11 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         );
     }
 
-    static class AtomicSpiderDiagramIterator implements Iterator<SpiderDiagram> {
-
-        private SpiderDiagram sd;
-        private boolean atStart = true;
-
-        public AtomicSpiderDiagramIterator(SpiderDiagram sd) {
-            if (sd == null) {
-                throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sd"));
-            }
-            this.sd = sd;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return atStart;
-        }
-
-        @Override
-        public SpiderDiagram next() {
-            if (atStart) {
-                atStart = false;
-                return sd;
-            } else {
-                throw new NoSuchElementException();
-            }
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException(i18n("SD_ITER_REMOVE_NOT_SUPPORTED"));
-        }
-    }
-
     @Override
     public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        } else if (other instanceof PrimarySpiderDiagram) {
-            return __isPsdEqual((PrimarySpiderDiagram) other);
-        } else {
-            return false;
-        }
+        return other == this ||
+               (other instanceof PrimarySpiderDiagram &&
+                __isPsdEqual((PrimarySpiderDiagram) other));
     }
 
     @Override
@@ -479,20 +438,20 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      */
     public PrimarySpiderDiagram addSpider(String spider, Region habitat) {
         // Add the habitat to the map of spiders and their habitats.
-        TreeMap<String, Region> newHabitats = (spiderHabitatsMap == null) ? new TreeMap<String, Region>() : new TreeMap<String, Region>(spiderHabitatsMap);
+        TreeMap<String, Region> newHabitats = (spiderHabitatsMap == null) ? new TreeMap<String, Region>() : new TreeMap<>(spiderHabitatsMap);
         newHabitats.put(spider, habitat);
-        // Now add the spider to the set of all spiders. Maybe we can reuse the 
+        // Now add the spider to the set of all spiders. Maybe we can reuse the
         // set if it already contains the spider.
         TreeSet<String> newSpiders;
         if (spiders != null) {
             if (spiders.contains(spider)) {
                 newSpiders = spiders;
             } else {
-                newSpiders = new TreeSet<String>(spiders);
+                newSpiders = new TreeSet<>(spiders);
                 newSpiders.add(spider);
             }
         } else {
-            newSpiders = new TreeSet<String>();
+            newSpiders = new TreeSet<>();
             newSpiders.add(spider);
         }
         // Finally construct the spider diagram (without making any copies of
@@ -516,6 +475,17 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
             printPresentZones(sb.append(", "));
         }
         sb.append('}');
+    }
+
+    @Override
+    public String toString() {
+        try {
+            final StringBuilder sb = new StringBuilder();
+            toString(sb);
+            return sb.toString();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     private void printSpiders(Appendable sb) {
@@ -548,10 +518,8 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     /**
      * Prints a list of habitats to the given {@link StringBuilder}. <p>The
      * output format is '{@code [ habitat, habitat, ... ]}'. See {@link
-     * PrimarySpiderDiagram#printHabitat(java.lang.StringBuilder, java.lang.String, speedith.core.lang.Region)}
+     * PrimarySpiderDiagram#printHabitat(Appendable, String, Region)}
      * for a description of the habitat output format (for each habitat).</p>
-     *
-     * @param sb
      */
     private void printHabitats(Appendable sb) throws IOException {
         sb.append(SDTextHabitatsAttribute).append(" = ");
@@ -571,30 +539,6 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     }
 
     /**
-     * Outputs a single habitat into the {@link StringBuilder}. <p>The format of
-     * the habitat is '{@code (spider, region)}' (it is a simple pair
-     * tuple).</p>
-     */
-    private static void printHabitat(Appendable sb, String spider, Region region) throws IOException {
-        sb.append('(');
-        printString(sb, spider);
-        sb.append(", ");
-        region.toString(sb);
-        sb.append(')');
-    }
-
-    @Override
-    public String toString() {
-        try {
-            final StringBuilder sb = new StringBuilder();
-            toString(sb);
-            return sb.toString();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    /**
      * Checks for syntactical and
      */
     @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
@@ -610,9 +554,6 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * Checks whether this and the given primary spider diagrams have the same
      * habitats for their spiders (invariant under spider names). <p>This method
      * can be used to check for semantic equivalence.</p>
-     *
-     * @param psd
-     * @return
      */
     private boolean __sameHabitats(PrimarySpiderDiagram psd) {
         if (getHabitatsCount() != psd.getHabitatsCount()) {
@@ -640,7 +581,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      */
     private void extractContours() {
         if (contours == null) {
-            contours = new TreeSet<String>();
+            contours = new TreeSet<>();
             if (extractContoursFromHabitats()
                     || extractContoursFromShadedZones()
                     || extractContoursFromPresentZones());
@@ -700,13 +641,9 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      */
     private boolean checkValid() {
         SortedSet<String> contours = getContours();
-        if (areHabitatZonesValid(contours)
-                && areShadedZonesValid(contours)
-                && arePresentZonesValid(contours)) {
-            return true;
-        } else {
-            return false;
-        }
+        return areHabitatZonesValid(contours)
+               && areShadedZonesValid(contours)
+               && arePresentZonesValid(contours);
     }
 
     private boolean arePresentZonesValid(SortedSet<String> contours) {
@@ -772,5 +709,50 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
     SortedSet<String> getContours() {
         extractContours();
         return Collections.unmodifiableSortedSet(contours);
+    }
+
+    /**
+     * Outputs a single habitat into the {@link StringBuilder}. <p>The format of
+     * the habitat is '{@code (spider, region)}' (it is a simple pair
+     * tuple).</p>
+     */
+    private static void printHabitat(Appendable sb, String spider, Region region) throws IOException {
+        sb.append('(');
+        printString(sb, spider);
+        sb.append(", ");
+        region.toString(sb).append(')');
+    }
+
+    static class AtomicSpiderDiagramIterator implements Iterator<SpiderDiagram> {
+
+        private SpiderDiagram sd;
+        private boolean atStart = true;
+
+        public AtomicSpiderDiagramIterator(SpiderDiagram sd) {
+            if (sd == null) {
+                throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "sd"));
+            }
+            this.sd = sd;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return atStart;
+        }
+
+        @Override
+        public SpiderDiagram next() {
+            if (atStart) {
+                atStart = false;
+                return sd;
+            } else {
+                throw new NoSuchElementException();
+            }
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException(i18n("SD_ITER_REMOVE_NOT_SUPPORTED"));
+        }
     }
 }

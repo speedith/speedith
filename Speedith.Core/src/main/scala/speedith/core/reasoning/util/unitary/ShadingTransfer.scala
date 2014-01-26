@@ -11,7 +11,7 @@ case class ShadingTransfer(sourceDiagram: PrimarySpiderDiagram, destinationDiagr
 
     val correspondingRegion = CorrespondingRegions(sourceDiagram, destinationDiagram).correspondingRegion(new Region(shadedZones))
 
-    destinationDiagram.addShading(correspondingRegion.getZones)
+    destinationDiagram.addShading(correspondingRegion.zones)
   }
 
   def transferShading(shadedZones: util.Collection[Zone]): PrimarySpiderDiagram = {
