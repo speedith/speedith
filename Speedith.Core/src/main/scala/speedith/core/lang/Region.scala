@@ -2,11 +2,14 @@ package speedith.core.lang
 
 import scala.collection.JavaConversions.{setAsJavaSet, asJavaCollection, iterableAsScalaIterable, asScalaSet}
 import propity.util.Sets
+import java.util.Collections
 
 case class Region(zones: Set[Zone]) extends Comparable[Region] {
 
-  val getZones: java.util.SortedSet[Zone] = {
-    new java.util.TreeSet[Zone](setAsJavaSet(zones))
+  val sortedZones: java.util.SortedSet[Zone] = {
+    Collections.unmodifiableSortedSet(
+      new java.util.TreeSet[Zone](setAsJavaSet(zones))
+    )
   }
 
   def this(zones: java.util.Set[Zone]) = {
@@ -50,7 +53,7 @@ case class Region(zones: Set[Zone]) extends Comparable[Region] {
   }
 
   def toString(stringBuilder: Appendable): Appendable = {
-    SpiderDiagram.printZoneList(stringBuilder, asJavaCollection(zones))
+    SpiderDiagram.printZoneList(stringBuilder, sortedZones)
     stringBuilder
   }
 
@@ -67,6 +70,6 @@ case class Region(zones: Set[Zone]) extends Comparable[Region] {
   }
 
   def compareTo(otherRegion: Region): Int = {
-    Sets.compareNaturally(getZones, otherRegion.getZones)
+    Sets.compareNaturally(sortedZones, otherRegion.sortedZones)
   }
 }

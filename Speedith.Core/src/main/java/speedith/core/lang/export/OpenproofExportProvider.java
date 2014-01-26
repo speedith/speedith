@@ -258,9 +258,6 @@ public class OpenproofExportProvider extends SDExportProvider {
         /**
          * Returns {@code true} iff at least one term was printed to the output.
          *
-         * @param psd
-         * @param output
-         * @return
          * @throws IOException
          */
         private boolean exportHabitats(PrimarySpiderDiagram psd, Writer output) throws IOException {
@@ -274,11 +271,6 @@ public class OpenproofExportProvider extends SDExportProvider {
                     printAnd(output);
                     exportHabitat(output, itr.next(), habitats);
                 }
-
-                if (psd.getShadedZonesCount() > 0) {
-//                    throw new UnsupportedOperationException();
-//                    printHolOrMlAnd(output, useML);
-                }
                 return true;
             } else {
                 return false;
@@ -287,7 +279,8 @@ public class OpenproofExportProvider extends SDExportProvider {
 
         private void exportSpidersDistinct(PrimarySpiderDiagram psd, Writer output) throws IOException {
             if (psd.getSpidersCount() > 1) {
-                String[] spiders = psd.getSpiders().toArray(new String[0]);
+                SortedSet<String> spiderSet = psd.getSpiders();
+                String[] spiders = spiderSet.toArray(new String[spiderSet.size()]);
                 for (int i = 0; i < spiders.length; i++) {
                     String spiderA = spiders[i];
                     for (int j = i + 1; j < spiders.length; j++) {
@@ -318,7 +311,7 @@ public class OpenproofExportProvider extends SDExportProvider {
         }
 
         private void exportHabitat(String spider, Region region, Writer output) throws IOException {
-            SortedSet<Zone> zones = region.getZones();
+            SortedSet<Zone> zones = region.sortedZones();
             if (zones.isEmpty()) {
                 printOpeningParenthesis(output);
                 printUniversalSet(output).append("(").append(spider).append(")");
@@ -435,7 +428,7 @@ public class OpenproofExportProvider extends SDExportProvider {
         public static final TreeMap<String, String> Parameters;
 
         static {
-            Parameters = new TreeMap<String, String>();
+            Parameters = new TreeMap<>();
         }
     }
     // </editor-fold>

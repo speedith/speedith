@@ -415,7 +415,7 @@ public class Isabelle2011ExportProvider extends SDExportProvider {
         }
 
         private void exportRegion(Region region, Writer output) throws IOException {
-            SortedSet<Zone> zones = region.getZones();
+            SortedSet<Zone> zones = region.sortedZones();
             if (zones.isEmpty()) {
                 printUniversalSet(output);
             } else {

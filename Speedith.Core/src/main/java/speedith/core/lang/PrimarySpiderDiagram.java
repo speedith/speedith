@@ -592,7 +592,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         if (getHabitatsCount() > 0) {
             Region region = spiderHabitatsMap.firstEntry().getValue();
             if (region.getZonesCount() > 0) {
-                Zone zone = region.getZones().first();
+                Zone zone = region.sortedZones().first();
                 if (zone.getInContoursCount() > 0) {
                     contours.addAll(zone.getInContours());
                 }
@@ -672,7 +672,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         if (spiderHabitatsMap != null) {
             for (Region region : this.spiderHabitatsMap.values()) {
                 if (region.getZonesCount() > 0) {
-                    for (Zone zone : region.getZones()) {
+                    for (Zone zone : region.sortedZones()) {
                         if (!zone.isValid(contours)) {
                             return false;
                         }

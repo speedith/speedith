@@ -109,7 +109,7 @@ public final class DiagramVisualisation {
         // Now also get all the zones specified in spiders' habitats:
         if (psd.getHabitatsCount() > 0) {
             for (Region region : psd.getHabitats().values()) {
-                for (Zone zone : region.getZones()) {
+                for (Zone zone : region.sortedZones()) {
                     // Mark this zone as being part of a spider's habitat.
                     markZone(allZones, allContours, zone, IsInHabitat);
                 }
@@ -152,7 +152,7 @@ public final class DiagramVisualisation {
             SortedMap<String, Region> habitats = psd.getHabitats();
             for (Entry<String, Region> habitat : habitats.entrySet()) {
                 TreeSet<AbstractBasicRegion> feet = new TreeSet<>();
-                for (Zone foot : habitat.getValue().getZones()) {
+                for (Zone foot : habitat.getValue().sortedZones()) {
                     // A Speedith's zone can correspond to many zones. Hence we
                     // should add all the necessary feet:
                     addFeetForZone(feet, contourMap, foot);
