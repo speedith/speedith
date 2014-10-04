@@ -1,47 +1,45 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <groupId>speedith</groupId>
-    <artifactId>speedith-gui</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+  <artifactId>speedith-gui</artifactId>
+  <packaging>jar</packaging>
 
-    <name>Speedith GUI</name>
+  <name>Speedith GUI</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
-    </properties>
+  <parent>
+    <groupId>si.urbas</groupId>
+    <artifactId>speedith-root</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
 
-    <dependencies>
-        <dependency>
-            <groupId>speedith</groupId>
-            <artifactId>speedith-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+  <dependencies>
+    <dependency>
+      <groupId>speedith</groupId>
+      <artifactId>speedith-core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
 
-        <dependency>
-            <groupId>icircles</groupId>
-            <artifactId>icircles</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+    <dependency>
+      <groupId>si.urbas</groupId>
+      <artifactId>icircles</artifactId>
+      <version>0.0.1</version>
+    </dependency>
 
-        <!--Test dependencies-->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
+    <!--Test dependencies-->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>speedith</groupId>
-            <artifactId>speedith-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <dependency>
+      <groupId>speedith</groupId>
+      <artifactId>speedith-core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>

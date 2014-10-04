@@ -1,17 +1,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <groupId>speedith</groupId>
-    <artifactId>speedith</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+  <groupId>si.urbas</groupId>
+  <artifactId>speedith-root</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
-    <name>Speedith</name>
+  <name>Speedith</name>
 
-    <modules>
-        <module>Speedith.Core</module>
-        <module>Speedith.Gui</module>
-        <module>SpiderDrawer</module>
-    </modules>
+  <repositories>
+    <repository>
+      <id>sonatype</id>
+      <url>http://repository.sonatype.org/content/groups/public/</url>
+    </repository>
+  </repositories>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
+  </properties>
+
+  <modules>
+    <module>Speedith.Core</module>
+    <module>Speedith.Gui</module>
+    <module>SpiderDrawer</module>
+  </modules>
 </project>
