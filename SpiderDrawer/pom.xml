@@ -27,13 +27,13 @@
     </dependency>
 
     <dependency>
-      <groupId>inkmllibj</groupId>
+      <groupId>si.urbas</groupId>
       <artifactId>inkmllibj</artifactId>
       <version>0.0.1</version>
     </dependency>
 
     <dependency>
-      <groupId>recognizer</groupId>
+      <groupId>si.urbas</groupId>
       <artifactId>recognizer</artifactId>
       <version>0.0.1</version>
     </dependency>
