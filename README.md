@@ -4,6 +4,8 @@
 
 Speedith is a diagrammatic theorem prover for [spider diagrams](http://en.wikipedia.org/wiki/Spider_diagram).
 
+[![Build Status](https://travis-ci.org/urbas/speedith.svg?branch=master)](https://travis-ci.org/urbas/speedith)
+
 
 
 
