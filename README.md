@@ -20,29 +20,6 @@ these, you can build Speedith at any time.
 
 *   Java 7: Currently, the project does not build against Java 8.
 
-*   _External dependencies_: run the script `ExternalDependencies/install-external-dependencies`:
-
-        cd ExternalDependencies
-        install-external-dependencies
-
-*   __iCircles sources__: You can get the sources of iCircles from
-    [GitHub](https://github.com/urbas/iCircles).
-
-    You may simply want to execute this in the command line:
-
-            git clone https://github.com/urbas/iCircles.git
-            cd iCircles
-            mvn install
-
-*   __Propity Library__: You can get the sources from
-    [GitHub](https://github.com/urbas/mixr).
-
-    Execute this in the command line:
-
-            git clone https://github.com/urbas/mixr.git
-            cd mixr/Propity
-            mvn install
-
 --------------------------------------------------------------------------------
 
 ## Building Speedith
