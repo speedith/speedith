@@ -20,6 +20,8 @@ Speedith is a diagrammatic theorem prover for [spider diagrams](http://en.wikipe
 These requirements have to be checked only once. After you make sure you have
 these, you can build Speedith at any time.
 
+*   Maven (see [installation instructions](https://maven.apache.org/))
+
 *   Java 7: Currently, the project does not build against Java 8.
 
 --------------------------------------------------------------------------------
