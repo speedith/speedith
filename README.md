@@ -44,13 +44,15 @@ Use Maven to build Speedith (in the root directory of your cloned Speedith repos
 
 ## Running Speedith
 
-After a successful build, you will find this zip archive:
+The build will result in a distributable package:
 
-    speedith/Speedith.Gui/target/speedith-gui-0.0.1-SNAPSHOT-bin.zip
+    Speedith.Gui/target/speedith-gui-0.0.1-SNAPSHOT-bin.zip
 
-Unpacking the archive will create the `speedith` folder.
+Unpack the archive and navigate into the unpacked `speedith/bin` folder.
 
-Navigate into the `speedith/bin` folder and execute the script that best matches your platform. For example, on Windows you might want to execute either
+Once in `speedith/bin` folder, execute the script that best matches your platform.
+
+For example, on Windows you might want to execute either
 
     speedith-win32.bat
 
