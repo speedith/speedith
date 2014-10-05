@@ -32,6 +32,7 @@
  */
 package speedith.draw;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.NullSpiderDiagram;
@@ -46,6 +47,7 @@ import static org.junit.Assert.*;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
+@Ignore
 public class SpiderDiagramPanelTest extends javax.swing.JFrame {
 
     /** Creates new form SpiderDiagramPanelTest */
