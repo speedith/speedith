@@ -65,7 +65,7 @@
             <configuration>
               <includeGroupIds>net.sourceforge.tess4j</includeGroupIds>
               <includeArtifactIds>tess4j</includeArtifactIds>
-              <outputDirectory>${project.basedir}/..</outputDirectory>
+              <outputDirectory>${project.build.directory}/appassembler</outputDirectory>
               <includes>tessdata\/**\/*,win32-x86*\/**\/*</includes>
             </configuration>
           </execution>
@@ -73,28 +73,45 @@
       </plugin>
 
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>2.6</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>appassembler-maven-plugin</artifactId>
+        <version>1.8.1</version>
         <executions>
           <execution>
-            <id>clean-tesseract-data</id>
-            <phase>clean</phase>
+            <id>assemble-distributable-artifact</id>
+            <phase>package</phase>
             <goals>
-              <goal>clean</goal>
+              <goal>assemble</goal>
             </goals>
             <configuration>
-              <filesets>
-                <fileset>
-                  <directory>${project.basedir}/../tessdata</directory>
-                </fileset>
-                <fileset>
-                  <directory>${project.basedir}/../win32-x86</directory>
-                </fileset>
-                <fileset>
-                  <directory>${project.basedir}/../win32-x86-64</directory>
-                </fileset>
-              </filesets>
+              <programs>
+                <program>
+                  <mainClass>speedith.ui.SpeedithMainForm</mainClass>
+                  <id>main-form-executable-wrapper</id>
+                </program>
+              </programs>
+              <platforms>
+                <platform>all</platform>
+              </platforms>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <attach>false</attach>
+              <descriptors>
+                <descriptor>src/assembly/executableDistribution.xml</descriptor>
+              </descriptors>
             </configuration>
           </execution>
         </executions>

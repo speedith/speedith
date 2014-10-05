@@ -1,0 +1,26 @@
+<assembly>
+    <id>bin</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <baseDirectory>speedith</baseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>src/main/executables</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>*.sh</include>
+                <include>*.bat</include>
+            </includes>
+            <lineEnding>unix</lineEnding>
+            <fileMode>0755</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>target/appassembler</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>
