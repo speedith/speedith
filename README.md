@@ -24,6 +24,14 @@ these, you can build Speedith at any time.
 
 *   Java 7: Currently, the project does not build against Java 8.
 
+Optional:
+
+* Tesseract (needed for character recognition in drawn input):
+
+  * Linux & OS X: Please follow [this guide](https://code.google.com/p/tesseract-ocr/wiki/ReadMe).
+
+  * Windows: no need to install. Tesseract comes pre-packaged.
+
 --------------------------------------------------------------------------------
 
 ## Building Speedith
@@ -36,14 +44,16 @@ Use Maven to build Speedith (in the root directory of your cloned Speedith repos
 
 ## Running Speedith
 
-After a successful build, you can run Speedith through the following commands:
+After a successful build, you will find this zip archive:
 
-Windows 32-bit:
+  speedith/Speedith.Gui/target/speedith-gui-0.0.1-SNAPSHOT-bin.zip
 
-    export MAVEN_OPTS="-Djava.library.path=./win32-x86 -Djna.library.path=./win32-x86";
-    mvn -pl Speedith.Gui exec:java -Dexec.mainClass=speedith.Main
+Unpacking the archive will create the `speedith` folder.
 
-Windows 64-bit:
+Navigate into the `speedith/bin` folder and execute the script that best matches your platform. For example, on Windows you might want to execute either
 
-    export MAVEN_OPTS="-Djava.library.path=./win32-x86-64 -Djna.library.path=./win32-x86-64";
-    mvn -pl Speedith.Gui exec:java -Dexec.mainClass=speedith.Main
+  speedith-win32.bat
+
+or
+
+  speedith-win64.bat
