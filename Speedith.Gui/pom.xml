@@ -48,4 +48,57 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.9</version>
+        <executions>
+          <execution>
+            <id>extract-tesseract-data</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>net.sourceforge.tess4j</includeGroupIds>
+              <includeArtifactIds>tess4j</includeArtifactIds>
+              <outputDirectory>${project.basedir}/..</outputDirectory>
+              <includes>tessdata\/**\/*,win32-x86*\/**\/*</includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.6</version>
+        <executions>
+          <execution>
+            <id>clean-tesseract-data</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+            <configuration>
+              <filesets>
+                <fileset>
+                  <directory>${project.basedir}/../tessdata</directory>
+                </fileset>
+                <fileset>
+                  <directory>${project.basedir}/../win32-x86</directory>
+                </fileset>
+                <fileset>
+                  <directory>${project.basedir}/../win32-x86-64</directory>
+                </fileset>
+              </filesets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
