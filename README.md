@@ -32,10 +32,6 @@ Use Maven to build Speedith (in the root directory of your cloned Speedith repos
 
 ## Running Speedith
 
-After a successful build, you can run Speedith by firstly entering the `Speedith.Gui` directory:
+After a successful build, you can run Speedith through the following command:
 
-    cd Speedith.Gui
-
-and then running:
-
-    mvn exec:java -Dexec.mainClass=speedith.Main
+    mvn -pl Speedith.Gui exec:java -Dexec.mainClass=speedith.Main
