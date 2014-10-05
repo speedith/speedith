@@ -15,9 +15,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>speedith</groupId>
+      <groupId>si.urbas</groupId>
       <artifactId>speedith-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
 
     <dependency>
