@@ -39,15 +39,3 @@ After a successful build, you can run Speedith by firstly entering the `Speedith
 and then running:
 
     mvn exec:java -Dexec.mainClass=speedith.Main
-
---------------------------------------------------------------------------------
-
-## Using Speedith in Isabelle/HOL
-
-*MixR* (the name of the Speedith/Isabelle integration) requires some special
-settings for Isabelle. You can find sample settings in the Speedith
-distribution's '`settings`' file.
-
-You can either edit your existing Isabelle settings, or copy the included
-'`devel/Theories/settings`' file to Isabelle's user settings folder (e.g.
-'`~/.isabelle/Isabelle2011-1/etc/`').
