@@ -33,7 +33,7 @@ class CopySpider extends SimpleInferenceRule[SpiderArg] {
   }
 
   def apply(args: SpiderArg, goals: Goals): RuleApplicationResult = {
-    val newSubgoals = goals.getGoals.toList.toArray[SpiderDiagram]
+    val newSubgoals = goals.getGoals.toSeq.toArray[SpiderDiagram]
     val targetSubgoal = SimpleInferenceRule.getSubgoal(args, goals)
     val indexOfParent: Int = targetSubgoal.getParentIndexOf(args.getSubDiagramIndex)
     newSubgoals(args.getSubgoalIndex) = targetSubgoal.transform(CopySpiderTransformer(indexOfParent, args))

@@ -63,7 +63,7 @@ public class Combining extends UnaryForwardRule {
 
     @Override
     protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
-        return new IdTransformer();
+        return new CombiningTransformer(arg);
     }
 
     private static boolean allHabitatsSingleZoned(PrimarySpiderDiagram diagram) {
@@ -80,7 +80,7 @@ public class Combining extends UnaryForwardRule {
     }
 
     private static boolean anyShadedZoneInOneWithLessSpidersThanOther(PrimarySpiderDiagram rhs, PrimarySpiderDiagram lhs) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private static final class SingletonContainer {
@@ -114,11 +114,9 @@ public class Combining extends UnaryForwardRule {
                     if (!allHabitatsSingleZoned(lhs) || !allHabitatsSingleZoned(rhs)) {
                         throw new TransformationException("Could not apply the 'combining' rule. The unitary diagrams contain spiders with multi-zoned habitats.");
                     }
-                    // No shaded zone in one diagram may have less spiders
-                    // than the same zone in the other:
                     if (anyShadedZoneInOneWithLessSpidersThanOther(lhs, rhs)
                         || anyShadedZoneInOneWithLessSpidersThanOther(rhs, lhs)) {
-                        throw new TransformationException("Could not apply the 'combining' rule. A shaded zone in one diagram has less spiders than the same zone in the other diagram.");
+                      return SpiderDiagrams.createCompoundSD(Operator.Negation, SpiderDiagrams.createNullSD());
                     }
                     // Okay, everything is satisfied. Create a new unitary diagram
                     // 1.) where the set of shaded zones is a union of the shaded zones in rhs and lhs:
