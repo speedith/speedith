@@ -22,5 +22,12 @@
                 <include>**/*</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>src/main/tesseractData</directory>
+            <outputDirectory>tessdata</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>
