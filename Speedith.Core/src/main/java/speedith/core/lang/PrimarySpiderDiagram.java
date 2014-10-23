@@ -488,7 +488,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
         }
     }
 
-    private void printSpiders(Appendable sb) {
+  private void printSpiders(Appendable sb) {
         try {
             sb.append(SDTextSpidersAttribute).append(" = ");
             printStringList(sb, spiders);

@@ -27,6 +27,7 @@
 package speedith.core.reasoning.rules;
 
 import speedith.core.lang.*;
+import speedith.core.lang.util.HabitatUtils;
 import speedith.core.reasoning.ApplyStyle;
 import speedith.core.reasoning.RuleApplicationInstruction;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
@@ -66,19 +67,6 @@ public class Combining extends UnaryForwardRule {
         return new CombiningTransformer(arg);
     }
 
-    private static boolean allHabitatsSingleZoned(PrimarySpiderDiagram diagram) {
-        if (diagram.getSpidersCount() > 0) {
-            SortedSet<String> spiders = diagram.getSpiders();
-            for (String spider : spiders) {
-                Region hab = diagram.getSpiderHabitat(spider);
-                if (hab.getZonesCount() != 1) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     private static boolean anyShadedZoneInOneWithLessSpidersThanOther(PrimarySpiderDiagram rhs, PrimarySpiderDiagram lhs) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -111,7 +99,7 @@ public class Combining extends UnaryForwardRule {
                         throw new TransformationException("Could not apply the 'combining' rule. The unitary diagrams do not contain the same contours.");
                     }
                     // All spiders must have single-zoned habitats:
-                    if (!allHabitatsSingleZoned(lhs) || !allHabitatsSingleZoned(rhs)) {
+                    if (!HabitatUtils.habitatsAreSingleZoned(lhs) || !HabitatUtils.habitatsAreSingleZoned(rhs)) {
                         throw new TransformationException("Could not apply the 'combining' rule. The unitary diagrams contain spiders with multi-zoned habitats.");
                     }
                     if (anyShadedZoneInOneWithLessSpidersThanOther(lhs, rhs)
@@ -124,7 +112,6 @@ public class Combining extends UnaryForwardRule {
                     shadedZones.addAll(lhs.getShadedZones());
                     // 2.) where each zone contains the number of spiders that equals to the maximum of the same zone in the two originating diagrams:
                     TreeMap<String, Region> spiders = new TreeMap<>(lhs.getHabitats());
-                    // TODO: ...
                     return csd;
                 }
                 throw new TransformationException("Could not apply the 'combining' rule. This rule may be applied only on a conjunction of two unitary diagrams.");
