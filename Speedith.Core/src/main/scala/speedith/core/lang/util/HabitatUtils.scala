@@ -2,17 +2,12 @@ package speedith.core.lang.util
 
 import speedith.core.lang.PrimarySpiderDiagram
 
-import scala.collection.JavaConversions.asScalaSet
+import scala.collection.JavaConversions._
 
 object HabitatUtils {
 
   def habitatsAreSingleZoned(diagram: PrimarySpiderDiagram): Boolean = {
-    diagram.getSpiders.forall {
-      spider =>
-        println("Spider! " + spider)
-        println("Habitat! " + diagram.getSpiderHabitat(spider))
-        diagram.getSpiderHabitat(spider).getZonesCount == 1
-    }
+    diagram.getHabitats.values.forall(_.getZonesCount == 1)
   }
 
 
