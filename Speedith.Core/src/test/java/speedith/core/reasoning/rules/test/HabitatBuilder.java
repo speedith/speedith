@@ -2,6 +2,7 @@ package speedith.core.reasoning.rules.test;
 
 import speedith.core.lang.Region;
 import speedith.core.lang.Zone;
+import speedith.core.lang.util.RegionBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +17,11 @@ public class HabitatBuilder {
 
   public HabitatBuilder addHabitat(String spider, ArrayList<Zone> habitat) {
     spiderHabitats.put(spider, new Region(habitat));
+    return this;
+  }
+
+  public HabitatBuilder addHabitat(String spider, RegionBuilder region) {
+    spiderHabitats.put(spider, region.get());
     return this;
   }
 

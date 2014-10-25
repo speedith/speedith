@@ -106,7 +106,11 @@ public class Combining extends UnaryForwardRule {
     if (!HabitatUtils.habitatsAreSingleZoned(leftDiagram) || !HabitatUtils.habitatsAreSingleZoned(rightDiagram)) {
       throw new TransformationException("Could not apply the 'combining' rule. The unitary diagrams contain spiders with multi-zoned habitats.");
     }
-    if (!ShadingUtils.shadedZonesHaveSameSpiders(leftDiagram, rightDiagram)) {
+    if (!ShadingUtils.allShadedZonesHaveSameSpidersAsShadedZonesInOther(leftDiagram, rightDiagram)) {
+      return SpiderDiagrams.bottom();
+    }
+    if (ShadingUtils.anyShadedZoneHasFewerSpidersThanNonShadedZoneInOther(leftDiagram, rightDiagram) ||
+        ShadingUtils.anyShadedZoneHasFewerSpidersThanNonShadedZoneInOther(rightDiagram, leftDiagram)) {
       return SpiderDiagrams.bottom();
     }
     // Okay, everything is satisfied. Create a new unitary diagram
