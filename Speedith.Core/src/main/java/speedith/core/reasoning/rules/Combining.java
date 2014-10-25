@@ -28,6 +28,7 @@ package speedith.core.reasoning.rules;
 
 import speedith.core.lang.*;
 import speedith.core.lang.util.HabitatUtils;
+import speedith.core.lang.util.ShadingUtils;
 import speedith.core.reasoning.ApplyStyle;
 import speedith.core.reasoning.RuleApplicationInstruction;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
@@ -40,83 +41,80 @@ import java.util.*;
  */
 public class Combining extends UnaryForwardRule {
 
-    public static final String InferenceRuleName = "Combining";
+  public static final String InferenceRuleName = "Combining";
 
-    @Override
-    public String getInferenceRuleName() {
-        return InferenceRuleName;
+  @Override
+  public String getInferenceRuleName() {
+    return InferenceRuleName;
+  }
+
+  @Override
+  public String getDescription(Locale locale) {
+    return "";
+  }
+
+  @Override
+  public String getPrettyName(Locale locale) {
+    return InferenceRuleName;
+  }
+
+  @Override
+  public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
+    return SingletonContainer.Instruction;
+  }
+
+  @Override
+  protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
+    return new CombiningTransformer(arg);
+  }
+
+  private static final class SingletonContainer {
+
+    private static final SelectSingleOperatorInstruction Instruction = new SelectSingleOperatorInstruction(Operator.Conjunction);
+  }
+
+  private class CombiningTransformer extends IdTransformer {
+
+    private final SubDiagramIndexArg arg;
+
+    public CombiningTransformer(SubDiagramIndexArg arg) {
+      this.arg = arg;
     }
 
     @Override
-    public String getDescription(Locale locale) {
-        return "";
-    }
-
-    @Override
-    public String getPrettyName(Locale locale) {
-        return InferenceRuleName;
-    }
-
-    @Override
-    public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
-        return SingletonContainer.Instruction;
-    }
-
-    @Override
-    protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
-        return new CombiningTransformer(arg);
-    }
-
-    private static boolean anyShadedZoneInOneWithLessSpidersThanOther(PrimarySpiderDiagram rhs, PrimarySpiderDiagram lhs) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    private static final class SingletonContainer {
-
-        private static final SelectSingleOperatorInstruction Instruction = new SelectSingleOperatorInstruction(Operator.Conjunction);
-    }
-
-    private class CombiningTransformer extends IdTransformer {
-
-        private final SubDiagramIndexArg arg;
-
-        public CombiningTransformer(SubDiagramIndexArg arg) {
-            this.arg = arg;
+    public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
+      // Transform only the target diagram, which must be a conjunction of
+      // two unitary diagrams.
+      if (diagramIndex == arg.getSubDiagramIndex()) {
+        if (Operator.Conjunction.equals(csd.getOperator())
+            && csd.getOperand(0) instanceof PrimarySpiderDiagram
+            && csd.getOperand(1) instanceof PrimarySpiderDiagram) {
+          PrimarySpiderDiagram rhs = (PrimarySpiderDiagram) csd.getOperand(1);
+          PrimarySpiderDiagram lhs = (PrimarySpiderDiagram) csd.getOperand(0);
+          return apply(lhs, rhs);
         }
-
-        @Override
-        public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
-            // Transform only the target diagram, which must be a conjunction of
-            // two unitary diagrams.
-            if (diagramIndex == arg.getSubDiagramIndex()) {
-                if (Operator.Conjunction.equals(csd.getOperator())
-                    && csd.getOperand(0) instanceof PrimarySpiderDiagram
-                    && csd.getOperand(1) instanceof PrimarySpiderDiagram) {
-                    PrimarySpiderDiagram rhs = (PrimarySpiderDiagram) csd.getOperand(1);
-                    PrimarySpiderDiagram lhs = (PrimarySpiderDiagram) csd.getOperand(0);
-                    // The two unitary diagrams must have the same sets of contours:
-                    if (!lhs.getAllContours().equals(rhs.getAllContours())) {
-                        throw new TransformationException("Could not apply the 'combining' rule. The unitary diagrams do not contain the same contours.");
-                    }
-                    // All spiders must have single-zoned habitats:
-                    if (!HabitatUtils.habitatsAreSingleZoned(lhs) || !HabitatUtils.habitatsAreSingleZoned(rhs)) {
-                        throw new TransformationException("Could not apply the 'combining' rule. The unitary diagrams contain spiders with multi-zoned habitats.");
-                    }
-                    if (anyShadedZoneInOneWithLessSpidersThanOther(lhs, rhs)
-                        || anyShadedZoneInOneWithLessSpidersThanOther(rhs, lhs)) {
-                      return SpiderDiagrams.createCompoundSD(Operator.Negation, SpiderDiagrams.createNullSD());
-                    }
-                    // Okay, everything is satisfied. Create a new unitary diagram
-                    // 1.) where the set of shaded zones is a union of the shaded zones in rhs and lhs:
-                    SortedSet<Zone> shadedZones = new TreeSet<>(rhs.getShadedZones());
-                    shadedZones.addAll(lhs.getShadedZones());
-                    // 2.) where each zone contains the number of spiders that equals to the maximum of the same zone in the two originating diagrams:
-                    TreeMap<String, Region> spiders = new TreeMap<>(lhs.getHabitats());
-                    return csd;
-                }
-                throw new TransformationException("Could not apply the 'combining' rule. This rule may be applied only on a conjunction of two unitary diagrams.");
-            }
-            return null;
-        }
+        throw new TransformationException("Could not apply the 'combining' rule. This rule may be applied only on a conjunction of two unitary diagrams.");
+      }
+      return null;
     }
+  }
+
+  public static SpiderDiagram apply(PrimarySpiderDiagram leftDiagram, PrimarySpiderDiagram rightDiagram) {
+    if (!leftDiagram.getAllContours().equals(rightDiagram.getAllContours())) {
+      throw new TransformationException("Could not apply the 'combining' rule. The unitary diagrams do not contain the same contours.");
+    }
+    if (!HabitatUtils.habitatsAreSingleZoned(leftDiagram) || !HabitatUtils.habitatsAreSingleZoned(rightDiagram)) {
+      throw new TransformationException("Could not apply the 'combining' rule. The unitary diagrams contain spiders with multi-zoned habitats.");
+    }
+    if (!ShadingUtils.shadedZonesHaveSameSpiders(leftDiagram, rightDiagram)) {
+      return SpiderDiagrams.bottom();
+    }
+    // Okay, everything is satisfied. Create a new unitary diagram
+    // 1.) where the set of shaded zones is a union of the shaded zones in rhs and lhs:
+    SortedSet<Zone> shadedZones = new TreeSet<>(rightDiagram.getShadedZones());
+    shadedZones.addAll(leftDiagram.getShadedZones());
+    // 2.) where each zone contains the number of spiders that equals to the maximum of the same zone in the two originating diagrams:
+    TreeMap<String, Region> spiders = new TreeMap<>(leftDiagram.getHabitats());
+    return null;
+  }
 }
