@@ -70,22 +70,35 @@ public class CombiningTest {
 
   @Test
   public void apply_MUST_return_a_diagram_with_two_spiders_WHEN_one_diagram_contains_one_spider_and_the_other_one_contains_two() throws RuleApplicationException {
-    Map<String, Region> leftDiagramHabitats = emptyHabitat()
+    Map<String, Region> leftConjunctHabitats = emptyHabitat()
       .addHabitat("s1", REGION_AB_C)
       .addHabitat("s2", REGION_AB_C).get();
-    PrimarySpiderDiagram leftConjunct = createPrimarySD(leftDiagramHabitats, emptyRegion().asZones(), FULL_ABC_REGION.asZones());
+    PrimarySpiderDiagram leftConjunct = createPrimarySD(leftConjunctHabitats, emptyRegion().asZones(), FULL_ABC_REGION.asZones());
 
-    Map<String, Region> rightDiagramHabitats = emptyHabitat()
+    Map<String, Region> rightConjunctHabitats = emptyHabitat()
       .addHabitat("t1", REGION_AB_C).get();
-    PrimarySpiderDiagram rightConjunct = createPrimarySD(rightDiagramHabitats, emptyRegion().asZones(), FULL_ABC_REGION.asZones());
+    PrimarySpiderDiagram rightConjunct = createPrimarySD(rightConjunctHabitats, emptyRegion().asZones(), FULL_ABC_REGION.asZones());
 
-    PrimarySpiderDiagram expectedResult = createPrimarySD(leftDiagramHabitats, emptyRegion().asZones(), FULL_ABC_REGION.asZones());
+    PrimarySpiderDiagram expectedResult = createPrimarySD(leftConjunctHabitats, emptyRegion().asZones(), FULL_ABC_REGION.asZones());
 
     assertEquals(expectedResult, applyCombining(leftConjunct, rightConjunct));
   }
 
   @Test
-  public void apply_MUST_return_the_combined_diagram_WHEN_given_valid_diagrams() throws RuleApplicationException {
+  public void apply_MUST_return_a_diagram_with_union_shading() throws RuleApplicationException {
+    RegionBuilder leftConjunctShading = REGION_BC_A.union(REGION_AB_C);
+    RegionBuilder rightConjunctShading = REGION_BC_A.union(REGION_C_AB);
+    RegionBuilder resultingShading = rightConjunctShading.union(leftConjunctShading);
+
+    PrimarySpiderDiagram leftConjunct = createPrimarySD(emptyHabitat().get(), leftConjunctShading.asZones(), FULL_ABC_REGION.asZones());
+    PrimarySpiderDiagram rightConjunct = createPrimarySD(emptyHabitat().get(), rightConjunctShading.asZones(), FULL_ABC_REGION.asZones());
+    PrimarySpiderDiagram expectedResult = createPrimarySD(emptyHabitat().get(), resultingShading.asZones(), FULL_ABC_REGION.asZones());
+
+    assertEquals(expectedResult, applyCombining(leftConjunct, rightConjunct));
+  }
+
+  @Test
+  public void apply_MUST_handle_example_in_fig12() throws RuleApplicationException {
     Map<String, Region> leftDiagramHabitats = emptyHabitat()
       .addHabitat("s1", REGION_AB_C)
       .addHabitat("s2", REGION_B_AC)
@@ -102,7 +115,7 @@ public class CombiningTest {
       .addHabitat("t4", REGION_BC_A)
       .addHabitat("t5", REGION_C_AB)
       .addHabitat("t6", REGION_C_AB).get();
-    RegionBuilder rightDiagramShading = REGION_BC_A.union(REGION_AB_C);
+    RegionBuilder rightDiagramShading = REGION_BC_A.union(REGION_C_AB);
     PrimarySpiderDiagram rightConjunct = createPrimarySD(rightDiagramHabitats, rightDiagramShading.asZones(), FULL_ABC_REGION.asZones());
 
     Map<String, Region> resultingDiagramHabitats = emptyHabitat()

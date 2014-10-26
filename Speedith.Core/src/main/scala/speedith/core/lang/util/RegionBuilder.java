@@ -36,7 +36,7 @@ public class RegionBuilder {
   }
 
   public RegionBuilder union(RegionBuilder region) {
-    return new RegionBuilder(region.get().union(region.get()));
+    return new RegionBuilder(this.region.union(region.get()));
   }
 
   public SortedSet<Zone> asZones() {

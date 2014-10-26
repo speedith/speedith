@@ -33,6 +33,7 @@ import speedith.core.reasoning.ApplyStyle;
 import speedith.core.reasoning.RuleApplicationInstruction;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
+import speedith.core.reasoning.rules.util.CombiningUtils;
 
 import java.util.*;
 
@@ -113,12 +114,6 @@ public class Combining extends UnaryForwardRule {
         ShadingUtils.anyShadedZoneHasFewerSpidersThanNonShadedZoneInOther(rightDiagram, leftDiagram)) {
       return SpiderDiagrams.bottom();
     }
-    // Okay, everything is satisfied. Create a new unitary diagram
-    // 1.) where the set of shaded zones is a union of the shaded zones in rhs and lhs:
-    SortedSet<Zone> shadedZones = new TreeSet<>(rightDiagram.getShadedZones());
-    shadedZones.addAll(leftDiagram.getShadedZones());
-    // 2.) where each zone contains the number of spiders that equals to the maximum of the same zone in the two originating diagrams:
-    TreeMap<String, Region> spiders = new TreeMap<>(leftDiagram.getHabitats());
-    return null;
+    return CombiningUtils.combine(leftDiagram, rightDiagram);
   }
 }
