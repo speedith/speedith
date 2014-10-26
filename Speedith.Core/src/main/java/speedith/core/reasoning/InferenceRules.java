@@ -66,6 +66,7 @@ public class InferenceRules {
         registerProvider(CopyShading.class);
         registerProvider(SplitSpiders.class);
         registerProvider(ExcludedMiddle.class);
+        registerProvider(NegationElimination.class);
 
         registerProvider(ModusPonens.class);
         registerProvider(ModusTolens.class);
