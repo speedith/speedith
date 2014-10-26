@@ -58,7 +58,7 @@ case class Region(zones: Set[Zone]) extends Comparable[Region] {
   }
 
   def union(otherRegion: Region): Region = {
-    Region(zones.union(otherRegion.zones))
+    Region(zones ++ otherRegion.zones)
   }
 
   def subtract(otherRegion: Region): Region = {
