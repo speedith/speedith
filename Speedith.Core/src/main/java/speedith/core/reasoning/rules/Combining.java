@@ -35,7 +35,7 @@ import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
 import speedith.core.reasoning.rules.util.CombiningUtils;
 
-import java.util.*;
+import java.util.Locale;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
@@ -66,7 +66,7 @@ public class Combining extends UnaryForwardRule {
 
   @Override
   protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
-    return new CombiningTransformer(arg);
+    return new CombiningTransformer(arg, applyStyle);
   }
 
   private static final class SingletonContainer {
@@ -74,29 +74,27 @@ public class Combining extends UnaryForwardRule {
     private static final SelectSingleOperatorInstruction Instruction = new SelectSingleOperatorInstruction(Operator.Conjunction);
   }
 
-  private class CombiningTransformer extends IdTransformer {
+  private class CombiningTransformer extends UnaryForwardTransformer {
 
-    private final SubDiagramIndexArg arg;
-
-    public CombiningTransformer(SubDiagramIndexArg arg) {
-      this.arg = arg;
+    public CombiningTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
+      super(arg, applyStyle);
     }
 
     @Override
-    public SpiderDiagram transform(CompoundSpiderDiagram csd, int diagramIndex, ArrayList<CompoundSpiderDiagram> parents, ArrayList<Integer> childIndices) {
-      // Transform only the target diagram, which must be a conjunction of
-      // two unitary diagrams.
-      if (diagramIndex == arg.getSubDiagramIndex()) {
-        if (Operator.Conjunction.equals(csd.getOperator())
-            && csd.getOperand(0) instanceof PrimarySpiderDiagram
-            && csd.getOperand(1) instanceof PrimarySpiderDiagram) {
-          PrimarySpiderDiagram rhs = (PrimarySpiderDiagram) csd.getOperand(1);
-          PrimarySpiderDiagram lhs = (PrimarySpiderDiagram) csd.getOperand(0);
-          return apply(lhs, rhs);
-        }
-        throw new TransformationException("Could not apply the 'combining' rule. This rule may be applied only on a conjunction of two unitary diagrams.");
+    protected SpiderDiagram apply(CompoundSpiderDiagram csd) {
+      if (Operator.Conjunction.equals(csd.getOperator())
+          && csd.getOperand(0) instanceof PrimarySpiderDiagram
+          && csd.getOperand(1) instanceof PrimarySpiderDiagram) {
+        PrimarySpiderDiagram rhs = (PrimarySpiderDiagram) csd.getOperand(1);
+        PrimarySpiderDiagram lhs = (PrimarySpiderDiagram) csd.getOperand(0);
+        return Combining.apply(lhs, rhs);
       }
-      return null;
+      return unsupported();
+    }
+
+    @Override
+    protected SpiderDiagram unsupported() {
+      throw new TransformationException("Could not apply the 'combining' rule. This rule may be applied only on a conjunction of two unitary diagrams.");
     }
   }
 

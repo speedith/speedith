@@ -138,7 +138,7 @@ public class CombiningTest {
   }
 
   private static RuleApplicationResult applyCombining(SpiderDiagram spiderDiagram) throws RuleApplicationException {
-    return new Combining().apply(new SubDiagramIndexArg(0, 0), createGoalsFrom(spiderDiagram));
+    return new Combining().applyForwards(new SubDiagramIndexArg(0, 0), createGoalsFrom(spiderDiagram));
   }
 
 }
