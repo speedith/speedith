@@ -125,11 +125,11 @@ public class OperatorPanel extends javax.swing.JPanel {
   private javax.swing.JLabel lblOperator;
   // End of variables declaration//GEN-END:variables
   // <editor-fold defaultstate="collapsed" desc="Constants">
-  private static final String NegationSign = "¬";
-  private static final String DisjunctionSign = "||";
-  private static final String ConjunctionSign = "&&";
-  private static final String ImplicationSign = "-->";
-  private static final String EquivalenceSign = "<-->";
+  private static final String NegationSign = "\u00AC";
+  private static final String DisjunctionSign = "\u2228";
+  private static final String ConjunctionSign = "\u2227";
+  private static final String ImplicationSign = "\u27F6";
+  private static final String EquivalenceSign = "\u27F7";
   // </editor-fold>
   // <editor-fold defaultstate="collapsed" desc="Private Fields">
   private Operator operator;
