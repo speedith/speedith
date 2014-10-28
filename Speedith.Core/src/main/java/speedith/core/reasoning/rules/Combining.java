@@ -27,6 +27,7 @@
 package speedith.core.reasoning.rules;
 
 import speedith.core.lang.*;
+import speedith.core.lang.util.CompoundDiagramsUtils;
 import speedith.core.lang.util.HabitatUtils;
 import speedith.core.lang.util.ShadingUtils;
 import speedith.core.reasoning.ApplyStyle;
@@ -61,17 +62,12 @@ public class Combining extends UnaryForwardRule {
 
   @Override
   public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
-    return SingletonContainer.Instruction;
+    return new SelectSingleOperatorInstruction(Operator.Conjunction);
   }
 
   @Override
   protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
     return new CombiningTransformer(arg, applyStyle);
-  }
-
-  private static final class SingletonContainer {
-
-    private static final SelectSingleOperatorInstruction Instruction = new SelectSingleOperatorInstruction(Operator.Conjunction);
   }
 
   private class CombiningTransformer extends UnaryForwardTransformer {
@@ -82,12 +78,8 @@ public class Combining extends UnaryForwardRule {
 
     @Override
     protected SpiderDiagram apply(CompoundSpiderDiagram csd) {
-      if (Operator.Conjunction.equals(csd.getOperator())
-          && csd.getOperand(0) instanceof PrimarySpiderDiagram
-          && csd.getOperand(1) instanceof PrimarySpiderDiagram) {
-        PrimarySpiderDiagram rhs = (PrimarySpiderDiagram) csd.getOperand(1);
-        PrimarySpiderDiagram lhs = (PrimarySpiderDiagram) csd.getOperand(0);
-        return Combining.apply(lhs, rhs);
+      if (CompoundDiagramsUtils.isConjunctionOfPrimaryDiagrams(csd)) {
+        return Combining.apply((PrimarySpiderDiagram) csd.getOperand(0), (PrimarySpiderDiagram) csd.getOperand(1));
       }
       return unsupported();
     }
@@ -105,10 +97,8 @@ public class Combining extends UnaryForwardRule {
     if (!HabitatUtils.habitatsAreSingleZoned(leftDiagram) || !HabitatUtils.habitatsAreSingleZoned(rightDiagram)) {
       throw new TransformationException("Could not apply the 'combining' rule. The unitary diagrams contain spiders with multi-zoned habitats.");
     }
-    if (!ShadingUtils.allShadedZonesHaveSameSpidersAsShadedZonesInOther(leftDiagram, rightDiagram)) {
-      return SpiderDiagrams.bottom();
-    }
-    if (ShadingUtils.anyShadedZoneHasFewerSpidersThanNonShadedZoneInOther(leftDiagram, rightDiagram) ||
+    if (!ShadingUtils.allShadedZonesHaveSameSpidersAsShadedZonesInOther(leftDiagram, rightDiagram) ||
+        ShadingUtils.anyShadedZoneHasFewerSpidersThanNonShadedZoneInOther(leftDiagram, rightDiagram) ||
         ShadingUtils.anyShadedZoneHasFewerSpidersThanNonShadedZoneInOther(rightDiagram, leftDiagram)) {
       return SpiderDiagrams.bottom();
     }

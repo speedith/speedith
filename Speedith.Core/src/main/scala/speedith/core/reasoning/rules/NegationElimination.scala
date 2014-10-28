@@ -5,11 +5,12 @@ import java.util.Locale
 import speedith.core.i18n.Translations
 import speedith.core.lang._
 import speedith.core.lang.util.RegionBuilder.emptyRegion
-import speedith.core.lang.util.{RegionBuilder, HabitatBuilder, SpiderUtils, HabitatUtils}
+import speedith.core.lang.util.{HabitatBuilder, HabitatUtils, SpiderUtils}
 import speedith.core.reasoning._
 import speedith.core.reasoning.args.SubDiagramIndexArg
 import speedith.core.reasoning.rules.UnaryForwardRule.UnaryForwardTransformer
 import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction
+
 import scala.collection.JavaConversions._
 
 class NegationElimination extends UnaryForwardRule {
