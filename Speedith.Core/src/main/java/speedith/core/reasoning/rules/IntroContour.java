@@ -26,25 +26,90 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.Locale;
-import speedith.core.lang.IdTransformer;
-import speedith.core.lang.Transformer;
-import speedith.core.reasoning.ApplyStyle;
-import speedith.core.reasoning.RuleApplicationInstruction;
+import java.util.*;
+
+import speedith.core.i18n.Translations;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.*;
+import speedith.core.reasoning.args.ContourArg;
+import speedith.core.reasoning.args.MultipleRuleArgs;
+import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
+import speedith.core.reasoning.rules.instructions.SelectSingleSubDiagramAndContourInstruction;
+import speedith.core.reasoning.rules.transformers.IntroduceContoursTransformer;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class IntroContour extends UnaryForwardRule {
+public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
+        implements BasicInferenceRule<MultipleRuleArgs>, ForwardRule<MultipleRuleArgs> {
 
     public static final String InferenceRuleName = "Introduce Contour";
 
     @Override
-    protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
-        return new IdTransformer();
+    public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
+        throw new RuleApplicationException("Not implemented yet!");
+        //return null;
     }
 
+    @Override
+    public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
+        MultipleRuleArgs ruleArgs = getTypedRuleArgs(args);
+        MultipleRuleArgs.assertArgumentsNotEmpty(ruleArgs);
+        SubDiagramIndexArg target = getTargetDiagramArg(ruleArgs);
+        ArrayList<ContourArg> contours = getContourArgsFrom(ruleArgs);
+        return apply(target, contours, goals);
+ //       throw new RuleApplicationException("Not implemented yet!");
+        //return null;
+    }
+
+    private SubDiagramIndexArg getTargetDiagramArg(MultipleRuleArgs args) throws RuleApplicationException {
+        return (SubDiagramIndexArg) args.get(0);
+    }
+
+    private ArrayList<ContourArg> getContourArgsFrom(MultipleRuleArgs args) throws RuleApplicationException {
+        ArrayList<ContourArg> contourArgs = new ArrayList<>();
+        int subDiagramIndex = -1;
+        int goalIndex = -1;
+        for (RuleArg ruleArg : args) {
+            if (ruleArg instanceof ContourArg) {
+                ContourArg contourArg = ContourArg.getContourArgFrom(ruleArg);
+                subDiagramIndex = ContourArg.assertSameSubDiagramIndices(subDiagramIndex, contourArg);
+                goalIndex = ContourArg.assertSameGoalIndices(goalIndex, contourArg);
+                contourArgs.add(contourArg);
+            }
+        }
+        return contourArgs;
+    }
+
+    private RuleApplicationResult apply(SubDiagramIndexArg target, ArrayList<ContourArg> targetContours, Goals goals) throws RuleApplicationException {
+        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
+   //     ContourArg inferenceTarget = targetContours.get(0);
+        SpiderDiagram targetSubgoal = getSubgoal(target, goals);
+        newSubgoals[target.getSubgoalIndex()] = targetSubgoal.transform(new IntroduceContoursTransformer(target, targetContours));
+        return createRuleApplicationResult(newSubgoals);
+    }
+
+    @Override
+    public InferenceRule<MultipleRuleArgs> getInferenceRule() {
+        return this;
+    }
+
+    @Override
+    public String getCategory(Locale locale) {
+        return Translations.i18n(locale, "INF_RULE_CATEGORY_PURELY_DIAGRAMMATIC");
+    }
+
+    @Override
+    public Class<MultipleRuleArgs> getArgumentType() {
+        return MultipleRuleArgs.class;
+    }
+
+    /*    @Override
+            protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
+                return new IdTransformer();
+            }
+        */
     @Override
     public String getInferenceRuleName() {
         return InferenceRuleName;
@@ -52,7 +117,7 @@ public class IntroContour extends UnaryForwardRule {
 
     @Override
     public String getDescription(Locale locale) {
-        return "";
+        return "test";
     }
 
     @Override
@@ -61,7 +126,7 @@ public class IntroContour extends UnaryForwardRule {
     }
 
     @Override
-    public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public RuleApplicationInstruction<MultipleRuleArgs> getInstructions() {
+        return new SelectSingleSubDiagramAndContourInstruction();
     }
 }
