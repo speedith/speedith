@@ -19,18 +19,6 @@ case class IntroduceContoursTransformer(target : SubDiagramIndexArg, contours : 
     region.map(zone => new Zone(zone.getInContours ++ contoursToAdd, zone.getOutContours )).toSet ++ region.map(zone => new Zone(zone.getInContours , zone.getOutContours ++ contoursToAdd )).toSet
   }
 
-/*  private def shadedRegionWithNewContours(region: Set[Zone]): Set[Zone] = {
-    var shadedRegion = region
-    for (contourToRemove <- contoursToRemove) {
-      shadedRegion = shadedRegion.filter(zone =>
-        zone.getInContours.contains(contourToRemove) &&
-          shadedRegion.contains(new Zone(zone.getInContours - contourToRemove, zone.getOutContours + contourToRemove))
-      )
-      shadedRegion = shadedRegion.map(zone => new Zone(zone.getInContours - contourToRemove, zone.getOutContours - contourToRemove)).toSet
-    }
-    shadedRegion
-  }
-*/
   override def transform(psd: PrimarySpiderDiagram,
                          diagramIndex: Int,
                          parents: java.util.ArrayList[CompoundSpiderDiagram],

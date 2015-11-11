@@ -84,7 +84,6 @@ public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
 
     private RuleApplicationResult apply(SubDiagramIndexArg target, ArrayList<ContourArg> targetContours, Goals goals) throws RuleApplicationException {
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
-   //     ContourArg inferenceTarget = targetContours.get(0);
         SpiderDiagram targetSubgoal = getSubgoal(target, goals);
         newSubgoals[target.getSubgoalIndex()] = targetSubgoal.transform(new IntroduceContoursTransformer(target, targetContours));
         return createRuleApplicationResult(newSubgoals);
@@ -117,7 +116,7 @@ public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
 
     @Override
     public String getDescription(Locale locale) {
-        return "test";
+        return "Introduces new contours into a diagram.";
     }
 
     @Override
