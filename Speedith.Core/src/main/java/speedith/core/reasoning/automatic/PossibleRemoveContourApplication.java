@@ -6,6 +6,7 @@ import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.automatic.wrappers.PrimarySpiderDiagramWrapper;
 
 /**
  * Created by sl542 on 12/11/15.
@@ -14,7 +15,7 @@ public class PossibleRemoveContourApplication extends PossibleRuleApplication {
 
     private String contour;
 
-    public PossibleRemoveContourApplication(PrimarySpiderDiagram target, InferenceRule<? super RuleArg> rule, String contour) {
+    public PossibleRemoveContourApplication(PrimarySpiderDiagramWrapper target, InferenceRule<? super RuleArg> rule, String contour) {
         super(target, rule);
         this.contour = contour;
     }
@@ -24,8 +25,8 @@ public class PossibleRemoveContourApplication extends PossibleRuleApplication {
     }
 
     @Override
-    public RuleArg getArg(int subgoalindex, SpiderDiagram sd) {
-        int targetIndex = sd.getSubDiagramIndex(getTarget());
+    public RuleArg getArg(int subgoalindex) {
+        int targetIndex = getTarget().getOccurrenceIndex();
         ContourArg arg = new ContourArg(subgoalindex, targetIndex, contour);
         return new MultipleRuleArgs(arg);
     }

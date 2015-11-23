@@ -5,6 +5,7 @@ import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
 
 /**
  * An instance of a possible rule application to an
@@ -18,9 +19,9 @@ public abstract class PossibleRuleApplication {
 
     private InferenceRule<? super RuleArg> rule;
 
-    private SpiderDiagram target;
+    private SpiderDiagramWrapper target;
 
-    public PossibleRuleApplication(SpiderDiagram target, InferenceRule<? super RuleArg> rule) {
+    public PossibleRuleApplication(SpiderDiagramWrapper target, InferenceRule<? super RuleArg> rule) {
         this.target = target;
         this.rule = rule;
     }
@@ -35,7 +36,7 @@ public abstract class PossibleRuleApplication {
      * The target diagram to which the rule could be applied
      * @return the target diagram
      */
-    public SpiderDiagram getTarget() { return target; }
+    public SpiderDiagramWrapper getTarget() { return target; }
 
-    public abstract RuleArg getArg(int subgoalindex, SpiderDiagram sd) throws RuleApplicationException;
+    public abstract RuleArg getArg(int subgoalindex) throws RuleApplicationException;
 }
