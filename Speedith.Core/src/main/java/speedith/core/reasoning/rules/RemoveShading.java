@@ -27,6 +27,8 @@
 package speedith.core.reasoning.rules;
 
 import java.util.Locale;
+
+import speedith.core.i18n.Translations;
 import speedith.core.lang.IdTransformer;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Transformer;
@@ -74,7 +76,7 @@ public class RemoveShading extends SimpleInferenceRule<ZoneArg>
 
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
-        return null;
+        return apply(args, goals);
     }
 
     @Override
@@ -93,7 +95,7 @@ public class RemoveShading extends SimpleInferenceRule<ZoneArg>
 
     @Override
     public String getCategory(Locale locale) {
-        return null;
+        return Translations.i18n(locale, "INF_RULE_CATEGORY_PURELY_DIAGRAMMATIC");
     }
 
     @Override

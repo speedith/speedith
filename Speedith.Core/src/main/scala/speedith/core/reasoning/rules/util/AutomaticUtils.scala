@@ -3,7 +3,7 @@ package speedith.core.reasoning.rules.util
 import java.text.Collator
 import java.util
 import speedith.core.lang.{SpiderDiagram, PrimarySpiderDiagram, CompoundSpiderDiagram, Operator, Zone,SpiderDiagrams,Zones}
-import speedith.core.reasoning.{Goals, InferenceRule}
+import speedith.core.reasoning.{Proof, RuleApplicationException, Goals, InferenceRule}
 import speedith.core.reasoning.args.RuleArg
 import speedith.core.reasoning.automatic._
 import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramWrapper, PrimarySpiderDiagramWrapper, SpiderDiagramWrapper}
@@ -43,8 +43,9 @@ object AutomaticUtils {
     }
   }
 
+
   def createAllPossibleRuleApplications (target: SpiderDiagramWrapper, contours: util.Collection[String], applied: AppliedRules ): util.Collection[PossibleRuleApplication] = target match {
-    case target : PrimarySpiderDiagramWrapper => createRemoveContourApplications(target, applied) ++ createRemoveShadingApplications(target, applied) ++ createIntroduceContoursApplication(target, contours, applied)
+    case target : PrimarySpiderDiagramWrapper => createRemoveShadedZoneApplications(target, applied) ++ createRemoveShadingApplications(target, applied) ++ createRemoveContourApplications(target, applied) ++  createIntroduceContoursApplication(target, contours, applied)
     case target : CompoundSpiderDiagramWrapper =>  target.getCompoundDiagram.getOperator match  {
       case Operator.Conjunction =>  createCopyContourApplication(target, applied)++  target.getOperands.flatMap(o =>    createAllPossibleRuleApplications(o, contours, applied)) ++createConjunctionEliminationApplication(target)
       case Operator.Implication => createAllPossibleRuleApplications(target.getOperand(0), contours, applied)
@@ -62,6 +63,9 @@ object AutomaticUtils {
   private def createRemoveContourApplications(target: PrimarySpiderDiagramWrapper, applied: AppliedRules): util.Collection[PossibleRuleApplication] = {
     (target.getAllContours -- applied.getRemovedContours(target)).map(c => new PossibleRemoveContourApplication(target, new RemoveContour().asInstanceOf[InferenceRule[RuleArg]], c))
   }
+
+  def createRemoveShadedZoneApplications(target: PrimarySpiderDiagramWrapper, applied: AppliedRules) : util.Collection[PossibleRuleApplication] =
+    ((target.getShadedZones & target.getPresentZones) -- applied.getRemovedShadedZones(target)) .map(z => new PossibleRemoveShadedZoneApplication(target, new RemoveShadedZone().asInstanceOf[InferenceRule[RuleArg]], z))
 
   private def createRemoveShadingApplications(target: PrimarySpiderDiagramWrapper, applied: AppliedRules): util.Collection[PossibleRuleApplication] = {
     ((target.getShadedZones & target.getPresentZones) -- applied.getRemovedShading(target)) .map(z => new PossibleRemoveShadingApplication(target, new RemoveShading().asInstanceOf[InferenceRule[RuleArg]], z))

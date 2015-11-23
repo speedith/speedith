@@ -190,7 +190,21 @@ public class AutoProver {
                 appliedRules.addRemovedShading(target, zone);
                 return true;
             }
-        }  else if (ruleApp instanceof PossibleCopyContourApplication) {
+        } else if (ruleApp instanceof PossibleRemoveShadedZoneApplication) {
+            PossibleRemoveShadedZoneApplication r= (PossibleRemoveShadedZoneApplication) ruleApp;
+            Zone zone = r.getZone();
+            SpiderDiagramWrapper target = ruleApp.getTarget();
+            if (!appliedRules.getRemovedShadedZones(target).contains(zone)) {
+                try {
+
+                    p.applyRule(r.getRule(), r.getArg(subgoalindex));
+                } catch (TransformationException e) {
+                    e.printStackTrace();
+                }
+                appliedRules.addRemovedShadedZones(target, zone);
+                return true;
+            }
+        } else if (ruleApp instanceof PossibleCopyContourApplication) {
             PossibleCopyContourApplication copy = (PossibleCopyContourApplication) ruleApp;
             String contour = copy.getContour();
             SpiderDiagramWrapper target = ruleApp.getTarget();

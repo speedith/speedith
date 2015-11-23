@@ -4,14 +4,15 @@ import java.util
 
 import speedith.core.lang._
 import speedith.core.reasoning.RuleApplicationException
-import speedith.core.reasoning.args.{ZoneArg, SubDiagramIndexArg}
+import speedith.core.reasoning.args.ZoneArg
 import scala.collection.JavaConversions._
 
-
 /**
- * Created by sl542 on 11/11/15.
+ *
+ * @author Sven Linker [s.linker@brighton.ac.uk]
+ *
  */
-class RemoveShadingTransformer (target:  ZoneArg) extends IdTransformer{
+class RemoveShadedZoneTransformer (target:  ZoneArg) extends IdTransformer{
   val subDiagramIndex = target.getSubDiagramIndex
 
   override def transform(psd: PrimarySpiderDiagram,
@@ -23,15 +24,15 @@ class RemoveShadingTransformer (target:  ZoneArg) extends IdTransformer{
         if (!(psd.getShadedZones & psd.getPresentZones).contains(target.getZone) ) {
           throw new RuleApplicationException("Selected zone is not shaded.")
         }
-        EulerDiagrams.createPrimaryEulerDiagram(psd.getShadedZones - target.getZone, psd.getPresentZones)
+        EulerDiagrams.createPrimaryEulerDiagram(psd.getShadedZones , psd.getPresentZones- target.getZone)
       }
       catch {
         case e: Throwable =>
-        println(e)
-        throw e
+          println(e)
+          e.printStackTrace()
+          throw e
       }
-    }
-    else {
+    } else {
       null;
     }
   }

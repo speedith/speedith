@@ -58,6 +58,7 @@ public class InferenceRules {
         registerProvider(RemoveContour.class);
         registerProvider(RemoveShading.class);
         registerProvider(IntroShadedZone.class);
+        registerProvider(RemoveShadedZone.class);
         registerProvider(DischargeNullGoal.class);
 
         registerProvider(Combining.class);

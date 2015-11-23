@@ -23,11 +23,14 @@ public class AppliedRules {
 
     private Map<SpiderDiagramWrapper, Set<Zone>> removedShading;
 
+    private Map<SpiderDiagramWrapper, Set<Zone>> removedShadedZones;
+
 
     public AppliedRules() {
         introContours = new HashMap<SpiderDiagramWrapper,Set<String>>();
         removeContours = new HashMap<SpiderDiagramWrapper,Set<String>>();
         removedShading = new HashMap<SpiderDiagramWrapper, Set<Zone>>();
+        removedShadedZones= new HashMap<SpiderDiagramWrapper, Set<Zone>>();
         copiedContours = new HashMap<SpiderDiagramWrapper, Set<String>>();
     }
 
@@ -66,6 +69,13 @@ public class AppliedRules {
         removedShading.get(sd).add(z);
     }
 
+    public void addRemovedShadedZones(SpiderDiagramWrapper sd, Zone z) {
+        if (!removedShadedZones.containsKey(sd)) {
+            removedShadedZones.put(sd, new HashSet<Zone>());
+        }
+        removedShadedZones.get(sd).add(z);
+    }
+
     public Set<String> getIntroducedContours(SpiderDiagramWrapper psd) {
         if (!introContours.containsKey(psd)) {
             introContours.put(psd, new HashSet<String>());
@@ -88,6 +98,13 @@ public class AppliedRules {
 
     }
 
+    public Set<Zone> getRemovedShadedZones(SpiderDiagramWrapper sd) {
+        if (!removedShadedZones.containsKey(sd)) {
+            removedShadedZones.put(sd, new HashSet<Zone>());
+        }
+        return removedShadedZones.get(sd);
+
+    }
     public Set<String> getCopiedContours(SpiderDiagramWrapper psd) {
         if (!copiedContours.containsKey(psd)) {
             copiedContours.put(psd, new HashSet<String>());

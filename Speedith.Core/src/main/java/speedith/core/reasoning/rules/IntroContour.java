@@ -48,7 +48,8 @@ public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
 
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
-        throw new RuleApplicationException("Not implemented yet!");
+        return apply(args, goals);
+//        throw new RuleApplicationException("Not implemented yet!");
         //return null;
     }
 
@@ -59,8 +60,6 @@ public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
         SubDiagramIndexArg target = getTargetDiagramArg(ruleArgs);
         ArrayList<ContourArg> contours = getContourArgsFrom(ruleArgs);
         return apply(target, contours, goals);
- //       throw new RuleApplicationException("Not implemented yet!");
-        //return null;
     }
 
     private SubDiagramIndexArg getTargetDiagramArg(MultipleRuleArgs args) throws RuleApplicationException {
