@@ -31,13 +31,14 @@ case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) ex
                          childIndices: java.util.ArrayList[java.lang.Integer]): SpiderDiagram = {
     if (subDiagramIndex == diagramIndex) {
       try {
+        val normalised = normalize(psd)
         SpiderDiagrams.createPrimarySD(
-          psd.getSpiders,
-          psd.getHabitats.map {
+          normalised.getSpiders,
+          normalised.getHabitats.map {
             case (spider, habitat) => (spider, new Region(regionWithoutContours(habitat.zones)))
           },
-          shadedRegionWithoutContours(psd.getShadedZones.toSet),
-          regionWithoutContours(psd.getPresentZones)
+          shadedRegionWithoutContours(normalised.getShadedZones.toSet),
+          regionWithoutContours(normalised  .getPresentZones)
         )
       }
       catch {
@@ -49,5 +50,10 @@ case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) ex
     } else {
       null
     }
+  }
+
+  private def normalize (psd : PrimarySpiderDiagram): PrimarySpiderDiagram= {
+    val possibleZones: Set[Zone] = Zones.allZonesForContours(psd.getAllContours.toSeq:_*).toSet
+    SpiderDiagrams.createPrimarySD(psd.getSpiders, psd.getHabitats, psd.getShadedZones, possibleZones -- (psd.getShadedZones -- psd.getPresentZones))
   }
 }

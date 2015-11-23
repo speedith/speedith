@@ -52,8 +52,8 @@ public class InferenceRules {
 
     static {
         // Register built-in inference rules.
-        registerProvider(AddFeet.class);
-        registerProvider(EraseSpider.class);
+     //   registerProvider(AddFeet.class);
+    //    registerProvider(EraseSpider.class);
         registerProvider(IntroContour.class);
         registerProvider(RemoveContour.class);
         registerProvider(RemoveShading.class);
@@ -61,12 +61,12 @@ public class InferenceRules {
         registerProvider(DischargeNullGoal.class);
 
         registerProvider(Combining.class);
-        registerProvider(CopySpider.class);
+    //    registerProvider(CopySpider.class);
         registerProvider(CopyContours.class);
         registerProvider(CopyShading.class);
-        registerProvider(SplitSpiders.class);
-        registerProvider(ExcludedMiddle.class);
-        registerProvider(NegationElimination.class);
+    //    registerProvider(SplitSpiders.class);
+    //    registerProvider(ExcludedMiddle.class);
+    //     registerProvider(NegationElimination.class);
 
         registerProvider(ModusPonens.class);
         registerProvider(ModusTolens.class);

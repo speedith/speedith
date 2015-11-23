@@ -37,6 +37,8 @@ import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
+import speedith.core.reasoning.automatic.AutoProver;
+import speedith.core.reasoning.automatic.AutomaticProofException;
 import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.ui.input.TextSDInputDialog;
@@ -47,11 +49,10 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -87,6 +88,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private speedith.ui.ProofPanel proofPanel1;
   private javax.swing.JMenu rulesMenu;
   private javax.swing.JScrollPane scrlPnlAppliedRules;
+  private javax.swing.JMenu reasoningMenu;
+  private javax.swing.JMenuItem proveAny;
 
   /**
    * Creates new form SpeedithMainForm
@@ -126,6 +129,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     useSdExample2MenuItem = new javax.swing.JMenuItem();
     useSdExample3MenuItem = new javax.swing.JMenuItem();
     rulesMenu = new javax.swing.JMenu();
+    reasoningMenu = new javax.swing.JMenu();
+    proveAny = new javax.swing.JMenuItem();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("Speedith");
@@ -242,6 +247,20 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     rulesMenu.setText("Rules");
     menuBar.add(rulesMenu);
 
+    reasoningMenu.setMnemonic('A');
+    reasoningMenu.setText("Auto");
+
+    proveAny.setText("Prove");
+    proveAny.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onProveAny(evt);
+      }
+    });
+
+    reasoningMenu.add(proveAny);
+    menuBar.add(reasoningMenu);
+
     setJMenuBar(menuBar);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -257,6 +276,27 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
+
+  private void onProveAny(ActionEvent evt) {
+    Goals initial =  proofPanel1.getInitialGoals();
+    Proof proof = null ;
+    try {
+      proof = AutoProver.generateProof(initial);
+    } catch (AutomaticProofException e) {
+      JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
+    }
+    if (!(proof == null)) {
+      proofPanel1.newProof(proof.getInitialGoals());
+      for (RuleApplication appl : proof.getRuleApplications()) {
+        try {
+          proofPanel1.applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments());
+        } catch (RuleApplicationException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    // TODO: Connect generated proof with the UI!
+  }
 
   private void onSpiderDrawerClicked(ActionEvent evt) {
     MainForm spiderDrawer = new MainForm(this, true, false);

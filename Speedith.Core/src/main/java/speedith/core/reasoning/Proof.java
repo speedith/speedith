@@ -148,4 +148,5 @@ public interface Proof {
      * which case no change at all happens to this proof.
      */
     boolean undoStep();
+
 }
