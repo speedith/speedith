@@ -69,19 +69,19 @@ public class InferenceRules {
     //    registerProvider(ExcludedMiddle.class);
     //     registerProvider(NegationElimination.class);
 
-        registerProvider(ModusPonens.class);
-        registerProvider(ModusTolens.class);
-        registerProvider(Idempotency.class);
-        registerProvider(GeneralTautology.class);
+//        registerProvider(ModusPonens.class);
+//        registerProvider(ModusTolens.class);
+//        registerProvider(Idempotency.class);
+//        registerProvider(GeneralTautology.class);
         registerProvider(ImplicationTautology.class);
         registerProvider(ConjunctionElimination.class);
-        registerProvider(ConjunctionIntroduction.class);
-        registerProvider(DisjunctionElimination.class);
-        registerProvider(DisjunctionIntroduction.class);
-        registerProvider(EquivalenceElimination.class);
-        registerProvider(EquivalenceIntroduction.class);
-        registerProvider(DoubleNegationElimination.class);
-        registerProvider(DoubleNegationIntroduction.class);
+//        registerProvider(ConjunctionIntroduction.class);
+//        registerProvider(DisjunctionElimination.class);
+//        registerProvider(DisjunctionIntroduction.class);
+//        registerProvider(EquivalenceElimination.class);
+//        registerProvider(EquivalenceIntroduction.class);
+//        registerProvider(DoubleNegationElimination.class);
+//        registerProvider(DoubleNegationIntroduction.class);
     }
 
     /**

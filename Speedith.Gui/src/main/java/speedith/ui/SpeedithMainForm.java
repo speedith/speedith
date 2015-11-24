@@ -279,23 +279,11 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
   private void onProveAny(ActionEvent evt) {
     Goals initial =  proofPanel1.getInitialGoals();
-    Proof proof = null ;
     try {
-      proof = AutoProver.generateProof(initial);
+       proofPanel1.generateProof(initial);
     } catch (AutomaticProofException e) {
       JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
     }
-    if (!(proof == null)) {
-      proofPanel1.newProof(proof.getInitialGoals());
-      for (RuleApplication appl : proof.getRuleApplications()) {
-        try {
-          proofPanel1.applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments());
-        } catch (RuleApplicationException e) {
-          e.printStackTrace();
-        }
-      }
-    }
-    // TODO: Connect generated proof with the UI!
   }
 
   private void onSpiderDrawerClicked(ActionEvent evt) {

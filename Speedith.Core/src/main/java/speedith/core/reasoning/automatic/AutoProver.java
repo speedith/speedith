@@ -3,6 +3,7 @@ package speedith.core.reasoning.automatic;
 import speedith.core.lang.*;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
+import speedith.core.reasoning.automatic.strategies.Strategy;
 import speedith.core.reasoning.automatic.wrappers.CompoundSpiderDiagramWrapper;
 import speedith.core.reasoning.automatic.wrappers.PrimarySpiderDiagramWrapper;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
@@ -12,6 +13,7 @@ import speedith.core.reasoning.rules.util.AutomaticUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Generates proofs for given subgoals.
@@ -22,6 +24,12 @@ import java.util.HashSet;
  */
 public class AutoProver {
 
+    private Strategy strategy;
+
+    public AutoProver(Strategy strategy) {
+        this.strategy = strategy;
+    }
+
     /**
      * Creates a proof without possibilities to set the wanted
      * heuristics.
@@ -31,7 +39,7 @@ public class AutoProver {
      *
      * @return a proof of the goals
      */
-    public static Proof generateProof(Goals initialGoals) throws AutomaticProofException {
+    public Proof generateProof(Goals initialGoals) throws AutomaticProofException {
        // currently only Spider Diagrams which have an imolication as their major operator
         // and where the assumption and conclusion are conjunctive diagrams
         // can be proved
@@ -57,6 +65,7 @@ public class AutoProver {
         } catch (RuleApplicationException e) {
             AutomaticProofException exc = new AutomaticProofException("Unable to prove current goal because of an illegal rule application");
             exc.initCause(e);
+            e.printStackTrace();
             throw exc;
         }
         if (result == null || !result.isFinished()) {
@@ -110,7 +119,7 @@ public class AutoProver {
      * state of the given Proof p. The rules already applied to subdiagrams within
      * the current set of goals are saved in appliedRules
      */
-    private static Proof prove(Proof p, int subgoalindex, AppliedRules appliedRules) throws RuleApplicationException {
+    private Proof prove(Proof p, int subgoalindex, AppliedRules appliedRules) throws RuleApplicationException {
         p = tryToFinish(p, subgoalindex);
         if (p.isFinished()) {
             return p;
@@ -124,18 +133,19 @@ public class AutoProver {
             contours.addAll( AutomaticUtils.collectContours(sd));
         }
         SpiderDiagramWrapper target = wrapDiagram(currentGoals.getGoalAt(subgoalindex), 0);
-        Collection<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours, appliedRules);
-        for (PossibleRuleApplication ruleApp : applications) {
+        Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours, appliedRules);
+        PossibleRuleApplication ruleApp = null;
+        do  {
+            ruleApp = strategy.select(p, applications);
             boolean hasbeenApplied = applyRule(ruleApp, p, subgoalindex, appliedRules);
             if (hasbeenApplied) {
                 p = prove(p, subgoalindex, appliedRules);
                 if (p.isFinished()) {
                     return p;
                 }
-                //FIXME: addition of copy contour creates some endless(?) recursion. Stackoverflow
                 p.undoStep();
             }
-        }
+        } while(ruleApp != null);
 
         return p;
     }
@@ -143,7 +153,7 @@ public class AutoProver {
     /*
      * Tries to finish the given subgoal by an application of ImplicationTautology
      */
-    private static Proof tryToFinish(Proof p, int subgoalindex) {
+    private Proof tryToFinish(Proof p, int subgoalindex) {
         ImplicationTautology tautology = new ImplicationTautology();
         Goals goalsAt = p.getLastGoals();
         SubDiagramIndexArg index = new SubDiagramIndexArg(subgoalindex,0);
@@ -157,7 +167,7 @@ public class AutoProver {
         return p;
     }
 
-    private static boolean applyRule(PossibleRuleApplication ruleApp, Proof p, int subgoalindex, AppliedRules appliedRules) throws RuleApplicationException {
+    private boolean applyRule(PossibleRuleApplication ruleApp, Proof p, int subgoalindex, AppliedRules appliedRules) throws RuleApplicationException {
         if (ruleApp instanceof PossibleIntroduceContourApplication) {
             PossibleIntroduceContourApplication intro = (PossibleIntroduceContourApplication) ruleApp;
             String contour = intro.getContour();
@@ -168,9 +178,11 @@ public class AutoProver {
                 return true;
             }
         } else if (ruleApp instanceof PossibleConjunctionElimination) {
-            PossibleConjunctionElimination pconjE = (PossibleConjunctionElimination) ruleApp;
-            SpiderDiagramWrapper target = ruleApp.getTarget();
-            p.applyRule(pconjE.getRule(), pconjE.getArg(subgoalindex));
+//            SpiderDiagramWrapper target = ruleApp.getTarget();
+            p.applyRule(ruleApp.getRule(), ruleApp.getArg(subgoalindex));
+            return true;
+        } else if (ruleApp instanceof PossibleCombiningApplication) {
+            p.applyRule(ruleApp.getRule(), ruleApp.getArg(subgoalindex));
             return true;
         } else if (ruleApp instanceof PossibleRemoveContourApplication) {
             PossibleRemoveContourApplication remove = (PossibleRemoveContourApplication) ruleApp;
@@ -204,6 +216,20 @@ public class AutoProver {
                 appliedRules.addRemovedShadedZones(target, zone);
                 return true;
             }
+        } else if (ruleApp instanceof PossibleIntroShadedZoneApplication) {
+            PossibleIntroShadedZoneApplication r= (PossibleIntroShadedZoneApplication) ruleApp;
+            Zone zone = r.getZone();
+            SpiderDiagramWrapper target = ruleApp.getTarget();
+            if (!appliedRules.getIntroducedShadedZones(target).contains(zone)) {
+                try {
+
+                    p.applyRule(r.getRule(), r.getArg(subgoalindex));
+                } catch (TransformationException e) {
+                    e.printStackTrace();
+                }
+                appliedRules.addIntroducedShadedZones(target, zone);
+                return true;
+            }
         } else if (ruleApp instanceof PossibleCopyContourApplication) {
             PossibleCopyContourApplication copy = (PossibleCopyContourApplication) ruleApp;
             String contour = copy.getContour();
@@ -218,12 +244,20 @@ public class AutoProver {
                 appliedRules.addCopiedContour(target, contour);
                 return true;
             }
+        } else if (ruleApp instanceof PossibleCopyShadingApplication) {
+            PossibleCopyShadingApplication cs = (PossibleCopyShadingApplication) ruleApp;
+            Set<Zone> r = cs.getRegion();
+            if (!appliedRules.getCopiedShadings(cs.getTarget()).contains(r)) {
+                p.applyRule(cs.getRule(), cs.getArg(subgoalindex));
+                appliedRules.addCopiedShadings(cs.getTarget(), r);
+                return true;
+            }
         }
         return false;
 
     }
 
-    private static boolean isImplicationOfConjunctions(SpiderDiagram goal) {
+      private boolean isImplicationOfConjunctions(SpiderDiagram goal) {
         if (goal instanceof CompoundSpiderDiagram) {
             CompoundSpiderDiagram csd = (CompoundSpiderDiagram) goal;
             if (csd.getOperator().equals(Operator.Implication)) {

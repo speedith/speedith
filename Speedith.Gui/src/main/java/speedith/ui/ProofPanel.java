@@ -33,6 +33,12 @@ import javax.swing.JPanel;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
+import speedith.core.reasoning.automatic.AutoProver;
+import speedith.core.reasoning.automatic.AutomaticProof;
+import speedith.core.reasoning.automatic.AutomaticProofException;
+import speedith.core.reasoning.automatic.strategies.NoStrategy;
+import speedith.core.reasoning.rules.util.AutomaticUtils;
+
 import static speedith.i18n.Translations.i18n;
 
 /**
@@ -41,10 +47,12 @@ import static speedith.i18n.Translations.i18n;
  * 
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class ProofPanel extends javax.swing.JPanel implements Proof {
+public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticProof {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private ProofTrace proof;
+
+    private AutoProver prover;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
@@ -67,6 +75,9 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
         initComponents();
 
         resetProof(initialGoals, false);
+        //TODO: chosing of strategies
+        prover = new AutoProver(new NoStrategy());
+
     }
     //</editor-fold>
 
@@ -179,6 +190,29 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
     public boolean isFinished() {
         return proof.isFinished();
     }
+    //</editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="AutomaticProof Interface Implementation">
+
+    @Override
+    public Proof generateProof(Goals initialGoals) throws AutomaticProofException {
+        Goals normalised = AutomaticUtils.normalize(initialGoals);
+        Proof tempProof = prover.generateProof(normalised);
+        if (!(tempProof == null)) {
+            newProof(normalised);
+//            newProof(initialGoals);
+            for (RuleApplication appl : tempProof.getRuleApplications()) {
+                try {
+                    applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments());
+                } catch (RuleApplicationException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return proof;
+    }
+
+
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="UI Related Methods">
