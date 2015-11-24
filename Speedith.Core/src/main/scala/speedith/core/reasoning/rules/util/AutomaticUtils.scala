@@ -20,7 +20,9 @@ object AutomaticUtils {
   }
 
   def createConjunctionEliminationApplication(target: CompoundSpiderDiagramWrapper) : util.Collection[ PossibleRuleApplication] = target.getCompoundDiagram.getOperator match  {
-    case Operator.Conjunction  => new util.HashSet[PossibleRuleApplication]() + new PossibleConjunctionElimination(target, new ConjunctionElimination().asInstanceOf[InferenceRule[RuleArg]]);
+    case Operator.Conjunction  => new util.HashSet[PossibleRuleApplication]() +
+      new PossibleConjunctionElimination(target, new ConjunctionElimination().asInstanceOf[InferenceRule[RuleArg]], target.getOperand(0)) +
+      new PossibleConjunctionElimination(target, new ConjunctionElimination().asInstanceOf[InferenceRule[RuleArg]], target.getOperand(1))
     case _ => new util.HashSet[PossibleRuleApplication]();
   }
 
@@ -47,10 +49,10 @@ object AutomaticUtils {
       if (leftContours.equals(rightContours)) {
         val leftShadedRegions = (target.getOperand(0).getDiagram.asInstanceOf[PrimarySpiderDiagram].getShadedZones &
           target.getOperand(0).getDiagram.asInstanceOf[PrimarySpiderDiagram].getPresentZones).
-          subsets.filter( r => r.nonEmpty).toSet
+          subsets.filter(r => r.nonEmpty).toSet
         val rightShadedRegions = (target.getOperand(1).getDiagram.asInstanceOf[PrimarySpiderDiagram].getShadedZones &
           target.getOperand(1).getDiagram.asInstanceOf[PrimarySpiderDiagram].getPresentZones)
-          .subsets.filter( r => r.nonEmpty).toSet
+          .subsets.filter(r => r.nonEmpty).toSet
         leftShadedRegions.
           filter(r => !applied.getCopiedShadings(target.getOperand(0)).contains(r)).
           diff(rightShadedRegions).
