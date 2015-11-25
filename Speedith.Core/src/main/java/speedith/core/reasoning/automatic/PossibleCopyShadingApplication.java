@@ -2,6 +2,7 @@ package speedith.core.reasoning.automatic;
 
 import speedith.core.lang.Zone;
 import speedith.core.reasoning.InferenceRule;
+import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
@@ -26,11 +27,8 @@ public class PossibleCopyShadingApplication extends PossibleRuleApplication {
     }
 
     @Override
-    public RuleArg getArg(int subgoalindex) throws RuleApplicationException {
+    public RuleArg getArg(int subgoalindex)  {
         int targetIndex = getTarget().getOccurrenceIndex();
-        if (targetIndex == -1) {
-            throw new RuleApplicationException("The target diagram is not an occurrence in the subgoal");
-        }
         List<ZoneArg> args = new ArrayList<>();
         for(Zone z : region) {
             args.add(new ZoneArg(subgoalindex, targetIndex, z));
@@ -40,5 +38,16 @@ public class PossibleCopyShadingApplication extends PossibleRuleApplication {
 
     public Set<Zone> getRegion() {
         return region;
+    }
+
+    @Override
+    public boolean apply(Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
+        if (!applied.getCopiedShadings(getTarget()).contains(region)) {
+            p.applyRule(getRule(), getArg(subGoalIndex));
+            applied.addCopiedShadings(getTarget(), region);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

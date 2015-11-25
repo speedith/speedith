@@ -3,6 +3,7 @@ package speedith.core.reasoning.automatic;
 import org.antlr.tool.Rule;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.InferenceRule;
+import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
@@ -38,5 +39,10 @@ public abstract class PossibleRuleApplication {
      */
     public SpiderDiagramWrapper getTarget() { return target; }
 
-    public abstract RuleArg getArg(int subgoalindex) throws RuleApplicationException;
+    public abstract RuleArg getArg(int subgoalindex) ;
+
+    public boolean apply (Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
+        p.applyRule(getRule(), getArg(subGoalIndex));
+        return true;
+    }
 }

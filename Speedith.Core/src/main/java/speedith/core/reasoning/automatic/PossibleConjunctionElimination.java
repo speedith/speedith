@@ -2,6 +2,8 @@ package speedith.core.reasoning.automatic;
 
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.InferenceRule;
+import speedith.core.reasoning.Proof;
+import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
@@ -29,4 +31,5 @@ public class PossibleConjunctionElimination extends PossibleRuleApplication {
         args.add(childArg);
         return new MultipleRuleArgs(args);
     }
+
 }

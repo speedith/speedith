@@ -2,6 +2,7 @@ package speedith.core.reasoning.automatic;
 
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.InferenceRule;
+import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
@@ -25,12 +26,20 @@ public class PossibleCopyContourApplication extends PossibleRuleApplication {
     }
 
     @Override
-    public RuleArg getArg(int subgoalindex) throws RuleApplicationException {
+    public RuleArg getArg(int subgoalindex)  {
         int targetIndex = getTarget().getOccurrenceIndex();
-        if (targetIndex == -1) {
-            throw new RuleApplicationException("The target diagram is not an occurrence in the subgoal");
-        }
         ContourArg arg = new ContourArg(subgoalindex, targetIndex, contour);
         return new MultipleRuleArgs(arg);
+    }
+
+    @Override
+    public boolean apply(Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
+        if (!applied.getCopiedContours(getTarget()).contains(contour)) {
+                p.applyRule(getRule(), getArg(subGoalIndex));
+            applied.addCopiedContour(getTarget(), contour);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

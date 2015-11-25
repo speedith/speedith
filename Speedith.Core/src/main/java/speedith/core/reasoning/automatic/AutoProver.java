@@ -134,10 +134,10 @@ public class AutoProver {
         }
         SpiderDiagramWrapper target = wrapDiagram(currentGoals.getGoalAt(subgoalindex), 0);
         Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours, appliedRules);
-        PossibleRuleApplication ruleApp = null;
+        PossibleRuleApplication nextRule = null;
         do  {
-            ruleApp = strategy.select(p, applications);
-            boolean hasbeenApplied = applyRule(ruleApp, p, subgoalindex, appliedRules);
+            nextRule = strategy.select(p, applications);
+            boolean hasbeenApplied = nextRule != null && nextRule.apply(p, subgoalindex, appliedRules);
             if (hasbeenApplied) {
                 p = prove(p, subgoalindex, appliedRules);
                 if (p.isFinished()) {
@@ -145,7 +145,7 @@ public class AutoProver {
                 }
                 p.undoStep();
             }
-        } while(ruleApp != null);
+        } while(nextRule != null);
 
         return p;
     }
@@ -160,102 +160,13 @@ public class AutoProver {
         try {
             p.applyRule(tautology,index);
         }catch (TransformationException e) {
-            //throw e;
+            throw e;
         } catch (RuleApplicationException e) {
             e.printStackTrace();
         }
         return p;
     }
 
-    private boolean applyRule(PossibleRuleApplication ruleApp, Proof p, int subgoalindex, AppliedRules appliedRules) throws RuleApplicationException {
-        if (ruleApp instanceof PossibleIntroduceContourApplication) {
-            PossibleIntroduceContourApplication intro = (PossibleIntroduceContourApplication) ruleApp;
-            String contour = intro.getContour();
-            SpiderDiagramWrapper target = ruleApp.getTarget();
-            if (!appliedRules.getIntroducedContours(target).contains(contour)) {
-                p.applyRule(intro.getRule(), intro.getArg(subgoalindex));
-                appliedRules.addIntroContour(target, contour);
-                return true;
-            }
-        } else if (ruleApp instanceof PossibleConjunctionElimination) {
-//            SpiderDiagramWrapper target = ruleApp.getTarget();
-            p.applyRule(ruleApp.getRule(), ruleApp.getArg(subgoalindex));
-            return true;
-        } else if (ruleApp instanceof PossibleCombiningApplication) {
-            p.applyRule(ruleApp.getRule(), ruleApp.getArg(subgoalindex));
-            return true;
-        } else if (ruleApp instanceof PossibleRemoveContourApplication) {
-            PossibleRemoveContourApplication remove = (PossibleRemoveContourApplication) ruleApp;
-            String contour = remove.getContour();
-            SpiderDiagramWrapper target = ruleApp.getTarget();
-            if (!appliedRules.getRemovedContours(target).contains(contour)) {
-                p.applyRule(remove.getRule(), remove.getArg(subgoalindex));
-                appliedRules.addRemoveContour(target, contour);
-                return true;
-            }
-        } else if (ruleApp instanceof PossibleRemoveShadingApplication) {
-            PossibleRemoveShadingApplication shading = (PossibleRemoveShadingApplication) ruleApp;
-            Zone zone= shading.getZone();
-            SpiderDiagramWrapper target = ruleApp.getTarget();
-            if (!appliedRules.getRemovedShading(target).contains(zone)) {
-                p.applyRule(shading.getRule(), shading.getArg(subgoalindex));
-                appliedRules.addRemovedShading(target, zone);
-                return true;
-            }
-        } else if (ruleApp instanceof PossibleRemoveShadedZoneApplication) {
-            PossibleRemoveShadedZoneApplication r= (PossibleRemoveShadedZoneApplication) ruleApp;
-            Zone zone = r.getZone();
-            SpiderDiagramWrapper target = ruleApp.getTarget();
-            if (!appliedRules.getRemovedShadedZones(target).contains(zone)) {
-                try {
-
-                    p.applyRule(r.getRule(), r.getArg(subgoalindex));
-                } catch (TransformationException e) {
-                    e.printStackTrace();
-                }
-                appliedRules.addRemovedShadedZones(target, zone);
-                return true;
-            }
-        } else if (ruleApp instanceof PossibleIntroShadedZoneApplication) {
-            PossibleIntroShadedZoneApplication r= (PossibleIntroShadedZoneApplication) ruleApp;
-            Zone zone = r.getZone();
-            SpiderDiagramWrapper target = ruleApp.getTarget();
-            if (!appliedRules.getIntroducedShadedZones(target).contains(zone)) {
-                try {
-
-                    p.applyRule(r.getRule(), r.getArg(subgoalindex));
-                } catch (TransformationException e) {
-                    e.printStackTrace();
-                }
-                appliedRules.addIntroducedShadedZones(target, zone);
-                return true;
-            }
-        } else if (ruleApp instanceof PossibleCopyContourApplication) {
-            PossibleCopyContourApplication copy = (PossibleCopyContourApplication) ruleApp;
-            String contour = copy.getContour();
-            SpiderDiagramWrapper target = ruleApp.getTarget();
-            if (!appliedRules.getCopiedContours(target).contains(contour)) {
-                try {
-
-                    p.applyRule(copy.getRule(), copy.getArg(subgoalindex));
-                } catch (TransformationException e) {
-                    e.printStackTrace();
-                }
-                appliedRules.addCopiedContour(target, contour);
-                return true;
-            }
-        } else if (ruleApp instanceof PossibleCopyShadingApplication) {
-            PossibleCopyShadingApplication cs = (PossibleCopyShadingApplication) ruleApp;
-            Set<Zone> r = cs.getRegion();
-            if (!appliedRules.getCopiedShadings(cs.getTarget()).contains(r)) {
-                p.applyRule(cs.getRule(), cs.getArg(subgoalindex));
-                appliedRules.addCopiedShadings(cs.getTarget(), r);
-                return true;
-            }
-        }
-        return false;
-
-    }
 
       private boolean isImplicationOfConjunctions(SpiderDiagram goal) {
         if (goal instanceof CompoundSpiderDiagram) {

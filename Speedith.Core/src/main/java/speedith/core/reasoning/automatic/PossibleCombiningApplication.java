@@ -16,7 +16,7 @@ public class PossibleCombiningApplication extends PossibleRuleApplication {
     }
 
     @Override
-    public RuleArg getArg(int subgoalindex) throws RuleApplicationException {
+    public RuleArg getArg(int subgoalindex)  {
         return new SubDiagramIndexArg(subgoalindex, getTarget().getOccurrenceIndex());
     }
 }

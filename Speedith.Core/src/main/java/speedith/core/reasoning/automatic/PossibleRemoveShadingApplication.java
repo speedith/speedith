@@ -3,6 +3,8 @@ package speedith.core.reasoning.automatic;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Zone;
 import speedith.core.reasoning.InferenceRule;
+import speedith.core.reasoning.Proof;
+import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
@@ -27,5 +29,16 @@ public class PossibleRemoveShadingApplication extends PossibleRuleApplication {
     public RuleArg getArg(int subgoalindex) {
         int targetIndex = getTarget().getOccurrenceIndex();
         return new ZoneArg(subgoalindex, targetIndex, zone);
+    }
+
+    @Override
+    public boolean apply(Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
+        if (!applied.getRemovedShading(getTarget()).contains(zone)) {
+            p.applyRule(getRule(), getArg(subGoalIndex));
+            applied.addRemovedShading(getTarget(), zone);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

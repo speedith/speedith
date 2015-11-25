@@ -1,7 +1,9 @@
 package speedith.core.reasoning.automatic;
 
+import speedith.core.lang.TransformationException;
 import speedith.core.lang.Zone;
 import speedith.core.reasoning.InferenceRule;
+import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.ZoneArg;
@@ -20,12 +22,23 @@ public class PossibleRemoveShadedZoneApplication extends PossibleRuleApplication
     }
 
     @Override
-    public RuleArg getArg(int subgoalindex) throws RuleApplicationException {
+    public RuleArg getArg(int subgoalindex)  {
         int subDiagramIndex = getTarget().getOccurrenceIndex();
         return new ZoneArg(subgoalindex, subDiagramIndex, zone);
     }
 
     public Zone getZone() {
         return zone;
+    }
+
+    @Override
+    public boolean apply(Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
+        if (!applied.getRemovedShadedZones(getTarget()).contains(zone)) {
+            p.applyRule(getRule(), getArg(subGoalIndex));
+            applied.addRemovedShadedZones(getTarget(), zone);
+            return true;
+        } else {
+            return false;
+        }
     }
 }
