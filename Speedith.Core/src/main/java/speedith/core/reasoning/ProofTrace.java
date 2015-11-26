@@ -96,6 +96,20 @@ public class ProofTrace implements Proof {
     public ProofTrace(List<SpiderDiagram> initialGoals) {
         this(Goals.createGoalsFrom(initialGoals));
     }
+
+    /**
+     * Copy constructor for this class. Creates a new instance of the lists holding
+     * the {@link Goals} and the {@link RuleApplication} instances (which themselves are
+     * immutable).
+     *
+     * @param goals
+     * @param ruleApplications
+     */
+    public ProofTrace(List<Goals> goals, List<RuleApplication> ruleApplications) {
+        this.goals = new ArrayList<Goals>(goals);
+        this.ruleApplications = new ArrayList<RuleApplication>(ruleApplications);
+    }
+
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Proof Interface Implementation">
@@ -188,4 +202,6 @@ public class ProofTrace implements Proof {
         }
     }
     //</editor-fold>
+
+
 }

@@ -33,9 +33,7 @@ import javax.swing.JPanel;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
-import speedith.core.reasoning.automatic.AutoProver;
-import speedith.core.reasoning.automatic.AutomaticProof;
-import speedith.core.reasoning.automatic.AutomaticProofException;
+import speedith.core.reasoning.automatic.*;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 
@@ -52,7 +50,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private ProofTrace proof;
 
-    private AutoProver prover;
+    private AutomaticProver prover;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
@@ -76,7 +74,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
 
         resetProof(initialGoals, false);
         //TODO: chosing of strategies
-        prover = new AutoProver(new NoStrategy());
+        prover = new BreadthFirstProver(new NoStrategy());
 
     }
     //</editor-fold>

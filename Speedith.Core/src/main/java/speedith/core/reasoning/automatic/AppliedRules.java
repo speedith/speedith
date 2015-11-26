@@ -1,5 +1,6 @@
 package speedith.core.reasoning.automatic;
 
+import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Zone;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
 
@@ -37,6 +38,37 @@ public class AppliedRules {
         copiedContours = new HashMap<SpiderDiagramWrapper, Set<String>>();
         copiedShadings = new HashMap<SpiderDiagramWrapper, Set<Set<Zone>>>();
 
+    }
+
+    public AppliedRules(AppliedRules old) {
+        this.introContours = new HashMap<> ();
+        for( SpiderDiagramWrapper key: old.introContours.keySet()) {
+            this.introContours.put(key, new HashSet<String>(old.introContours.get(key)));
+        }
+        this.removeContours = new HashMap<>();
+        for (SpiderDiagramWrapper key: old.removeContours.keySet()) {
+            this.removeContours.put(key, new HashSet<String>(old.removeContours.get(key)));
+        }
+        this.copiedContours = new HashMap<>();
+        for (SpiderDiagramWrapper key: old.copiedContours.keySet()) {
+            this.copiedContours.put(key, new HashSet<String>(old.copiedContours.get(key)));
+        }
+        this.removedShading = new HashMap<>();
+        for (SpiderDiagramWrapper key: old.removedShading.keySet()) {
+            this.removedShading.put(key, new HashSet<Zone>(old.removedShading.get(key)));
+        }
+        this.removedShadedZones = new HashMap<>();
+        for (SpiderDiagramWrapper key: old.removedShadedZones.keySet()) {
+            this.removedShadedZones.put(key, new HashSet<Zone>(old.removedShadedZones.get(key)));
+        }
+        this.introducedShadedZones = new HashMap<>();
+        for (SpiderDiagramWrapper key: old.introducedShadedZones.keySet()) {
+            this.introducedShadedZones.put(key, new HashSet<Zone>(old.introducedShadedZones.get(key)));
+        }
+        this.copiedShadings = new HashMap<>();
+        for (SpiderDiagramWrapper key: old.copiedShadings.keySet()) {
+            this.copiedShadings.put(key, new HashSet<Set<Zone>>(old.copiedShadings.get(key)));
+        }
     }
 
     /**

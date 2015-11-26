@@ -37,7 +37,6 @@ import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
-import speedith.core.reasoning.automatic.AutoProver;
 import speedith.core.reasoning.automatic.AutomaticProofException;
 import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
