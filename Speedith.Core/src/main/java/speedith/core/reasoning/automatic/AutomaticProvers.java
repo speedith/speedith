@@ -24,14 +24,14 @@ public class AutomaticProvers {
     }
 
     /**
-     * The main method for fetching a {@link AutomaticProver
-     * inference rule}.
+     * The main method for fetching an {@link AutomaticProver
+     * automatic prover}.
      * <p>You can get the automatic provers by name.</p>
      * <p>This method throws an exception if the prover does not
      * exist.</p>
      * <p><span style="font-weight:bold">Note</span>: use {@link
      * AutomaticProvers#getProvider(java.lang.String)} to get more information
-     * about the inference rule before fetching an actual one.</p>
+     * about the prover before fetching an actual one.</p>
      *
      * @param prover the name of the automatic prover to fetch.
      * @return an {@link AutomaticProver automatic prover} that operates on euler

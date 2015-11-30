@@ -18,7 +18,7 @@ import java.util.*;
  */
 public class BreadthFirstProver extends  AutomaticProver {
 
-    public static final String proverName = "breadth_first";
+    private static final String proverName = "breadth_first";
 
     public BreadthFirstProver() {super(new NoStrategy());}
 

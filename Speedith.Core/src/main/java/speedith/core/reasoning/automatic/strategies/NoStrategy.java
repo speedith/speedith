@@ -12,7 +12,9 @@ import java.util.Set;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class NoStrategy implements Strategy {
+public class NoStrategy implements Strategy, StrategyProvider {
+
+    private static final String strategyName = "no_strategy";
 
     @Override
     public PossibleRuleApplication select(Proof p, Set<PossibleRuleApplication> possible) {
@@ -24,5 +26,25 @@ public class NoStrategy implements Strategy {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Strategy getStrategy() {
+        return this;
+    }
+
+    @Override
+    public String getStrategyName() {
+        return strategyName;
+    }
+
+    @Override
+    public String getDescription() {
+        return "No strategy";
+    }
+
+    @Override
+    public String getPrettyName() {
+        return "None";
     }
 }

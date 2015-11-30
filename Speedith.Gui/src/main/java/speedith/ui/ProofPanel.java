@@ -203,6 +203,9 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
 
     @Override
     public Proof generateProof(Goals initialGoals) throws AutomaticProofException {
+        if (initialGoals == null) {
+            throw  new AutomaticProofException("No subgoal to prove");
+        }
         Goals normalised = AutomaticUtils.normalize(initialGoals);
         Proof tempProof = prover.generateProof(normalised);
         if (!(tempProof == null)) {

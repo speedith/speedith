@@ -3,6 +3,9 @@ package speedith.ui;
 import speedith.core.reasoning.automatic.AutomaticProver;
 import speedith.core.reasoning.automatic.AutomaticProverProvider;
 import speedith.core.reasoning.automatic.AutomaticProvers;
+import speedith.core.reasoning.automatic.strategies.Strategies;
+import speedith.core.reasoning.automatic.strategies.Strategy;
+import speedith.core.reasoning.automatic.strategies.StrategyProvider;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
@@ -42,9 +45,7 @@ public class SettingsDialog  extends javax.swing.JDialog {
         typeLabel = new JLabel();
         typeCombo = new JComboBox(getProverComboList());
         strategyLabel = new JLabel();
-        //TODO: add provider for strategies and loading of strategies
-        String[] strategies = {"None"};
-        strategyCombo = new JComboBox(strategies);
+        strategyCombo = new JComboBox(getStrategyComboList());
 
         autoProverPanel.setLayout(new GridBagLayout());
         autoProverPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -124,8 +125,9 @@ public class SettingsDialog  extends javax.swing.JDialog {
     private void okbuttonClicked(ActionEvent actionEvent) {
         Preferences prefs =  Preferences.userNodeForPackage(SettingsDialog.class);
         ProverListItem selectedProver = (ProverListItem) typeCombo.getSelectedItem();
-        prefs.put(AutomaticProvers.prover_preference, selectedProver.getAutomaticProverProvider().getAutomaticProverName() );
-        // TODO: add saving of selected strategy
+        prefs.put(AutomaticProvers.prover_preference, selectedProver.getAutomaticProverProvider().getAutomaticProverName());
+        StrategyListItem selectedStrategy = (StrategyListItem) strategyCombo.getSelectedItem();
+        prefs.put(Strategies.strategy_preference, selectedStrategy.getStrategyProvider().getStrategyName());
         dispose();
     }
 
@@ -151,6 +153,28 @@ public class SettingsDialog  extends javax.swing.JDialog {
         return selected.getAutomaticProverProvider().getAutomaticProver();
     }
 
+    private ComboBoxModel getStrategyComboList() {
+        Set<String> strategies = Strategies.getKnownStrategies();
+        StrategyListItem[] stragetyItems = new StrategyListItem[strategies.size()];
+        int i = 0;
+        for (String strategyName : strategies) {
+            stragetyItems[i++] = new StrategyListItem(Strategies.getProvider(strategyName));
+        }
+        Arrays.sort(stragetyItems);
+        ComboBoxModel model = new DefaultComboBoxModel(stragetyItems);
+        Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
+        String selected = prefs.get(Strategies.strategy_preference, null);
+        if (selected != null) {
+            model.setSelectedItem(new StrategyListItem(Strategies.getProvider(selected)));
+        }
+        return model;
+    }
+
+    public Strategy getSelectedStrategy() {
+        StrategyListItem selected = (StrategyListItem) strategyCombo.getSelectedItem();
+        return selected.getStrategyProvider().getStrategy();
+    }
+
     private static class ProverListItem implements Comparable<ProverListItem> {
 
         private final AutomaticProverProvider proverProvider;
@@ -174,6 +198,32 @@ public class SettingsDialog  extends javax.swing.JDialog {
         @Override
         public int compareTo(ProverListItem o) {
             return proverProvider.toString().compareToIgnoreCase(o.toString());
+        }
+    }
+
+    private static class StrategyListItem implements Comparable<StrategyListItem> {
+
+        private final StrategyProvider strategyProvider;
+
+        public StrategyListItem(StrategyProvider provider) {
+            if (provider == null) {
+                throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_NULL_ARGUMENT", "provider"));
+            }
+            this.strategyProvider = provider;
+        }
+
+        public StrategyProvider  getStrategyProvider() {
+            return strategyProvider;
+        }
+
+        @Override
+        public String toString() {
+            return strategyProvider.getPrettyName();
+        }
+
+        @Override
+        public int compareTo(StrategyListItem o) {
+            return strategyProvider.toString().compareToIgnoreCase(o.toString());
         }
     }
 }

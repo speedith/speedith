@@ -294,6 +294,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     SettingsDialog settings = new SettingsDialog(this, true);
     settings.setVisible(true);
     proofPanel1.setProver(settings.getSelectedProver());
+    proofPanel1.getProver().setStrategy(settings.getSelectedStrategy());
   }
 
   private void onProveAny(ActionEvent evt) {

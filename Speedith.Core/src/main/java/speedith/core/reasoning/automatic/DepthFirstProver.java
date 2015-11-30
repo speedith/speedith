@@ -21,7 +21,7 @@ import java.util.Set;
  */
 public class DepthFirstProver extends AutomaticProver {
 
-    public static final String proverName = "depth_first";
+    private static final String proverName = "depth_first";
 
     public DepthFirstProver() {super(new NoStrategy());}
 
