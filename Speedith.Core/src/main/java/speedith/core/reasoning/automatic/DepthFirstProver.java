@@ -2,15 +2,12 @@ package speedith.core.reasoning.automatic;
 
 import speedith.core.lang.*;
 import speedith.core.reasoning.*;
-import speedith.core.reasoning.args.SubDiagramIndexArg;
+import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
+import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;
-import speedith.core.reasoning.automatic.wrappers.CompoundSpiderDiagramWrapper;
-import speedith.core.reasoning.automatic.wrappers.PrimarySpiderDiagramWrapper;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
-import speedith.core.reasoning.rules.*;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,6 +21,9 @@ import java.util.Set;
  */
 public class DepthFirstProver extends AutomaticProver {
 
+    public static final String proverName = "depth_first";
+
+    public DepthFirstProver() {super(new NoStrategy());}
 
     public DepthFirstProver(Strategy strategy) {
         super(strategy);
@@ -69,4 +69,23 @@ public class DepthFirstProver extends AutomaticProver {
         return p;
     }
 
+    @Override
+    public AutomaticProver getAutomaticProver() {
+        return this;
+    }
+
+    @Override
+    public String getAutomaticProverName() {
+        return proverName ;
+    }
+
+    @Override
+    public String getDescription() {
+        return "Depth first proof search";
+    }
+
+    @Override
+    public String getPrettyName() {
+        return "Depth First";
+    }
 }

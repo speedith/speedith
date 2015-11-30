@@ -74,7 +74,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
 
         resetProof(initialGoals, false);
         //TODO: chosing of strategies
-        prover = new BreadthFirstProver(new NoStrategy());
+        prover = new DepthFirstProver(new NoStrategy());
 
     }
     //</editor-fold>
@@ -125,6 +125,15 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
     public void newProof(Goals initialGoals) {
         resetProof(initialGoals, true);
     }
+
+    public AutomaticProver getProver() {
+        return prover;
+    }
+
+    public void setProver(AutomaticProver prover) {
+        this.prover = prover;
+    }
+
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Proof Interface Implementation">

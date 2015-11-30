@@ -49,6 +49,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -75,6 +76,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private JMenuItem goalSpiderDrawerInputMenuItem;
   private javax.swing.JMenu drawMenu;
   private javax.swing.JMenuItem exitMenuItem;
+  private javax.swing.JMenuItem settingsMenuItem;
   private javax.swing.JMenu fileMenu;
   private javax.swing.JMenuItem useSdExample1MenuItem;
   private javax.swing.JMenuItem useSdExample2MenuItem;
@@ -120,6 +122,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     lstAppliedRules = new javax.swing.JList();
     menuBar = new javax.swing.JMenuBar();
     fileMenu = new javax.swing.JMenu();
+    settingsMenuItem = new javax.swing.JMenuItem();
     exitMenuItem = new javax.swing.JMenuItem();
     drawMenu = new javax.swing.JMenu();
     goalSpiderDrawerInputMenuItem = new javax.swing.JMenuItem();
@@ -175,6 +178,17 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     fileMenu.setMnemonic('F');
     fileMenu.setText("File");
+
+    settingsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+    settingsMenuItem.setMnemonic('S');
+    settingsMenuItem.setText("Settings");
+    settingsMenuItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onSettings(evt);
+      }
+    });
+    fileMenu.add(settingsMenuItem);
 
     exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
     exitMenuItem.setMnemonic('x');
@@ -275,6 +289,12 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
+
+  private void onSettings(ActionEvent evt) {
+    SettingsDialog settings = new SettingsDialog(this, true);
+    settings.setVisible(true);
+    proofPanel1.setProver(settings.getSelectedProver());
+  }
 
   private void onProveAny(ActionEvent evt) {
     Goals initial =  proofPanel1.getInitialGoals();

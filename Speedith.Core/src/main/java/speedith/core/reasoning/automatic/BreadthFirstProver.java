@@ -1,11 +1,12 @@
 package speedith.core.reasoning.automatic;
 
-import scala.App;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.ProofTrace;
 import speedith.core.reasoning.RuleApplicationException;
+import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
+import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
@@ -16,6 +17,10 @@ import java.util.*;
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 public class BreadthFirstProver extends  AutomaticProver {
+
+    public static final String proverName = "breadth_first";
+
+    public BreadthFirstProver() {super(new NoStrategy());}
 
     public BreadthFirstProver(Strategy strategy) {
         super(strategy);
@@ -71,5 +76,25 @@ public class BreadthFirstProver extends  AutomaticProver {
             currentProofs = newProofs;
         }
         return finishedProof;
+    }
+
+    @Override
+    public AutomaticProver getAutomaticProver() {
+        return this;
+    }
+
+    @Override
+    public String getAutomaticProverName() {
+        return proverName;
+    }
+
+    @Override
+    public String getDescription() {
+        return "Breadth first proof search";
+    }
+
+    @Override
+    public String getPrettyName() {
+        return "Breadth First";
     }
 }

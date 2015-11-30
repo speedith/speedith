@@ -1,4 +1,4 @@
-package speedith.core.reasoning.automatic;
+package speedith.core.reasoning.automatic.rules;
 
 import speedith.core.lang.Zone;
 import speedith.core.reasoning.InferenceRule;
@@ -6,6 +6,7 @@ import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.ZoneArg;
+import speedith.core.reasoning.automatic.AppliedRules;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
 
 /**

@@ -1,9 +1,8 @@
 package speedith.core.reasoning.automatic.strategies;
 
 import speedith.core.reasoning.Proof;
-import speedith.core.reasoning.automatic.PossibleRuleApplication;
+import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
 
-import java.util.Collection;
 import java.util.Set;
 
 /**

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public abstract class AutomaticProver  implements  AutomaticProof {
+public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProverProvider {
 
     private Strategy strategy;
 
