@@ -46,4 +46,13 @@ public abstract class PossibleRuleApplication {
         p.applyRule(getRule(), getArg(subGoalIndex));
         return true;
     }
+
+    /**
+     * Remove this {@link PossibleRuleApplication possible rule application } from the set of
+     * already applied rules.
+     * The standard implementation does nothing!
+     *
+     * @param applied the set of applied rules this instance will be removed from
+     */
+    public void removeFrom(AppliedRules applied) {};
 }

@@ -55,24 +55,33 @@ public class BreadthFirstProver extends  AutomaticProver {
             for(ProofTrace current : currentProofs) {
                 current = (ProofTrace) tryToFinish(current, subgoalindex);
                 if (current.isFinished()) {
+                    // we found a finished proof
                     finishedProof = current;
                     break;
                 } else {
+                    // create all possible proof rules for this unfinished proof
                     SpiderDiagramWrapper target = wrapDiagram(current.getLastGoals().getGoalAt(subgoalindex),0);
-                    AppliedRules alreadyApplied = new AppliedRules(rulesWithinProofs.get(current));
-                    Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours, alreadyApplied);
+                    Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours, rulesWithinProofs.get(current));
                     nextRule = null;
+                    // apply all possible rules to the current proof, creating a new proof for each application
                     do {
                         ProofTrace newCurrent = new ProofTrace(current.getGoals(), current.getRuleApplications());
+                        // create a new set of already applied rules for the current proof
+                        AppliedRules alreadyApplied = new AppliedRules(rulesWithinProofs.get(current));
                         nextRule = getStrategy().select(newCurrent, applications);
                         boolean hasbeenApplied = nextRule != null && nextRule.apply(newCurrent, subgoalindex, appliedRules);
                         if (hasbeenApplied) {
+                            // save the new proof within the set of not yet considered proofs
                             newProofs.add(newCurrent);
+                            // save the rules that have already been applied for the new proof
                             rulesWithinProofs.put(newCurrent,alreadyApplied);
                         }
                     } while(nextRule !=null);
                 }
+                // remove the applied rules for this proof (since we create a new proof for each step)
+                rulesWithinProofs.remove(current);
             }
+            // the new set of not yet considered proofs
             currentProofs = newProofs;
         }
         return finishedProof;

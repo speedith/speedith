@@ -186,4 +186,46 @@ public class AppliedRules {
         copiedContours.get(psd).add(c);
     }
 
+    public void removeCopiedContour(SpiderDiagramWrapper sd, String c) {
+        if (copiedContours.containsKey(sd)) {
+            copiedContours.get(sd).remove(c);
+        }
+    }
+
+
+    public void removeRemovedShading(SpiderDiagramWrapper sd, Zone z) {
+        if (removedShading.containsKey(sd)) {
+            removedShading.get(sd).remove(z);
+        }
+    }
+
+    public void removeRemoveShadedZones(SpiderDiagramWrapper sd, Zone z) {
+        if (removedShadedZones.containsKey(sd)) {
+            removedShadedZones.get(sd).remove(z);
+        }
+    }
+
+    public  void removeRemovedContours(SpiderDiagramWrapper sd, String c) {
+ //       if (removeContours.containsKey(sd)) {
+            removeContours.get(sd).remove(c);
+//        }
+    }
+
+    public  void removeIntroducedContours(SpiderDiagramWrapper sd, String c) {
+        if(introContours.containsKey(sd)) {
+            introContours.get(sd).remove(c);
+        }
+    }
+
+    public void removeCopiedShading(SpiderDiagramWrapper sd, Set<Zone> zones) {
+        if (copiedShadings.containsKey(sd)) {
+            copiedShadings.get(sd).remove(zones);
+        }
+    }
+
+    public void removeIntroducedShadedZone(SpiderDiagramWrapper sd, Zone z) {
+        if (introducedShadedZones.containsKey(sd)) {
+            introducedShadedZones.get(sd).remove(z);
+        }
+    }
 }

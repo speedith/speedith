@@ -41,4 +41,5 @@ public class PossibleRemoveShadedZoneApplication extends PossibleRuleApplication
             return false;
         }
     }
+
 }

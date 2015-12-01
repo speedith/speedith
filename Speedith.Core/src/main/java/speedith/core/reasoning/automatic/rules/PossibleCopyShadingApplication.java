@@ -50,4 +50,9 @@ public class PossibleCopyShadingApplication extends PossibleRuleApplication {
             return false;
         }
     }
+
+    @Override
+    public void removeFrom(AppliedRules applied) {
+        applied.removeCopiedShading(getTarget(), getRegion());
+    }
 }
