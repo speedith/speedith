@@ -33,7 +33,7 @@ object AutomaticUtils {
       val rightContours = target.getOperand(1).asInstanceOf[PrimarySpiderDiagramWrapper].getAllContours
       val difference =  leftContours -- rightContours
       val removed = difference -- applied.getCopiedContours(target.getOperand(0))
-      (( leftContours -- rightContours) -- applied.getCopiedContours(target))
+      (( leftContours -- rightContours) -- applied.getCopiedContours(target.getOperand(0)))
           .map(c => new PossibleCopyContourApplication(target.getOperand(0), new CopyContours().asInstanceOf[InferenceRule[RuleArg]], c).asInstanceOf[PossibleRuleApplication]) ++
         ((rightContours --
           leftContours) -- applied.getCopiedContours(target.getOperand(1)))
@@ -54,6 +54,7 @@ object AutomaticUtils {
           subsets.filter(r => r.nonEmpty).toSet
         val rightShadedRegions = (rightDiagram.getShadedZones & rightDiagram.getPresentZones)
           .subsets.filter(r => r.nonEmpty).toSet
+
         val leftNotYetCopied = leftShadedRegions.
           filter(r => !applied.getCopiedShadings(target.getOperand(0)).contains(r))
         val leftNotContainedInRight = leftNotYetCopied.
@@ -62,6 +63,7 @@ object AutomaticUtils {
           map(r => r -- rightDiagram.getShadedZones)
         val leftResult = leftRemovedRightShaded.
           map(r => new PossibleCopyShadingApplication(target.getOperand(0), new CopyShading().asInstanceOf[InferenceRule[RuleArg]], r))
+
         val rightNotYetCopied = rightShadedRegions.
           filter(r => !applied.getCopiedShadings(target.getOperand(1)).contains(r))
         val rightNotContainedInLeft = rightNotYetCopied.
@@ -70,6 +72,7 @@ object AutomaticUtils {
           map(r => r -- leftDiagram.getShadedZones)
         val rightResult = rightRemovedLeftShaded.
           map(r => new PossibleCopyShadingApplication(target.getOperand(1), new CopyShading().asInstanceOf[InferenceRule[RuleArg]], r))
+
         leftResult ++ rightResult
       } else {
         new util.HashSet[PossibleCopyShadingApplication]()
