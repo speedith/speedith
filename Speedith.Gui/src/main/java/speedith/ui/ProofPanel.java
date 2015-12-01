@@ -29,12 +29,14 @@ package speedith.ui;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.util.List;
+import java.util.prefs.Preferences;
 import javax.swing.JPanel;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
 import speedith.core.reasoning.automatic.*;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
+import speedith.core.reasoning.automatic.strategies.Strategies;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 
 import static speedith.i18n.Translations.i18n;
@@ -71,11 +73,8 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
      */
     public ProofPanel(Goals initialGoals) {
         initComponents();
-
         resetProof(initialGoals, false);
-        //TODO: chosing of strategies
-        prover = new DepthFirstProver(new NoStrategy());
-
+        initialiseProver();
     }
     //</editor-fold>
 
@@ -319,4 +318,23 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         pnlGoals.removeAll();
     }
     // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Private Initialisation Methods">
+    private void initialiseProver() {
+        Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
+        String proverName = prefs.get(AutomaticProvers.prover_preference, null);
+        if (proverName == null) {
+            prover = new BreadthFirstProver();
+        } else {
+            prover = AutomaticProvers.getAutomaticProver(proverName);
+        }
+        String strategyName = prefs.get(Strategies.strategy_preference, null);
+        if (strategyName == null) {
+            prover.setStrategy(new NoStrategy());
+        } else {
+            prover.setStrategy(Strategies.getStrategy(strategyName));
+        }
+    }
+    // </editor-fold>
+
 }
