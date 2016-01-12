@@ -204,4 +204,21 @@ public class ProofTrace implements Proof {
     //</editor-fold>
 
 
+    @Override
+    public boolean equals(Object obj) {
+        // two proof traces are equal, iff the list of goals and the list of applied rules are equal
+        if (obj == this) return true;
+        if (obj instanceof ProofTrace) {
+            ProofTrace other = (ProofTrace) obj;
+            return goals.equals(other.goals) && ruleApplications.equals(other.ruleApplications);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = goals.hashCode();
+        result = 31 * result + ruleApplications.hashCode();
+        return result;
+    }
 }

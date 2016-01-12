@@ -11,6 +11,7 @@ import speedith.core.reasoning.automatic.wrappers.CompoundSpiderDiagramWrapper;
 import speedith.core.reasoning.automatic.wrappers.PrimarySpiderDiagramWrapper;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
 import speedith.core.reasoning.rules.ImplicationTautology;
+import speedith.core.reasoning.rules.TrivialImplicationTautology;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
 
         Proof result = null;
         try {
-            result = prove(init, subGoalToProve, appliedRules);
+            result = prove(init, subGoalToProve);
         } catch (RuleApplicationException e) {
             AutomaticProofException exc = new AutomaticProofException("Unable to prove current goal because of an illegal rule application");
             exc.initCause(e);
@@ -74,7 +75,9 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
     }
 
 
-    protected abstract Proof prove (Proof p, int subgoalindex, AppliedRules appliedRules) throws RuleApplicationException;
+    protected abstract Proof prove (Proof p, int subgoalindex) throws RuleApplicationException, AutomaticProofException;
+
+
     /**
      * Tries to finish up the given Proof p by applying ImplicationTautology to
      * the given subgoal in the last goals in the proof.
@@ -84,14 +87,14 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
      * @throws RuleApplicationException
      */
     protected Proof tryToFinish(Proof p, int subGoalIndex) throws  RuleApplicationException{
-        ImplicationTautology tautology = new ImplicationTautology();
+        TrivialImplicationTautology tautology = new TrivialImplicationTautology();
         Goals goalsAt = p.getLastGoals();
         SubDiagramIndexArg index = new SubDiagramIndexArg(subGoalIndex,0);
         try {
             p.applyRule(tautology, index);
         } catch (TransformationException e) {
-            // ImplicationTautology throws a TransformationException, if the rule
-            // could not be applied (i.e., if the semantic equivalence could not
+            // TrivialImplicationTautology throws a TransformationException, if the rule
+            // could not be applied (i.e., if the syntactic equivalence could not
             // be established). I abuse this behaviour by silently swallowing
             // the exception, Hence, if such an exception is thrown, the old proof
             // will be returned.
@@ -106,7 +109,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
      * @param goal The SpiderDiagram that will be analysed
      * @return true if goal is of the described form, false otherwise
      */
-    public boolean isImplicationOfConjunctions(SpiderDiagram goal) {
+    public static boolean isImplicationOfConjunctions(SpiderDiagram goal) {
         if (goal instanceof CompoundSpiderDiagram) {
             CompoundSpiderDiagram csd = (CompoundSpiderDiagram) goal;
             if (csd.getOperator().equals(Operator.Implication)) {

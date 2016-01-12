@@ -27,7 +27,7 @@ public class BreadthFirstProver extends  AutomaticProver {
     }
 
     @Override
-    protected Proof prove(Proof p, int subgoalindex, AppliedRules appliedRules) throws RuleApplicationException {
+    protected Proof prove(Proof p, int subgoalindex) throws RuleApplicationException, AutomaticProofException {
         p = tryToFinish(p, subgoalindex);
         if (p.isFinished()) {
             return p;
@@ -38,7 +38,7 @@ public class BreadthFirstProver extends  AutomaticProver {
         // initialise the new set of proofs
         Set<ProofTrace> newProofs = new HashSet<>();
         Map<ProofTrace, AppliedRules> rulesWithinProofs = new HashMap<>();
-        rulesWithinProofs.put((ProofTrace) p, appliedRules);
+        rulesWithinProofs.put((ProofTrace) p, new AppliedRules());
 
          Goals currentGoals = p.getLastGoals();
         // get all names of contours present in the goals. This bounds the
@@ -69,7 +69,7 @@ public class BreadthFirstProver extends  AutomaticProver {
                         // create a new set of already applied rules for the current proof
                         AppliedRules alreadyApplied = new AppliedRules(rulesWithinProofs.get(current));
                         nextRule = getStrategy().select(newCurrent, applications);
-                        boolean hasbeenApplied = nextRule != null && nextRule.apply(newCurrent, subgoalindex, appliedRules);
+                        boolean hasbeenApplied = nextRule != null && nextRule.apply(newCurrent, subgoalindex, alreadyApplied);
                         if (hasbeenApplied) {
                             // save the new proof within the set of not yet considered proofs
                             newProofs.add(newCurrent);

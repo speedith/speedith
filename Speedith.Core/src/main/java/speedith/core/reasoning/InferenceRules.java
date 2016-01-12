@@ -73,6 +73,7 @@ public class InferenceRules {
 //        registerProvider(ModusTolens.class);
 //        registerProvider(Idempotency.class);
 //        registerProvider(GeneralTautology.class);
+        registerProvider(TrivialImplicationTautology.class);
         registerProvider(ImplicationTautology.class);
         registerProvider(ConjunctionElimination.class);
 //        registerProvider(ConjunctionIntroduction.class);

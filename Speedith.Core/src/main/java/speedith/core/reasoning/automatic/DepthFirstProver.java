@@ -37,8 +37,7 @@ public class DepthFirstProver extends AutomaticProver {
      * state of the given Proof p. The rules already applied to subdiagrams within
      * the current set of goals are saved in appliedRules
      */
-    @Override
-    protected Proof prove(Proof p, int subgoalindex, AppliedRules appliedRules) throws RuleApplicationException {
+    private Proof proveRecursively(Proof p, int subgoalindex, AppliedRules appliedRules) throws RuleApplicationException, AutomaticProofException {
         p = tryToFinish(p, subgoalindex);
         if (p.isFinished()) {
             return p;
@@ -55,12 +54,12 @@ public class DepthFirstProver extends AutomaticProver {
 //        AppliedRules applied = new AppliedRules(appliedRules);
 //        AppliedRules applied = appliedRules;
         Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours, appliedRules);
-        PossibleRuleApplication nextRule = null;
+        PossibleRuleApplication nextRule= null;
         do  {
             nextRule = getStrategy().select(p, applications);
             boolean hasBeenApplied = nextRule != null && nextRule.apply(p, subgoalindex, appliedRules);
             if (hasBeenApplied) {
-                p = prove(p, subgoalindex, appliedRules);
+                p = proveRecursively(p, subgoalindex, appliedRules);
                 if (p.isFinished()) {
                     return p;
                 }
@@ -70,6 +69,11 @@ public class DepthFirstProver extends AutomaticProver {
         } while(nextRule != null);
 
         return p;
+    }
+
+    @Override
+    protected Proof prove(Proof p, int subgoalindex) throws RuleApplicationException, AutomaticProofException {
+        return proveRecursively(p, subgoalindex, new AppliedRules());
     }
 
     @Override

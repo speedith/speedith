@@ -1,12 +1,10 @@
 package speedith.core.reasoning.util.unitary
 
 import java.util
-
-import speedith.core.lang.SpiderDiagrams._
 import speedith.core.lang.{EulerDiagrams, Zones, Zone, PrimarySpiderDiagram}
 import scala.collection.JavaConversions._
-import scala.collection.immutable.HashSet.HashSet1
-import scala.collection.mutable
+
+
 
 /** Implementation of the topological zone transfer used in the Readith project
   * for the CopyContour rule.

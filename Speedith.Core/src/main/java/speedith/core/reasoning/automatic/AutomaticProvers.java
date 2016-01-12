@@ -18,6 +18,7 @@ public class AutomaticProvers {
     static {
         registerProvider(DepthFirstProver.class);
         registerProvider(BreadthFirstProver.class);
+        registerProvider(HeuristicSearch.class);
     }
 
     private AutomaticProvers() {
