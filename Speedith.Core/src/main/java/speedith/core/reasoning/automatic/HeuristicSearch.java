@@ -39,7 +39,7 @@ public class HeuristicSearch extends AutomaticProver {
         // the set of already visited proofs
         Set<ProofWrapper> closed = new HashSet<>();
         // the list of proof attempts, which still have to be visited
-        List<ProofWrapper> attempts = new ArrayList<ProofWrapper>();
+        List<ProofWrapper> attempts = new ArrayList<>();
         attempts.add(new ProofWrapper(p));
 
         // the rules that have already been applied to the subgoals
@@ -48,17 +48,16 @@ public class HeuristicSearch extends AutomaticProver {
         // get all names of contours present in the goals. This bounds the
         // possible proof rule applications, since contours not in this set
         // never have to be copied or introduced.
-        Collection<String> contours = new HashSet<String>();
+        Collection<String> contours = new HashSet<>();
         for (SpiderDiagram sd : p.getLastGoals().getGoals()) {
             contours.addAll( AutomaticUtils.collectContours(sd));
         }
-        //  TODO: proofs can be readded to the list, and hence we could get infinite looping
-        // (i think)
 
         while(!attempts.isEmpty()) {
             ProofWrapper currentAttempt = attempts.remove(0);
             Proof currentProof = tryToFinish(currentAttempt.getProof(), subgoalindex);
             if (currentProof.isFinished()) {
+                //TODO: remove sysout
                 System.out.println("Considered "+closed.size()+ " proof attempts");
                 return currentProof;
             }
@@ -82,7 +81,8 @@ public class HeuristicSearch extends AutomaticProver {
             attempts.addAll(newProofs);
             Collections.sort(attempts);
         }
-
+        // TODO: remove sysout
+        System.out.println("Considered "+closed.size()+ " proof attempts");
         return null;
     }
 

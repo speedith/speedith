@@ -98,7 +98,7 @@ object HeuristicUtils {
       }
 
     case d1: CompoundSpiderDiagram =>
-      SpiderDiagrams.createCompoundSD(d1.getOperator.getName, (d1.getOperands.map(d => computeCForm(d, contours))).toSeq)
+      SpiderDiagrams.createCompoundSD(d1.getOperator.getName, d1.getOperands.map(d => computeCForm(d, contours)).toSeq)
 
 
   }
@@ -167,7 +167,7 @@ object HeuristicUtils {
   }
 
   private def computeVennForm(d : SpiderDiagram) : SpiderDiagram = d match {
-    case d: PrimarySpiderDiagram => SpiderDiagrams.createPrimarySD(d.getSpiders, d.getHabitats, d.getShadedZones, (d.getPresentZones.toSet ++d.getShadedZones)).asInstanceOf[SpiderDiagram]
+    case d: PrimarySpiderDiagram => SpiderDiagrams.createPrimarySD(d.getSpiders, d.getHabitats, d.getShadedZones, d.getPresentZones.toSet ++d.getShadedZones).asInstanceOf[SpiderDiagram]
     case d: CompoundSpiderDiagram => SpiderDiagrams.createCompoundSD(d.getOperator.getName, d.getOperands.map(computeVennForm).toSeq)
   }
 
@@ -200,11 +200,11 @@ object HeuristicUtils {
     val m1 = connectiveM1(d1)
     val m2 = connectiveM1(d2)
     if (m1 > 0 && m2 > 0) {
-      (math.abs(math.log(m1) - math.log(m2))).toInt
+      math.abs(log2(m1) - log2(m2)).toInt
     } else if (m1 == 0 && m2 > 0 ) {
-      (1 + math.log(m2)).toInt
+      (1 + log2(m2)).toInt
     } else if (m1 > 0 && m2 == 0) {
-      (1 + math.log(m1)).toInt
+      (1 + log2(m1)).toInt
     } else {
       0
     }
@@ -214,11 +214,11 @@ object HeuristicUtils {
     val m1 = connectiveM2(d1)
     val m2 = connectiveM2(d2)
     if (m1 > 0 && m2 > 0) {
-      (math.abs(math.log(m1) - math.log(m2))).toInt
+      math.abs(log2(m1) - log2(m2)).toInt
     } else if (m1 == 0 && m2 > 0 ) {
-      (1 + math.log(m2)).toInt
+      (1 + log2(m2)).toInt
     } else if (m1 > 0 && m2 == 0) {
-      (1 + math.log(m1)).toInt
+      (1 + log2(m1)).toInt
     } else {
       0
     }
@@ -249,4 +249,5 @@ object HeuristicUtils {
   }
 
 
+  private def log2(x : Int) = scala.math.log(x)/scala.math.log(2)
   }

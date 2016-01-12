@@ -16,7 +16,7 @@ import java.util.Set;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class ProofWrapper implements Comparable{
+public class ProofWrapper implements Comparable<ProofWrapper>{
 
     private Proof proof;
 
@@ -47,12 +47,8 @@ public class ProofWrapper implements Comparable{
     }
 
     @Override
-    public int compareTo(Object o) {
-        if (! (o instanceof ProofWrapper)) {
-            throw  new RuntimeException("Object is not comparable with a ProofWrapper");
-        }
-        ProofWrapper other = (ProofWrapper) o;
-        return (cost+getHeuristic()) - (other.getCost()+other.getHeuristic());
+    public int compareTo(ProofWrapper o) {
+        return (cost+getHeuristic()) - (o.getCost()+o.getHeuristic());
     }
 
     @Override
