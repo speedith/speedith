@@ -44,6 +44,7 @@ import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
+import speedith.ui.selection.SubgoalSelectionDialog;
 import spiderdrawer.ui.MainForm;
 
 import javax.imageio.ImageIO;
@@ -53,6 +54,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -324,24 +326,61 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }// </editor-fold>//GEN-END:initComponents
 
   private void onOpen(ActionEvent evt) {
-
     int returnVal = fileChooser.showOpenDialog(this);
-
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-          File file = fileChooser.getSelectedFile();
-          System.out.println(file.getName());
-          try {
-            SpiderDiagram input = SpiderDiagramsReader.readSpiderDiagram(file);
-            proofPanel1.newProof(Goals.createGoalsFrom(input));
-          } catch (IOException ioe) {
-            JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
-          } catch (ReadingException re) {
-            JOptionPane.showMessageDialog(this, "An error occurred while reading the contents of the file:\n"+ re.getLocalizedMessage());
-          }
-        }
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      File file = fileChooser.getSelectedFile();
+      try {
+        SpiderDiagram input = SpiderDiagramsReader.readSpiderDiagram(file);
+        proofPanel1.newProof(Goals.createGoalsFrom(input));
+      } catch (IOException ioe) {
+        JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
+      } catch (ReadingException re) {
+        JOptionPane.showMessageDialog(this, "An error occurred while reading the contents of the file:\n" + re.getLocalizedMessage());
+      }
+    }
   }
 
   private void onSave(ActionEvent evt) {
+    if (proofPanel1.getGoals().isEmpty()) {
+      JOptionPane.showMessageDialog(this, "No subgoal to be saved exists.");
+      return;
+    }
+    boolean cancelled = false;
+    SpiderDiagram toSave = SpiderDiagrams.createNullSD() ;
+    if (proofPanel1.getGoals().size() > 1) {
+      SubgoalSelectionDialog select = new SubgoalSelectionDialog(this, true);
+      select.setSubgoals(proofPanel1.getGoals(), proofPanel1.getRuleApplications());
+      select.setVisible(true);
+      if (!select.isCancelled()) {
+        toSave = select.getSelected();
+      } else {
+        cancelled = true;
+      }
+    } else {
+      toSave = proofPanel1.getGoalsAt(0).getGoalAt(0);
+    }
+    if (!cancelled) {
+
+      int returnVal = fileChooser.showSaveDialog(this);
+      if (returnVal == JFileChooser.APPROVE_OPTION) {
+        File file = fileChooser.getSelectedFile();
+        if (file.exists()) {
+          int reallySave = JOptionPane.showConfirmDialog(this, "File " + file.getName()+ " exists at given path. Save anyway?", "File already exists", JOptionPane.YES_NO_OPTION);
+          if (reallySave == JOptionPane.NO_OPTION) {
+            return;
+          }
+        }
+        try {
+
+        FileWriter writer = new FileWriter(file);
+          writer.write(toSave.toString());
+          writer.flush();
+          writer.close();
+        } catch (IOException ioe) {
+          JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
+        }
+      }
+    }
 
   }
   private void onSettings(ActionEvent evt) {
