@@ -33,6 +33,7 @@
 package speedith.ui;
 
 import speedith.core.lang.*;
+import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
@@ -40,6 +41,7 @@ import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.automatic.AutomaticProofException;
 import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
+import speedith.core.reasoning.rules.util.AutomaticUtils;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
 import spiderdrawer.ui.MainForm;
@@ -50,6 +52,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -75,6 +78,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
   private JMenuItem goalSpiderDrawerInputMenuItem;
   private javax.swing.JMenu drawMenu;
+  private javax.swing.JMenuItem openMenuItem;
+  private javax.swing.JMenuItem saveMenuItem;
   private javax.swing.JMenuItem exitMenuItem;
   private javax.swing.JMenuItem settingsMenuItem;
   private javax.swing.JMenu fileMenu;
@@ -91,6 +96,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JScrollPane scrlPnlAppliedRules;
   private javax.swing.JMenu reasoningMenu;
   private javax.swing.JMenuItem proveAny;
+  private javax.swing.JFileChooser fileChooser;
 
   /**
    * Creates new form SpeedithMainForm
@@ -124,6 +130,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     fileMenu = new javax.swing.JMenu();
     settingsMenuItem = new javax.swing.JMenuItem();
     exitMenuItem = new javax.swing.JMenuItem();
+    openMenuItem = new javax.swing.JMenuItem();
+    saveMenuItem = new javax.swing.JMenuItem();
     drawMenu = new javax.swing.JMenu();
     goalSpiderDrawerInputMenuItem = new javax.swing.JMenuItem();
     goalTextInputMenuItem = new javax.swing.JMenuItem();
@@ -179,9 +187,31 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     fileMenu.setMnemonic('F');
     fileMenu.setText("File");
 
-    settingsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-    settingsMenuItem.setMnemonic('S');
-    settingsMenuItem.setText("Settings");
+    openMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+    openMenuItem.setMnemonic('O');
+    openMenuItem.setText("Open");
+    openMenuItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onOpen(evt);
+      }
+    });
+    fileMenu.add(openMenuItem);
+
+    saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+    saveMenuItem.setMnemonic('S');
+    saveMenuItem.setText("Save");
+    saveMenuItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onSave(evt);
+      }
+    });
+    fileMenu.add(saveMenuItem);
+
+    settingsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
+    settingsMenuItem.setMnemonic('P');
+    settingsMenuItem.setText("Preferences");
     settingsMenuItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
@@ -279,17 +309,41 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
-      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 995, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 995, Short.MAX_VALUE)
     );
     layout.setVerticalGroup(
-      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
     );
+
+
+    fileChooser = new JFileChooser();
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
+  private void onOpen(ActionEvent evt) {
+
+    int returnVal = fileChooser.showOpenDialog(this);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+          File file = fileChooser.getSelectedFile();
+          System.out.println(file.getName());
+          try {
+            SpiderDiagram input = SpiderDiagramsReader.readSpiderDiagram(file);
+            proofPanel1.newProof(Goals.createGoalsFrom(input));
+          } catch (IOException ioe) {
+            JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
+          } catch (ReadingException re) {
+            JOptionPane.showMessageDialog(this, "An error occurred while reading the contents of the file:\n"+ re.getLocalizedMessage());
+          }
+        }
+  }
+
+  private void onSave(ActionEvent evt) {
+
+  }
   private void onSettings(ActionEvent evt) {
     SettingsDialog settings = new SettingsDialog(this, true);
     settings.setVisible(true);
@@ -357,7 +411,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
     dialog.setVisible(true);
     if (!dialog.isCancelled() && dialog.getSpiderDiagram() != null) {
-      proofPanel1.newProof(Goals.createGoalsFrom(dialog.getSpiderDiagram()));
+      proofPanel1.newProof(Goals.createGoalsFrom(AutomaticUtils.normalize(dialog.getSpiderDiagram())));
     }
   }//GEN-LAST:event_onTextInputClicked
 
