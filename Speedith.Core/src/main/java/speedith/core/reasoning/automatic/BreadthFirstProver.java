@@ -12,6 +12,7 @@ import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
@@ -34,6 +35,7 @@ public class BreadthFirstProver extends  AutomaticProver {
         }
         // initialise the set of proofs to be considered
         Set<ProofTrace> currentProofs = new HashSet<>();
+        Set<ProofTrace> closed = new HashSet<>();
         currentProofs.add((ProofTrace) p);
         // initialise the new set of proofs
         Set<ProofTrace> newProofs = new HashSet<>();
@@ -50,6 +52,7 @@ public class BreadthFirstProver extends  AutomaticProver {
         }
         Proof finishedProof = null;
         PossibleRuleApplication nextRule = null;
+        long startTime= System.nanoTime();
         while(finishedProof == null && !currentProofs.isEmpty()) {
             newProofs = new HashSet<>();
             for(ProofTrace current : currentProofs) {
@@ -80,10 +83,15 @@ public class BreadthFirstProver extends  AutomaticProver {
                 }
                 // remove the applied rules for this proof (since we create a new proof for each step)
                 rulesWithinProofs.remove(current);
+                closed.add(current);
             }
             // the new set of not yet considered proofs
             currentProofs = newProofs;
         }
+        System.out.println("Considered "+closed.size()+ " proof attempts");
+        long duration = System.nanoTime() - startTime;
+        System.out.println("Time needed: "+ TimeUnit.NANOSECONDS.toMillis(duration)+"ms");
+        System.out.println("Average per Attempt: " + TimeUnit.NANOSECONDS.toMillis(duration)/closed.size() +"ms\n");
         return finishedProof;
     }
 

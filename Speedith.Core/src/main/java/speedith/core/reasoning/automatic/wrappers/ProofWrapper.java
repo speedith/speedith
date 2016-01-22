@@ -76,33 +76,7 @@ public class ProofWrapper implements Comparable<ProofWrapper>{
     }
 
     private int computeHeuristic(SpiderDiagram d1, SpiderDiagram d2) {
-        return HeuristicUtils.contourDiffMetric(d1,d2)+
-                HeuristicUtils.zoneDiffMetric(d1,d2) +
-                notDiff(d1,d2)+
-                Math.max(
-                        HeuristicUtils.shadingDiffMetric(d1, d2),
-                        HeuristicUtils.connectiveDiffMetric(d1, d2)
-                );
+        return HeuristicUtils.metric(d1,d2);
     }
-
-    private int connectiveDiff(SpiderDiagram d1, SpiderDiagram d2) {
-        return 0;
-    }
-
-    private int shadingDiff(SpiderDiagram d1, SpiderDiagram d2) {
-        return 0;
-    }
-
-    private int notDiff(SpiderDiagram d1, SpiderDiagram d2) {
-        // TODO: negations are currently not considered (no proof rules for negations present)
-        return 0;
-    }
-
-    private int zoneDiff(SpiderDiagram d1, SpiderDiagram d2) {
-        return 0;
-    }
-
-
-
 
 }

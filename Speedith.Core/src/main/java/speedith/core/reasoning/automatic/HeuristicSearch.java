@@ -12,6 +12,7 @@ import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Implements an A* search with the heuristic strategy currently loaded within
@@ -36,11 +37,14 @@ public class HeuristicSearch extends AutomaticProver {
         if (p.isFinished()) {
             return p;
         }
-        // the set of already visited proofs
+        // the set of already visited proofs (not necessary for the algorithm itself, but nice for
+        // getting a clue how many proofs have been analysed
         Set<ProofWrapper> closed = new HashSet<>();
         // the list of proof attempts, which still have to be visited
         List<ProofWrapper> attempts = new ArrayList<>();
-        attempts.add(new ProofWrapper(p));
+        ProofWrapper pw = new ProofWrapper(p);
+        attempts.add(pw);
+
 
         // the rules that have already been applied to the subgoals
         AppliedRules appliedRules = new AppliedRules();
@@ -52,37 +56,47 @@ public class HeuristicSearch extends AutomaticProver {
         for (SpiderDiagram sd : p.getLastGoals().getGoals()) {
             contours.addAll( AutomaticUtils.collectContours(sd));
         }
-
+        long startTime= System.nanoTime();
         while(!attempts.isEmpty()) {
             ProofWrapper currentAttempt = attempts.remove(0);
             Proof currentProof = tryToFinish(currentAttempt.getProof(), subgoalindex);
             if (currentProof.isFinished()) {
                 //TODO: remove sysout
                 System.out.println("Considered "+closed.size()+ " proof attempts");
+                long duration = System.nanoTime() - startTime;
+                System.out.println("Time needed: "+ TimeUnit.NANOSECONDS.toMillis(duration)+"ms");
+                System.out.println("Average per Attempt: " + TimeUnit.NANOSECONDS.toMillis(duration)/closed.size() +"ms\n");
                 return currentProof;
             }
             Set<ProofWrapper> newProofs = new HashSet<>();
             SpiderDiagramWrapper target = wrapDiagram(currentProof.getLastGoals().getGoalAt(subgoalindex),0);
             Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours, appliedRules);
+
             PossibleRuleApplication nextRule = null;
             // apply all possible rules to the current proof, creating a new proof for each application
             do {
                 ProofTrace newCurrent = new ProofTrace(currentProof.getGoals(), currentProof.getRuleApplications());
                 // create a new set of already applied rules for the current proof
                 nextRule = getStrategy().select(newCurrent, applications);
+//                long currentTime = System.nanoTime();
                 boolean hasbeenApplied = nextRule != null && nextRule.apply(newCurrent, subgoalindex, appliedRules);
+//                System.out.println("Took "+ TimeUnit.NANOSECONDS.toMillis(System.nanoTime()- currentTime)+"ms \t to apply rule"+ nextRule);
                 if (hasbeenApplied) {
                     // save the new proof within the set of not yet considered proofs
                     ProofWrapper newAttempt = new ProofWrapper(newCurrent);
                     newProofs.add(newAttempt);
                 }
             } while(nextRule !=null);
+
             closed.add(currentAttempt);
             attempts.addAll(newProofs);
             Collections.sort(attempts);
         }
         // TODO: remove sysout
         System.out.println("Considered "+closed.size()+ " proof attempts");
+        long duration = System.nanoTime() - startTime;
+        System.out.println("Time needed: "+ TimeUnit.NANOSECONDS.toMillis(duration)+"ms");
+        System.out.println("Average per Attempt: " + TimeUnit.NANOSECONDS.toMillis(duration)/closed.size() +"ms\n");
         return null;
     }
 

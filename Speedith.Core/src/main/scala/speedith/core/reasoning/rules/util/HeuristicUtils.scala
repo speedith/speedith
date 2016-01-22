@@ -19,6 +19,22 @@ import speedith.core.lang._
  */
 object HeuristicUtils {
 
+  // TODO: still missing measure for negation
+  def metric(d1: SpiderDiagram, d2:SpiderDiagram) : Int = {
+    val contours = (AutomaticUtils.collectContours(d1) ++ AutomaticUtils.collectContours(d2)).toSet
+    val cform1 = computeCForm(d1,contours)
+    val cform2 = computeCForm(d2,contours)
+    val vennCForm1 = computeVennForm(cform1)
+    val vennCForm2 = computeVennForm(cform2)
+    contourDiffMetric(d1,d2) +
+     zoneDiffMetric(cform1,cform2) +
+      math.max(
+        shadingDiffMetric(vennCForm1,vennCForm2)
+        ,
+        connectiveDiffMetric(d1,d2)
+      )
+  }
+
   def contourDiffMetric(d1: SpiderDiagram, d2: SpiderDiagram) : Int = {
     math.max(
       (contourM1(d2) -- contourM1(d1)).size + (contourM1(d1) -- contourM1(d2)).size,
@@ -47,19 +63,18 @@ object HeuristicUtils {
   }
 
   def zoneDiffMetric(d1 :SpiderDiagram, d2: SpiderDiagram) : Int = {
-    val contours = (AutomaticUtils.collectContours(d1) ++ AutomaticUtils.collectContours(d2)).toSet
-    addZ(d1,d2,contours)+remZ(d1,d2,contours)
+    addZ(d1,d2)+remZ(d1,d2)
   }
 
-  private def addZ(d1 : SpiderDiagram, d2: SpiderDiagram, contours : Set[String]) : Int = {
+  private def addZ(d1 : SpiderDiagram, d2: SpiderDiagram) : Int = {
     math.max(
-    if (zoneM1(computeCForm(d2,contours)).subsetOf(zoneM1(computeCForm(d1, contours)))) {
+    if (zoneM1(d2).subsetOf(zoneM1(d1))) {
       0
     } else {
       1
     }
     ,
-    if (zoneM2(computeCForm(d2,contours)).subsetOf(zoneM2(computeCForm(d1, contours)))) {
+    if (zoneM2(d2).subsetOf(zoneM2(d1))) {
         0
       } else {
         1
@@ -67,15 +82,15 @@ object HeuristicUtils {
     )
   }
 
-  private def remZ(d1 : SpiderDiagram, d2: SpiderDiagram, contours : Set[String]) : Int = {
+  private def remZ(d1 : SpiderDiagram, d2: SpiderDiagram) : Int = {
     math.max(
-      if (zoneM1(computeCForm(d1,contours)).subsetOf(zoneM1(computeCForm(d2, contours)))) {
+      if (zoneM1(d1).subsetOf(zoneM1(d2))) {
         0
       } else {
         1
       }
       ,
-      if (zoneM2(computeCForm(d1,contours)).subsetOf(zoneM2(computeCForm(d2, contours)))) {
+      if (zoneM2(d1).subsetOf(zoneM2(d2))) {
         0
       } else {
         1
@@ -85,27 +100,20 @@ object HeuristicUtils {
 
   private def computeCForm(d1: SpiderDiagram, contours :Set[String]) : SpiderDiagram = d1 match  {
     case d1 : PrimarySpiderDiagram  =>
-      val arg = createMultipleArg(contours -- d1.getAllContours)
-      val rule = new IntroContour()
-      val list  = new util.HashSet[SpiderDiagram]()
-      val sd = SpiderDiagrams.createPrimarySD(d1.getSpiders, d1.getHabitats, d1.getShadedZones, d1.getPresentZones)
-      list.add(sd)
-      val goal = new Goals(list )
-      if (arg.nonEmpty) {
-        rule.apply(arg, goal).getGoals.getGoalAt(0)
-      } else {
-        sd
-      }
-
+      val newContours = contours -- d1.getAllContours
+      EulerDiagrams.createPrimaryEulerDiagram(
+        AutomaticUtils.regionWithNewContours(d1.getShadedZones.toSet, newContours),
+        AutomaticUtils.regionWithNewContours(d1.getPresentZones, newContours))
     case d1: CompoundSpiderDiagram =>
       SpiderDiagrams.createCompoundSD(d1.getOperator.getName, d1.getOperands.map(d => computeCForm(d, contours)).toSeq)
 
 
   }
 
-  private def createMultipleArg (contours : Set[String]) : MultipleRuleArgs = {
+/*  private def createMultipleArg (contours : Set[String]) : MultipleRuleArgs = {
     new MultipleRuleArgs(contours.map(c => new ContourArg(0,0, c)).toSeq)
   }
+*/
 
   private def zoneM1(d: SpiderDiagram) : Set[Zone] = d match {
     case d: PrimarySpiderDiagram => d.getPresentZones.toSet
@@ -129,20 +137,19 @@ object HeuristicUtils {
 
 
   def shadingDiffMetric(d1 : SpiderDiagram, d2: SpiderDiagram) : Int = {
-    val contours = (AutomaticUtils.collectContours(d1) ++ AutomaticUtils.collectContours(d2)).toSet
-    addSh(d1,d2,contours)+remSh(d1,d2,contours)
+    addSh(d1,d2)+remSh(d1,d2)
 
   }
 
-  private def addSh(d1 : SpiderDiagram, d2: SpiderDiagram, contours : Set[String]) : Int = {
+  private def addSh(d1 : SpiderDiagram, d2: SpiderDiagram) : Int = {
     math.max(
-      if (shadingM1(computeVennForm(computeCForm(d2,contours))).subsetOf(shadingM1(computeVennForm(computeCForm(d1, contours))))) {
+      if (shadingM1(d1).subsetOf(shadingM1(d1))) {
         0
       } else {
         1
       }
       ,
-      if (shadingM2(computeVennForm(computeCForm(d2,contours))).subsetOf(shadingM2(computeVennForm(computeCForm(d1, contours))))) {
+      if (shadingM2(d2).subsetOf(shadingM2(d1))) {
         0
       } else {
         1
@@ -150,15 +157,15 @@ object HeuristicUtils {
     )
   }
 
-  private def remSh(d1 : SpiderDiagram, d2: SpiderDiagram, contours : Set[String]) : Int = {
+  private def remSh(d1 : SpiderDiagram, d2: SpiderDiagram) : Int = {
     math.max(
-      if (shadingM1(computeVennForm(computeCForm(d1,contours))).subsetOf(shadingM1(computeVennForm(computeCForm(d2, contours))))) {
+      if (shadingM1(d1).subsetOf(shadingM1(d2))) {
         0
       } else {
         1
       }
       ,
-      if (shadingM2(computeVennForm(computeCForm(d1,contours))).subsetOf(shadingM2(computeVennForm(computeCForm(d2, contours))))) {
+      if (shadingM2(d1).subsetOf(shadingM2(d2))) {
         0
       } else {
         1
@@ -167,7 +174,7 @@ object HeuristicUtils {
   }
 
   private def computeVennForm(d : SpiderDiagram) : SpiderDiagram = d match {
-    case d: PrimarySpiderDiagram => SpiderDiagrams.createPrimarySD(d.getSpiders, d.getHabitats, d.getShadedZones, d.getPresentZones.toSet ++d.getShadedZones).asInstanceOf[SpiderDiagram]
+    case d: PrimarySpiderDiagram => EulerDiagrams.createPrimaryEulerDiagram(d.getShadedZones, d.getPresentZones.toSet ++d.getShadedZones).asInstanceOf[SpiderDiagram]
     case d: CompoundSpiderDiagram => SpiderDiagrams.createCompoundSD(d.getOperator.getName, d.getOperands.map(computeVennForm).toSeq)
   }
 

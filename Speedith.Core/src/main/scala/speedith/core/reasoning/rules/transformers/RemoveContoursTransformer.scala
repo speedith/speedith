@@ -11,8 +11,8 @@ case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) ex
   val subDiagramIndex = contourArgs(0).getSubDiagramIndex
   val contoursToRemove = contourArgs.map(_.getContour).toSet
 
-  private def regionWithoutContours(region: Iterable[Zone]): Set[Zone] = {
-    region.map(zone => new Zone(zone.getInContours -- contoursToRemove, zone.getOutContours -- contoursToRemove)).toSet
+  private def regionWithoutContours(region: Set[Zone]): Set[Zone] = {
+    region.map(zone => new Zone(zone.getInContours -- contoursToRemove, zone.getOutContours -- contoursToRemove)).filter(zone => zone.getAllContours.nonEmpty)
   }
 
   private def shadedRegionWithoutContours(region: Set[Zone]): Set[Zone] = {
@@ -33,14 +33,16 @@ case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) ex
                          childIndices: java.util.ArrayList[java.lang.Integer]): SpiderDiagram = {
     if (subDiagramIndex == diagramIndex) {
         val normalised = AutomaticUtils.normalize(psd)
-        if (!normalised.equals(psd)) throw new RuleApplicationException("Rule can only be applied to a normalised diagram (all visible zones have to be included in the set of present zones in the abstract syntax)")
+        if (!normalised.equals(psd)) {
+          throw new RuleApplicationException("Rule can only be applied to a normalised diagram (all visible zones have to be included in the set of present zones in the abstract syntax)")
+        }
         SpiderDiagrams.createPrimarySD(
           psd.getSpiders,
           psd.getHabitats.map {
             case (spider, habitat) => (spider, new Region(regionWithoutContours(habitat.zones)))
           },
           shadedRegionWithoutContours(psd.getShadedZones.toSet),
-          regionWithoutContours(psd.getPresentZones)
+          regionWithoutContours(psd.getPresentZones.toSet)
         )
     } else {
       null

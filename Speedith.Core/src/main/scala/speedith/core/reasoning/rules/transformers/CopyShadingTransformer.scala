@@ -33,7 +33,7 @@ case class CopyShadingTransformer(compoundDiagramIndex: Int,
     }
     catch {
       case e: Exception => {
-        throw new TransformationException("Could not copy the spider. " + e.getMessage, e)
+        throw new TransformationException("Could not copy the shading. " + e.getMessage, e)
       }
     }
   }
