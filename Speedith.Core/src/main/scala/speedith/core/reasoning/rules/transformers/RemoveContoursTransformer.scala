@@ -3,7 +3,7 @@ package speedith.core.reasoning.rules.transformers
 import speedith.core.reasoning.RuleApplicationException
 import speedith.core.reasoning.args.ContourArg
 import speedith.core.lang._
-import speedith.core.reasoning.rules.util.AutomaticUtils
+import speedith.core.reasoning.rules.util.{ReasoningUtils, AutomaticUtils}
 import scala.collection.JavaConversions._
 
 case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) extends IdTransformer {
@@ -32,7 +32,7 @@ case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) ex
                          parents: java.util.ArrayList[CompoundSpiderDiagram],
                          childIndices: java.util.ArrayList[java.lang.Integer]): SpiderDiagram = {
     if (subDiagramIndex == diagramIndex) {
-        val normalised = AutomaticUtils.normalize(psd)
+        val normalised = ReasoningUtils.normalize(psd)
         if (!normalised.equals(psd)) {
           throw new RuleApplicationException("Rule can only be applied to a normalised diagram (all visible zones have to be included in the set of present zones in the abstract syntax)")
         }
