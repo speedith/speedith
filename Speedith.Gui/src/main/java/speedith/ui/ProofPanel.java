@@ -38,6 +38,7 @@ import speedith.core.reasoning.automatic.*;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategies;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
+import speedith.core.reasoning.rules.util.ReasoningUtils;
 
 import static speedith.i18n.Translations.i18n;
 
@@ -205,7 +206,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         if (initialGoals == null) {
             throw  new AutomaticProofException("No subgoal to prove");
         }
-        Goals normalised = AutomaticUtils.normalize(initialGoals);
+        Goals normalised = ReasoningUtils.normalize(initialGoals);
         Proof tempProof = prover.generateProof(normalised);
         if (!(tempProof == null)) {
             newProof(normalised);
