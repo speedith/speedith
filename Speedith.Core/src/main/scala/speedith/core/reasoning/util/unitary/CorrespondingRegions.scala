@@ -1,6 +1,7 @@
 package speedith.core.reasoning.util.unitary
 
 import speedith.core.lang.{Zone, Region, PrimarySpiderDiagram}
+import speedith.core.reasoning.rules.util.{ReasoningUtils, AutomaticUtils}
 import scala.collection.JavaConversions._
 import speedith.core.lang.Zones.allZonesForContours
 import scala.collection.mutable
@@ -30,13 +31,16 @@ case class CorrespondingRegions(sourceDiagram: PrimarySpiderDiagram, destination
 
 
   private def getRegionWhenSourceContoursAreSubset(regionInSourceDiagram: Region): mutable.Buffer[Zone] = {
+    val contoursOnlyInDestination = destinationDiagram.getAllContours -- sourceDiagram.getAllContours
     allPossibleZonesInDestination.filter {
       destinationZone =>
-        regionInSourceDiagram.zones.exists {
+        ReasoningUtils.expand(destinationZone, contoursOnlyInDestination).forall(ex =>
+          (regionInSourceDiagram.zones ++ (destinationDiagram.getShadedZones diff destinationDiagram.getPresentZones)).exists {
           sourceZone =>
-            sourceZone.getInContours.subsetOf(destinationZone.getInContours) &&
-              sourceZone.getOutContours.subsetOf(destinationZone.getOutContours)
+            sourceZone.getInContours.subsetOf(ex.getInContours) &&
+              sourceZone.getOutContours.subsetOf(ex.getOutContours)
         }
+        )
     }
   }
 
@@ -52,13 +56,16 @@ case class CorrespondingRegions(sourceDiagram: PrimarySpiderDiagram, destination
   }
 
   private def getRegionWhenDestinationContoursAreSubset(regionInSourceDiagram: Region): mutable.Buffer[Zone] = {
+    val contoursOnlyInSource = sourceDiagram.getAllContours -- destinationDiagram.getAllContours
     allPossibleZonesInDestination.filter {
       destinationZone =>
-        regionInSourceDiagram.zones.exists {
-          sourceZone =>
-            destinationZone.getInContours.subsetOf(sourceZone.getInContours) &&
-              destinationZone.getOutContours.subsetOf(sourceZone.getOutContours)
-        }
+        ReasoningUtils.expand(destinationZone, contoursOnlyInSource).forall( ex=>
+          (regionInSourceDiagram.zones ++ (sourceDiagram.getShadedZones diff sourceDiagram.getPresentZones)).exists {
+            sourceZone =>
+              ex.getInContours.subsetOf(sourceZone.getInContours) &&
+                ex.getOutContours.subsetOf(sourceZone.getOutContours)
+          })
+
     }
   }
 

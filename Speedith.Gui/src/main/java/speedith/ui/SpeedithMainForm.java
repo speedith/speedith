@@ -42,6 +42,7 @@ import speedith.core.reasoning.automatic.AutomaticProofException;
 import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
+import speedith.core.reasoning.rules.util.ReasoningUtils;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
 import speedith.ui.selection.SubgoalSelectionDialog;
@@ -331,7 +332,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       File file = fileChooser.getSelectedFile();
       try {
         SpiderDiagram input = SpiderDiagramsReader.readSpiderDiagram(file);
-        proofPanel1.newProof(Goals.createGoalsFrom(input));
+        proofPanel1.newProof(Goals.createGoalsFrom(ReasoningUtils.normalize(input)));
       } catch (IOException ioe) {
         JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
       } catch (ReadingException re) {
@@ -450,7 +451,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
     dialog.setVisible(true);
     if (!dialog.isCancelled() && dialog.getSpiderDiagram() != null) {
-      proofPanel1.newProof(Goals.createGoalsFrom(AutomaticUtils.normalize(dialog.getSpiderDiagram())));
+      proofPanel1.newProof(Goals.createGoalsFrom(ReasoningUtils.normalize(dialog.getSpiderDiagram())));
     }
   }//GEN-LAST:event_onTextInputClicked
 

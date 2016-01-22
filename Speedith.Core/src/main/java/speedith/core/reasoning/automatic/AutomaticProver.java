@@ -13,6 +13,7 @@ import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
 import speedith.core.reasoning.rules.ImplicationTautology;
 import speedith.core.reasoning.rules.TrivialImplicationTautology;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
+import speedith.core.reasoning.rules.util.ReasoningUtils;
 
 import java.util.ArrayList;
 
@@ -56,7 +57,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
         // introduce all zones that are only implicit in the
         // data structure. I.e. present_zones returns the zone set in
         // the usual sense of spider diagrams
-        Proof init = new ProofTrace(AutomaticUtils.normalize(initialGoals));
+        Proof init = new ProofTrace(ReasoningUtils.normalize(initialGoals));
         AppliedRules appliedRules = new AppliedRules();
 
         Proof result = null;

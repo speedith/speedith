@@ -27,44 +27,13 @@ object AutomaticUtils {
     case sd : CompoundSpiderDiagram => sd.getOperator.equals(Operator.getConjunction) && sd.getOperands.forall(isConjunctive)
   }
 
-  /**
-   * Creates all zones to the set of present zones which are normally implicitly inferred for each subgoal
-   *
-   * Adds zones to the set of present zones in each subgoal. The added zones are taken from all
-   * possible zones, without the shaded zones that are not in the set of currently present zones (i.e., that are
-   * are missing zones, in the typical definition of Spider Diagrams).
-   * @param goals The set of goals to be normalised
-   * @return
-   */
-  def normalize (goals : Goals) : Goals = new Goals(normalize(goals.getGoals))
 
-  def normalize (sds : java.util.Collection[SpiderDiagram]) : java.util.Collection[SpiderDiagram] = sds.map(o => normalize(o))
-
-  def normalize (sd : SpiderDiagram): SpiderDiagram= sd match {
-    case psd: PrimarySpiderDiagram => {
-      val possibleZones: Set[Zone] = Zones.allZonesForContours(psd.getAllContours.toSeq: _*).toSet
-      SpiderDiagrams.createPrimarySD(psd.getSpiders, psd.getHabitats, psd.getShadedZones, possibleZones -- (psd.getShadedZones -- psd.getPresentZones))
-    }
-    case csd : CompoundSpiderDiagram => {
-      SpiderDiagrams.createCompoundSD(csd.getOperator, new java.util.ArrayList[SpiderDiagram](csd.getOperands.map(o=>  normalize(o))), true)
-    }
-  }
 
   def regionWithNewContours(region: Iterable[Zone], contoursToAdd: Set[String] ): Set[Zone] = {
     region.map(zone => new Zone(zone.getInContours ++ contoursToAdd, zone.getOutContours )).toSet ++ region.map(zone => new Zone(zone.getInContours , zone.getOutContours ++ contoursToAdd )).toSet
   }
 
-  def expand(zones: Set[Zone], contoursOnlyInSource: util.Set[String]) : Set[Zone] = {
-    zones.flatMap(z => contoursOnlyInSource.subsets.
-      flatMap(cs => new util.HashSet[Zone]() + new Zone(z.getInContours.toSet ++ cs,z.getOutContours.toSet ++contoursOnlyInSource.diff(cs))
-      )
 
-    )
-  }
-  def expand(zone :Zone, contoursOnlyInSource : util.Set[String]) : Set[Zone] = {
-    contoursOnlyInSource.subsets.flatMap(cs => new util.HashSet[Zone]() +
-      new Zone(zone.getInContours.toSet ++ cs,zone.getOutContours.toSet ++contoursOnlyInSource.diff(cs))).toSet
-  }
 
 /*  def regionCorrespond(source: PrimarySpiderDiagram, target: PrimarySpiderDiagram, sourceRegion: Set[Zone], targetRegion: Set[Zone]): Boolean = {
     val contoursOnlyInSource = source.getAllContours -- target.getAllContours
@@ -78,14 +47,14 @@ object AutomaticUtils {
     sourceExpansion.equals(targetExpansion)
   }
   */
-  def regionCorrespond (sourceRegion: Set[Zone], sourceMissingZoneExpansion : Set[Zone], contoursOnlyInSource: Set[String],
+  /*def regionCorrespond (sourceRegion: Set[Zone], sourceMissingZoneExpansion : Set[Zone], contoursOnlyInSource: Set[String],
                         targetRegion: Set[Zone], targetMissingZonExpansion: Set[Zone] , contoursOnlyInTarget: Set[String]): Boolean = {
-    val sourceExpansion = sourceMissingZoneExpansion ++ targetMissingZonExpansion++ AutomaticUtils.expand(sourceRegion, contoursOnlyInTarget)
-    val targetExpansion = targetMissingZonExpansion ++ sourceMissingZoneExpansion ++ AutomaticUtils.expand(targetRegion, contoursOnlyInSource)
+    val sourceExpansion = sourceMissingZoneExpansion ++ targetMissingZonExpansion++ ReasoningUtils.expand(sourceRegion, contoursOnlyInTarget)
+    val targetExpansion = targetMissingZonExpansion ++ sourceMissingZoneExpansion ++ ReasoningUtils.expand(targetRegion, contoursOnlyInSource)
     sourceExpansion.equals(targetExpansion)
 
   }
-
+  */
   /**
    * Creates all possible rule application for the given SpiderDiagram with respect to the given set of contours and excluding
    * all elements already contained in the given set of applied rules.

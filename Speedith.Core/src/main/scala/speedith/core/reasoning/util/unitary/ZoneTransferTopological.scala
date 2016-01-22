@@ -2,7 +2,7 @@ package speedith.core.reasoning.util.unitary
 
 import java.util
 import speedith.core.lang.{EulerDiagrams, Zones, Zone, PrimarySpiderDiagram}
-import speedith.core.reasoning.rules.util.AutomaticUtils
+import speedith.core.reasoning.rules.util.{ReasoningUtils, AutomaticUtils}
 import scala.collection.JavaConversions._
 
 
@@ -32,11 +32,11 @@ class ZoneTransferTopological(sourceDiagram: PrimarySpiderDiagram, destinationDi
     // but works straightforwardly like the written procedure
 
     // compute the expansions of the missing zones in source and target
-    val sourceDiagramMZExpansion = AutomaticUtils.expand(sourceDiagram.getShadedZones.toSet -- sourceDiagram.getPresentZones, contoursOnlyInDestination )
-    val destinationDiagramMZExpansion = AutomaticUtils.expand(destinationDiagram.getShadedZones.toSet -- destinationDiagram.getPresentZones, contoursOnlyInSource )
+    val sourceDiagramMZExpansion = ReasoningUtils.expand(sourceDiagram.getShadedZones.toSet -- sourceDiagram.getPresentZones, contoursOnlyInDestination )
+    val destinationDiagramMZExpansion = ReasoningUtils.expand(destinationDiagram.getShadedZones.toSet -- destinationDiagram.getPresentZones, contoursOnlyInSource )
     // compute the expansion of the zones the contour to copy is a) contained in and b) not contained in
-    val in = AutomaticUtils.expand(sourceDiagram.getPresentZones.filter(z => z.getInContours.contains(contourFromSource)).toSet, contoursOnlyInDestination)
-    val out = AutomaticUtils.expand(sourceDiagram.getPresentZones.filter(z => z.getOutContours.contains(contourFromSource)).toSet, contoursOnlyInDestination)
+    val in = ReasoningUtils.expand(sourceDiagram.getPresentZones.filter(z => z.getInContours.contains(contourFromSource)).toSet, contoursOnlyInDestination)
+    val out = ReasoningUtils.expand(sourceDiagram.getPresentZones.filter(z => z.getOutContours.contains(contourFromSource)).toSet, contoursOnlyInDestination)
 
     // add the missing zones of the source and target to prevent these sets from being computed several times
     val inMZ = in ++sourceDiagramMZExpansion++destinationDiagramMZExpansion
@@ -44,19 +44,19 @@ class ZoneTransferTopological(sourceDiagram: PrimarySpiderDiagram, destinationDi
     // all zones that are either shaded and visible or already corresponding to missing zones in the source
     // are free, i.e. they have to be ignored for the initial computation of Z_i, Z_o or Z_s
     val freeZones =  (destinationDiagram.getPresentZones & destinationDiagram.getShadedZones) ++
-      destinationDiagram.getPresentZones.filter(z =>  AutomaticUtils.expand(new util.HashSet[Zone]().toSet + z, contoursOnlyInSource).subsetOf(sourceDiagramMZExpansion))
+      destinationDiagram.getPresentZones.filter(z =>  ReasoningUtils.expand(new util.HashSet[Zone]().toSet + z, contoursOnlyInSource).subsetOf(sourceDiagramMZExpansion))
     // compute set of zones in Z_i (no free zones!)
-    val inZones = destinationDiagram.getPresentZones.filter(z => !freeZones.contains(z) && AutomaticUtils.expand(new util.HashSet[Zone]().toSet + z, contoursOnlyInSource).subsetOf(inMZ))
+    val inZones = destinationDiagram.getPresentZones.filter(z => !freeZones.contains(z) && ReasoningUtils.expand(new util.HashSet[Zone]().toSet + z, contoursOnlyInSource).subsetOf(inMZ))
 
     // compute set of zones in Z_o (no free zones!)
-    val outZones = destinationDiagram.getPresentZones.filter(z => !freeZones.contains(z) && AutomaticUtils.expand(new util.HashSet[Zone]().toSet + z, contoursOnlyInSource).subsetOf(outMZ))
+    val outZones = destinationDiagram.getPresentZones.filter(z => !freeZones.contains(z) && ReasoningUtils.expand(new util.HashSet[Zone]().toSet + z, contoursOnlyInSource).subsetOf(outMZ))
     // the rest of the non-free zones are definitely in Z_s
     val splitZones = allVisibleZonesInDestinationDiagram.diff(freeZones) -- (inZones ++ outZones)
 
     // we now have to compute, to which of the sets Z_i, Z_o or Z_s the free zones are added
-    val freeOutZones = freeZones.filter(z => (AutomaticUtils.expand(new util.HashSet[Zone]().toSet+z, contoursOnlyInSource) -- sourceDiagramMZExpansion).forall(z2 => !z2.getInContours.contains(contourFromSource)))
+    val freeOutZones = freeZones.filter(z => (ReasoningUtils.expand(new util.HashSet[Zone]().toSet+z, contoursOnlyInSource) -- sourceDiagramMZExpansion).forall(z2 => !z2.getInContours.contains(contourFromSource)))
     val freeInZones = freeZones.filter( { z =>
-      val X = AutomaticUtils.expand(new util.HashSet[Zone]().toSet+z, contoursOnlyInSource) -- sourceDiagramMZExpansion
+      val X = ReasoningUtils.expand(new util.HashSet[Zone]().toSet+z, contoursOnlyInSource) -- sourceDiagramMZExpansion
       X.nonEmpty && X.forall(z2 => z2.getInContours.contains(contourFromSource))
     })
     val freeSplitZones = freeZones -- (freeOutZones ++ freeInZones)
