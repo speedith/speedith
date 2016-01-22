@@ -5,7 +5,7 @@ import java.util
 import speedith.core.lang.{SpiderDiagram, PrimarySpiderDiagram, CompoundSpiderDiagram, Operator, Zones, Zone, SpiderDiagrams, Region}
 import speedith.core.reasoning.automatic.rules._
 import speedith.core.reasoning.util.unitary.CorrespondingRegions
-import speedith.core.reasoning.{Goals, InferenceRule}
+import speedith.core.reasoning.InferenceRule
 import speedith.core.reasoning.args.RuleArg
 import speedith.core.reasoning.automatic._
 import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramWrapper, PrimarySpiderDiagramWrapper, SpiderDiagramWrapper}
@@ -17,6 +17,9 @@ import scala.collection.JavaConversions._
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 object AutomaticUtils {
+
+  // <editor-fold defaultstate="collapsed" desc="Various helper methods">
+
   def collectContours  (spiderDiagram: SpiderDiagram) : java.util.Collection[String] = spiderDiagram  match {
     case spiderDiagram : PrimarySpiderDiagram => spiderDiagram.getAllContours
     case spiderDiagram: CompoundSpiderDiagram => spiderDiagram.getOperands.flatMap(collectContours)
@@ -27,34 +30,12 @@ object AutomaticUtils {
     case sd : CompoundSpiderDiagram => sd.getOperator.equals(Operator.getConjunction) && sd.getOperands.forall(isConjunctive)
   }
 
-
-
   def regionWithNewContours(region: Iterable[Zone], contoursToAdd: Set[String] ): Set[Zone] = {
     region.map(zone => new Zone(zone.getInContours ++ contoursToAdd, zone.getOutContours )).toSet ++ region.map(zone => new Zone(zone.getInContours , zone.getOutContours ++ contoursToAdd )).toSet
   }
+  // </editor-fold>
 
-
-
-/*  def regionCorrespond(source: PrimarySpiderDiagram, target: PrimarySpiderDiagram, sourceRegion: Set[Zone], targetRegion: Set[Zone]): Boolean = {
-    val contoursOnlyInSource = source.getAllContours -- target.getAllContours
-    val contoursOnlyInTarget = target.getAllContours -- source.getAllContours
-    // compute the expansions of the missing zones in source and target
-    val sourceDiagramMZExpansion = AutomaticUtils.expand(source.getShadedZones.toSet -- source.getPresentZones, contoursOnlyInTarget )
-    val targetDiagramMZExpansion = AutomaticUtils.expand(target.getShadedZones.toSet -- target.getPresentZones, contoursOnlyInSource )
-
-    val sourceExpansion = sourceDiagramMZExpansion ++ targetDiagramMZExpansion ++ AutomaticUtils.expand(sourceRegion, contoursOnlyInTarget)
-    val targetExpansion = targetDiagramMZExpansion ++ sourceDiagramMZExpansion ++ AutomaticUtils.expand(targetRegion, contoursOnlyInSource)
-    sourceExpansion.equals(targetExpansion)
-  }
-  */
-  /*def regionCorrespond (sourceRegion: Set[Zone], sourceMissingZoneExpansion : Set[Zone], contoursOnlyInSource: Set[String],
-                        targetRegion: Set[Zone], targetMissingZonExpansion: Set[Zone] , contoursOnlyInTarget: Set[String]): Boolean = {
-    val sourceExpansion = sourceMissingZoneExpansion ++ targetMissingZonExpansion++ ReasoningUtils.expand(sourceRegion, contoursOnlyInTarget)
-    val targetExpansion = targetMissingZonExpansion ++ sourceMissingZoneExpansion ++ ReasoningUtils.expand(targetRegion, contoursOnlyInSource)
-    sourceExpansion.equals(targetExpansion)
-
-  }
-  */
+  // <editor-fold defaultstate="collapsed" desc="Creation of possible rule applications">
   /**
    * Creates all possible rule application for the given SpiderDiagram with respect to the given set of contours and excluding
    * all elements already contained in the given set of applied rules.
@@ -183,6 +164,6 @@ object AutomaticUtils {
       map(c => new PossibleIntroduceContourApplication(target, new IntroContour().asInstanceOf[InferenceRule[RuleArg]], c))
   }
 
-
+  // </editor-fold>
 
 }

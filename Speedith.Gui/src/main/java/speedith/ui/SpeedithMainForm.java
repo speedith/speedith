@@ -192,7 +192,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     openMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
     openMenuItem.setMnemonic('O');
-    openMenuItem.setText("Open");
+    openMenuItem.setText("Open Goal");
     openMenuItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
@@ -203,7 +203,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
     saveMenuItem.setMnemonic('S');
-    saveMenuItem.setText("Save");
+    saveMenuItem.setText("Save Subgoal");
     saveMenuItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
