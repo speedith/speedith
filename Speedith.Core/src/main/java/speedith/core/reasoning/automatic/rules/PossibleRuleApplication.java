@@ -54,5 +54,5 @@ public abstract class PossibleRuleApplication {
      *
      * @param applied the set of applied rules this instance will be removed from
      */
-    public void removeFrom(AppliedRules applied) {};
+    public void removeFrom(AppliedRules applied) {}
 }

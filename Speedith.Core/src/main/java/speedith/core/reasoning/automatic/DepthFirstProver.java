@@ -46,7 +46,7 @@ public class DepthFirstProver extends AutomaticProver {
         // get all names of contours present in the goals. This bounds the
         // possible proof rule applications, since contours not in this set
         // never have to be copied or introduced.
-        Collection<String> contours = new HashSet<String>();
+        Collection<String> contours = new HashSet<>();
         for (SpiderDiagram sd : currentGoals.getGoals()) {
             contours.addAll( AutomaticUtils.collectContours(sd));
         }
@@ -54,10 +54,8 @@ public class DepthFirstProver extends AutomaticProver {
 //        AppliedRules applied = new AppliedRules(appliedRules);
 //        AppliedRules applied = appliedRules;
         Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours, appliedRules);
-        PossibleRuleApplication nextRule= null;
-        do  {
-            nextRule = getStrategy().select(p, applications);
-            boolean hasBeenApplied = nextRule != null && nextRule.apply(p, subgoalindex, appliedRules);
+        for(PossibleRuleApplication nextRule : applications)  {
+            boolean hasBeenApplied = nextRule.apply(p, subgoalindex, appliedRules);
             if (hasBeenApplied) {
                 p = proveRecursively(p, subgoalindex, appliedRules);
                 if (p.isFinished()) {
@@ -66,7 +64,7 @@ public class DepthFirstProver extends AutomaticProver {
                 p.undoStep();
                 //nextRule.removeFrom(appliedRules);
             }
-        } while(nextRule != null);
+        }
 
         return p;
     }

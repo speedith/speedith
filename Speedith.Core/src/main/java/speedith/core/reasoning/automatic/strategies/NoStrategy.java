@@ -16,6 +16,7 @@ public class NoStrategy implements Strategy, StrategyProvider {
 
     private static final String strategyName = "no_strategy";
 
+    /*
     @Override
     public PossibleRuleApplication select(Proof p, Set<PossibleRuleApplication> possible) {
         Iterator<PossibleRuleApplication> it = possible.iterator();
@@ -26,6 +27,17 @@ public class NoStrategy implements Strategy, StrategyProvider {
         } else {
             return null;
         }
+    }
+    */
+
+    @Override
+    public int getCost(Proof p) {
+        return 0;
+    }
+
+    @Override
+    public int getHeuristic(Proof p) {
+        return 0;
     }
 
     @Override

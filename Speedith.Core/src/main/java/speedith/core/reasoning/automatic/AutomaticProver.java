@@ -58,7 +58,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
         // data structure. I.e. present_zones returns the zone set in
         // the usual sense of spider diagrams
         Proof init = new ProofTrace(ReasoningUtils.normalize(initialGoals));
-        AppliedRules appliedRules = new AppliedRules();
+        //AppliedRules appliedRules = new AppliedRules();
 
         Proof result = null;
         try {
@@ -89,7 +89,6 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
      */
     protected Proof tryToFinish(Proof p, int subGoalIndex) throws  RuleApplicationException{
         TrivialImplicationTautology tautology = new TrivialImplicationTautology();
-        Goals goalsAt = p.getLastGoals();
         SubDiagramIndexArg index = new SubDiagramIndexArg(subGoalIndex,0);
         try {
             p.applyRule(tautology, index);

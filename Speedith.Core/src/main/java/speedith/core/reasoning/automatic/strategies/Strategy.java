@@ -1,6 +1,7 @@
 package speedith.core.reasoning.automatic.strategies;
 
 import speedith.core.reasoning.Proof;
+import speedith.core.reasoning.automatic.AutomaticProofException;
 import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
 
 import java.util.Set;
@@ -12,13 +13,8 @@ import java.util.Set;
  */
 public interface Strategy {
 
-    /**
-     * Selects the next rule to apply to the given proof from the set
-     * of given possible proof rule applications.
-     *
-     * @param p the Proof to which the rule shall be applied to
-     * @param possible the set of PossibleRuleApplictions for the current goal in p
-     * @return the next PossibleRuleApplication according to this strategy
-     */
-    PossibleRuleApplication select (Proof p, Set<PossibleRuleApplication> possible);
+
+    int getCost(Proof p);
+
+    int getHeuristic(Proof p) throws AutomaticProofException;
 }

@@ -7,7 +7,7 @@ import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;
-import speedith.core.reasoning.automatic.wrappers.ProofWrapper;
+import speedith.core.reasoning.automatic.wrappers.ProofAttempt;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 
@@ -39,16 +39,13 @@ public class HeuristicSearch extends AutomaticProver {
         }
         // the set of already visited proofs (not necessary for the algorithm itself, but nice for
         // getting a clue how many proofs have been analysed
-        Set<ProofWrapper> closed = new HashSet<>();
+        Set<ProofAttempt> closed = new HashSet<>();
         // the list of proof attempts, which still have to be visited
-        List<ProofWrapper> attempts = new ArrayList<>();
-        ProofWrapper pw = new ProofWrapper(p);
+        List<ProofAttempt> attempts = new ArrayList<>();
+        ProofAttempt pw = new ProofAttempt(p,getStrategy());
         attempts.add(pw);
-
-
         // the rules that have already been applied to the subgoals
         AppliedRules appliedRules = new AppliedRules();
-
         // get all names of contours present in the goals. This bounds the
         // possible proof rule applications, since contours not in this set
         // never have to be copied or introduced.
@@ -58,7 +55,7 @@ public class HeuristicSearch extends AutomaticProver {
         }
         long startTime= System.nanoTime();
         while(!attempts.isEmpty()) {
-            ProofWrapper currentAttempt = attempts.remove(0);
+            ProofAttempt currentAttempt = attempts.remove(0);
             Proof currentProof = tryToFinish(currentAttempt.getProof(), subgoalindex);
             if (currentProof.isFinished()) {
                 //TODO: remove sysout
@@ -68,26 +65,22 @@ public class HeuristicSearch extends AutomaticProver {
                 System.out.println("Average per Attempt: " + TimeUnit.NANOSECONDS.toMillis(duration)/closed.size() +"ms\n");
                 return currentProof;
             }
-            Set<ProofWrapper> newProofs = new HashSet<>();
+            Set<ProofAttempt> newProofs = new HashSet<>();
             SpiderDiagramWrapper target = wrapDiagram(currentProof.getLastGoals().getGoalAt(subgoalindex),0);
             Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours, appliedRules);
-
-            PossibleRuleApplication nextRule = null;
             // apply all possible rules to the current proof, creating a new proof for each application
-            do {
+            for(PossibleRuleApplication nextRule : applications) {
                 ProofTrace newCurrent = new ProofTrace(currentProof.getGoals(), currentProof.getRuleApplications());
                 // create a new set of already applied rules for the current proof
-                nextRule = getStrategy().select(newCurrent, applications);
 //                long currentTime = System.nanoTime();
-                boolean hasbeenApplied = nextRule != null && nextRule.apply(newCurrent, subgoalindex, appliedRules);
+                boolean hasbeenApplied =  nextRule.apply(newCurrent, subgoalindex, appliedRules);
 //                System.out.println("Took "+ TimeUnit.NANOSECONDS.toMillis(System.nanoTime()- currentTime)+"ms \t to apply rule"+ nextRule);
                 if (hasbeenApplied) {
                     // save the new proof within the set of not yet considered proofs
-                    ProofWrapper newAttempt = new ProofWrapper(newCurrent);
+                    ProofAttempt newAttempt = new ProofAttempt(newCurrent, getStrategy());
                     newProofs.add(newAttempt);
                 }
-            } while(nextRule !=null);
-
+            }
             closed.add(currentAttempt);
             attempts.addAll(newProofs);
             Collections.sort(attempts);

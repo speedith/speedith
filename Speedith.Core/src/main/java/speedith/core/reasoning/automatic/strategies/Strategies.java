@@ -16,7 +16,7 @@ public class Strategies {
 
     static {
         registerProvider(NoStrategy.class);
-
+        registerProvider(BasicHeuristicStrategy.class);
     }
 
     private Strategies() {

@@ -38,7 +38,7 @@ public class BreadthFirstProver extends  AutomaticProver {
         Set<ProofTrace> closed = new HashSet<>();
         currentProofs.add((ProofTrace) p);
         // initialise the new set of proofs
-        Set<ProofTrace> newProofs = new HashSet<>();
+        Set<ProofTrace> newProofs ;
         Map<ProofTrace, AppliedRules> rulesWithinProofs = new HashMap<>();
         rulesWithinProofs.put((ProofTrace) p, new AppliedRules());
 
@@ -46,12 +46,11 @@ public class BreadthFirstProver extends  AutomaticProver {
         // get all names of contours present in the goals. This bounds the
         // possible proof rule applications, since contours not in this set
         // never have to be copied or introduced.
-        Collection<String> contours = new HashSet<String>();
+        Collection<String> contours = new HashSet<>();
         for (SpiderDiagram sd : currentGoals.getGoals()) {
             contours.addAll( AutomaticUtils.collectContours(sd));
         }
         Proof finishedProof = null;
-        PossibleRuleApplication nextRule = null;
         long startTime= System.nanoTime();
         while(finishedProof == null && !currentProofs.isEmpty()) {
             newProofs = new HashSet<>();
@@ -65,21 +64,19 @@ public class BreadthFirstProver extends  AutomaticProver {
                     // create all possible proof rules for this unfinished proof
                     SpiderDiagramWrapper target = wrapDiagram(current.getLastGoals().getGoalAt(subgoalindex),0);
                     Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours, rulesWithinProofs.get(current));
-                    nextRule = null;
                     // apply all possible rules to the current proof, creating a new proof for each application
-                    do {
+                    for (PossibleRuleApplication nextRule : applications){
                         ProofTrace newCurrent = new ProofTrace(current.getGoals(), current.getRuleApplications());
                         // create a new set of already applied rules for the current proof
                         AppliedRules alreadyApplied = new AppliedRules(rulesWithinProofs.get(current));
-                        nextRule = getStrategy().select(newCurrent, applications);
-                        boolean hasbeenApplied = nextRule != null && nextRule.apply(newCurrent, subgoalindex, alreadyApplied);
+                        boolean hasbeenApplied = nextRule.apply(newCurrent, subgoalindex, alreadyApplied);
                         if (hasbeenApplied) {
                             // save the new proof within the set of not yet considered proofs
                             newProofs.add(newCurrent);
                             // save the rules that have already been applied for the new proof
                             rulesWithinProofs.put(newCurrent,alreadyApplied);
                         }
-                    } while(nextRule !=null);
+                    }
                 }
                 // remove the applied rules for this proof (since we create a new proof for each step)
                 rulesWithinProofs.remove(current);
