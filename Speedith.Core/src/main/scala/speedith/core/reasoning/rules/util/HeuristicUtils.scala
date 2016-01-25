@@ -26,18 +26,22 @@ object HeuristicUtils {
     val cform2 = computeCForm(d2,contours)
     val vennCForm1 = computeVennForm(cform1)
     val vennCForm2 = computeVennForm(cform2)
-    contourDiffMetric(d1,d2) +
-     zoneDiffMetric(cform1,cform2) +
-      math.max(
-        shadingDiffMetric(vennCForm1,vennCForm2)
-        ,
-        connectiveDiffMetric(d1,d2)
-      )
+    val contMetr = contourDiffMetric(d1,d2)
+    val zoneMetr = zoneDiffMetric(cform1,cform2)
+    val shadMetr = shadingDiffMetric(vennCForm1,vennCForm2)
+    val connMetr = connectiveDiffMetric(d1,d2)
+    contMetr + zoneMetr +  math.max(shadMetr, connMetr)
   }
 
   def contourDiffMetric(d1: SpiderDiagram, d2: SpiderDiagram) : Int = {
+    val contM1d1 = contourM1(d1)
+    val contM1d2 = contourM1(d2)
+    val contM2d1 = contourM2(d1)
+    val contM2d2 = contourM2(d2)
+
     math.max(
-      (contourM1(d2) -- contourM1(d1)).size + (contourM1(d1) -- contourM1(d2)).size,
+      (contourM1(d2) -- contourM1(d1)).size + (contourM1(d1) -- contourM1(d2)).size
+      ,
       (contourM2(d2) -- contourM2(d1)).size + (contourM2(d1) -- contourM2(d2)).size
     )
   }

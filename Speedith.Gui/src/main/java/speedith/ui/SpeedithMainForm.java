@@ -747,7 +747,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private void applyRule(InfRuleListItem selectedRule) {
     int subgoalIndex = 0;
     try {
-      InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proofPanel1);
+     boolean test =  InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proofPanel1);
+   //   System.out.println("Cost:"+ proofPanel1.getProver().getStrategy().getCost(proofPanel1)+"\tHeuristic:"+proofPanel1.getProver().getStrategy().getHeuristic(proofPanel1));
     } catch (Exception ex) {
       JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
     }
