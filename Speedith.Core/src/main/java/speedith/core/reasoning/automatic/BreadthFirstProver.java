@@ -63,7 +63,7 @@ public class BreadthFirstProver extends  AutomaticProver {
                 } else {
                     // create all possible proof rules for this unfinished proof
                     SpiderDiagramWrapper target = wrapDiagram(current.getLastGoals().getGoalAt(subgoalindex),0);
-                    Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours, rulesWithinProofs.get(current));
+                    Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
                     // apply all possible rules to the current proof, creating a new proof for each application
                     for (PossibleRuleApplication nextRule : applications){
                         ProofTrace newCurrent = new ProofTrace(current.getGoals(), current.getRuleApplications());

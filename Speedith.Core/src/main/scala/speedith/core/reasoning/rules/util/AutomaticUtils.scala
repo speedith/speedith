@@ -2,12 +2,11 @@ package speedith.core.reasoning.rules.util
 
 import java.util
 
-import speedith.core.lang.{SpiderDiagram, PrimarySpiderDiagram, CompoundSpiderDiagram, Operator, Zones, Zone, SpiderDiagrams, Region}
+import speedith.core.lang.{SpiderDiagram, PrimarySpiderDiagram, CompoundSpiderDiagram, Operator, Zone, Region}
 import speedith.core.reasoning.automatic.rules._
 import speedith.core.reasoning.util.unitary.CorrespondingRegions
 import speedith.core.reasoning.InferenceRule
 import speedith.core.reasoning.args.RuleArg
-import speedith.core.reasoning.automatic._
 import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramWrapper, PrimarySpiderDiagramWrapper, SpiderDiagramWrapper}
 import speedith.core.reasoning.rules._
 
@@ -37,30 +36,28 @@ object AutomaticUtils {
 
   // <editor-fold defaultstate="collapsed" desc="Creation of possible rule applications">
   /**
-   * Creates all possible rule application for the given SpiderDiagram with respect to the given set of contours and excluding
-   * all elements already contained in the given set of applied rules.
+   * Creates all possible rule application for the given SpiderDiagram with respect to the given set of contours.
    *
    * @param target The SpiderDiagramWrapper for which the set of PossibleRuleApplication will be created
    * @param contours The set of contours present in the whole subgoal target is contained in
-   * @param applied The set of already applied rules
    * @return A set of PossibleRuleApplication denoting all rule applications possible to target
    */
-  def createAllPossibleRuleApplications (target: SpiderDiagramWrapper, contours: util.Collection[String], applied: AppliedRules ): util.Set[PossibleRuleApplication] = target match {
+  def createAllPossibleRuleApplications (target: SpiderDiagramWrapper, contours: util.Collection[String]): util.Set[PossibleRuleApplication] = target match {
     case target : PrimarySpiderDiagramWrapper =>
-      createRemoveShadedZoneApplications(target, applied) ++
-        createRemoveShadingApplications(target, applied) ++
-        createIntroducedShadedZoneApplications(target, applied) ++
-        createRemoveContourApplications(target, applied) ++
-        createIntroduceContoursApplication(target, contours, applied) ++
+      createRemoveShadedZoneApplications(target) ++
+        createRemoveShadingApplications(target) ++
+        createIntroducedShadedZoneApplications(target) ++
+        createRemoveContourApplications(target) ++
+        createIntroduceContoursApplication(target, contours) ++
         new java.util.HashSet[PossibleRuleApplication]()
     case target : CompoundSpiderDiagramWrapper =>  target.getCompoundDiagram.getOperator match  {
       case Operator.Conjunction =>
-        createCopyContourApplications(target, applied) ++
-          createCopyShadingApplications(target,applied) ++
-          createCombiningApplications(target, applied) ++
-          target.getOperands.flatMap(o => createAllPossibleRuleApplications(o, contours, applied)) ++
+        createCopyContourApplications(target) ++
+          createCopyShadingApplications(target) ++
+          createCombiningApplications(target) ++
+          target.getOperands.flatMap(o => createAllPossibleRuleApplications(o, contours)) ++
           createConjunctionEliminationApplication(target)
-      case Operator.Implication => createAllPossibleRuleApplications(target.getOperand(0), contours, applied)
+      case Operator.Implication => createAllPossibleRuleApplications(target.getOperand(0), contours)
       case _ => new java.util.HashSet[PossibleRuleApplication]()
     }
     case _ => new java.util.HashSet[PossibleRuleApplication]() //TODO: full implementation for Compound Diagrams!
@@ -73,23 +70,21 @@ object AutomaticUtils {
     case _ => new java.util.HashSet[PossibleRuleApplication]();
   }
 
-  private def createCopyContourApplications(target: CompoundSpiderDiagramWrapper, applied: AppliedRules) : java.util.Set[PossibleRuleApplication] = {
+  private def createCopyContourApplications(target: CompoundSpiderDiagramWrapper) : java.util.Set[PossibleRuleApplication] = {
     if (target.getOperands.forall(o => o.isInstanceOf[PrimarySpiderDiagramWrapper])) {
       val leftContours= target.getOperand(0).asInstanceOf[PrimarySpiderDiagramWrapper].getAllContours
       val rightContours = target.getOperand(1).asInstanceOf[PrimarySpiderDiagramWrapper].getAllContours
       val difference =  leftContours -- rightContours
-      val removed = difference -- applied.getCopiedContours(target.getOperand(0))
-      (( leftContours -- rightContours) -- applied.getCopiedContours(target.getOperand(0)))
+      ( leftContours -- rightContours)
           .map(c => new PossibleCopyContourApplication(target.getOperand(0), new CopyContours().asInstanceOf[InferenceRule[RuleArg]], c).asInstanceOf[PossibleRuleApplication]) ++
-        ((rightContours --
-          leftContours) -- applied.getCopiedContours(target.getOperand(1)))
+        (rightContours -- leftContours)
           .map(c => new PossibleCopyContourApplication(target.getOperand(1), new CopyContours().asInstanceOf[InferenceRule[RuleArg]], c).asInstanceOf[PossibleRuleApplication])
     } else {
       new java.util.HashSet[PossibleRuleApplication]()
     }
   }
 
-  private def createCopyShadingApplications(target: CompoundSpiderDiagramWrapper, applied: AppliedRules) : util.Set[PossibleCopyShadingApplication] = {
+  private def createCopyShadingApplications(target: CompoundSpiderDiagramWrapper) : util.Set[PossibleCopyShadingApplication] = {
     if (target.getOperands.forall(o => o.isInstanceOf[PrimarySpiderDiagramWrapper])) {
       val leftDiagram = target.getOperand(0).getDiagram.asInstanceOf[PrimarySpiderDiagram]
       val rightDiagram = target.getOperand(1).getDiagram.asInstanceOf[PrimarySpiderDiagram]
@@ -100,16 +95,12 @@ object AutomaticUtils {
 //        val contoursOnlyInRight = rightContours -- leftContours
         val leftVisibleShadedZones = leftDiagram.getShadedZones & leftDiagram.getPresentZones
         val leftNonEmptyShadedRegions = leftVisibleShadedZones.subsets.toSet.filter(s => s.nonEmpty)
-        val leftRegionsNotYetCopied = leftNonEmptyShadedRegions.
-              filter(r => !applied.getCopiedShadings(target.getOperand(0)).contains(r))
-        val leftRegions = leftRegionsNotYetCopied.map(region => Tuple2(region, CorrespondingRegions(leftDiagram, rightDiagram).correspondingRegion(new Region(region)))).filter(r => r._2.zones.nonEmpty)
+        val leftRegions = leftNonEmptyShadedRegions.map(region => Tuple2(region, CorrespondingRegions(leftDiagram, rightDiagram).correspondingRegion(new Region(region)))).filter(r => r._2.zones.nonEmpty)
         val leftResult = leftRegions.
-              map(r => new PossibleCopyShadingApplication(target.getOperand(0), new CopyShading().asInstanceOf[InferenceRule[RuleArg]], r._1)).toSet
+              map(r => new PossibleCopyShadingApplication(target.getOperand(0), new CopyShading().asInstanceOf[InferenceRule[RuleArg]], r._1))
         val rightShadedRegions = (rightDiagram.getShadedZones & rightDiagram.getPresentZones)
-          .subsets.toSet.filter(r => r.nonEmpty).toSet
-        val rightNotYetCopied = rightShadedRegions.
-          filter(r => !applied.getCopiedShadings(target.getOperand(1)).contains(r))
-        val rightRegions = rightNotYetCopied.
+          .subsets.toSet.filter(r => r.nonEmpty)
+        val rightRegions = rightShadedRegions.
           map(r => Tuple2(r, CorrespondingRegions(rightDiagram, leftDiagram).correspondingRegion(new Region(r)))).filter(t => t._2.zones.nonEmpty)
         val rightResult = rightRegions.
           map(r => new PossibleCopyShadingApplication(target.getOperand(1), new CopyShading().asInstanceOf[InferenceRule[RuleArg]], r._1))
@@ -123,7 +114,7 @@ object AutomaticUtils {
     }
   }
 
-  private def createCombiningApplications(target: CompoundSpiderDiagramWrapper, applied: AppliedRules) : java.util.Set[PossibleCombiningApplication] = {
+  private def createCombiningApplications(target: CompoundSpiderDiagramWrapper) : java.util.Set[PossibleCombiningApplication] = {
     if (target.getOperands.forall(o => o.isInstanceOf[PrimarySpiderDiagramWrapper])) {
       val leftZones = target.getOperand(0).getDiagram.asInstanceOf[PrimarySpiderDiagram].getPresentZones
       val rightZones = target.getOperand(1).getDiagram.asInstanceOf[PrimarySpiderDiagram].getPresentZones
@@ -137,30 +128,29 @@ object AutomaticUtils {
     }
   }
 
-  private def createRemoveContourApplications(target: PrimarySpiderDiagramWrapper, applied: AppliedRules): java.util.Set[PossibleRemoveContourApplication] = {
-    (target.getAllContours -- applied.getRemovedContours(target)).
+  private def createRemoveContourApplications(target: PrimarySpiderDiagramWrapper): java.util.Set[PossibleRemoveContourApplication] = {
+    target.getAllContours .
       map(c => new PossibleRemoveContourApplication(target, new RemoveContour().asInstanceOf[InferenceRule[RuleArg]], c))
   }
 
-  private def createRemoveShadedZoneApplications(target: PrimarySpiderDiagramWrapper, applied: AppliedRules) : java.util.Set[PossibleRuleApplication] = {
-    ((target.getShadedZones & target.getPresentZones) -- applied.getRemovedShadedZones(target)) .
+  private def createRemoveShadedZoneApplications(target: PrimarySpiderDiagramWrapper) : java.util.Set[PossibleRuleApplication] = {
+    (target.getShadedZones & target.getPresentZones) .
       map(z => new PossibleRemoveShadedZoneApplication(target, new RemoveShadedZone().asInstanceOf[InferenceRule[RuleArg]], z).asInstanceOf[PossibleRuleApplication])
   }
 
-  private def createIntroducedShadedZoneApplications(target: PrimarySpiderDiagramWrapper, applied: AppliedRules) : java.util.Set[PossibleIntroShadedZoneApplication] = {
-    ((target.getShadedZones -- target.getPresentZones) -- applied.getIntroducedShadedZones(target)).
+  private def createIntroducedShadedZoneApplications(target: PrimarySpiderDiagramWrapper) : java.util.Set[PossibleIntroShadedZoneApplication] = {
+    (target.getShadedZones -- target.getPresentZones).
     map(z => new PossibleIntroShadedZoneApplication(target, new IntroShadedZone().asInstanceOf[InferenceRule[RuleArg]], z))
   }
 
-  private def createRemoveShadingApplications(target: PrimarySpiderDiagramWrapper, applied: AppliedRules): java.util.Set[PossibleRuleApplication] = {
-    ((target.getShadedZones & target.getPresentZones) -- applied.getRemovedShading(target)).
+  private def createRemoveShadingApplications(target: PrimarySpiderDiagramWrapper): java.util.Set[PossibleRuleApplication] = {
+    (target.getShadedZones & target.getPresentZones).
       map(z => new PossibleRemoveShadingApplication(target, new RemoveShading().asInstanceOf[InferenceRule[RuleArg]], z).asInstanceOf[PossibleRuleApplication])
   }
 
   private def createIntroduceContoursApplication(target: PrimarySpiderDiagramWrapper,
-                                                 contours: java.util.Collection[String],
-                                                 applied : AppliedRules): java.util.Set[PossibleIntroduceContourApplication] = {
-    ((contours.toSet -- applied.getIntroducedContours(target)) -- target.getAllContours).
+                                                 contours: java.util.Collection[String]): java.util.Set[PossibleIntroduceContourApplication] = {
+    (contours.toSet  -- target.getAllContours).
       map(c => new PossibleIntroduceContourApplication(target, new IntroContour().asInstanceOf[InferenceRule[RuleArg]], c))
   }
 

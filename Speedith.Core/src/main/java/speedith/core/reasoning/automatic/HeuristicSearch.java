@@ -1,8 +1,10 @@
 package speedith.core.reasoning.automatic;
 
+import propity.util.Sets;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.ProofTrace;
+import speedith.core.reasoning.RuleApplication;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
@@ -46,6 +48,8 @@ public class HeuristicSearch extends AutomaticProver {
         attempts.add(pw);
         // the rules that have already been applied to the subgoals
         AppliedRules appliedRules = new AppliedRules();
+        Map<Proof, AppliedRules> applied = new HashMap<>();
+        applied.put(p, appliedRules);
         // get all names of contours present in the goals. This bounds the
         // possible proof rule applications, since contours not in this set
         // never have to be copied or introduced.
@@ -57,24 +61,30 @@ public class HeuristicSearch extends AutomaticProver {
         while(!attempts.isEmpty()) {
             ProofAttempt currentAttempt = attempts.poll();
             Proof currentProof = tryToFinish(currentAttempt.getProof(), subgoalindex);
+            AppliedRules alreadyApplied = applied.get(currentProof);
             if (currentProof.isFinished()) {
                 //TODO: remove sysout
                 printStatistics(closed, startTime);
                 return currentProof;
             }
             SpiderDiagramWrapper target = wrapDiagram(currentProof.getLastGoals().getGoalAt(subgoalindex),0);
-            Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours, appliedRules);
+            Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
             // apply all possible rules to the current proof, creating a new proof for each application
             for(PossibleRuleApplication nextRule : applications) {
                 ProofTrace newCurrent = new ProofTrace(currentProof.getGoals(), currentProof.getRuleApplications());
                 // create a new set of already applied rules for the current proof
-                boolean hasbeenApplied =  nextRule.apply(newCurrent, subgoalindex, appliedRules);
-               if (hasbeenApplied) {
+                AppliedRules updated = new AppliedRules(alreadyApplied);
+                boolean hasbeenApplied =  nextRule.apply(newCurrent, subgoalindex, updated);
+                if (hasbeenApplied) {
                     // save the new proof within the set of not yet considered proofs
                     ProofAttempt newAttempt = new ProofAttempt(newCurrent, getStrategy());
                     attempts.add(newAttempt);
+                    applied.put(newCurrent, updated);
+                } else {
+//                    System.out.println("Did not apply "+ nextRule.getRule()+ " to occ index "+nextRule.getTarget().getOccurrenceIndex());
                 }
             }
+            applied.remove(currentProof);
             closed.add(currentAttempt);
         }
         // TODO: remove sysout

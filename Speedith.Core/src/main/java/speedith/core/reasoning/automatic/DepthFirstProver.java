@@ -53,7 +53,7 @@ public class DepthFirstProver extends AutomaticProver {
         SpiderDiagramWrapper target = wrapDiagram(currentGoals.getGoalAt(subgoalindex), 0);
 //        AppliedRules applied = new AppliedRules(appliedRules);
 //        AppliedRules applied = appliedRules;
-        Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours, appliedRules);
+        Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
         for(PossibleRuleApplication nextRule : applications)  {
             boolean hasBeenApplied = nextRule.apply(p, subgoalindex, appliedRules);
             if (hasBeenApplied) {
