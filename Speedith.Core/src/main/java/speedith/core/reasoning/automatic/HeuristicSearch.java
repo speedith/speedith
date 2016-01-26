@@ -59,10 +59,7 @@ public class HeuristicSearch extends AutomaticProver {
             Proof currentProof = tryToFinish(currentAttempt.getProof(), subgoalindex);
             if (currentProof.isFinished()) {
                 //TODO: remove sysout
-                System.out.println("Considered "+closed.size()+ " proof attempts");
-                long duration = System.nanoTime() - startTime;
-                System.out.println("Time needed: "+ TimeUnit.NANOSECONDS.toMillis(duration)+"ms");
-                System.out.println("Average per Attempt: " + TimeUnit.NANOSECONDS.toMillis(duration)/closed.size() +"ms\n");
+                printStatistics(closed, startTime);
                 return currentProof;
             }
             SpiderDiagramWrapper target = wrapDiagram(currentProof.getLastGoals().getGoalAt(subgoalindex),0);
@@ -71,10 +68,8 @@ public class HeuristicSearch extends AutomaticProver {
             for(PossibleRuleApplication nextRule : applications) {
                 ProofTrace newCurrent = new ProofTrace(currentProof.getGoals(), currentProof.getRuleApplications());
                 // create a new set of already applied rules for the current proof
-//                long currentTime = System.nanoTime();
                 boolean hasbeenApplied =  nextRule.apply(newCurrent, subgoalindex, appliedRules);
-//                System.out.println("Took "+ TimeUnit.NANOSECONDS.toMillis(System.nanoTime()- currentTime)+"ms \t to apply rule"+ nextRule);
-                if (hasbeenApplied) {
+               if (hasbeenApplied) {
                     // save the new proof within the set of not yet considered proofs
                     ProofAttempt newAttempt = new ProofAttempt(newCurrent, getStrategy());
                     attempts.add(newAttempt);
@@ -83,11 +78,15 @@ public class HeuristicSearch extends AutomaticProver {
             closed.add(currentAttempt);
         }
         // TODO: remove sysout
+        printStatistics(closed, startTime);
+        return null;
+    }
+
+    private void printStatistics(Set<ProofAttempt> closed, long startTime) {
         System.out.println("Considered "+closed.size()+ " proof attempts");
         long duration = System.nanoTime() - startTime;
         System.out.println("Time needed: "+ TimeUnit.NANOSECONDS.toMillis(duration)+"ms");
         System.out.println("Average per Attempt: " + TimeUnit.NANOSECONDS.toMillis(duration)/closed.size() +"ms\n");
-        return null;
     }
 
     @Override
