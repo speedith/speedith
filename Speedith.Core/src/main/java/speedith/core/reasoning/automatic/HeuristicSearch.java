@@ -41,7 +41,7 @@ public class HeuristicSearch extends AutomaticProver {
         // getting a clue how many proofs have been analysed
         Set<ProofAttempt> closed = new HashSet<>();
         // the list of proof attempts, which still have to be visited
-        List<ProofAttempt> attempts = new ArrayList<>();
+        PriorityQueue<ProofAttempt> attempts = new PriorityQueue<>();
         ProofAttempt pw = new ProofAttempt(p,getStrategy());
         attempts.add(pw);
         // the rules that have already been applied to the subgoals
@@ -55,7 +55,7 @@ public class HeuristicSearch extends AutomaticProver {
         }
         long startTime= System.nanoTime();
         while(!attempts.isEmpty()) {
-            ProofAttempt currentAttempt = attempts.remove(0);
+            ProofAttempt currentAttempt = attempts.poll();
             Proof currentProof = tryToFinish(currentAttempt.getProof(), subgoalindex);
             if (currentProof.isFinished()) {
                 //TODO: remove sysout
@@ -65,7 +65,6 @@ public class HeuristicSearch extends AutomaticProver {
                 System.out.println("Average per Attempt: " + TimeUnit.NANOSECONDS.toMillis(duration)/closed.size() +"ms\n");
                 return currentProof;
             }
-            Set<ProofAttempt> newProofs = new HashSet<>();
             SpiderDiagramWrapper target = wrapDiagram(currentProof.getLastGoals().getGoalAt(subgoalindex),0);
             Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours, appliedRules);
             // apply all possible rules to the current proof, creating a new proof for each application
@@ -78,12 +77,10 @@ public class HeuristicSearch extends AutomaticProver {
                 if (hasbeenApplied) {
                     // save the new proof within the set of not yet considered proofs
                     ProofAttempt newAttempt = new ProofAttempt(newCurrent, getStrategy());
-                    newProofs.add(newAttempt);
+                    attempts.add(newAttempt);
                 }
             }
             closed.add(currentAttempt);
-            attempts.addAll(newProofs);
-            Collections.sort(attempts);
         }
         // TODO: remove sysout
         System.out.println("Considered "+closed.size()+ " proof attempts");
