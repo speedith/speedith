@@ -222,6 +222,24 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         return proof;
     }
 
+    @Override
+    public Proof extendProof(Proof proof) throws AutomaticProofException {
+        if (proof == null || proof.getLastGoals() == null) {
+            throw  new AutomaticProofException("No subgoal to prove");
+        }
+        Proof extendedProof = prover.extendProof(proof);
+        if (!(extendedProof==null)) {
+            newProof(extendedProof.getInitialGoals());
+            for (RuleApplication appl : extendedProof.getRuleApplications()) {
+                try {
+                    applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments());
+                } catch (RuleApplicationException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return this.proof;
+    }
 
     //</editor-fold>
 

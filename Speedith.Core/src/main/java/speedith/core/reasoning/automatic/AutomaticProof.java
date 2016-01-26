@@ -10,4 +10,6 @@ public interface AutomaticProof {
 
     Proof generateProof(Goals initialGoals) throws AutomaticProofException;
 
+    Proof extendProof(Proof proof) throws AutomaticProofException;
+
 }

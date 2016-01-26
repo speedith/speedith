@@ -99,6 +99,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JScrollPane scrlPnlAppliedRules;
   private javax.swing.JMenu reasoningMenu;
   private javax.swing.JMenuItem proveAny;
+  private javax.swing.JMenuItem proveFromHere;
   private javax.swing.JFileChooser fileChooser;
 
   /**
@@ -144,6 +145,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     rulesMenu = new javax.swing.JMenu();
     reasoningMenu = new javax.swing.JMenu();
     proveAny = new javax.swing.JMenuItem();
+    proveFromHere = new javax.swing.JMenuItem();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("Speedith");
@@ -303,8 +305,16 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         onProveAny(evt);
       }
     });
-
     reasoningMenu.add(proveAny);
+
+    proveFromHere.setText("Prove from the current state");
+    proveFromHere.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onProveFromHere(evt);
+      }
+    });
+    reasoningMenu.add(proveFromHere);
     menuBar.add(reasoningMenu);
 
     setJMenuBar(menuBar);
@@ -325,6 +335,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
+
+
 
   private void onOpen(ActionEvent evt) {
     int returnVal = fileChooser.showOpenDialog(this);
@@ -395,6 +407,14 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     Goals initial =  proofPanel1.getInitialGoals();
     try {
        proofPanel1.generateProof(initial);
+    } catch (AutomaticProofException e) {
+      JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
+    }
+  }
+
+  private void onProveFromHere(ActionEvent evt) {
+    try {
+      proofPanel1.extendProof(proofPanel1);
     } catch (AutomaticProofException e) {
       JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
     }

@@ -60,7 +60,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
         Proof init = new ProofTrace(ReasoningUtils.normalize(initialGoals));
         //AppliedRules appliedRules = new AppliedRules();
 
-        Proof result = null;
+        Proof result;
         try {
             result = prove(init, subGoalToProve);
         } catch (RuleApplicationException e) {
@@ -75,6 +75,36 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
         return result;
     }
 
+    @Override
+    public Proof extendProof(Proof proof) throws AutomaticProofException {
+        // workaround as long as Speedith doesn't support several subgoals at once
+        int subGoalToProve = 0;
+        if (!isImplicationOfConjunctions(proof.getLastGoals().getGoalAt(subGoalToProve))) {
+            throw new AutomaticProofException("The current goal is not an implication of conjunctions");
+        }
+        // proof generators can only be applied to normalised spider diagrams
+        Goals normalised = ReasoningUtils.normalize(proof.getLastGoals());
+        if (!normalised.equals(proof.getLastGoals())) {
+            throw  new AutomaticProofException("The current goal is not normalised!");
+        }
+        // create a new proof object, so that we do not mess with the supplied proof
+        Proof initial = new ProofTrace(proof.getGoals(), proof.getRuleApplications());
+
+        Proof result;
+        try {
+            result = prove(initial, subGoalToProve);
+        } catch (RuleApplicationException e) {
+            AutomaticProofException exc = new AutomaticProofException("Unable to prove current goal because of an illegal rule application");
+            exc.initCause(e);
+            e.printStackTrace();  //TODO: for debugging. Remove if not needed anymore
+            throw exc;
+        }
+        if (result == null || !result.isFinished()) {
+            throw  new AutomaticProofException("Unable to prove current goal");
+        }
+        return result;
+
+    }
 
     protected abstract Proof prove (Proof p, int subgoalindex) throws RuleApplicationException, AutomaticProofException;
 
@@ -133,7 +163,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
         }
         if (sd instanceof CompoundSpiderDiagram) {
             int newIndex = occurrenceIndex+1;
-            ArrayList<SpiderDiagramWrapper> operands = new ArrayList<SpiderDiagramWrapper>();
+            ArrayList<SpiderDiagramWrapper> operands = new ArrayList<>();
             for(SpiderDiagram op: ((CompoundSpiderDiagram) sd).getOperands()) {
                 SpiderDiagramWrapper opWrap = wrapDiagram(op, newIndex);
                 operands.add(opWrap);
