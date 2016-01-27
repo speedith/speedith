@@ -350,6 +350,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       } catch (ReadingException re) {
         JOptionPane.showMessageDialog(this, "An error occurred while reading the contents of the file:\n" + re.getLocalizedMessage());
       }
+      this.setTitle("Speedith"+": " + file.getName());
     }
   }
 
@@ -441,14 +442,17 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
   private void onExample1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onExample1
     proofPanel1.newProof(Goals.createGoalsFrom(getExampleA()));
+    setTitle("Speedith" + ": " + "Example 1");
   }//GEN-LAST:event_onExample1
 
   private void onExample2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onExample2
     proofPanel1.newProof(Goals.createGoalsFrom(getExampleB()));
+    setTitle("Speedith"+": "+"Example 2");
   }//GEN-LAST:event_onExample2
 
   private void onExample3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onExample3
     proofPanel1.newProof(Goals.createGoalsFrom(getExampleC()));
+    setTitle("Speedith"+": "+"Example 3");
   }//GEN-LAST:event_onExample3
 
   private void onRuleItemClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onRuleItemClicked
@@ -472,6 +476,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     dialog.setVisible(true);
     if (!dialog.isCancelled() && dialog.getSpiderDiagram() != null) {
       proofPanel1.newProof(Goals.createGoalsFrom(ReasoningUtils.normalize(dialog.getSpiderDiagram())));
+      setTitle("Speedith");
     }
   }//GEN-LAST:event_onTextInputClicked
 
