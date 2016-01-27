@@ -15,6 +15,7 @@ import speedith.core.reasoning.rules.RemoveContour;
 import speedith.core.reasoning.rules.RemoveShadedZone;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -59,6 +60,7 @@ public class HeuristicSearch extends AutomaticProver {
         for (SpiderDiagram sd : p.getLastGoals().getGoals()) {
             contours.addAll( AutomaticUtils.collectContours(sd));
         }
+        long numOfSuperFl = 0;
         long startTime= System.nanoTime();
         while(!attempts.isEmpty()) {
             ProofAttempt currentAttempt = attempts.poll();
@@ -66,7 +68,7 @@ public class HeuristicSearch extends AutomaticProver {
             AppliedRules alreadyApplied = applied.get(currentProof);
             if (currentProof.isFinished()) {
                 //TODO: remove sysout
-                printStatistics(closed, startTime);
+                printStatistics(closed, attempts,startTime, numOfSuperFl);
                 return currentProof;
             }
             SpiderDiagramWrapper target = wrapDiagram(currentProof.getLastGoals().getGoalAt(subgoalindex),0);
@@ -76,27 +78,34 @@ public class HeuristicSearch extends AutomaticProver {
                 ProofTrace newCurrent = new ProofTrace(currentProof.getGoals(), currentProof.getRuleApplications());
                 // create a new set of already applied rules for the current proof
                 AppliedRules updated = new AppliedRules(alreadyApplied);
-                boolean hasBeenApplied =  !nextRule.isSuperfluous(newCurrent,subgoalindex) && nextRule.apply(newCurrent, subgoalindex, updated);
+                boolean superfl = nextRule.isSuperfluous(newCurrent,subgoalindex);
+                if (superfl) numOfSuperFl++;
+
+                boolean hasBeenApplied =  !superfl  && nextRule.apply(newCurrent, subgoalindex, updated);
                 if (hasBeenApplied) {
                     // save the new proof within the set of not yet considered proofs
                     ProofAttempt newAttempt = new ProofAttempt(newCurrent, getStrategy());
                     attempts.add(newAttempt);
                     applied.put(newCurrent, updated);
-                } else {
-//                    System.out.println("Did not apply "+ nextRule.getRule()+ " to occ index "+nextRule.getTarget().getOccurrenceIndex());
                 }
             }
             applied.remove(currentProof);
             closed.add(currentAttempt);
         }
         // TODO: remove sysout
-        printStatistics(closed, startTime);
+        printStatistics(closed, attempts,startTime,numOfSuperFl);
         return null;
     }
 
-    private void printStatistics(Set<ProofAttempt> closed, long startTime) {
-        System.out.println("Considered "+closed.size()+ " proof attempts");
+    private void printStatistics(Set<ProofAttempt> closed, PriorityQueue<ProofAttempt> attempts, long startTime, long superfluousAttemps) {
         long duration = System.nanoTime() - startTime;
+        DecimalFormat format = new DecimalFormat("###,###,###,###");
+        String fullNumber= format.format(closed.size()+attempts.size());
+        String considered = format.format(closed.size());
+        String superfluous = format.format(superfluousAttemps);
+        System.out.println("Considered proof attempts: "+considered);
+        System.out.println("Complete number of created proofs: "+fullNumber);
+        System.out.println("Number of superfluous rule applications: "+superfluous);
         System.out.println("Time needed: "+ TimeUnit.NANOSECONDS.toMillis(duration)+"ms ("+ TimeUnit.NANOSECONDS.toSeconds(duration)+"s)" );
         System.out.println("Average per Attempt: " + TimeUnit.NANOSECONDS.toMillis(duration)/closed.size() +"ms\n");
     }
