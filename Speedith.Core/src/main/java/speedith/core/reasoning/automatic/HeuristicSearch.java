@@ -2,15 +2,17 @@ package speedith.core.reasoning.automatic;
 
 import propity.util.Sets;
 import speedith.core.lang.SpiderDiagram;
-import speedith.core.reasoning.Proof;
-import speedith.core.reasoning.ProofTrace;
-import speedith.core.reasoning.RuleApplication;
-import speedith.core.reasoning.RuleApplicationException;
+import speedith.core.reasoning.*;
+import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;
 import speedith.core.reasoning.automatic.wrappers.ProofAttempt;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
+import speedith.core.reasoning.rules.IntroShadedZone;
+import speedith.core.reasoning.rules.RemoveContour;
+import speedith.core.reasoning.rules.RemoveShadedZone;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 
 import java.util.*;
@@ -74,8 +76,8 @@ public class HeuristicSearch extends AutomaticProver {
                 ProofTrace newCurrent = new ProofTrace(currentProof.getGoals(), currentProof.getRuleApplications());
                 // create a new set of already applied rules for the current proof
                 AppliedRules updated = new AppliedRules(alreadyApplied);
-                boolean hasbeenApplied =  nextRule.apply(newCurrent, subgoalindex, updated);
-                if (hasbeenApplied) {
+                boolean hasBeenApplied =  !nextRule.isSuperfluous(newCurrent,subgoalindex) && nextRule.apply(newCurrent, subgoalindex, updated);
+                if (hasBeenApplied) {
                     // save the new proof within the set of not yet considered proofs
                     ProofAttempt newAttempt = new ProofAttempt(newCurrent, getStrategy());
                     attempts.add(newAttempt);
@@ -95,7 +97,7 @@ public class HeuristicSearch extends AutomaticProver {
     private void printStatistics(Set<ProofAttempt> closed, long startTime) {
         System.out.println("Considered "+closed.size()+ " proof attempts");
         long duration = System.nanoTime() - startTime;
-        System.out.println("Time needed: "+ TimeUnit.NANOSECONDS.toMillis(duration)+"ms");
+        System.out.println("Time needed: "+ TimeUnit.NANOSECONDS.toMillis(duration)+"ms ("+ TimeUnit.NANOSECONDS.toSeconds(duration)+"s)" );
         System.out.println("Average per Attempt: " + TimeUnit.NANOSECONDS.toMillis(duration)/closed.size() +"ms\n");
     }
 

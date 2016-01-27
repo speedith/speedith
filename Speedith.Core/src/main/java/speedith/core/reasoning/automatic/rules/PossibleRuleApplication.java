@@ -55,4 +55,17 @@ public abstract class PossibleRuleApplication {
      * @param applied the set of applied rules this instance will be removed from
      */
     public void removeFrom(AppliedRules applied) {}
+
+    /**
+     * Check whether there is already an application of a proof rule within
+     * p that makes this proof rule application superfluous, or worse the entrance
+     * to an infinite loop. The standard implementation always returns false, i.e., the
+     * rule application is not superfluous.
+     * @param p
+     * @param subGoalIndex
+     * @return
+     */
+    public boolean isSuperfluous(Proof p, int subGoalIndex) {
+        return false;
+    }
 }
