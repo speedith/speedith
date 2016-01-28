@@ -105,7 +105,7 @@ public class HeuristicSearch extends AutomaticProver {
         String superfluous = format.format(superfluousAttemps);
         System.out.println("Considered proof attempts: "+considered);
         System.out.println("Complete number of created proofs: "+fullNumber);
-        System.out.println("Number of superfluous rule applications: "+superfluous);
+        System.out.println("Number of prevented rule applications: "+superfluous);
         System.out.println("Time needed: "+ TimeUnit.NANOSECONDS.toMillis(duration)+"ms ("+ TimeUnit.NANOSECONDS.toSeconds(duration)+"s)" );
         System.out.println("Average per Attempt: " + TimeUnit.NANOSECONDS.toMillis(duration)/closed.size() +"ms\n");
     }

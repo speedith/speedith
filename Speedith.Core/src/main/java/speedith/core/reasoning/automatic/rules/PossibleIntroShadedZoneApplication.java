@@ -33,7 +33,7 @@ public class PossibleIntroShadedZoneApplication extends PossibleRuleApplication 
         return zone;
     }
 
-    @Override
+  /*  @Override
     public boolean apply(Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
         if (!applied.getIntroducedShadedZones(getTarget()).contains(zone)) {
                 p.applyRule(getRule(), getArg(subGoalIndex));
@@ -43,7 +43,7 @@ public class PossibleIntroShadedZoneApplication extends PossibleRuleApplication 
             return false;
         }
     }
-
+*/
     @Override
     public boolean isSuperfluous(Proof p, int subGoalIndex) {
         for (int i =0 ; i< p.getRuleApplicationCount(); i++) {

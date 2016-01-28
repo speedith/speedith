@@ -1,5 +1,6 @@
 package speedith.core.reasoning.automatic.rules;
 
+import scala.collection.script.Remove;
 import speedith.core.lang.Zone;
 import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.Proof;
@@ -11,6 +12,9 @@ import speedith.core.reasoning.automatic.AppliedRules;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
 import speedith.core.reasoning.rules.IntroShadedZone;
 import speedith.core.reasoning.rules.RemoveShadedZone;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
@@ -32,17 +36,6 @@ public class PossibleRemoveShadedZoneApplication extends PossibleRuleApplication
 
     public Zone getZone() {
         return zone;
-    }
-
-    @Override
-    public boolean apply(Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
-        if (!applied.getRemovedShadedZones(getTarget()).contains(zone)) {
-            p.applyRule(getRule(), getArg(subGoalIndex));
-            applied.addRemovedShadedZones(getTarget(), zone);
-            return true;
-        } else {
-            return false;
-        }
     }
 
     @Override
