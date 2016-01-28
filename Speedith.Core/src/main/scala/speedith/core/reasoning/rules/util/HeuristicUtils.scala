@@ -147,7 +147,7 @@ object HeuristicUtils {
 
   private def addSh(d1 : SpiderDiagram, d2: SpiderDiagram) : Int = {
     math.max(
-      if (shadingM1(d1).subsetOf(shadingM1(d1))) {
+      if (shadingM1(d2).subsetOf(shadingM1(d1))) {
         0
       } else {
         1
