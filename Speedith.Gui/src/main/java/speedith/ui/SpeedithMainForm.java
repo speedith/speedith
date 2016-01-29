@@ -41,11 +41,9 @@ import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.automatic.AutomaticProofException;
 import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
-import speedith.core.reasoning.rules.util.AutomaticUtils;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
-import speedith.ui.selection.SubgoalSelectionDialog;
 import spiderdrawer.ui.MainForm;
 
 import javax.imageio.ImageIO;
@@ -95,7 +93,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenuItem goalTextInputMenuItem;
   private javax.swing.JPanel pnlRulesSidePane;
   private speedith.ui.ProofPanel proofPanel1;
-  private javax.swing.JMenu rulesMenu;
+  private javax.swing.JMenu proofMenu;
+  private javax.swing.JMenuItem cropProof;
   private javax.swing.JScrollPane scrlPnlAppliedRules;
   private javax.swing.JMenu reasoningMenu;
   private javax.swing.JMenuItem proveAny;
@@ -142,7 +141,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     useSdExample1MenuItem = new javax.swing.JMenuItem();
     useSdExample2MenuItem = new javax.swing.JMenuItem();
     useSdExample3MenuItem = new javax.swing.JMenuItem();
-    rulesMenu = new javax.swing.JMenu();
+    proofMenu = new javax.swing.JMenu();
+    cropProof = new javax.swing.JMenuItem();
     reasoningMenu = new javax.swing.JMenu();
     proveAny = new javax.swing.JMenuItem();
     proveFromHere = new javax.swing.JMenuItem();
@@ -205,7 +205,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
     saveMenuItem.setMnemonic('S');
-    saveMenuItem.setText("Save Subgoal");
+    saveMenuItem.setText("Save selected Subgoal");
     saveMenuItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
@@ -291,9 +291,18 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     menuBar.add(drawMenu);
 
-    rulesMenu.setMnemonic('R');
-    rulesMenu.setText("Rules");
-    menuBar.add(rulesMenu);
+    proofMenu.setMnemonic('P');
+    proofMenu.setText("Proof");
+
+    cropProof.setText("Reduce Proof to selected Subgoal");
+    cropProof.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onCropProof(evt);
+      }
+    });
+    proofMenu.add(cropProof);
+    menuBar.add(proofMenu);
 
     reasoningMenu.setMnemonic('A');
     reasoningMenu.setText("Auto");
@@ -336,6 +345,11 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
+  private void onCropProof(ActionEvent evt) {
+    if (proofPanel1.getSelected() != null) {
+      proofPanel1.reduceToSelected();
+    }
+  }
 
 
   private void onOpen(ActionEvent evt) {
@@ -359,42 +373,32 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       JOptionPane.showMessageDialog(this, "No subgoal to be saved exists.");
       return;
     }
-    boolean cancelled = false;
-    SpiderDiagram toSave = SpiderDiagrams.createNullSD() ;
-    if (proofPanel1.getGoals().size() > 1) {
-      SubgoalSelectionDialog select = new SubgoalSelectionDialog(this, true);
-      select.setSubgoals(proofPanel1.getGoals(), proofPanel1.getRuleApplications());
-      select.setVisible(true);
-      if (!select.isCancelled()) {
-        toSave = select.getSelected();
-      } else {
-        cancelled = true;
-      }
-    } else {
-      toSave = proofPanel1.getGoalsAt(0).getGoalAt(0);
-    }
-    if (!cancelled) {
+    if (proofPanel1.getSelected() != null) {
+        SpiderDiagram toSave = proofPanel1.getSelected();
+        int returnVal = fileChooser.showSaveDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+          File file = fileChooser.getSelectedFile();
+          if (file.exists()) {
+            int reallySave = JOptionPane.showConfirmDialog(this, "File " + file.getName() + " exists at given path. Save anyway?", "File already exists", JOptionPane.YES_NO_OPTION);
+            if (reallySave == JOptionPane.NO_OPTION) {
+              return;
+            }
+          }
+          try {
 
-      int returnVal = fileChooser.showSaveDialog(this);
-      if (returnVal == JFileChooser.APPROVE_OPTION) {
-        File file = fileChooser.getSelectedFile();
-        if (file.exists()) {
-          int reallySave = JOptionPane.showConfirmDialog(this, "File " + file.getName()+ " exists at given path. Save anyway?", "File already exists", JOptionPane.YES_NO_OPTION);
-          if (reallySave == JOptionPane.NO_OPTION) {
-            return;
+            FileWriter writer = new FileWriter(file);
+            writer.write(toSave.toString());
+            writer.flush();
+            writer.close();
+          } catch (IOException ioe) {
+            JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
           }
         }
-        try {
 
-        FileWriter writer = new FileWriter(file);
-          writer.write(toSave.toString());
-          writer.flush();
-          writer.close();
-        } catch (IOException ioe) {
-          JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
-        }
+      } else {
+        JOptionPane.showMessageDialog(this, "No subgoal selected", "No subgoal selected", JOptionPane.ERROR_MESSAGE);
       }
-    }
+
 
   }
   private void onSettings(ActionEvent evt) {

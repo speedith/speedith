@@ -22,6 +22,7 @@ import static speedith.i18n.Translations.i18n;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
+@Deprecated
 public class SubgoalSelectionDialog extends JDialog {
 
     private boolean cancelled = true;
