@@ -1,17 +1,16 @@
 package speedith.core.reasoning.automatic.rules;
 
 import scala.collection.script.Remove;
+import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Zone;
-import speedith.core.reasoning.InferenceRule;
-import speedith.core.reasoning.Proof;
-import speedith.core.reasoning.RuleApplication;
-import speedith.core.reasoning.RuleApplicationException;
+import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.automatic.AppliedRules;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
 import speedith.core.reasoning.rules.IntroShadedZone;
 import speedith.core.reasoning.rules.RemoveShadedZone;
+import speedith.core.reasoning.rules.util.AutomaticUtils;
 
 import java.util.Map;
 import java.util.Set;
@@ -39,6 +38,20 @@ public class PossibleRemoveShadedZoneApplication extends PossibleRuleApplication
     }
 
     @Override
+    public boolean apply(Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
+        p.applyRule(getRule(), getArg(subGoalIndex));
+        // FIXME: Workaround, as long as iCircles is buggy  (https://github.com/svenlinker/speedith/issues/3)
+        Goals lastGoals = p.getLastGoals();
+        for (SpiderDiagram sd: lastGoals.getGoals() ) {
+            if (AutomaticUtils.containsEmptyZone(sd)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    @Override
     public boolean isSuperfluous(Proof p, int subGoalIndex) {
         for (int i = 0; i < p.getRuleApplicationCount(); i++) {
             RuleApplication application = p.getRuleApplicationAt(i);
@@ -53,6 +66,17 @@ public class PossibleRemoveShadedZoneApplication extends PossibleRuleApplication
                         getTarget().getDiagram().equals(
                                 p.getGoalsAt(i + 1).getGoalAt(nextArg.getSubgoalIndex()).getSubDiagramAt(arg.getSubDiagramIndex())) &&
                         nextArg.getZone().equals(arg.getZone())) {
+                    return true;
+                }
+            } else if (application.getInferenceRule() instanceof RemoveShadedZone) {
+                ZoneArg args = (ZoneArg) application.getRuleArguments();
+                ZoneArg thisArgs = (ZoneArg) getArg(subGoalIndex);
+                // application is superfluous if the other rule
+                // a) works on the same subgoal
+                // b) and on the same subdiagram and
+                // c) both refer to the same zone
+                if (args.getSubgoalIndex() == thisArgs.getSubgoalIndex() &&
+                        getTarget().getOccurrenceIndex() == args.getSubDiagramIndex() && thisArgs.getZone().equals(args.getZone())) {
                     return true;
                 }
             }

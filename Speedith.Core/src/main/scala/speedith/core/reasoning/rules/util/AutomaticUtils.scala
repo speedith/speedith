@@ -32,6 +32,15 @@ object AutomaticUtils {
   def regionWithNewContours(region: Iterable[Zone], contoursToAdd: Set[String] ): Set[Zone] = {
     region.map(zone => new Zone(zone.getInContours ++ contoursToAdd, zone.getOutContours )).toSet ++ region.map(zone => new Zone(zone.getInContours , zone.getOutContours ++ contoursToAdd )).toSet
   }
+
+  def containsEmptyZone (sd : SpiderDiagram): Boolean = sd match {
+    case sd:PrimarySpiderDiagram => {
+      sd.getAllContours.exists(c => sd.getPresentZones.forall(!_.getInContours.contains(c)))
+    }
+    case sd: CompoundSpiderDiagram => {
+      sd.getOperands.exists(containsEmptyZone)
+    }
+  }
   // </editor-fold>
 
   // <editor-fold defaultstate="collapsed" desc="Creation of possible rule applications">

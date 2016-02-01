@@ -9,6 +9,7 @@ import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.automatic.AppliedRules;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
+import speedith.core.reasoning.rules.IntroShadedZone;
 import speedith.core.reasoning.rules.RemoveShadedZone;
 
 /**
@@ -59,6 +60,17 @@ public class PossibleIntroShadedZoneApplication extends PossibleRuleApplication 
                         getTarget().getDiagram().equals(
                                 p.getGoalsAt(i+1).getGoalAt(nextArg.getSubgoalIndex()).getSubDiagramAt(arg.getSubDiagramIndex())) &&
                         nextArg.getZone().equals(arg.getZone())) {
+                    return true;
+                }
+            } else if (application.getInferenceRule() instanceof IntroShadedZone) {
+                ZoneArg args = (ZoneArg) application.getRuleArguments();
+                ZoneArg thisArgs = (ZoneArg) getArg(subGoalIndex);
+                // application is superfluous if the other rule
+                // a) works on the same subgoal
+                // b) and on the same subdiagram and
+                // c) both refer to the same zone
+                if (args.getSubgoalIndex() == thisArgs.getSubgoalIndex() &&
+                        getTarget().getOccurrenceIndex() == args.getSubDiagramIndex() && thisArgs.getZone().equals(args.getZone())) {
                     return true;
                 }
             }

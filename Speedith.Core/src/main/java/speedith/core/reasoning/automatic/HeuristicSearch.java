@@ -51,8 +51,8 @@ public class HeuristicSearch extends AutomaticProver {
         attempts.add(pw);
         // the rules that have already been applied to the subgoals
         AppliedRules appliedRules = new AppliedRules();
-        Map<Proof, AppliedRules> applied = new HashMap<>();
-        applied.put(p, appliedRules);
+//        Map<Proof, AppliedRules> applied = new HashMap<>();
+//        applied.put(p, appliedRules);
         // get all names of contours present in the goals. This bounds the
         // possible proof rule applications, since contours not in this set
         // never have to be copied or introduced.
@@ -65,7 +65,7 @@ public class HeuristicSearch extends AutomaticProver {
         while(!attempts.isEmpty()) {
             ProofAttempt currentAttempt = attempts.poll();
             Proof currentProof = tryToFinish(currentAttempt.getProof(), subgoalindex);
-            AppliedRules alreadyApplied = applied.get(currentProof);
+//            AppliedRules alreadyApplied = applied.get(currentProof);
             if (currentProof.isFinished()) {
                 //TODO: remove sysout
                 printStatistics(closed, attempts,startTime, numOfSuperFl);
@@ -77,19 +77,19 @@ public class HeuristicSearch extends AutomaticProver {
             for(PossibleRuleApplication nextRule : applications) {
                 ProofTrace newCurrent = new ProofTrace(currentProof.getGoals(), currentProof.getRuleApplications());
                 // create a new set of already applied rules for the current proof
-                AppliedRules updated = new AppliedRules(alreadyApplied);
+//                AppliedRules updated = new AppliedRules(alreadyApplied);
                 boolean superfl = nextRule.isSuperfluous(newCurrent,subgoalindex);
                 if (superfl) numOfSuperFl++;
 
-                boolean hasBeenApplied =  !superfl  && nextRule.apply(newCurrent, subgoalindex, updated);
+                boolean hasBeenApplied =  !superfl  && nextRule.apply(newCurrent, subgoalindex, appliedRules);
                 if (hasBeenApplied) {
                     // save the new proof within the set of not yet considered proofs
                     ProofAttempt newAttempt = new ProofAttempt(newCurrent, getStrategy());
                     attempts.add(newAttempt);
-                    applied.put(newCurrent, updated);
+//                    applied.put(newCurrent, updated);
                 }
             }
-            applied.remove(currentProof);
+//            applied.remove(currentProof);
             closed.add(currentAttempt);
         }
         // TODO: remove sysout

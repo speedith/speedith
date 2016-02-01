@@ -12,6 +12,9 @@ import speedith.core.reasoning.automatic.wrappers.PrimarySpiderDiagramWrapper;
 import speedith.core.reasoning.rules.IntroContour;
 import speedith.core.reasoning.rules.RemoveContour;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Represents the possibility to apply the rule Introduce Contour
  * to a SpiderDiagram at a given subdiagram.
@@ -40,13 +43,13 @@ public class PossibleIntroduceContourApplication extends PossibleRuleApplication
 
     @Override
     public boolean apply(Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
-        if (!applied.getIntroducedContours(getTarget()).contains(contour)) {
+//        if (!applied.getIntroducedContours(getTarget()).contains(contour)) {
             p.applyRule(getRule(), getArg(subGoalIndex));
-            applied.addIntroContour(getTarget(), contour);
+//            applied.addIntroContour(getTarget(), contour);
             return true;
-        } else {
-            return false;
-        }
+//        } else {
+//            return false;
+  //      }
     }
 
     @Override
@@ -70,6 +73,28 @@ public class PossibleIntroduceContourApplication extends PossibleRuleApplication
                                 getTarget().getDiagram().equals(
                                         p.getGoalsAt(i+1).getGoalAt(thisArg.getSubgoalIndex()).getSubDiagramAt(arg.getSubDiagramIndex())) &&
                                 thisArg.getContour().equals(arg.getContour()));
+                    }
+                }
+            } else if (application.getInferenceRule() instanceof IntroContour) {
+                MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
+                MultipleRuleArgs thisArgs = (MultipleRuleArgs) getArg(subGoalIndex);
+                if (args.size() == thisArgs.size() && args.size() > 0) {
+                    // application is superfluous if the other rule
+                    // a) works on the same subgoal
+                    // b) and on the same subdiagram and
+                    // c) both refer to the same region
+                    ContourArg thisFirst = (ContourArg) thisArgs.get(0);
+                    ContourArg thatFirst = (ContourArg) args.get(0);
+                    if (thisFirst.getSubgoalIndex() == thatFirst.getSubgoalIndex() && getTarget().getOccurrenceIndex() == thatFirst.getSubDiagramIndex()) {
+                        Set<String> thisContours = new HashSet<>();
+                        Set<String> thatContours = new HashSet<>();
+                        for (int j = 0; j < args.size(); j++) {
+                            thisContours.add(((ContourArg) thisArgs.get(j)).getContour());
+                            thatContours.add(((ContourArg) args.get(j)).getContour());
+                        }
+                        if (thisContours.equals(thatContours)) {
+                            return true;
+                        }
                     }
                 }
             }

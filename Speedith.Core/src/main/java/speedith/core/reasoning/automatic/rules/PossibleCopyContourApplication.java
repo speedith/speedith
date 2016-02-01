@@ -2,12 +2,17 @@ package speedith.core.reasoning.automatic.rules;
 
 import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.Proof;
+import speedith.core.reasoning.RuleApplication;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.automatic.AppliedRules;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
+import speedith.core.reasoning.rules.CopyContours;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by sl542 on 17/11/15.
@@ -34,13 +39,43 @@ public class PossibleCopyContourApplication extends PossibleRuleApplication {
 
     @Override
     public boolean apply(Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
-        if (!applied.getCopiedContours(getTarget()).contains(contour)) {
+//        if (!applied.getCopiedContours(getTarget()).contains(contour)) {
                 p.applyRule(getRule(), getArg(subGoalIndex));
-            applied.addCopiedContour(getTarget(), contour);
+//            applied.addCopiedContour(getTarget(), contour);
             return true;
-        } else {
-            return false;
+//        } else {
+//            return false;
+//        }
+    }
+
+    @Override
+    public boolean isSuperfluous(Proof p, int subGoalIndex) {
+        for (RuleApplication application : p.getRuleApplications() ) {
+            if (application.getInferenceRule() instanceof CopyContours) {
+                MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
+                MultipleRuleArgs thisArgs = (MultipleRuleArgs) getArg(subGoalIndex);
+                if (args.size() == thisArgs.size() && args.size() > 0) {
+                    // application is superfluous if the other rule
+                    // a) works on the same subgoal
+                    // b) and on the same subdiagram and
+                    // c) both refer to the same region
+                    ContourArg thisFirst = (ContourArg) thisArgs.get(0);
+                    ContourArg thatFirst = (ContourArg) args.get(0);
+                    if (thisFirst.getSubgoalIndex() == thatFirst.getSubgoalIndex() && getTarget().getOccurrenceIndex() == thatFirst.getSubDiagramIndex()) {
+                        Set<String> thisContours = new HashSet<>();
+                        Set<String> thatContours = new HashSet<>();
+                        for (int i = 0; i < args.size(); i++) {
+                            thisContours.add(((ContourArg) thisArgs.get(i)).getContour());
+                            thatContours.add(((ContourArg) args.get(i)).getContour());
+                        }
+                        if (thisContours.equals(thatContours)) {
+                            return true;
+                        }
+                    }
+                }
+            }
         }
+        return false;
     }
 
     @Override
