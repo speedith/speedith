@@ -1,18 +1,12 @@
 package speedith.core.reasoning.automatic;
 
-import propity.util.Sets;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
-import speedith.core.reasoning.args.RuleArg;
-import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;
 import speedith.core.reasoning.automatic.wrappers.ProofAttempt;
-import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
-import speedith.core.reasoning.rules.IntroShadedZone;
-import speedith.core.reasoning.rules.RemoveContour;
-import speedith.core.reasoning.rules.RemoveShadedZone;
+import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 
 import java.text.DecimalFormat;
@@ -71,7 +65,7 @@ public class HeuristicSearch extends AutomaticProver {
                 printStatistics(closed, attempts,startTime, numOfSuperFl);
                 return currentProof;
             }
-            SpiderDiagramWrapper target = wrapDiagram(currentProof.getLastGoals().getGoalAt(subgoalindex),0);
+            SpiderDiagramOccurrence target = SpiderDiagramOccurrence.wrapDiagram(currentProof.getLastGoals().getGoalAt(subgoalindex), 0);
             Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
             // apply all possible rules to the current proof, creating a new proof for each application
             for(PossibleRuleApplication nextRule : applications) {

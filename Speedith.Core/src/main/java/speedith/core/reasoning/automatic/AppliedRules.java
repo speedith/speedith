@@ -1,8 +1,7 @@
 package speedith.core.reasoning.automatic;
 
-import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Zone;
-import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
+import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,61 +13,61 @@ import java.util.Set;
  */
 public class AppliedRules {
 
-    private Map<SpiderDiagramWrapper, Set<String>> introContours;
+    private Map<SpiderDiagramOccurrence, Set<String>> introContours;
 
-    private Map<SpiderDiagramWrapper, Set<String>> removeContours;
+    private Map<SpiderDiagramOccurrence, Set<String>> removeContours;
 
-    private Map<SpiderDiagramWrapper, Set<String>> copiedContours;
+    private Map<SpiderDiagramOccurrence, Set<String>> copiedContours;
 
-    private Map<SpiderDiagramWrapper, Set<Zone>> removedShading;
+    private Map<SpiderDiagramOccurrence, Set<Zone>> removedShading;
 
-//    private Map<SpiderDiagramWrapper, Set<Zone>> removedShadedZones;
+//    private Map<SpiderDiagramOccurrence, Set<Zone>> removedShadedZones;
 
-//    private Map<SpiderDiagramWrapper, Set<Zone>> introducedShadedZones;
+//    private Map<SpiderDiagramOccurrence, Set<Zone>> introducedShadedZones;
 
-    private Map<SpiderDiagramWrapper, Set<Set<Zone>>> copiedShadings;
+    private Map<SpiderDiagramOccurrence, Set<Set<Zone>>> copiedShadings;
 
 
     public AppliedRules() {
-        introContours = new HashMap<SpiderDiagramWrapper,Set<String>>();
-        removeContours = new HashMap<SpiderDiagramWrapper,Set<String>>();
-        removedShading = new HashMap<SpiderDiagramWrapper, Set<Zone>>();
-//        removedShadedZones= new HashMap<SpiderDiagramWrapper, Set<Zone>>();
-//        introducedShadedZones = new HashMap<SpiderDiagramWrapper, Set<Zone>>();
-        copiedContours = new HashMap<SpiderDiagramWrapper, Set<String>>();
-        copiedShadings = new HashMap<SpiderDiagramWrapper, Set<Set<Zone>>>();
+        introContours = new HashMap<SpiderDiagramOccurrence,Set<String>>();
+        removeContours = new HashMap<SpiderDiagramOccurrence,Set<String>>();
+        removedShading = new HashMap<SpiderDiagramOccurrence, Set<Zone>>();
+//        removedShadedZones= new HashMap<SpiderDiagramOccurrence, Set<Zone>>();
+//        introducedShadedZones = new HashMap<SpiderDiagramOccurrence, Set<Zone>>();
+        copiedContours = new HashMap<SpiderDiagramOccurrence, Set<String>>();
+        copiedShadings = new HashMap<SpiderDiagramOccurrence, Set<Set<Zone>>>();
 
     }
 
     public AppliedRules(AppliedRules old) {
         this.introContours = new HashMap<> ();
-        for( SpiderDiagramWrapper key: old.introContours.keySet()) {
+        for( SpiderDiagramOccurrence key: old.introContours.keySet()) {
             this.introContours.put(key, new HashSet<String>(old.introContours.get(key)));
         }
         this.removeContours = new HashMap<>();
-        for (SpiderDiagramWrapper key: old.removeContours.keySet()) {
+        for (SpiderDiagramOccurrence key: old.removeContours.keySet()) {
             this.removeContours.put(key, new HashSet<String>(old.removeContours.get(key)));
         }
         this.copiedContours = new HashMap<>();
-        for (SpiderDiagramWrapper key: old.copiedContours.keySet()) {
+        for (SpiderDiagramOccurrence key: old.copiedContours.keySet()) {
             this.copiedContours.put(key, new HashSet<String>(old.copiedContours.get(key)));
         }
         this.removedShading = new HashMap<>();
-        for (SpiderDiagramWrapper key: old.removedShading.keySet()) {
+        for (SpiderDiagramOccurrence key: old.removedShading.keySet()) {
             this.removedShading.put(key, new HashSet<Zone>(old.removedShading.get(key)));
         }
 /*        this.removedShadedZones = new HashMap<>();
-        for (SpiderDiagramWrapper key: old.removedShadedZones.keySet()) {
+        for (SpiderDiagramOccurrence key: old.removedShadedZones.keySet()) {
             this.removedShadedZones.put(key, new HashSet<Zone>(old.removedShadedZones.get(key)));
         }
 
         this.introducedShadedZones = new HashMap<>();
-        for (SpiderDiagramWrapper key: old.introducedShadedZones.keySet()) {
+        for (SpiderDiagramOccurrence key: old.introducedShadedZones.keySet()) {
             this.introducedShadedZones.put(key, new HashSet<Zone>(old.introducedShadedZones.get(key)));
         }
         */
         this.copiedShadings = new HashMap<>();
-        for (SpiderDiagramWrapper key: old.copiedShadings.keySet()) {
+        for (SpiderDiagramOccurrence key: old.copiedShadings.keySet()) {
             this.copiedShadings.put(key, new HashSet<Set<Zone>>(old.copiedShadings.get(key)));
         }
     }
@@ -80,7 +79,7 @@ public class AppliedRules {
      *            as already introduced
      * @param c the name of the contour
      */
-    public void addIntroContour(SpiderDiagramWrapper psd, String c) {
+    public void addIntroContour(SpiderDiagramOccurrence psd, String c) {
         if (!introContours.containsKey(psd)) {
             introContours.put(psd, new HashSet<String>());
         }
@@ -94,28 +93,28 @@ public class AppliedRules {
      *            as already removed
      * @param c the name of the contour
      */
-    public void addRemoveContour(SpiderDiagramWrapper psd, String c) {
+    public void addRemoveContour(SpiderDiagramOccurrence psd, String c) {
         if (!removeContours.containsKey(psd)) {
             removeContours.put(psd, new HashSet<String>());
         }
         removeContours.get(psd).add(c);
     }
 
-    public void addRemovedShading(SpiderDiagramWrapper sd, Zone z) {
+    public void addRemovedShading(SpiderDiagramOccurrence sd, Zone z) {
         if (!removedShading.containsKey(sd)) {
             removedShading.put(sd, new HashSet<Zone>());
         }
         removedShading.get(sd).add(z);
     }
 
-/*    public void addRemovedShadedZones(SpiderDiagramWrapper sd, Zone z) {
+/*    public void addRemovedShadedZones(SpiderDiagramOccurrence sd, Zone z) {
         if (!removedShadedZones.containsKey(sd)) {
             removedShadedZones.put(sd, new HashSet<Zone>());
         }
         removedShadedZones.get(sd).add(z);
     }
 
-    public void addIntroducedShadedZones(SpiderDiagramWrapper sd, Zone z) {
+    public void addIntroducedShadedZones(SpiderDiagramOccurrence sd, Zone z) {
         if (!introducedShadedZones.containsKey(sd)) {
             introducedShadedZones.put(sd, new HashSet<Zone>());
         }
@@ -123,35 +122,35 @@ public class AppliedRules {
     }
 */
 
-    public void addCopiedShadings(SpiderDiagramWrapper sd, Set<Zone> z) {
+    public void addCopiedShadings(SpiderDiagramOccurrence sd, Set<Zone> z) {
         if (!copiedShadings.containsKey(sd)) {
             copiedShadings.put(sd, new HashSet<Set<Zone>>());
         }
         copiedShadings.get(sd).add(z);
     }
 
-    public Set<Set<Zone>> getCopiedShadings(SpiderDiagramWrapper psd) {
+    public Set<Set<Zone>> getCopiedShadings(SpiderDiagramOccurrence psd) {
         if (!copiedShadings.containsKey(psd)) {
             copiedShadings.put(psd, new HashSet<Set<Zone>>());
         }
         return copiedShadings.get(psd);
     }
 
-    public Set<String> getIntroducedContours(SpiderDiagramWrapper psd) {
+    public Set<String> getIntroducedContours(SpiderDiagramOccurrence psd) {
         if (!introContours.containsKey(psd)) {
             introContours.put(psd, new HashSet<String>());
         }
         return introContours.get(psd);
     }
 
-    public Set<String> getRemovedContours(SpiderDiagramWrapper psd) {
+    public Set<String> getRemovedContours(SpiderDiagramOccurrence psd) {
         if (!removeContours.containsKey(psd)) {
             removeContours.put(psd, new HashSet<String>());
         }
         return removeContours.get(psd);
     }
 
-    public Set<Zone> getRemovedShading(SpiderDiagramWrapper sd) {
+    public Set<Zone> getRemovedShading(SpiderDiagramOccurrence sd) {
         if (!removedShading.containsKey(sd)) {
             removedShading.put(sd, new HashSet<Zone>());
         }
@@ -159,7 +158,7 @@ public class AppliedRules {
 
     }
 
-/*    public Set<Zone> getRemovedShadedZones(SpiderDiagramWrapper sd) {
+/*    public Set<Zone> getRemovedShadedZones(SpiderDiagramOccurrence sd) {
         if (!removedShadedZones.containsKey(sd)) {
             removedShadedZones.put(sd, new HashSet<Zone>());
         }
@@ -167,7 +166,7 @@ public class AppliedRules {
 
     }
 
-    public Set<Zone> getIntroducedShadedZones(SpiderDiagramWrapper sd) {
+    public Set<Zone> getIntroducedShadedZones(SpiderDiagramOccurrence sd) {
         if (!introducedShadedZones.containsKey(sd)) {
             introducedShadedZones.put(sd, new HashSet<Zone>());
         }
@@ -175,58 +174,58 @@ public class AppliedRules {
 
     }
     */
-    public Set<String> getCopiedContours(SpiderDiagramWrapper psd) {
+    public Set<String> getCopiedContours(SpiderDiagramOccurrence psd) {
         if (!copiedContours.containsKey(psd)) {
             copiedContours.put(psd, new HashSet<String>());
         }
         return copiedContours.get(psd);
     }
 
-    public void addCopiedContour(SpiderDiagramWrapper psd, String c) {
+    public void addCopiedContour(SpiderDiagramOccurrence psd, String c) {
         if (!copiedContours.containsKey(psd)) {
             copiedContours.put(psd, new HashSet<String>());
         }
         copiedContours.get(psd).add(c);
     }
 
-    public void removeCopiedContour(SpiderDiagramWrapper sd, String c) {
+    public void removeCopiedContour(SpiderDiagramOccurrence sd, String c) {
         if (copiedContours.containsKey(sd)) {
             copiedContours.get(sd).remove(c);
         }
     }
 
 
-    public void removeRemovedShading(SpiderDiagramWrapper sd, Zone z) {
+    public void removeRemovedShading(SpiderDiagramOccurrence sd, Zone z) {
         if (removedShading.containsKey(sd)) {
             removedShading.get(sd).remove(z);
         }
     }
 
-/*    public void removeRemoveShadedZones(SpiderDiagramWrapper sd, Zone z) {
+/*    public void removeRemoveShadedZones(SpiderDiagramOccurrence sd, Zone z) {
         if (removedShadedZones.containsKey(sd)) {
             removedShadedZones.get(sd).remove(z);
         }
     }
 */
-    public  void removeRemovedContours(SpiderDiagramWrapper sd, String c) {
+    public  void removeRemovedContours(SpiderDiagramOccurrence sd, String c) {
  //       if (removeContours.containsKey(sd)) {
             removeContours.get(sd).remove(c);
 //        }
     }
 
-    public  void removeIntroducedContours(SpiderDiagramWrapper sd, String c) {
+    public  void removeIntroducedContours(SpiderDiagramOccurrence sd, String c) {
         if(introContours.containsKey(sd)) {
             introContours.get(sd).remove(c);
         }
     }
 
-    public void removeCopiedShading(SpiderDiagramWrapper sd, Set<Zone> zones) {
+    public void removeCopiedShading(SpiderDiagramOccurrence sd, Set<Zone> zones) {
         if (copiedShadings.containsKey(sd)) {
             copiedShadings.get(sd).remove(zones);
         }
     }
 
-/*    public void removeIntroducedShadedZone(SpiderDiagramWrapper sd, Zone z) {
+/*    public void removeIntroducedShadedZone(SpiderDiagramOccurrence sd, Zone z) {
         if (introducedShadedZones.containsKey(sd)) {
             introducedShadedZones.get(sd).remove(z);
         }

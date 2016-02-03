@@ -7,10 +7,9 @@ import speedith.core.reasoning.ProofTrace;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.automatic.strategies.Strategy;
-import speedith.core.reasoning.automatic.wrappers.CompoundSpiderDiagramWrapper;
-import speedith.core.reasoning.automatic.wrappers.PrimarySpiderDiagramWrapper;
-import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
-import speedith.core.reasoning.rules.ImplicationTautology;
+import speedith.core.reasoning.automatic.wrappers.CompoundSpiderDiagramOccurrence;
+import speedith.core.reasoning.automatic.wrappers.PrimarySpiderDiagramOccurrence;
+import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.TrivialImplicationTautology;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
@@ -135,38 +134,16 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
 
 
     /*
-    * Creates a SpiderDiagramWrapper for the given SpiderDiagram sd to reliably
-    * refer to the different occurrences of diagrams in sd
-    */
-    public static SpiderDiagramWrapper wrapDiagram (SpiderDiagram sd, final int occurrenceIndex) {
-        if (sd instanceof PrimarySpiderDiagram) {
-            return new PrimarySpiderDiagramWrapper(sd, occurrenceIndex);
-        }
-        if (sd instanceof CompoundSpiderDiagram) {
-            int newIndex = occurrenceIndex+1;
-            ArrayList<SpiderDiagramWrapper> operands = new ArrayList<>();
-            for(SpiderDiagram op: ((CompoundSpiderDiagram) sd).getOperands()) {
-                SpiderDiagramWrapper opWrap = wrapDiagram(op, newIndex);
-                operands.add(opWrap);
-                newIndex+= opWrap.getDiagram().getSubDiagramCount();
-            }
-            return new CompoundSpiderDiagramWrapper(sd, occurrenceIndex, operands);
-
-        }
-        return null;
-    }
-
-    /*
-     * Prints all subdiagrams of the given SpiderDiagramWrapper to the console including
-     * their occurrences in the SpiderDiagramWrapper.
+     * Prints all subdiagrams of the given SpiderDiagramOccurrence to the console including
+     * their occurrences in the SpiderDiagramOccurrence.
      */
-    public static void printSubDiagramIndices(SpiderDiagramWrapper current) {
-        if (current instanceof PrimarySpiderDiagramWrapper) {
+    public static void printSubDiagramIndices(SpiderDiagramOccurrence current) {
+        if (current instanceof PrimarySpiderDiagramOccurrence) {
             System.out.println( current.getOccurrenceIndex() + ":  "+current.getDiagram());
         } else {
-            CompoundSpiderDiagramWrapper cs = (CompoundSpiderDiagramWrapper) current;
+            CompoundSpiderDiagramOccurrence cs = (CompoundSpiderDiagramOccurrence) current;
             System.out.println( current.getOccurrenceIndex() + ":  "+current.getDiagram());
-            for (SpiderDiagramWrapper sub: cs.getOperands()) {
+            for (SpiderDiagramOccurrence sub: cs.getOperands()) {
                 printSubDiagramIndices(sub);
             }
 

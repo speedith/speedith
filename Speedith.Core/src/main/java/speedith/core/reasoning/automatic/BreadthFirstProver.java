@@ -8,7 +8,7 @@ import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;
-import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
+import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 
 import java.util.*;
@@ -62,7 +62,7 @@ public class BreadthFirstProver extends  AutomaticProver {
                     break;
                 } else {
                     // create all possible proof rules for this unfinished proof
-                    SpiderDiagramWrapper target = wrapDiagram(current.getLastGoals().getGoalAt(subgoalindex),0);
+                    SpiderDiagramOccurrence target = SpiderDiagramOccurrence.wrapDiagram(current.getLastGoals().getGoalAt(subgoalindex), 0);
                     Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
                     // apply all possible rules to the current proof, creating a new proof for each application
                     for (PossibleRuleApplication nextRule : applications){

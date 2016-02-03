@@ -5,12 +5,11 @@ import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplication;
 import speedith.core.reasoning.RuleApplicationException;
-import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.automatic.AppliedRules;
-import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
+import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.CopyShading;
 
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class PossibleCopyShadingApplication extends PossibleRuleApplication {
 
     private Set<Zone> region;
 
-    public PossibleCopyShadingApplication(SpiderDiagramWrapper target, InferenceRule<? super RuleArg> rule, Set<Zone> region) {
+    public PossibleCopyShadingApplication(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, Set<Zone> region) {
         super(target, rule);
         this.region = region;
     }
