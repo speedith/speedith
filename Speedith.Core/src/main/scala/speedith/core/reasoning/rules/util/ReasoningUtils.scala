@@ -51,4 +51,23 @@ object ReasoningUtils {
       new Zone(zone.getInContours.toSet ++ cs,zone.getOutContours.toSet ++ newContours.diff(cs))).toSet
   }
 
+  /**
+   * Checks whether the given SpiderDiagram consists of exactly one implication, where
+   * both the premise and the conclusion are conjunctive diagrams, i.e., either
+   * primary spider diagrams or a conjunction.
+   * @param goal The SpiderDiagram that will be analysed
+   * @return true if goal is of the described form, false otherwise
+   */
+  def isImplicationOfConjunctions(goal: SpiderDiagram): Boolean = goal match {
+    case goal : CompoundSpiderDiagram => goal.getOperator match {
+      case  Operator.Implication  => {
+        val premise: SpiderDiagram = goal.getOperand(0)
+        val conclusion: SpiderDiagram = goal.getOperand(1)
+        AutomaticUtils.isConjunctive(premise) && AutomaticUtils.isConjunctive(conclusion)
+      }
+      case _ => false
+    }
+    case _ => false
+  }
+
 }

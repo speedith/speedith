@@ -65,7 +65,7 @@ object AutomaticUtils {
         createCopyContourApplications(target) ++
           createCopyShadingApplications(target) ++
           createCombiningApplications(target) ++
-          target.getOperands.flatMap(o => createAllPossibleRuleApplications(o, contours)) ++
+          target.getOperands.flatMap(createAllPossibleRuleApplications(_, contours)) ++
           createConjunctionEliminationApplication(target)
       case Operator.Implication => createAllPossibleRuleApplications(target.getOperand(0), contours)
       case _ => new java.util.HashSet[PossibleRuleApplication]()

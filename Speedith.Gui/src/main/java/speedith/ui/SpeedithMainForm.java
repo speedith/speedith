@@ -32,6 +32,8 @@
  */
 package speedith.ui;
 
+import scala.Function1;
+import scala.collection.Seq;
 import speedith.core.lang.*;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
@@ -42,6 +44,11 @@ import speedith.core.reasoning.automatic.AutomaticProofException;
 import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
+import speedith.core.reasoning.tactical.TacticApplicationException;
+import speedith.core.reasoning.tactical.euler.BasicTacticals;
+import speedith.core.reasoning.tactical.euler.SimpleTacticals;
+import speedith.core.reasoning.tactical.euler.SingleRuleTacticals;
+import speedith.core.reasoning.tactical.euler.Tactics;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
 import spiderdrawer.ui.MainForm;
@@ -56,6 +63,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,6 +110,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenuItem proveAny;
   private javax.swing.JMenuItem proveFromHere;
   private javax.swing.JFileChooser fileChooser;
+  private javax.swing.JMenu tacticsMenu;
+  private javax.swing.JMenuItem vennify;
+  private javax.swing.JMenuItem devennify;
 
   /**
    * Creates new form SpeedithMainForm
@@ -146,6 +159,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     reasoningMenu = new javax.swing.JMenu();
     proveAny = new javax.swing.JMenuItem();
     proveFromHere = new javax.swing.JMenuItem();
+    tacticsMenu = new javax.swing.JMenu();
+    vennify = new javax.swing.JMenuItem();
+    devennify = new javax.swing.JMenuItem();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("Speedith");
@@ -326,6 +342,38 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     reasoningMenu.add(proveFromHere);
     menuBar.add(reasoningMenu);
 
+    tacticsMenu.setText("Tactics");
+    JMenu tacticSubmenu = new javax.swing.JMenu();
+    tacticSubmenu.setText("Apply rule tactic");
+    for (final Method tactic:  SingleRuleTacticals.class.getDeclaredMethods()) {
+      JMenuItem tacticButton = new javax.swing.JMenuItem();
+      tacticButton.setText(tactic.getName());
+      tacticButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+          applyTactic(tactic);
+        }
+      });
+      tacticSubmenu.add(tacticButton);
+      tacticsMenu.add(tacticSubmenu);
+
+    }
+
+
+    for (final Method tactical:  SimpleTacticals.class.getDeclaredMethods()) {
+      JMenuItem tacticalButton = new javax.swing.JMenuItem();
+      tacticalButton.setText(tactical.getName());
+      tacticalButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+          applyTactical(tactical);
+        }
+      });
+      tacticsMenu.add(tacticalButton);
+      menuBar.add(tacticsMenu);
+
+    }
+
     setJMenuBar(menuBar);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -344,6 +392,50 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
+
+  private void applyTactic(Method tactic) {
+    if (!proofPanel1.isFinished()) {
+      Proof intermediate = new ProofTrace(proofPanel1);
+      Proof result = null;
+      try {
+        result = (Proof) tactic.invoke(SingleRuleTacticals.class, intermediate);
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        if (e.getCause() instanceof TacticApplicationException) {
+          TacticApplicationException tacticE = (TacticApplicationException) e.getCause();
+          JOptionPane.showMessageDialog(this, tacticE.getMessage());
+        }
+      }
+      proofPanel1.replaceCurrentProof(result);
+    } else {
+      JOptionPane.showMessageDialog(this, "No subgoals are open");
+    }
+  }
+
+
+
+
+  private void applyTactical(Method tactical) {
+    if (!proofPanel1.isFinished()) {
+      Proof intermediate = new ProofTrace(proofPanel1);
+      Seq<Proof> result = null;
+      try {
+        result = (Seq<Proof>) tactical.invoke(SimpleTacticals.class, intermediate);
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        e.printStackTrace();
+      }
+      if (result !=null && result.nonEmpty()) {
+        proofPanel1.replaceCurrentProof(result.head());
+      } else {
+        JOptionPane.showMessageDialog(this, "Tactic could not be applied");
+      }
+    } else {
+      JOptionPane.showMessageDialog(this, "No subgoals are open");
+    }
+  }
 
   private void onCropProof(ActionEvent evt) {
     if (proofPanel1.getSelected() != null) {

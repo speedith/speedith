@@ -1,6 +1,7 @@
 package speedith.core.reasoning.automatic.wrappers;
 
 import speedith.core.lang.CompoundSpiderDiagram;
+import speedith.core.lang.Operator;
 import speedith.core.lang.SpiderDiagram;
 
 import java.util.ArrayList;
@@ -34,6 +35,8 @@ public class CompoundSpiderDiagramWrapper extends SpiderDiagramWrapper {
     public CompoundSpiderDiagram getCompoundDiagram() {
         return (CompoundSpiderDiagram) getDiagram();
     }
+
+    public Operator getOperator() { return  getCompoundDiagram().getOperator();}
 
     @Override
     public boolean equals(Object other) {

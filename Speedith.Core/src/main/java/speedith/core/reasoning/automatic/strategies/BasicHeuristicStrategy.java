@@ -6,6 +6,7 @@ import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.automatic.AutomaticProofException;
 import speedith.core.reasoning.automatic.AutomaticProver;
 import speedith.core.reasoning.rules.util.HeuristicUtils;
+import speedith.core.reasoning.rules.util.ReasoningUtils;
 
 /**
  * TODO: Description
@@ -25,7 +26,7 @@ public class BasicHeuristicStrategy implements Strategy, StrategyProvider {
     public int getHeuristic(Proof p) throws AutomaticProofException{
         int heuristic = 0;
         for (SpiderDiagram goal : p.getLastGoals().getGoals()) {
-            if (AutomaticProver.isImplicationOfConjunctions(goal)) {
+            if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
                 CompoundSpiderDiagram impl = (CompoundSpiderDiagram) goal;
                 heuristic += HeuristicUtils.metric(impl.getOperand(0), impl.getOperand(1));
             } else {

@@ -274,6 +274,19 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         }
     }
 
+    public void replaceCurrentProof( Proof proof) {
+        if (!(proof==null)) {
+            newProof(proof.getInitialGoals());
+            for (RuleApplication appl : proof.getRuleApplications()) {
+                try {
+                    applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments());
+                } catch (RuleApplicationException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="UI Related Methods">

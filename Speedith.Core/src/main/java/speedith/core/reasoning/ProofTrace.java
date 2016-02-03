@@ -110,6 +110,15 @@ public class ProofTrace implements Proof {
         this.ruleApplications = new ArrayList<RuleApplication>(ruleApplications);
     }
 
+
+    /**
+     * Copy constructor for this class. Creates a new instance of the given proof element.
+     * @param proof
+     */
+    public ProofTrace(Proof proof) {
+        this(proof.getGoals(), proof.getRuleApplications());
+    }
+
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Proof Interface Implementation">

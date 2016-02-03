@@ -47,7 +47,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
         // currently only Spider Diagrams which have an implication as their major operator
         // and where the assumption and conclusion are conjunctive diagrams
         // can be proved
-        if (!isImplicationOfConjunctions(initialGoals.getGoalAt(0))) {
+        if (!ReasoningUtils.isImplicationOfConjunctions(initialGoals.getGoalAt(0))) {
             throw new AutomaticProofException("The current goal is not an implication of conjunctions.");
         }
 
@@ -79,7 +79,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
     public Proof extendProof(Proof proof) throws AutomaticProofException {
         // workaround as long as Speedith doesn't support several subgoals at once
         int subGoalToProve = 0;
-        if (!isImplicationOfConjunctions(proof.getLastGoals().getGoalAt(subGoalToProve))) {
+        if (!ReasoningUtils.isImplicationOfConjunctions(proof.getLastGoals().getGoalAt(subGoalToProve))) {
             throw new AutomaticProofException("The current goal is not an implication of conjunctions");
         }
         // proof generators can only be applied to normalised spider diagrams
@@ -132,26 +132,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
         return p;
     }
 
-    /**
-     * Checks whether the given SpiderDiagram consists of exactly one implication, where
-     * both the premise and the conclusion are conjunctive diagrams, i.e., either
-     * primary spider diagrams or a conjunction.
-     * @param goal The SpiderDiagram that will be analysed
-     * @return true if goal is of the described form, false otherwise
-     */
-    public static boolean isImplicationOfConjunctions(SpiderDiagram goal) {
-        if (goal instanceof CompoundSpiderDiagram) {
-            CompoundSpiderDiagram csd = (CompoundSpiderDiagram) goal;
-            if (csd.getOperator().equals(Operator.Implication)) {
-                SpiderDiagram premise = csd.getOperand(0);
-                SpiderDiagram conclusion = csd.getOperand(1);
-                if (AutomaticUtils.isConjunctive(premise) && AutomaticUtils.isConjunctive(conclusion)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+
 
     /*
     * Creates a SpiderDiagramWrapper for the given SpiderDiagram sd to reliably
