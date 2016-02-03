@@ -9,13 +9,13 @@ import java.util.SortedSet;
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PrimarySpiderDiagramWrapper extends SpiderDiagramWrapper {
+public class PrimarySpiderDiagramOccurrence extends SpiderDiagramOccurrence {
 
     private boolean hashInvalid = true;
     private int hash;
 
 
-    public PrimarySpiderDiagramWrapper(SpiderDiagram diagram, int occurrenceIndex) {
+    public PrimarySpiderDiagramOccurrence(SpiderDiagram diagram, int occurrenceIndex) {
         super(diagram, occurrenceIndex);
     }
 
@@ -34,10 +34,10 @@ public class PrimarySpiderDiagramWrapper extends SpiderDiagramWrapper {
     @Override
     public boolean equals(Object other) {
         return other == this ||
-                (other instanceof PrimarySpiderDiagramWrapper
+                (other instanceof PrimarySpiderDiagramOccurrence
                         && hashCode() == other.hashCode()
-                        && getDiagram().equals(((PrimarySpiderDiagramWrapper) other).getDiagram())
-                        && getOccurrenceIndex() == ((PrimarySpiderDiagramWrapper) other).getOccurrenceIndex()
+                        && getDiagram().equals(((PrimarySpiderDiagramOccurrence) other).getDiagram())
+                        && getOccurrenceIndex() == ((PrimarySpiderDiagramOccurrence) other).getOccurrenceIndex()
                 );
 
     }

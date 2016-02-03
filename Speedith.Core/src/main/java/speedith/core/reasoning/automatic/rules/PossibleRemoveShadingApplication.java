@@ -8,7 +8,7 @@ import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.automatic.AppliedRules;
-import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
+import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.RemoveShading;
 
 /**
@@ -18,7 +18,7 @@ public class PossibleRemoveShadingApplication extends PossibleRuleApplication {
 
     private Zone zone;
 
-    public PossibleRemoveShadingApplication(SpiderDiagramWrapper target, InferenceRule<? super RuleArg> rule, Zone zone) {
+    public PossibleRemoveShadingApplication(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, Zone zone) {
         super(target, rule);
         this.zone = zone;
     }

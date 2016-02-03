@@ -4,8 +4,7 @@ import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
-import speedith.core.reasoning.automatic.AppliedRules;
-import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
+import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +13,8 @@ import java.util.List;
  * Created by sl542 on 16/11/15.
  */
 public class PossibleConjunctionElimination extends PossibleRuleApplication {
-    SpiderDiagramWrapper child;
-    public PossibleConjunctionElimination(SpiderDiagramWrapper target, InferenceRule<? super RuleArg> rule, SpiderDiagramWrapper child) {
+    SpiderDiagramOccurrence child;
+    public PossibleConjunctionElimination(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, SpiderDiagramOccurrence child) {
         super(target, rule);
         this.child = child;
     }

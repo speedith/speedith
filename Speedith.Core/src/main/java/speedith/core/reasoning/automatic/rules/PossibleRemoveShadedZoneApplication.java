@@ -1,19 +1,15 @@
 package speedith.core.reasoning.automatic.rules;
 
-import scala.collection.script.Remove;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Zone;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.automatic.AppliedRules;
-import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
+import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.IntroShadedZone;
 import speedith.core.reasoning.rules.RemoveShadedZone;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
-
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
@@ -22,7 +18,7 @@ public class PossibleRemoveShadedZoneApplication extends PossibleRuleApplication
 
     private Zone zone;
 
-    public PossibleRemoveShadedZoneApplication(SpiderDiagramWrapper target, InferenceRule<? super RuleArg> rule, Zone zone) {
+    public PossibleRemoveShadedZoneApplication(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, Zone zone) {
         super(target, rule);
         this.zone = zone;
     }

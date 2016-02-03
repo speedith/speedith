@@ -8,7 +8,7 @@ import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.automatic.AppliedRules;
-import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
+import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.CopyContours;
 
 import java.util.HashSet;
@@ -21,7 +21,7 @@ public class PossibleCopyContourApplication extends PossibleRuleApplication {
 
     private String contour;
 
-    public PossibleCopyContourApplication(SpiderDiagramWrapper target, InferenceRule<? super RuleArg> rule, String contour) {
+    public PossibleCopyContourApplication(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, String contour) {
         super(target, rule);
         this.contour = contour;
     }

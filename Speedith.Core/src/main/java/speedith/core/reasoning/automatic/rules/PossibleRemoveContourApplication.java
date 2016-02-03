@@ -1,6 +1,5 @@
 package speedith.core.reasoning.automatic.rules;
 
-import org.antlr.tool.Rule;
 import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplication;
@@ -9,7 +8,7 @@ import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.automatic.AppliedRules;
-import speedith.core.reasoning.automatic.wrappers.PrimarySpiderDiagramWrapper;
+import speedith.core.reasoning.automatic.wrappers.PrimarySpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.IntroContour;
 import speedith.core.reasoning.rules.RemoveContour;
 
@@ -23,7 +22,7 @@ public class PossibleRemoveContourApplication extends PossibleRuleApplication {
 
     private String contour;
 
-    public PossibleRemoveContourApplication(PrimarySpiderDiagramWrapper target, InferenceRule<? super RuleArg> rule, String contour) {
+    public PossibleRemoveContourApplication(PrimarySpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, String contour) {
         super(target, rule);
         this.contour = contour;
     }

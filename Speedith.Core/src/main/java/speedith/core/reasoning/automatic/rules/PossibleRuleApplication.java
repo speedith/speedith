@@ -1,13 +1,11 @@
 package speedith.core.reasoning.automatic.rules;
 
-import org.antlr.tool.Rule;
-import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.automatic.AppliedRules;
-import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
+import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 
 /**
  * An instance of a possible rule application to an
@@ -21,9 +19,9 @@ public abstract class PossibleRuleApplication {
 
     private InferenceRule<? super RuleArg> rule;
 
-    private SpiderDiagramWrapper target;
+    private SpiderDiagramOccurrence target;
 
-    public PossibleRuleApplication(SpiderDiagramWrapper target, InferenceRule<? super RuleArg> rule) {
+    public PossibleRuleApplication(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule) {
         this.target = target;
         this.rule = rule;
     }
@@ -38,7 +36,7 @@ public abstract class PossibleRuleApplication {
      * The target diagram to which the rule could be applied
      * @return the target diagram
      */
-    public SpiderDiagramWrapper getTarget() { return target; }
+    public SpiderDiagramOccurrence getTarget() { return target; }
 
     public abstract RuleArg getArg(int subgoalindex) ;
 

@@ -10,24 +10,24 @@ import java.util.List;
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class CompoundSpiderDiagramWrapper extends SpiderDiagramWrapper {
+public class CompoundSpiderDiagramOccurrence extends SpiderDiagramOccurrence {
 
-    private ArrayList<SpiderDiagramWrapper> operands;
+    private ArrayList<SpiderDiagramOccurrence> operands;
 
     private boolean hashInvalid = true;
     private int hash;
 
 
-    public CompoundSpiderDiagramWrapper(SpiderDiagram diagram, int occurrenceIndex, ArrayList<SpiderDiagramWrapper> operands) {
+    public CompoundSpiderDiagramOccurrence(SpiderDiagram diagram, int occurrenceIndex, ArrayList<SpiderDiagramOccurrence> operands) {
         super(diagram, occurrenceIndex);
         this.operands = operands;
     }
 
-    public List<SpiderDiagramWrapper> getOperands() {
+    public List<SpiderDiagramOccurrence> getOperands() {
         return Collections.unmodifiableList(operands);
     }
 
-    public SpiderDiagramWrapper getOperand(int index) {
+    public SpiderDiagramOccurrence getOperand(int index) {
         return operands.get(index);
     }
 
@@ -39,9 +39,9 @@ public class CompoundSpiderDiagramWrapper extends SpiderDiagramWrapper {
     public boolean equals(Object other) {
         if (other == this) {
             return true;
-        } else if (other instanceof CompoundSpiderDiagramWrapper) {
+        } else if (other instanceof CompoundSpiderDiagramOccurrence) {
             return hashCode() == other.hashCode()
-                    && getDiagram().equals(((CompoundSpiderDiagramWrapper) other).getDiagram())
+                    && getDiagram().equals(((CompoundSpiderDiagramOccurrence) other).getDiagram())
                     ;
         } else {
             return false;
@@ -53,7 +53,7 @@ public class CompoundSpiderDiagramWrapper extends SpiderDiagramWrapper {
         if (hashInvalid) {
             hash = getDiagram().hashCode();
             if (operands != null) {
-                for (SpiderDiagramWrapper sd : operands) {
+                for (SpiderDiagramOccurrence sd : operands) {
                     hash += sd.hashCode();
                 }
             }

@@ -3,15 +3,14 @@ package speedith.core.reasoning.automatic.rules;
 import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
-import speedith.core.reasoning.automatic.AppliedRules;
-import speedith.core.reasoning.automatic.wrappers.SpiderDiagramWrapper;
+import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 public class PossibleCombiningApplication extends PossibleRuleApplication {
 
-    public PossibleCombiningApplication(SpiderDiagramWrapper target, InferenceRule<? super RuleArg> rule) {
+    public PossibleCombiningApplication(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule) {
         super(target, rule);
     }
 
