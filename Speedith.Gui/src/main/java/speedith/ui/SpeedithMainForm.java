@@ -345,7 +345,14 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     tacticsMenu.setText("Tactics");
     JMenu tacticSubmenu = new javax.swing.JMenu();
     tacticSubmenu.setText("Apply rule tactic");
-    for (final Method tactic:  SingleRuleTacticals.class.getDeclaredMethods()) {
+    Method[] tactics = SingleRuleTacticals.class.getDeclaredMethods();
+    Arrays.sort(tactics, new Comparator<Method>() {
+      @Override
+      public int compare(Method method, Method t1) {
+        return method.getName().compareTo(t1.getName());
+      }
+    });
+    for (final Method tactic: tactics  ) {
       JMenuItem tacticButton = new javax.swing.JMenuItem();
       tacticButton.setText(tactic.getName());
       tacticButton.addActionListener(new ActionListener() {
@@ -359,8 +366,14 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     }
 
-
-    for (final Method tactical:  SimpleTacticals.class.getDeclaredMethods()) {
+    Method[] tacticals =    SimpleTacticals.class.getDeclaredMethods();
+    Arrays.sort(tacticals, new Comparator<Method>() {
+      @Override
+      public int compare(Method method, Method t1) {
+        return method.getName().compareTo(t1.getName());
+      }
+    });
+    for (final Method tactical:  tacticals) {
       JMenuItem tacticalButton = new javax.swing.JMenuItem();
       tacticalButton.setText(tactical.getName());
       tacticalButton.addActionListener(new ActionListener() {

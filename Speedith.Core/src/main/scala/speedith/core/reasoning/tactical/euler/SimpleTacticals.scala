@@ -17,8 +17,7 @@ object SimpleTacticals {
 
   def vennify(state:Proof) = {
     REPEAT(ORELSE(trivialTautology(0,_),
-      ORELSE(introduceShadedZone(0,_),
-        introduceContour(0,_) )))(state)
+      introduceShadedZone(0,_)))(state)
   }
 
   def deVennify (state:Proof) = {
@@ -29,7 +28,7 @@ object SimpleTacticals {
   private def equalContourSetsInEachPrimaryDiagram(subgoalIndex : Int) :Proof => Boolean = (state:Proof) => {
     val goal = state.getLastGoals.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
-      val subDiagams = ReasoningUtils.getPrimaryDiagrams(goal)
+      val subDiagams = ReasoningUtils.getPrimaryDiagrams(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0))
       subDiagams.map(pd => pd.getAllContours.toSet).forall(subDiagams.head.getAllContours.sameElements)
     } else {
       false
@@ -38,5 +37,10 @@ object SimpleTacticals {
 
   def unifyContourSets(state:Proof) = {
     DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram(0),  ORELSE(trivialTautology(0,_),introduceContour(0,_)))(state)
+  }
+
+  def eraseContours(state:Proof) = {
+    REPEAT(ORELSE(trivialTautology(0,_),
+      eraseContour(0,_)))(state)
   }
 }
