@@ -425,7 +425,10 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       } catch (IllegalAccessException e) {
         e.printStackTrace();
       } catch (InvocationTargetException e) {
-        e.printStackTrace();
+        if (e.getCause() instanceof TacticApplicationException) {
+          TacticApplicationException tacticE = (TacticApplicationException) e.getCause();
+          JOptionPane.showMessageDialog(this, tacticE.getMessage());
+        }
       }
       if (result !=null && result.nonEmpty()) {
         proofPanel1.replaceCurrentProof(result.head());
