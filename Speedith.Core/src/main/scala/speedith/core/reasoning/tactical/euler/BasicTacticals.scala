@@ -11,11 +11,11 @@ import speedith.core.reasoning.tactical.TacticApplicationException
  *
  */
 object BasicTacticals {
-  def THEN(tac1: Proof => Seq[Proof], tac2: Proof => Seq[Proof]) = (state : Proof) => {
+  def THEN(tac1: Tactical, tac2: Tactical) = (state : Proof) => {
     tac1(state) flatMap tac2
   }
 
-  def ORELSE(tac1 : Proof => Seq[Proof], tac2 : Proof => Seq[Proof]) = (state : Proof) => {
+  def ORELSE(tac1 : Tactical, tac2 : Tactical) = (state : Proof) => {
     val state1 = tac1(state)
     if (state1.isEmpty) {
       tac2(state)
@@ -28,12 +28,28 @@ object BasicTacticals {
     Seq(state)
   }
 
-  def REPEAT(tac : Proof => Seq[Proof]): (Proof => Seq[Proof]) = (state : Proof) => {
+  def fail(state:Proof) = {
+    Seq()
+  }
+
+  def TRY(tac : Tactical) = (state:Proof) => {
+    ORELSE(tac, id)(state)
+  }
+
+  def REPEAT(tac : Tactical): Tactical = (state : Proof) => {
     ORELSE(THEN(tac, REPEAT(tac)), id )(state)
   }
 
+  def DEPTH_FIRST (predicate:Proof => Boolean, tac:Tactical):Tactical = (state :Proof) => {
+    if (predicate(state)) {
+      id(state)
+    } else {
+      THEN(tac, DEPTH_FIRST(predicate, tac))(state)
+    }
+  }
+
   @throws(classOf[TacticApplicationException])
-  def BY( tac : Proof => Seq[Proof], state:Proof): Proof =  {
+  def BY( tac : Tactical) = (state:Proof) =>  {
       tac(state).headOption.getOrElse{
         throw new TacticApplicationException("Tactic could not be applied to current subgoal")
       }

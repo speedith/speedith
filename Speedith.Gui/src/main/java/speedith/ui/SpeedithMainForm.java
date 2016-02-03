@@ -430,6 +430,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       if (result !=null && result.nonEmpty()) {
         proofPanel1.replaceCurrentProof(result.head());
       } else {
+        System.out.println(result);
         JOptionPane.showMessageDialog(this, "Tactic could not be applied");
       }
     } else {

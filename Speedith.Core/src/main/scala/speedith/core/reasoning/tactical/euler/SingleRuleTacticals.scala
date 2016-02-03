@@ -14,22 +14,28 @@ object SingleRuleTacticals {
 
   @throws(classOf[TacticApplicationException])
   def introduceContour(state:Proof)  =  {
-    BY(Tactics.introduceContour(0,_),state)
+    BY(Tactics.introduceContour(0,_))(state)
   }
 
   @throws(classOf[TacticApplicationException])
   def introduceShadedZone(state:Proof) = {
-    BY(Tactics.introduceShadedZone(0,_), state)
+    BY(Tactics.introduceShadedZone(0,_))(state)
   }
 
   @throws(classOf[TacticApplicationException])
   def removeShadedZone(state:Proof)= {
-    BY(Tactics.removeShadedZone(0,_), state)
+    BY(Tactics.removeShadedZone(0,_))(state)
+  }
+
+  @throws(classOf[TacticApplicationException])
+  def eraseContour(state:Proof)= {
+    BY(Tactics.eraseContour(0,_))(state)
   }
 
   @throws(classOf[TacticApplicationException])
   def trivialTautology(state:Proof)= {
-    BY(Tactics.trivialTautology(0,_), state)
+    BY(Tactics.trivialTautology(0,_))(state)
   }
+
 
 }

@@ -70,4 +70,10 @@ object ReasoningUtils {
     case _ => false
   }
 
+  def getPrimaryDiagrams(sd: SpiderDiagram): Seq[PrimarySpiderDiagram] = sd match {
+    case sd:PrimarySpiderDiagram => Seq(sd)
+    case sd:CompoundSpiderDiagram => getPrimaryDiagrams(sd.getOperand(0)) ++ getPrimaryDiagrams(sd.getOperand(1))
+  }
+
+
 }

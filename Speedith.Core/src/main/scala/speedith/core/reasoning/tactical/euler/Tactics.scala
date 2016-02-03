@@ -2,7 +2,7 @@ package speedith.core.reasoning.tactical.euler
 
 import speedith.core.lang.{TransformationException, SpiderDiagram, Operator, CompoundSpiderDiagram}
 import speedith.core.reasoning.args._
-import speedith.core.reasoning.rules.{RemoveShadedZone, TrivialImplicationTautology, IntroShadedZone, IntroContour}
+import speedith.core.reasoning.rules._
 import speedith.core.reasoning.tactical.TacticApplicationException
 import speedith.core.reasoning.{RuleApplicationException, InferenceRule, ProofTrace, Proof}
 import speedith.core.reasoning.automatic.AutomaticProver
@@ -52,16 +52,22 @@ object Tactics {
     case _ => false
   }
 
+  private def isPrimaryAndContainsContours(sd : SpiderDiagramWrapper) : Boolean = sd match {
+    case sd:PrimarySpiderDiagramWrapper => sd.getAllContours.nonEmpty
+    case _ => false
+  }
+
   private def createResults(goals : Seq[SpiderDiagramWrapper], state : Proof, rule : InferenceRule[RuleArg], args : RuleArg) : Seq[Proof] = {
     val result = goals.map(sd => Tuple2(sd, new ProofTrace(state)))
     val intermediate = result.map(t => t._2.applyRule(rule, args))
     result.map(t => t._2)
+
   }
   
  def introduceContour(subgoalIndex : Int, state:Proof) : Seq[Proof] = {
    try {
      val subgoal = getSubgoal(subgoalIndex, state)
-     val contours = AutomaticUtils.collectContours(subgoal.getDiagram)
+     val contours = AutomaticUtils.collectContours(subgoal.getDiagram).toSet
      val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramWrapper].getOperand(0),
        isPrimaryAndContainsMoreContours(_, contours.toSet))
      if (target.isEmpty) { throw  new TacticApplicationException("No subgoal for this tactic") }
@@ -97,6 +103,22 @@ object Tactics {
         new ZoneArg(subgoalIndex, target.head.getOccurrenceIndex, presentShadedZones.head))
     } catch {
       case e:TacticApplicationException => Seq()
+    }
+  }
+
+  def eraseContour(subgoalIndex:Int, state:Proof) : Seq[Proof] = {
+    try {
+      val subgoal = getSubgoal(subgoalIndex, state)
+      val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramWrapper].getOperand(0),
+        isPrimaryAndContainsContours)
+      if (target.isEmpty) {
+        throw new TacticApplicationException("No subgoal for this tactic")
+      }
+      val presentContours = target.head.asInstanceOf[PrimarySpiderDiagramWrapper].getAllContours
+      createResults(target, state, new RemoveContour().asInstanceOf[InferenceRule[RuleArg]],
+        new MultipleRuleArgs(new ContourArg(subgoalIndex, target.head.getOccurrenceIndex, presentContours.head)))
+    } catch {
+      case e: TacticApplicationException => Seq()
     }
   }
 
