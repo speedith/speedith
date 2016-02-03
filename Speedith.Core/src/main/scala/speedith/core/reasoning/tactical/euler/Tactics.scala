@@ -6,7 +6,7 @@ import speedith.core.reasoning.rules._
 import speedith.core.reasoning.tactical.TacticApplicationException
 import speedith.core.reasoning.{RuleApplicationException, InferenceRule, ProofTrace, Proof}
 import speedith.core.reasoning.automatic.AutomaticProver
-import speedith.core.reasoning.automatic.wrappers.{PrimarySpiderDiagramWrapper, CompoundSpiderDiagramWrapper, SpiderDiagramWrapper}
+import speedith.core.reasoning.automatic.wrappers._
 import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
 import scala.collection.JavaConversions._
 
@@ -18,8 +18,8 @@ import scala.collection.JavaConversions._
  */
 object Tactics {
 
-  private def firstMatchingDiagram(sd : SpiderDiagramWrapper, predicate : SpiderDiagramWrapper=> Boolean): Seq[SpiderDiagramWrapper] = sd match  {
-    case sd :CompoundSpiderDiagramWrapper => {
+  private def firstMatchingDiagram(sd : SpiderDiagramOccurrence, predicate : SpiderDiagramOccurrence=> Boolean): Seq[SpiderDiagramOccurrence] = sd match  {
+    case sd :CompoundSpiderDiagramOccurrence => {
       if (predicate(sd)) { Seq(sd) } else {
         val matching = firstMatchingDiagram(sd.getOperand(0), predicate)
         matching match {
@@ -28,7 +28,7 @@ object Tactics {
         }
       }
     }
-    case sd : PrimarySpiderDiagramWrapper => {
+    case sd : PrimarySpiderDiagramOccurrence => {
       if (predicate(sd)) {
         Seq(sd)
       } else {
@@ -37,27 +37,27 @@ object Tactics {
     }
   }
 
-  private def isPrimaryAndContainsMoreContours(sd : SpiderDiagramWrapper, contours : Set[String]) : Boolean = sd match {
-    case sd:PrimarySpiderDiagramWrapper => (contours -- sd.getAllContours).nonEmpty
+  private def isPrimaryAndContainsMoreContours(sd : SpiderDiagramOccurrence, contours : Set[String]) : Boolean = sd match {
+    case sd:PrimarySpiderDiagramOccurrence => (contours -- sd.getAllContours).nonEmpty
     case _ => false
   }
 
-  private def isPrimaryAndContainsMissingZones(sd : SpiderDiagramWrapper) : Boolean = sd match {
-    case sd:PrimarySpiderDiagramWrapper => (sd.getShadedZones--sd.getPresentZones).nonEmpty
+  private def isPrimaryAndContainsMissingZones(sd : SpiderDiagramOccurrence) : Boolean = sd match {
+    case sd:PrimarySpiderDiagramOccurrence => (sd.getShadedZones--sd.getPresentZones).nonEmpty
     case _ => false
   }
 
-  private def isPrimaryAndContainsShadedZones(sd : SpiderDiagramWrapper) : Boolean = sd match {
-    case sd:PrimarySpiderDiagramWrapper => (sd.getShadedZones & sd.getPresentZones).nonEmpty
+  private def isPrimaryAndContainsShadedZones(sd : SpiderDiagramOccurrence) : Boolean = sd match {
+    case sd:PrimarySpiderDiagramOccurrence => (sd.getShadedZones & sd.getPresentZones).nonEmpty
     case _ => false
   }
 
-  private def isPrimaryAndContainsContours(sd : SpiderDiagramWrapper) : Boolean = sd match {
-    case sd:PrimarySpiderDiagramWrapper => sd.getAllContours.nonEmpty
+  private def isPrimaryAndContainsContours(sd : SpiderDiagramOccurrence) : Boolean = sd match {
+    case sd:PrimarySpiderDiagramOccurrence => sd.getAllContours.nonEmpty
     case _ => false
   }
 
-  private def createResults(goals : Seq[SpiderDiagramWrapper], state : Proof, rule : InferenceRule[RuleArg], args : RuleArg) : Seq[Proof] = {
+  private def createResults(goals : Seq[SpiderDiagramOccurrence], state : Proof, rule : InferenceRule[RuleArg], args : RuleArg) : Seq[Proof] = {
     val result = goals.map(sd => Tuple2(sd, new ProofTrace(state)))
     val intermediate = result.map(t => t._2.applyRule(rule, args))
     result.map(t => t._2)
@@ -68,12 +68,12 @@ object Tactics {
    try {
      val subgoal = getSubgoal(subgoalIndex, state)
      val contours = AutomaticUtils.collectContours(subgoal.getDiagram).toSet
-     val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramWrapper].getOperand(0),
+     val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
        isPrimaryAndContainsMoreContours(_, contours.toSet))
      if (target.isEmpty) { throw  new TacticApplicationException("No subgoal for this tactic") }
        createResults(target, state, new IntroContour().asInstanceOf[InferenceRule[RuleArg]],
          new MultipleRuleArgs(new ContourArg(subgoalIndex, target.head.getOccurrenceIndex,
-           (contours.toSet -- target.head.asInstanceOf[PrimarySpiderDiagramWrapper].getAllContours).head)))
+           (contours.toSet -- target.head.asInstanceOf[PrimarySpiderDiagramOccurrence].getAllContours).head)))
    } catch {
      case e : TacticApplicationException => Seq()
    }
@@ -81,10 +81,10 @@ object Tactics {
   def introduceShadedZone(subgoalIndex : Int, state:Proof) : Seq[Proof] = {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
-      val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramWrapper].getOperand(0),
+      val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
         isPrimaryAndContainsMissingZones)
       if (target.isEmpty) { throw new TacticApplicationException("No subgoal for this tactic") }
-        val missingZones = target.head.asInstanceOf[PrimarySpiderDiagramWrapper].getShadedZones -- target.head.asInstanceOf[PrimarySpiderDiagramWrapper].getPresentZones
+        val missingZones = target.head.asInstanceOf[PrimarySpiderDiagramOccurrence].getShadedZones -- target.head.asInstanceOf[PrimarySpiderDiagramOccurrence].getPresentZones
         createResults(target, state, new IntroShadedZone().asInstanceOf[InferenceRule[RuleArg]],
           new ZoneArg(subgoalIndex, target.head.getOccurrenceIndex, missingZones.head))
     } catch {
@@ -95,10 +95,10 @@ object Tactics {
   def removeShadedZone(subgoalIndex : Int, state:Proof) : Seq[Proof] = {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
-      val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramWrapper].getOperand(0),
+      val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
         isPrimaryAndContainsShadedZones)
       if (target.isEmpty) { throw new TacticApplicationException("No subgoal for this tactic") }
-      val presentShadedZones = target.head.asInstanceOf[PrimarySpiderDiagramWrapper].getShadedZones & target.head.asInstanceOf[PrimarySpiderDiagramWrapper].getPresentZones
+      val presentShadedZones = target.head.asInstanceOf[PrimarySpiderDiagramOccurrence].getShadedZones & target.head.asInstanceOf[PrimarySpiderDiagramOccurrence].getPresentZones
       createResults(target, state, new RemoveShadedZone().asInstanceOf[InferenceRule[RuleArg]],
         new ZoneArg(subgoalIndex, target.head.getOccurrenceIndex, presentShadedZones.head))
     } catch {
@@ -109,12 +109,12 @@ object Tactics {
   def eraseContour(subgoalIndex:Int, state:Proof) : Seq[Proof] = {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
-      val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramWrapper].getOperand(0),
+      val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
         isPrimaryAndContainsContours)
       if (target.isEmpty) {
         throw new TacticApplicationException("No subgoal for this tactic")
       }
-      val presentContours = target.head.asInstanceOf[PrimarySpiderDiagramWrapper].getAllContours
+      val presentContours = target.head.asInstanceOf[PrimarySpiderDiagramOccurrence].getAllContours
       createResults(target, state, new RemoveContour().asInstanceOf[InferenceRule[RuleArg]],
         new MultipleRuleArgs(new ContourArg(subgoalIndex, target.head.getOccurrenceIndex, presentContours.head)))
     } catch {
@@ -122,8 +122,8 @@ object Tactics {
     }
   }
 
-  private def isCompoundAndAnImplication (sd : SpiderDiagramWrapper): Boolean = sd match {
-    case sd:CompoundSpiderDiagramWrapper => sd.getOperator match {
+  private def isCompoundAndAnImplication (sd : SpiderDiagramOccurrence): Boolean = sd match {
+    case sd:CompoundSpiderDiagramOccurrence => sd.getOperator match {
       case Operator.Implication => true
       case _ => false
     }
@@ -152,11 +152,11 @@ object Tactics {
    * @param subgoalIndex the index of subgoal which shall be returned
    * @param state the proof from in which the subgoal will be searched
    */
-  private def getSubgoal( subgoalIndex : Int, state:Proof ): SpiderDiagramWrapper  = {
+  private def getSubgoal( subgoalIndex : Int, state:Proof ): SpiderDiagramOccurrence  = {
     if (!state.isFinished) {
       val goal = state.getLastGoals.getGoalAt(subgoalIndex)
       if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
-        AutomaticProver.wrapDiagram(goal, 0)
+        SpiderDiagramOccurrence.wrapDiagram(goal, 0)
       } else throw new TacticApplicationException("No subgoal for this tactic")
     } else throw new TacticApplicationException("No subgoal for this tactic")
   }
