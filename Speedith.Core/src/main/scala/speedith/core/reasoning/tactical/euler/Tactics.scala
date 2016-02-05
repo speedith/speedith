@@ -146,6 +146,28 @@ object Tactics {
     }
   }
 
+  def copyContour(subgoalIndex: Int,  state: Proof) : Seq[Proof] = {
+    try {
+      val subgoal = getSubgoal(subgoalIndex, state)
+      val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
+        isConjunctionWithContoursToCopy)
+      if (target.isEmpty) {
+        throw new TacticApplicationException("No subgoal for this tactic")
+      }
+      val op0 = target.head.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0).asInstanceOf[PrimarySpiderDiagramOccurrence]
+      val op1 = target.head.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(1).asInstanceOf[PrimarySpiderDiagramOccurrence]
+      if ((op0.getAllContours -- op1.getAllContours).nonEmpty) {
+        createResults(Seq(op0),state, new CopyContours().asInstanceOf[InferenceRule[RuleArg]],
+        new MultipleRuleArgs (new ContourArg (subgoalIndex, op0.getOccurrenceIndex,(op0.getAllContours -- op1.getAllContours).head ) )  )
+      } else {
+        createResults(Seq(op1),state, new CopyContours().asInstanceOf[InferenceRule[RuleArg]],
+          new MultipleRuleArgs (new ContourArg (subgoalIndex, op1.getOccurrenceIndex,(op1.getAllContours -- op0.getAllContours).head ) )  )
+      }
+    } catch {
+      case e:TacticApplicationException => Seq()
+    }
+  }
+
 
 
   def trivialTautology(subgoalIndex: Int, state: Proof): Seq[Proof] = {

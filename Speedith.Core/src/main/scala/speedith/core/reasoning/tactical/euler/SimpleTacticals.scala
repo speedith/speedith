@@ -64,6 +64,6 @@ object SimpleTacticals {
   }
 
   def copyTopologicalInformation(state : Proof) = {
-
+    THEN(REPEAT(ORELSE(trivialTautology(0,_), removeShadedZone(0,_))) , REPEAT(ORELSE(trivialTautology(0,_), copyContour(0,_))))(state)
   }
 }

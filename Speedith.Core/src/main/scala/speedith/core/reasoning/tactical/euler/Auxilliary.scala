@@ -63,6 +63,20 @@ object Auxilliary {
     }
   }
 
+  def isConjunctionWithContoursToCopy(sd : SpiderDiagramOccurrence ) : Boolean = sd match {
+    case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match {
+      case Operator.Conjunction => {
+        if (sd.getOperands.forall(_.isInstanceOf[PrimarySpiderDiagramOccurrence])) {
+          val op0 = sd.getOperand(0).asInstanceOf[PrimarySpiderDiagramOccurrence]
+          val op1 = sd.getOperand(1).asInstanceOf[PrimarySpiderDiagramOccurrence]
+          (op0.getAllContours -- op1.getAllContours).nonEmpty || (op1.getAllContours -- op0.getAllContours).nonEmpty
+        } else false
+      }
+      case _ => false
+    }
+    case _ => false
+  }
+
 
   def containsGivenContours(d : SpiderDiagramOccurrence, contours : Set[String]) : Boolean = d match {
     case d: PrimarySpiderDiagramOccurrence => (d.getAllContours & contours).nonEmpty
