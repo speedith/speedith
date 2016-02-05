@@ -4,8 +4,10 @@ import speedith.core.lang.{CompoundSpiderDiagram, PrimarySpiderDiagram, SpiderDi
 import speedith.core.reasoning.Proof
 import BasicTacticals._
 import Tactics._
+import speedith.core.reasoning.automatic.wrappers.{PrimarySpiderDiagramOccurrence, SpiderDiagramOccurrence}
 import speedith.core.reasoning.rules.util.ReasoningUtils
 import scala.collection.JavaConversions._
+import Auxilliary._
 
 /**
  * TODO: Description
@@ -29,18 +31,39 @@ object SimpleTacticals {
     val goal = state.getLastGoals.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
       val subDiagams = ReasoningUtils.getPrimaryDiagrams(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0))
-      subDiagams.map(pd => pd.getAllContours.toSet).forall(subDiagams.head.getAllContours.sameElements)
+      subDiagams.map(pd => pd.getAllContours.toSet).forall(subDiagams.head.getAllContours.toSet.sameElements)
     } else {
       false
     }
   }
 
+
+
   def unifyContourSets(state:Proof) = {
     DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram(0),  ORELSE(trivialTautology(0,_),introduceContour(0,_)))(state)
   }
 
-  def eraseContours(state:Proof) = {
+  def eraseAllContours(state:Proof) = {
     REPEAT(ORELSE(trivialTautology(0,_),
-      eraseContour(0,_)))(state)
+      eraseContour(0,containsContours, anyContour,_)))(state)
+  }
+
+  def combineAll(state : Proof) = {
+    REPEAT(ORELSE(trivialTautology(0,_),
+      combine(0,_)))(state)
+  }
+
+  def vennStyle(state : Proof) = {
+    THEN(unifyContourSets, THEN(vennify, THEN(combineAll, deVennify)))(state)
+  }
+
+  def matchConclusion(state : Proof) = {
+    val concContours =getContoursInConclusion(0,state)
+    THEN(REPEAT(ORELSE(trivialTautology(0,_), removeShadedZone(0,_))), REPEAT(ORELSE(trivialTautology(0,_),
+      eraseContour(0, containsOtherContours(_, concContours ), firstOfTheOtherContours(_, concContours),_))))(state)
+  }
+
+  def copyTopologicalInformation(state : Proof) = {
+
   }
 }

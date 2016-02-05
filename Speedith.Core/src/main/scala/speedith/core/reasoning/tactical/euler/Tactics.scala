@@ -4,11 +4,11 @@ import speedith.core.lang.{TransformationException, SpiderDiagram, Operator, Com
 import speedith.core.reasoning.args._
 import speedith.core.reasoning.rules._
 import speedith.core.reasoning.tactical.TacticApplicationException
-import speedith.core.reasoning.{RuleApplicationException, InferenceRule, ProofTrace, Proof}
-import speedith.core.reasoning.automatic.AutomaticProver
+import speedith.core.reasoning.{ InferenceRule, ProofTrace, Proof}
 import speedith.core.reasoning.automatic.wrappers._
 import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
 import scala.collection.JavaConversions._
+import Auxilliary._
 
 /**
  * TODO: Description
@@ -37,25 +37,29 @@ object Tactics {
     }
   }
 
-  private def isPrimaryAndContainsMoreContours(sd : SpiderDiagramOccurrence, contours : Set[String]) : Boolean = sd match {
-    case sd:PrimarySpiderDiagramOccurrence => (contours -- sd.getAllContours).nonEmpty
-    case _ => false
+  private def firstMatchingDiagramAndContour( sd : SpiderDiagramOccurrence,
+                                              predicate : SpiderDiagramOccurrence => Boolean,
+                                              contourChooser : SpiderDiagramOccurrence => Option[String])
+    : Seq[(SpiderDiagramOccurrence, Option[String])] = sd match  {
+    case sd : CompoundSpiderDiagramOccurrence => {
+      if (predicate(sd)) {Seq(Tuple2(sd, contourChooser(sd)))} else {
+        val matching = firstMatchingDiagramAndContour(sd.getOperand(0), predicate, contourChooser)
+        matching match {
+          case Seq() => firstMatchingDiagramAndContour(sd.getOperand(1), predicate, contourChooser)
+          case _ => matching
+        }
+      }
+    }
+    case sd : PrimarySpiderDiagramOccurrence => {
+      if (predicate(sd)) {
+        Seq(Tuple2(sd, contourChooser(sd)))
+      } else {
+        Seq()
+      }
+    }
   }
 
-  private def isPrimaryAndContainsMissingZones(sd : SpiderDiagramOccurrence) : Boolean = sd match {
-    case sd:PrimarySpiderDiagramOccurrence => (sd.getShadedZones--sd.getPresentZones).nonEmpty
-    case _ => false
-  }
 
-  private def isPrimaryAndContainsShadedZones(sd : SpiderDiagramOccurrence) : Boolean = sd match {
-    case sd:PrimarySpiderDiagramOccurrence => (sd.getShadedZones & sd.getPresentZones).nonEmpty
-    case _ => false
-  }
-
-  private def isPrimaryAndContainsContours(sd : SpiderDiagramOccurrence) : Boolean = sd match {
-    case sd:PrimarySpiderDiagramOccurrence => sd.getAllContours.nonEmpty
-    case _ => false
-  }
 
   private def createResults(goals : Seq[SpiderDiagramOccurrence], state : Proof, rule : InferenceRule[RuleArg], args : RuleArg) : Seq[Proof] = {
     val result = goals.map(sd => Tuple2(sd, new ProofTrace(state)))
@@ -64,7 +68,7 @@ object Tactics {
 
   }
   
- def introduceContour(subgoalIndex : Int, state:Proof) : Seq[Proof] = {
+  def introduceContour(subgoalIndex : Int, state:Proof) : Seq[Proof] = {
    try {
      val subgoal = getSubgoal(subgoalIndex, state)
      val contours = AutomaticUtils.collectContours(subgoal.getDiagram).toSet
@@ -78,6 +82,7 @@ object Tactics {
      case e : TacticApplicationException => Seq()
    }
  }
+
   def introduceShadedZone(subgoalIndex : Int, state:Proof) : Seq[Proof] = {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
@@ -106,34 +111,47 @@ object Tactics {
     }
   }
 
-  def eraseContour(subgoalIndex:Int, state:Proof) : Seq[Proof] = {
+  def eraseContour(subgoalIndex:Int, predicate: SpiderDiagramOccurrence => Boolean, contourChooser: SpiderDiagramOccurrence => Option[String], state:Proof) : Seq[Proof] = {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
-      val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
-        isPrimaryAndContainsContours)
+      val target = firstMatchingDiagramAndContour(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
+        d => d.isInstanceOf[PrimarySpiderDiagramOccurrence] && predicate(d), contourChooser)
       if (target.isEmpty) {
         throw new TacticApplicationException("No subgoal for this tactic")
       }
-      val presentContours = target.head.asInstanceOf[PrimarySpiderDiagramOccurrence].getAllContours
-      createResults(target, state, new RemoveContour().asInstanceOf[InferenceRule[RuleArg]],
-        new MultipleRuleArgs(new ContourArg(subgoalIndex, target.head.getOccurrenceIndex, presentContours.head)))
+      target.head._2 match {
+        case Some(c)  =>   {   //val presentContours = target.head.asInstanceOf[PrimarySpiderDiagramOccurrence].getAllContours
+         createResults (target.map (_._1), state, new RemoveContour ().asInstanceOf[InferenceRule[RuleArg]],
+         new MultipleRuleArgs (new ContourArg (subgoalIndex, target.head._1.getOccurrenceIndex, c) ) )
+        }
+        case None => throw new TacticApplicationException("Could not find a suited contour in this diagram")
+      }
     } catch {
       case e: TacticApplicationException => Seq()
     }
   }
 
-  private def isCompoundAndAnImplication (sd : SpiderDiagramOccurrence): Boolean = sd match {
-    case sd:CompoundSpiderDiagramOccurrence => sd.getOperator match {
-      case Operator.Implication => true
-      case _ => false
+  def combine(subgoalIndex: Int, state:Proof) : Seq[Proof] = {
+    try {
+      val subgoal = getSubgoal(subgoalIndex, state)
+      val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
+       isConjunctionOfPrimaryDiagramsWithEqualZoneSets)
+      if (target.isEmpty) {
+        throw new TacticApplicationException("No subgoal for this tactic")
+      }
+      createResults(target, state, new Combining().asInstanceOf[InferenceRule[RuleArg]],
+        new SubDiagramIndexArg(subgoalIndex, target.head.getOccurrenceIndex))
+    }catch {
+      case e: TacticApplicationException => Seq()
     }
-    case _ => false
   }
+
+
 
   def trivialTautology(subgoalIndex: Int, state: Proof): Seq[Proof] = {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
-      val target = firstMatchingDiagram(subgoal,isCompoundAndAnImplication)
+      val target = firstMatchingDiagram(subgoal,isImplication)
       if (target.isEmpty) {
         throw new TacticApplicationException("No subgoal for this tactic")
       }

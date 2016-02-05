@@ -3,6 +3,7 @@ package speedith.core.reasoning.tactical.euler
 import speedith.core.reasoning.Proof
 import speedith.core.reasoning.tactical.TacticApplicationException
 import speedith.core.reasoning.tactical.euler.BasicTacticals._
+import Auxilliary._
 
 /**
  * TODO: Description
@@ -29,7 +30,7 @@ object SingleRuleTacticals {
 
   @throws(classOf[TacticApplicationException])
   def eraseContour(state:Proof)= {
-    BY(THEN(Tactics.eraseContour(0,_), TRY(Tactics.trivialTautology(0,_))))(state)
+    BY(THEN(Tactics.eraseContour(0,_ => true,anyContour, _), TRY(Tactics.trivialTautology(0,_))))(state)
   }
 
   @throws(classOf[TacticApplicationException])
