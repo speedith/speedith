@@ -31,6 +31,8 @@ public class PrimarySpiderDiagramOccurrence extends SpiderDiagramOccurrence {
         return ((PrimarySpiderDiagram) getDiagram()).getPresentZones();
     }
 
+    public PrimarySpiderDiagram getPrimaryDiagram() { return (PrimarySpiderDiagram) getDiagram();}
+
     @Override
     public boolean equals(Object other) {
         return other == this ||

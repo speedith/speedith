@@ -27,18 +27,6 @@ object SimpleTacticals {
   }
 
 
-  private def equalContourSetsInEachPrimaryDiagram(subgoalIndex : Int) :Proof => Boolean = (state:Proof) => {
-    val goal = state.getLastGoals.getGoalAt(subgoalIndex)
-    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
-      val subDiagams = ReasoningUtils.getPrimaryDiagrams(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0))
-      subDiagams.map(pd => pd.getAllContours.toSet).forall(subDiagams.head.getAllContours.toSet.sameElements)
-    } else {
-      false
-    }
-  }
-
-
-
   def unifyContourSets(state:Proof) = {
     DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram(0),  ORELSE(trivialTautology(0,_),introduceContour(0,_)))(state)
   }
@@ -65,5 +53,10 @@ object SimpleTacticals {
 
   def copyTopologicalInformation(state : Proof) = {
     THEN(REPEAT(ORELSE(trivialTautology(0,_), removeShadedZone(0,_))) , REPEAT(ORELSE(trivialTautology(0,_), copyContour(0,_))))(state)
+  }
+
+  def copyAll(state:Proof) = {
+    REPEAT(ORELSE(trivialTautology(0,_),
+      copyShading(0,_)))(state)
   }
 }

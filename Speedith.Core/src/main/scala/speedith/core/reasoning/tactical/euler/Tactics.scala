@@ -1,14 +1,17 @@
 package speedith.core.reasoning.tactical.euler
 
-import speedith.core.lang.{TransformationException, SpiderDiagram, Operator, CompoundSpiderDiagram}
+import speedith.core.lang._
 import speedith.core.reasoning.args._
 import speedith.core.reasoning.rules._
 import speedith.core.reasoning.tactical.TacticApplicationException
+import speedith.core.reasoning.util.unitary.CorrespondingRegions
 import speedith.core.reasoning.{ InferenceRule, ProofTrace, Proof}
 import speedith.core.reasoning.automatic.wrappers._
 import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
 import scala.collection.JavaConversions._
 import Auxilliary._
+
+import scala.collection.mutable
 
 /**
  * TODO: Description
@@ -168,6 +171,50 @@ object Tactics {
     }
   }
 
+  def copyShading(subgoalIndex : Int, state:Proof) : Seq[Proof] = {
+    try {
+      val subgoal = getSubgoal(subgoalIndex, state)
+      val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
+        isConjunctionWithShadingToCopy)
+      if (target.isEmpty) {
+        throw new TacticApplicationException("No subgoal for this tactic")
+      }
+      val op0 = target.head.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0).asInstanceOf[PrimarySpiderDiagramOccurrence]
+      val op1 = target.head.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(1).asInstanceOf[PrimarySpiderDiagramOccurrence]
+      if (op0.getAllContours.subsetOf(op1.getAllContours)) {
+        val maxZone = computeMaximalCorrespondingShadedRegion(op0, op1)
+        maxZone match {
+          case Some((r1: Set[Zone], r2: Set[Zone])) => {
+            createResults(Seq(op0), state, new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
+              new MultipleRuleArgs(r1.map(z => new ZoneArg(subgoalIndex, op0.getOccurrenceIndex, z)).toList))
+          }
+          case None => {
+            if (op1.getAllContours.subsetOf(op0.getAllContours)) {
+              val maxZone = computeMaximalCorrespondingShadedRegion(op1, op0)
+              maxZone match {
+                case Some((r1: Set[Zone], r2: Set[Zone])) => {
+                  createResults(Seq(op1), state, new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
+                    new MultipleRuleArgs(r1.map(z => new ZoneArg(subgoalIndex, op1.getOccurrenceIndex, z)).toList))
+                }
+                case None => Seq()
+              }
+            } else Seq()
+          }
+        }
+      } else if (op1.getAllContours.subsetOf(op0.getAllContours)) {
+        val maxZone = computeMaximalCorrespondingShadedRegion(op1, op0)
+        maxZone match {
+          case Some((r1: Set[Zone], r2: Set[Zone])) => {
+            createResults(Seq(op1), state, new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
+              new MultipleRuleArgs(r1.map(z => new ZoneArg(subgoalIndex, op1.getOccurrenceIndex, z)).toList))
+          }
+          case None => Seq()
+        }
+      } else Seq()
+    }catch {
+      case e:TacticApplicationException => Seq()
+    }
+  }
 
 
   def trivialTautology(subgoalIndex: Int, state: Proof): Seq[Proof] = {

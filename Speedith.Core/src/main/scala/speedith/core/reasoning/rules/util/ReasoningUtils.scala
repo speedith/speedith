@@ -5,6 +5,8 @@ import java.util
 import speedith.core.lang._
 import speedith.core.reasoning.Goals
 import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
+
 /**
  * TODO: Description
  *
@@ -28,7 +30,8 @@ object ReasoningUtils {
 
   def normalize (sd : SpiderDiagram): SpiderDiagram= sd match {
     case psd: PrimarySpiderDiagram => {
-      val possibleZones: Set[Zone] = Zones.allZonesForContours(psd.getAllContours.toSeq: _*).toSet
+      val allContours = psd.getAllContours.toSeq.asJava
+      val possibleZones: Set[Zone] = Zones.allZonesForContours(allContours: _*).toSet
       SpiderDiagrams.createPrimarySD(psd.getSpiders, psd.getHabitats, psd.getShadedZones, possibleZones -- (psd.getShadedZones -- psd.getPresentZones))
     }
     case csd : CompoundSpiderDiagram => {
