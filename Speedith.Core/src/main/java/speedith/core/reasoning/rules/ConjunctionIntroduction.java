@@ -26,16 +26,16 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.Set;
-
 import speedith.core.lang.DiagramType;
 import speedith.core.lang.IdTransformer;
 import speedith.core.lang.Transformer;
 import speedith.core.reasoning.ApplyStyle;
 import speedith.core.reasoning.RuleApplicationInstruction;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
+
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]

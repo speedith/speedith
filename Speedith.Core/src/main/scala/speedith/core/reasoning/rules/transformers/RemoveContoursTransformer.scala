@@ -1,9 +1,8 @@
 package speedith.core.reasoning.rules.transformers
 
-import speedith.core.reasoning.RuleApplicationException
-import speedith.core.reasoning.args.ContourArg
 import speedith.core.lang._
-import speedith.core.reasoning.rules.util.{ReasoningUtils, AutomaticUtils}
+import speedith.core.reasoning.args.ContourArg
+
 import scala.collection.JavaConversions._
 
 case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) extends IdTransformer {

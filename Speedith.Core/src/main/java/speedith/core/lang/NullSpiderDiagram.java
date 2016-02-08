@@ -29,6 +29,7 @@ package speedith.core.lang;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import static speedith.core.i18n.Translations.i18n;
 
 /**

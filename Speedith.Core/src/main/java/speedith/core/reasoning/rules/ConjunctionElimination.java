@@ -26,25 +26,19 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.Set;
-
-import com.sun.org.apache.xpath.internal.operations.Mult;
 import speedith.core.i18n.Translations;
 import speedith.core.lang.DiagramType;
 import speedith.core.lang.SpiderDiagram;
-import speedith.core.reasoning.Goals;
-import speedith.core.reasoning.InferenceRule;
-import speedith.core.reasoning.RuleApplicationException;
-import speedith.core.reasoning.RuleApplicationInstruction;
-import speedith.core.reasoning.RuleApplicationResult;
+import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectOperatorAndSubDiagramInstruction;
-import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
 import speedith.core.reasoning.rules.transformers.ConjunctionEliminationTransformer;
+
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  *

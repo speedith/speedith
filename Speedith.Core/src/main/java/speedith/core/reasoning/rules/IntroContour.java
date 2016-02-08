@@ -26,8 +26,6 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.*;
-
 import speedith.core.i18n.Translations;
 import speedith.core.lang.DiagramType;
 import speedith.core.lang.SpiderDiagram;
@@ -38,6 +36,11 @@ import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleSubDiagramAndContourInstruction;
 import speedith.core.reasoning.rules.transformers.IntroduceContoursTransformer;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]

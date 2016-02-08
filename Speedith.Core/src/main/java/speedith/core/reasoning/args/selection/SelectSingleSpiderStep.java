@@ -26,10 +26,12 @@
  */
 package speedith.core.reasoning.args.selection;
 
-import java.util.List;
-import java.util.Locale;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderZoneArg;
+
+import java.util.List;
+import java.util.Locale;
+
 import static speedith.core.i18n.Translations.i18n;
 
 /**

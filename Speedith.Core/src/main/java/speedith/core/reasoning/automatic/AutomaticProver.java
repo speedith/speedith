@@ -1,6 +1,6 @@
 package speedith.core.reasoning.automatic;
 
-import speedith.core.lang.*;
+import speedith.core.lang.TransformationException;
 import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.ProofTrace;
@@ -11,10 +11,7 @@ import speedith.core.reasoning.automatic.wrappers.CompoundSpiderDiagramOccurrenc
 import speedith.core.reasoning.automatic.wrappers.PrimarySpiderDiagramOccurrence;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.TrivialImplicationTautology;
-import speedith.core.reasoning.rules.util.AutomaticUtils;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
-
-import java.util.ArrayList;
 
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]

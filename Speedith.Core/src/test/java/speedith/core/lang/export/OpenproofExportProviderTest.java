@@ -27,10 +27,12 @@
 package speedith.core.lang.export;
 
 import org.junit.*;
-import static org.junit.Assert.*;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.lang.reader.SpiderDiagramsReaderTest;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 /**
  *

@@ -2,19 +2,17 @@ package speedith.core.reasoning.tactical.euler
 
 import speedith.core.lang._
 import speedith.core.reasoning.args._
-import speedith.core.reasoning.rules._
-import speedith.core.reasoning.tactical.TacticApplicationException
-import speedith.core.reasoning.util.unitary.CorrespondingRegions
-import speedith.core.reasoning.{RuleApplicationException, InferenceRule, ProofTrace, Proof}
 import speedith.core.reasoning.automatic.wrappers._
+import speedith.core.reasoning.rules._
 import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
-import scala.collection.JavaConversions._
-import Auxilliary._
+import speedith.core.reasoning.tactical.TacticApplicationException
+import speedith.core.reasoning.tactical.euler.Auxilliary._
+import speedith.core.reasoning.{InferenceRule, Proof, ProofTrace, RuleApplicationException}
 
-import scala.collection.mutable
+import scala.collection.JavaConversions._
 
 /**
- * TODO: Description
+ * Contains the main tactics to apply single rules to a given proof.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  *

@@ -1,7 +1,10 @@
 package speedith.core.reasoning.util.unitary;
 
 import org.junit.Test;
-import speedith.core.lang.*;
+import speedith.core.lang.EulerDiagrams;
+import speedith.core.lang.PrimarySpiderDiagram;
+import speedith.core.lang.Region;
+import speedith.core.lang.Zone;
 
 import java.util.HashSet;
 import java.util.Set;

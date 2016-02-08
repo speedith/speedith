@@ -1,7 +1,6 @@
 package speedith.core.reasoning.args.selection;
 
 import speedith.core.reasoning.args.RuleArg;
-import speedith.core.reasoning.args.SpiderZoneArg;
 import speedith.core.reasoning.args.ZoneArg;
 
 import java.util.List;

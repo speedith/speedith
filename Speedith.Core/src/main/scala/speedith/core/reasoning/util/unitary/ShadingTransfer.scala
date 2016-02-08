@@ -1,7 +1,9 @@
 package speedith.core.reasoning.util.unitary
 
-import speedith.core.lang.{Region, TransformationException, Zone, PrimarySpiderDiagram}
 import java.util
+
+import speedith.core.lang.{PrimarySpiderDiagram, Region, TransformationException, Zone}
+
 import scala.collection.JavaConversions._
 
 case class ShadingTransfer(sourceDiagram: PrimarySpiderDiagram, destinationDiagram: PrimarySpiderDiagram) {

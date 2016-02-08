@@ -2,11 +2,13 @@ package speedith.core.reasoning.tactical.euler
 
 import speedith.core.reasoning.Proof
 import speedith.core.reasoning.tactical.TacticApplicationException
+import speedith.core.reasoning.tactical.euler.Auxilliary._
 import speedith.core.reasoning.tactical.euler.BasicTacticals._
-import Auxilliary._
 
 /**
- * TODO: Description
+ * Contains tacticals which can be applied to a proof. In contrast to the
+  * elements of [[Tactics Tactics]], the tacticals can be applied
+  * without adding any more predicates.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  *

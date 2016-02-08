@@ -26,13 +26,15 @@
  */
 package speedith.core.reasoning;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import static speedith.core.i18n.Translations.i18n;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.args.RuleArg;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * An implementation of the {@link Proof} interface. <p>This class serves as the

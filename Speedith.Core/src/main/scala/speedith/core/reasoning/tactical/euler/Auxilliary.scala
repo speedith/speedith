@@ -1,6 +1,6 @@
 package speedith.core.reasoning.tactical.euler
 
-import speedith.core.lang.{Zone, Region, Operator, CompoundSpiderDiagram}
+import speedith.core.lang.{CompoundSpiderDiagram, Operator, Region, Zone}
 import speedith.core.reasoning.Proof
 import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramOccurrence, PrimarySpiderDiagramOccurrence, SpiderDiagramOccurrence}
 import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
@@ -9,7 +9,8 @@ import speedith.core.reasoning.util.unitary.CorrespondingRegions
 import scala.collection.JavaConversions._
 
 /**
- * TODO: Description
+ * Helper functions and predicates for the use with [[BasicTacticals basic tacticals]]
+  * and [[SimpleTacticals simple tacticals]].
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  *

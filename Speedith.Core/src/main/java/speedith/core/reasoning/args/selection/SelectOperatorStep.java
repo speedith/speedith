@@ -26,18 +26,18 @@
  */
 package speedith.core.reasoning.args.selection;
 
+import propity.util.Sequences;
+import speedith.core.lang.CompoundSpiderDiagram;
+import speedith.core.lang.Operator;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.SubDiagramIndexArg;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
-import speedith.core.reasoning.args.RuleArg;
-
 import static speedith.core.i18n.Translations.i18n;
-import speedith.core.lang.CompoundSpiderDiagram;
-import speedith.core.lang.Operator;
-import speedith.core.lang.SpiderDiagram;
-import speedith.core.reasoning.args.SubDiagramIndexArg;
-import propity.util.Sequences;
 
 /**
  * This selection step asks the user to select an operator (a compound

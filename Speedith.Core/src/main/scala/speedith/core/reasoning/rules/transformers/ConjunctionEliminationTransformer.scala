@@ -1,7 +1,7 @@
 package speedith.core.reasoning.rules.transformers
 
+import speedith.core.lang.{CompoundSpiderDiagram, SpiderDiagram}
 import speedith.core.reasoning.args.SubDiagramIndexArg
-import speedith.core.lang.{SpiderDiagram, CompoundSpiderDiagram}
 import speedith.core.reasoning.rules.transformers.util.InferenceTargetChecks._
 import speedith.core.reasoning.rules.transformers.util.InferenceTargetExtraction
 

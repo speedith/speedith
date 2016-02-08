@@ -26,14 +26,16 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.ArrayList;
-import java.util.Locale;
-import static speedith.core.i18n.Translations.i18n;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
+
+import java.util.ArrayList;
+import java.util.Locale;
+
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * This simple abstract class provides some helper methods commonly used in

@@ -1,11 +1,11 @@
 package speedith.core.reasoning.rules.transformers
 
 import speedith.core.lang._
-import speedith.core.reasoning.rules.transformers.util.InferenceTargetChecks._
-import speedith.core.reasoning.rules.transformers.util.InferenceTargetExtraction._
 import speedith.core.reasoning.args.SpiderArg
-import speedith.core.reasoning.util.unitary.SpiderTransfer
+import speedith.core.reasoning.rules.transformers.util.InferenceTargetChecks._
 import speedith.core.reasoning.rules.transformers.util.InferenceTargetExtraction
+import speedith.core.reasoning.rules.transformers.util.InferenceTargetExtraction._
+import speedith.core.reasoning.util.unitary.SpiderTransfer
 
 case class CopySpiderTransformer(compoundDiagramIndex: Int, spiderArg: SpiderArg) extends CompoundDiagramTransformer(compoundDiagramIndex) {
 

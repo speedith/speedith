@@ -26,8 +26,9 @@
  */
 package speedith.core.reasoning;
 
-import static speedith.core.i18n.Translations.i18n;
 import speedith.core.reasoning.args.RuleArg;
+
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * A pair of two elements:

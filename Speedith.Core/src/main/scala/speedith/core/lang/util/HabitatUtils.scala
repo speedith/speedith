@@ -1,6 +1,6 @@
 package speedith.core.lang.util
 
-import speedith.core.lang.{Zone, PrimarySpiderDiagram}
+import speedith.core.lang.{PrimarySpiderDiagram, Zone}
 
 import scala.collection.JavaConversions._
 

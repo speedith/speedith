@@ -1,16 +1,13 @@
 package speedith.core.reasoning.tactical.euler
 
-import speedith.core.lang.{CompoundSpiderDiagram, PrimarySpiderDiagram, SpiderDiagram}
 import speedith.core.reasoning.Proof
-import BasicTacticals._
-import Tactics._
-import speedith.core.reasoning.automatic.wrappers.{PrimarySpiderDiagramOccurrence, SpiderDiagramOccurrence}
-import speedith.core.reasoning.rules.util.ReasoningUtils
-import scala.collection.JavaConversions._
-import Auxilliary._
+import speedith.core.reasoning.tactical.euler.Auxilliary._
+import speedith.core.reasoning.tactical.euler.BasicTacticals._
+import speedith.core.reasoning.tactical.euler.Tactics._
 
 /**
- * TODO: Description
+ * Basic tacticals to work on a proof. The tacticals chain several tactics
+  * by using the [[BasicTacticals basic tacticals]].
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  *

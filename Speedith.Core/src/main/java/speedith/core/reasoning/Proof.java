@@ -26,8 +26,9 @@
  */
 package speedith.core.reasoning;
 
-import java.util.List;
 import speedith.core.reasoning.args.RuleArg;
+
+import java.util.List;
 
 /**
  * This interface outlines how a proof in Speedith looks like.

@@ -26,20 +26,17 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.io.File;
+import org.junit.*;
 import speedith.core.lang.SpiderDiagram;
-import java.util.Locale;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import speedith.core.lang.SpiderDiagrams;
-import static org.junit.Assert.*;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
+
+import java.util.Locale;
+
+import static org.junit.Assert.*;
 
 /**
  *

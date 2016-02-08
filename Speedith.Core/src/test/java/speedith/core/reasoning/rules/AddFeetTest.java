@@ -26,7 +26,6 @@
  */
 package speedith.core.reasoning.rules;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
 import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagram;
@@ -39,6 +38,8 @@ import speedith.core.reasoning.InferenceRules;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.RuleApplicationResult;
 import speedith.core.reasoning.args.SpiderRegionArg;
+
+import static org.junit.Assert.assertSame;
 
 /**
  *

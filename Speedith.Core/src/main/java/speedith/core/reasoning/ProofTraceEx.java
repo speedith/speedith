@@ -27,8 +27,10 @@
 package speedith.core.reasoning;
 
 import speedith.core.reasoning.args.RuleArg;
+
 import java.util.ArrayList;
-import static speedith.core.i18n.Translations.*;
+
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * This class represents a sequence of applied inference rules with intermediate

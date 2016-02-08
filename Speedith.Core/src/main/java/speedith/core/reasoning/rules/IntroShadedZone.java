@@ -26,19 +26,16 @@
  */
 package speedith.core.reasoning.rules;
 
+import speedith.core.lang.DiagramType;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.*;
+import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.ZoneArg;
+import speedith.core.reasoning.rules.transformers.IntroShadedZoneTransformer;
+
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
-
-import speedith.core.lang.DiagramType;
-import speedith.core.lang.IdTransformer;
-import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.Transformer;
-import speedith.core.reasoning.*;
-import speedith.core.reasoning.args.RuleArg;
-import speedith.core.reasoning.args.SubDiagramIndexArg;
-import speedith.core.reasoning.args.ZoneArg;
-import speedith.core.reasoning.rules.transformers.IntroShadedZoneTransformer;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]

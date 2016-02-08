@@ -2,10 +2,10 @@ package speedith.core.reasoning.rules;
 
 import org.junit.Test;
 import speedith.core.lang.*;
+import speedith.core.lang.util.HabitatBuilder;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.RuleApplicationResult;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
-import speedith.core.lang.util.HabitatBuilder;
 
 import java.util.Map;
 
@@ -13,9 +13,9 @@ import static org.junit.Assert.assertEquals;
 import static speedith.core.lang.Operator.Negation;
 import static speedith.core.lang.SpiderDiagrams.*;
 import static speedith.core.lang.test.RegionsABC.*;
+import static speedith.core.lang.util.HabitatBuilder.emptyHabitat;
 import static speedith.core.lang.util.RegionBuilder.emptyRegion;
 import static speedith.core.reasoning.Goals.createGoalsFrom;
-import static speedith.core.lang.util.HabitatBuilder.emptyHabitat;
 
 public class NegationEliminationTest {
 

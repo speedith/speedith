@@ -27,15 +27,12 @@
 
 package speedith.core.lang.export;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
+import speedith.core.lang.SpiderDiagram;
+
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
-import speedith.core.lang.SpiderDiagram;
+
 import static speedith.core.i18n.Translations.i18n;
 
 /**

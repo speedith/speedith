@@ -9,7 +9,6 @@ import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.rules.instructions.SelectContoursInstruction;
 import speedith.core.reasoning.rules.transformers.CopyContoursTopologicalTransformer;
-import speedith.core.reasoning.rules.transformers.CopyContoursTransformer;
 
 import java.util.ArrayList;
 import java.util.EnumSet;

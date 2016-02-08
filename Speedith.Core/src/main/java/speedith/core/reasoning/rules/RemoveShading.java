@@ -26,18 +26,18 @@
  */
 package speedith.core.reasoning.rules;
 
+import speedith.core.i18n.Translations;
+import speedith.core.lang.DiagramType;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.*;
+import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.ZoneArg;
+import speedith.core.reasoning.rules.instructions.SelectSingleZoneInstruction;
+import speedith.core.reasoning.rules.transformers.RemoveShadingTransformer;
+
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
-
-import speedith.core.i18n.Translations;
-import speedith.core.lang.*;
-import speedith.core.reasoning.*;
-import speedith.core.reasoning.args.*;
-import speedith.core.reasoning.rules.instructions.SelectSingleZoneInstruction;
-import speedith.core.reasoning.rules.instructions.SelectZonesInstruction;
-import speedith.core.reasoning.rules.transformers.IntroduceContoursTransformer;
-import speedith.core.reasoning.rules.transformers.RemoveShadingTransformer;
 
 /**
  * Erases shading from a zone.

@@ -26,11 +26,16 @@
  */
 package speedith.core.reasoning.rules.instructions;
 
-import java.util.*;
 import speedith.core.lang.Operator;
 import speedith.core.reasoning.RuleApplicationInstruction;
-import speedith.core.reasoning.args.*;
-import speedith.core.reasoning.args.selection.*;
+import speedith.core.reasoning.args.SubDiagramIndexArg;
+import speedith.core.reasoning.args.selection.SelectOperatorStep;
+import speedith.core.reasoning.args.selection.SelectionSequence;
+import speedith.core.reasoning.args.selection.SelectionStep;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Returns instructions for rules that require a single operator (anywhere in a

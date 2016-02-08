@@ -3,7 +3,7 @@ package speedith.core.reasoning.tactical
 import speedith.core.reasoning.Proof
 
 /**
- * TODO: Description
+ * Type definitions for tactic/tactical support.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  *

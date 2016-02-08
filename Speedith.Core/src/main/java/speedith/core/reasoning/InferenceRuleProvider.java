@@ -26,11 +26,11 @@
  */
 package speedith.core.reasoning;
 
-import java.util.Locale;
-import java.util.Set;
-
 import speedith.core.lang.DiagramType;
 import speedith.core.reasoning.args.RuleArg;
+
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * Contains detailed information about the inference rules it provides (through

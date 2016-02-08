@@ -26,13 +26,15 @@
  */
 package speedith.core.lang;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import static org.junit.Assert.*;
 import org.junit.*;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.lang.reader.SpiderDiagramsReaderTest;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static org.junit.Assert.*;
 
 /**
  *

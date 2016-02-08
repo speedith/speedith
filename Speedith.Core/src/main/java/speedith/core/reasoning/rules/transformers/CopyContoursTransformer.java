@@ -5,7 +5,6 @@ import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.rules.transformers.util.InferenceTargetChecks;
 import speedith.core.reasoning.rules.transformers.util.InferenceTargetExtraction;
 import speedith.core.reasoning.util.unitary.ZoneTransfer;
-import speedith.core.reasoning.util.unitary.ZoneTransferTopological;
 
 import java.util.ArrayList;
 import java.util.List;

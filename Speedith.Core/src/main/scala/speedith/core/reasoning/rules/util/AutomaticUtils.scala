@@ -2,13 +2,13 @@ package speedith.core.reasoning.rules.util
 
 import java.util
 
-import speedith.core.lang.{SpiderDiagram, PrimarySpiderDiagram, CompoundSpiderDiagram, Operator, Zone, Region}
-import speedith.core.reasoning.automatic.rules._
-import speedith.core.reasoning.util.unitary.CorrespondingRegions
+import speedith.core.lang.{CompoundSpiderDiagram, Operator, PrimarySpiderDiagram, Region, SpiderDiagram, Zone}
 import speedith.core.reasoning.InferenceRule
 import speedith.core.reasoning.args.RuleArg
+import speedith.core.reasoning.automatic.rules._
 import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramOccurrence, PrimarySpiderDiagramOccurrence, SpiderDiagramOccurrence}
 import speedith.core.reasoning.rules._
+import speedith.core.reasoning.util.unitary.CorrespondingRegions
 
 import scala.collection.JavaConversions._
 

@@ -4,6 +4,7 @@ import java.util
 
 import speedith.core.lang._
 import speedith.core.reasoning.Goals
+
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 

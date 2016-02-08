@@ -1,12 +1,10 @@
 package speedith.core.reasoning.rules.util
 
 import java.util
-import speedith.core.reasoning.{Goals, InferenceRules}
-import speedith.core.reasoning.args.{RuleArg, ContourArg, MultipleRuleArgs}
-import speedith.core.reasoning.rules.IntroContour
+
+import speedith.core.lang._
 
 import scala.collection.JavaConversions._
-import speedith.core.lang._
 
 /**
  * Helper functions for the computation of the heuristic search. All these

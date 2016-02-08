@@ -1,9 +1,10 @@
 package speedith.core.reasoning.util.unitary
 
-import speedith.core.lang.{Zone, Region, PrimarySpiderDiagram}
-import speedith.core.reasoning.rules.util.{ReasoningUtils, AutomaticUtils}
-import scala.collection.JavaConversions._
 import speedith.core.lang.Zones.allZonesForContours
+import speedith.core.lang.{PrimarySpiderDiagram, Region, Zone}
+import speedith.core.reasoning.rules.util.ReasoningUtils
+
+import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 case class CorrespondingRegions(sourceDiagram: PrimarySpiderDiagram, destinationDiagram: PrimarySpiderDiagram) {

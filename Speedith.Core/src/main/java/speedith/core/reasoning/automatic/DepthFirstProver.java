@@ -1,7 +1,9 @@
 package speedith.core.reasoning.automatic;
 
-import speedith.core.lang.*;
-import speedith.core.reasoning.*;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.Goals;
+import speedith.core.reasoning.Proof;
+import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;

@@ -5,7 +5,6 @@ import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplication;
 import speedith.core.reasoning.automatic.AutomaticProofException;
-import speedith.core.reasoning.automatic.AutomaticProver;
 import speedith.core.reasoning.rules.*;
 import speedith.core.reasoning.rules.util.HeuristicUtils;
 import speedith.core.reasoning.rules.util.ReasoningUtils;

@@ -26,18 +26,19 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.Set;
-
 import speedith.core.i18n.Translations;
-import static speedith.core.i18n.Translations.*;
 import speedith.core.lang.*;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.rules.instructions.SelectFeetOfSpiderInstruction;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.Set;
+
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * The implementation of the 'split spiders' diagrammatic inference rule.

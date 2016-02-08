@@ -1,7 +1,9 @@
 package speedith.core.reasoning.automatic;
 
 import speedith.core.lang.SpiderDiagram;
-import speedith.core.reasoning.*;
+import speedith.core.reasoning.Proof;
+import speedith.core.reasoning.ProofTrace;
+import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;
@@ -10,7 +12,10 @@ import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**

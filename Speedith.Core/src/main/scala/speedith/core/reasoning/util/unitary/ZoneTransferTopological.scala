@@ -1,8 +1,10 @@
 package speedith.core.reasoning.util.unitary
 
 import java.util
-import speedith.core.lang.{EulerDiagrams, Zones, Zone, PrimarySpiderDiagram}
-import speedith.core.reasoning.rules.util.{ReasoningUtils, AutomaticUtils}
+
+import speedith.core.lang.{EulerDiagrams, PrimarySpiderDiagram, Zone, Zones}
+import speedith.core.reasoning.rules.util.ReasoningUtils
+
 import scala.collection.JavaConversions._
 
 

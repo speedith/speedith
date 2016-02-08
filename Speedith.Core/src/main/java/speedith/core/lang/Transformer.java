@@ -27,7 +27,6 @@
 package speedith.core.lang;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 /**
  * Transformers operate on spider diagrams via the {@link

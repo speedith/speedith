@@ -1,10 +1,6 @@
 package speedith.core.reasoning.automatic.strategies;
 
 import speedith.core.reasoning.Proof;
-import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
-
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  * Implements a non-strategy, i.e., it just picks the next rule that is available without

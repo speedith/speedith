@@ -3,8 +3,9 @@ package speedith.core.reasoning.rules.instructions
 import java.util
 
 import speedith.core.reasoning.RuleApplicationInstruction
-import speedith.core.reasoning.args.{ZoneArg, SubDiagramIndexArg}
-import speedith.core.reasoning.args.selection.{SelectSingleZoneStep, SelectZonesStep, SelectionStep, SelectionSequence}
+import speedith.core.reasoning.args.ZoneArg
+import speedith.core.reasoning.args.selection.{SelectSingleZoneStep, SelectionSequence, SelectionStep}
+
 import scala.collection.JavaConversions._
 
 /**

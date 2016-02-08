@@ -4,7 +4,8 @@ package speedith.core.reasoning.rules.transformers
 import speedith.core.lang._
 import speedith.core.reasoning.RuleApplicationException
 import speedith.core.reasoning.args.{ContourArg, SubDiagramIndexArg}
-import speedith.core.reasoning.rules.util.{ReasoningUtils, AutomaticUtils}
+import speedith.core.reasoning.rules.util.AutomaticUtils
+
 import scala.collection.JavaConversions._
 /** @author Sven Linker [s.linker@brighton.ac.uk]
   *

@@ -2,7 +2,6 @@ package speedith.core.reasoning.rules.instructions;
 
 import speedith.core.lang.Operator;
 import speedith.core.reasoning.RuleApplicationInstruction;
-import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;

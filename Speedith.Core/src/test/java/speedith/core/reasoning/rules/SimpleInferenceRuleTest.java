@@ -26,8 +26,6 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.ArrayList;
-import static org.junit.Assert.*;
 import org.junit.Test;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.DiagramVisitor;
@@ -35,6 +33,11 @@ import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.lang.reader.SpiderDiagramsReaderTest;
+
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  *

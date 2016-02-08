@@ -2,13 +2,14 @@ package speedith.core.reasoning.rules
 
 
 
-import speedith.core.reasoning.args.{ RuleArg, SpiderArg}
-import speedith.core.reasoning.{InferenceRule, RuleApplicationInstruction, RuleApplicationResult, Goals}
 import java.util.Locale
+
 import speedith.core.i18n.Translations
 import speedith.core.lang.{DiagramType, SpiderDiagram}
-import speedith.core.reasoning.rules.transformers.CopySpiderTransformer
+import speedith.core.reasoning.args.{RuleArg, SpiderArg}
 import speedith.core.reasoning.rules.instructions.SelectSpiderInstruction
+import speedith.core.reasoning.rules.transformers.CopySpiderTransformer
+import speedith.core.reasoning.{Goals, InferenceRule, RuleApplicationInstruction, RuleApplicationResult}
 
 import scala.collection.JavaConversions._
 
