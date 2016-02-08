@@ -47,16 +47,16 @@ object SimpleTacticals {
 
   def matchConclusion(state : Proof) = {
     val concContours =getContoursInConclusion(0,state)
-    THEN(REPEAT(ORELSE(trivialTautology(0,_), removeShadedZone(0,_))), REPEAT(ORELSE(trivialTautology(0,_),
-      eraseContour(0, containsOtherContours(_, concContours ), firstOfTheOtherContours(_, concContours),_))))(state)
+    THEN(REPEAT(ORELSE(trivialTautology(0,_),
+      eraseContour(0, containsOtherContours(_, concContours ), firstOfTheOtherContours(_, concContours),_))),REPEAT(ORELSE(trivialTautology(0,_), removeShadedZone(0,_))) )(state)
   }
 
   def copyTopologicalInformation(state : Proof) = {
     THEN(REPEAT(ORELSE(trivialTautology(0,_), removeShadedZone(0,_))) , REPEAT(ORELSE(trivialTautology(0,_), copyContour(0,_))))(state)
   }
 
-  def copyAll(state:Proof) = {
+  def copyShadings(state:Proof) = {
     REPEAT(ORELSE(trivialTautology(0,_),
-      copyShading(0,_)))(state)
+      THEN(introduceShadedZone(0,_),copyShading(0,_))))(state)
   }
 }

@@ -5,7 +5,7 @@ import speedith.core.reasoning.args._
 import speedith.core.reasoning.rules._
 import speedith.core.reasoning.tactical.TacticApplicationException
 import speedith.core.reasoning.util.unitary.CorrespondingRegions
-import speedith.core.reasoning.{ InferenceRule, ProofTrace, Proof}
+import speedith.core.reasoning.{RuleApplicationException, InferenceRule, ProofTrace, Proof}
 import speedith.core.reasoning.automatic.wrappers._
 import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
 import scala.collection.JavaConversions._
@@ -111,6 +111,7 @@ object Tactics {
         new ZoneArg(subgoalIndex, target.head.getOccurrenceIndex, presentShadedZones.head))
     } catch {
       case e:TacticApplicationException => Seq()
+      case e:RuleApplicationException => Seq()
     }
   }
 

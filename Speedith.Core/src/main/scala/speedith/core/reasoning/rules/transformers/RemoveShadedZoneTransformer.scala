@@ -24,6 +24,9 @@ class RemoveShadedZoneTransformer (target:  ZoneArg) extends IdTransformer{
         if (!(psd.getShadedZones & psd.getPresentZones).contains(target.getZone) ) {
           throw new RuleApplicationException("Selected zone is not shaded.")
         }
+        if (target.getZone.getInContoursCount ==0) {
+          throw new RuleApplicationException("Cannot remove the outer zone")
+        }
         EulerDiagrams.createPrimaryEulerDiagram(psd.getShadedZones , psd.getPresentZones- target.getZone)
       }
       catch {

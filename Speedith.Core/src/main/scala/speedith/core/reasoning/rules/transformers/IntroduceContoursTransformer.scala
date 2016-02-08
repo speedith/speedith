@@ -4,6 +4,7 @@ package speedith.core.reasoning.rules.transformers
 import speedith.core.lang._
 import speedith.core.reasoning.RuleApplicationException
 import speedith.core.reasoning.args.{ContourArg, SubDiagramIndexArg}
+import speedith.core.reasoning.rules.util.{ReasoningUtils, AutomaticUtils}
 import scala.collection.JavaConversions._
 /** @author Sven Linker [s.linker@brighton.ac.uk]
   *
@@ -28,8 +29,8 @@ case class IntroduceContoursTransformer(target : SubDiagramIndexArg, contours : 
           throw new RuleApplicationException("The contours to be introduced must not be contained in the target diagram.")
         }
         EulerDiagrams.createPrimaryEulerDiagram(
-          regionWithNewContours(psd.getShadedZones.toSet),
-          regionWithNewContours(psd.getPresentZones)
+          AutomaticUtils.regionWithNewContours(psd.getShadedZones.toSet,contoursToAdd),
+          AutomaticUtils.regionWithNewContours(psd.getPresentZones,contoursToAdd)
         )
       }
       catch {
