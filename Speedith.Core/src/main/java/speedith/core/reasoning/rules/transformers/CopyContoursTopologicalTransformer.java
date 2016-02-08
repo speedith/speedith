@@ -4,18 +4,22 @@ import speedith.core.lang.*;
 import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.rules.transformers.util.InferenceTargetChecks;
 import speedith.core.reasoning.rules.transformers.util.InferenceTargetExtraction;
-import speedith.core.reasoning.util.unitary.ZoneTransfer;
 import speedith.core.reasoning.util.unitary.ZoneTransferTopological;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CopyContoursTransformer extends IdTransformer {
+/**
+ * TODO: Description
+ *
+ * @author Sven Linker [s.linker@brighton.ac.uk]
+ */
+public class CopyContoursTopologicalTransformer extends IdTransformer {
 
     private final int indexOfParent;
     private final List<ContourArg> targetContours;
 
-    public CopyContoursTransformer(int indexOfParent, List<ContourArg> targetContours) {
+    public CopyContoursTopologicalTransformer(int indexOfParent, List<ContourArg> targetContours) {
         if (indexOfParent < 0) {
             throw new TransformationException("The target sub-diagram is not in a conjunction.");
         }
@@ -62,7 +66,7 @@ public class CopyContoursTransformer extends IdTransformer {
 
     private SpiderDiagram copyContours(PrimarySpiderDiagram diagramWithContour, PrimarySpiderDiagram diagramWithoutContour) {
         try {
-            PrimarySpiderDiagram transformedDiagram = new ZoneTransfer(diagramWithContour, diagramWithoutContour).transferContour(getTargetContours().get(0));
+            PrimarySpiderDiagram transformedDiagram = new ZoneTransferTopological(diagramWithContour, diagramWithoutContour).transferContour(getTargetContours().get(0));
             return InferenceTargetExtraction.createBinaryDiagram(Operator.Conjunction, diagramWithContour, transformedDiagram, targetContours.get(0), indexOfParent);
         } catch (Exception e) {
             throw new TransformationException("Could not copy the contour. " + e.getMessage(), e);

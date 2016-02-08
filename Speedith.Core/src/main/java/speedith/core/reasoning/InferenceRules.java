@@ -26,11 +26,13 @@
  */
 package speedith.core.reasoning;
 
+import speedith.core.lang.DiagramType;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.rules.*;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static speedith.core.i18n.Translations.i18n;
@@ -45,6 +47,8 @@ import static speedith.core.i18n.Translations.i18n;
  */
 public class InferenceRules {
 
+    public  static  final String diagram_type_preference = "diagram_type";
+
     /**
      * The map containing all currently registered inference rule providers.
      */
@@ -52,8 +56,8 @@ public class InferenceRules {
 
     static {
         // Register built-in inference rules.
-     //   registerProvider(AddFeet.class);
-    //    registerProvider(EraseSpider.class);
+        registerProvider(AddFeet.class);
+        registerProvider(EraseSpider.class);
         registerProvider(IntroContour.class);
         registerProvider(RemoveContour.class);
         registerProvider(RemoveShading.class);
@@ -62,27 +66,28 @@ public class InferenceRules {
         registerProvider(DischargeNullGoal.class);
 
         registerProvider(Combining.class);
-    //    registerProvider(CopySpider.class);
+        registerProvider(CopySpider.class);
         registerProvider(CopyContours.class);
+        registerProvider(CopyContoursTopological.class);
         registerProvider(CopyShading.class);
-    //    registerProvider(SplitSpiders.class);
-    //    registerProvider(ExcludedMiddle.class);
-    //     registerProvider(NegationElimination.class);
+        registerProvider(SplitSpiders.class);
+        registerProvider(ExcludedMiddle.class);
+        registerProvider(NegationElimination.class);
 
-//        registerProvider(ModusPonens.class);
-//        registerProvider(ModusTolens.class);
+        registerProvider(ModusPonens.class);
+        registerProvider(ModusTolens.class);
         registerProvider(Idempotency.class);
-//        registerProvider(GeneralTautology.class);
+        registerProvider(GeneralTautology.class);
         registerProvider(TrivialImplicationTautology.class);
         registerProvider(ImplicationTautology.class);
         registerProvider(ConjunctionElimination.class);
-//        registerProvider(ConjunctionIntroduction.class);
-//        registerProvider(DisjunctionElimination.class);
-//        registerProvider(DisjunctionIntroduction.class);
-//        registerProvider(EquivalenceElimination.class);
-//        registerProvider(EquivalenceIntroduction.class);
-//        registerProvider(DoubleNegationElimination.class);
-//        registerProvider(DoubleNegationIntroduction.class);
+        registerProvider(ConjunctionIntroduction.class);
+        registerProvider(DisjunctionElimination.class);
+        registerProvider(DisjunctionIntroduction.class);
+        registerProvider(EquivalenceElimination.class);
+        registerProvider(EquivalenceIntroduction.class);
+        registerProvider(DoubleNegationElimination.class);
+        registerProvider(DoubleNegationIntroduction.class);
     }
 
     /**
@@ -132,15 +137,25 @@ public class InferenceRules {
     }
 
     /**
-     * Returns a set of names of all currently supported inference rules.
+     * Returns a set of names of all currently supported inference rules for the specified
+     * diagram type..
      * <p>To get information about a particular inference rule, use the
      * {@link InferenceRules#getProvider(java.lang.String)} method.</p>
      * <p>Note: This method never returns {@code null}.</p>
      *
+     * @param diagramType The {@link DiagramType diagram type} to which
+     *                    the supported inference rules are applicable.
+     *
      * @return a set of names of all currently supported inference rules.
      */
-    public static Set<String> getKnownInferenceRules() {
-        return Collections.unmodifiableSet(providers.keySet());
+    public static Set<String> getKnownInferenceRules(DiagramType diagramType) {
+        HashMap<String,InferenceRuleProvider<? extends RuleArg>> intermediate = new HashMap<>();
+        for (Map.Entry<String, InferenceRuleProvider<? extends RuleArg> > entry : providers.entrySet()) {
+            if(entry.getValue().getApplicableTypes().contains(diagramType)) {
+                intermediate.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return Collections.unmodifiableSet(intermediate.keySet());
     }
 
     /**

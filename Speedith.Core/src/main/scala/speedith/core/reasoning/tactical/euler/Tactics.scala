@@ -107,6 +107,7 @@ object Tactics {
         isPrimaryAndContainsShadedZones)
       if (target.isEmpty) { throw new TacticApplicationException("No subgoal for this tactic") }
       val presentShadedZones = target.head.asInstanceOf[PrimarySpiderDiagramOccurrence].getShadedZones & target.head.asInstanceOf[PrimarySpiderDiagramOccurrence].getPresentZones
+      if (presentShadedZones.head.getInContoursCount == 0) { throw new TacticApplicationException("Cannot remove outer zone")}
       createResults(target, state, new RemoveShadedZone().asInstanceOf[InferenceRule[RuleArg]],
         new ZoneArg(subgoalIndex, target.head.getOccurrenceIndex, presentShadedZones.head))
     } catch {
@@ -161,10 +162,10 @@ object Tactics {
       val op0 = target.head.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0).asInstanceOf[PrimarySpiderDiagramOccurrence]
       val op1 = target.head.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(1).asInstanceOf[PrimarySpiderDiagramOccurrence]
       if ((op0.getAllContours -- op1.getAllContours).nonEmpty) {
-        createResults(Seq(op0),state, new CopyContours().asInstanceOf[InferenceRule[RuleArg]],
+        createResults(Seq(op0),state, new CopyContoursTopological().asInstanceOf[InferenceRule[RuleArg]],
         new MultipleRuleArgs (new ContourArg (subgoalIndex, op0.getOccurrenceIndex,(op0.getAllContours -- op1.getAllContours).head ) )  )
       } else {
-        createResults(Seq(op1),state, new CopyContours().asInstanceOf[InferenceRule[RuleArg]],
+        createResults(Seq(op1),state, new CopyContoursTopological().asInstanceOf[InferenceRule[RuleArg]],
           new MultipleRuleArgs (new ContourArg (subgoalIndex, op1.getOccurrenceIndex,(op1.getAllContours -- op0.getAllContours).head ) )  )
       }
     } catch {

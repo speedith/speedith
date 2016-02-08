@@ -32,10 +32,10 @@ case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) ex
                          parents: java.util.ArrayList[CompoundSpiderDiagram],
                          childIndices: java.util.ArrayList[java.lang.Integer]): SpiderDiagram = {
     if (subDiagramIndex == diagramIndex) {
-        val normalised = ReasoningUtils.normalize(psd)
+        /*val normalised = ReasoningUtils.normalize(psd)
         if (!normalised.equals(psd)) {
           throw new RuleApplicationException("Rule can only be applied to a normalised diagram (all visible zones have to be included in the set of present zones in the abstract syntax)")
-        }
+        }*/
         SpiderDiagrams.createPrimarySD(
           psd.getSpiders,
           psd.getHabitats.map {
