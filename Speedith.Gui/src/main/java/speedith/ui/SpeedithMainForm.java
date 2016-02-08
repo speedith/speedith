@@ -69,6 +69,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 
 import static speedith.i18n.Translations.i18n;
 
@@ -86,6 +87,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     "SpeedithIconVennDiagram-64.png",
     "SpeedithIconVennDiagram-128.png"
   };
+
+  private DiagramType activeDiagram;
 
   private JMenuItem goalSpiderDrawerInputMenuItem;
   private javax.swing.JMenu drawMenu;
@@ -111,13 +114,12 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenuItem proveFromHere;
   private javax.swing.JFileChooser fileChooser;
   private javax.swing.JMenu tacticsMenu;
-  private javax.swing.JMenuItem vennify;
-  private javax.swing.JMenuItem devennify;
 
   /**
    * Creates new form SpeedithMainForm
    */
   public SpeedithMainForm() {
+    readDiagramType();
     initComponents();
     try {
       ArrayList<Image> icons = new ArrayList<Image>();
@@ -129,6 +131,17 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       setIconImages(icons);
     } catch (IOException ex) {
       Logger.getLogger(SpeedithMainForm.class.getName()).log(Level.WARNING, "Speedith's icons could not have been loaded.", ex);
+    }
+  }
+
+  private void readDiagramType() {
+    Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
+    String selected = prefs.get(InferenceRules.diagram_type_preference, null);
+    if (selected != null) {
+      activeDiagram = DiagramType.valueOf(selected);
+    } else {
+      // startup with spider diagrams as the default.
+      activeDiagram = DiagramType.SpiderDiagram;
     }
   }
 
@@ -160,8 +173,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     proveAny = new javax.swing.JMenuItem();
     proveFromHere = new javax.swing.JMenuItem();
     tacticsMenu = new javax.swing.JMenu();
-    vennify = new javax.swing.JMenuItem();
-    devennify = new javax.swing.JMenuItem();
+    //vennify = new javax.swing.JMenuItem();
+    //devennify = new javax.swing.JMenuItem();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("Speedith");
@@ -515,6 +528,11 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     settings.setVisible(true);
     proofPanel1.setProver(settings.getSelectedProver());
     proofPanel1.getProver().setStrategy(settings.getSelectedStrategy());
+    if (settings.getSelectedDiagramType() != activeDiagram) {
+      activeDiagram = settings.getSelectedDiagramType();
+      lstAppliedRules.setModel(getRulesList());
+      lstAppliedRules.repaint();
+    }
   }
 
   private void onProveAny(ActionEvent evt) {
@@ -787,7 +805,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }
 
   private ComboBoxModel getRulesComboList() {
-    Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules();
+    Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules(activeDiagram);
     InfRuleListItem[] infRules = new InfRuleListItem[knownInferenceRules.size()];
     int i = 0;
     for (String providerName : knownInferenceRules) {
@@ -798,7 +816,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }
 
   private ListModel<InfRuleListItem> getRulesList() {
-    Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules();
+    Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules(activeDiagram);
     InfRuleListItem[] infRules = new InfRuleListItem[knownInferenceRules.size()];
     int i = 0;
     for (String providerName : knownInferenceRules) {

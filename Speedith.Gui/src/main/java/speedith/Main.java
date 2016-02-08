@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import org.apache.commons.cli.ParseException;
 import speedith.cli.CliOptions;
+import speedith.core.lang.DiagramType;
 import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.export.SDExportProvider;
@@ -200,7 +201,7 @@ public class Main {
     private static void printKnownInferenceRules() {
         System.out.println(i18n("MSG_KNOWN_INFERENCE_RULES_LIST"));
         System.out.println();
-        final String[] infRules = InferenceRules.getKnownInferenceRules().toArray(new String[0]);
+        final String[] infRules = InferenceRules.getKnownInferenceRules(DiagramType.SpiderDiagram).toArray(new String[0]);
         Arrays.sort(infRules);
         for (int i = 0; i < infRules.length; i++) {
             String infRule = infRules[i];

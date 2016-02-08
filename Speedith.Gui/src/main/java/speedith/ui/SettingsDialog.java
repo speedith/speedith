@@ -1,5 +1,7 @@
 package speedith.ui;
 
+import speedith.core.lang.DiagramType;
+import speedith.core.reasoning.InferenceRules;
 import speedith.core.reasoning.automatic.AutomaticProver;
 import speedith.core.reasoning.automatic.AutomaticProverProvider;
 import speedith.core.reasoning.automatic.AutomaticProvers;
@@ -30,7 +32,11 @@ public class SettingsDialog  extends javax.swing.JDialog {
     private JComboBox typeCombo;
     private JComboBox strategyCombo;
     private JButton okButton;
+
     private JPanel settingsPanel;
+    private JPanel diagramsPanel;
+    private JComboBox diagramTypeCombo;
+
 
     public SettingsDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -46,6 +52,9 @@ public class SettingsDialog  extends javax.swing.JDialog {
         typeCombo = new JComboBox(getProverComboList());
         strategyLabel = new JLabel();
         strategyCombo = new JComboBox(getStrategyComboList());
+
+        diagramsPanel = new JPanel();
+        diagramTypeCombo = new JComboBox(getDiagramTypesComboList());
 
         autoProverPanel.setLayout(new GridBagLayout());
         autoProverPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -91,6 +100,14 @@ public class SettingsDialog  extends javax.swing.JDialog {
 
         settingsTab.addTab("Auto Prover", autoProverPanel);
 
+
+        javax.swing.GroupLayout groupLayout = new javax.swing.GroupLayout(diagramsPanel);
+        diagramsPanel.setLayout(groupLayout);
+        groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup().addComponent(diagramTypeCombo));
+        groupLayout.setVerticalGroup(groupLayout.createSequentialGroup().addComponent(diagramTypeCombo,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                GroupLayout.PREFERRED_SIZE));
+        settingsTab.addTab("Diagram Type", diagramsPanel);
+
         settingsPanel.setLayout(new GridBagLayout());
         c.anchor = GridBagConstraints.CENTER;
         c = new GridBagConstraints();
@@ -128,6 +145,8 @@ public class SettingsDialog  extends javax.swing.JDialog {
         prefs.put(AutomaticProvers.prover_preference, selectedProver.getAutomaticProverProvider().getAutomaticProverName());
         StrategyListItem selectedStrategy = (StrategyListItem) strategyCombo.getSelectedItem();
         prefs.put(Strategies.strategy_preference, selectedStrategy.getStrategyProvider().getStrategyName());
+        DiagramType diagrams = (DiagramType) diagramTypeCombo.getSelectedItem();
+        prefs.put(InferenceRules.diagram_type_preference, diagrams.name());
         dispose();
     }
 
@@ -161,7 +180,7 @@ public class SettingsDialog  extends javax.swing.JDialog {
             stragetyItems[i++] = new StrategyListItem(Strategies.getProvider(strategyName));
         }
         Arrays.sort(stragetyItems);
-        ComboBoxModel model = new DefaultComboBoxModel(stragetyItems);
+        ComboBoxModel model = new DefaultComboBoxModel<>(stragetyItems);
         Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
         String selected = prefs.get(Strategies.strategy_preference, null);
         if (selected != null) {
@@ -173,6 +192,20 @@ public class SettingsDialog  extends javax.swing.JDialog {
     public Strategy getSelectedStrategy() {
         StrategyListItem selected = (StrategyListItem) strategyCombo.getSelectedItem();
         return selected.getStrategyProvider().getStrategy();
+    }
+
+    private ComboBoxModel<DiagramType> getDiagramTypesComboList() {
+        ComboBoxModel<DiagramType> model = new DefaultComboBoxModel<>(DiagramType.values());
+        Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
+        String selected = prefs.get(InferenceRules.diagram_type_preference, null);
+        if (selected != null) {
+            model.setSelectedItem(DiagramType.valueOf(selected));
+        }
+        return model;
+    }
+
+    public DiagramType getSelectedDiagramType() {
+        return (DiagramType) diagramTypeCombo.getSelectedItem();
     }
 
     private static class ProverListItem implements Comparable<ProverListItem> {
