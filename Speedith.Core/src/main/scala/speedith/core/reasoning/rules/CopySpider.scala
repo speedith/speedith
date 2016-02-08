@@ -1,13 +1,16 @@
 package speedith.core.reasoning.rules
 
-import speedith.core.reasoning.args.{ContourArg, RuleArg, SpiderArg}
+
+
+import speedith.core.reasoning.args.{ RuleArg, SpiderArg}
 import speedith.core.reasoning.{InferenceRule, RuleApplicationInstruction, RuleApplicationResult, Goals}
 import java.util.Locale
 import speedith.core.i18n.Translations
-import speedith.core.lang.SpiderDiagram
-import scala.collection.JavaConversions._
+import speedith.core.lang.{DiagramType, SpiderDiagram}
 import speedith.core.reasoning.rules.transformers.CopySpiderTransformer
 import speedith.core.reasoning.rules.instructions.SelectSpiderInstruction
+
+import scala.collection.JavaConversions._
 
 class CopySpider extends SimpleInferenceRule[SpiderArg] {
   def getInferenceRule: InferenceRule[SpiderArg] = {
@@ -15,6 +18,8 @@ class CopySpider extends SimpleInferenceRule[SpiderArg] {
   }
 
   def getInferenceRuleName: String = "copy_spider"
+
+  def getApplicableTypes: java.util.Set[DiagramType] = Set(DiagramType.SpiderDiagram)
 
   def getDescription(locale: Locale): String = Translations.i18n(locale, "COPY_SPIDER_DESCRIPTION")
 

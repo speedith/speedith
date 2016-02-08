@@ -8,7 +8,9 @@ import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.Locale;
+import java.util.Set;
 
 import static speedith.core.i18n.Translations.i18n;
 
@@ -24,6 +26,9 @@ public class TrivialImplicationTautology extends SimpleInferenceRule<SubDiagramI
      * method.</p>
      */
     public static final String InferenceRuleName = "trivial_implication_tautology";
+
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
+
 
     @Override
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
@@ -61,6 +66,11 @@ public class TrivialImplicationTautology extends SimpleInferenceRule<SubDiagramI
     @Override
     public String getCategory(Locale locale) {
         return Translations.i18n(locale, "INF_RULE_CATEGORY_PURELY_SENTENTIAL");
+    }
+
+    @Override
+    public Set<DiagramType> getApplicableTypes() {
+        return applicableTypes;
     }
 
     @Override

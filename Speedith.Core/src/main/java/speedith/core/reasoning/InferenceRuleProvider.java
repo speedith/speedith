@@ -27,6 +27,9 @@
 package speedith.core.reasoning;
 
 import java.util.Locale;
+import java.util.Set;
+
+import speedith.core.lang.DiagramType;
 import speedith.core.reasoning.args.RuleArg;
 
 /**
@@ -195,4 +198,13 @@ public interface InferenceRuleProvider<TArgs extends RuleArg> {
      */
     @Override
     String toString();
+
+    /**
+     * Returns the set of all {@link DiagramType diagram types} the provided rule
+     * is applicable to.
+     *
+     * @return the {@link Set} of {@link DiagramType diagram types} the rule provided
+     * by this provider is applicable to
+     */
+    Set<DiagramType> getApplicableTypes();
 }

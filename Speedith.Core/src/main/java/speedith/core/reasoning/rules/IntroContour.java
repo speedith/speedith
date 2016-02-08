@@ -29,6 +29,7 @@ package speedith.core.reasoning.rules;
 import java.util.*;
 
 import speedith.core.i18n.Translations;
+import speedith.core.lang.DiagramType;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.ContourArg;
@@ -45,6 +46,8 @@ public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
         implements BasicInferenceRule<MultipleRuleArgs>, ForwardRule<MultipleRuleArgs> {
 
     public static final String InferenceRuleName = "Introduce Contour";
+
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram);
 
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
@@ -103,11 +106,7 @@ public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
         return MultipleRuleArgs.class;
     }
 
-    /*    @Override
-            protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
-                return new IdTransformer();
-            }
-        */
+
     @Override
     public String getInferenceRuleName() {
         return InferenceRuleName;
@@ -126,5 +125,10 @@ public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
     @Override
     public RuleApplicationInstruction<MultipleRuleArgs> getInstructions() {
         return new SelectSingleSubDiagramAndContourInstruction();
+    }
+
+    @Override
+    public Set<DiagramType> getApplicableTypes() {
+        return applicableTypes;
     }
 }

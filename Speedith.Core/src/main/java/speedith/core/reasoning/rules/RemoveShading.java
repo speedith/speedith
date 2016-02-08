@@ -26,13 +26,12 @@
  */
 package speedith.core.reasoning.rules;
 
+import java.util.EnumSet;
 import java.util.Locale;
+import java.util.Set;
 
 import speedith.core.i18n.Translations;
-import speedith.core.lang.IdTransformer;
-import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.Transformer;
-import speedith.core.lang.Zone;
+import speedith.core.lang.*;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.*;
 import speedith.core.reasoning.rules.instructions.SelectSingleZoneInstruction;
@@ -53,6 +52,7 @@ public class RemoveShading extends SimpleInferenceRule<ZoneArg>
 
     public static final String InferenceRuleName = "Erase Shading";
 
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram);
 
     @Override
     public String getInferenceRuleName() {
@@ -101,5 +101,10 @@ public class RemoveShading extends SimpleInferenceRule<ZoneArg>
     @Override
     public Class<ZoneArg> getArgumentType() {
         return ZoneArg.class;
+    }
+
+    @Override
+    public Set<DiagramType> getApplicableTypes() {
+        return applicableTypes;
     }
 }

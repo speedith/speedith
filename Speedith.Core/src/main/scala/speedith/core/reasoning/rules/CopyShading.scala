@@ -4,7 +4,7 @@ import speedith.core.reasoning.args.{MultipleRuleArgs, ZoneArg, RuleArg}
 import speedith.core.reasoning.{InferenceRule, RuleApplicationInstruction, RuleApplicationResult, Goals}
 import java.util.Locale
 import speedith.core.i18n.Translations
-import speedith.core.lang.SpiderDiagram
+import speedith.core.lang.{DiagramType, SpiderDiagram}
 import scala.collection.JavaConversions._
 import speedith.core.reasoning.rules.transformers.CopyShadingTransformer
 import speedith.core.reasoning.rules.instructions.SelectZonesInstruction
@@ -13,6 +13,8 @@ class CopyShading extends SimpleInferenceRule[MultipleRuleArgs] {
   def getInferenceRule: InferenceRule[MultipleRuleArgs] = this
 
   def getInferenceRuleName: String = "copy_shading"
+
+  def getApplicableTypes:  java.util.Set[DiagramType] = Set(DiagramType.EulerDiagram, DiagramType.SpiderDiagram)
 
   def getDescription(locale: Locale): String = Translations.i18n(locale, "COPY_SHADING_DESCRIPTION")
 

@@ -26,10 +26,13 @@
  */
 package speedith.core.reasoning.rules;
 
+import java.util.EnumSet;
 import java.util.Locale;
+import java.util.Set;
 
 import com.sun.org.apache.xpath.internal.operations.Mult;
 import speedith.core.i18n.Translations;
+import speedith.core.lang.DiagramType;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.InferenceRule;
@@ -54,6 +57,8 @@ public class ConjunctionElimination extends SimpleInferenceRule<MultipleRuleArgs
      */
     public static final String InferenceRuleName = "conjunction_elimination";
 
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
+
     @Override
     public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
         MultipleRuleArgs mult = getTypedRuleArgs(args);
@@ -73,7 +78,12 @@ public class ConjunctionElimination extends SimpleInferenceRule<MultipleRuleArgs
     public String getInferenceRuleName() {
         return InferenceRuleName;
     }
-    
+
+    @Override
+    public Set<DiagramType> getApplicableTypes() {
+        return applicableTypes;
+    }
+
     @Override
     public String getDescription(Locale locale) {
         return Translations.i18n(locale, "CONJUNCTION_ELIMINATION_DESCRIPTION");

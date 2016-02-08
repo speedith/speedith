@@ -26,7 +26,11 @@
  */
 package speedith.core.reasoning.rules;
 
+import java.util.EnumSet;
 import java.util.Locale;
+import java.util.Set;
+
+import speedith.core.lang.DiagramType;
 import speedith.core.lang.IdTransformer;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Transformer;
@@ -43,6 +47,8 @@ public class IntroShadedZone extends SimpleInferenceRule<ZoneArg>
         implements BasicInferenceRule<ZoneArg>, ForwardRule<ZoneArg> {
 
     public static final String InferenceRuleName = "Introduce Shaded Zone";
+
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram);
 
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
@@ -91,5 +97,10 @@ public class IntroShadedZone extends SimpleInferenceRule<ZoneArg>
     @Override
     public RuleApplicationInstruction<ZoneArg> getInstructions() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Set<DiagramType> getApplicableTypes() {
+        return applicableTypes;
     }
 }

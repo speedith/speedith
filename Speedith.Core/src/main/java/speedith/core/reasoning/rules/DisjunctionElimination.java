@@ -26,7 +26,11 @@
  */
 package speedith.core.reasoning.rules;
 
+import java.util.EnumSet;
 import java.util.Locale;
+import java.util.Set;
+
+import speedith.core.lang.DiagramType;
 import speedith.core.lang.IdTransformer;
 import speedith.core.lang.Transformer;
 import speedith.core.reasoning.ApplyStyle;
@@ -39,6 +43,8 @@ import speedith.core.reasoning.args.SubDiagramIndexArg;
 public class DisjunctionElimination extends UnaryForwardRule {
 
     public static final String InferenceRuleName = "Disjunction Elimination";
+
+    private static final Set<DiagramType> applicableTypes = EnumSet.noneOf(DiagramType.class);
 
     @Override
     protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
@@ -64,4 +70,10 @@ public class DisjunctionElimination extends UnaryForwardRule {
     public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public Set<DiagramType> getApplicableTypes() {
+        return applicableTypes;
+    }
+
 }
