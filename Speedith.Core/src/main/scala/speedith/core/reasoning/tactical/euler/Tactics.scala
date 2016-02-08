@@ -19,43 +19,37 @@ import scala.collection.JavaConversions._
  */
 object Tactics {
 
-  private def firstMatchingDiagram(sd : SpiderDiagramOccurrence, predicate : SpiderDiagramOccurrence=> Boolean): Seq[SpiderDiagramOccurrence] = sd match  {
-    case sd :CompoundSpiderDiagramOccurrence => {
-      if (predicate(sd)) { Seq(sd) } else {
-        val matching = firstMatchingDiagram(sd.getOperand(0), predicate)
-        matching match {
-          case Seq() => firstMatchingDiagram(sd.getOperand(1), predicate)
-          case _ => matching
-        }
-      }
-    }
-    case sd : PrimarySpiderDiagramOccurrence => {
-      if (predicate(sd)) {
-        Seq(sd)
-      } else {
-        Seq()
+  private def firstMatchingDiagram(sd: SpiderDiagramOccurrence, predicate: SpiderDiagramOccurrence => Boolean): Seq[SpiderDiagramOccurrence] = {
+    if (predicate(sd)) {
+      Seq(sd)
+    } else {
+      sd match {
+        case sd: CompoundSpiderDiagramOccurrence =>
+          val matching = firstMatchingDiagram(sd.getOperand(0), predicate)
+          matching match {
+            case Seq() => firstMatchingDiagram(sd.getOperand(1), predicate)
+            case _ => matching
+          }
+        case sd: PrimarySpiderDiagramOccurrence => Seq()
       }
     }
   }
 
-  private def firstMatchingDiagramAndContour( sd : SpiderDiagramOccurrence,
-                                              predicate : SpiderDiagramOccurrence => Boolean,
-                                              contourChooser : SpiderDiagramOccurrence => Option[String])
-    : Seq[(SpiderDiagramOccurrence, Option[String])] = sd match  {
-    case sd : CompoundSpiderDiagramOccurrence => {
-      if (predicate(sd)) {Seq(Tuple2(sd, contourChooser(sd)))} else {
-        val matching = firstMatchingDiagramAndContour(sd.getOperand(0), predicate, contourChooser)
-        matching match {
-          case Seq() => firstMatchingDiagramAndContour(sd.getOperand(1), predicate, contourChooser)
-          case _ => matching
-        }
-      }
-    }
-    case sd : PrimarySpiderDiagramOccurrence => {
-      if (predicate(sd)) {
-        Seq(Tuple2(sd, contourChooser(sd)))
-      } else {
-        Seq()
+  private def firstMatchingDiagramAndContour(sd: SpiderDiagramOccurrence,
+                                             predicate: SpiderDiagramOccurrence => Boolean,
+                                             contourChooser: SpiderDiagramOccurrence => Option[String])
+  : Seq[(SpiderDiagramOccurrence, Option[String])] = {
+    if (predicate(sd)) {
+      Seq(Tuple2(sd, contourChooser(sd)))
+    } else {
+      sd match {
+        case sd: CompoundSpiderDiagramOccurrence =>
+          val matching = firstMatchingDiagramAndContour(sd.getOperand(0), predicate, contourChooser)
+          matching match {
+            case Seq() => firstMatchingDiagramAndContour(sd.getOperand(1), predicate, contourChooser)
+            case _ => matching
+          }
+        case sd: PrimarySpiderDiagramOccurrence => Seq()
       }
     }
   }
@@ -64,6 +58,8 @@ object Tactics {
 
   private def createResults(goals : Seq[SpiderDiagramOccurrence], state : Proof, rule : InferenceRule[RuleArg], args : RuleArg) : Seq[Proof] = {
     val result = goals.map(sd => Tuple2(sd, new ProofTrace(state)))
+    // intermediate is used to create the rule applications (applyRule changes the given proof and
+    // returns a RuleApplicationResult!)
     val intermediate = result.map(t => t._2.applyRule(rule, args))
     result.map(t => t._2)
 
@@ -123,10 +119,9 @@ object Tactics {
         throw new TacticApplicationException("No subgoal for this tactic")
       }
       target.head._2 match {
-        case Some(c)  =>   {   //val presentContours = target.head.asInstanceOf[PrimarySpiderDiagramOccurrence].getAllContours
+        case Some(c)  =>
          createResults (target.map (_._1), state, new RemoveContour ().asInstanceOf[InferenceRule[RuleArg]],
          new MultipleRuleArgs (new ContourArg (subgoalIndex, target.head._1.getOccurrenceIndex, c) ) )
-        }
         case None => throw new TacticApplicationException("Could not find a suited contour in this diagram")
       }
     } catch {
@@ -184,30 +179,26 @@ object Tactics {
       if (op0.getAllContours.subsetOf(op1.getAllContours)) {
         val maxZone = computeMaximalCorrespondingShadedRegion(op0, op1)
         maxZone match {
-          case Some((r1: Set[Zone], r2: Set[Zone])) => {
+          case Some((r1: Set[Zone], r2: Set[Zone])) =>
             createResults(Seq(op0), state, new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
               new MultipleRuleArgs(r1.map(z => new ZoneArg(subgoalIndex, op0.getOccurrenceIndex, z)).toList))
-          }
-          case None => {
+          case None =>
             if (op1.getAllContours.subsetOf(op0.getAllContours)) {
               val maxZone = computeMaximalCorrespondingShadedRegion(op1, op0)
               maxZone match {
-                case Some((r1: Set[Zone], r2: Set[Zone])) => {
+                case Some((r1: Set[Zone], r2: Set[Zone])) =>
                   createResults(Seq(op1), state, new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
                     new MultipleRuleArgs(r1.map(z => new ZoneArg(subgoalIndex, op1.getOccurrenceIndex, z)).toList))
-                }
                 case None => Seq()
               }
             } else Seq()
-          }
         }
       } else if (op1.getAllContours.subsetOf(op0.getAllContours)) {
         val maxZone = computeMaximalCorrespondingShadedRegion(op1, op0)
         maxZone match {
-          case Some((r1: Set[Zone], r2: Set[Zone])) => {
+          case Some((r1: Set[Zone], r2: Set[Zone])) =>
             createResults(Seq(op1), state, new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
               new MultipleRuleArgs(r1.map(z => new ZoneArg(subgoalIndex, op1.getOccurrenceIndex, z)).toList))
-          }
           case None => Seq()
         }
       } else Seq()

@@ -39,7 +39,7 @@ object SimpleTacticals {
   }
 
   def vennStyle(state : Proof) = {
-    THEN(unifyContourSets, THEN(vennify, THEN(combineAll, deVennify)))(state)
+    THEN(unifyContourSets, THEN(vennify, THEN(combineAll, matchConclusion)))(state)
   }
 
   def matchConclusion(state : Proof) = {

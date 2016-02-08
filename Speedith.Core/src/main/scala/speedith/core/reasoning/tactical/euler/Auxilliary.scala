@@ -52,56 +52,42 @@ object Auxilliary {
 
   def isConjunctionOfPrimaryDiagramsWithEqualZoneSets(sd : SpiderDiagramOccurrence) : Boolean = sd match {
     case sd: PrimarySpiderDiagramOccurrence => false
-    case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match {
-      case Operator.Conjunction => {
-        if (sd.getOperand(0).isInstanceOf[PrimarySpiderDiagramOccurrence] && sd.getOperand(1).isInstanceOf[PrimarySpiderDiagramOccurrence]) {
-          val op1 = sd.getOperand(0).asInstanceOf[PrimarySpiderDiagramOccurrence]
-          val op2 = sd.getOperand(1).asInstanceOf[PrimarySpiderDiagramOccurrence]
-          op1.getPresentZones.equals(op2.getPresentZones)
-
-        } else {false}
-      }
+    case sd: CompoundSpiderDiagramOccurrence => (sd.getOperator, sd.getOperand(0), sd.getOperand(1)) match {
+      case (Operator.Conjunction ,op0:PrimarySpiderDiagramOccurrence, op1:PrimarySpiderDiagramOccurrence) =>
+          op0.getPresentZones.equals(op1.getPresentZones)
       case _ => false
     }
   }
 
   def isConjunctionWithContoursToCopy(sd : SpiderDiagramOccurrence ) : Boolean = sd match {
-    case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match {
-      case Operator.Conjunction => {
-        if (sd.getOperands.forall(_.isInstanceOf[PrimarySpiderDiagramOccurrence])) {
-          val op0 = sd.getOperand(0).asInstanceOf[PrimarySpiderDiagramOccurrence]
-          val op1 = sd.getOperand(1).asInstanceOf[PrimarySpiderDiagramOccurrence]
-          (op0.getAllContours -- op1.getAllContours).nonEmpty || (op1.getAllContours -- op0.getAllContours).nonEmpty
-        } else false
-      }
+    case sd: CompoundSpiderDiagramOccurrence => (sd.getOperator, sd.getOperand(0), sd.getOperand(1)) match {
+      case (Operator.Conjunction, op0:PrimarySpiderDiagramOccurrence, op1:PrimarySpiderDiagramOccurrence) =>
+        (op0.getAllContours -- op1.getAllContours).nonEmpty || (op1.getAllContours -- op0.getAllContours).nonEmpty
       case _ => false
     }
     case _ => false
   }
 
-  def isConjunctionWithShadingToCopy(sd : SpiderDiagramOccurrence ) : Boolean = sd match {
-    case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match {
-      case Operator.Conjunction => {
-        if (sd.getOperands.forall(_.isInstanceOf[PrimarySpiderDiagramOccurrence])) {
-          val op0 = sd.getOperand(0).asInstanceOf[PrimarySpiderDiagramOccurrence]
-          val op1 = sd.getOperand(1).asInstanceOf[PrimarySpiderDiagramOccurrence]
-          if (op0.getAllContours.subsetOf(op1.getAllContours)) {
-            val leftRegions = computeCorrespondingShadedRegions(op0,op1)
-            if (leftRegions.nonEmpty) { true }
-            else {
-              if (op1.getAllContours.subsetOf(op0.getAllContours)) {
-                val rightRegions = computeCorrespondingShadedRegions(op1,op0)
-                rightRegions.nonEmpty
-              } else false
-            }
-          } else {
+  def isConjunctionWithShadingToCopy(sd: SpiderDiagramOccurrence): Boolean = sd match {
+    case sd: CompoundSpiderDiagramOccurrence => (sd.getOperator, sd.getOperand(0), sd.getOperand(1)) match {
+      case (Operator.Conjunction, op0: PrimarySpiderDiagramOccurrence, op1: PrimarySpiderDiagramOccurrence) =>
+        if (op0.getAllContours.subsetOf(op1.getAllContours)) {
+          val leftRegions = computeCorrespondingShadedRegions(op0, op1)
+          if (leftRegions.nonEmpty) {
+            true
+          }
+          else {
             if (op1.getAllContours.subsetOf(op0.getAllContours)) {
-              val rightRegions = computeCorrespondingShadedRegions(op1,op0)
+              val rightRegions = computeCorrespondingShadedRegions(op1, op0)
               rightRegions.nonEmpty
             } else false
           }
-        } else false
-      }
+        } else {
+          if (op1.getAllContours.subsetOf(op0.getAllContours)) {
+            val rightRegions = computeCorrespondingShadedRegions(op1, op0)
+            rightRegions.nonEmpty
+          } else false
+        }
       case _ => false
     }
     case _ => false

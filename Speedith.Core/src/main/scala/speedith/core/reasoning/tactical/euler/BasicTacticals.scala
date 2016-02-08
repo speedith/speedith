@@ -5,7 +5,7 @@ import speedith.core.reasoning.tactical.TacticApplicationException
 
 
 /**
- * TODO: Description
+ * Basic tacticals to combine other tacticals.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  *
