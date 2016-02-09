@@ -80,11 +80,11 @@ object Tactics {
    }
  }
 
-  def introduceShadedZone(subgoalIndex : Int, state:Proof) : Seq[Proof] = {
+  def introduceShadedZone(subgoalIndex : Int, predicate : SpiderDiagramOccurrence => Proof => Boolean, state:Proof) : Seq[Proof] = {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
-        isPrimaryAndContainsMissingZones)
+        d => d.isInstanceOf[PrimarySpiderDiagramOccurrence] && predicate(d)(state))
       if (target.isEmpty) { throw new TacticApplicationException("No subgoal for this tactic") }
         val missingZones = target.head.asInstanceOf[PrimarySpiderDiagramOccurrence].getShadedZones -- target.head.asInstanceOf[PrimarySpiderDiagramOccurrence].getPresentZones
         createResults(target, state, new IntroShadedZone().asInstanceOf[InferenceRule[RuleArg]],
@@ -224,20 +224,7 @@ object Tactics {
     }
   }
 
-  /**
-   * implements some general checks
-   *
-   * @param subgoalIndex the index of subgoal which shall be returned
-   * @param state the proof from in which the subgoal will be searched
-   */
-  private def getSubgoal( subgoalIndex : Int, state:Proof ): SpiderDiagramOccurrence  = {
-    if (!state.isFinished) {
-      val goal = state.getLastGoals.getGoalAt(subgoalIndex)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
-        SpiderDiagramOccurrence.wrapDiagram(goal, 0)
-      } else throw new TacticApplicationException("No subgoal for this tactic")
-    } else throw new TacticApplicationException("No subgoal for this tactic")
-  }
+
 }
 
 

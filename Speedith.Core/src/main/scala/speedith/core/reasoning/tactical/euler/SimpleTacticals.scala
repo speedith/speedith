@@ -16,7 +16,7 @@ object SimpleTacticals {
 
   def vennify(state:Proof) = {
     REPEAT(ORELSE(trivialTautology(0,_),
-      introduceShadedZone(0,_)))(state)
+      introduceShadedZone(0,isPrimaryAndContainsMissingZones,_)))(state)
   }
 
   def deVennify (state:Proof) = {
@@ -54,6 +54,7 @@ object SimpleTacticals {
 
   def copyShadings(state:Proof) = {
     REPEAT(ORELSE(trivialTautology(0,_),
-      THEN(introduceShadedZone(0,_),copyShading(0,_))))(state)
+      THEN(TRY(introduceShadedZone(0,sd => collectDiagramsWithMissingZonesThatCouldBeCopied(0,_).contains(sd), _)),
+        copyShading(0,_))))(state)
   }
 }
