@@ -25,11 +25,11 @@ object BasicTacticals {
   }
 
   def id (state : Proof) = {
-    Seq(state)
+    Some(state)
   }
 
   def fail(state:Proof) = {
-    Seq()
+    None
   }
 
   def TRY(tac : Tactical) = (state:Proof) => {
@@ -50,7 +50,7 @@ object BasicTacticals {
 
   @throws(classOf[TacticApplicationException])
   def BY( tac : Tactical) = (state:Proof) =>  {
-      tac(state).headOption.getOrElse{
+      tac(state).getOrElse{
         throw new TacticApplicationException("Tactic could not be applied to current subgoal")
       }
   }

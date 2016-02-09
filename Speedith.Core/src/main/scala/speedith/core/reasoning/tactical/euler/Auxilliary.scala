@@ -31,6 +31,15 @@ object Auxilliary {
     case _ => false
   }
 
+  def isIdempotent(sd : SpiderDiagramOccurrence): Boolean = sd match {
+    case sd:CompoundSpiderDiagramOccurrence => sd.getOperator match {
+      case Operator.Conjunction | Operator.Disjunction | Operator.Equivalence | Operator.Implication =>
+        sd.getOperand(0).getDiagram.isSEquivalentTo(sd.getOperand(1).getDiagram)
+      case _ => false
+    }
+    case _ => false
+  }
+
   def isPrimaryAndContainsMoreContours(sd : SpiderDiagramOccurrence, contours : Set[String]) : Boolean = sd match {
     case sd:PrimarySpiderDiagramOccurrence => (contours -- sd.getAllContours).nonEmpty
     case _ => false
@@ -53,43 +62,52 @@ object Auxilliary {
 
   def isConjunctionOfPrimaryDiagramsWithEqualZoneSets(sd : SpiderDiagramOccurrence) : Boolean = sd match {
     case sd: PrimarySpiderDiagramOccurrence => false
-    case sd: CompoundSpiderDiagramOccurrence => (sd.getOperator, sd.getOperand(0), sd.getOperand(1)) match {
-      case (Operator.Conjunction ,op0:PrimarySpiderDiagramOccurrence, op1:PrimarySpiderDiagramOccurrence) =>
+    case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match {
+      case Operator.Conjunction => (sd.getOperand(0), sd.getOperand(1)) match {
+        case (op0: PrimarySpiderDiagramOccurrence, op1: PrimarySpiderDiagramOccurrence) =>
           op0.getPresentZones.equals(op1.getPresentZones)
+        case _ => false
+      }
       case _ => false
     }
   }
 
   def isConjunctionWithContoursToCopy(sd : SpiderDiagramOccurrence ) : Boolean = sd match {
-    case sd: CompoundSpiderDiagramOccurrence => (sd.getOperator, sd.getOperand(0), sd.getOperand(1)) match {
-      case (Operator.Conjunction, op0:PrimarySpiderDiagramOccurrence, op1:PrimarySpiderDiagramOccurrence) =>
-        (op0.getAllContours -- op1.getAllContours).nonEmpty || (op1.getAllContours -- op0.getAllContours).nonEmpty
+    case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match  {
+      case Operator.Conjunction => (sd.getOperand(0), sd.getOperand(1)) match {
+        case (op0: PrimarySpiderDiagramOccurrence, op1: PrimarySpiderDiagramOccurrence) =>
+          (op0.getAllContours -- op1.getAllContours).nonEmpty || (op1.getAllContours -- op0.getAllContours).nonEmpty
+        case _ => false
+      }
       case _ => false
     }
     case _ => false
   }
 
   def isConjunctionWithShadingToCopy(sd: SpiderDiagramOccurrence): Boolean = sd match {
-    case sd: CompoundSpiderDiagramOccurrence => (sd.getOperator, sd.getOperand(0), sd.getOperand(1)) match {
-      case (Operator.Conjunction, op0: PrimarySpiderDiagramOccurrence, op1: PrimarySpiderDiagramOccurrence) =>
-        if (op0.getAllContours.subsetOf(op1.getAllContours)) {
-          val leftRegions = computeCorrespondingShadedRegions(op0, op1)
-          if (leftRegions.nonEmpty) {
-            true
-          }
-          else {
+    case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match {
+      case Operator.Conjunction => (sd.getOperand(0), sd.getOperand(1)) match {
+        case (op0: PrimarySpiderDiagramOccurrence, op1: PrimarySpiderDiagramOccurrence) =>
+          if (op0.getAllContours.subsetOf(op1.getAllContours)) {
+            val leftRegions = computeCorrespondingShadedRegions(op0, op1)
+            if (leftRegions.nonEmpty) {
+              true
+            }
+            else {
+              if (op1.getAllContours.subsetOf(op0.getAllContours)) {
+                val rightRegions = computeCorrespondingShadedRegions(op1, op0)
+                rightRegions.nonEmpty
+              } else false
+            }
+          } else {
             if (op1.getAllContours.subsetOf(op0.getAllContours)) {
               val rightRegions = computeCorrespondingShadedRegions(op1, op0)
               rightRegions.nonEmpty
             } else false
           }
-        } else {
-          if (op1.getAllContours.subsetOf(op0.getAllContours)) {
-            val rightRegions = computeCorrespondingShadedRegions(op1, op0)
-            rightRegions.nonEmpty
-          } else false
-        }
-      case _ => false
+        case _ => false
+      }
+      case _=> false
     }
     case _ => false
   }

@@ -9,5 +9,5 @@ import speedith.core.reasoning.Proof
  *
  */
 package object euler {
-  type Tactical = Proof => Seq[Proof]
+  type Tactical = Proof => Option[Proof]
 }

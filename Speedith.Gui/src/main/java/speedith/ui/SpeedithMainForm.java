@@ -32,6 +32,7 @@
  */
 package speedith.ui;
 
+import scala.Some;
 import scala.collection.Seq;
 import speedith.core.lang.*;
 import speedith.core.lang.reader.ReadingException;
@@ -446,19 +447,20 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private void applyTactical(Method tactical) {
     if (!proofPanel1.isFinished()) {
       Proof intermediate = new ProofTrace(proofPanel1);
-      Seq<Proof> result = null;
+      Some<Proof> result = null;
       try {
-        result = (Seq<Proof>) tactical.invoke(SimpleTacticals.class, intermediate);
+        result = (Some<Proof>) tactical.invoke(SimpleTacticals.class, intermediate);
       } catch (IllegalAccessException e) {
         e.printStackTrace();
       } catch (InvocationTargetException e) {
+        e.printStackTrace();
         if (e.getCause() instanceof TacticApplicationException) {
           TacticApplicationException tacticE = (TacticApplicationException) e.getCause();
           JOptionPane.showMessageDialog(this, tacticE.getMessage());
         }
       }
       if (result !=null && result.nonEmpty()) {
-        proofPanel1.replaceCurrentProof(result.head());
+        proofPanel1.replaceCurrentProof(result.get());
       } else {
         System.out.println(result);
         JOptionPane.showMessageDialog(this, "Tactic could not be applied");

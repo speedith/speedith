@@ -75,6 +75,9 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
     public Proof extendProof(Proof proof) throws AutomaticProofException {
         // workaround as long as Speedith doesn't support several subgoals at once
         int subGoalToProve = 0;
+        if (proof.isFinished()) {
+            throw new AutomaticProofException("The proof is already finished");
+        }
         if (!ReasoningUtils.isImplicationOfConjunctions(proof.getLastGoals().getGoalAt(subGoalToProve))) {
             throw new AutomaticProofException("The current goal is not an implication of conjunctions");
         }
