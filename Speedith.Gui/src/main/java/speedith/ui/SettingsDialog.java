@@ -56,65 +56,46 @@ public class SettingsDialog  extends javax.swing.JDialog {
         diagramsPanel = new JPanel();
         diagramTypeCombo = new JComboBox(getDiagramTypesComboList());
 
-        autoProverPanel.setLayout(new GridBagLayout());
-        autoProverPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        javax.swing.GroupLayout groupLayout;
 
-
-        GridBagConstraints c = new GridBagConstraints();
-
-        c.gridx = 0;
-        c.gridy = 0;
-        c.ipadx = 5;
-        c.ipady = 5;
-        c.anchor = GridBagConstraints.LINE_START;
-        typeLabel.setText("Type");
-        autoProverPanel.add(typeLabel, c);
-
-
-        c.gridx = 2;
-        c.gridy = 0;
-        c.ipadx = 5;
-        c.ipady = 5;
-        c.anchor = GridBagConstraints.LINE_END;
-        autoProverPanel.add(typeCombo,c);
-
-
-
-        c.gridx = 0;
-        c.gridy = 1;
-        c.ipadx = 5;
-        c.ipady = 5;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.LINE_START;
-        strategyLabel.setText("Strategy");
-        autoProverPanel.add(strategyLabel, c);
-
-
-
-        c.gridx = 2;
-        c.gridy = 1;
-        c.ipadx = 5;
-        c.ipady = 5;
-        c.anchor = GridBagConstraints.LINE_END;
-        autoProverPanel.add(strategyCombo, c);
-
-        settingsTab.addTab("Auto Prover", autoProverPanel);
-
-
-        javax.swing.GroupLayout groupLayout = new javax.swing.GroupLayout(diagramsPanel);
+        groupLayout = new javax.swing.GroupLayout(diagramsPanel);
         diagramsPanel.setLayout(groupLayout);
+        groupLayout.setAutoCreateContainerGaps(true);
         groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup().addComponent(diagramTypeCombo));
         groupLayout.setVerticalGroup(groupLayout.createSequentialGroup().addComponent(diagramTypeCombo,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
                 GroupLayout.PREFERRED_SIZE));
         settingsTab.addTab("Diagram Type", diagramsPanel);
 
-        settingsPanel.setLayout(new GridBagLayout());
-        c.anchor = GridBagConstraints.CENTER;
-        c = new GridBagConstraints();
-        c.gridy = 0;
-        c.gridx = 0;
-        c.fill = GridBagConstraints.BOTH;
-        settingsPanel.add(settingsTab, c);
+
+        typeLabel.setText("Type");
+        strategyLabel.setText("Strategy");
+
+        groupLayout = new javax.swing.GroupLayout(autoProverPanel);
+        autoProverPanel.setLayout(groupLayout);
+        autoProverPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        groupLayout.setAutoCreateContainerGaps(true);
+        groupLayout.setHorizontalGroup(
+                groupLayout.createSequentialGroup()
+                        .addGroup(
+                                groupLayout.createParallelGroup()
+                                        .addComponent(typeLabel)
+                                        .addComponent(strategyLabel))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(
+                                groupLayout.createParallelGroup()
+                                        .addComponent(typeCombo)
+                                        .addComponent(strategyCombo)));
+        groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
+                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(typeLabel).addComponent(typeCombo,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                        GroupLayout.PREFERRED_SIZE))
+                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(strategyLabel).addComponent(strategyCombo,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                        GroupLayout.PREFERRED_SIZE)));
+
+
+        settingsTab.addTab("Auto Prover", autoProverPanel);
+
+
+
 
         okButton.setText("Ok");
         okButton.addActionListener(new ActionListener() {
@@ -123,17 +104,25 @@ public class SettingsDialog  extends javax.swing.JDialog {
                 okbuttonClicked(actionEvent);
             }
         });
-        c.gridy = 1;
-        c.gridx = 0;
-        c.anchor = GridBagConstraints.LINE_START;
-        c.fill = GridBagConstraints.NONE;
-        settingsPanel.add(okButton, c);
 
+        JSeparator sep = new JSeparator();
 
-        GridBagLayout layout = new GridBagLayout();
-        getContentPane().setLayout(new BorderLayout());
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor =GridBagConstraints.LINE_START;
+        groupLayout = new javax.swing.GroupLayout(settingsPanel);
+        settingsPanel.setLayout(groupLayout);
+        groupLayout.setAutoCreateContainerGaps(false);
+        groupLayout.setHorizontalGroup(groupLayout.createParallelGroup()
+                .addComponent(settingsTab).addComponent(sep)
+                .addGroup(groupLayout.createSequentialGroup().addContainerGap().addComponent(okButton)));
+        groupLayout.setVerticalGroup(
+                groupLayout.createSequentialGroup()
+                        .addComponent(settingsTab)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                     GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(sep,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                                GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(okButton)
+                        .addContainerGap());
         getContentPane().add(settingsPanel, BorderLayout.CENTER);
 
         pack();
