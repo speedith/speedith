@@ -49,17 +49,16 @@ object SimpleTacticals {
   }
 
   def copyTopologicalInformation(state : Proof) = {
-    THEN(
-      THEN(
-        REPEAT(ORELSE(trivialTautology(0,_), removeShadedZone(0,_))),
-        REPEAT(ORELSE(trivialTautology(0,_), copyContour(0,_)))),
-      REPEAT(ORELSE(trivialTautology(0,_), idempotency(0,_))))(state)
+      REPEAT(ORELSE(trivialTautology(0,_),
+        ORELSE(idempotency(0,_),
+          ORELSE(removeShadedZone(0,_),
+            copyContour(0,_)))))(state)
   }
 
   def copyShadings(state:Proof) = {
     REPEAT(ORELSE(trivialTautology(0,_),
-      THEN(
-        ORELSE(copyShading(0,_), introduceShadedZone(0,sd => collectDiagramsWithMissingZonesThatCouldBeCopied(0,_).contains(sd), _)),
-      TRY(idempotency(0,_)))))(state)
+      ORELSE(idempotency(0,_),
+        ORELSE(copyShading(0,_),
+          introduceShadedZone(0,sd => collectDiagramsWithMissingZonesThatCouldBeCopied(0,_).contains(sd), _)))))(state)
   }
 }
