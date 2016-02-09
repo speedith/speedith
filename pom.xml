@@ -47,9 +47,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git@github.com:urbas/speedith.git</connection>
-    <developerConnection>scm:git:git@github.com:urbas/speedith.git</developerConnection>
-    <url>https://github.com/urbas/speedith</url>
+    <connection>scm:git:git@github.com:speedith/speedith.git</connection>
+    <developerConnection>scm:git:git@github.com:speedith/speedith.git</developerConnection>
+    <url>https://github.com/speedith/speedith</url>
   </scm>
 
   <build>

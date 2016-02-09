@@ -26,40 +26,45 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.Locale;
 import speedith.core.i18n.Translations;
+import speedith.core.lang.DiagramType;
 import speedith.core.lang.SpiderDiagram;
-import speedith.core.reasoning.Goals;
-import speedith.core.reasoning.InferenceRule;
-import speedith.core.reasoning.RuleApplicationException;
-import speedith.core.reasoning.RuleApplicationInstruction;
-import speedith.core.reasoning.RuleApplicationResult;
+import speedith.core.reasoning.*;
+import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
-import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
+import speedith.core.reasoning.rules.instructions.SelectOperatorAndSubDiagramInstruction;
 import speedith.core.reasoning.rules.transformers.ConjunctionEliminationTransformer;
+
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class ConjunctionElimination extends SimpleInferenceRule<SubDiagramIndexArg> {
+public class ConjunctionElimination extends SimpleInferenceRule<MultipleRuleArgs> {
 
     /**
      * The name of this inference rule.
      */
     public static final String InferenceRuleName = "conjunction_elimination";
 
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
+
     @Override
     public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
-        SubDiagramIndexArg subDiagramIndexArg = getTypedRuleArgs(args);
+        MultipleRuleArgs mult = getTypedRuleArgs(args);
+        SubDiagramIndexArg operatorDiagram = (SubDiagramIndexArg) mult.get(0);
+        SubDiagramIndexArg targetChild = (SubDiagramIndexArg) mult.get(1);
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
-        newSubgoals[subDiagramIndexArg.getSubgoalIndex()] = getSubgoal(subDiagramIndexArg, goals).transform(new ConjunctionEliminationTransformer(subDiagramIndexArg));
+        newSubgoals[operatorDiagram.getSubgoalIndex()] = getSubgoal(operatorDiagram, goals).transform(new ConjunctionEliminationTransformer(operatorDiagram.getSubDiagramIndex(), targetChild));
         return createRuleApplicationResult(newSubgoals);
     }
     
     @Override
-    public InferenceRule<SubDiagramIndexArg> getInferenceRule() {
+    public InferenceRule<MultipleRuleArgs> getInferenceRule() {
         return this;
     }
     
@@ -67,7 +72,12 @@ public class ConjunctionElimination extends SimpleInferenceRule<SubDiagramIndexA
     public String getInferenceRuleName() {
         return InferenceRuleName;
     }
-    
+
+    @Override
+    public Set<DiagramType> getApplicableTypes() {
+        return applicableTypes;
+    }
+
     @Override
     public String getDescription(Locale locale) {
         return Translations.i18n(locale, "CONJUNCTION_ELIMINATION_DESCRIPTION");
@@ -84,12 +94,12 @@ public class ConjunctionElimination extends SimpleInferenceRule<SubDiagramIndexA
     }
     
     @Override
-    public Class<SubDiagramIndexArg> getArgumentType() {
-        return SubDiagramIndexArg.class;
+    public Class<MultipleRuleArgs> getArgumentType() {
+        return MultipleRuleArgs.class;
     }
     
     @Override
-    public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
-        return new SelectSingleOperatorInstruction();
+    public RuleApplicationInstruction<MultipleRuleArgs> getInstructions() {
+        return new SelectOperatorAndSubDiagramInstruction();
     }
 }

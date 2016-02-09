@@ -26,16 +26,23 @@
  */
 package speedith.core.reasoning.rules.instructions;
 
-import java.util.*;
 import speedith.core.lang.Region;
 import speedith.core.lang.Zone;
 import speedith.core.reasoning.RuleApplicationInstruction;
-import speedith.core.reasoning.args.*;
+import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.SpiderRegionArg;
+import speedith.core.reasoning.args.SpiderZoneArg;
+import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.args.selection.SelectSingleSpiderStep;
 import speedith.core.reasoning.args.selection.SelectZonesStep;
 import speedith.core.reasoning.args.selection.SelectionSequence;
 import speedith.core.reasoning.args.selection.SelectionStep;
 import speedith.core.reasoning.rules.AddFeet;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.TreeSet;
 
 /**
  * Instructions on how to get arguments for the {@link AddFeet add feet}

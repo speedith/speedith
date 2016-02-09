@@ -29,6 +29,7 @@ package speedith.core.lang.reader;
 
 import org.antlr.runtime.BaseRecognizer;
 import org.antlr.runtime.RecognitionException;
+
 import static speedith.core.i18n.Translations.i18n;
 
 /**

@@ -26,23 +26,54 @@
  */
 package speedith.core.reasoning.rules;
 
+import speedith.core.lang.DiagramType;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.*;
+import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.ZoneArg;
+import speedith.core.reasoning.rules.transformers.IntroShadedZoneTransformer;
+
+import java.util.EnumSet;
 import java.util.Locale;
-import speedith.core.lang.IdTransformer;
-import speedith.core.lang.Transformer;
-import speedith.core.reasoning.ApplyStyle;
-import speedith.core.reasoning.RuleApplicationInstruction;
-import speedith.core.reasoning.args.SubDiagramIndexArg;
+import java.util.Set;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class IntroShadedZone extends UnaryForwardRule {
+public class IntroShadedZone extends SimpleInferenceRule<ZoneArg>
+        implements BasicInferenceRule<ZoneArg>, ForwardRule<ZoneArg> {
 
     public static final String InferenceRuleName = "Introduce Shaded Zone";
 
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram);
+
     @Override
-    protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
-        return new IdTransformer();
+    public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
+        return apply(args, goals);
+    }
+
+    @Override
+    public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
+        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
+        ZoneArg subgoal = (ZoneArg) args;
+        SpiderDiagram targetSubgoal = getSubgoal(subgoal, goals);
+        newSubgoals[subgoal.getSubgoalIndex()] = targetSubgoal.transform(new IntroShadedZoneTransformer(subgoal));
+        return createRuleApplicationResult(newSubgoals);
+    }
+
+    @Override
+    public InferenceRule<ZoneArg> getInferenceRule() {
+        return this;
+    }
+
+    @Override
+    public String getCategory(Locale locale) {
+        return null;
+    }
+
+    @Override
+    public Class<ZoneArg> getArgumentType() {
+        return ZoneArg.class;
     }
 
     @Override
@@ -52,7 +83,7 @@ public class IntroShadedZone extends UnaryForwardRule {
 
     @Override
     public String getDescription(Locale locale) {
-        return "";
+        return "Introduces a missing zone as a new shaded zone.";
     }
 
     @Override
@@ -61,7 +92,12 @@ public class IntroShadedZone extends UnaryForwardRule {
     }
 
     @Override
-    public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
+    public RuleApplicationInstruction<ZoneArg> getInstructions() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Set<DiagramType> getApplicableTypes() {
+        return applicableTypes;
     }
 }

@@ -26,6 +26,7 @@
  */
 package speedith.core.reasoning.rules;
 
+import speedith.core.lang.DiagramType;
 import speedith.core.lang.Transformer;
 import speedith.core.reasoning.ApplyStyle;
 import speedith.core.reasoning.RuleApplicationInstruction;
@@ -33,7 +34,9 @@ import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleSubDiagramInstruction;
 import speedith.core.reasoning.rules.transformers.DoubleNegationIntroductionTransformer;
 
+import java.util.EnumSet;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
@@ -41,6 +44,8 @@ import java.util.Locale;
 public class DoubleNegationIntroduction extends UnaryForwardRule {
 
     public static final String InferenceRuleName = "double_negation_introduction";
+
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
 
     @Override
     public String getInferenceRuleName() {
@@ -66,4 +71,9 @@ public class DoubleNegationIntroduction extends UnaryForwardRule {
     protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
         return new DoubleNegationIntroductionTransformer(arg.getSubDiagramIndex());
     }
+    @Override
+    public Set<DiagramType> getApplicableTypes() {
+        return applicableTypes;
+    }
+
 }

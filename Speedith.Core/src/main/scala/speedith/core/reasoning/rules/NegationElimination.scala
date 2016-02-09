@@ -21,6 +21,8 @@ class NegationElimination extends UnaryForwardRule {
 
   def getPrettyName(locale: Locale): String = "Negation elimination"
 
+  def getApplicableTypes :  java.util.Set[DiagramType] = Set(DiagramType.SpiderDiagram)
+
   override def getCategory(locale: Locale): String = Translations.i18n(locale, "INF_RULE_CATEGORY_HETEROGENEOUS")
 
   override def getArgumentType: Class[SubDiagramIndexArg] = classOf[SubDiagramIndexArg]

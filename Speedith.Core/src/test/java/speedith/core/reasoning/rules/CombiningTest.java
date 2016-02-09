@@ -16,9 +16,9 @@ import static speedith.core.lang.SpiderDiagrams.createCompoundSD;
 import static speedith.core.lang.SpiderDiagrams.createPrimarySD;
 import static speedith.core.lang.Zones.getZonesInsideAllContours;
 import static speedith.core.lang.test.RegionsABC.*;
+import static speedith.core.lang.util.HabitatBuilder.emptyHabitat;
 import static speedith.core.lang.util.RegionBuilder.emptyRegion;
 import static speedith.core.reasoning.Goals.createGoalsFrom;
-import static speedith.core.lang.util.HabitatBuilder.emptyHabitat;
 import static speedith.core.reasoning.util.unitary.TestSpiderDiagrams.*;
 
 public class CombiningTest {

@@ -26,15 +26,11 @@
  */
 package speedith.core.reasoning;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import speedith.core.lang.SpiderDiagram;
 
-import static speedith.core.i18n.Translations.*;
+import java.util.*;
+
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * This class contains a list of spider diagrams.

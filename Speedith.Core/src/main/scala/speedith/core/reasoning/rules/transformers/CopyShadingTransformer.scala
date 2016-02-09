@@ -3,9 +3,10 @@ package speedith.core.reasoning.rules.transformers
 import speedith.core.lang._
 import speedith.core.reasoning.args.ZoneArg
 import speedith.core.reasoning.rules.transformers.util.InferenceTargetChecks._
+import speedith.core.reasoning.rules.transformers.util.InferenceTargetExtraction
 import speedith.core.reasoning.rules.transformers.util.InferenceTargetExtraction._
 import speedith.core.reasoning.util.unitary.ShadingTransfer
-import speedith.core.reasoning.rules.transformers.util.InferenceTargetExtraction
+
 import scala.collection.JavaConversions._
 
 case class CopyShadingTransformer(compoundDiagramIndex: Int,
@@ -33,7 +34,7 @@ case class CopyShadingTransformer(compoundDiagramIndex: Int,
     }
     catch {
       case e: Exception => {
-        throw new TransformationException("Could not copy the spider. " + e.getMessage, e)
+        throw new TransformationException("Could not copy the shading. " + e.getMessage, e)
       }
     }
   }

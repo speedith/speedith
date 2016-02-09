@@ -28,11 +28,23 @@ package speedith.ui;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JPanel;
+import java.util.prefs.Preferences;
+import javax.swing.*;
+
+import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
+import speedith.core.reasoning.automatic.*;
+import speedith.core.reasoning.automatic.strategies.NoStrategy;
+import speedith.core.reasoning.automatic.strategies.Strategies;
+import speedith.core.reasoning.rules.util.AutomaticUtils;
+import speedith.core.reasoning.rules.util.ReasoningUtils;
+
 import static speedith.i18n.Translations.i18n;
 
 /**
@@ -41,10 +53,18 @@ import static speedith.i18n.Translations.i18n;
  * 
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class ProofPanel extends javax.swing.JPanel implements Proof {
+public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticProof {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private ProofTrace proof;
+
+    private AutomaticProver prover;
+
+    private List<SubgoalsPanel> subgoals;
+
+    private SpiderDiagram selected;
+
+    private int selectedNumber;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
@@ -64,9 +84,11 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
      * applicable.</p>
      */
     public ProofPanel(Goals initialGoals) {
+        subgoals = new ArrayList<>();
         initComponents();
-
         resetProof(initialGoals, false);
+        initialiseProver();
+
     }
     //</editor-fold>
 
@@ -116,6 +138,15 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
     public void newProof(Goals initialGoals) {
         resetProof(initialGoals, true);
     }
+
+    public AutomaticProver getProver() {
+        return prover;
+    }
+
+    public void setProver(AutomaticProver prover) {
+        this.prover = prover;
+    }
+
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Proof Interface Implementation">
@@ -179,6 +210,83 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
     public boolean isFinished() {
         return proof.isFinished();
     }
+
+    public SpiderDiagram getSelected() { return selected; }
+
+
+    //</editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="AutomaticProof Interface Implementation">
+
+    @Override
+    public Proof generateProof(Goals initialGoals) throws AutomaticProofException {
+        if (initialGoals == null) {
+            throw  new AutomaticProofException("No subgoal to prove");
+        }
+        Goals normalised = ReasoningUtils.normalize(initialGoals);
+        Proof tempProof = prover.generateProof(normalised);
+        if (!(tempProof == null)) {
+            newProof(normalised);
+            for (RuleApplication appl : tempProof.getRuleApplications()) {
+                try {
+                    applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments());
+                } catch (RuleApplicationException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return proof;
+    }
+
+    @Override
+    public Proof extendProof(Proof proof) throws AutomaticProofException {
+        if (proof == null || proof.getLastGoals() == null) {
+            throw  new AutomaticProofException("No subgoal to prove");
+        }
+        Proof extendedProof = prover.extendProof(proof);
+        if (!(extendedProof==null)) {
+            newProof(extendedProof.getInitialGoals());
+            for (RuleApplication appl : extendedProof.getRuleApplications()) {
+                try {
+                    applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments());
+                } catch (RuleApplicationException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return this.proof;
+    }
+
+    public void reduceToSelected() {
+        ProofTrace newProof;
+        if (selectedNumber > 0) {
+            newProof = new ProofTrace(proof.getGoals().subList(0, selectedNumber), proof.getRuleApplications().subList(0, selectedNumber));
+        } else {
+            newProof = new ProofTrace(proof.getInitialGoals());
+        }
+        newProof(newProof.getInitialGoals());
+        for (RuleApplication appl : newProof.getRuleApplications()) {
+            try {
+                applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments());
+            } catch (RuleApplicationException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void replaceCurrentProof( Proof proof) {
+        if (!(proof==null)) {
+            newProof(proof.getInitialGoals());
+            for (RuleApplication appl : proof.getRuleApplications()) {
+                try {
+                    applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments());
+                } catch (RuleApplicationException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="UI Related Methods">
@@ -200,6 +308,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
         SubgoalsPanel sgp = new SubgoalsPanel(initialGoals, getSubgoalsTitle(0), (String) null);
         sgp.setTitleBackground(Color.BLUE);
         pnlGoals.add(sgp, gbc);
+        registerMouseSelectionListener(initialGoals, sgp);
     }
 
     private <TRuleArg extends RuleArg> void addGoals(int stepIndex, Goals goals, InferenceRule<? super TRuleArg> rule, TRuleArg args) {
@@ -208,10 +317,59 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
         gbc.gridx = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        SubgoalsPanel sgp = new SubgoalsPanel(goals, getSubgoalsTitle(stepIndex), getStepDescription(rule, args));
+        final SubgoalsPanel sgp = new SubgoalsPanel(goals, getSubgoalsTitle(stepIndex), getStepDescription(rule, args));
         pnlGoals.add(sgp, gbc);
+        registerMouseSelectionListener(goals, sgp);
         validate();
     }
+
+    private void registerMouseSelectionListener(final Goals goals, final SubgoalsPanel sgp) {
+        subgoals.add(sgp);
+        if (!goals.isEmpty()) {
+            sgp.addMouseListener(new MouseListener() {
+                final int stepNumber = subgoals.size()-1;
+                private Goals goal = goals;
+
+                @Override
+                public void mouseClicked(MouseEvent mouseEvent) {
+                    if (mouseEvent.getComponent() == sgp) {
+                        for (SubgoalsPanel s : subgoals) {
+
+                            s.setBorder(BorderFactory.createEmptyBorder());
+                            if (s.equals(subgoals.get(0))) {
+                                s.setTitleBackground(Color.BLUE);
+                            } else {
+                                s.setTitleBackground(Color.GRAY);
+                            }
+                        }
+                        sgp.setTitleBackground(Color.RED);
+                        sgp.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                        selected = goal.getGoalAt(0);
+                        selectedNumber = stepNumber;
+                        pnlGoals.repaint();
+                    }
+                }
+
+
+                @Override
+                public void mousePressed(MouseEvent mouseEvent) {
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent mouseEvent) {
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent mouseEvent) {
+                }
+
+                @Override
+                public void mouseExited(MouseEvent mouseEvent) {
+                }
+            });
+        }
+    }
+
 
     private String getSubgoalsTitle(int stepIndex) {
         if (stepIndex < 1) {
@@ -240,6 +398,8 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
         gbc.weighty = 1.0;
         SubgoalsPanel sgp = new SubgoalsPanel(i18n("PROOF_PANEL_NO_GOALS"));
         pnlGoals.add(sgp, gbc);
+        subgoals = new ArrayList<>();
+        selected = null;
     }
 
     private <TRuleArg extends RuleArg> void addProofFinished(InferenceRule<? super TRuleArg> rule, TRuleArg args) {
@@ -273,6 +433,27 @@ public class ProofPanel extends javax.swing.JPanel implements Proof {
 
     private void cleanProofPanel() {
         pnlGoals.removeAll();
+        subgoals.clear();
+        selected = null;
     }
     // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Private Initialisation Methods">
+    private void initialiseProver() {
+        Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
+        String proverName = prefs.get(AutomaticProvers.prover_preference, null);
+        if (proverName == null) {
+            prover = new BreadthFirstProver();
+        } else {
+            prover = AutomaticProvers.getAutomaticProver(proverName);
+        }
+        String strategyName = prefs.get(Strategies.strategy_preference, null);
+        if (strategyName == null) {
+            prover.setStrategy(new NoStrategy());
+        } else {
+            prover.setStrategy(Strategies.getStrategy(strategyName));
+        }
+    }
+    // </editor-fold>
+
 }

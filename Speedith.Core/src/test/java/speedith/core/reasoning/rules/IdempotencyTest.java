@@ -26,12 +26,7 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.io.File;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.SpiderDiagrams;
@@ -40,6 +35,7 @@ import speedith.core.lang.reader.SpiderDiagramsReaderTest;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
+
 import static org.junit.Assert.*;
 
 /**

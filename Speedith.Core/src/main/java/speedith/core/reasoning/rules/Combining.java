@@ -36,7 +36,9 @@ import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
 import speedith.core.reasoning.rules.util.CombiningUtils;
 
+import java.util.EnumSet;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
@@ -44,6 +46,9 @@ import java.util.Locale;
 public class Combining extends UnaryForwardRule {
 
   public static final String InferenceRuleName = "Combining";
+
+  private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
+
 
   @Override
   public String getInferenceRuleName() {
@@ -88,6 +93,11 @@ public class Combining extends UnaryForwardRule {
     protected SpiderDiagram unsupported() {
       throw new TransformationException("Could not apply the 'combining' rule. This rule may be applied only on a conjunction of two unitary diagrams.");
     }
+  }
+
+  @Override
+  public Set<DiagramType> getApplicableTypes() {
+    return applicableTypes;
   }
 
   public static SpiderDiagram apply(PrimarySpiderDiagram leftDiagram, PrimarySpiderDiagram rightDiagram) {

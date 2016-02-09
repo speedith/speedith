@@ -1,9 +1,11 @@
 package speedith.core.lang
 
-import scala.collection.JavaConversions.{setAsJavaSet, asJavaCollection, iterableAsScalaIterable, asScalaSet}
-import propity.util.Sets
-import java.util.Collections
 import java.lang.StringBuilder
+import java.util.Collections
+
+import propity.util.Sets
+
+import scala.collection.JavaConversions.{asJavaCollection, asScalaSet, iterableAsScalaIterable, setAsJavaSet}
 
 case class Region(zones: Set[Zone]) extends Comparable[Region] {
 

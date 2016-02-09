@@ -1,7 +1,9 @@
 package speedith.core.reasoning.rules.transformers;
 
 import org.junit.Test;
-import speedith.core.lang.*;
+import speedith.core.lang.Operator;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.lang.TransformationException;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;

@@ -26,11 +26,13 @@
  */
 package speedith.core.lang.export;
 
+import speedith.core.lang.*;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
-import static speedith.core.i18n.Translations.*;
-import speedith.core.lang.*;
+
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * The provider for exporting spider diagrams to Openproof's FOL formulae.

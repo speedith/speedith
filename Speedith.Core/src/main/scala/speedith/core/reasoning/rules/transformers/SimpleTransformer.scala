@@ -1,8 +1,8 @@
 package speedith.core.reasoning.rules.transformers
 
 import speedith.core.lang._
-import scala.collection.JavaConversions
-import scala.collection.mutable
+
+import scala.collection.{JavaConversions, mutable}
 
 abstract class SimpleTransformer extends Transformer {
 

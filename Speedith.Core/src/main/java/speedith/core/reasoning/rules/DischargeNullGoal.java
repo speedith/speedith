@@ -27,14 +27,19 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.Locale;
 import speedith.core.i18n.Translations;
-import static speedith.core.i18n.Translations.*;
+import speedith.core.lang.DiagramType;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
+
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.Set;
+
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * This inference rule removes a {@link NullSpiderDiagram null-subgoal} from the
@@ -49,6 +54,8 @@ public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> impl
      * method.</p>
      */
     public static final String InferenceRuleName = "discharge_goal";
+
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
 
     @Override
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
@@ -107,7 +114,14 @@ public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> impl
     }
 
     @Override
+    public Set<DiagramType> getApplicableTypes() {
+        return applicableTypes;
+    }
+
+    @Override
     public RuleApplicationInstruction<SubgoalIndexArg> getInstructions() {
         return null;
     }
+
+
 }

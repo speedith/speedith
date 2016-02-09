@@ -26,10 +26,11 @@
  */
 package speedith.core.lang.export;
 
+import speedith.core.lang.SpiderDiagram;
+
 import java.util.Locale;
 import java.util.Map;
 import java.util.SortedSet;
-import speedith.core.lang.SpiderDiagram;
 
 /**
  * This is the base of the classes that provide actual exporters for the

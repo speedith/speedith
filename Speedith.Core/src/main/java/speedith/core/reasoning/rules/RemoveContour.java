@@ -27,6 +27,7 @@
 package speedith.core.reasoning.rules;
 
 import speedith.core.i18n.Translations;
+import speedith.core.lang.DiagramType;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.ContourArg;
@@ -36,7 +37,9 @@ import speedith.core.reasoning.rules.instructions.SelectContoursInstruction;
 import speedith.core.reasoning.rules.transformers.RemoveContoursTransformer;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
@@ -48,6 +51,8 @@ public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> {
      * The name of this inference rule.
      */
     public static final String InferenceRuleName = "remove_contour";
+
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.SpiderDiagram,DiagramType.EulerDiagram);
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Inference Rule Implementation">
@@ -95,4 +100,9 @@ public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> {
     }
     //</editor-fold>
 
+
+    @Override
+    public Set<DiagramType> getApplicableTypes() {
+        return applicableTypes;
+    }
 }

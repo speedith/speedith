@@ -1,9 +1,13 @@
 package speedith.core.reasoning.util.unitary;
 
 import org.junit.Test;
+import speedith.core.lang.EulerDiagrams;
 import speedith.core.lang.PrimarySpiderDiagram;
 import speedith.core.lang.Region;
 import speedith.core.lang.Zone;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
@@ -39,7 +43,7 @@ public class CorrespondingRegionsTest {
   @Test(expected = IllegalArgumentException.class)
   public void correspondingRegion_should_throw_an_exception_if_any_of_the_zones_has_a_contour_not_in_source_diagram() {
     new CorrespondingRegions(VENN_3_ABC_DIAGRAM, VENN_3_ABD_DIAGRAM).correspondingRegion(new Region(
-      Zone.fromInContours("A", "B", "C", "D")
+            Zone.fromInContours("A", "B", "C", "D")
     ));
   }
 
@@ -53,20 +57,38 @@ public class CorrespondingRegionsTest {
   @Test
   public void correspondingRegion_of_a_single_venn3_zone_should_return_a_combinatorial_set_of_zones() {
     Region correspondingRegion = new CorrespondingRegions(VENN_3_ABC_DIAGRAM, VENN_2_AB_DIAGRAM).correspondingRegion(new Region(
-      Zone.fromInContours("A", "C").withOutContours("B"),
-      Zone.fromInContours("B", "C").withOutContours("A"),
-      Zone.fromInContours("A").withOutContours("B", "C"),
-      Zone.fromInContours("B").withOutContours("A", "C")
+            Zone.fromInContours("A", "C").withOutContours("B"),
+            Zone.fromInContours("B", "C").withOutContours("A"),
+            Zone.fromInContours("A").withOutContours("B", "C"),
+            Zone.fromInContours("B").withOutContours("A", "C")
     ));
 
     Region expectedRegion = new Region(
-      Zone.fromInContours("A").withOutContours("B"),
-      Zone.fromInContours("B").withOutContours("A")
+            Zone.fromInContours("A").withOutContours("B"),
+            Zone.fromInContours("B").withOutContours("A")
     );
 
     assertThat(
-      correspondingRegion,
-      equalTo(expectedRegion)
+            correspondingRegion,
+            equalTo(expectedRegion)
     );
   }
+  @Test
+  public void correspondingRegion_of_shaded_venn3_zone_should_return_empty_set() {
+    String sourceString = " PrimarySD {spiders = [], habitats = [], sh_zones = [([\"C\"], [\"A\", \"B\"])], present_zones = [([\"C\"], [\"A\", \"B\"])]}";
+    String targetString = "PrimarySD {spiders = [], habitats = [], sh_zones = [], present_zones = [ ([\"C\"], [])]}}";
+    Set<Zone> source_sh_zones = new HashSet<Zone>();
+    source_sh_zones.add(Zone.fromInContours("C").withOutContours("A","B"));
+    Set<Zone> source_present_zones= new HashSet<>();
+    source_present_zones.add(Zone.fromInContours("C").withOutContours("A", "B"));
+    PrimarySpiderDiagram sourceDiagram = EulerDiagrams.createPrimaryEulerDiagram(source_sh_zones, source_present_zones);
+    Set<Zone> target_present_zones = new HashSet<>();
+    target_present_zones.add(Zone.fromInContours("C"));
+    PrimarySpiderDiagram targetDiagram = EulerDiagrams.createPrimaryEulerDiagram(new HashSet<Zone>(), target_present_zones);
+
+    Region createdRegion = new CorrespondingRegions(sourceDiagram, targetDiagram).correspondingRegion(new Region(Zone.fromInContours("C").withOutContours("A","B")));
+    Region expectedRegion = new Region();
+    assertThat(createdRegion, equalTo(expectedRegion));
+  }
+
 }

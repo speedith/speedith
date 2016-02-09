@@ -26,12 +26,13 @@
  */
 package speedith.core.reasoning.args.selection;
 
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.args.RuleArg;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import speedith.core.lang.SpiderDiagram;
-import speedith.core.reasoning.args.RuleArg;
 
 /**
  *

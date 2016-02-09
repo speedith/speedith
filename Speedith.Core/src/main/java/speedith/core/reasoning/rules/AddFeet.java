@@ -26,20 +26,19 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.ArrayList;
-import java.util.Locale;
 import speedith.core.i18n.Translations;
-import static speedith.core.i18n.Translations.*;
-import speedith.core.lang.CompoundSpiderDiagram;
-import speedith.core.lang.IdTransformer;
-import speedith.core.lang.PrimarySpiderDiagram;
-import speedith.core.lang.Region;
-import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.TransformationException;
+import speedith.core.lang.*;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.rules.instructions.AddFeetRuleInstruction;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.Set;
+
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * The implementation of the 'add feet' inference rule. <p>The argument to this
@@ -57,6 +56,8 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
      * {@link AddFeet#getInferenceRuleName()} method.</p>
      */
     public static final String InferenceRuleName = "add_feet";
+
+    private static final Set<DiagramType> applicableTo = EnumSet.of(DiagramType.SpiderDiagram);
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
@@ -107,6 +108,11 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
     @Override
     public RuleApplicationInstruction<SpiderRegionArg> getInstructions() {
         return AddFeetRuleInstruction.getInstance();
+    }
+
+    @Override
+    public Set<DiagramType> getApplicableTypes() {
+        return applicableTo;
     }
     // </editor-fold>
     

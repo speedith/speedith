@@ -26,15 +26,17 @@
  */
 package speedith.core.lang.export;
 
+import speedith.core.lang.SpiderDiagram;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Set;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import speedith.core.lang.SpiderDiagram;
+import java.util.Set;
+
 import static speedith.core.i18n.Translations.i18n;
 
 /**

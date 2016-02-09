@@ -32,13 +32,23 @@
  */
 package speedith.ui;
 
+import scala.Function1;
+import scala.collection.Seq;
 import speedith.core.lang.*;
+import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
+import speedith.core.reasoning.automatic.AutomaticProofException;
 import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
+import speedith.core.reasoning.rules.util.ReasoningUtils;
+import speedith.core.reasoning.tactical.TacticApplicationException;
+import speedith.core.reasoning.tactical.euler.BasicTacticals;
+import speedith.core.reasoning.tactical.euler.SimpleTacticals;
+import speedith.core.reasoning.tactical.euler.SingleRuleTacticals;
+import speedith.core.reasoning.tactical.euler.Tactics;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
 import spiderdrawer.ui.MainForm;
@@ -47,13 +57,19 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 
 import static speedith.i18n.Translations.i18n;
 
@@ -72,9 +88,14 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     "SpeedithIconVennDiagram-128.png"
   };
 
+  private DiagramType activeDiagram;
+
   private JMenuItem goalSpiderDrawerInputMenuItem;
   private javax.swing.JMenu drawMenu;
+  private javax.swing.JMenuItem openMenuItem;
+  private javax.swing.JMenuItem saveMenuItem;
   private javax.swing.JMenuItem exitMenuItem;
+  private javax.swing.JMenuItem settingsMenuItem;
   private javax.swing.JMenu fileMenu;
   private javax.swing.JMenuItem useSdExample1MenuItem;
   private javax.swing.JMenuItem useSdExample2MenuItem;
@@ -85,13 +106,20 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenuItem goalTextInputMenuItem;
   private javax.swing.JPanel pnlRulesSidePane;
   private speedith.ui.ProofPanel proofPanel1;
-  private javax.swing.JMenu rulesMenu;
+  private javax.swing.JMenu proofMenu;
+  private javax.swing.JMenuItem cropProof;
   private javax.swing.JScrollPane scrlPnlAppliedRules;
+  private javax.swing.JMenu reasoningMenu;
+  private javax.swing.JMenuItem proveAny;
+  private javax.swing.JMenuItem proveFromHere;
+  private javax.swing.JFileChooser fileChooser;
+  private javax.swing.JMenu tacticsMenu;
 
   /**
    * Creates new form SpeedithMainForm
    */
   public SpeedithMainForm() {
+    readDiagramType();
     initComponents();
     try {
       ArrayList<Image> icons = new ArrayList<Image>();
@@ -103,6 +131,17 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       setIconImages(icons);
     } catch (IOException ex) {
       Logger.getLogger(SpeedithMainForm.class.getName()).log(Level.WARNING, "Speedith's icons could not have been loaded.", ex);
+    }
+  }
+
+  private void readDiagramType() {
+    Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
+    String selected = prefs.get(InferenceRules.diagram_type_preference, null);
+    if (selected != null) {
+      activeDiagram = DiagramType.valueOf(selected);
+    } else {
+      // startup with spider diagrams as the default.
+      activeDiagram = DiagramType.SpiderDiagram;
     }
   }
 
@@ -118,14 +157,24 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     lstAppliedRules = new javax.swing.JList();
     menuBar = new javax.swing.JMenuBar();
     fileMenu = new javax.swing.JMenu();
+    settingsMenuItem = new javax.swing.JMenuItem();
     exitMenuItem = new javax.swing.JMenuItem();
+    openMenuItem = new javax.swing.JMenuItem();
+    saveMenuItem = new javax.swing.JMenuItem();
     drawMenu = new javax.swing.JMenu();
     goalSpiderDrawerInputMenuItem = new javax.swing.JMenuItem();
     goalTextInputMenuItem = new javax.swing.JMenuItem();
     useSdExample1MenuItem = new javax.swing.JMenuItem();
     useSdExample2MenuItem = new javax.swing.JMenuItem();
     useSdExample3MenuItem = new javax.swing.JMenuItem();
-    rulesMenu = new javax.swing.JMenu();
+    proofMenu = new javax.swing.JMenu();
+    cropProof = new javax.swing.JMenuItem();
+    reasoningMenu = new javax.swing.JMenu();
+    proveAny = new javax.swing.JMenuItem();
+    proveFromHere = new javax.swing.JMenuItem();
+    tacticsMenu = new javax.swing.JMenu();
+    //vennify = new javax.swing.JMenuItem();
+    //devennify = new javax.swing.JMenuItem();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("Speedith");
@@ -171,6 +220,39 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     fileMenu.setMnemonic('F');
     fileMenu.setText("File");
+
+    openMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+    openMenuItem.setMnemonic('O');
+    openMenuItem.setText("Open Goal");
+    openMenuItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onOpen(evt);
+      }
+    });
+    fileMenu.add(openMenuItem);
+
+    saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+    saveMenuItem.setMnemonic('S');
+    saveMenuItem.setText("Save selected Subgoal");
+    saveMenuItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onSave(evt);
+      }
+    });
+    fileMenu.add(saveMenuItem);
+
+    settingsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
+    settingsMenuItem.setMnemonic('P');
+    settingsMenuItem.setText("Preferences");
+    settingsMenuItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onSettings(evt);
+      }
+    });
+    fileMenu.add(settingsMenuItem);
 
     exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
     exitMenuItem.setMnemonic('x');
@@ -238,25 +320,237 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     menuBar.add(drawMenu);
 
-    rulesMenu.setMnemonic('R');
-    rulesMenu.setText("Rules");
-    menuBar.add(rulesMenu);
+    proofMenu.setMnemonic('P');
+    proofMenu.setText("Proof");
+
+    cropProof.setText("Reduce Proof to selected Subgoal");
+    cropProof.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onCropProof(evt);
+      }
+    });
+    proofMenu.add(cropProof);
+    menuBar.add(proofMenu);
+
+    reasoningMenu.setMnemonic('A');
+    reasoningMenu.setText("Auto");
+
+    proveAny.setText("Prove");
+    proveAny.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onProveAny(evt);
+      }
+    });
+    reasoningMenu.add(proveAny);
+
+    proveFromHere.setText("Prove from the current state");
+    proveFromHere.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onProveFromHere(evt);
+      }
+    });
+    reasoningMenu.add(proveFromHere);
+    menuBar.add(reasoningMenu);
+
+    tacticsMenu.setText("Tactics");
+    JMenu tacticSubmenu = new javax.swing.JMenu();
+    tacticSubmenu.setText("Apply rule tactic");
+    Method[] tactics = SingleRuleTacticals.class.getDeclaredMethods();
+    Arrays.sort(tactics, new Comparator<Method>() {
+      @Override
+      public int compare(Method method, Method t1) {
+        return method.getName().compareTo(t1.getName());
+      }
+    });
+    for (final Method tactic: tactics  ) {
+      JMenuItem tacticButton = new javax.swing.JMenuItem();
+      tacticButton.setText(tactic.getName());
+      tacticButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+          applyTactic(tactic);
+        }
+      });
+      tacticSubmenu.add(tacticButton);
+      tacticsMenu.add(tacticSubmenu);
+
+    }
+
+    Method[] tacticals =    SimpleTacticals.class.getDeclaredMethods();
+    Arrays.sort(tacticals, new Comparator<Method>() {
+      @Override
+      public int compare(Method method, Method t1) {
+        return method.getName().compareTo(t1.getName());
+      }
+    });
+    for (final Method tactical:  tacticals) {
+      JMenuItem tacticalButton = new javax.swing.JMenuItem();
+      tacticalButton.setText(tactical.getName());
+      tacticalButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+          applyTactical(tactical);
+        }
+      });
+      tacticsMenu.add(tacticalButton);
+      menuBar.add(tacticsMenu);
+
+    }
 
     setJMenuBar(menuBar);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
-      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 995, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 995, Short.MAX_VALUE)
     );
     layout.setVerticalGroup(
-      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
     );
+
+
+    fileChooser = new JFileChooser();
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
+
+  private void applyTactic(Method tactic) {
+    if (!proofPanel1.isFinished()) {
+      Proof intermediate = new ProofTrace(proofPanel1);
+      Proof result = null;
+      try {
+        result = (Proof) tactic.invoke(SingleRuleTacticals.class, intermediate);
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        if (e.getCause() instanceof TacticApplicationException) {
+          TacticApplicationException tacticE = (TacticApplicationException) e.getCause();
+          JOptionPane.showMessageDialog(this, tacticE.getMessage());
+        }
+      }
+      proofPanel1.replaceCurrentProof(result);
+    } else {
+      JOptionPane.showMessageDialog(this, "No subgoals are open");
+    }
+  }
+
+
+
+
+  private void applyTactical(Method tactical) {
+    if (!proofPanel1.isFinished()) {
+      Proof intermediate = new ProofTrace(proofPanel1);
+      Seq<Proof> result = null;
+      try {
+        result = (Seq<Proof>) tactical.invoke(SimpleTacticals.class, intermediate);
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        if (e.getCause() instanceof TacticApplicationException) {
+          TacticApplicationException tacticE = (TacticApplicationException) e.getCause();
+          JOptionPane.showMessageDialog(this, tacticE.getMessage());
+        }
+      }
+      if (result !=null && result.nonEmpty()) {
+        proofPanel1.replaceCurrentProof(result.head());
+      } else {
+        System.out.println(result);
+        JOptionPane.showMessageDialog(this, "Tactic could not be applied");
+      }
+    } else {
+      JOptionPane.showMessageDialog(this, "No subgoals are open");
+    }
+  }
+
+  private void onCropProof(ActionEvent evt) {
+    if (proofPanel1.getSelected() != null) {
+      proofPanel1.reduceToSelected();
+    }
+  }
+
+
+  private void onOpen(ActionEvent evt) {
+    int returnVal = fileChooser.showOpenDialog(this);
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      File file = fileChooser.getSelectedFile();
+      try {
+        SpiderDiagram input = SpiderDiagramsReader.readSpiderDiagram(file);
+        proofPanel1.newProof(Goals.createGoalsFrom(ReasoningUtils.normalize(input)));
+      } catch (IOException ioe) {
+        JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
+      } catch (ReadingException re) {
+        JOptionPane.showMessageDialog(this, "An error occurred while reading the contents of the file:\n" + re.getLocalizedMessage());
+      }
+      this.setTitle("Speedith"+": " + file.getName());
+    }
+  }
+
+  private void onSave(ActionEvent evt) {
+    if (proofPanel1.getGoals().isEmpty()) {
+      JOptionPane.showMessageDialog(this, "No subgoal to be saved exists.");
+      return;
+    }
+    if (proofPanel1.getSelected() != null) {
+        SpiderDiagram toSave = proofPanel1.getSelected();
+        int returnVal = fileChooser.showSaveDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+          File file = fileChooser.getSelectedFile();
+          if (file.exists()) {
+            int reallySave = JOptionPane.showConfirmDialog(this, "File " + file.getName() + " exists at given path. Save anyway?", "File already exists", JOptionPane.YES_NO_OPTION);
+            if (reallySave == JOptionPane.NO_OPTION) {
+              return;
+            }
+          }
+          try {
+
+            FileWriter writer = new FileWriter(file);
+            writer.write(toSave.toString());
+            writer.flush();
+            writer.close();
+          } catch (IOException ioe) {
+            JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
+          }
+        }
+
+      } else {
+        JOptionPane.showMessageDialog(this, "No subgoal selected", "No subgoal selected", JOptionPane.ERROR_MESSAGE);
+      }
+
+
+  }
+  private void onSettings(ActionEvent evt) {
+    SettingsDialog settings = new SettingsDialog(this, true);
+    settings.setVisible(true);
+    proofPanel1.setProver(settings.getSelectedProver());
+    proofPanel1.getProver().setStrategy(settings.getSelectedStrategy());
+    if (settings.getSelectedDiagramType() != activeDiagram) {
+      activeDiagram = settings.getSelectedDiagramType();
+      lstAppliedRules.setModel(getRulesList());
+      lstAppliedRules.repaint();
+    }
+  }
+
+  private void onProveAny(ActionEvent evt) {
+    Goals initial =  proofPanel1.getInitialGoals();
+    try {
+       proofPanel1.generateProof(initial);
+    } catch (AutomaticProofException e) {
+      JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
+    }
+  }
+
+  private void onProveFromHere(ActionEvent evt) {
+    try {
+      proofPanel1.extendProof(proofPanel1);
+    } catch (AutomaticProofException e) {
+      JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
+    }
+  }
 
   private void onSpiderDrawerClicked(ActionEvent evt) {
     MainForm spiderDrawer = new MainForm(this, true, false);
@@ -279,14 +573,17 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
   private void onExample1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onExample1
     proofPanel1.newProof(Goals.createGoalsFrom(getExampleA()));
+    setTitle("Speedith" + ": " + "Example 1");
   }//GEN-LAST:event_onExample1
 
   private void onExample2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onExample2
     proofPanel1.newProof(Goals.createGoalsFrom(getExampleB()));
+    setTitle("Speedith"+": "+"Example 2");
   }//GEN-LAST:event_onExample2
 
   private void onExample3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onExample3
     proofPanel1.newProof(Goals.createGoalsFrom(getExampleC()));
+    setTitle("Speedith"+": "+"Example 3");
   }//GEN-LAST:event_onExample3
 
   private void onRuleItemClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onRuleItemClicked
@@ -309,7 +606,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
     dialog.setVisible(true);
     if (!dialog.isCancelled() && dialog.getSpiderDiagram() != null) {
-      proofPanel1.newProof(Goals.createGoalsFrom(dialog.getSpiderDiagram()));
+      proofPanel1.newProof(Goals.createGoalsFrom(ReasoningUtils.normalize(dialog.getSpiderDiagram())));
+      setTitle("Speedith");
     }
   }//GEN-LAST:event_onTextInputClicked
 
@@ -507,7 +805,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }
 
   private ComboBoxModel getRulesComboList() {
-    Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules();
+    Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules(activeDiagram);
     InfRuleListItem[] infRules = new InfRuleListItem[knownInferenceRules.size()];
     int i = 0;
     for (String providerName : knownInferenceRules) {
@@ -518,7 +816,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }
 
   private ListModel<InfRuleListItem> getRulesList() {
-    Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules();
+    Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules(activeDiagram);
     InfRuleListItem[] infRules = new InfRuleListItem[knownInferenceRules.size()];
     int i = 0;
     for (String providerName : knownInferenceRules) {
@@ -605,7 +903,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private void applyRule(InfRuleListItem selectedRule) {
     int subgoalIndex = 0;
     try {
-      InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proofPanel1);
+     boolean test =  InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proofPanel1);
+   //   System.out.println("Cost:"+ proofPanel1.getProver().getStrategy().getCost(proofPanel1)+"\tHeuristic:"+proofPanel1.getProver().getStrategy().getHeuristic(proofPanel1));
     } catch (Exception ex) {
       JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
     }

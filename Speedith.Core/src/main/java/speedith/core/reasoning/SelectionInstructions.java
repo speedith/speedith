@@ -26,8 +26,9 @@
  */
 package speedith.core.reasoning;
 
-import java.util.List;
 import speedith.core.reasoning.args.selection.SelectionStep;
+
+import java.util.List;
 
 /**
  * Instructs the user how to select diagrammatic elements. This is used for example

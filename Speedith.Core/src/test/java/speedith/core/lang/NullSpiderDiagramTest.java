@@ -26,16 +26,12 @@
  */
 package speedith.core.lang;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.WeakHashMap;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import propity.util.Sets;
+
+import java.io.IOException;
+import java.util.HashSet;
+
 import static org.junit.Assert.*;
 
 /**
