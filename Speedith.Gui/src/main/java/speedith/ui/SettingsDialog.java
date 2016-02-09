@@ -108,13 +108,6 @@ public class SettingsDialog  extends javax.swing.JDialog {
                 GroupLayout.PREFERRED_SIZE));
         settingsTab.addTab("Diagram Type", diagramsPanel);
 
-        settingsPanel.setLayout(new GridBagLayout());
-        c.anchor = GridBagConstraints.CENTER;
-        c = new GridBagConstraints();
-        c.gridy = 0;
-        c.gridx = 0;
-        c.fill = GridBagConstraints.BOTH;
-        settingsPanel.add(settingsTab, c);
 
         okButton.setText("Ok");
         okButton.addActionListener(new ActionListener() {
@@ -123,17 +116,12 @@ public class SettingsDialog  extends javax.swing.JDialog {
                 okbuttonClicked(actionEvent);
             }
         });
-        c.gridy = 1;
-        c.gridx = 0;
-        c.anchor = GridBagConstraints.LINE_START;
-        c.fill = GridBagConstraints.NONE;
-        settingsPanel.add(okButton, c);
 
 
-        GridBagLayout layout = new GridBagLayout();
-        getContentPane().setLayout(new BorderLayout());
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor =GridBagConstraints.LINE_START;
+        groupLayout = new javax.swing.GroupLayout(settingsPanel);
+        settingsPanel.setLayout(groupLayout);
+        groupLayout.setHorizontalGroup(groupLayout.createParallelGroup().addComponent(settingsTab).addComponent(okButton));
+        groupLayout.setVerticalGroup(groupLayout.createSequentialGroup().addComponent(settingsTab).addComponent(okButton));
         getContentPane().add(settingsPanel, BorderLayout.CENTER);
 
         pack();
