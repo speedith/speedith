@@ -26,21 +26,19 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.ArrayList;
-import java.util.Locale;
 import speedith.core.i18n.Translations;
-import static speedith.core.i18n.Translations.*;
-import speedith.core.lang.CompoundSpiderDiagram;
-import speedith.core.lang.IdTransformer;
-import speedith.core.lang.NullSpiderDiagram;
-import speedith.core.lang.Operator;
-import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.SpiderDiagrams;
-import speedith.core.lang.TransformationException;
+import speedith.core.lang.*;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.Set;
+
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * The implementation of the idempotency inference rule.
@@ -54,12 +52,15 @@ import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstructio
  */
 public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg>, ForwardRule<SubDiagramIndexArg> {
 
+
     /**
      * The name of this inference rule.
      * <p>This value is returned by the {@link Idempotency#getInferenceRuleName()}
      * method.</p>
      */
     public static final String InferenceRuleName = "idempotency";
+
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
 
     @Override
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
@@ -77,6 +78,11 @@ public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> impleme
     @Override
     public String getInferenceRuleName() {
         return InferenceRuleName;
+    }
+
+    @Override
+    public Set<DiagramType> getApplicableTypes() {
+        return applicableTypes;
     }
 
     @Override

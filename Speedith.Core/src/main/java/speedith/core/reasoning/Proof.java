@@ -26,8 +26,9 @@
  */
 package speedith.core.reasoning;
 
-import java.util.List;
 import speedith.core.reasoning.args.RuleArg;
+
+import java.util.List;
 
 /**
  * This interface outlines how a proof in Speedith looks like.
@@ -148,4 +149,5 @@ public interface Proof {
      * which case no change at all happens to this proof.
      */
     boolean undoStep();
+
 }

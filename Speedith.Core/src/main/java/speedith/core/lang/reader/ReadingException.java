@@ -26,11 +26,12 @@
  */
 package speedith.core.lang.reader;
 
-import org.antlr.runtime.Token;
 import org.antlr.runtime.MissingTokenException;
 import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.Token;
 import org.antlr.runtime.UnwantedTokenException;
 import org.antlr.runtime.tree.CommonTree;
+
 import static speedith.core.i18n.Translations.i18n;
 
 /**

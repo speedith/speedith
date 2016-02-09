@@ -1,6 +1,7 @@
 package speedith.core.reasoning.util.unitary
 
-import speedith.core.lang.{Zone, Zones, PrimarySpiderDiagram}
+import speedith.core.lang.{PrimarySpiderDiagram, Zone, Zones}
+
 import scala.collection.JavaConversions._
 
 class ContourRelations(diagram: PrimarySpiderDiagram) {

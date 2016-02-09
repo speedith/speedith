@@ -26,15 +26,19 @@
  */
 package speedith.core.reasoning.rules;
 
-import java.util.ArrayList;
-import java.util.Locale;
 import speedith.core.i18n.Translations;
-import static speedith.core.i18n.Translations.*;
 import speedith.core.lang.*;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.rules.instructions.SelectFeetOfSpiderInstruction;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.Set;
+
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * The implementation of the 'split spiders' diagrammatic inference rule.
@@ -49,6 +53,8 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
      * method.</p>
      */
     public static final String InferenceRuleName = "split_spiders";
+
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.SpiderDiagram);
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
@@ -95,6 +101,11 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
     @Override
     public RuleApplicationInstruction<SpiderRegionArg> getInstructions() {
         return SelectFeetOfSpiderInstruction.getInstance();
+    }
+
+    @Override
+    public Set<DiagramType> getApplicableTypes() {
+        return applicableTypes;
     }
     // </editor-fold>
 

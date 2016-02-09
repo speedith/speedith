@@ -26,21 +26,18 @@
  */
 package speedith.core.reasoning;
 
-import java.io.File;
+import org.junit.*;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.lang.reader.ReadingException;
+import speedith.core.lang.reader.SpiderDiagramsReader;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import static org.junit.Assert.*;
-import speedith.core.lang.SpiderDiagram;
-import speedith.core.lang.reader.ReadingException;
-import speedith.core.lang.reader.SpiderDiagramsReader;
 
 /**
  *

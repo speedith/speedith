@@ -26,17 +26,11 @@
  */
 package speedith.core.lang;
 
+import org.junit.*;
+
+import java.util.*;
+
 import static org.junit.Assert.*;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.TreeSet;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  *

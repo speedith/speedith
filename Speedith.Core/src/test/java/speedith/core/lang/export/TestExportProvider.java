@@ -26,11 +26,12 @@
  */
 package speedith.core.lang.export;
 
+import speedith.core.lang.SpiderDiagram;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Locale;
 import java.util.Map;
-import speedith.core.lang.SpiderDiagram;
 
 /**
  * A stupid test export format provider.

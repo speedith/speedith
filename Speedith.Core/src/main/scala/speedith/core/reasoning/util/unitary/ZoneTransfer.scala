@@ -1,8 +1,9 @@
 package speedith.core.reasoning.util.unitary
 
-import speedith.core.lang.{Zones, Region, Zone, PrimarySpiderDiagram}
-import scala.collection.JavaConversions._
 import speedith.core.lang.SpiderDiagrams.createPrimarySD
+import speedith.core.lang.{PrimarySpiderDiagram, Region, Zone, Zones}
+
+import scala.collection.JavaConversions._
 
 class ZoneTransfer(sourceDiagram: PrimarySpiderDiagram, destinationDiagram: PrimarySpiderDiagram) {
 

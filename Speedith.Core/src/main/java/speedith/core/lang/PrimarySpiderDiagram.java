@@ -26,10 +26,12 @@
  */
 package speedith.core.lang;
 
+import propity.util.Sets;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
-import propity.util.Sets;
+
 import static propity.util.Sets.equal;
 import static speedith.core.i18n.Translations.i18n;
 

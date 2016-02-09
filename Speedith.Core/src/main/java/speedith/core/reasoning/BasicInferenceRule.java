@@ -26,10 +26,6 @@
  */
 package speedith.core.reasoning;
 
-import java.util.ArrayList;
-import speedith.core.i18n.Translations;
-import speedith.core.lang.CompoundSpiderDiagram;
-import speedith.core.lang.Operator;
 import speedith.core.reasoning.args.RuleArg;
 
 /**

@@ -26,18 +26,9 @@
  */
 package speedith.core.lang;
 
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
+
+import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;

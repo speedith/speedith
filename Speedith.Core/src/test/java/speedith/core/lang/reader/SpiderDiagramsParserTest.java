@@ -27,18 +27,14 @@
 
 package speedith.core.lang.reader;
 
-import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import speedith.core.lang.reader.SpiderDiagramsParser.spiderDiagram_return;
 import speedith.core.reasoning.GoalsTest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * JUnit 4.0 tester class for the spider diagrams parser.

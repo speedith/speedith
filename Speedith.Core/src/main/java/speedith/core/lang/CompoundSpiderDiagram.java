@@ -26,12 +26,12 @@
  */
 package speedith.core.lang;
 
+import speedith.core.reasoning.args.SubDiagramIndexArg;
+
 import java.io.IOException;
 import java.util.*;
 
 import static speedith.core.i18n.Translations.i18n;
-
-import speedith.core.reasoning.args.SubDiagramIndexArg;
 
 /**
  * A compound spider diagram connects two applies an operator to one or more

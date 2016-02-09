@@ -26,24 +26,33 @@
  */
 package speedith.core.reasoning.rules;
 
+import speedith.core.i18n.Translations;
+import speedith.core.lang.DiagramType;
+import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.*;
+import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.ZoneArg;
+import speedith.core.reasoning.rules.instructions.SelectSingleZoneInstruction;
+import speedith.core.reasoning.rules.transformers.RemoveShadingTransformer;
+
+import java.util.EnumSet;
 import java.util.Locale;
-import speedith.core.lang.IdTransformer;
-import speedith.core.lang.Transformer;
-import speedith.core.reasoning.ApplyStyle;
-import speedith.core.reasoning.RuleApplicationInstruction;
-import speedith.core.reasoning.args.SubDiagramIndexArg;
+import java.util.Set;
 
 /**
+ * Erases shading from a zone.
+ *
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
+ * @author Sven Linker [s.linker@brighton.ac.uk]
+ *
  */
-public class RemoveShading extends UnaryForwardRule {
+public class RemoveShading extends SimpleInferenceRule<ZoneArg>
+        implements BasicInferenceRule<ZoneArg>, ForwardRule<ZoneArg> {
 
-    public static final String InferenceRuleName = "Remove Shading";
+    public static final String InferenceRuleName = "Erase Shading";
 
-    @Override
-    protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
-        return new IdTransformer();
-    }
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram);
 
     @Override
     public String getInferenceRuleName() {
@@ -52,7 +61,7 @@ public class RemoveShading extends UnaryForwardRule {
 
     @Override
     public String getDescription(Locale locale) {
-        return "";
+        return "Erases the shading from a zone.";
     }
 
     @Override
@@ -61,7 +70,41 @@ public class RemoveShading extends UnaryForwardRule {
     }
 
     @Override
-    public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public RuleApplicationInstruction<ZoneArg> getInstructions() {
+        return new SelectSingleZoneInstruction();
+    }
+
+    @Override
+    public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
+        return apply(args, goals);
+    }
+
+    @Override
+    public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
+        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
+        ZoneArg subgoal = (ZoneArg) args;
+        SpiderDiagram targetSubgoal = getSubgoal(subgoal, goals);
+        newSubgoals[subgoal.getSubgoalIndex()] = targetSubgoal.transform(new RemoveShadingTransformer(subgoal));
+        return createRuleApplicationResult(newSubgoals);
+    }
+
+    @Override
+    public InferenceRule<ZoneArg> getInferenceRule() {
+        return this;
+    }
+
+    @Override
+    public String getCategory(Locale locale) {
+        return Translations.i18n(locale, "INF_RULE_CATEGORY_PURELY_DIAGRAMMATIC");
+    }
+
+    @Override
+    public Class<ZoneArg> getArgumentType() {
+        return ZoneArg.class;
+    }
+
+    @Override
+    public Set<DiagramType> getApplicableTypes() {
+        return applicableTypes;
     }
 }

@@ -3,7 +3,8 @@ package speedith.core.reasoning.rules.util
 import java.util
 
 import speedith.core.lang.util.HabitatUtils
-import speedith.core.lang.{Zone, Region, SpiderDiagrams, PrimarySpiderDiagram}
+import speedith.core.lang.{PrimarySpiderDiagram, Region, SpiderDiagrams, Zone}
+
 import scala.collection.JavaConversions._
 
 object CombiningUtils {

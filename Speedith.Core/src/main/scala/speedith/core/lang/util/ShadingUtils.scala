@@ -1,6 +1,7 @@
 package speedith.core.lang.util
 
 import speedith.core.lang.PrimarySpiderDiagram
+
 import scala.collection.JavaConversions._
 
 object ShadingUtils {

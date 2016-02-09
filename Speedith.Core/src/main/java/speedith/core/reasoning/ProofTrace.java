@@ -26,13 +26,15 @@
  */
 package speedith.core.reasoning;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import static speedith.core.i18n.Translations.i18n;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.args.RuleArg;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static speedith.core.i18n.Translations.i18n;
 
 /**
  * An implementation of the {@link Proof} interface. <p>This class serves as the
@@ -96,6 +98,29 @@ public class ProofTrace implements Proof {
     public ProofTrace(List<SpiderDiagram> initialGoals) {
         this(Goals.createGoalsFrom(initialGoals));
     }
+
+    /**
+     * Copy constructor for this class. Creates a new instance of the lists holding
+     * the {@link Goals} and the {@link RuleApplication} instances (which themselves are
+     * immutable).
+     *
+     * @param goals
+     * @param ruleApplications
+     */
+    public ProofTrace(List<Goals> goals, List<RuleApplication> ruleApplications) {
+        this.goals = new ArrayList<Goals>(goals);
+        this.ruleApplications = new ArrayList<RuleApplication>(ruleApplications);
+    }
+
+
+    /**
+     * Copy constructor for this class. Creates a new instance of the given proof element.
+     * @param proof
+     */
+    public ProofTrace(Proof proof) {
+        this(proof.getGoals(), proof.getRuleApplications());
+    }
+
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Proof Interface Implementation">
@@ -188,4 +213,23 @@ public class ProofTrace implements Proof {
         }
     }
     //</editor-fold>
+
+
+    @Override
+    public boolean equals(Object obj) {
+        // two proof traces are equal, iff the list of goals and the list of applied rules are equal
+        if (obj == this) return true;
+        if (obj instanceof ProofTrace) {
+            ProofTrace other = (ProofTrace) obj;
+            return goals.equals(other.goals) && ruleApplications.equals(other.ruleApplications);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = goals.hashCode();
+        result = 31 * result + ruleApplications.hashCode();
+        return result;
+    }
 }
