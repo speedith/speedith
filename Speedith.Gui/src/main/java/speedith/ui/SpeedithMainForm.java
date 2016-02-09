@@ -32,7 +32,6 @@
  */
 package speedith.ui;
 
-import scala.Function1;
 import scala.collection.Seq;
 import speedith.core.lang.*;
 import speedith.core.lang.reader.ReadingException;
@@ -45,10 +44,8 @@ import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
 import speedith.core.reasoning.tactical.TacticApplicationException;
-import speedith.core.reasoning.tactical.euler.BasicTacticals;
 import speedith.core.reasoning.tactical.euler.SimpleTacticals;
 import speedith.core.reasoning.tactical.euler.SingleRuleTacticals;
-import speedith.core.reasoning.tactical.euler.Tactics;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
 import spiderdrawer.ui.MainForm;
@@ -63,10 +60,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -355,8 +354,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     reasoningMenu.add(proveFromHere);
     menuBar.add(reasoningMenu);
 
+
     tacticsMenu.setText("Tactics");
-    JMenu tacticSubmenu = new javax.swing.JMenu();
+    /*JMenu tacticSubmenu = new javax.swing.JMenu();
     tacticSubmenu.setText("Apply rule tactic");
     Method[] tactics = SingleRuleTacticals.class.getDeclaredMethods();
     Arrays.sort(tactics, new Comparator<Method>() {
@@ -378,6 +378,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       tacticsMenu.add(tacticSubmenu);
 
     }
+    */
 
     Method[] tacticals =    SimpleTacticals.class.getDeclaredMethods();
     Arrays.sort(tacticals, new Comparator<Method>() {
