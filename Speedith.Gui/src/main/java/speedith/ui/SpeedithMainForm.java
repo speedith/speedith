@@ -536,6 +536,10 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }
 
   private void onProveAny(ActionEvent evt) {
+    if (activeDiagram != DiagramType.EulerDiagram) {
+      JOptionPane.showMessageDialog(this,"The automatic provers only work for Euler diagrams");
+      return;
+    }
     Goals initial =  proofPanel1.getInitialGoals();
     try {
        proofPanel1.generateProof(initial);
@@ -545,6 +549,10 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }
 
   private void onProveFromHere(ActionEvent evt) {
+    if (activeDiagram != DiagramType.EulerDiagram) {
+      JOptionPane.showMessageDialog(this,"The automatic provers only work for Euler diagrams");
+      return;
+    }
     try {
       proofPanel1.extendProof(proofPanel1);
     } catch (AutomaticProofException e) {
