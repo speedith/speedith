@@ -35,12 +35,10 @@ object AutomaticUtils {
   }
 
   def containsEmptyZone (sd : SpiderDiagram): Boolean = sd match {
-    case sd:PrimarySpiderDiagram => {
+    case sd:PrimarySpiderDiagram =>
       sd.getAllContours.exists(c => sd.getPresentZones.forall(!_.getInContours.contains(c)))
-    }
-    case sd: CompoundSpiderDiagram => {
+    case sd: CompoundSpiderDiagram =>
       sd.getOperands.exists(containsEmptyZone)
-    }
   }
   // </editor-fold>
 

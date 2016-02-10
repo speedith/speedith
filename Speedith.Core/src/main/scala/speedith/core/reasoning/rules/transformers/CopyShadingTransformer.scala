@@ -33,9 +33,7 @@ case class CopyShadingTransformer(compoundDiagramIndex: Int,
       InferenceTargetExtraction.createBinaryDiagram(Operator.Conjunction, sourceDiagram, transformedDiagram, zoneArgs(0), compoundDiagramIndex)
     }
     catch {
-      case e: Exception => {
-        throw new TransformationException("Could not copy the shading. " + e.getMessage, e)
-      }
+      case e: Exception => throw new TransformationException("Could not copy the shading. " + e.getMessage, e)
     }
   }
 }

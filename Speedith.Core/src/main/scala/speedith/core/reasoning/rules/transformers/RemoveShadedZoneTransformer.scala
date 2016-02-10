@@ -37,7 +37,7 @@ class RemoveShadedZoneTransformer (target:  ZoneArg) extends IdTransformer{
           throw e
       }
     } else {
-      null;
+      null
     }
   }
 

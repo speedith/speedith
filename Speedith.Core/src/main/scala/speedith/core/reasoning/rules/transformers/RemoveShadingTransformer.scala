@@ -9,7 +9,10 @@ import scala.collection.JavaConversions._
 
 
 /**
- * Created by sl542 on 11/11/15.
+  * Transforms the [[PrimarySpiderDiagram]] referenced by the given [[ZoneArg]] by
+  * removing the zone saved in this [[ZoneArg]] from the set of shaded zones.
+  *
+ * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 class RemoveShadingTransformer (target:  ZoneArg) extends IdTransformer{
   val subDiagramIndex = target.getSubDiagramIndex
@@ -32,7 +35,7 @@ class RemoveShadingTransformer (target:  ZoneArg) extends IdTransformer{
       }
     }
     else {
-      null;
+      null
     }
   }
 

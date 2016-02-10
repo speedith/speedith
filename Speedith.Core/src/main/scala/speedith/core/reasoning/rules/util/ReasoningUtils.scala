@@ -30,14 +30,12 @@ object ReasoningUtils {
   def normalize (sds : java.util.Collection[SpiderDiagram]) : java.util.Collection[SpiderDiagram] = sds.map(o => normalize(o))
 
   def normalize (sd : SpiderDiagram): SpiderDiagram= sd match {
-    case psd: PrimarySpiderDiagram => {
+    case psd: PrimarySpiderDiagram =>
       val allContours = psd.getAllContours.toSeq.asJava
       val possibleZones: Set[Zone] = Zones.allZonesForContours(allContours: _*).toSet
       SpiderDiagrams.createPrimarySD(psd.getSpiders, psd.getHabitats, psd.getShadedZones, possibleZones -- (psd.getShadedZones -- psd.getPresentZones))
-    }
-    case csd : CompoundSpiderDiagram => {
+    case csd : CompoundSpiderDiagram =>
       SpiderDiagrams.createCompoundSD(csd.getOperator, new java.util.ArrayList[SpiderDiagram](csd.getOperands.map(o=>  normalize(o))), true)
-    }
   }
 
 
@@ -64,11 +62,10 @@ object ReasoningUtils {
    */
   def isImplicationOfConjunctions(goal: SpiderDiagram): Boolean = goal match {
     case goal : CompoundSpiderDiagram => goal.getOperator match {
-      case  Operator.Implication  => {
+      case  Operator.Implication  =>
         val premise: SpiderDiagram = goal.getOperand(0)
         val conclusion: SpiderDiagram = goal.getOperand(1)
         AutomaticUtils.isConjunctive(premise) && AutomaticUtils.isConjunctive(conclusion)
-      }
       case _ => false
     }
     case _ => false

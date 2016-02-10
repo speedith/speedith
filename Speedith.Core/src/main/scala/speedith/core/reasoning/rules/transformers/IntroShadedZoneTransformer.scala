@@ -32,7 +32,7 @@ class IntroShadedZoneTransformer (target:  ZoneArg) extends IdTransformer {
           throw e
       }
     } else {
-      null;
+      null
     }
   }
 }

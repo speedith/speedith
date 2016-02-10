@@ -24,18 +24,11 @@ import java.util.prefs.Preferences;
  */
 public class SettingsDialog  extends javax.swing.JDialog {
 
-    private JTabbedPane settingsTab;
+    private static final long serialVersionUID = 7227563068597417669L;
 
-    private JPanel autoProverPanel;
-    private JLabel typeLabel;
-    private JLabel strategyLabel;
-    private JComboBox typeCombo;
-    private JComboBox strategyCombo;
-    private JButton okButton;
-
-    private JPanel settingsPanel;
-    private JPanel diagramsPanel;
-    private JComboBox diagramTypeCombo;
+    private JComboBox<ProverListItem> typeCombo;
+    private JComboBox<StrategyListItem> strategyCombo;
+    private JComboBox<DiagramType> diagramTypeCombo;
 
 
     public SettingsDialog(java.awt.Frame parent, boolean modal) {
@@ -44,19 +37,20 @@ public class SettingsDialog  extends javax.swing.JDialog {
     }
 
     private void initComponents() {
-        settingsPanel = new JPanel();
-        okButton = new JButton();
-        autoProverPanel = new JPanel();
-        settingsTab = new JTabbedPane();
-        typeLabel = new JLabel();
-        typeCombo = new JComboBox(getProverComboList());
-        strategyLabel = new JLabel();
-        strategyCombo = new JComboBox(getStrategyComboList());
-
-        diagramsPanel = new JPanel();
-        diagramTypeCombo = new JComboBox(getDiagramTypesComboList());
-
+        this.setTitle("Preferences");
+        JPanel settingsPanel = new JPanel();
+        JButton okButton = new JButton();
+        JPanel autoProverPanel = new JPanel();
+        JTabbedPane settingsTab = new JTabbedPane();
+        JLabel typeLabel = new JLabel();
+        JLabel strategyLabel = new JLabel();
+        JPanel diagramsPanel = new JPanel();
         javax.swing.GroupLayout groupLayout;
+
+        typeCombo = new JComboBox<>(getProverComboList());
+        strategyCombo = new JComboBox<>(getStrategyComboList());
+        diagramTypeCombo = new JComboBox<>(getDiagramTypesComboList());
+
 
         groupLayout = new javax.swing.GroupLayout(diagramsPanel);
         diagramsPanel.setLayout(groupLayout);
@@ -101,7 +95,7 @@ public class SettingsDialog  extends javax.swing.JDialog {
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                okbuttonClicked(actionEvent);
+                okbuttonClicked();
             }
         });
 
@@ -128,7 +122,7 @@ public class SettingsDialog  extends javax.swing.JDialog {
         pack();
     }
 
-    private void okbuttonClicked(ActionEvent actionEvent) {
+    private void okbuttonClicked() {
         Preferences prefs =  Preferences.userNodeForPackage(SettingsDialog.class);
         ProverListItem selectedProver = (ProverListItem) typeCombo.getSelectedItem();
         prefs.put(AutomaticProvers.prover_preference, selectedProver.getAutomaticProverProvider().getAutomaticProverName());
@@ -139,7 +133,7 @@ public class SettingsDialog  extends javax.swing.JDialog {
         dispose();
     }
 
-    private ComboBoxModel getProverComboList() {
+    private ComboBoxModel<ProverListItem> getProverComboList() {
         Set<String> provers = AutomaticProvers.getKnownAutomaticProvers();
         ProverListItem[] proverItems = new ProverListItem[provers.size()];
         int i = 0;
@@ -147,7 +141,7 @@ public class SettingsDialog  extends javax.swing.JDialog {
             proverItems[i++] = new ProverListItem(AutomaticProvers.getProvider(providerName));
         }
         Arrays.sort(proverItems);
-        ComboBoxModel model = new DefaultComboBoxModel<>(proverItems);
+        ComboBoxModel<ProverListItem> model = new DefaultComboBoxModel<>(proverItems);
         Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
         String prover = prefs.get(AutomaticProvers.prover_preference, null);
         if (prover != null) {
@@ -161,7 +155,7 @@ public class SettingsDialog  extends javax.swing.JDialog {
         return selected.getAutomaticProverProvider().getAutomaticProver();
     }
 
-    private ComboBoxModel getStrategyComboList() {
+    private ComboBoxModel<StrategyListItem> getStrategyComboList() {
         Set<String> strategies = Strategies.getKnownStrategies();
         StrategyListItem[] stragetyItems = new StrategyListItem[strategies.size()];
         int i = 0;
@@ -169,7 +163,7 @@ public class SettingsDialog  extends javax.swing.JDialog {
             stragetyItems[i++] = new StrategyListItem(Strategies.getProvider(strategyName));
         }
         Arrays.sort(stragetyItems);
-        ComboBoxModel model = new DefaultComboBoxModel<>(stragetyItems);
+        ComboBoxModel<StrategyListItem> model = new DefaultComboBoxModel<>(stragetyItems);
         Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
         String selected = prefs.get(Strategies.strategy_preference, null);
         if (selected != null) {

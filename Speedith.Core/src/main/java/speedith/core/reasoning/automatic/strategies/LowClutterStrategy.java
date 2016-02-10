@@ -26,7 +26,7 @@ public class LowClutterStrategy implements Strategy, StrategyProvider {
     private static final Map<Class, Integer> COSTS = createCosts();
 
     private static Map<Class, Integer> createCosts() {
-        Map<Class, Integer> result = new HashMap<Class, Integer>();
+        Map<Class, Integer> result = new HashMap<>();
         result.put(IntroContour.class, 5);
         result.put(IntroShadedZone.class, 5);
         result.put(CopyContours.class, 7);
@@ -50,7 +50,6 @@ public class LowClutterStrategy implements Strategy, StrategyProvider {
         List<RuleApplication> applications = p.getRuleApplications();
         int cost = 0;
         for (RuleApplication app: applications) {
-            Class cl = app.getClass();
             int debug = COSTS.get(app.getInferenceRule().getClass());
             cost +=  debug;
         }
