@@ -62,11 +62,6 @@ public class IntroContourTest {
     }
 
     @Test(expected = RuleApplicationException.class)
-    public void apply_should_throw_an_exception_when_any_of_the_multiple_args_is_not_a_contour() throws RuleApplicationException {
-        introContour.apply(new MultipleRuleArgs(Arrays.asList(new ZoneArg(0, 0, Zone.fromInContours("A")))), null);
-    }
-
-    @Test(expected = RuleApplicationException.class)
     public void apply_should_throw_an_exception_when_contour_args_contain_different_sub_diagram_indices() throws RuleApplicationException {
         List<ContourArg> contoursFromDifferentSpiderDiagrams = Arrays.asList(new ContourArg(0, 0, "A"), new ContourArg(0, 1, "B"));
         introContour.apply(new MultipleRuleArgs(contoursFromDifferentSpiderDiagrams), null);

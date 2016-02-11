@@ -72,17 +72,31 @@ public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
         return (SubDiagramIndexArg) args.get(0);
     }
 
-    private ArrayList<ContourArg> getContourArgsFrom(MultipleRuleArgs args) throws RuleApplicationException {
-        MultipleRuleArgs multipleRuleArgs = getTypedRuleArgs(args);
-        MultipleRuleArgs.assertArgumentsNotEmpty(multipleRuleArgs);
-        return ContourArg.getContourArgsFrom(multipleRuleArgs);
-    }
 
     private RuleApplicationResult apply(SubDiagramIndexArg target, ArrayList<ContourArg> targetContours, Goals goals) throws RuleApplicationException {
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
         SpiderDiagram targetSubgoal = getSubgoal(target, goals);
         newSubgoals[target.getSubgoalIndex()] = targetSubgoal.transform(new IntroduceContoursTransformer(target, targetContours));
         return createRuleApplicationResult(newSubgoals);
+    }
+
+    public ArrayList<ContourArg> getContourArgsFrom(MultipleRuleArgs args) throws RuleApplicationException {
+        MultipleRuleArgs multipleRuleArgs = getTypedRuleArgs(args);
+        MultipleRuleArgs.assertArgumentsNotEmpty(multipleRuleArgs);
+        ArrayList<ContourArg> contourArgs = new ArrayList<>();
+        int subDiagramIndex = -1;
+        int goalIndex = -1;
+        for (RuleArg ruleArg : multipleRuleArgs) {
+            // an interactive application of IntroContour contains also a SubDiagramIndexArg,
+            // to refer to the diagram the rule shall be applied to.
+            if (ruleArg instanceof ContourArg) {
+                ContourArg contourArg = ContourArg.getContourArgFrom(ruleArg);
+                subDiagramIndex = ContourArg.assertSameSubDiagramIndices(subDiagramIndex, contourArg);
+                goalIndex = ContourArg.assertSameGoalIndices(goalIndex, contourArg);
+                contourArgs.add(contourArg);
+            }
+        }
+        return contourArgs;
     }
 
     @Override
