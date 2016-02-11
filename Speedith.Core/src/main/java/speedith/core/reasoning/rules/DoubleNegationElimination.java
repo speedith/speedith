@@ -34,6 +34,7 @@ import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleSubDiagramInstruction;
 import speedith.core.reasoning.rules.transformers.DoubleNegationEliminationTransformer;
 
+import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
@@ -41,11 +42,12 @@ import java.util.Set;
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class DoubleNegationElimination extends UnaryForwardRule {
+public class DoubleNegationElimination extends UnaryForwardRule implements Serializable {
 
     public static final String InferenceRuleName = "double_negation_elimination";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
+    private static final long serialVersionUID = 8293162053994300758L;
 
     @Override
     public String getInferenceRuleName() {

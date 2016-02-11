@@ -33,6 +33,7 @@ import speedith.core.reasoning.ApplyStyle;
 import speedith.core.reasoning.RuleApplicationInstruction;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 
+import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
@@ -43,11 +44,12 @@ import java.util.Set;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class GeneralTautology extends UnaryForwardRule {
+public class GeneralTautology extends UnaryForwardRule implements Serializable {
 
     public static final String InferenceRuleName = "general_tautology";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.noneOf(DiagramType.class);
+    private static final long serialVersionUID = -5205748212133960769L;
 
     @Override
     public String getInferenceRuleName() {

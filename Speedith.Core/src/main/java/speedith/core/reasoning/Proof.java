@@ -28,6 +28,7 @@ package speedith.core.reasoning;
 
 import speedith.core.reasoning.args.RuleArg;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ import java.util.List;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface Proof {
+public interface Proof extends Serializable {
 
     /**
      * Applies the rule on the {@link Proof#getLastGoals()  current goals} (if

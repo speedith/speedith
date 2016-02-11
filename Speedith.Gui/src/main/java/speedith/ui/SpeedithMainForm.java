@@ -57,10 +57,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -93,6 +90,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenu drawMenu;
   private javax.swing.JMenuItem openMenuItem;
   private javax.swing.JMenuItem saveMenuItem;
+  private javax.swing.JMenuItem openProofMenuItem;
+  private javax.swing.JMenuItem saveProofMenuItem;
+
   private javax.swing.JMenuItem exitMenuItem;
   private javax.swing.JMenuItem settingsMenuItem;
   private javax.swing.JMenu fileMenu;
@@ -160,6 +160,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     exitMenuItem = new javax.swing.JMenuItem();
     openMenuItem = new javax.swing.JMenuItem();
     saveMenuItem = new javax.swing.JMenuItem();
+    openProofMenuItem = new javax.swing.JMenuItem();
+    saveProofMenuItem = new javax.swing.JMenuItem();
+
     drawMenu = new javax.swing.JMenu();
     goalSpiderDrawerInputMenuItem = new javax.swing.JMenuItem();
     goalTextInputMenuItem = new javax.swing.JMenuItem();
@@ -241,6 +244,19 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       }
     });
     fileMenu.add(saveMenuItem);
+
+
+    openProofMenuItem.setText("Open proof");
+    fileMenu.add(openProofMenuItem);
+
+    saveProofMenuItem.setText("Save current proof");
+    saveProofMenuItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onSaveProof();
+      }
+    });
+    fileMenu.add(saveProofMenuItem);
 
     settingsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
     settingsMenuItem.setMnemonic('P');
@@ -391,6 +407,31 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
+  private void onSaveProof() {
+    if (proofPanel1.getGoals().isEmpty()) {
+      JOptionPane.showMessageDialog(this, "No proof to be saved exists.");
+      return;
+    }
+    int returnVal = fileChooser.showSaveDialog(this);
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      File file = fileChooser.getSelectedFile();
+      if (file.exists()) {
+        int reallySave = JOptionPane.showConfirmDialog(this, "File " + file.getName() + " exists at given path. Save anyway?", "File already exists", JOptionPane.YES_NO_OPTION);
+        if (reallySave == JOptionPane.NO_OPTION) {
+          return;
+        }
+      }
+      try (
+              FileOutputStream fileStream = new FileOutputStream(file);
+              ObjectOutputStream objectStream = new ObjectOutputStream(fileStream)) {
+        objectStream.writeObject(proofPanel1.getProof());
+        objectStream.flush();
+      } catch (IOException ioe) {
+        JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
+      }
+    }
+  }
+
   private void applyTactic(Method tactic) {
     if (!proofPanel1.isFinished()) {
       Proof intermediate = new ProofTrace(proofPanel1);
@@ -483,9 +524,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       } else {
         JOptionPane.showMessageDialog(this, "No subgoal selected", "No subgoal selected", JOptionPane.ERROR_MESSAGE);
       }
-
-
   }
+
   private void onSettings(ActionEvent evt) {
     SettingsDialog settings = new SettingsDialog(this, true);
     settings.setVisible(true);

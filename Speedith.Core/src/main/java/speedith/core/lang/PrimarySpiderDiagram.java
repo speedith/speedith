@@ -29,6 +29,7 @@ package speedith.core.lang;
 import propity.util.Sets;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -47,7 +48,7 @@ import static speedith.core.i18n.Translations.i18n;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class PrimarySpiderDiagram extends SpiderDiagram {
+public class PrimarySpiderDiagram extends SpiderDiagram implements Serializable {
 
     /**
      * The identifier of the primary (unitary) spider diagram in the textual
@@ -82,6 +83,7 @@ public class PrimarySpiderDiagram extends SpiderDiagram {
      * diagrams (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextSpidersAttribute = "spiders";
+    private static final long serialVersionUID = -2824062283982956082L;
     private final TreeSet<String> spiders;
     private final TreeMap<String, Region> spiderHabitatsMap;
     private final TreeSet<Zone> shadedZones;

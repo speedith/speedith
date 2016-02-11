@@ -35,6 +35,7 @@ import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleZoneInstruction;
 import speedith.core.reasoning.rules.transformers.RemoveShadingTransformer;
 
+import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
@@ -48,11 +49,12 @@ import java.util.Set;
  *
  */
 public class RemoveShading extends SimpleInferenceRule<ZoneArg>
-        implements BasicInferenceRule<ZoneArg>, ForwardRule<ZoneArg> {
+        implements BasicInferenceRule<ZoneArg>, ForwardRule<ZoneArg>, Serializable {
 
     public static final String InferenceRuleName = "Erase Shading";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram);
+    private static final long serialVersionUID = -4093837815231375163L;
 
     @Override
     public String getInferenceRuleName() {

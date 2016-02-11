@@ -28,6 +28,8 @@ package speedith.core.reasoning;
 
 import speedith.core.reasoning.args.RuleArg;
 
+import java.io.Serializable;
+
 import static speedith.core.i18n.Translations.i18n;
 
 /**
@@ -39,10 +41,11 @@ import static speedith.core.i18n.Translations.i18n;
  * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class RuleApplication {
+public class RuleApplication implements Serializable {
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private InferenceRule<?> inferenceRule;
     private RuleArg ruleArguments;
+    private static final long serialVersionUID = -5487436537034792892L;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructor">

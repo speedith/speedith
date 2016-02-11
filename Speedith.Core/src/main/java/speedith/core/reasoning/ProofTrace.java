@@ -44,6 +44,8 @@ import static speedith.core.i18n.Translations.i18n;
  */
 public class ProofTrace implements Proof {
 
+    private static final long serialVersionUID = 1409264338597584493L;
+
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
      * Contains all goals of this proof trace (including the initial goal).

@@ -36,6 +36,7 @@ import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectOperatorAndSubDiagramInstruction;
 import speedith.core.reasoning.rules.transformers.ConjunctionEliminationTransformer;
 
+import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
@@ -44,7 +45,7 @@ import java.util.Set;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class ConjunctionElimination extends SimpleInferenceRule<MultipleRuleArgs> {
+public class ConjunctionElimination extends SimpleInferenceRule<MultipleRuleArgs> implements Serializable {
 
     /**
      * The name of this inference rule.
@@ -52,6 +53,7 @@ public class ConjunctionElimination extends SimpleInferenceRule<MultipleRuleArgs
     public static final String InferenceRuleName = "conjunction_elimination";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
+    private static final long serialVersionUID = -1908339958775714434L;
 
     @Override
     public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {

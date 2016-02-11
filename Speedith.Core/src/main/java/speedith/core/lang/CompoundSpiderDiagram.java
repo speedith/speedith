@@ -29,6 +29,7 @@ package speedith.core.lang;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 import static speedith.core.i18n.Translations.i18n;
@@ -43,7 +44,7 @@ import static speedith.core.i18n.Translations.i18n;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class CompoundSpiderDiagram extends SpiderDiagram {
+public class CompoundSpiderDiagram extends SpiderDiagram implements Serializable {
 
     /**
      * The identifier of the unary spider diagram in the textual representation
@@ -76,6 +77,8 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * diagrams (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextOperatorAttribute = "operator";
+
+
     /**
      * The operator which to apply on the {@link CompoundSpiderDiagram#getOperands()
      * operands}. <p>See {@link Operator#knownOperatorNames()} for a list of all
@@ -90,7 +93,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     private boolean hashInvalid = true;
     private int hash;
     private int subDiagramCount = -1;
-
+    private static final long serialVersionUID = 6756171788260505819L;
 
     /**
      * Initialises a new n-ary spider diagram.

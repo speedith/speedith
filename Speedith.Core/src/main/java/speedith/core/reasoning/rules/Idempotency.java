@@ -33,6 +33,7 @@ import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Locale;
@@ -50,7 +51,7 @@ import static speedith.core.i18n.Translations.i18n;
  * equivalence} operators).</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg>, ForwardRule<SubDiagramIndexArg> {
+public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg>, ForwardRule<SubDiagramIndexArg>, Serializable {
 
 
     /**
@@ -61,6 +62,7 @@ public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> impleme
     public static final String InferenceRuleName = "idempotency";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
+    private static final long serialVersionUID = 9106763180422196129L;
 
     @Override
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {

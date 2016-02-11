@@ -55,6 +55,8 @@ import static speedith.i18n.Translations.i18n;
  */
 public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticProof {
 
+    private static final long serialVersionUID = 6560236682608445666L;
+
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private ProofTrace proof;
 
@@ -288,6 +290,10 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
     }
 
     //</editor-fold>
+
+    public Proof getProof() {
+        return proof;
+    }
 
     // <editor-fold defaultstate="collapsed" desc="UI Related Methods">
     private void displayInitialGoals() {

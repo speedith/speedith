@@ -33,6 +33,7 @@ import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.rules.transformers.IntroShadedZoneTransformer;
 
+import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
@@ -41,11 +42,12 @@ import java.util.Set;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class IntroShadedZone extends SimpleInferenceRule<ZoneArg>
-        implements BasicInferenceRule<ZoneArg>, ForwardRule<ZoneArg> {
+        implements BasicInferenceRule<ZoneArg>, ForwardRule<ZoneArg>, Serializable {
 
     public static final String InferenceRuleName = "Introduce Shaded Zone";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram);
+    private static final long serialVersionUID = 5113694271453004231L;
 
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
