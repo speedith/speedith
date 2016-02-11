@@ -13,7 +13,7 @@ import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstructio
 
 import scala.collection.JavaConversions._
 
-class NegationElimination extends UnaryForwardRule {
+class NegationElimination extends UnaryForwardRule with Serializable {
 
   def getInferenceRuleName: String = "negation_elimination"
 

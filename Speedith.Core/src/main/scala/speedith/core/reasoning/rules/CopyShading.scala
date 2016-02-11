@@ -11,7 +11,7 @@ import speedith.core.reasoning.{Goals, InferenceRule, RuleApplicationInstruction
 
 import scala.collection.JavaConversions._
 
-class CopyShading extends SimpleInferenceRule[MultipleRuleArgs] {
+class CopyShading extends SimpleInferenceRule[MultipleRuleArgs] with Serializable {
   def getInferenceRule: InferenceRule[MultipleRuleArgs] = this
 
   def getInferenceRuleName: String = "copy_shading"
