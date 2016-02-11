@@ -28,6 +28,8 @@ package speedith.core.reasoning.args;
 
 import speedith.core.lang.Zone;
 
+import java.io.Serializable;
+
 /**
  * This inference rule argument provides the following (in addition to data
  * provided by {@link SpiderArg}): <ul> <li>a zone of the {@link
@@ -40,8 +42,9 @@ import speedith.core.lang.Zone;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SpiderZoneArg extends SpiderArg {
+public class SpiderZoneArg extends SpiderArg implements Serializable {
 
+    private static final long serialVersionUID = 96187206156965663L;
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private final Zone zone;
     // </editor-fold>

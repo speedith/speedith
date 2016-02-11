@@ -30,6 +30,8 @@ import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.RuleApplicationException;
 
+import java.io.Serializable;
+
 /**
  * Instances of this class provide the <span style="font-style:italic;">subgoal
  * index</span> argument to inference rules. <p>The subgoal index indicates
@@ -41,8 +43,9 @@ import speedith.core.reasoning.RuleApplicationException;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SubgoalIndexArg implements Cloneable, RuleArg {
+public class SubgoalIndexArg implements Cloneable, RuleArg, Serializable {
 
+    private static final long serialVersionUID = -6866690252979361539L;
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private int subgoalIndex;
     // </editor-fold>

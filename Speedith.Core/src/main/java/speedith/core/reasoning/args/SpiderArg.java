@@ -26,12 +26,15 @@
  */
 package speedith.core.reasoning.args;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SpiderArg extends SubDiagramIndexArg {
+public class SpiderArg extends SubDiagramIndexArg implements Serializable {
 
+    private static final long serialVersionUID = 3413371829779550812L;
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private final String spider;
     // </editor-fold>

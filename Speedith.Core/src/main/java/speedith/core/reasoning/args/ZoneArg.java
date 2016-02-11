@@ -28,12 +28,15 @@ package speedith.core.reasoning.args;
 
 import speedith.core.lang.Zone;
 
+import java.io.Serializable;
+
 /**
  * This argument contains a zone.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class ZoneArg extends SubDiagramIndexArg {
+public class ZoneArg extends SubDiagramIndexArg implements Serializable {
 
+    private static final long serialVersionUID = -9202275269070794992L;
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private final Zone zone;
     // </editor-fold>

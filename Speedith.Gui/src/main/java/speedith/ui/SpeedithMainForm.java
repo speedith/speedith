@@ -247,6 +247,12 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
 
     openProofMenuItem.setText("Open proof");
+    openProofMenuItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onOpenProof();
+      }
+    });
     fileMenu.add(openProofMenuItem);
 
     saveProofMenuItem.setText("Save current proof");
@@ -432,6 +438,25 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
   }
 
+  private void onOpenProof() {
+    int returnVal = fileChooser.showOpenDialog(this);
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      File file = fileChooser.getSelectedFile();
+      Proof inputProof = null;
+      try (
+        FileInputStream inputStream = new FileInputStream(file);
+        ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+        inputProof = (Proof) objectInputStream.readObject();
+
+      } catch (IOException ioe) {
+        JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
+      }  catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      }
+      proofPanel1.replaceCurrentProof(inputProof);
+      this.setTitle("Speedith"+": " + file.getName());
+    }
+  }
   private void applyTactic(Method tactic) {
     if (!proofPanel1.isFinished()) {
       Proof intermediate = new ProofTrace(proofPanel1);
