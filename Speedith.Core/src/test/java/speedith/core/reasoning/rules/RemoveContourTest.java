@@ -26,7 +26,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 
 /**
- * TODO: Description
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

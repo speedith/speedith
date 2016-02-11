@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
- * Created by sl542 on 10/11/15.
+ *
  */
 public class IntroContourTest {
 
