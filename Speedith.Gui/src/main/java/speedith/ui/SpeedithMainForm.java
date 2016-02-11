@@ -33,7 +33,6 @@
 package speedith.ui;
 
 import scala.Some;
-import scala.collection.Seq;
 import speedith.core.lang.*;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
@@ -49,6 +48,7 @@ import speedith.core.reasoning.tactical.euler.SimpleTacticals;
 import speedith.core.reasoning.tactical.euler.SingleRuleTacticals;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
+import speedith.ui.tactics.TacticMenuItem;
 import spiderdrawer.ui.MainForm;
 
 import javax.imageio.ImageIO;
@@ -65,7 +65,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -357,44 +356,15 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
 
     tacticsMenu.setText("Tactics");
-    /*JMenu tacticSubmenu = new javax.swing.JMenu();
-    tacticSubmenu.setText("Apply rule tactic");
-    Method[] tactics = SingleRuleTacticals.class.getDeclaredMethods();
-    Arrays.sort(tactics, new Comparator<Method>() {
-      @Override
-      public int compare(Method method, Method t1) {
-        return method.getName().compareTo(t1.getName());
-      }
-    });
-    for (final Method tactic: tactics  ) {
-      JMenuItem tacticButton = new javax.swing.JMenuItem();
-      tacticButton.setText(tactic.getName());
-      tacticButton.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-          applyTactic(tactic);
-        }
-      });
-      tacticSubmenu.add(tacticButton);
-      tacticsMenu.add(tacticSubmenu);
 
-    }
-    */
+    for (final TacticMenuItem item:  TacticMenuItem.values()) {
 
-    Method[] tacticals =    SimpleTacticals.class.getDeclaredMethods();
-    Arrays.sort(tacticals, new Comparator<Method>() {
-      @Override
-      public int compare(Method method, Method t1) {
-        return method.getName().compareTo(t1.getName());
-      }
-    });
-    for (final Method tactical:  tacticals) {
       JMenuItem tacticalButton = new javax.swing.JMenuItem();
-      tacticalButton.setText(tactical.getName());
+      tacticalButton.setText(item.getName());
       tacticalButton.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent evt) {
-          applyTactical(tactical);
+          applyTactical(item);
         }
       });
       tacticsMenu.add(tacticalButton);
@@ -442,29 +412,19 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }
 
 
-
-
-  private void applyTactical(Method tactical) {
+  private void applyTactical(TacticMenuItem item) {
     if (!proofPanel1.isFinished()) {
       Proof intermediate = new ProofTrace(proofPanel1);
-      Some<Proof> result = null;
+      Proof result = null;
       try {
-        result = (Some<Proof>) tactical.invoke(SimpleTacticals.class, intermediate);
-      } catch (IllegalAccessException e) {
+        result = item.apply(intermediate);
+      } catch (TacticApplicationException e) {
         e.printStackTrace();
-      } catch (InvocationTargetException e) {
-        e.printStackTrace();
-        if (e.getCause() instanceof TacticApplicationException) {
-          TacticApplicationException tacticE = (TacticApplicationException) e.getCause();
-          JOptionPane.showMessageDialog(this, tacticE.getMessage());
-        }
+        JOptionPane.showMessageDialog(this, e.getMessage());
+
       }
-      if (result !=null && result.nonEmpty()) {
-        proofPanel1.replaceCurrentProof(result.get());
-      } else {
-        System.out.println(result);
-        JOptionPane.showMessageDialog(this, "Tactic could not be applied");
-      }
+      proofPanel1.replaceCurrentProof(result);
+
     } else {
       JOptionPane.showMessageDialog(this, "No subgoals are open");
     }
