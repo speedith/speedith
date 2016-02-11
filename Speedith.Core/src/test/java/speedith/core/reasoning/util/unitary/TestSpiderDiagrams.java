@@ -37,6 +37,10 @@ public class TestSpiderDiagrams {
     public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG7_5 = getDiagramFromSpeedithPaper_Fig7_5th();
     public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG7_3_SHADED_C = getDiagramFromSpeedithPaper_Fig7_3rd_shaded();
 
+    public static final PrimarySpiderDiagram EULER_DIAGRAM_A_SUBSET_B = getASubSetBDiagram();
+
+    public static final PrimarySpiderDiagram EULER_DIAGRAM_A_SUBSET_B_INTERSECT_C = getASubSetBAndCPresent();
+
     public static SpiderDiagram diagramSpeedithPaperFig7Goal() {
         return tryReadSpiderDiagramFromSDTFile(3);
     }
@@ -231,5 +235,37 @@ public class TestSpiderDiagrams {
         ));
 
         return SpiderDiagrams.createPrimarySD(habitats.keySet(), habitats, shadedZones, presentZones);
+    }
+
+    private static PrimarySpiderDiagram getASubSetBDiagram() {
+        Set<Zone> presentZones = new HashSet<>();
+        presentZones.add(new Zone(Arrays.asList("B"),Arrays.asList("A")));
+        presentZones.add(new Zone(null, Arrays.asList("A","B")));
+        presentZones.add(new Zone("A","B"));
+
+        Set<Zone> shadedZones = new HashSet<>();
+        shadedZones.add(new Zone(Arrays.asList("A"),Arrays.asList("B")));
+
+        return EulerDiagrams.createPrimaryEulerDiagram(shadedZones, presentZones);
+
+
+    }
+
+    private static PrimarySpiderDiagram getASubSetBAndCPresent() {
+        Set<Zone> presentZones = new HashSet<>();
+        presentZones.add(new Zone(null, Arrays.asList("A","B","C")));
+        presentZones.add(new Zone(Arrays.asList("B"),Arrays.asList("A","C")));
+        presentZones.add(new Zone(Arrays.asList("C"),Arrays.asList("A","B")));
+        presentZones.add(new Zone(Arrays.asList("A","B"),Arrays.asList("C")));
+        presentZones.add(new Zone(Arrays.asList("C","B"),Arrays.asList("A")));
+        presentZones.add(new Zone("A","B","C"));
+
+        Set<Zone> shadedZones = new HashSet<>();
+        shadedZones.add(new Zone(Arrays.asList("A"),Arrays.asList("B","C")));
+        shadedZones.add(new Zone(Arrays.asList("A","C"),Arrays.asList("B")));
+
+        return EulerDiagrams.createPrimaryEulerDiagram(shadedZones, presentZones);
+
+
     }
 }

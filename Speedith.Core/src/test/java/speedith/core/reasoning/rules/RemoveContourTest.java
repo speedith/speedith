@@ -1,6 +1,5 @@
 package speedith.core.reasoning.rules;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import speedith.core.lang.PrimarySpiderDiagram;
@@ -14,68 +13,70 @@ import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.rules.instructions.SelectContoursInstruction;
-import speedith.core.reasoning.rules.instructions.SelectSingleSubDiagramAndContourInstruction;
 import speedith.core.reasoning.util.unitary.TestSpiderDiagrams;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 
 /**
+ * TODO: Description
+ *
  * @author Sven Linker [s.linker@brighton.ac.uk]
- * Created by sl542 on 10/11/15.
  */
-public class IntroContourTest {
+public class RemoveContourTest {
 
-    private IntroContour introContour;
+    private RemoveContour removeContour;
 
     @Before
     public void setUp() {
-        introContour = new IntroContour();
+        removeContour = new RemoveContour();
     }
 
     @Test
     public void getInferenceRule_should_return_the_intro_contour_inference_rule() {
-        assertSame(introContour, introContour.getInferenceRule());
+        assertSame(removeContour, removeContour.getInferenceRule());
     }
 
     @Test(expected = TransformationException.class)
-    public void apply_should_throw_an_exception_when_introducing_a_contour_that_already_exists_in_the_unitary_diagram() throws RuleApplicationException {
-        PrimarySpiderDiagram  targetDiagram = TestSpiderDiagrams.EULER_DIAGRAM_A_SUBSET_B;
+    public void apply_should_throw_an_exception_when_removing_a_contour_that_does_not_exist_in_the_unitary_diagram() throws RuleApplicationException {
+        PrimarySpiderDiagram targetDiagram = TestSpiderDiagrams.EULER_DIAGRAM_A_SUBSET_B;
         Goals targetOfInference = Goals.createGoalsFrom(targetDiagram);
 
-        introContour.apply(new MultipleRuleArgs(new ContourArg(0, 0, "A")), targetOfInference);
+        removeContour.apply(new MultipleRuleArgs(new ContourArg(0, 0, "C")), targetOfInference);
     }
 
     @Test(expected = RuleApplicationException.class)
     public void apply_should_throw_an_exception_when_the_arguments_are_null() throws RuleApplicationException {
-        introContour.apply(null, null);
+        removeContour.apply(null, null);
     }
 
     @Test(expected = RuleApplicationException.class)
     public void apply_should_throw_an_exception_when_the_arguments_are_not_of_the_right_type() throws RuleApplicationException {
-        introContour.apply(new ZoneArg(0, 0, Zone.fromInContours("A")), null);
+        removeContour.apply(new ZoneArg(0, 0, Zone.fromInContours("A")), null);
     }
 
     @Test(expected = RuleApplicationException.class)
     public void apply_should_throw_an_exception_when_any_of_the_multiple_args_is_not_a_contour() throws RuleApplicationException {
-        introContour.apply(new MultipleRuleArgs(Arrays.asList(new ZoneArg(0, 0, Zone.fromInContours("A")))), null);
+        removeContour.apply(new MultipleRuleArgs(Arrays.asList(new ZoneArg(0, 0, Zone.fromInContours("A")))), null);
     }
 
     @Test(expected = RuleApplicationException.class)
     public void apply_should_throw_an_exception_when_contour_args_contain_different_sub_diagram_indices() throws RuleApplicationException {
         List<ContourArg> contoursFromDifferentSpiderDiagrams = Arrays.asList(new ContourArg(0, 0, "A"), new ContourArg(0, 1, "B"));
-        introContour.apply(new MultipleRuleArgs(contoursFromDifferentSpiderDiagrams), null);
+        removeContour.apply(new MultipleRuleArgs(contoursFromDifferentSpiderDiagrams), null);
     }
 
     @Test(expected = RuleApplicationException.class)
     public void apply_should_throw_an_exception_when_contour_args_contain_different_goal_indices() throws RuleApplicationException {
         List<ContourArg> contoursFromDifferentGoals = Arrays.asList(new ContourArg(1, 0, "A"), new ContourArg(0, 0, "B"));
-        introContour.apply(new MultipleRuleArgs(contoursFromDifferentGoals), null);
+        removeContour.apply(new MultipleRuleArgs(contoursFromDifferentGoals), null);
     }
 
     @Test
@@ -86,20 +87,20 @@ public class IntroContourTest {
     }
 
     @Test
-    public void getInstructions_should_return_the_contours_and_subdiagram_selection_instructions() {
+    public void getInstructions_should_return_the_contours_selection_instructions() {
         assertThat(
-                introContour.getInstructions(),
-                instanceOf(SelectSingleSubDiagramAndContourInstruction.class)
+                removeContour.getInstructions(),
+                instanceOf(SelectContoursInstruction.class)
         );
     }
 
     @Test
-    public void apply_must_add_the_new_contour_to_in_and_out_sets_of_all_zones_euler_diagram()  throws RuleApplicationException {
-        PrimarySpiderDiagram target = TestSpiderDiagrams.EULER_DIAGRAM_A_SUBSET_B;
+    public void apply_must_remove_the_contour_from_in_and_out_sets_of_all_zones_euler_diagram()  throws RuleApplicationException {
+        PrimarySpiderDiagram target = TestSpiderDiagrams.EULER_DIAGRAM_A_SUBSET_B_INTERSECT_C;
         Goals targetOfInference = Goals.createGoalsFrom(target);
-        SpiderDiagram expectedResult = TestSpiderDiagrams.EULER_DIAGRAM_A_SUBSET_B_INTERSECT_C;
+        SpiderDiagram expectedResult = TestSpiderDiagrams.EULER_DIAGRAM_A_SUBSET_B;
 
-        RuleApplicationResult result = introContour.apply(new MultipleRuleArgs(new ContourArg(0,0,"C")), targetOfInference);
+        RuleApplicationResult result = removeContour.apply(new MultipleRuleArgs(new ContourArg(0,0,"C")), targetOfInference);
 
         assertThat(result.getGoals().getGoalAt(0),
                 equalTo(expectedResult));

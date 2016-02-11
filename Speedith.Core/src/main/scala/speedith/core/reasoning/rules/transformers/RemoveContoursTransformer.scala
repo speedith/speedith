@@ -35,6 +35,9 @@ case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) ex
         if (!normalised.equals(psd)) {
           throw new RuleApplicationException("Rule can only be applied to a normalised diagram (all visible zones have to be included in the set of present zones in the abstract syntax)")
         }*/
+      if (!psd.getAllContours.containsAll(contoursToRemove)) {
+        throw new TransformationException("The contours to be removed do not exist in the target diagram")
+      }
         SpiderDiagrams.createPrimarySD(
           psd.getSpiders,
           psd.getHabitats.map {

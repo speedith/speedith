@@ -27,7 +27,7 @@ case class IntroduceContoursTransformer(target : SubDiagramIndexArg, contours : 
     if (subDiagramIndex == diagramIndex) {
       try {
         if ((contoursToAdd & psd.getAllContours).nonEmpty ) {
-          throw new RuleApplicationException("The contours to be introduced must not be contained in the target diagram.")
+          throw new TransformationException("The contours to be introduced must not be contained in the target diagram.")
         }
         EulerDiagrams.createPrimaryEulerDiagram(
           AutomaticUtils.regionWithNewContours(psd.getShadedZones.toSet,contoursToAdd),

@@ -73,18 +73,9 @@ public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
     }
 
     private ArrayList<ContourArg> getContourArgsFrom(MultipleRuleArgs args) throws RuleApplicationException {
-        ArrayList<ContourArg> contourArgs = new ArrayList<>();
-        int subDiagramIndex = -1;
-        int goalIndex = -1;
-        for (RuleArg ruleArg : args) {
-            if (ruleArg instanceof ContourArg) {
-                ContourArg contourArg = ContourArg.getContourArgFrom(ruleArg);
-                subDiagramIndex = ContourArg.assertSameSubDiagramIndices(subDiagramIndex, contourArg);
-                goalIndex = ContourArg.assertSameGoalIndices(goalIndex, contourArg);
-                contourArgs.add(contourArg);
-            }
-        }
-        return contourArgs;
+        MultipleRuleArgs multipleRuleArgs = getTypedRuleArgs(args);
+        MultipleRuleArgs.assertArgumentsNotEmpty(multipleRuleArgs);
+        return ContourArg.getContourArgsFrom(multipleRuleArgs);
     }
 
     private RuleApplicationResult apply(SubDiagramIndexArg target, ArrayList<ContourArg> targetContours, Goals goals) throws RuleApplicationException {
