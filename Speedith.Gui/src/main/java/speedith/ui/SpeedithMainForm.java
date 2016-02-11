@@ -113,6 +113,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenuItem proveFromHere;
   private javax.swing.JFileChooser fileChooser;
   private javax.swing.JMenu tacticsMenu;
+  private javax.swing.JMenu openMenu;
+  private javax.swing.JMenu saveMenu;
 
   /**
    * Creates new form SpeedithMainForm
@@ -156,6 +158,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     lstAppliedRules = new javax.swing.JList();
     menuBar = new javax.swing.JMenuBar();
     fileMenu = new javax.swing.JMenu();
+    openMenu = new javax.swing.JMenu();
+    saveMenu = new javax.swing.JMenu();
+
     settingsMenuItem = new javax.swing.JMenuItem();
     exitMenuItem = new javax.swing.JMenuItem();
     openMenuItem = new javax.swing.JMenuItem();
@@ -223,6 +228,11 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     fileMenu.setMnemonic('F');
     fileMenu.setText("File");
 
+    openMenu.setText("Open");
+    fileMenu.add(openMenu);
+    saveMenu.setText("Save");
+    fileMenu.add(saveMenu);
+
     openMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
     openMenuItem.setMnemonic('O');
     openMenuItem.setText("Open Goal");
@@ -232,7 +242,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         onOpen(evt);
       }
     });
-    fileMenu.add(openMenuItem);
+    openMenu.add(openMenuItem);
 
     saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
     saveMenuItem.setMnemonic('S');
@@ -243,7 +253,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         onSave(evt);
       }
     });
-    fileMenu.add(saveMenuItem);
+    saveMenu.add(saveMenuItem);
 
 
     openProofMenuItem.setText("Open proof");
@@ -253,7 +263,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         onOpenProof();
       }
     });
-    fileMenu.add(openProofMenuItem);
+    openMenu.add(openProofMenuItem);
 
     saveProofMenuItem.setText("Save current proof");
     saveProofMenuItem.addActionListener(new ActionListener() {
@@ -262,7 +272,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         onSaveProof();
       }
     });
-    fileMenu.add(saveProofMenuItem);
+    saveMenu.add(saveProofMenuItem);
 
     settingsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
     settingsMenuItem.setMnemonic('P');
