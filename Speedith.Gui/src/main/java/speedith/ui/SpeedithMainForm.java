@@ -115,6 +115,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenu tacticsMenu;
   private javax.swing.JMenu openMenu;
   private javax.swing.JMenu saveMenu;
+  private javax.swing.JMenuItem analyseItem;
 
   /**
    * Creates new form SpeedithMainForm
@@ -176,6 +177,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     useSdExample3MenuItem = new javax.swing.JMenuItem();
     proofMenu = new javax.swing.JMenu();
     cropProof = new javax.swing.JMenuItem();
+    analyseItem = new javax.swing.JMenuItem();
     reasoningMenu = new javax.swing.JMenu();
     proveAny = new javax.swing.JMenuItem();
     proveFromHere = new javax.swing.JMenuItem();
@@ -354,7 +356,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     proofMenu.setMnemonic('P');
     proofMenu.setText("Proof");
 
-    cropProof.setText("Reduce Proof to selected Subgoal");
+    cropProof.setText("Reduce to selected Subgoal");
     cropProof.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
@@ -362,6 +364,15 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       }
     });
     proofMenu.add(cropProof);
+
+    analyseItem.setText("Analyse");
+    analyseItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        analyseProof();
+      }
+    });
+    proofMenu.add(analyseItem);
     menuBar.add(proofMenu);
 
     reasoningMenu.setMnemonic('A');
@@ -422,6 +433,26 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
+
+  private void analyseProof() {
+    if (proofPanel1.getGoals().isEmpty()) {
+      JOptionPane.showMessageDialog(this, "No proof to analyse.");
+      return;
+    }
+    int length = ProofAnalyser.length(proofPanel1);
+    int maxClutter = ProofAnalyser.maximumClutter(proofPanel1);
+    double avgClutter = ProofAnalyser.averageClutter(proofPanel1);
+    int velo = ProofAnalyser.clutterVelocity(proofPanel1);
+    int complexR = ProofAnalyser.complexRuleCount(proofPanel1);
+    double avgComplex = ProofAnalyser.averageNumberOfComplexRules(proofPanel1);
+
+    JOptionPane.showMessageDialog(this, "Length:\t"+ length+
+            "\nMaximum Clutter:\t"+maxClutter +
+            "\nAverage Clutter:\t"+String.format("%.2f", avgClutter)+
+            "\nNumber of Complex Rules:\t"+complexR +
+            "\nAverage Number of Complex Rules:\t"+String.format("%.2f", avgComplex)+
+            "\nClutter Velocity:\t"+velo);
+  }
 
   private void onSaveProof() {
     if (proofPanel1.getGoals().isEmpty()) {
