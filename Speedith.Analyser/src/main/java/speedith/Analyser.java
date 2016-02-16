@@ -1,16 +1,13 @@
 package speedith;
 
 import org.apache.commons.cli.*;
-import speedith.analyser.FileAnalyserVisitor;
+import speedith.analyser.ProofAnalyserVisitor;
 import speedith.cli.AnalyserOptions;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.EnumSet;
 
 /**
@@ -24,7 +21,7 @@ public class Analyser {
         AnalyserOptions options = new AnalyserOptions();
         CommandLineParser parser = new BasicParser();
         HelpFormatter help = new HelpFormatter();
-        FileAnalyserVisitor visitor = new FileAnalyserVisitor();
+        ProofAnalyserVisitor visitor = new ProofAnalyserVisitor();
         boolean recursive ;
 
         try {
@@ -39,12 +36,14 @@ public class Analyser {
             Files.walkFileTree(input, EnumSet.of(FileVisitOption.FOLLOW_LINKS), depth, visitor);
             File output = new File(line.getOptionValue(AnalyserOptions.OUTPUT_SHORT));
             FileWriter writer = new FileWriter(output);
-            writer.write(visitor.getResult().toString());
+            writer.write(visitor.getResult());
             writer.close();
         } catch (ParseException e) {
 //            e.printStackTrace();
-            help.printHelp("proof-analyser", options);
+            help.printHelp("proof-analyser [-R] <-i input dir> <-o output file>", options);
 
+        } catch (NoSuchFileException e) {
+            System.out.println("No file with this name exists: " + e.getFile());
         } catch (IOException e) {
             e.printStackTrace();
         }

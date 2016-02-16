@@ -15,12 +15,12 @@ import java.nio.file.attribute.BasicFileAttributes;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class FileAnalyserVisitor extends SimpleFileVisitor<Path> {
+public class ProofAnalyserVisitor extends SimpleFileVisitor<Path> {
 
     private StringBuilder result ;
     private PathMatcher matcher;
 
-    public FileAnalyserVisitor() {
+    public ProofAnalyserVisitor() {
         result = new StringBuilder();
         result.append("Name, ")
                 .append("Length, ")
@@ -74,7 +74,7 @@ public class FileAnalyserVisitor extends SimpleFileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
 
-    public StringBuilder getResult() {
-        return result;
+    public String getResult() {
+        return result.toString();
     }
 }
