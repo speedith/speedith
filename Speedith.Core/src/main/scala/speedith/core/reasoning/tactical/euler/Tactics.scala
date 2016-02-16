@@ -83,24 +83,29 @@ object Tactics {
     }
   }
 
-  def introduceShadedZone(subgoalIndex: Int, predicate: SpiderDiagramOccurrence => Proof => Boolean, state: Proof): Option[Proof] = {
+  def introduceShadedZone(subgoalIndex: Int, predicate: SpiderDiagramOccurrence => Proof => Boolean, zoneChooser : SpiderDiagramOccurrence => Option[Zone],  state: Proof): Option[Proof] = {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
         d => d.isInstanceOf[PrimarySpiderDiagramOccurrence] && predicate(d)(state))
       target match {
         case None => None
-        case Some(diagram) =>
-          val missingZones = diagram.asInstanceOf[PrimarySpiderDiagramOccurrence].getShadedZones -- diagram.asInstanceOf[PrimarySpiderDiagramOccurrence].getPresentZones
-          createResults(target, state, new IntroShadedZone().asInstanceOf[InferenceRule[RuleArg]],
-            new ZoneArg(subgoalIndex, diagram.getOccurrenceIndex, missingZones.head))
+        case Some(diagram) => {
+          val targetZone = zoneChooser(diagram)
+          targetZone match {
+            case Some(zone) =>
+              createResults(target, state, new IntroShadedZone().asInstanceOf[InferenceRule[RuleArg]],
+                new ZoneArg(subgoalIndex, diagram.getOccurrenceIndex, zone))
+            case None => None
+          }
+        }
       }
     } catch {
       case e: TacticApplicationException => None
     }
   }
 
-  def removeShadedZone(subgoalIndex: Int, state: Proof): Option[Proof] = {
+  def removeShadedZone(subgoalIndex: Int, zoneChooser: SpiderDiagramOccurrence => Option[Zone], state: Proof): Option[Proof] = {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
@@ -108,12 +113,18 @@ object Tactics {
       target match {
         case None => None
         case Some(diagram) =>
-          val presentShadedZones = diagram.asInstanceOf[PrimarySpiderDiagramOccurrence].getShadedZones & diagram.asInstanceOf[PrimarySpiderDiagramOccurrence].getPresentZones
-          if (presentShadedZones.head.getInContoursCount == 0) {
-            throw new TacticApplicationException("Cannot remove outer zone")
+//          val presentShadedZones = diagram.asInstanceOf[PrimarySpiderDiagramOccurrence].getShadedZones & diagram.asInstanceOf[PrimarySpiderDiagramOccurrence].getPresentZones
+          val targetZone = zoneChooser(diagram)
+          targetZone match {
+            case Some(zone) =>
+              if (zone.getInContoursCount == 0) {
+                throw new TacticApplicationException("Cannot remove outer zone")
+              }
+              createResults(target, state, new RemoveShadedZone().asInstanceOf[InferenceRule[RuleArg]],
+                new ZoneArg(subgoalIndex, diagram.getOccurrenceIndex, zone))
+            case None => None
           }
-          createResults(target, state, new RemoveShadedZone().asInstanceOf[InferenceRule[RuleArg]],
-            new ZoneArg(subgoalIndex, diagram.getOccurrenceIndex, presentShadedZones.head))
+
       }
     } catch {
       case e: TacticApplicationException => None

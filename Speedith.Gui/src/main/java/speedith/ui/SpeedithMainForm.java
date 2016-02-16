@@ -452,7 +452,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
             "\nNumber of Complex Rules:\t"+complexR +
             "\nAverage Number of Complex Rules:\t"+String.format("%.2f", avgComplex)+
             "\nNumber of Interactions:\t"+interactions+
-            "\nAverage Number of Interactions:\t"+avgInteractions+
+            "\nAverage Number of Interactions:\t"+String.format("%.2f",avgInteractions)+
             "\nMaximal Clutter Velocity:\t"+velo);
   }
 

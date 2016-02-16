@@ -22,12 +22,12 @@ object SingleRuleTacticals {
 
   @throws(classOf[TacticApplicationException])
   def introduceShadedZone(state:Proof) = {
-    BY(THEN(Tactics.introduceShadedZone(0,isPrimaryAndContainsMissingZones,_),TRY(Tactics.trivialTautology(0,_))))(state)
+    BY(THEN(Tactics.introduceShadedZone(0,isPrimaryAndContainsMissingZones,anyMissingZone,_),TRY(Tactics.trivialTautology(0,_))))(state)
   }
 
   @throws(classOf[TacticApplicationException])
   def removeShadedZone(state:Proof)= {
-    BY(THEN(Tactics.removeShadedZone(0,_), TRY(Tactics.trivialTautology(0,_))))(state)
+    BY(THEN(Tactics.removeShadedZone(0,anyShadedZone,_), TRY(Tactics.trivialTautology(0,_))))(state)
   }
 
   @throws(classOf[TacticApplicationException])

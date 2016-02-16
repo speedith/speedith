@@ -16,11 +16,11 @@ object SimpleTacticals {
 
   def vennify(state:Proof) = {
     REPEAT(ORELSE(trivialTautology(0,_),
-      introduceShadedZone(0,isPrimaryAndContainsMissingZones,_)))(state)
+      introduceShadedZone(0,isPrimaryAndContainsMissingZones,anyMissingZone,_)))(state)
   }
 
   def deVennify (state:Proof) = {
-    REPEAT(ORELSE(trivialTautology(0,_),removeShadedZone(0,_)))(state)
+    REPEAT(ORELSE(trivialTautology(0,_),removeShadedZone(0,anyShadedZone,_)))(state)
   }
 
 
@@ -44,14 +44,18 @@ object SimpleTacticals {
 
   def matchConclusion(state : Proof) = {
     val concContours =getContoursInConclusion(0,state)
-    THEN(REPEAT(ORELSE(trivialTautology(0,_),
-      eraseContour(0, containsOtherContours(_, concContours ), firstOfTheOtherContours(_, concContours),_))),REPEAT(ORELSE(trivialTautology(0,_), removeShadedZone(0,_))) )(state)
+    val concShadedZones = getShadedZonesInConclusion(0,state)
+    THEN(THEN(REPEAT(ORELSE(trivialTautology(0,_),
+      eraseContour(0, containsOtherContours(_, concContours ), firstOfTheOtherContours(_, concContours),_))),
+      REPEAT(ORELSE(trivialTautology(0,_), removeShadedZone(0,firstVisibleShadedZoneNotInGivenZones(_,concShadedZones),_)))),
+      REPEAT(ORELSE(trivialTautology(0,_),
+        introduceShadedZone(0,isPrimaryAndContainsMissingZones, firstMissingZoneInGivenZones(_,concShadedZones),_))))(state)
   }
 
   def copyTopologicalInformation(state : Proof) = {
       REPEAT(ORELSE(trivialTautology(0,_),
         ORELSE(idempotency(0,_),
-          ORELSE(removeShadedZone(0,_),
+          ORELSE(removeShadedZone(0,anyShadedZone,_),
             copyContour(0,_)))))(state)
   }
 
@@ -59,6 +63,6 @@ object SimpleTacticals {
     REPEAT(ORELSE(trivialTautology(0,_),
       ORELSE(idempotency(0,_),
         ORELSE(copyShading(0,_),
-          introduceShadedZone(0,sd => collectDiagramsWithMissingZonesThatCouldBeCopied(0,_).contains(sd), _)))))(state)
+          introduceShadedZone(0,sd => collectDiagramsWithMissingZonesThatCouldBeCopied(0,_).contains(sd), anyMissingZone, _)))))(state)
   }
 }

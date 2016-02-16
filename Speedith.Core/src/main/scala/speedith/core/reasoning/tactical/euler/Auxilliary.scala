@@ -1,6 +1,6 @@
 package speedith.core.reasoning.tactical.euler
 
-import speedith.core.lang.{CompoundSpiderDiagram, Operator, Region, Zone}
+import speedith.core.lang._
 import speedith.core.reasoning.Proof
 import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramOccurrence, PrimarySpiderDiagramOccurrence, SpiderDiagramOccurrence}
 import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
@@ -165,6 +165,44 @@ object Auxilliary {
     case sd: PrimarySpiderDiagramOccurrence => Some((sd.getAllContours -- contours).head)
   }
 
+  def firstVisibleShadedZoneNotInGivenZones(sd : SpiderDiagramOccurrence, zones : Set[Zone]) : Option[Zone] = sd match {
+    case sd: CompoundSpiderDiagramOccurrence => None
+    case sd:PrimarySpiderDiagramOccurrence => Some(((sd.getPresentZones & sd.getShadedZones) -- zones).head)
+  }
+
+  def anyShadedZone(sd:SpiderDiagramOccurrence) : Option[Zone] = sd match {
+    case sd: CompoundSpiderDiagramOccurrence => None
+    case sd: PrimarySpiderDiagramOccurrence =>
+      try {
+        Some((sd.getPresentZones & sd.getShadedZones).head)
+      }
+      catch {
+        case e: Exception => None
+      }
+  }
+
+  def firstMissingZoneInGivenZones(sd : SpiderDiagramOccurrence, zones : Set[Zone]) : Option[Zone] = sd match {
+    case sd: CompoundSpiderDiagramOccurrence => None
+    case sd:PrimarySpiderDiagramOccurrence => try {
+      Some((( sd.getShadedZones -- sd.getPresentZones) & zones).head)
+    }
+    catch {
+      case e: Exception => None
+    }
+  }
+
+
+  def anyMissingZone(sd : SpiderDiagramOccurrence): Option[Zone] = sd match {
+    case sd: CompoundSpiderDiagramOccurrence => None
+    case sd: PrimarySpiderDiagramOccurrence =>
+      try {
+        Some((sd.getShadedZones -- sd.getPresentZones).head)
+      }
+      catch {
+        case e: Exception => None
+      }
+  }
+
   def anyContour(sd: SpiderDiagramOccurrence): Option[String] = sd match {
     case sd: CompoundSpiderDiagramOccurrence => None
     case sd: PrimarySpiderDiagramOccurrence =>
@@ -180,6 +218,20 @@ object Auxilliary {
     val goal = state.getLastGoals.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
       AutomaticUtils.collectContours(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1)).toSet
+    } else {
+      Set()
+    }
+  }
+
+  def collectShadedZones(diagram: SpiderDiagram): Set[Zone] = diagram match {
+    case diagram : PrimarySpiderDiagram => (diagram.getPresentZones & diagram.getShadedZones).toSet
+    case diagram : CompoundSpiderDiagram => diagram.getOperands.flatMap(collectShadedZones).toSet
+  }
+
+  def getShadedZonesInConclusion(subgoalIndex : Int, state : Proof) : Set[Zone] = {
+    val goal = state.getLastGoals.getGoalAt(subgoalIndex)
+    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+        collectShadedZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
     } else {
       Set()
     }
