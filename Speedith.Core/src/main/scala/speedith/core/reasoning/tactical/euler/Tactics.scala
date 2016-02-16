@@ -7,7 +7,7 @@ import speedith.core.reasoning.rules._
 import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
 import speedith.core.reasoning.tactical.TacticApplicationException
 import speedith.core.reasoning.tactical.euler.Auxilliary._
-import speedith.core.reasoning.{InferenceRule, Proof, ProofTrace, RuleApplicationException}
+import speedith.core.reasoning._
 
 import scala.collection.JavaConversions._
 
@@ -61,7 +61,7 @@ object Tactics {
       val result = Tuple2(diagram, new ProofTrace(state))
       // intermediate is used to create the rule applications (applyRule changes the given proof and
       // returns a RuleApplicationResult!)
-      val intermediate = result._2.applyRule(rule, args)
+      val intermediate = result._2.applyRule(rule, args, RuleApplicationType.TACTIC)
       Some(result._2)
   }
 

@@ -127,12 +127,12 @@ public class ProofTrace implements Proof {
 
     //<editor-fold defaultstate="collapsed" desc="Proof Interface Implementation">
     @Override
-    public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<TRuleArg> rule) throws RuleApplicationException {
-        return applyRule(rule, null);
+    public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<TRuleArg> rule, RuleApplicationType type) throws RuleApplicationException {
+        return applyRule(rule, null, type);
     }
 
     @Override
-    public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException {
+    public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args, RuleApplicationType type) throws RuleApplicationException {
         if (isFinished()) {
             throw new RuleApplicationException(i18n("PROOF_TRACE_FINISHED"));
         }
@@ -152,7 +152,7 @@ public class ProofTrace implements Proof {
             }
             newGoals = Goals.createGoalsFrom(remainingGoals);
         }
-        ruleApplications.add(new RuleApplication(rule, args));
+        ruleApplications.add(new RuleApplication(rule, args, type));
 //        goals.add(appResult.getGoals());
         goals.add(newGoals);
         return appResult;

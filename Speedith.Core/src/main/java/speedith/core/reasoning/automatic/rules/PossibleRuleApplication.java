@@ -3,6 +3,7 @@ package speedith.core.reasoning.automatic.rules;
 import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplicationException;
+import speedith.core.reasoning.RuleApplicationType;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.automatic.AppliedRules;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
@@ -41,7 +42,7 @@ public abstract class PossibleRuleApplication {
     public abstract RuleArg getArg(int subgoalindex) ;
 
     public boolean apply (Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
-        p.applyRule(getRule(), getArg(subGoalIndex));
+        p.applyRule(getRule(), getArg(subGoalIndex), RuleApplicationType.AUTOMATIC);
         return true;
     }
 

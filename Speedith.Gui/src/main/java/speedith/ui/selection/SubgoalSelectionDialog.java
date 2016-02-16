@@ -118,7 +118,7 @@ public class SubgoalSelectionDialog extends JDialog {
             } else {
                 stepDescription = i18n("PROOF_PANEL_STEP_DESC_GENERAL", ruleApplications.get(stepIndex - 1).getInferenceRule().getProvider().getPrettyName());
             }
-            final SubgoalsPanel select = new SubgoalsPanel(g, goalTitle, stepDescription);
+            final SubgoalsPanel select = new SubgoalsPanel(g, goalTitle, stepDescription, Color.GRAY);
 
             GridBagConstraints bgc = new java.awt.GridBagConstraints();
             bgc.gridx = 0;

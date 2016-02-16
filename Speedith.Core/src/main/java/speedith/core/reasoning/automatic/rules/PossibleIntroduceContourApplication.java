@@ -41,16 +41,6 @@ public class PossibleIntroduceContourApplication extends PossibleRuleApplication
         return new MultipleRuleArgs(arg);
     }
 
-    @Override
-    public boolean apply(Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
-//        if (!applied.getIntroducedContours(getTarget()).contains(contour)) {
-            p.applyRule(getRule(), getArg(subGoalIndex));
-//            applied.addIntroContour(getTarget(), contour);
-            return true;
-//        } else {
-//            return false;
-  //      }
-    }
 
     @Override
     public boolean isSuperfluous(Proof p, int subGoalIndex) {

@@ -43,13 +43,6 @@ public class PossibleCopyShadingApplication extends PossibleRuleApplication {
         return region;
     }
 
-    @Override
-    public boolean apply(Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
-//        if (!applied.getCopiedShadings(getTarget()).contains(region)) {
-            p.applyRule(getRule(), getArg(subGoalIndex));
-//            applied.addCopiedShadings(getTarget(), region);
-            return true;
-    }
 
     @Override
     public boolean isSuperfluous(Proof p, int subGoalIndex) {

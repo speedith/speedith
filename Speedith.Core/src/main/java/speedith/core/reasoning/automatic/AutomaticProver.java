@@ -1,10 +1,7 @@
 package speedith.core.reasoning.automatic;
 
 import speedith.core.lang.TransformationException;
-import speedith.core.reasoning.Goals;
-import speedith.core.reasoning.Proof;
-import speedith.core.reasoning.ProofTrace;
-import speedith.core.reasoning.RuleApplicationException;
+import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.automatic.strategies.Strategy;
 import speedith.core.reasoning.automatic.wrappers.CompoundSpiderDiagramOccurrence;
@@ -120,7 +117,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
         TrivialImplicationTautology tautology = new TrivialImplicationTautology();
         SubDiagramIndexArg index = new SubDiagramIndexArg(subGoalIndex,0);
         try {
-            p.applyRule(tautology, index);
+            p.applyRule(tautology, index, RuleApplicationType.AUTOMATIC);
         } catch (TransformationException e) {
             // TrivialImplicationTautology throws a TransformationException, if the rule
             // could not be applied (i.e., if the syntactic equivalence could not

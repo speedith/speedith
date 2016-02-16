@@ -33,16 +33,6 @@ public class PossibleRemoveShadingApplication extends PossibleRuleApplication {
         return new ZoneArg(subgoalindex, targetIndex, zone);
     }
 
-    @Override
-    public boolean apply(Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
-//        if (!applied.getRemovedShading(getTarget()).contains(zone)) {
-            p.applyRule(getRule(), getArg(subGoalIndex));
-//            applied.addRemovedShading(getTarget(), zone);
-            return true;
-//        } else {
-//            return false;
- //       }
-    }
 
     @Override
     public boolean isSuperfluous(Proof p, int subGoalIndex) {

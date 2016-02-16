@@ -37,16 +37,6 @@ public class PossibleCopyContourApplication extends PossibleRuleApplication {
         return new MultipleRuleArgs(arg);
     }
 
-    @Override
-    public boolean apply(Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
-//        if (!applied.getCopiedContours(getTarget()).contains(contour)) {
-                p.applyRule(getRule(), getArg(subGoalIndex));
-//            applied.addCopiedContour(getTarget(), contour);
-            return true;
-//        } else {
-//            return false;
-//        }
-    }
 
     @Override
     public boolean isSuperfluous(Proof p, int subGoalIndex) {
