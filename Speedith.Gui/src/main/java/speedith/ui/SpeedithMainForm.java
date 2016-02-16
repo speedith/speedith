@@ -32,7 +32,6 @@
  */
 package speedith.ui;
 
-import scala.Some;
 import speedith.core.lang.*;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
@@ -44,7 +43,6 @@ import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
 import speedith.core.reasoning.tactical.TacticApplicationException;
-import speedith.core.reasoning.tactical.euler.SimpleTacticals;
 import speedith.core.reasoning.tactical.euler.SingleRuleTacticals;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
@@ -442,16 +440,20 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     int length = ProofAnalyser.length(proofPanel1);
     int maxClutter = ProofAnalyser.maximumClutter(proofPanel1);
     double avgClutter = ProofAnalyser.averageClutter(proofPanel1);
-    int velo = ProofAnalyser.clutterVelocity(proofPanel1);
+    int velo = ProofAnalyser.maximalClutterVelocity(proofPanel1);
     int complexR = ProofAnalyser.complexRuleCount(proofPanel1);
     double avgComplex = ProofAnalyser.averageNumberOfComplexRules(proofPanel1);
+    int interactions = ProofAnalyser.numberOfInteractions(proofPanel1);
+    double avgInteractions = ProofAnalyser.averageInteractions(proofPanel1);
 
     JOptionPane.showMessageDialog(this, "Length:\t"+ length+
             "\nMaximum Clutter:\t"+maxClutter +
             "\nAverage Clutter:\t"+String.format("%.2f", avgClutter)+
             "\nNumber of Complex Rules:\t"+complexR +
             "\nAverage Number of Complex Rules:\t"+String.format("%.2f", avgComplex)+
-            "\nClutter Velocity:\t"+velo);
+            "\nNumber of Interactions:\t"+interactions+
+            "\nAverage Number of Interactions:\t"+avgInteractions+
+            "\nMaximal Clutter Velocity:\t"+velo);
   }
 
   private void onSaveProof() {

@@ -27,6 +27,8 @@ public class ProofAnalyserVisitor extends SimpleFileVisitor<Path> {
                 .append("Average Clutter, ")
                 .append("Number of complex Rules, ")
                 .append("Average number of complex rules, ")
+                .append("Interactions, ")
+                .append("Average number of Interactions, ")
                 .append("Maximal clutter velocity\n");
         matcher = FileSystems.getDefault().getPathMatcher("glob:**.prf");
     }
@@ -46,9 +48,11 @@ public class ProofAnalyserVisitor extends SimpleFileVisitor<Path> {
                     int length = ProofAnalyser.length(inputProof);
                     int maxClutter = ProofAnalyser.maximumClutter(inputProof);
                     double avgClutter = ProofAnalyser.averageClutter(inputProof);
-                    int velo = ProofAnalyser.clutterVelocity(inputProof);
+                    int velo = ProofAnalyser.maximalClutterVelocity(inputProof);
                     int complexR = ProofAnalyser.complexRuleCount(inputProof);
                     double avgComplex = ProofAnalyser.averageNumberOfComplexRules(inputProof);
+                    int interactions = ProofAnalyser.numberOfInteractions(inputProof);
+                    double avgInteractions = ProofAnalyser.averageInteractions(inputProof);
 
                     result.append(file.getFileName()).append(", ")
                             .append(length).append(", ")
@@ -56,6 +60,8 @@ public class ProofAnalyserVisitor extends SimpleFileVisitor<Path> {
                             .append(String.format("%.2f", avgClutter)).append(", ")
                             .append(complexR).append(", ")
                             .append(String.format("%.2f", avgComplex)).append(", ")
+                            .append(interactions).append(", ")
+                            .append(String.format("%.2f", avgInteractions)).append(", ")
                             .append(velo).append("\n");
 
                 }

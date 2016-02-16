@@ -13,7 +13,7 @@ import scala.collection.JavaConversions._
 object ProofAnalyser  {
 
   def averageClutter(proof  : Proof) : Double = {
-    maximumClutter(proof).toDouble / length(proof)
+    proof.getGoals.filter(p => !p.isEmpty).map(clutterScore).sum.toDouble / length(proof)
   }
 
   def maximumClutter(proof:Proof) : Int = {
@@ -62,7 +62,15 @@ object ProofAnalyser  {
 
   def length(proof: Proof) : Int = proof.getRuleApplicationCount
 
-  def clutterVelocity(proof : Proof) : Int = {
+  def numberOfInteractions(proof : Proof) : Int = {
+    proof.getRuleApplications.count(app => app.getType.equals(RuleApplicationType.INTERACTIVE))
+  }
+
+  def averageInteractions(proof:Proof) : Double = {
+    numberOfInteractions(proof).toDouble /length(proof)
+  }
+
+  def maximalClutterVelocity(proof : Proof) : Int = {
     val goals = proof.getGoals.filter(g => !g.isEmpty).toList
     val tuples = goals.sliding(2).map(t => t match { case List(x,y) => clutterScore(x)-clutterScore(y)})
     val list = tuples.toList.map(i => if (i < 0) -i else i)
