@@ -3,7 +3,6 @@ package speedith.analyser;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.ProofAnalyser;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -38,7 +37,7 @@ public class ProofAnalyserVisitor extends SimpleFileVisitor<Path> {
         if (attrs.isRegularFile() && matcher.matches(file)) {
             // load and analyse proof
 
-            Proof inputProof = null;
+            Proof inputProof;
             try (
                     FileInputStream inputStream = new FileInputStream(file.toFile());
                     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
