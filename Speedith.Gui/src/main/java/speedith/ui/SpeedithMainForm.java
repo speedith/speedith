@@ -51,6 +51,7 @@ import spiderdrawer.ui.MainForm;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -109,7 +110,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenu reasoningMenu;
   private javax.swing.JMenuItem proveAny;
   private javax.swing.JMenuItem proveFromHere;
-  private javax.swing.JFileChooser fileChooser;
+  private javax.swing.JFileChooser goalFileChooser;
+  private javax.swing.JFileChooser proofFileChooser;
   private javax.swing.JMenu tacticsMenu;
   private javax.swing.JMenu openMenu;
   private javax.swing.JMenu saveMenu;
@@ -427,7 +429,13 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     );
 
 
-    fileChooser = new JFileChooser();
+    goalFileChooser = new JFileChooser();
+    goalFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Speedith diagram files", "sdt"));
+    goalFileChooser.setMultiSelectionEnabled(false);
+
+    proofFileChooser = new JFileChooser();
+    proofFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Speedith proof files", "prf"));
+    proofFileChooser.setMultiSelectionEnabled(false);
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
@@ -461,9 +469,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       JOptionPane.showMessageDialog(this, "No proof to be saved exists.");
       return;
     }
-    int returnVal = fileChooser.showSaveDialog(this);
+    int returnVal = proofFileChooser.showSaveDialog(this);
     if (returnVal == JFileChooser.APPROVE_OPTION) {
-      File file = fileChooser.getSelectedFile();
+      File file = proofFileChooser.getSelectedFile();
       if (file.exists()) {
         int reallySave = JOptionPane.showConfirmDialog(this, "File " + file.getName() + " exists at given path. Save anyway?", "File already exists", JOptionPane.YES_NO_OPTION);
         if (reallySave == JOptionPane.NO_OPTION) {
@@ -482,9 +490,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }
 
   private void onOpenProof() {
-    int returnVal = fileChooser.showOpenDialog(this);
+    int returnVal = proofFileChooser.showOpenDialog(this);
     if (returnVal == JFileChooser.APPROVE_OPTION) {
-      File file = fileChooser.getSelectedFile();
+      File file = proofFileChooser.getSelectedFile();
       Proof inputProof = null;
       try (
         FileInputStream inputStream = new FileInputStream(file);
@@ -532,7 +540,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, e.getMessage());
 
       }
-      proofPanel1.replaceCurrentProof(result);
+      proofPanel1.extendCurrentProofTo(result);
 
     } else {
       JOptionPane.showMessageDialog(this, "No subgoals are open");
@@ -547,9 +555,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
 
   private void onOpen(ActionEvent evt) {
-    int returnVal = fileChooser.showOpenDialog(this);
+    int returnVal = goalFileChooser.showOpenDialog(this);
     if (returnVal == JFileChooser.APPROVE_OPTION) {
-      File file = fileChooser.getSelectedFile();
+      File file = goalFileChooser.getSelectedFile();
       try {
         SpiderDiagram input = SpiderDiagramsReader.readSpiderDiagram(file);
         proofPanel1.newProof(Goals.createGoalsFrom(ReasoningUtils.normalize(input)));
@@ -569,9 +577,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
     if (proofPanel1.getSelected() != null) {
         SpiderDiagram toSave = proofPanel1.getSelected();
-        int returnVal = fileChooser.showSaveDialog(this);
+        int returnVal = goalFileChooser.showSaveDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-          File file = fileChooser.getSelectedFile();
+          File file = goalFileChooser.getSelectedFile();
           if (file.exists()) {
             int reallySave = JOptionPane.showConfirmDialog(this, "File " + file.getName() + " exists at given path. Save anyway?", "File already exists", JOptionPane.YES_NO_OPTION);
             if (reallySave == JOptionPane.NO_OPTION) {
