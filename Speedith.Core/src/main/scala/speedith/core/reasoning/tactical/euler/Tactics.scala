@@ -68,7 +68,7 @@ object Tactics {
       Some(result._2)
   }
 
-  def introduceContour(subgoalIndex: Int, state: Proof): Option[Proof] = {
+  def introduceContour(subgoalIndex: Int):Tactical = ( state: Proof) => {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val contours = AutomaticUtils.collectContours(subgoal.getDiagram).toSet
@@ -86,7 +86,7 @@ object Tactics {
     }
   }
 
-  def introduceShadedZone(subgoalIndex: Int, predicate: Proof => Predicate, zoneChooser : Chooser[Zone],  state: Proof): Option[Proof] = {
+  def introduceShadedZone(subgoalIndex: Int, predicate: Proof => Predicate, zoneChooser : Chooser[Zone]): Tactical = (state: Proof) => {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
@@ -108,7 +108,7 @@ object Tactics {
     }
   }
 
-  def removeShadedZone(subgoalIndex: Int, zoneChooser:Chooser[Zone], state: Proof): Option[Proof] = {
+  def removeShadedZone(subgoalIndex: Int, zoneChooser:Chooser[Zone]): Tactical = ( state: Proof) => {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
@@ -116,7 +116,6 @@ object Tactics {
       target match {
         case None => None
         case Some(diagram) =>
-//          val presentShadedZones = diagram.asInstanceOf[PrimarySpiderDiagramOccurrence].getShadedZones & diagram.asInstanceOf[PrimarySpiderDiagramOccurrence].getPresentZones
           val targetZone = zoneChooser(diagram)
           targetZone match {
             case Some(zone) =>
@@ -135,7 +134,7 @@ object Tactics {
     }
   }
 
-  def eraseContour(subgoalIndex: Int, predicate: Predicate, contourChooser: Chooser[String], state: Proof): Option[Proof] = {
+  def eraseContour(subgoalIndex: Int, predicate: Predicate, contourChooser: Chooser[String]): Tactical = (state: Proof) => {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagramAndContour(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
@@ -155,7 +154,7 @@ object Tactics {
     }
   }
 
-  def eraseShading(subgoalIndex : Int, predicate: Predicate, zoneChooser : Chooser[Zone], state : Proof) : Option[Proof] = {
+  def eraseShading(subgoalIndex : Int, predicate: Predicate, zoneChooser : Chooser[Zone]) :  Tactical  = (state : Proof) => {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0), predicate)
@@ -175,7 +174,7 @@ object Tactics {
     }
   }
 
-  def combine(subgoalIndex: Int, state: Proof): Option[Proof] = {
+  def combine(subgoalIndex: Int): Tactical = (state: Proof) => {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
@@ -191,7 +190,7 @@ object Tactics {
     }
   }
 
-  def copyContour(subgoalIndex: Int, state: Proof): Option[Proof] = {
+  def copyContour(subgoalIndex: Int): Tactical = (state: Proof) => {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
@@ -214,7 +213,7 @@ object Tactics {
     }
   }
 
-  def copyShading(subgoalIndex: Int, state: Proof): Option[Proof] = {
+  def copyShading(subgoalIndex: Int ) : Tactical = (state: Proof) =>{
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
@@ -256,7 +255,7 @@ object Tactics {
     }
   }
 
-  def idempotency(subGoalIndex : Int, state:Proof) : Option[Proof] = {
+  def idempotency(subGoalIndex : Int) : Tactical = ( state:Proof) => {
     try {
       val subgoal = getSubgoal(subGoalIndex, state)
       val target = firstMatchingDiagram(subgoal, isIdempotent)
@@ -273,7 +272,7 @@ object Tactics {
     }
   }
 
-  def trivialTautology(subgoalIndex: Int, state: Proof): Option[Proof] = {
+  def trivialTautology(subgoalIndex: Int) :  Tactical = ( state: Proof) => {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagram(subgoal, isImplication)

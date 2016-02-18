@@ -13,33 +13,19 @@ object Choosers {
 
   def firstOfTheGivenContours : Set[String] => Chooser[String] = (contours : Set[String]) => {
     case sd : CompoundSpiderDiagramOccurrence => None
-    case sd : PrimarySpiderDiagramOccurrence => try {
-      Some((sd.getAllContours & contours).head)
-    }
-    catch {
-      case e: Exception => None
-    }
+    case sd : PrimarySpiderDiagramOccurrence => (sd.getAllContours & contours).headOption
   }
 
   def firstOfTheOtherContours : Set[String] => Chooser[String] = (contours : Set[String]) => {
     case sd: CompoundSpiderDiagramOccurrence => None
     case sd: PrimarySpiderDiagramOccurrence =>
-      try {
-        Some((sd.getAllContours -- contours).head)
-      } catch {
-        case e: Exception => None
-      }
+        (sd.getAllContours -- contours).headOption
   }
 
   def firstVisibleShadedZoneNotInGivenZones : Set[Zone] => Chooser[Zone] = (zones : Set[Zone]) => {
     case sd: CompoundSpiderDiagramOccurrence => None
     case sd:PrimarySpiderDiagramOccurrence =>
-      try {
-        Some(((sd.getPresentZones & sd.getShadedZones) -- zones).head)
-      }
-      catch {
-        case e: Exception=> None
-      }
+       ((sd.getPresentZones & sd.getShadedZones) -- zones).headOption
   }
 
   def someVisibleShadedZonesInGivenZones : Set[Zone] => Chooser[Zone] = (zones:Set[Zone]) => {
@@ -50,45 +36,24 @@ object Choosers {
   def anyShadedZone : Chooser[Zone] = {
     case sd: CompoundSpiderDiagramOccurrence => None
     case sd: PrimarySpiderDiagramOccurrence =>
-      try {
-        Some((sd.getPresentZones & sd.getShadedZones).head)
-      }
-      catch {
-        case e: Exception => None
-      }
+      (sd.getPresentZones & sd.getShadedZones).headOption
   }
 
   def firstMissingZoneInGivenZones: Set[Zone] => Chooser[Zone] = (zones : Set[Zone]) =>  {
     case sd: CompoundSpiderDiagramOccurrence => None
-    case sd:PrimarySpiderDiagramOccurrence => try {
-      Some((( sd.getShadedZones -- sd.getPresentZones) & zones).head)
-    }
-    catch {
-      case e: Exception => None
-    }
+    case sd:PrimarySpiderDiagramOccurrence =>
+      (( sd.getShadedZones -- sd.getPresentZones) & zones).headOption
   }
 
   def anyMissingZone : Chooser[Zone] = {
     case sd: CompoundSpiderDiagramOccurrence => None
     case sd: PrimarySpiderDiagramOccurrence =>
-      try {
-        Some((sd.getShadedZones -- sd.getPresentZones).head)
-      }
-      catch {
-        case e: Exception => None
-      }
+      (sd.getShadedZones -- sd.getPresentZones).headOption
   }
 
   def anyContour : Chooser[String] = {
     case sd: CompoundSpiderDiagramOccurrence => None
     case sd: PrimarySpiderDiagramOccurrence =>
-      try {
-        Some(sd.getAllContours.head)
-      }
-      catch {
-        case e: Exception => None
-      }
+      sd.getAllContours.headOption
   }
-
-
 }

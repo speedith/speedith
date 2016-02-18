@@ -1,6 +1,6 @@
 package speedith.ui.tactics;
 
-import scala.Some;
+import scala.*;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.tactical.TacticApplicationException;
 import speedith.core.reasoning.tactical.euler.SimpleTacticals;
@@ -34,7 +34,7 @@ public enum TacticMenuItem implements Comparable<TacticMenuItem> {
     TacticMenuItem(String name, String methodName) {
         this.name = name;
         try {
-            this.callee = SimpleTacticals.class.getDeclaredMethod(methodName, Proof.class);
+            this.callee = SimpleTacticals.class.getDeclaredMethod(methodName);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -43,7 +43,8 @@ public enum TacticMenuItem implements Comparable<TacticMenuItem> {
     public Proof apply(Proof proof) throws TacticApplicationException {
         Some<Proof> result = null;
         try {
-            result = (Some<Proof>) callee.invoke(SimpleTacticals.class, proof);
+            Function1<Proof, Option<Proof>> function = (Function1<Proof, Option<Proof>>) callee.invoke(SimpleTacticals.class);
+            result = (Some<Proof>) function.apply(proof);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {

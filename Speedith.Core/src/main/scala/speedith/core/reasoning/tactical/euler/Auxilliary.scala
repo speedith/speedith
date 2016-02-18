@@ -56,7 +56,7 @@ object Auxilliary {
   }
 
 
-  def getContoursInConclusion(subgoalIndex : Int, state : Proof) : Set[String]= {
+  def getContoursInConclusion(subgoalIndex : Int, state:Proof) : Set[String]= {
     val goal = state.getLastGoals.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
       AutomaticUtils.collectContours(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1)).toSet

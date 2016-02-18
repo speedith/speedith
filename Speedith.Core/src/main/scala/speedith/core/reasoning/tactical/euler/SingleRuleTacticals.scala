@@ -18,27 +18,27 @@ object SingleRuleTacticals {
 
   @throws(classOf[TacticApplicationException])
   def introduceContour(state:Proof)  =  {
-    BY(THEN(Tactics.introduceContour(0,_),TRY(Tactics.trivialTautology(0,_))))(state)
+    BY(THEN(Tactics.introduceContour(0),TRY(Tactics.trivialTautology(0))))(state)
   }
 
   @throws(classOf[TacticApplicationException])
   def introduceShadedZone(state:Proof) = {
-    BY(THEN(Tactics.introduceShadedZone(0,isPrimaryAndContainsMissingZones,anyMissingZone,_),TRY(Tactics.trivialTautology(0,_))))(state)
+    BY(THEN(Tactics.introduceShadedZone(0,isPrimaryAndContainsMissingZones,anyMissingZone),TRY(Tactics.trivialTautology(0))))(state)
   }
 
   @throws(classOf[TacticApplicationException])
   def removeShadedZone(state:Proof)= {
-    BY(THEN(Tactics.removeShadedZone(0,anyShadedZone,_), TRY(Tactics.trivialTautology(0,_))))(state)
+    BY(THEN(Tactics.removeShadedZone(0,anyShadedZone), TRY(Tactics.trivialTautology(0))))(state)
   }
 
   @throws(classOf[TacticApplicationException])
   def eraseContour(state:Proof)= {
-    BY(THEN(Tactics.eraseContour(0,_ => true,anyContour, _), TRY(Tactics.trivialTautology(0,_))))(state)
+    BY(THEN(Tactics.eraseContour(0,_ => true,anyContour), TRY(Tactics.trivialTautology(0))))(state)
   }
 
   @throws(classOf[TacticApplicationException])
-  def trivialTautology(state:Proof)= {
-    BY(Tactics.trivialTautology(0,_))(state)
+  def trivialTautology (state:Proof)= {
+    BY(Tactics.trivialTautology(0))(state)
   }
 
 
