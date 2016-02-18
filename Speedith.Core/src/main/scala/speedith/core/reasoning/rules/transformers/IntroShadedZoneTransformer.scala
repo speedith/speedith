@@ -19,18 +19,10 @@ class IntroShadedZoneTransformer (target:  ZoneArg) extends IdTransformer {
                          parents: java.util.ArrayList[CompoundSpiderDiagram],
                          childIndices: java.util.ArrayList[java.lang.Integer]): SpiderDiagram = {
     if (diagramIndex == subDiagramIndex) {
-      try {
         if (!(psd.getShadedZones -- psd.getPresentZones).contains(target.getZone)) {
           throw new RuleApplicationException("Selected zone is not missing.")
         }
         EulerDiagrams.createPrimaryEulerDiagram(psd.getShadedZones, psd.getPresentZones + target.getZone)
-      }
-      catch {
-        case e: Throwable =>
-          println(e)
-          e.printStackTrace()
-          throw e
-      }
     } else {
       null
     }

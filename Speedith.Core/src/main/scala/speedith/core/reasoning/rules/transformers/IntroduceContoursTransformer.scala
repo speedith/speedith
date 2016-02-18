@@ -25,7 +25,6 @@ case class IntroduceContoursTransformer(target : SubDiagramIndexArg, contours : 
                          parents: java.util.ArrayList[CompoundSpiderDiagram],
                          childIndices: java.util.ArrayList[java.lang.Integer]): SpiderDiagram = {
     if (subDiagramIndex == diagramIndex) {
-      try {
         if ((contoursToAdd & psd.getAllContours).nonEmpty ) {
           throw new TransformationException("The contours to be introduced must not be contained in the target diagram.")
         }
@@ -33,13 +32,7 @@ case class IntroduceContoursTransformer(target : SubDiagramIndexArg, contours : 
           AutomaticUtils.regionWithNewContours(psd.getShadedZones.toSet,contoursToAdd),
           AutomaticUtils.regionWithNewContours(psd.getPresentZones,contoursToAdd)
         )
-      }
-      catch {
-        case e: Throwable =>
-          println(e)
-          e.printStackTrace()
-          throw e
-      }
+
     } else {
       null
     }

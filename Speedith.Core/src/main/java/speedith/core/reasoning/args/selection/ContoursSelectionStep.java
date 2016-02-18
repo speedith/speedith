@@ -31,7 +31,7 @@ public class ContoursSelectionStep extends SelectionStep {
         if (selection instanceof ContourArg) {
             return null;
         } else {
-            return new I18NSelectionRejectionExplanation("The selected element is not a contour.");
+            return new I18NSelectionRejectionExplanation("SELSTEP_NOT_A_CONTOUR");
         }
     }
 

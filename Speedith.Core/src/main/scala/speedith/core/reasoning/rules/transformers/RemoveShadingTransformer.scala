@@ -22,17 +22,10 @@ class RemoveShadingTransformer (target:  ZoneArg) extends IdTransformer{
                          parents: java.util.ArrayList[CompoundSpiderDiagram],
                          childIndices: java.util.ArrayList[java.lang.Integer]): SpiderDiagram = {
     if (diagramIndex == subDiagramIndex) {
-      try{
         if (!(psd.getShadedZones & psd.getPresentZones).contains(target.getZone) ) {
           throw new RuleApplicationException("Selected zone is not shaded.")
         }
         EulerDiagrams.createPrimaryEulerDiagram(psd.getShadedZones - target.getZone, psd.getPresentZones)
-      }
-      catch {
-        case e: Throwable =>
-        println(e)
-        throw e
-      }
     }
     else {
       null
