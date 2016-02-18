@@ -93,6 +93,20 @@ object Auxilliary {
     }
   }
 
+  def collectVisibleZones(diagram: SpiderDiagram): Set[Zone] = diagram match {
+    case diagram : PrimarySpiderDiagram => diagram.getPresentZones.toSet
+    case diagram : CompoundSpiderDiagram => diagram.getOperands.flatMap(collectShadedZones).toSet
+  }
+
+  def getVisibleZonesInConclusion(subGoalIndex: Int, state: Proof) : Set[Zone] = {
+    val goal = state.getLastGoals.getGoalAt(subGoalIndex)
+    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      collectVisibleZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
+    } else {
+      Set()
+    }
+  }
+
   def equalContourSetsInEachPrimaryDiagram(subgoalIndex : Int) :Proof => Boolean = (state:Proof) => {
     val goal = state.getLastGoals.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {

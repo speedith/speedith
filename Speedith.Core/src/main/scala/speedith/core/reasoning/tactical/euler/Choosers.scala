@@ -11,18 +11,18 @@ import scala.collection.JavaConversions._
   */
 object Choosers {
 
-  def firstOfTheGivenContours : Set[String] => Chooser[String] = (contours : Set[String]) => {
+  def someOfTheGivenContours : Set[String] => Chooser[String] = (contours : Set[String]) => {
     case sd : CompoundSpiderDiagramOccurrence => None
     case sd : PrimarySpiderDiagramOccurrence => (sd.getAllContours & contours).headOption
   }
 
-  def firstOfTheOtherContours : Set[String] => Chooser[String] = (contours : Set[String]) => {
+  def someOfTheOtherContours : Set[String] => Chooser[String] = (contours : Set[String]) => {
     case sd: CompoundSpiderDiagramOccurrence => None
     case sd: PrimarySpiderDiagramOccurrence =>
         (sd.getAllContours -- contours).headOption
   }
 
-  def firstVisibleShadedZoneNotInGivenZones : Set[Zone] => Chooser[Zone] = (zones : Set[Zone]) => {
+  def someVisibleShadedZoneNotInGivenZones : Set[Zone] => Chooser[Zone] = (zones : Set[Zone]) => {
     case sd: CompoundSpiderDiagramOccurrence => None
     case sd:PrimarySpiderDiagramOccurrence =>
        ((sd.getPresentZones & sd.getShadedZones) -- zones).headOption
@@ -39,7 +39,7 @@ object Choosers {
       (sd.getPresentZones & sd.getShadedZones).headOption
   }
 
-  def firstMissingZoneInGivenZones: Set[Zone] => Chooser[Zone] = (zones : Set[Zone]) =>  {
+  def someMissingZoneInGivenZones: Set[Zone] => Chooser[Zone] = (zones : Set[Zone]) =>  {
     case sd: CompoundSpiderDiagramOccurrence => None
     case sd:PrimarySpiderDiagramOccurrence =>
       (( sd.getShadedZones -- sd.getPresentZones) & zones).headOption
