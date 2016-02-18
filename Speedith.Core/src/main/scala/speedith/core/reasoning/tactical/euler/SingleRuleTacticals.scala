@@ -2,7 +2,8 @@ package speedith.core.reasoning.tactical.euler
 
 import speedith.core.reasoning.Proof
 import speedith.core.reasoning.tactical.TacticApplicationException
-import speedith.core.reasoning.tactical.euler.Auxilliary._
+import speedith.core.reasoning.tactical.euler.Choosers._
+import speedith.core.reasoning.tactical.euler.Predicates._
 import speedith.core.reasoning.tactical.euler.BasicTacticals._
 
 /**

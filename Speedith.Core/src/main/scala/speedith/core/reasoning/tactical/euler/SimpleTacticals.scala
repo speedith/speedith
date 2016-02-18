@@ -2,6 +2,8 @@ package speedith.core.reasoning.tactical.euler
 
 import speedith.core.reasoning.Proof
 import speedith.core.reasoning.tactical.euler.Auxilliary._
+import speedith.core.reasoning.tactical.euler.Choosers._
+import speedith.core.reasoning.tactical.euler.Predicates._
 import speedith.core.reasoning.tactical.euler.BasicTacticals._
 import speedith.core.reasoning.tactical.euler.Tactics._
 
@@ -45,11 +47,17 @@ object SimpleTacticals {
   def matchConclusion(state : Proof) = {
     val concContours =getContoursInConclusion(0,state)
     val concShadedZones = getShadedZonesInConclusion(0,state)
-    THEN(THEN(REPEAT(ORELSE(trivialTautology(0,_),
-      eraseContour(0, containsOtherContours(_, concContours ), firstOfTheOtherContours(_, concContours),_))),
-      REPEAT(ORELSE(trivialTautology(0,_), removeShadedZone(0,firstVisibleShadedZoneNotInGivenZones(_,concShadedZones),_)))),
+    val concUnshadedZones = getUnshadedZonesInConclusion(0,state)
+    THEN(
+      THEN(
+        THEN(
+          REPEAT(ORELSE(trivialTautology(0,_),
+            eraseContour(0, containsOtherContours(concContours ), firstOfTheOtherContours(concContours),_))),
+          REPEAT(ORELSE(trivialTautology(0,_) ,
+            eraseShading(0,isPrimaryAndContainsShadedZones, someVisibleShadedZonesInGivenZones(concUnshadedZones),_)))),
+      REPEAT(ORELSE(trivialTautology(0,_), removeShadedZone(0,firstVisibleShadedZoneNotInGivenZones(concShadedZones),_)))),
       REPEAT(ORELSE(trivialTautology(0,_),
-        introduceShadedZone(0,isPrimaryAndContainsMissingZones, firstMissingZoneInGivenZones(_,concShadedZones),_))))(state)
+        introduceShadedZone(0,isPrimaryAndContainsMissingZones, firstMissingZoneInGivenZones(concShadedZones),_))))(state)
   }
 
   def copyTopologicalInformation(state : Proof) = {
@@ -63,6 +71,6 @@ object SimpleTacticals {
     REPEAT(ORELSE(trivialTautology(0,_),
       ORELSE(idempotency(0,_),
         ORELSE(copyShading(0,_),
-          introduceShadedZone(0,sd => collectDiagramsWithMissingZonesThatCouldBeCopied(0,_).contains(sd), anyMissingZone, _)))))(state)
+          introduceShadedZone(0,collectDiagramsWithMissingZonesThatCouldBeCopied(0,_).contains, anyMissingZone, _)))))(state)
   }
 }

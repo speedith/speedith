@@ -18,99 +18,6 @@ import scala.collection.JavaConversions._
  */
 object Auxilliary {
 
-  def containsContours(d : SpiderDiagramOccurrence) : Boolean = d match {
-    case d : PrimarySpiderDiagramOccurrence => d.getAllContours.nonEmpty
-    case _ => false
-  }
-
-  def isImplication (sd : SpiderDiagramOccurrence): Boolean = sd match {
-    case sd:CompoundSpiderDiagramOccurrence => sd.getOperator match {
-      case Operator.Implication => true
-      case _ => false
-    }
-    case _ => false
-  }
-
-  def isIdempotent(sd : SpiderDiagramOccurrence): Boolean = sd match {
-    case sd:CompoundSpiderDiagramOccurrence => sd.getOperator match {
-      case Operator.Conjunction | Operator.Disjunction | Operator.Equivalence | Operator.Implication =>
-        sd.getOperand(0).getDiagram.isSEquivalentTo(sd.getOperand(1).getDiagram)
-      case _ => false
-    }
-    case _ => false
-  }
-
-  def isPrimaryAndContainsMoreContours(sd : SpiderDiagramOccurrence, contours : Set[String]) : Boolean = sd match {
-    case sd:PrimarySpiderDiagramOccurrence => (contours -- sd.getAllContours).nonEmpty
-    case _ => false
-  }
-
-  def isPrimaryAndContainsMissingZones(sd : SpiderDiagramOccurrence) : Proof =>  Boolean = (state : Proof) => sd match {
-    case sd:PrimarySpiderDiagramOccurrence => (sd.getShadedZones--sd.getPresentZones).nonEmpty
-    case _ => false
-  }
-
-  def isPrimaryAndContainsShadedZones(sd : SpiderDiagramOccurrence) : Boolean = sd match {
-    case sd:PrimarySpiderDiagramOccurrence => (sd.getShadedZones & sd.getPresentZones).nonEmpty
-    case _ => false
-  }
-
-  def isPrimaryAndContainsContours(sd : SpiderDiagramOccurrence) : Boolean = sd match {
-    case sd:PrimarySpiderDiagramOccurrence => sd.getAllContours.nonEmpty
-    case _ => false
-  }
-
-  def isConjunctionOfPrimaryDiagramsWithEqualZoneSets(sd : SpiderDiagramOccurrence) : Boolean = sd match {
-    case sd: PrimarySpiderDiagramOccurrence => false
-    case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match {
-      case Operator.Conjunction => (sd.getOperand(0), sd.getOperand(1)) match {
-        case (op0: PrimarySpiderDiagramOccurrence, op1: PrimarySpiderDiagramOccurrence) =>
-          op0.getPresentZones.equals(op1.getPresentZones)
-        case _ => false
-      }
-      case _ => false
-    }
-  }
-
-  def isConjunctionWithContoursToCopy(sd : SpiderDiagramOccurrence ) : Boolean = sd match {
-    case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match  {
-      case Operator.Conjunction => (sd.getOperand(0), sd.getOperand(1)) match {
-        case (op0: PrimarySpiderDiagramOccurrence, op1: PrimarySpiderDiagramOccurrence) =>
-          (op0.getAllContours -- op1.getAllContours).nonEmpty || (op1.getAllContours -- op0.getAllContours).nonEmpty
-        case _ => false
-      }
-      case _ => false
-    }
-    case _ => false
-  }
-
-  def isConjunctionWithShadingToCopy(sd: SpiderDiagramOccurrence): Boolean = sd match {
-    case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match {
-      case Operator.Conjunction => (sd.getOperand(0), sd.getOperand(1)) match {
-        case (op0: PrimarySpiderDiagramOccurrence, op1: PrimarySpiderDiagramOccurrence) =>
-          if (op0.getAllContours.subsetOf(op1.getAllContours)) {
-            val leftRegions = computeCorrespondingShadedRegions(op0, op1)
-            if (leftRegions.nonEmpty) {
-              true
-            }
-            else {
-              if (op1.getAllContours.subsetOf(op0.getAllContours)) {
-                val rightRegions = computeCorrespondingShadedRegions(op1, op0)
-                rightRegions.nonEmpty
-              } else false
-            }
-          } else {
-            if (op1.getAllContours.subsetOf(op0.getAllContours)) {
-              val rightRegions = computeCorrespondingShadedRegions(op1, op0)
-              rightRegions.nonEmpty
-            } else false
-          }
-        case _ => false
-      }
-      case _=> false
-    }
-    case _ => false
-  }
 
   def collectDiagramsWithMissingZonesThatCouldBeCopied(subGoalIndex: Int, state : Proof): Set[SpiderDiagramOccurrence ] =  {
     val target =getSubgoal(subGoalIndex, state)
@@ -140,6 +47,7 @@ object Auxilliary {
     val nonEmptyShadedRegions = visibleShadedZones.subsets.toSet.filter(s => s.nonEmpty)
     nonEmptyShadedRegions.map(region => CorrespondingRegions(d1.getPrimaryDiagram, d2.getPrimaryDiagram).correspondingRegion(new Region(region))).filter(r => r.zones.nonEmpty)
   }
+
   def computeMaximalCorrespondingShadedRegion(d1 : PrimarySpiderDiagramOccurrence, d2 : PrimarySpiderDiagramOccurrence): Option[(Set[Zone], Set[Zone])] = {
     val shadedZones = (d1.getShadedZones & d1.getPresentZones).toSet
     val nonEmptyShadedRegions = shadedZones.subsets.toSet.filter(s => s.nonEmpty)
@@ -147,72 +55,6 @@ object Auxilliary {
     maxCorrespondingRegion(regions.to[collection.immutable.List])
   }
 
-  def containsGivenContours(d : SpiderDiagramOccurrence, contours : Set[String]) : Boolean = d match {
-    case d: PrimarySpiderDiagramOccurrence => (d.getAllContours & contours).nonEmpty
-  }
-
-  def containsOtherContours(d : SpiderDiagramOccurrence, contours : Set[String]) : Boolean = d match {
-    case d: PrimarySpiderDiagramOccurrence => (d.getAllContours -- contours).nonEmpty
-  }
-
-  def firstOfTheGivenContours(sd : SpiderDiagramOccurrence , contours : Set[String]) : Option[String] = sd match {
-    case sd : CompoundSpiderDiagramOccurrence => None
-    case sd : PrimarySpiderDiagramOccurrence => Some((sd.getAllContours & contours).head)
-  }
-
-  def firstOfTheOtherContours(sd: SpiderDiagramOccurrence, contours: Set[String]): Option[String] = sd match {
-    case sd: CompoundSpiderDiagramOccurrence => None
-    case sd: PrimarySpiderDiagramOccurrence => Some((sd.getAllContours -- contours).head)
-  }
-
-  def firstVisibleShadedZoneNotInGivenZones(sd : SpiderDiagramOccurrence, zones : Set[Zone]) : Option[Zone] = sd match {
-    case sd: CompoundSpiderDiagramOccurrence => None
-    case sd:PrimarySpiderDiagramOccurrence => Some(((sd.getPresentZones & sd.getShadedZones) -- zones).head)
-  }
-
-  def anyShadedZone(sd:SpiderDiagramOccurrence) : Option[Zone] = sd match {
-    case sd: CompoundSpiderDiagramOccurrence => None
-    case sd: PrimarySpiderDiagramOccurrence =>
-      try {
-        Some((sd.getPresentZones & sd.getShadedZones).head)
-      }
-      catch {
-        case e: Exception => None
-      }
-  }
-
-  def firstMissingZoneInGivenZones(sd : SpiderDiagramOccurrence, zones : Set[Zone]) : Option[Zone] = sd match {
-    case sd: CompoundSpiderDiagramOccurrence => None
-    case sd:PrimarySpiderDiagramOccurrence => try {
-      Some((( sd.getShadedZones -- sd.getPresentZones) & zones).head)
-    }
-    catch {
-      case e: Exception => None
-    }
-  }
-
-
-  def anyMissingZone(sd : SpiderDiagramOccurrence): Option[Zone] = sd match {
-    case sd: CompoundSpiderDiagramOccurrence => None
-    case sd: PrimarySpiderDiagramOccurrence =>
-      try {
-        Some((sd.getShadedZones -- sd.getPresentZones).head)
-      }
-      catch {
-        case e: Exception => None
-      }
-  }
-
-  def anyContour(sd: SpiderDiagramOccurrence): Option[String] = sd match {
-    case sd: CompoundSpiderDiagramOccurrence => None
-    case sd: PrimarySpiderDiagramOccurrence =>
-      try {
-        Some(sd.getAllContours.head)
-      }
-      catch {
-        case e: Exception => None
-      }
-  }
 
   def getContoursInConclusion(subgoalIndex : Int, state : Proof) : Set[String]= {
     val goal = state.getLastGoals.getGoalAt(subgoalIndex)
@@ -232,6 +74,20 @@ object Auxilliary {
     val goal = state.getLastGoals.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
         collectShadedZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
+    } else {
+      Set()
+    }
+  }
+
+  def collectUnShadedZones(diagram: SpiderDiagram): Set[Zone] =  diagram match {
+    case diagram : PrimarySpiderDiagram => (diagram.getPresentZones -- diagram.getShadedZones).toSet
+    case diagram : CompoundSpiderDiagram => diagram.getOperands.flatMap(collectShadedZones).toSet
+  }
+
+  def getUnshadedZonesInConclusion(subgoalIndex : Int, state : Proof) : Set[Zone] = {
+    val goal = state.getLastGoals.getGoalAt(subgoalIndex)
+    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      collectUnShadedZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
     } else {
       Set()
     }

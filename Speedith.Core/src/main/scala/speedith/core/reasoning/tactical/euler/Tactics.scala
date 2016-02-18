@@ -7,7 +7,10 @@ import speedith.core.reasoning.rules._
 import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
 import speedith.core.reasoning.tactical.TacticApplicationException
 import speedith.core.reasoning.tactical.euler.Auxilliary._
+import speedith.core.reasoning.tactical.euler.Predicates._
+
 import speedith.core.reasoning._
+
 
 import scala.collection.JavaConversions._
 
@@ -70,7 +73,7 @@ object Tactics {
       val subgoal = getSubgoal(subgoalIndex, state)
       val contours = AutomaticUtils.collectContours(subgoal.getDiagram).toSet
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
-        isPrimaryAndContainsMoreContours(_, contours.toSet))
+        isPrimaryAndContainsMoreContours(contours))
       target match {
         case None => None
         case Some(diagram) =>
@@ -83,11 +86,11 @@ object Tactics {
     }
   }
 
-  def introduceShadedZone(subgoalIndex: Int, predicate: SpiderDiagramOccurrence => Proof => Boolean, zoneChooser : SpiderDiagramOccurrence => Option[Zone],  state: Proof): Option[Proof] = {
+  def introduceShadedZone(subgoalIndex: Int, predicate: Proof => Predicate, zoneChooser : Chooser[Zone],  state: Proof): Option[Proof] = {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
-        d => d.isInstanceOf[PrimarySpiderDiagramOccurrence] && predicate(d)(state))
+        d => d.isInstanceOf[PrimarySpiderDiagramOccurrence] && predicate(state)(d))
       target match {
         case None => None
         case Some(diagram) => {
@@ -105,7 +108,7 @@ object Tactics {
     }
   }
 
-  def removeShadedZone(subgoalIndex: Int, zoneChooser: SpiderDiagramOccurrence => Option[Zone], state: Proof): Option[Proof] = {
+  def removeShadedZone(subgoalIndex: Int, zoneChooser:Chooser[Zone], state: Proof): Option[Proof] = {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
@@ -132,7 +135,7 @@ object Tactics {
     }
   }
 
-  def eraseContour(subgoalIndex: Int, predicate: SpiderDiagramOccurrence => Boolean, contourChooser: SpiderDiagramOccurrence => Option[String], state: Proof): Option[Proof] = {
+  def eraseContour(subgoalIndex: Int, predicate: Predicate, contourChooser: Chooser[String], state: Proof): Option[Proof] = {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagramAndContour(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
@@ -149,6 +152,26 @@ object Tactics {
       }
     } catch {
       case e: TacticApplicationException => None
+    }
+  }
+
+  def eraseShading(subgoalIndex : Int, predicate: Predicate, zoneChooser : Chooser[Zone], state : Proof) : Option[Proof] = {
+    try {
+      val subgoal = getSubgoal(subgoalIndex, state)
+      val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0), predicate)
+      target match {
+        case Some(diagram) =>
+          val targetZone = zoneChooser(diagram)
+          targetZone match {
+            case Some(zone) =>
+              createResults(Some(diagram), state, new RemoveShading().asInstanceOf[InferenceRule[RuleArg]],
+                new ZoneArg(subgoalIndex, diagram.getOccurrenceIndex, zone))
+            case None => None
+          }
+        case None => None
+      }
+    } catch {
+      case e : TacticApplicationException => None
     }
   }
 
@@ -249,7 +272,6 @@ object Tactics {
       case e: TransformationException => None
     }
   }
-
 
   def trivialTautology(subgoalIndex: Int, state: Proof): Option[Proof] = {
     try {

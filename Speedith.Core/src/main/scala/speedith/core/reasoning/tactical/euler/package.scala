@@ -1,6 +1,7 @@
 package speedith.core.reasoning.tactical
 
 import speedith.core.reasoning.Proof
+import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence
 
 /**
  * Type definitions for tactic/tactical support.
@@ -10,4 +11,6 @@ import speedith.core.reasoning.Proof
  */
 package object euler {
   type Tactical = Proof => Option[Proof]
+  type Chooser[A] = SpiderDiagramOccurrence => Option[A]
+  type Predicate = SpiderDiagramOccurrence => Boolean
 }
