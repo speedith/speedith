@@ -560,13 +560,16 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       File file = goalFileChooser.getSelectedFile();
       try {
         SpiderDiagram input = SpiderDiagramsReader.readSpiderDiagram(file);
+        if (!input.isValid()) {
+          throw new ReadingException("The spider diagram contained in the file is not valid.");
+        }
         proofPanel1.newProof(Goals.createGoalsFrom(ReasoningUtils.normalize(input)));
+        this.setTitle("Speedith"+": " + file.getName());
       } catch (IOException ioe) {
         JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
       } catch (ReadingException re) {
         JOptionPane.showMessageDialog(this, "An error occurred while reading the contents of the file:\n" + re.getLocalizedMessage());
       }
-      this.setTitle("Speedith"+": " + file.getName());
     }
   }
 
