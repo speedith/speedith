@@ -178,12 +178,12 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     /**
      * Returns the set of flags that determines which elements of the diagram
      * may be highlighted with the mouse. <p>This flag can be a (binary)
-     * combination of the following flags: <ul> <li>{@link SpeedithCirclesPanel#Spiders}:
+     * combination of the following flags: <ul> <li>{@link SelectionStep#Spiders}:
      * which indicates that spiders will be highlighted when the user hovers
-     * over them.</li> <li>{@link SpeedithCirclesPanel#Zones}: which indicates that
-     * zones will be highlighted when the user hovers over them.</li> <li>{@link SpeedithCirclesPanel#Contours}:
+     * over them.</li> <li>{@link SelectionStep#Zones}: which indicates that
+     * zones will be highlighted when the user hovers over them.</li> <li>{@link SelectionStep#Contours}:
      * which indicates that circle contours will be highlighted when the user
-     * hovers over them.</li> </ul></p> <p> The {@link SpeedithCirclesPanel#All} and {@link SpeedithCirclesPanel#None}
+     * hovers over them.</li> </ul></p> <p> The {@link SelectionStep#All} and {@link SelectionStep#None}
      * flags can also be used. These indicate that all diagram or no elements
      * (respectively) can be highlighted with the mouse.</p>
      *
