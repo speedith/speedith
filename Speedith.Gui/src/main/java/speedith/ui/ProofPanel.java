@@ -318,7 +318,6 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         SubgoalsPanel sgp = new SubgoalsPanel(initialGoals, getSubgoalsTitle(0), (String) null, Color.BLUE);
-        sgp.setTitleBackground(Color.BLUE);
         addSubgoal(gbc, sgp);
         registerMouseSelectionListener(initialGoals, sgp);
     }
@@ -357,13 +356,8 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
                 public void mouseClicked(MouseEvent mouseEvent) {
                     if (mouseEvent.getComponent() == sgp) {
                         for (SubgoalsPanel s : subgoals) {
-
                             s.setBorder(BorderFactory.createEmptyBorder());
-                            if (s.equals(subgoals.get(0))) {
-                                s.setTitleBackground(Color.BLUE);
-                            } else {
-                                s.setTitleBackground(s.getColor());
-                            }
+                            s.setTitleBackground(s.getColor());
                         }
                         sgp.setTitleBackground(Color.RED);
                         sgp.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
@@ -433,8 +427,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         gbc.gridx = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        SubgoalsPanel sgp = new SubgoalsPanel(i18n("PROOF_PANEL_PROOF_FINISHED"), getStepDescription(rule, args, type));
-        sgp.setTitleBackground(Color.GREEN);
+        SubgoalsPanel sgp = new SubgoalsPanel(i18n("PROOF_PANEL_PROOF_FINISHED"), getStepDescription(rule, args, type), Color.GREEN);
         addSubgoal(gbc, sgp);
         validate();
     }

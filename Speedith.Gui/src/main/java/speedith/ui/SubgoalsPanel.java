@@ -66,6 +66,11 @@ public class SubgoalsPanel extends javax.swing.JPanel {
         this(null, goalTitle, stepDescription, Color.GRAY);
     }
 
+    public SubgoalsPanel(String goalTitle, String stepDescription, Color color) {
+        this(null, goalTitle, stepDescription, color);
+    }
+
+
     public SubgoalsPanel(Goals goals, String title, String stepDescription, Color color) {
         this.color = color;
         initComponents();
