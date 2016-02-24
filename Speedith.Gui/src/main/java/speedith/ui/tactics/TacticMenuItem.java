@@ -13,15 +13,15 @@ import java.lang.reflect.Method;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public enum TacticMenuItem implements Comparable<TacticMenuItem> {
+public enum TacticMenuItem  { //implements Comparable<TacticMenuItem> {
 
     Vennify("Introduce all missing zones", "vennify"),
     DeVennify("Remove all shaded zones", "deVennify"),
     UnifyContours("Unify contours in premises", "unifyContourSets"),
     EraseContours("Erase all contours in premises",  "eraseAllContours"),
     CombineAll("Combine as much as possible","combineAll"),
-    VennStyle("Try a Venn-Style proof", "vennStyle"),
     MatchConc("Match the premises with the conclusion", "matchConclusion"),
+    VennStyle("Venn-Style reasoning", "vennStyle"),
     CopyContours("Copy contours as much as possible", "copyTopologicalInformation"),
     CopyShadings("Copy as much shading as possible", "copyShadings");
 
