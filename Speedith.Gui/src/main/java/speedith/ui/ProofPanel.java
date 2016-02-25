@@ -32,6 +32,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.prefs.Preferences;
 import javax.swing.*;
 
@@ -42,8 +45,8 @@ import speedith.core.reasoning.args.SubgoalIndexArg;
 import speedith.core.reasoning.automatic.*;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategies;
-import speedith.core.reasoning.rules.util.AutomaticUtils;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
+import speedith.ui.automatic.AutomaticProverThread;
 
 import static speedith.i18n.Translations.i18n;
 
@@ -58,6 +61,8 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
     private static final long serialVersionUID = 6560236682608445666L;
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+
+
     private ProofTrace proof;
 
     private AutomaticProver prover;
@@ -242,20 +247,17 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
     }
 
     @Override
-    public Proof extendProof(Proof proof) throws AutomaticProofException {
+    public Proof extendProof(Proof newProof) throws AutomaticProofException {
         if (proof == null || proof.getLastGoals() == null) {
-            throw  new AutomaticProofException("No subgoal to prove");
+            throw new AutomaticProofException("No subgoal to prove");
         }
-        Proof extendedProof = prover.extendProof(proof);
-        if (!(extendedProof==null)) {
-            int currentLength = this.proof.getRuleApplicationCount();
-            int targetLength  = extendedProof.getRuleApplicationCount();
-            for (RuleApplication appl : extendedProof.getRuleApplications().subList(currentLength, targetLength)) {
-                try {
-                    applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments(), appl.getType());
-                } catch (RuleApplicationException e) {
-                    e.printStackTrace();
-                }
+        int currentLength = this.proof.getRuleApplicationCount();
+        int targetLength = newProof.getRuleApplicationCount();
+        for (RuleApplication appl : newProof.getRuleApplications().subList(currentLength, targetLength)) {
+            try {
+                applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments(), appl.getType());
+            } catch (RuleApplicationException e) {
+                e.printStackTrace();
             }
         }
         return this.proof;

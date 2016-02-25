@@ -95,7 +95,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
             e.printStackTrace();  //TODO: for debugging. Remove if not needed anymore
             throw exc;
         }
-        if (result == null || !result.isFinished()) {
+        if (!Thread.currentThread().isInterrupted() && (result == null || !result.isFinished())) {
             throw  new AutomaticProofException("Unable to prove current goal");
         }
         return result;

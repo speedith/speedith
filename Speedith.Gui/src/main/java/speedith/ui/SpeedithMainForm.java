@@ -38,12 +38,13 @@ import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
-import speedith.core.reasoning.automatic.AutomaticProofException;
+import speedith.core.reasoning.automatic.*;
 import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
 import speedith.core.reasoning.tactical.TacticApplicationException;
 import speedith.core.reasoning.tactical.euler.SingleRuleTacticals;
+import speedith.ui.automatic.AutomaticProverThread;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
 import speedith.ui.tactics.TacticMenuItem;
@@ -51,17 +52,21 @@ import spiderdrawer.ui.MainForm;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -82,6 +87,12 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     "SpeedithIconVennDiagram-64.png",
     "SpeedithIconVennDiagram-128.png"
   };
+
+
+  private ExecutorService service;
+  private AutomaticProverThread automaticProof;
+  private java.util.List<ProofChangedListener> proofChangedListeners;
+
 
   private DiagramType activeDiagram;
 
@@ -117,12 +128,16 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenu saveMenu;
   private javax.swing.JMenuItem analyseItem;
 
+  private javax.swing.JToolBar autoToolBar;
+  private javax.swing.JButton replaceWithGenerated;
+  private javax.swing.JButton cancelAutoProver;
   /**
    * Creates new form SpeedithMainForm
    */
   public SpeedithMainForm() {
     readDiagramType();
     initComponents();
+    proofChangedListeners = new ArrayList<>();
     try {
       ArrayList<Image> icons = new ArrayList<Image>();
       // Set the icon of this window:
@@ -134,6 +149,77 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     } catch (IOException ex) {
       Logger.getLogger(SpeedithMainForm.class.getName()).log(Level.WARNING, "Speedith's icons could not have been loaded.", ex);
     }
+    initThreading();
+  }
+
+  private void initThreading() {
+    service = Executors.newFixedThreadPool(1);
+    this.addWindowListener(new WindowListener() {
+      @Override
+      public void windowOpened(WindowEvent windowEvent) {
+
+      }
+
+      @Override
+      public void windowClosing(WindowEvent windowEvent) {
+        if (automaticProof != null) {
+          automaticProof.cancel(true);
+        }
+        if (service != null) {
+          service.shutdown();
+        }
+      }
+
+      @Override
+      public void windowClosed(WindowEvent windowEvent) {
+
+      }
+
+      @Override
+      public void windowIconified(WindowEvent windowEvent) {
+
+      }
+
+      @Override
+      public void windowDeiconified(WindowEvent windowEvent) {
+
+      }
+
+      @Override
+      public void windowActivated(WindowEvent windowEvent) {
+
+      }
+
+      @Override
+      public void windowDeactivated(WindowEvent windowEvent) {
+
+      }
+    });
+    this.addProofChangedListener(new ProofChangedListener() {
+      @Override
+      public void interactiveRuleApplied(InteractiveRuleAppliedEvent e) {
+        restartAutomatedReasoner();
+      }
+
+      @Override
+      public void tacticApplied(TacticAppliedEvent e) {
+        restartAutomatedReasoner();
+
+      }
+
+      @Override
+      public void proofReplaced(ProofReplacedEvent e) {
+        System.out.println("Proof replaced");
+      }
+
+      @Override
+      public void proofReduced(ProofReducedEvent e) {
+        restartAutomatedReasoner();
+      }
+
+
+    });
+
   }
 
   private void readDiagramType() {
@@ -182,8 +268,11 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     proveAny = new javax.swing.JMenuItem();
     proveFromHere = new javax.swing.JMenuItem();
     tacticsMenu = new javax.swing.JMenu();
-    //vennify = new javax.swing.JMenuItem();
-    //devennify = new javax.swing.JMenuItem();
+
+    autoToolBar = new JToolBar();
+    replaceWithGenerated = new javax.swing.JButton();
+    cancelAutoProver = new javax.swing.JButton();
+
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("Speedith");
@@ -417,15 +506,41 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     setJMenuBar(menuBar);
 
+    replaceWithGenerated.setText("Extend (Auto)");
+    replaceWithGenerated.setEnabled(false);
+    replaceWithGenerated.setToolTipText("Extend the current proof by the automatic prover");
+    replaceWithGenerated.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        extendWithAutomaticProof();
+      }
+    });
+    autoToolBar.add(replaceWithGenerated);
+
+    cancelAutoProver.setText("Cancel (Auto)");
+    cancelAutoProver.setToolTipText("Cancel the automatic proof attempt");
+    cancelAutoProver.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        cancelAutomaticProof();
+      }
+    });
+    autoToolBar.add(cancelAutoProver);
+
+    autoToolBar.setFloatable(false);
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 995, Short.MAX_VALUE)
+                    .addComponent(autoToolBar)
+                    .addComponent(mainSplitPane) // javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 995, Short.MAX_VALUE)
     );
     layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+            layout.createSequentialGroup()
+                    .addComponent(autoToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                            GroupLayout.PREFERRED_SIZE)
+                    .addComponent(mainSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
     );
 
 
@@ -439,6 +554,34 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
+
+  private void extendWithAutomaticProof() {
+    if (automaticProof != null) {
+      try {
+        Proof autoProof = automaticProof.get();
+        proofPanel1.extendProof(autoProof);
+        fireProofChangedEvent(new ProofReplacedEvent(this));
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      } catch (ExecutionException e) {
+        e.printStackTrace();
+      } catch (AutomaticProofException e) {
+        JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
+      }
+
+    }
+  }
+
+  private void cancelAutomaticProof() {
+    if (automaticProof != null) {
+      automaticProof.cancel(true);
+      System.out.println("State: "+automaticProof.getState());
+      System.out.println("Was Cancelled: "+automaticProof.isCancelled());
+      System.out.println("Is Finished: "+automaticProof.isFinished());
+
+
+    }
+  }
 
   private void analyseProof() {
     if (proofPanel1.getGoals().isEmpty()) {
@@ -508,26 +651,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       this.setTitle("Speedith"+": " + file.getName());
     }
   }
-  private void applyTactic(Method tactic) {
-    if (!proofPanel1.isFinished()) {
-      Proof intermediate = new ProofTrace(proofPanel1);
-      Proof result = null;
-      try {
-        result = (Proof) tactic.invoke(SingleRuleTacticals.class, intermediate);
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
-      } catch (InvocationTargetException e) {
-        if (e.getCause() instanceof TacticApplicationException) {
-          TacticApplicationException tacticE = (TacticApplicationException) e.getCause();
-          JOptionPane.showMessageDialog(this, tacticE.getMessage());
-        }
-      }
-      proofPanel1.replaceCurrentProof(result);
-    } else {
-      JOptionPane.showMessageDialog(this, "No subgoals are open");
-    }
-  }
-
 
   private void applyTactical(TacticMenuItem item) {
     if (!proofPanel1.isFinished()) {
@@ -535,12 +658,12 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       Proof result = null;
       try {
         result = item.apply(intermediate);
+        proofPanel1.extendCurrentProofTo(result);
+        fireProofChangedEvent(new TacticAppliedEvent(this));
       } catch (TacticApplicationException e) {
         e.printStackTrace();
         JOptionPane.showMessageDialog(this, e.getMessage());
-
       }
-      proofPanel1.extendCurrentProofTo(result);
 
     } else {
       JOptionPane.showMessageDialog(this, "No subgoals are open");
@@ -550,6 +673,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private void onCropProof(ActionEvent evt) {
     if (proofPanel1.getSelected() != null) {
       proofPanel1.reduceToSelected();
+      fireProofChangedEvent(new ProofReducedEvent( this));
     }
   }
 
@@ -635,10 +759,66 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       JOptionPane.showMessageDialog(this,"The automatic provers only work for Euler diagrams");
       return;
     }
-    try {
-      proofPanel1.extendProof(proofPanel1);
-    } catch (AutomaticProofException e) {
-      JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
+    startAutomatedReasoner();
+  }
+
+  private void startAutomatedReasoner() {
+    disableAutomaticProofUI();
+    automaticProof = new AutomaticProverThread(proofPanel1.getProof(), proofPanel1.getProver());
+    automaticProof.addPropertyChangeListener(new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        if ("state".equals(propertyChangeEvent.getPropertyName())) {
+          if (automaticProof.isFinished() && SwingWorker.StateValue.DONE.equals(propertyChangeEvent.getNewValue())) {
+            System.out.println(propertyChangeEvent.getNewValue());
+            enableAutomaticProofUI();
+          }
+        }
+      }
+    });
+    service.submit(automaticProof);
+  }
+
+  private void restartAutomatedReasoner() {
+    if (automaticProof != null) {
+      automaticProof.cancel(true);
+    }
+    startAutomatedReasoner();
+  }
+
+  private void enableAutomaticProofUI() {
+    replaceWithGenerated.setEnabled(true);
+  }
+
+  private void disableAutomaticProofUI() {
+    replaceWithGenerated.setEnabled(false);
+  }
+
+  public void addProofChangedListener(ProofChangedListener l) {
+    proofChangedListeners.add(l);
+  }
+
+  public void removeProofChangedListener(ProofChangedListener l) {
+    proofChangedListeners.remove(l);
+  }
+
+  private void fireProofChangedEvent(ProofChangedEvent e) {
+    if (e instanceof InteractiveRuleAppliedEvent) {
+      for(ProofChangedListener l : proofChangedListeners) {
+        l.interactiveRuleApplied((InteractiveRuleAppliedEvent) e);
+      }
+    } else if (e instanceof TacticAppliedEvent) {
+      for (ProofChangedListener l: proofChangedListeners) {
+        l.tacticApplied((TacticAppliedEvent) e);
+      }
+    } else if (e instanceof ProofReplacedEvent) {
+      for (ProofChangedListener l: proofChangedListeners) {
+        l.proofReplaced((ProofReplacedEvent) e);
+      }
+    } else if (e instanceof ProofReducedEvent) {
+      for (ProofChangedListener l: proofChangedListeners) {
+        l.proofReduced((ProofReducedEvent) e);
+      }
     }
   }
 
@@ -658,8 +838,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }
 
   private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
-    this.dispose();
+    this.processWindowEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
   }//GEN-LAST:event_exitMenuItemActionPerformed
+
 
   private void onExample1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onExample1
     proofPanel1.newProof(Goals.createGoalsFrom(getExampleA()));
@@ -994,7 +1175,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     int subgoalIndex = 0;
     try {
      boolean test =  InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proofPanel1);
-   //   System.out.println("Cost:"+ proofPanel1.getProver().getStrategy().getCost(proofPanel1)+"\tHeuristic:"+proofPanel1.getProver().getStrategy().getHeuristic(proofPanel1));
+      fireProofChangedEvent(new InteractiveRuleAppliedEvent(this));
     } catch (Exception ex) {
       JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
     }

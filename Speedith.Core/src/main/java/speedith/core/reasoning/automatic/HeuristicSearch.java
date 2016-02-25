@@ -61,7 +61,7 @@ public class HeuristicSearch extends AutomaticProver {
         }
         long numOfSuperFl = 0;
         long startTime= System.nanoTime();
-        while(!attempts.isEmpty()) {
+        while(!attempts.isEmpty() && !Thread.currentThread().isInterrupted()) {
             ProofAttempt currentAttempt = attempts.poll();
             Proof currentProof = tryToFinish(currentAttempt.getProof(), subgoalindex);
 //            AppliedRules alreadyApplied = applied.get(currentProof);
