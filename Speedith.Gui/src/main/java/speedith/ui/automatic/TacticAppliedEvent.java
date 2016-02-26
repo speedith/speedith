@@ -1,6 +1,4 @@
-package speedith.core.reasoning.automatic;
-
-import speedith.core.reasoning.automatic.ProofChangedEvent;
+package speedith.ui.automatic;
 
 /**
  * TODO: Description

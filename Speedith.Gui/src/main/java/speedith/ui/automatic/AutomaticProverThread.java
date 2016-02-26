@@ -1,11 +1,9 @@
 package speedith.ui.automatic;
 
 import speedith.core.reasoning.Proof;
-import speedith.core.reasoning.automatic.AutomaticProofException;
 import speedith.core.reasoning.automatic.AutomaticProver;
 
 import javax.swing.*;
-import java.util.concurrent.Callable;
 
 /**
  * TODO: Description
@@ -13,6 +11,8 @@ import java.util.concurrent.Callable;
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 public class AutomaticProverThread extends SwingWorker<Proof, Object> {
+
+    public static final String background_preference = "background_search";
 
     private Proof proof;
 
@@ -26,11 +26,6 @@ public class AutomaticProverThread extends SwingWorker<Proof, Object> {
         finished = false;
     }
 
-
-
-    public void setProof(Proof proof) {
-        this.proof = proof;
-    }
 
     public boolean isFinished() {
         return finished;

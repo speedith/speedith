@@ -1,4 +1,4 @@
-package speedith.core.reasoning.automatic;
+package speedith.ui.automatic;
 
 import java.util.EventListener;
 

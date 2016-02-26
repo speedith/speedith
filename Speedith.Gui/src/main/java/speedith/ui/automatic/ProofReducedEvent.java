@@ -1,6 +1,4 @@
-package speedith.core.reasoning.automatic;
-
-import java.util.EventObject;
+package speedith.ui.automatic;
 
 /**
  * TODO: Description

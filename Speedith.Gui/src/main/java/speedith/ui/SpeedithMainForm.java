@@ -43,8 +43,7 @@ import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
 import speedith.core.reasoning.tactical.TacticApplicationException;
-import speedith.core.reasoning.tactical.euler.SingleRuleTacticals;
-import speedith.ui.automatic.AutomaticProverThread;
+import speedith.ui.automatic.*;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
 import speedith.ui.tactics.TacticMenuItem;
@@ -52,21 +51,17 @@ import spiderdrawer.ui.MainForm;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -93,8 +88,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private AutomaticProverThread automaticProof;
   private java.util.List<ProofChangedListener> proofChangedListeners;
 
-
+  private Map<Boolean, Icon> proofFoundIcon;
   private DiagramType activeDiagram;
+  private Boolean backgroundProofSearch;
 
   private JMenuItem goalSpiderDrawerInputMenuItem;
   private javax.swing.JMenu drawMenu;
@@ -131,12 +127,30 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JToolBar autoToolBar;
   private javax.swing.JButton replaceWithGenerated;
   private javax.swing.JButton cancelAutoProver;
+  private javax.swing.JLabel proofFoundIndicator;
   /**
    * Creates new form SpeedithMainForm
    */
   public SpeedithMainForm() {
-    readDiagramType();
+    readPreferences();
+    proofFoundIcon = new HashMap<>(2);
+    URL onUrl = SpeedithMainForm.class.getResource("lightbulb.png");
+    if (onUrl != null) {
+      ImageIcon onIcon = new ImageIcon(onUrl);
+      proofFoundIcon.put(Boolean.TRUE, onIcon);
+    } else {
+      throw new RuntimeException("Lightbulb not found");
+    }
+    URL offUrl = SpeedithMainForm.class.getResource("lightbulb_off.png");
+    if (offUrl != null) {
+      ImageIcon offIcon = new ImageIcon(offUrl);
+      proofFoundIcon.put(Boolean.FALSE, offIcon);
+    } else {
+      throw new RuntimeException("Lightbulb_off not found");
+    }
+
     initComponents();
+
     proofChangedListeners = new ArrayList<>();
     try {
       ArrayList<Image> icons = new ArrayList<Image>();
@@ -149,6 +163,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     } catch (IOException ex) {
       Logger.getLogger(SpeedithMainForm.class.getName()).log(Level.WARNING, "Speedith's icons could not have been loaded.", ex);
     }
+
+
     initThreading();
   }
 
@@ -210,6 +226,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       @Override
       public void proofReplaced(ProofReplacedEvent e) {
         System.out.println("Proof replaced");
+        cancelAutoProver.setEnabled(false);
       }
 
       @Override
@@ -222,7 +239,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
   }
 
-  private void readDiagramType() {
+  private void readPreferences() {
     Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
     String selected = prefs.get(InferenceRules.diagram_type_preference, null);
     if (selected != null) {
@@ -230,6 +247,12 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     } else {
       // startup with spider diagrams as the default.
       activeDiagram = DiagramType.SpiderDiagram;
+    }
+    selected = prefs.get(AutomaticProverThread.background_preference, null);
+    if (selected != null) {
+      backgroundProofSearch = Boolean.valueOf(selected);
+    } else {
+      backgroundProofSearch = Boolean.FALSE;
     }
   }
 
@@ -316,6 +339,76 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     mainSplitPane.setRightComponent(pnlRulesSidePane);
 
+    initMenuBar();
+
+    initToolBar();
+
+    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+    getContentPane().setLayout(layout);
+    layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(autoToolBar)
+                    .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 995, Short.MAX_VALUE)
+    );
+    layout.setVerticalGroup(
+            layout.createSequentialGroup()
+                    .addComponent(autoToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                            GroupLayout.PREFERRED_SIZE)
+                    .addComponent(mainSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+    );
+
+
+    goalFileChooser = new JFileChooser();
+    goalFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Speedith diagram files", "sdt"));
+    goalFileChooser.setMultiSelectionEnabled(false);
+
+    proofFileChooser = new JFileChooser();
+    proofFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Speedith proof files", "prf"));
+    proofFileChooser.setMultiSelectionEnabled(false);
+
+    pack();
+  }// </editor-fold>//GEN-END:initComponents
+
+  private void initToolBar() {
+    replaceWithGenerated.setText("Extend");
+    replaceWithGenerated.setEnabled(false);
+    replaceWithGenerated.setToolTipText("Extend the current proof by the automatic prover");
+    replaceWithGenerated.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        extendWithAutomaticProof();
+      }
+    });
+
+    cancelAutoProver.setText("Cancel");
+    cancelAutoProver.setToolTipText("Cancel the automatic proof attempt");
+    cancelAutoProver.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        cancelAutomaticProof();
+      }
+    });
+
+
+    proofFoundIndicator = new JLabel();
+    proofFoundIndicator.setIcon(proofFoundIcon.get(Boolean.TRUE));
+    proofFoundIndicator.setDisabledIcon(proofFoundIcon.get(Boolean.FALSE));
+    proofFoundIndicator.setEnabled(false);
+    proofFoundIndicator.setToolTipText("Lights up, if a proof has been found automatically");
+
+    JLabel description = new JLabel();
+    description.setText("Automatic Prover:");
+
+    autoToolBar.addSeparator();
+    autoToolBar.add(description);
+    autoToolBar.addSeparator();
+    autoToolBar.add(cancelAutoProver);
+    autoToolBar.add(replaceWithGenerated);
+    autoToolBar.add(proofFoundIndicator);
+    autoToolBar.setFloatable(false);
+  }
+
+  private void initMenuBar() {
     fileMenu.setMnemonic('F');
     fileMenu.setText("File");
 
@@ -324,7 +417,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     saveMenu.setText("Save");
     fileMenu.add(saveMenu);
 
-    openMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+    openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
     openMenuItem.setMnemonic('O');
     openMenuItem.setText("Open Goal");
     openMenuItem.addActionListener(new ActionListener() {
@@ -335,7 +428,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     });
     openMenu.add(openMenuItem);
 
-    saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+    saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
     saveMenuItem.setMnemonic('S');
     saveMenuItem.setText("Save selected Subgoal");
     saveMenuItem.addActionListener(new ActionListener() {
@@ -365,7 +458,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     });
     saveMenu.add(saveProofMenuItem);
 
-    settingsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
+    settingsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
     settingsMenuItem.setMnemonic('P');
     settingsMenuItem.setText("Preferences");
     settingsMenuItem.addActionListener(new ActionListener() {
@@ -376,11 +469,11 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     });
     fileMenu.add(settingsMenuItem);
 
-    exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+    exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
     exitMenuItem.setMnemonic('x');
     exitMenuItem.setText("Exit");
-    exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
+    exitMenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
         exitMenuItemActionPerformed(evt);
       }
     });
@@ -392,49 +485,49 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     drawMenu.setText("Draw");
 
     goalSpiderDrawerInputMenuItem.setText("Use SpiderDrawer"); // NOI18N
-    goalSpiderDrawerInputMenuItem.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
+    goalSpiderDrawerInputMenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
         onSpiderDrawerClicked(evt);
       }
     });
     drawMenu.add(goalSpiderDrawerInputMenuItem);
 
-    goalTextInputMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK));
-    goalTextInputMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("speedith/i18n/strings").getString("MAIN_FORM_TEXT_INPUT_MNEMONIC").charAt(0));
-    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("speedith/i18n/strings"); // NOI18N
+    goalTextInputMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_MASK));
+    goalTextInputMenuItem.setMnemonic(ResourceBundle.getBundle("speedith/i18n/strings").getString("MAIN_FORM_TEXT_INPUT_MNEMONIC").charAt(0));
+    ResourceBundle bundle = ResourceBundle.getBundle("speedith/i18n/strings"); // NOI18N
     goalTextInputMenuItem.setText(bundle.getString("MAIN_FORM_TEXT_INPUT")); // NOI18N
-    goalTextInputMenuItem.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
+    goalTextInputMenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
         onTextInputClicked(evt);
       }
     });
     drawMenu.add(goalTextInputMenuItem);
 
-    useSdExample1MenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.CTRL_MASK));
+    useSdExample1MenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_MASK));
     useSdExample1MenuItem.setMnemonic(i18n("MAIN_FORM_USE_EXAMPLE1_MNEMONIC").charAt(0));
     useSdExample1MenuItem.setText(i18n("MAIN_FORM_USE_EXAMPLE1")); // NOI18N
-    useSdExample1MenuItem.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
+    useSdExample1MenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
         onExample1(evt);
       }
     });
     drawMenu.add(useSdExample1MenuItem);
 
-    useSdExample2MenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.CTRL_MASK));
+    useSdExample2MenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_MASK));
     useSdExample2MenuItem.setMnemonic(i18n("MAIN_FORM_USE_EXAMPLE2_MNEMONIC").charAt(0));
     useSdExample2MenuItem.setText(i18n("MAIN_FORM_USE_EXAMPLE2")); // NOI18N
-    useSdExample2MenuItem.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
+    useSdExample2MenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
         onExample2(evt);
       }
     });
     drawMenu.add(useSdExample2MenuItem);
 
-    useSdExample3MenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.CTRL_MASK));
+    useSdExample3MenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_MASK));
     useSdExample3MenuItem.setMnemonic(i18n("MAIN_FORM_USE_EXAMPLE3_MNEMONIC").charAt(0));
     useSdExample3MenuItem.setText(i18n("MAIN_FORM_USE_EXAMPLE3")); // NOI18N
-    useSdExample3MenuItem.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
+    useSdExample3MenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
         onExample3(evt);
       }
     });
@@ -491,7 +584,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     for (final TacticMenuItem item:  TacticMenuItem.values()) {
 
-      JMenuItem tacticalButton = new javax.swing.JMenuItem();
+      JMenuItem tacticalButton = new JMenuItem();
       tacticalButton.setText(item.getName());
       tacticalButton.addActionListener(new ActionListener() {
         @Override
@@ -505,61 +598,14 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
 
     setJMenuBar(menuBar);
-
-    replaceWithGenerated.setText("Extend (Auto)");
-    replaceWithGenerated.setEnabled(false);
-    replaceWithGenerated.setToolTipText("Extend the current proof by the automatic prover");
-    replaceWithGenerated.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        extendWithAutomaticProof();
-      }
-    });
-    autoToolBar.add(replaceWithGenerated);
-
-    cancelAutoProver.setText("Cancel (Auto)");
-    cancelAutoProver.setToolTipText("Cancel the automatic proof attempt");
-    cancelAutoProver.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        cancelAutomaticProof();
-      }
-    });
-    autoToolBar.add(cancelAutoProver);
-
-    autoToolBar.setFloatable(false);
-
-    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-    getContentPane().setLayout(layout);
-    layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(autoToolBar)
-                    .addComponent(mainSplitPane) // javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 995, Short.MAX_VALUE)
-    );
-    layout.setVerticalGroup(
-            layout.createSequentialGroup()
-                    .addComponent(autoToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-                            GroupLayout.PREFERRED_SIZE)
-                    .addComponent(mainSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
-    );
-
-
-    goalFileChooser = new JFileChooser();
-    goalFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Speedith diagram files", "sdt"));
-    goalFileChooser.setMultiSelectionEnabled(false);
-
-    proofFileChooser = new JFileChooser();
-    proofFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Speedith proof files", "prf"));
-    proofFileChooser.setMultiSelectionEnabled(false);
-
-    pack();
-  }// </editor-fold>//GEN-END:initComponents
+  }
 
   private void extendWithAutomaticProof() {
     if (automaticProof != null) {
       try {
         Proof autoProof = automaticProof.get();
         proofPanel1.extendProof(autoProof);
+        disableAutomaticProofUI();
         fireProofChangedEvent(new ProofReplacedEvent(this));
       } catch (InterruptedException e) {
         e.printStackTrace();
@@ -689,6 +735,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         }
         proofPanel1.newProof(Goals.createGoalsFrom(ReasoningUtils.normalize(input)));
         this.setTitle("Speedith"+": " + file.getName());
+        if (backgroundProofSearch) {
+          startAutomatedReasoner();
+        }
       } catch (IOException ioe) {
         JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
       } catch (ReadingException re) {
@@ -739,6 +788,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       lstAppliedRules.setModel(getRulesList());
       lstAppliedRules.repaint();
     }
+    backgroundProofSearch = settings.isBackGroundSearchEnabled();
   }
 
   private void onProveAny(ActionEvent evt) {
@@ -783,15 +833,21 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     if (automaticProof != null) {
       automaticProof.cancel(true);
     }
-    startAutomatedReasoner();
+    if (backgroundProofSearch) {
+      startAutomatedReasoner();
+    }
   }
 
   private void enableAutomaticProofUI() {
     replaceWithGenerated.setEnabled(true);
+    proofFoundIndicator.setEnabled(true);
+    cancelAutoProver.setEnabled(false);
   }
 
   private void disableAutomaticProofUI() {
     replaceWithGenerated.setEnabled(false);
+    proofFoundIndicator.setEnabled(false);
+    cancelAutoProver.setEnabled(true);
   }
 
   public void addProofChangedListener(ProofChangedListener l) {

@@ -8,6 +8,7 @@ import speedith.core.reasoning.automatic.AutomaticProvers;
 import speedith.core.reasoning.automatic.strategies.Strategies;
 import speedith.core.reasoning.automatic.strategies.Strategy;
 import speedith.core.reasoning.automatic.strategies.StrategyProvider;
+import speedith.ui.automatic.AutomaticProverThread;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
@@ -29,7 +30,7 @@ public class SettingsDialog  extends javax.swing.JDialog {
     private JComboBox<ProverListItem> typeCombo;
     private JComboBox<StrategyListItem> strategyCombo;
     private JComboBox<DiagramType> diagramTypeCombo;
-
+    private JCheckBox backgroundSearchCheckbox = new JCheckBox();
 
     public SettingsDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -45,6 +46,9 @@ public class SettingsDialog  extends javax.swing.JDialog {
         JLabel typeLabel = new JLabel();
         JLabel strategyLabel = new JLabel();
         JPanel diagramsPanel = new JPanel();
+        JLabel backgroundSearchLabel = new JLabel();
+
+
         javax.swing.GroupLayout groupLayout;
 
         typeCombo = new JComboBox<>(getProverComboList());
@@ -59,10 +63,11 @@ public class SettingsDialog  extends javax.swing.JDialog {
         groupLayout.setVerticalGroup(groupLayout.createSequentialGroup().addComponent(diagramTypeCombo,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
                 GroupLayout.PREFERRED_SIZE));
         settingsTab.addTab("Diagram Type", diagramsPanel);
-
+        backgroundSearchCheckbox.setSelected(getBackGroundSearchEnabled());
 
         typeLabel.setText("Type");
         strategyLabel.setText("Strategy");
+        backgroundSearchLabel.setText("Enable automatic proof search in the background");
 
         groupLayout = new javax.swing.GroupLayout(autoProverPanel);
         autoProverPanel.setLayout(groupLayout);
@@ -73,16 +78,21 @@ public class SettingsDialog  extends javax.swing.JDialog {
                         .addGroup(
                                 groupLayout.createParallelGroup()
                                         .addComponent(typeLabel)
-                                        .addComponent(strategyLabel))
+                                        .addComponent(strategyLabel)
+                                        .addComponent(backgroundSearchLabel))
+
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(
                                 groupLayout.createParallelGroup()
                                         .addComponent(typeCombo)
-                                        .addComponent(strategyCombo)));
+                                        .addComponent(strategyCombo)
+                                        .addComponent(backgroundSearchCheckbox)));
         groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
                 .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(typeLabel).addComponent(typeCombo,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
                         GroupLayout.PREFERRED_SIZE))
                 .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(strategyLabel).addComponent(strategyCombo,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                        GroupLayout.PREFERRED_SIZE))
+                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(backgroundSearchLabel).addComponent(backgroundSearchCheckbox,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
                         GroupLayout.PREFERRED_SIZE)));
 
 
@@ -130,6 +140,8 @@ public class SettingsDialog  extends javax.swing.JDialog {
         prefs.put(Strategies.strategy_preference, selectedStrategy.getStrategyProvider().getStrategyName());
         DiagramType diagrams = (DiagramType) diagramTypeCombo.getSelectedItem();
         prefs.put(InferenceRules.diagram_type_preference, diagrams.name());
+        Boolean backgroundSearch = backgroundSearchCheckbox.isSelected();
+        prefs.put(AutomaticProverThread.background_preference, backgroundSearch.toString());
         dispose();
     }
 
@@ -185,6 +197,20 @@ public class SettingsDialog  extends javax.swing.JDialog {
             model.setSelectedItem(DiagramType.valueOf(selected));
         }
         return model;
+    }
+
+    private Boolean getBackGroundSearchEnabled() {
+        Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
+        String selected = prefs.get(AutomaticProverThread.background_preference, null);
+        if (selected != null) {
+            return Boolean.valueOf(selected);
+        }
+        return Boolean.FALSE;
+
+    }
+
+    public Boolean isBackGroundSearchEnabled() {
+        return backgroundSearchCheckbox.isSelected();
     }
 
     public DiagramType getSelectedDiagramType() {
