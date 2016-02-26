@@ -36,13 +36,6 @@ public class PossibleRemoveShadedZoneApplication extends PossibleRuleApplication
     @Override
     public boolean apply(Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
         p.applyRule(getRule(), getArg(subGoalIndex), RuleApplicationType.AUTOMATIC);
-        // FIXME: Workaround, as long as iCircles is buggy  (https://github.com/svenlinker/speedith/issues/3)
-        Goals lastGoals = p.getLastGoals();
-        for (SpiderDiagram sd: lastGoals.getGoals() ) {
-            if (AutomaticUtils.containsEmptyZone(sd)) {
-                return false;
-            }
-        }
         return true;
     }
 

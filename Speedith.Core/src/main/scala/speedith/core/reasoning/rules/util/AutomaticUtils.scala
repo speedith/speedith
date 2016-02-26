@@ -142,7 +142,7 @@ object AutomaticUtils {
   }
 
   private def createRemoveShadedZoneApplications(target: PrimarySpiderDiagramOccurrence) : java.util.Set[PossibleRuleApplication] = {
-    (target.getShadedZones & target.getPresentZones) .
+    (target.getShadedZones & target.getPresentZones) .filter(z => z.getInContours.nonEmpty).
       map(z => new PossibleRemoveShadedZoneApplication(target, new RemoveShadedZone().asInstanceOf[InferenceRule[RuleArg]], z).asInstanceOf[PossibleRuleApplication])
   }
 
