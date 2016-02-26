@@ -52,7 +52,7 @@ public class BreadthFirstProver extends  AutomaticProver {
         }
         Proof finishedProof = null;
         long startTime= System.nanoTime();
-        while(finishedProof == null && !currentProofs.isEmpty()) {
+        while(finishedProof == null && !currentProofs.isEmpty() && !Thread.currentThread().isInterrupted()) {
             newProofs = new HashSet<>();
             for(ProofTrace current : currentProofs) {
                 current = (ProofTrace) tryToFinish(current, subgoalindex);

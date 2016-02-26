@@ -60,7 +60,7 @@ public class DepthFirstProver extends AutomaticProver {
             boolean hasBeenApplied = nextRule.apply(p, subgoalindex, appliedRules);
             if (hasBeenApplied) {
                 p = proveRecursively(p, subgoalindex, appliedRules);
-                if (p.isFinished()) {
+                if (p.isFinished() || Thread.currentThread().isInterrupted()) {
                     return p;
                 }
                 p.undoStep();
