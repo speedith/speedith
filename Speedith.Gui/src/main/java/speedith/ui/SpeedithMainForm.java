@@ -128,6 +128,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JButton replaceWithGenerated;
   private javax.swing.JButton cancelAutoProver;
   private javax.swing.JLabel proofFoundIndicator;
+  private javax.swing.JButton startAutoProver;
+  private javax.swing.JButton extendByOneStep;
+
   /**
    * Creates new form SpeedithMainForm
    */
@@ -226,7 +229,14 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       @Override
       public void proofReplaced(ProofReplacedEvent e) {
         System.out.println("Proof replaced");
-        cancelAutoProver.setEnabled(false);
+        if (proofPanel1.isFinished()) {
+          cancelAutoProver.setEnabled(false);
+          startAutoProver.setEnabled(false);
+          extendByOneStep.setEnabled(false);
+          replaceWithGenerated.setEnabled(false);
+        } else {
+          restartAutomatedReasoner();
+        }
       }
 
       @Override
@@ -292,9 +302,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     proveFromHere = new javax.swing.JMenuItem();
     tacticsMenu = new javax.swing.JMenu();
 
-    autoToolBar = new JToolBar();
-    replaceWithGenerated = new javax.swing.JButton();
-    cancelAutoProver = new javax.swing.JButton();
+
+
 
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -370,7 +379,22 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }// </editor-fold>//GEN-END:initComponents
 
   private void initToolBar() {
-    replaceWithGenerated.setText("Extend");
+    autoToolBar = new JToolBar();
+    startAutoProver = new javax.swing.JButton();
+    replaceWithGenerated = new javax.swing.JButton();
+    cancelAutoProver = new javax.swing.JButton();
+    extendByOneStep = new javax.swing.JButton();
+
+    startAutoProver.setText("Start");
+    startAutoProver.setEnabled(false);
+    startAutoProver.setToolTipText("Start automated proof search");
+    startAutoProver.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onProveFromHere(evt);
+      }
+    });
+    replaceWithGenerated.setText("Solve");
     replaceWithGenerated.setEnabled(false);
     replaceWithGenerated.setToolTipText("Extend the current proof by the automatic prover");
     replaceWithGenerated.addActionListener(new ActionListener() {
@@ -381,6 +405,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     });
 
     cancelAutoProver.setText("Cancel");
+    cancelAutoProver.setEnabled(false);
     cancelAutoProver.setToolTipText("Cancel the automatic proof attempt");
     cancelAutoProver.addActionListener(new ActionListener() {
       @Override
@@ -389,12 +414,22 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       }
     });
 
+    extendByOneStep.setText("Hint");
+    extendByOneStep.setEnabled(false);
+    extendByOneStep.setToolTipText("Show a possible next proof step");
+    extendByOneStep.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        extendByOneAutomatedStep();
+      }
+    });
 
     proofFoundIndicator = new JLabel();
     proofFoundIndicator.setIcon(proofFoundIcon.get(Boolean.TRUE));
     proofFoundIndicator.setDisabledIcon(proofFoundIcon.get(Boolean.FALSE));
     proofFoundIndicator.setEnabled(false);
     proofFoundIndicator.setToolTipText("Lights up, if a proof has been found automatically");
+    proofFoundIndicator.setText("Idle");
 
     JLabel description = new JLabel();
     description.setText("Automatic Prover:");
@@ -402,11 +437,15 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     autoToolBar.addSeparator();
     autoToolBar.add(description);
     autoToolBar.addSeparator();
+    autoToolBar.add(startAutoProver);
     autoToolBar.add(cancelAutoProver);
+    autoToolBar.add(extendByOneStep);
     autoToolBar.add(replaceWithGenerated);
     autoToolBar.add(proofFoundIndicator);
     autoToolBar.setFloatable(false);
   }
+
+
 
   private void initMenuBar() {
     fileMenu.setMnemonic('F');
@@ -557,7 +596,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     proofMenu.add(analyseItem);
     menuBar.add(proofMenu);
 
-    reasoningMenu.setMnemonic('A');
+/*    reasoningMenu.setMnemonic('A');
     reasoningMenu.setText("Auto");
 
     proveAny.setText("Prove");
@@ -570,14 +609,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     reasoningMenu.add(proveAny);
 
     proveFromHere.setText("Prove from the current state");
-    proveFromHere.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent evt) {
-        onProveFromHere(evt);
-      }
-    });
-    reasoningMenu.add(proveFromHere);
-    menuBar.add(reasoningMenu);
+   // proveFromHere
+    reasoningMenu.add(proveFromHere); */
+//    menuBar.add(reasoningMenu);
 
 
     tacticsMenu.setText("Tactics");
@@ -606,6 +640,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         Proof autoProof = automaticProof.get();
         proofPanel1.extendProof(autoProof);
         disableAutomaticProofUI();
+        proofFoundIndicator.setText("Idle");
         fireProofChangedEvent(new ProofReplacedEvent(this));
       } catch (InterruptedException e) {
         e.printStackTrace();
@@ -618,15 +653,36 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
   }
 
+  private void extendByOneAutomatedStep() {
+  if (automaticProof != null) {
+    try {
+      Proof autoProof = automaticProof.get();
+      proofPanel1.extendByOneStep(autoProof);
+      fireProofChangedEvent(new ProofReplacedEvent(this));
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    } catch (ExecutionException e) {
+      e.printStackTrace();
+    } catch (AutomaticProofException e) {
+      JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
+    }
+
+  }
+  }
+
   private void cancelAutomaticProof() {
     if (automaticProof != null) {
       automaticProof.cancel(true);
+
       System.out.println("State: "+automaticProof.getState());
       System.out.println("Was Cancelled: "+automaticProof.isCancelled());
       System.out.println("Is Finished: "+automaticProof.isFinished());
 
 
     }
+    proofFoundIndicator.setText("Idle");
+    cancelAutoProver.setEnabled(false);
+    startAutoProver.setEnabled(true);
   }
 
   private void analyseProof() {
@@ -735,8 +791,11 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         }
         proofPanel1.newProof(Goals.createGoalsFrom(ReasoningUtils.normalize(input)));
         this.setTitle("Speedith"+": " + file.getName());
+        cancelAutomaticProof();
         if (backgroundProofSearch) {
           startAutomatedReasoner();
+        } else {
+          startAutoProver.setEnabled(true);
         }
       } catch (IOException ioe) {
         JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
@@ -822,30 +881,37 @@ public class SpeedithMainForm extends javax.swing.JFrame {
           if (automaticProof.isFinished() && SwingWorker.StateValue.DONE.equals(propertyChangeEvent.getNewValue())) {
             System.out.println(propertyChangeEvent.getNewValue());
             enableAutomaticProofUI();
+
           }
         }
       }
     });
     service.submit(automaticProof);
+    proofFoundIndicator.setText("Searching...");
   }
 
   private void restartAutomatedReasoner() {
-    if (automaticProof != null) {
-      automaticProof.cancel(true);
-    }
+    cancelAutomaticProof();
     if (backgroundProofSearch) {
       startAutomatedReasoner();
+    } else {
+      startAutoProver.setEnabled(true);
     }
   }
 
   private void enableAutomaticProofUI() {
+    startAutoProver.setEnabled(false);
     replaceWithGenerated.setEnabled(true);
+    extendByOneStep.setEnabled(true);
     proofFoundIndicator.setEnabled(true);
+    proofFoundIndicator.setText("Success!");
     cancelAutoProver.setEnabled(false);
   }
 
   private void disableAutomaticProofUI() {
+    startAutoProver.setEnabled(false);
     replaceWithGenerated.setEnabled(false);
+    extendByOneStep.setEnabled(false);
     proofFoundIndicator.setEnabled(false);
     cancelAutoProver.setEnabled(true);
   }

@@ -263,6 +263,24 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         return this.proof;
     }
 
+    public Proof extendByOneStep(Proof newProof) throws AutomaticProofException {
+        if (proof == null || proof.getLastGoals() == null) {
+            throw new AutomaticProofException("No subgoal to prove");
+        }
+        int currentLength = this.proof.getRuleApplicationCount();
+        int targetLength = newProof.getRuleApplicationCount();
+        if (currentLength >= targetLength) {
+            throw new AutomaticProofException("No new proof steps in given proof");
+        }
+        RuleApplication appl = newProof.getRuleApplicationAt(currentLength);
+        try {
+            applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments(), appl.getType());
+        } catch (RuleApplicationException e) {
+            e.printStackTrace();
+        }
+        return this.proof;
+    }
+
     public void reduceToSelected() {
         int currentLength = proof.getGoalsCount()-1;
         for (int i = 0; i < currentLength - selectedNumber; i++) {
