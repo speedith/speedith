@@ -683,8 +683,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private void cancelAutomaticProof() {
     if (automaticProof != null) {
       automaticProof.cancel(true);
-
-      System.out.println("State: "+automaticProof.getState());
       System.out.println("Was Cancelled: "+automaticProof.isCancelled());
       System.out.println("Is Finished: "+automaticProof.isFinished());
 
@@ -877,10 +875,10 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         if ("state".equals(propertyChangeEvent.getPropertyName())) {
           if (SwingWorker.StateValue.DONE.equals(propertyChangeEvent.getNewValue())) {
             if (automaticProof.isFinished()) {
-              System.out.println(propertyChangeEvent.getNewValue());
+              System.out.println("Successful! "+propertyChangeEvent.getNewValue());
               enableAutomaticProofUI();
             } else {
-              System.out.println(propertyChangeEvent.getNewValue());
+              System.out.println("Unsuccessful! "+propertyChangeEvent.getNewValue());
               proofFoundIndicator.setText("Unable to solve");
               cancelAutoProver.setEnabled(false);
             }

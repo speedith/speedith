@@ -6,7 +6,8 @@ import speedith.core.reasoning.automatic.AutomaticProver;
 import javax.swing.*;
 
 /**
- * TODO: Description
+ * Thread that tries to finish the given {@link Proof proof object} with
+ * the given {@AutomaticProver prover}.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
@@ -36,7 +37,7 @@ public class AutomaticProverThread extends SwingWorker<Proof, Object> {
         Proof newProof = null;
         newProof = prover.extendProof(proof);
         proof = newProof;
-        finished = true;
+        finished = (proof != null) && proof.getLastGoals().isEmpty();
         return newProof;
     }
 }
