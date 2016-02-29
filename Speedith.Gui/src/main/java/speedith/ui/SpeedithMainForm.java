@@ -875,10 +875,15 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       @Override
       public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         if ("state".equals(propertyChangeEvent.getPropertyName())) {
-          if (automaticProof.isFinished() && SwingWorker.StateValue.DONE.equals(propertyChangeEvent.getNewValue())) {
-            System.out.println(propertyChangeEvent.getNewValue());
-            enableAutomaticProofUI();
-
+          if (SwingWorker.StateValue.DONE.equals(propertyChangeEvent.getNewValue())) {
+            if (automaticProof.isFinished()) {
+              System.out.println(propertyChangeEvent.getNewValue());
+              enableAutomaticProofUI();
+            } else {
+              System.out.println(propertyChangeEvent.getNewValue());
+              proofFoundIndicator.setText("Unable to solve");
+              cancelAutoProver.setEnabled(false);
+            }
           }
         }
       }
