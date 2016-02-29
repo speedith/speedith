@@ -223,17 +223,18 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       @Override
       public void tacticApplied(TacticAppliedEvent e) {
         restartAutomatedReasoner();
-
       }
 
       @Override
       public void proofReplaced(ProofReplacedEvent e) {
         System.out.println("Proof replaced");
+        disableAutomaticProofUI();
         if (proofPanel1.isFinished()) {
           cancelAutoProver.setEnabled(false);
           startAutoProver.setEnabled(false);
           extendByOneStep.setEnabled(false);
           replaceWithGenerated.setEnabled(false);
+          proofFoundIndicator.setText("Idle");
         } else {
           restartAutomatedReasoner();
         }
@@ -244,7 +245,18 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         restartAutomatedReasoner();
       }
 
-
+      @Override
+      public void proofExtendedByStep(ProofExtendedByStepEvent e) {
+        System.out.println("Proof extended by a single step");
+        if (proofPanel1.isFinished()) {
+          disableAutomaticProofUI();
+          cancelAutoProver.setEnabled(false);
+          startAutoProver.setEnabled(false);
+          extendByOneStep.setEnabled(false);
+          replaceWithGenerated.setEnabled(false);
+          proofFoundIndicator.setText("Idle");
+        }
+      }
     });
 
   }
@@ -639,8 +651,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       try {
         Proof autoProof = automaticProof.get();
         proofPanel1.extendProof(autoProof);
-        disableAutomaticProofUI();
-        proofFoundIndicator.setText("Idle");
         fireProofChangedEvent(new ProofReplacedEvent(this));
       } catch (InterruptedException e) {
         e.printStackTrace();
@@ -658,7 +668,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     try {
       Proof autoProof = automaticProof.get();
       proofPanel1.extendByOneStep(autoProof);
-      fireProofChangedEvent(new ProofReplacedEvent(this));
+      fireProofChangedEvent(new ProofExtendedByStepEvent(this));
     } catch (InterruptedException e) {
       e.printStackTrace();
     } catch (ExecutionException e) {
@@ -850,19 +860,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     backgroundProofSearch = settings.isBackGroundSearchEnabled();
   }
 
-  private void onProveAny(ActionEvent evt) {
-    if (activeDiagram != DiagramType.EulerDiagram) {
-      JOptionPane.showMessageDialog(this,"The automatic provers only work for Euler diagrams");
-      return;
-    }
-    Goals initial =  proofPanel1.getInitialGoals();
-    try {
-       proofPanel1.generateProof(initial);
-    } catch (AutomaticProofException e) {
-      JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
-    }
-  }
-
   private void onProveFromHere(ActionEvent evt) {
     if (activeDiagram != DiagramType.EulerDiagram) {
       JOptionPane.showMessageDialog(this,"The automatic provers only work for Euler diagrams");
@@ -941,6 +938,10 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       for (ProofChangedListener l: proofChangedListeners) {
         l.proofReduced((ProofReducedEvent) e);
       }
+    } else if (e instanceof ProofExtendedByStepEvent) {
+      for (ProofChangedListener l: proofChangedListeners) {
+        l.proofExtendedByStep((ProofExtendedByStepEvent) e);
+      }
     }
   }
 
@@ -962,7 +963,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
     this.processWindowEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
   }//GEN-LAST:event_exitMenuItemActionPerformed
-
 
   private void onExample1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onExample1
     proofPanel1.newProof(Goals.createGoalsFrom(getExampleA()));
@@ -1037,6 +1037,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     });
   }
 
+  // <editor-fold defaultstate="collapsed" desc="Static methods for example creation">
   /**
    * The first main example used in most of our papers. Useful for testing the
    * rules: split spider, add feet, idempotency, and tautology of implication.
@@ -1197,17 +1198,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     return csd;
   }
 
-  private ComboBoxModel getRulesComboList() {
-    Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules(activeDiagram);
-    InfRuleListItem[] infRules = new InfRuleListItem[knownInferenceRules.size()];
-    int i = 0;
-    for (String providerName : knownInferenceRules) {
-      infRules[i++] = new InfRuleListItem(InferenceRules.getProvider(providerName));
-    }
-    Arrays.sort(infRules);
-    return new DefaultComboBoxModel<>(infRules);
-  }
+ // </editor-fold>
 
+  // <editor-fold defaultstate="collapsed" desc="Inference rule list and application">
   private ListModel<InfRuleListItem> getRulesList() {
     Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules(activeDiagram);
     InfRuleListItem[] infRules = new InfRuleListItem[knownInferenceRules.size()];
@@ -1246,6 +1239,16 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
   }
 
+  private void applyRule(InfRuleListItem selectedRule) {
+    int subgoalIndex = 0;
+    try {
+      boolean test =  InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proofPanel1);
+      fireProofChangedEvent(new InteractiveRuleAppliedEvent(this));
+    } catch (Exception ex) {
+      JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
+    }
+  }
+
   private static Goals applyInferenceRule(String infRuleName, RuleArg ruleArg, Goals goals0) {
     InferenceRule<? extends RuleArg> infRule = InferenceRules.getInferenceRule(infRuleName);
     try {
@@ -1257,6 +1260,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     return goals0;
   }
 
+  // </editor-fold>
+
+  // <editor-fold defaultstate="collapsed" desc="Private methods creating examples of regions and zones">
   private static Region regionA_B() {
     return new Region(zoneA_B());
   }
@@ -1293,13 +1299,5 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     return Zone.fromInContours("B").withOutContours("A");
   }
 
-  private void applyRule(InfRuleListItem selectedRule) {
-    int subgoalIndex = 0;
-    try {
-     boolean test =  InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proofPanel1);
-      fireProofChangedEvent(new InteractiveRuleAppliedEvent(this));
-    } catch (Exception ex) {
-      JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
-    }
-  }
+  //</editor-fold>
 }

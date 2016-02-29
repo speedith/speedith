@@ -18,5 +18,7 @@ public interface ProofChangedListener extends EventListener {
 
     void proofReduced(ProofReducedEvent e);
 
+    void proofExtendedByStep(ProofExtendedByStepEvent e);
+
 
 }
