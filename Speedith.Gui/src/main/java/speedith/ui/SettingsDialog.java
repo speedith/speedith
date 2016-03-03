@@ -11,8 +11,6 @@ import speedith.core.reasoning.automatic.strategies.StrategyProvider;
 import speedith.ui.automatic.AutomaticProverThread;
 
 import javax.swing.*;
-import javax.swing.event.ListDataListener;
-import javax.swing.plaf.TabbedPaneUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

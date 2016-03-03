@@ -16,7 +16,7 @@ import java.util.Set;
 import static speedith.core.i18n.Translations.i18n;
 
 /**
- * TODO: Description
+ * Removes the subgoal, if it consists of an implication, where premiss and conclusion are equal.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

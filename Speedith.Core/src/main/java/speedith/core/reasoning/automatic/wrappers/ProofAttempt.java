@@ -5,7 +5,7 @@ import speedith.core.reasoning.automatic.strategies.Strategy;
 
 
 /**
- * TODO: Description
+ * Computes the cost and heuristic function for the proof wrapped inside.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

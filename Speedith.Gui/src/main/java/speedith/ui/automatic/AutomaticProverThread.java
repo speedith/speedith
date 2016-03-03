@@ -7,20 +7,30 @@ import javax.swing.*;
 
 /**
  * Thread that tries to finish the given {@link Proof proof object} with
- * the given {@AutomaticProver prover}.
+ * the given {@link AutomaticProver prover}.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 public class AutomaticProverThread extends SwingWorker<Proof, Object> {
 
+    /**
+     * The name of the preference for activating automated search in the background
+     */
     public static final String background_preference = "background_search";
 
     private Proof proof;
 
-    private AutomaticProver prover;
+    private final AutomaticProver prover;
 
     private boolean finished;
 
+    /**
+     * Creates a new instance of this thread to extend the given proof
+     * by the given prover object.
+     *
+     * @param proofToExtend The proof that will be extended to a finished proof if possible
+     * @param prover The proof method to be used
+     */
     public AutomaticProverThread(Proof proofToExtend, AutomaticProver prover) {
         this.proof = proofToExtend;
         this.prover = prover;
@@ -28,14 +38,17 @@ public class AutomaticProverThread extends SwingWorker<Proof, Object> {
     }
 
 
+    /**
+     * Returns true if the prover was able to finish the proof
+     * @return true, if the proof could be finished
+     */
     public boolean isFinished() {
         return finished;
     }
 
     @Override
     protected Proof doInBackground() throws Exception {
-        Proof newProof = null;
-        newProof = prover.extendProof(proof);
+        Proof newProof = prover.extendProof(proof);
         proof = newProof;
         finished = (proof != null) && proof.getLastGoals().isEmpty();
         return newProof;

@@ -1,7 +1,7 @@
 package speedith.ui.automatic;
 
 /**
- * TODO: Description
+ * Event to signal that the current proof was extended by a single proof step.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

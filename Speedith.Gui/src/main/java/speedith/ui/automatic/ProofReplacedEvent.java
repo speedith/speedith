@@ -1,7 +1,7 @@
 package speedith.ui.automatic;
 
 /**
- * TODO: Description
+ *  Event to signal that the current proof was replaced by a different one.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

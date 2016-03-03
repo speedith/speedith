@@ -26,18 +26,6 @@
  */
 package speedith.ui;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.prefs.Preferences;
-import javax.swing.*;
-
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
@@ -46,7 +34,14 @@ import speedith.core.reasoning.automatic.*;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategies;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
-import speedith.ui.automatic.AutomaticProverThread;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.prefs.Preferences;
 
 import static speedith.i18n.Translations.i18n;
 

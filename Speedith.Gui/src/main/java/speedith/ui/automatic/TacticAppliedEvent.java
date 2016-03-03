@@ -1,7 +1,7 @@
 package speedith.ui.automatic;
 
 /**
- * TODO: Description
+ *  Event to signal that a tactic has been applied to the current proof.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

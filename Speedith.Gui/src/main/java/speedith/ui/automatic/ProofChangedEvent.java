@@ -3,7 +3,7 @@ package speedith.ui.automatic;
 import java.util.EventObject;
 
 /**
- * TODO: Description
+ * Super class for events that will be fired if a proof was changed by the UI.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

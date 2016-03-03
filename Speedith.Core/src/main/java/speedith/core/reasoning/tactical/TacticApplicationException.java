@@ -1,7 +1,7 @@
 package speedith.core.reasoning.tactical;
 
 /**
- * TODO: Description
+ * Thrown if a tactic could not be applied.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

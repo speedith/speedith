@@ -3,7 +3,7 @@ package speedith.ui.automatic;
 import java.util.EventListener;
 
 /**
- * TODO: Description
+ * Listener for reacting to {@link ProofChangedEvent proof changed events}.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

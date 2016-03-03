@@ -11,7 +11,7 @@ import java.nio.file.*;
 import java.util.EnumSet;
 
 /**
- * TODO: Description
+ * Command line tool to analyse all proofs within a given directory.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
@@ -39,7 +39,6 @@ public class Analyser {
             writer.write(visitor.getResult());
             writer.close();
         } catch (ParseException e) {
-//            e.printStackTrace();
             help.printHelp("proof-analyser [-R] <-i input dir> <-o output file>", options);
 
         } catch (NoSuchFileException e) {

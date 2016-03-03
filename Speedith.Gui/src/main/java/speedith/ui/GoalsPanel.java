@@ -33,6 +33,9 @@
 package speedith.ui;
 
 import speedith.core.reasoning.Goals;
+
+import java.awt.*;
+
 import static speedith.i18n.Translations.i18n;
 
 /**
@@ -84,7 +87,7 @@ public class GoalsPanel extends javax.swing.JPanel {
         pnlTitle.setMinimumSize(new java.awt.Dimension(0, 0));
         pnlTitle.setPreferredSize(new java.awt.Dimension(0, 0));
 
-        lblGoal.setFont(new java.awt.Font("Dialog", 3, 14)); // NOI18N
+        lblGoal.setFont(new java.awt.Font("Dialog", Font.PLAIN, 14)); // NOI18N
         lblGoal.setForeground(new java.awt.Color(255, 255, 255));
         lblGoal.setText(getGoalLabel());
         lblGoal.setPreferredSize(new java.awt.Dimension(0, 0));

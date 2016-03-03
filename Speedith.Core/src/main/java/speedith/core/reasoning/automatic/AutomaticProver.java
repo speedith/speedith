@@ -57,10 +57,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
         try {
             result = prove(init, subGoalToProve);
         } catch (RuleApplicationException e) {
-            AutomaticProofException exc = new AutomaticProofException("Unable to prove current goal because of an illegal rule application");
-            exc.initCause(e);
-            e.printStackTrace();  //TODO: for debugging. Remove if not needed anymore
-            throw exc;
+            throw new AutomaticProofException("Unable to prove current goal because of an illegal rule application",e);
         }
         if (result == null || !result.isFinished()) {
             throw  new AutomaticProofException("Unable to prove current goal");

@@ -1,7 +1,8 @@
 package speedith.ui.automatic;
 
 /**
- * TODO: Description
+ *  Event to signal that the current proof was reduced to a subgoal within the proof, i.e.,
+ *  the subgoals afterwards were removed.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

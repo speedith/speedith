@@ -9,7 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * TODO: Description
+ * Items shown in the tactics menu.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
@@ -30,7 +30,13 @@ public enum TacticMenuItem  { //implements Comparable<TacticMenuItem> {
 
     private Method callee;
 
-
+    /**
+     * Creates a new TacticMenuItem. The method that will be called must return
+     * a function of the type {@link Proof} => {@link Option}<{@link Proof}>
+     *
+     * @param name The text that will be displayed in the menu
+     * @param methodName The name of the method within {@link SimpleTacticals}.
+     */
     TacticMenuItem(String name, String methodName) {
         this.name = name;
         try {
@@ -40,6 +46,12 @@ public enum TacticMenuItem  { //implements Comparable<TacticMenuItem> {
         }
     }
 
+    /**
+     * Applies the method of this TacticMenuItem to the given proof.
+     * @param proof The proof to which the tactic will be applied to
+     * @return the result of applying the tactic to the proof
+     * @throws TacticApplicationException If the tactic could not be applied
+     */
     public Proof apply(Proof proof) throws TacticApplicationException {
         Some<Proof> result = null;
         try {
@@ -59,6 +71,10 @@ public enum TacticMenuItem  { //implements Comparable<TacticMenuItem> {
         return result.get();
     }
 
+    /**
+     *
+     * @return the name of this menu item
+     */
     public String getName() {
         return name;
     }

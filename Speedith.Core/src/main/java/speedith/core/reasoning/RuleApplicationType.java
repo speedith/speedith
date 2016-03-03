@@ -3,7 +3,7 @@ package speedith.core.reasoning;
 import java.awt.*;
 
 /**
- * TODO: Description
+ * Distinguishes the way a rule was applied.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

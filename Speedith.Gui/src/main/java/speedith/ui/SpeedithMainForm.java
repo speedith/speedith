@@ -156,7 +156,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     proofChangedListeners = new ArrayList<>();
     try {
-      ArrayList<Image> icons = new ArrayList<Image>();
+      ArrayList<Image> icons = new ArrayList<>();
       // Set the icon of this window:
       for (String path : SpeedithIcons) {
         InputStream imgStream = this.getClass().getResourceAsStream(path);
@@ -765,7 +765,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private void applyTactical(TacticMenuItem item) {
     if (!proofPanel1.isFinished()) {
       Proof intermediate = new ProofTrace(proofPanel1);
-      Proof result = null;
+      Proof result ;
       try {
         result = item.apply(intermediate);
         proofPanel1.extendCurrentProofTo(result);
@@ -1245,7 +1245,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private void applyRule(InfRuleListItem selectedRule) {
     int subgoalIndex = 0;
     try {
-      boolean test =  InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proofPanel1);
+      InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proofPanel1);
       fireProofChangedEvent(new InteractiveRuleAppliedEvent(this));
     } catch (Exception ex) {
       JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
