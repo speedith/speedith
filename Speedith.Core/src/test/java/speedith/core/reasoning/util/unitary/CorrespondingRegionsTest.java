@@ -77,7 +77,7 @@ public class CorrespondingRegionsTest {
   public void correspondingRegion_of_shaded_venn3_zone_should_return_empty_set() {
     String sourceString = " PrimarySD {spiders = [], habitats = [], sh_zones = [([\"C\"], [\"A\", \"B\"])], present_zones = [([\"C\"], [\"A\", \"B\"])]}";
     String targetString = "PrimarySD {spiders = [], habitats = [], sh_zones = [], present_zones = [ ([\"C\"], [])]}}";
-    Set<Zone> source_sh_zones = new HashSet<Zone>();
+    Set<Zone> source_sh_zones = new HashSet<>();
     source_sh_zones.add(Zone.fromInContours("C").withOutContours("A","B"));
     Set<Zone> source_present_zones= new HashSet<>();
     source_present_zones.add(Zone.fromInContours("C").withOutContours("A", "B"));

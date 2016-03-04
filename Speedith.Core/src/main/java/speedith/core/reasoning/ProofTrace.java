@@ -50,8 +50,8 @@ public class ProofTrace implements Proof {
     /**
      * Contains all goals of this proof trace (including the initial goal).
      */
-    private ArrayList<Goals> goals = new ArrayList<Goals>();
-    private ArrayList<RuleApplication> ruleApplications = new ArrayList<RuleApplication>();
+    private ArrayList<Goals> goals = new ArrayList<>();
+    private ArrayList<RuleApplication> ruleApplications = new ArrayList<>();
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -106,18 +106,18 @@ public class ProofTrace implements Proof {
      * the {@link Goals} and the {@link RuleApplication} instances (which themselves are
      * immutable).
      *
-     * @param goals
-     * @param ruleApplications
+     * @param goals the list of subgoals
+     * @param ruleApplications a set of rule applications
      */
     public ProofTrace(List<Goals> goals, List<RuleApplication> ruleApplications) {
-        this.goals = new ArrayList<Goals>(goals);
-        this.ruleApplications = new ArrayList<RuleApplication>(ruleApplications);
+        this.goals = new ArrayList<>(goals);
+        this.ruleApplications = new ArrayList<>(ruleApplications);
     }
 
 
     /**
      * Copy constructor for this class. Creates a new instance of the given proof element.
-     * @param proof
+     * @param proof the proof to copy
      */
     public ProofTrace(Proof proof) {
         this(proof.getGoals(), proof.getRuleApplications());
@@ -143,7 +143,7 @@ public class ProofTrace implements Proof {
         // Discharge any null-spider diagrams automatically.
         Goals newGoals = appResult.getGoals();
         if (!newGoals.isEmpty()) {
-            ArrayList<SpiderDiagram> remainingGoals = new ArrayList<SpiderDiagram>();
+            ArrayList<SpiderDiagram> remainingGoals = new ArrayList<>();
             NullSpiderDiagram nsd = NullSpiderDiagram.getInstance();
             for (SpiderDiagram goal : newGoals.getGoals()) {
                 if (!nsd.isSEquivalentTo(goal)) {

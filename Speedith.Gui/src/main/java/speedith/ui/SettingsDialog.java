@@ -45,6 +45,10 @@ public class SettingsDialog  extends javax.swing.JDialog {
         JLabel strategyLabel = new JLabel();
         JPanel diagramsPanel = new JPanel();
         JLabel backgroundSearchLabel = new JLabel();
+        final JLabel explanationLabel = new JLabel();
+        final JLabel strategyExplanationLabel = new JLabel();
+
+
 
 
         javax.swing.GroupLayout groupLayout;
@@ -52,6 +56,21 @@ public class SettingsDialog  extends javax.swing.JDialog {
         typeCombo = new JComboBox<>(getProverComboList());
         strategyCombo = new JComboBox<>(getStrategyComboList());
         diagramTypeCombo = new JComboBox<>(getDiagramTypesComboList());
+
+        typeCombo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                ProverListItem item = (ProverListItem) typeCombo.getSelectedItem();
+                explanationLabel.setText(item.getAutomaticProverProvider().getDescription());
+            }
+        });
+        strategyCombo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                StrategyListItem item = (StrategyListItem) strategyCombo.getSelectedItem();
+                strategyExplanationLabel.setText(item.getStrategyProvider().getDescription());
+            }
+        });
 
 
         groupLayout = new javax.swing.GroupLayout(diagramsPanel);
@@ -66,6 +85,12 @@ public class SettingsDialog  extends javax.swing.JDialog {
         typeLabel.setText("Type");
         strategyLabel.setText("Strategy");
         backgroundSearchLabel.setText("Enable automatic proof search in the background");
+        ProverListItem item = (ProverListItem) typeCombo.getSelectedItem();
+        explanationLabel.setText(item.getAutomaticProverProvider().getDescription());
+        StrategyListItem item2 = (StrategyListItem) strategyCombo.getSelectedItem();
+        strategyExplanationLabel.setText(item2.getStrategyProvider().getDescription());
+
+
 
         groupLayout = new javax.swing.GroupLayout(autoProverPanel);
         autoProverPanel.setLayout(groupLayout);
@@ -83,15 +108,21 @@ public class SettingsDialog  extends javax.swing.JDialog {
                         .addGroup(
                                 groupLayout.createParallelGroup()
                                         .addComponent(typeCombo)
+                                        .addComponent(explanationLabel)
                                         .addComponent(strategyCombo)
-                                        .addComponent(backgroundSearchCheckbox)));
+                                        .addComponent(strategyExplanationLabel)
+                                        .addComponent(backgroundSearchCheckbox))
+        );
         groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(typeLabel).addComponent(typeCombo,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(typeLabel).addComponent(typeCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
                         GroupLayout.PREFERRED_SIZE))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(strategyLabel).addComponent(strategyCombo,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                .addComponent(explanationLabel)
+                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(strategyLabel).addComponent(strategyCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
                         GroupLayout.PREFERRED_SIZE))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(backgroundSearchLabel).addComponent(backgroundSearchCheckbox,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-                        GroupLayout.PREFERRED_SIZE)));
+                .addComponent(strategyExplanationLabel)
+                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(backgroundSearchLabel).addComponent(backgroundSearchCheckbox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                        GroupLayout.PREFERRED_SIZE))
+        );
 
 
         settingsTab.addTab("Auto Prover", autoProverPanel);

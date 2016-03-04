@@ -93,7 +93,7 @@ object Tactics {
         d => d.isInstanceOf[PrimarySpiderDiagramOccurrence] && predicate(state)(d))
       target match {
         case None => None
-        case Some(diagram) => {
+        case Some(diagram) =>
           val targetZone = zoneChooser(diagram)
           targetZone match {
             case Some(zone) =>
@@ -101,7 +101,6 @@ object Tactics {
                 new ZoneArg(subgoalIndex, diagram.getOccurrenceIndex, zone))
             case None => None
           }
-        }
       }
     } catch {
       case e: TacticApplicationException => None

@@ -9,9 +9,8 @@ class DoubleNegationEliminationTransformer(targetSubDiagramIndex: Int) extends S
   protected def transform(spiderDiagram: SpiderDiagram, currentDiagramIndex: Int, parents: mutable.Buffer[CompoundSpiderDiagram], childIndices: mutable.Buffer[Int]): SpiderDiagram = {
     if (currentDiagramIndex == targetSubDiagramIndex) {
       spiderDiagram match {
-        case csd: CompoundSpiderDiagram => {
+        case csd: CompoundSpiderDiagram =>
           extractDoublyNegatedDiagram(csd)
-        }
         case _ => reportNotDoublyNegated
       }
     } else {
@@ -22,11 +21,10 @@ class DoubleNegationEliminationTransformer(targetSubDiagramIndex: Int) extends S
   private def extractDoublyNegatedDiagram(diagram: CompoundSpiderDiagram): SpiderDiagram = {
     if (diagram.getOperator == Operator.Negation) {
       diagram.getOperand(0) match {
-        case csd: CompoundSpiderDiagram => {
+        case csd: CompoundSpiderDiagram =>
           if (csd.getOperator == Operator.Negation) {
             return csd.getOperand(0)
           }
-        }
         case _ =>
       }
     }

@@ -41,7 +41,7 @@ class NegationElimination extends UnaryForwardRule with Serializable {
         unsupported()
       }
       val psd = csd.getOperand(0).asInstanceOf[PrimarySpiderDiagram]
-      if (HabitatUtils.zonesToSpiders(psd).values.count(_.size > 0) != 1) {
+      if (HabitatUtils.zonesToSpiders(psd).values.count(_.nonEmpty) != 1) {
         throw new TransformationException("Elimination negation requires that there must be exactly one zone with some spiders.")
       }
       NegationElimination.apply(psd)

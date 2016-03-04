@@ -9,7 +9,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by sl542 on 17/11/15.
+ *
+ *
+ * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 public class AppliedRules {
 
@@ -29,32 +31,32 @@ public class AppliedRules {
 
 
     public AppliedRules() {
-        introContours = new HashMap<SpiderDiagramOccurrence,Set<String>>();
-        removeContours = new HashMap<SpiderDiagramOccurrence,Set<String>>();
-        removedShading = new HashMap<SpiderDiagramOccurrence, Set<Zone>>();
+        introContours = new HashMap<>();
+        removeContours = new HashMap<>();
+        removedShading = new HashMap<>();
 //        removedShadedZones= new HashMap<SpiderDiagramOccurrence, Set<Zone>>();
 //        introducedShadedZones = new HashMap<SpiderDiagramOccurrence, Set<Zone>>();
-        copiedContours = new HashMap<SpiderDiagramOccurrence, Set<String>>();
-        copiedShadings = new HashMap<SpiderDiagramOccurrence, Set<Set<Zone>>>();
+        copiedContours = new HashMap<>();
+        copiedShadings = new HashMap<>();
 
     }
 
     public AppliedRules(AppliedRules old) {
         this.introContours = new HashMap<> ();
         for( SpiderDiagramOccurrence key: old.introContours.keySet()) {
-            this.introContours.put(key, new HashSet<String>(old.introContours.get(key)));
+            this.introContours.put(key, new HashSet<>(old.introContours.get(key)));
         }
         this.removeContours = new HashMap<>();
         for (SpiderDiagramOccurrence key: old.removeContours.keySet()) {
-            this.removeContours.put(key, new HashSet<String>(old.removeContours.get(key)));
+            this.removeContours.put(key, new HashSet<>(old.removeContours.get(key)));
         }
         this.copiedContours = new HashMap<>();
         for (SpiderDiagramOccurrence key: old.copiedContours.keySet()) {
-            this.copiedContours.put(key, new HashSet<String>(old.copiedContours.get(key)));
+            this.copiedContours.put(key, new HashSet<>(old.copiedContours.get(key)));
         }
         this.removedShading = new HashMap<>();
         for (SpiderDiagramOccurrence key: old.removedShading.keySet()) {
-            this.removedShading.put(key, new HashSet<Zone>(old.removedShading.get(key)));
+            this.removedShading.put(key, new HashSet<>(old.removedShading.get(key)));
         }
 /*        this.removedShadedZones = new HashMap<>();
         for (SpiderDiagramOccurrence key: old.removedShadedZones.keySet()) {
@@ -68,7 +70,7 @@ public class AppliedRules {
         */
         this.copiedShadings = new HashMap<>();
         for (SpiderDiagramOccurrence key: old.copiedShadings.keySet()) {
-            this.copiedShadings.put(key, new HashSet<Set<Zone>>(old.copiedShadings.get(key)));
+            this.copiedShadings.put(key, new HashSet<>(old.copiedShadings.get(key)));
         }
     }
 

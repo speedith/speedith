@@ -18,9 +18,9 @@ import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
  */
 public abstract class PossibleRuleApplication {
 
-    private InferenceRule<? super RuleArg> rule;
+    private final InferenceRule<? super RuleArg> rule;
 
-    private SpiderDiagramOccurrence target;
+    private final SpiderDiagramOccurrence target;
 
     public PossibleRuleApplication(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule) {
         this.target = target;
@@ -46,23 +46,18 @@ public abstract class PossibleRuleApplication {
         return true;
     }
 
-    /**
-     * Remove this {@link PossibleRuleApplication possible rule application } from the set of
-     * already applied rules.
-     * The standard implementation does nothing!
-     *
-     * @param applied the set of applied rules this instance will be removed from
-     */
-    public void removeFrom(AppliedRules applied) {}
 
     /**
      * Check whether there is already an application of a proof rule within
      * p that makes this proof rule application superfluous, or worse the entrance
      * to an infinite loop. The standard implementation always returns false, i.e., the
      * rule application is not superfluous.
-     * @param p
-     * @param subGoalIndex
-     * @return
+     *
+     * NOTE: The standard implementation always returns false
+     *
+     * @param p a proof
+     * @param subGoalIndex the subgoal index the proof rule shall be applied to
+     * @return true, if the rule application would be superfluous
      */
     public boolean isSuperfluous(Proof p, int subGoalIndex) {
         return false;

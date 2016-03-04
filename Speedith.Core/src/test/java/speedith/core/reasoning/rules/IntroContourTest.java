@@ -1,6 +1,5 @@
 package speedith.core.reasoning.rules;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import speedith.core.lang.PrimarySpiderDiagram;
@@ -13,7 +12,6 @@ import speedith.core.reasoning.RuleApplicationResult;
 import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.ZoneArg;
-import speedith.core.reasoning.rules.instructions.SelectContoursInstruction;
 import speedith.core.reasoning.rules.instructions.SelectSingleSubDiagramAndContourInstruction;
 import speedith.core.reasoning.util.unitary.TestSpiderDiagrams;
 
@@ -21,7 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
 

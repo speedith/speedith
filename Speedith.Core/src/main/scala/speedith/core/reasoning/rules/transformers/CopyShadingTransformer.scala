@@ -21,8 +21,8 @@ case class CopyShadingTransformer(compoundDiagramIndex: Int,
     assertIsConjunction(currentDiagram)
     assertOperandsAreUnitary(currentDiagram)
 
-    val diagramWithSpider = getSourceOperand(currentDiagram, compoundDiagramIndex, zoneArgs(0))
-    val diagramWithoutSpider = getTargetOperand(currentDiagram, compoundDiagramIndex, zoneArgs(0))
+    val diagramWithSpider = getSourceOperand(currentDiagram, compoundDiagramIndex, zoneArgs.head)
+    val diagramWithoutSpider = getTargetOperand(currentDiagram, compoundDiagramIndex, zoneArgs.head)
 
     copyShading(diagramWithSpider, diagramWithoutSpider)
   }
@@ -30,7 +30,7 @@ case class CopyShadingTransformer(compoundDiagramIndex: Int,
   def copyShading(sourceDiagram: PrimarySpiderDiagram, targetDiagram: PrimarySpiderDiagram): SpiderDiagram = {
     try {
       val transformedDiagram = new ShadingTransfer(sourceDiagram, targetDiagram).transferShading(zoneArgs.map(_.getZone))
-      InferenceTargetExtraction.createBinaryDiagram(Operator.Conjunction, sourceDiagram, transformedDiagram, zoneArgs(0), compoundDiagramIndex)
+      InferenceTargetExtraction.createBinaryDiagram(Operator.Conjunction, sourceDiagram, transformedDiagram, zoneArgs.head, compoundDiagramIndex)
     }
     catch {
       case e: Exception => throw new TransformationException("Could not copy the shading. " + e.getMessage, e)

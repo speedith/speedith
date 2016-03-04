@@ -4,7 +4,6 @@ import speedith.core.lang.Zone;
 import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplication;
-import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.ZoneArg;
@@ -22,7 +21,7 @@ import java.util.Set;
  */
 public class PossibleCopyShadingApplication extends PossibleRuleApplication {
 
-    private Set<Zone> region;
+    private final Set<Zone> region;
 
     public PossibleCopyShadingApplication(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, Set<Zone> region) {
         super(target, rule);
@@ -74,8 +73,4 @@ public class PossibleCopyShadingApplication extends PossibleRuleApplication {
         return false;
     }
 
-    @Override
-    public void removeFrom(AppliedRules applied) {
-        applied.removeCopiedShading(getTarget(), getRegion());
-    }
 }

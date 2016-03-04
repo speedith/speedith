@@ -155,7 +155,7 @@ public class GoalsTest {
     public void testCreateGoalsFrom_ArrayList() throws ReadingException, IOException {
         SpiderDiagram sd1 = SpiderDiagramsReader.readSpiderDiagram(getSpiderDiagramTestFile("/speedith/core/lang/reader/SpiderDiagramExample_1.sd"));
         SpiderDiagram sd2 = SpiderDiagramsReader.readSpiderDiagram(getSpiderDiagramTestFile("/speedith/core/lang/reader/SpiderDiagramExample_2.sd"));
-        Goals instance = Goals.createGoalsFrom(new ArrayList<SpiderDiagram>(Arrays.asList(sd1, sd2)));
+        Goals instance = Goals.createGoalsFrom(new ArrayList<>(Arrays.asList(sd1, sd2)));
         assertEquals(2, instance.getGoalsCount());
         assertSame(instance.getGoalAt(0), sd1);
         assertSame(instance.getGoalAt(1), sd2);

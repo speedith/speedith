@@ -59,8 +59,8 @@ public class ProofTraceEx {
      */
     public ProofTraceEx(Goals initialGoals) {
         this.initialGoals = initialGoals;
-        inferenceRules = new ArrayList<RuleApplication>();
-        applicationResults = new ArrayList<RuleApplicationResult>();
+        inferenceRules = new ArrayList<>();
+        applicationResults = new ArrayList<>();
     }
     // </editor-fold>
 

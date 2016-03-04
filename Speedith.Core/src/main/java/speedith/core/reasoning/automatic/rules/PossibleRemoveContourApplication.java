@@ -3,11 +3,9 @@ package speedith.core.reasoning.automatic.rules;
 import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplication;
-import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
-import speedith.core.reasoning.automatic.AppliedRules;
 import speedith.core.reasoning.automatic.wrappers.PrimarySpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.IntroContour;
 import speedith.core.reasoning.rules.RemoveContour;
@@ -16,11 +14,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by sl542 on 12/11/15.
+ * A possibility to apply remove contour.
+ *
+ * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 public class PossibleRemoveContourApplication extends PossibleRuleApplication {
 
-    private String contour;
+    private final String contour;
 
     public PossibleRemoveContourApplication(PrimarySpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, String contour) {
         super(target, rule);

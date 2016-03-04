@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by sl542 on 16/11/15.
+ * A possibility to apply conjunction elimination.
+ *
+ * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 public class PossibleConjunctionElimination extends PossibleRuleApplication {
-    SpiderDiagramOccurrence child;
+    final SpiderDiagramOccurrence child;
     public PossibleConjunctionElimination(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, SpiderDiagramOccurrence child) {
         super(target, rule);
         this.child = child;

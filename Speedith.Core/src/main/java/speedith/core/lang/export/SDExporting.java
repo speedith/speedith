@@ -57,7 +57,7 @@ public final class SDExporting {
     /**
      * The map containing all currently registered export providers.
      */
-    private static final HashMap<String, SDExportProvider> providers = new HashMap<String, SDExportProvider>();
+    private static final HashMap<String, SDExportProvider> providers = new HashMap<>();
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">

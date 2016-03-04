@@ -37,9 +37,9 @@ class CopyShading extends SimpleInferenceRule[MultipleRuleArgs] with Serializabl
   private def apply(argsUntyped: MultipleRuleArgs, goals: Goals): RuleApplicationResult = {
     val zoneArgs = argsUntyped.getRuleArgs.map(_.asInstanceOf[ZoneArg])
     val newSubgoals = goals.getGoals.toList.toArray[SpiderDiagram]
-    val targetSubgoal = SimpleInferenceRule.getSubgoal(zoneArgs(0), goals)
-    val indexOfParent = targetSubgoal.getParentIndexOf(zoneArgs(0).getSubDiagramIndex)
-    newSubgoals(zoneArgs(0).getSubgoalIndex) = targetSubgoal.transform(CopyShadingTransformer(indexOfParent, zoneArgs))
+    val targetSubgoal = SimpleInferenceRule.getSubgoal(zoneArgs.head, goals)
+    val indexOfParent = targetSubgoal.getParentIndexOf(zoneArgs.head.getSubDiagramIndex)
+    newSubgoals(zoneArgs.head.getSubgoalIndex) = targetSubgoal.transform(CopyShadingTransformer(indexOfParent, zoneArgs))
     new RuleApplicationResult(Goals.createGoalsFrom(seqAsJavaList(newSubgoals)))
   }
 }

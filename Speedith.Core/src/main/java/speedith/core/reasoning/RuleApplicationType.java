@@ -13,9 +13,9 @@ public enum RuleApplicationType {
     AUTOMATIC("Automatic",new Color(0x9999FF)),
     TACTIC("Tactic", new Color(0x55AA55));
 
-    private String name;
+    private final String name;
 
-    private Color color;
+    private final Color color;
 
     RuleApplicationType(String name, Color color) {
         this.name = name;

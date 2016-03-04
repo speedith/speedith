@@ -1,6 +1,5 @@
 package speedith.core.reasoning.automatic.rules;
 
-import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Zone;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
@@ -9,14 +8,13 @@ import speedith.core.reasoning.automatic.AppliedRules;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.IntroShadedZone;
 import speedith.core.reasoning.rules.RemoveShadedZone;
-import speedith.core.reasoning.rules.util.AutomaticUtils;
 
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 public class PossibleRemoveShadedZoneApplication extends PossibleRuleApplication {
 
-    private Zone zone;
+    private final Zone zone;
 
     public PossibleRemoveShadedZoneApplication(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, Zone zone) {
         super(target, rule);

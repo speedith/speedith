@@ -37,7 +37,7 @@ class ContourRelations(diagram: PrimarySpiderDiagram) {
   }
 
   private def noSharedContoursHaveSpiders(contourA: String, contourB: String): Boolean = {
-    val allZonesWithSpiders = diagram.getHabitats.values().flatMap(_.zones).toIterable
+    val allZonesWithSpiders = diagram.getHabitats.values().flatMap(_.zones)
     allZonesWithSpiders.forall(zoneWithSpider => !Zones.isZonePartOfAllContours(zoneWithSpider, contourA, contourB))
   }
 

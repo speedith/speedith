@@ -8,7 +8,10 @@ import speedith.core.reasoning.rules.util.HeuristicUtils;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
 
 /**
- * TODO: Description
+ * The heuristic strategy as defined in [Flower, Jean, Masthoff, Judith and Stapleton, Gem (2004)
+ * Generating proofs with spider diagrams using heuristics In: 10th International Conference on
+ * Distributed Multimedia Systems, International Workshop on Visual Languages and Computing,
+ * Oak Brook, Illinois, USA.]
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

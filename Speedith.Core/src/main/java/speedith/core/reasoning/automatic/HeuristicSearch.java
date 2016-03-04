@@ -29,8 +29,17 @@ public class HeuristicSearch extends AutomaticProver {
     private static final String proverName = "heuristic";
 
 
+    /**
+     * Creates an instance of the heuristic prover without a certain strategy, i.e.,
+     * with a strategy that does not distinguish the costs of proof attempts.
+     *
+     */
     public HeuristicSearch() {super(new NoStrategy());}
 
+    /**
+     * Creates an instance of the heuristic prover with the certain strategy.
+     * @param strategy The strategy that the provers uses to order proof attempts
+     */
     public HeuristicSearch(Strategy strategy) {
         super(strategy);
     }

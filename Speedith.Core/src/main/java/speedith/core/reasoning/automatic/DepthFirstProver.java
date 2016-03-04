@@ -39,7 +39,7 @@ public class DepthFirstProver extends AutomaticProver {
      * state of the given Proof p. The rules already applied to subdiagrams within
      * the current set of goals are saved in appliedRules
      */
-    private Proof proveRecursively(Proof p, int subgoalindex, AppliedRules appliedRules) throws RuleApplicationException, AutomaticProofException {
+    private Proof proveRecursively(Proof p, int subgoalindex, AppliedRules appliedRules) throws RuleApplicationException {
         p = tryToFinish(p, subgoalindex);
         if (p.isFinished()) {
             return p;

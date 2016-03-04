@@ -3,7 +3,6 @@ package speedith.core.reasoning.automatic.rules;
 import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplication;
-import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
@@ -15,11 +14,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by sl542 on 17/11/15.
+ * A possibility to apply copy contour.
+ *
+ * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 public class PossibleCopyContourApplication extends PossibleRuleApplication {
 
-    private String contour;
+    private final String contour;
 
     public PossibleCopyContourApplication(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, String contour) {
         super(target, rule);
@@ -68,8 +69,5 @@ public class PossibleCopyContourApplication extends PossibleRuleApplication {
         return false;
     }
 
-    @Override
-    public void removeFrom(AppliedRules applied) {
-        applied.removeCopiedContour(getTarget(), getContour());
-    }
+
 }

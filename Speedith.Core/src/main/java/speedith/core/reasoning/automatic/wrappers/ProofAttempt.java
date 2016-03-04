@@ -11,7 +11,7 @@ import speedith.core.reasoning.automatic.strategies.Strategy;
  */
 public class ProofAttempt implements Comparable<ProofAttempt>{
 
-    private Proof proof;
+    private final Proof proof;
 
     private int cost;
 

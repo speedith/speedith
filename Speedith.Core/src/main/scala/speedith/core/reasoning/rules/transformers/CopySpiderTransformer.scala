@@ -28,9 +28,8 @@ case class CopySpiderTransformer(compoundDiagramIndex: Int, spiderArg: SpiderArg
       InferenceTargetExtraction.createBinaryDiagram(Operator.Conjunction, sourceDiagram, transformedDiagram, spiderArg, compoundDiagramIndex)
     }
     catch {
-      case e: Exception => {
+      case e: Exception =>
         throw new TransformationException("Could not copy the spider. " + e.getMessage, e)
-      }
     }
   }
 

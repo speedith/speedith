@@ -9,8 +9,10 @@ import speedith.core.reasoning.args.selection.{SelectSingleZoneStep, SelectionSe
 import scala.collection.JavaConversions._
 
 /**
- * Created by sl542 on 11/11/15.
- */
+  * Instruction to select a single zone of a SpiderDiagram.
+  *
+  * @author Sven Linker [s.linker@brighton.ac.uk]
+  */
 class SelectSingleZoneInstruction extends RuleApplicationInstruction[ZoneArg]{
 
   private val steps: List[SelectSingleZoneStep] = List(SelectSingleZoneStep.getInstance())

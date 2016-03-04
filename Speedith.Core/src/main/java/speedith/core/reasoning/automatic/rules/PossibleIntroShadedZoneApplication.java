@@ -15,7 +15,7 @@ import speedith.core.reasoning.rules.RemoveShadedZone;
  */
 public class PossibleIntroShadedZoneApplication extends PossibleRuleApplication {
 
-    private Zone zone;
+    private final Zone zone;
 
     public PossibleIntroShadedZoneApplication(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, Zone zone) {
         super(target, rule);

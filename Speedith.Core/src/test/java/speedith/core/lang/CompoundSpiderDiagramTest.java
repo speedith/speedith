@@ -555,7 +555,7 @@ public class CompoundSpiderDiagramTest {
 
     private static void checkSDCollection(SpiderDiagram sd) {
         ArrayList<SpiderDiagram> retVal = sd.visit(new DiagramVisitor<ArrayList<SpiderDiagram>>() {
-            private ArrayList<SpiderDiagram> collectedSDs = new ArrayList<SpiderDiagram>();
+            private ArrayList<SpiderDiagram> collectedSDs = new ArrayList<>();
 
             @Override
             public void init(SpiderDiagram root) {

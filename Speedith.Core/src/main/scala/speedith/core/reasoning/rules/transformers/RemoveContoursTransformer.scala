@@ -21,7 +21,7 @@ case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) ex
         zone.getInContours.contains(contourToRemove) &&
           shadedRegion.contains(new Zone(zone.getInContours - contourToRemove, zone.getOutContours + contourToRemove))
       )
-      shadedRegion = shadedRegion.map(zone => new Zone(zone.getInContours - contourToRemove, zone.getOutContours - contourToRemove)).toSet
+      shadedRegion = shadedRegion.map(zone => new Zone(zone.getInContours - contourToRemove, zone.getOutContours - contourToRemove))
     }
     shadedRegion
   }
