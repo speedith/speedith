@@ -111,7 +111,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
         TrivialImplicationTautology tautology = new TrivialImplicationTautology();
         SubDiagramIndexArg index = new SubDiagramIndexArg(subGoalIndex,0);
         try {
-            p.applyRule(tautology, index, RuleApplicationType.AUTOMATIC);
+            p.applyRule(tautology, index, RuleApplicationType.AUTOMATIC, getPrettyName());
         } catch (TransformationException e) {
             // TrivialImplicationTautology throws a TransformationException, if the rule
             // could not be applied (i.e., if the syntactic equivalence could not

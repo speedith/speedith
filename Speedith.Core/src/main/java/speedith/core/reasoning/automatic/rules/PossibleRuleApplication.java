@@ -41,8 +41,8 @@ public abstract class PossibleRuleApplication {
 
     public abstract RuleArg getArg(int subgoalindex) ;
 
-    public boolean apply (Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
-        p.applyRule(getRule(), getArg(subGoalIndex), RuleApplicationType.AUTOMATIC);
+    public boolean apply (Proof p, int subGoalIndex, AppliedRules applied, String typeSpecifier) throws RuleApplicationException {
+        p.applyRule(getRule(), getArg(subGoalIndex), RuleApplicationType.AUTOMATIC, typeSpecifier);
         return true;
     }
 

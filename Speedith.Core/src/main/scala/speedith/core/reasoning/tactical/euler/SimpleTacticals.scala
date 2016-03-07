@@ -46,7 +46,7 @@ object SimpleTacticals {
 
 
 
-  def matchConclusion : Tactical = (state:Proof) => {
+  def matchConclusion : Tactical = (name:String) => (state:Proof) => {
     val concContours =getContoursInConclusion(0,state)
     val concShadedZones = getShadedZonesInConclusion(0,state)
     val concUnshadedZones = getUnshadedZonesInConclusion(0,state)
@@ -60,7 +60,7 @@ object SimpleTacticals {
             introduceShadedZone(0,isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones))))),
           REPEAT(ORELSE(trivialTautology(0) ,
             eraseShading(0,isPrimaryAndContainsShadedZones, someVisibleShadedZonesInGivenZones(concUnshadedZones))))),
-      REPEAT(ORELSE(trivialTautology(0), removeShadedZone(0,someVisibleShadedZoneNotInGivenZones(concShadedZones)))))(state)
+      REPEAT(ORELSE(trivialTautology(0), removeShadedZone(0,someVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)
   }
 
   def copyTopologicalInformation : Tactical = {

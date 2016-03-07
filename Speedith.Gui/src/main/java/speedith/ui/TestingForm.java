@@ -95,7 +95,7 @@ public class TestingForm extends javax.swing.JFrame {
         if (!dsd.isCancelled()) {
             RuleArg ruleArg = instructions.extractRuleArg(dsd.getSelection(), 0);
             try {
-                proofPanel1.applyRule(splitSpiders, ruleArg, RuleApplicationType.INTERACTIVE);
+                proofPanel1.applyRule(splitSpiders, ruleArg, RuleApplicationType.INTERACTIVE,"");
             } catch (RuleApplicationException ex) {
                 System.out.println("Error!" + ex.getMessage());
             }

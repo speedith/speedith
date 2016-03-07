@@ -69,7 +69,7 @@ public class BreadthFirstProver extends  AutomaticProver {
                         ProofTrace newCurrent = new ProofTrace(current.getGoals(), current.getRuleApplications());
                         // create a new set of already applied rules for the current proof
                         AppliedRules alreadyApplied = new AppliedRules(rulesWithinProofs.get(current));
-                        boolean hasbeenApplied = nextRule.apply(newCurrent, subgoalindex, alreadyApplied);
+                        boolean hasbeenApplied = nextRule.apply(newCurrent, subgoalindex, alreadyApplied, getPrettyName());
                         if (hasbeenApplied) {
                             // save the new proof within the set of not yet considered proofs
                             newProofs.add(newCurrent);

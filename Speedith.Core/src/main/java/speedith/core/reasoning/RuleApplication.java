@@ -46,6 +46,7 @@ public class RuleApplication implements Serializable {
     private InferenceRule<?> inferenceRule;
     private RuleArg ruleArguments;
     private RuleApplicationType type;
+    private String typeSpecifier;
     private static final long serialVersionUID = -5487436537034792892L;
     // </editor-fold>
 
@@ -57,13 +58,14 @@ public class RuleApplication implements Serializable {
      * some set of spider diagrams with the given additional arguments).
      * @param ruleArguments the additional arguments to the inference rule.
      */
-    public RuleApplication(InferenceRule<?> inferenceRule, RuleArg ruleArguments, RuleApplicationType type) {
+    public RuleApplication(InferenceRule<?> inferenceRule, RuleArg ruleArguments, RuleApplicationType type, String typeSpecifier) {
         if (inferenceRule == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "inferenceRule"));
         }
         this.inferenceRule = inferenceRule;
         this.ruleArguments = ruleArguments;
         this.type = type;
+        this.typeSpecifier = typeSpecifier;
     }
     //</editor-fold>
 
@@ -93,6 +95,8 @@ public class RuleApplication implements Serializable {
     }
 
     public RuleApplicationType getType() { return type; }
+
+    public String getTypeSpecifier() { return typeSpecifier; }
     //</editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Rule Application">

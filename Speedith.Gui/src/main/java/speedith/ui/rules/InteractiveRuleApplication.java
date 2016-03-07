@@ -255,7 +255,7 @@ public final class InteractiveRuleApplication {
 
             // Finally, apply the inference rule.
             if (proof != null) {
-                return proof.applyRule((InferenceRule<RuleArg>) rule, ruleArg, RuleApplicationType.INTERACTIVE);
+                return proof.applyRule((InferenceRule<RuleArg>) rule, ruleArg, RuleApplicationType.INTERACTIVE,"");
             } else {
                 return rule.apply(ruleArg, goals);
             }

@@ -55,8 +55,8 @@ public enum TacticMenuItem  { //implements Comparable<TacticMenuItem> {
     public Proof apply(Proof proof) throws TacticApplicationException {
         Some<Proof> result = null;
         try {
-            Function1<Proof, Option<Proof>> function = (Function1<Proof, Option<Proof>>) callee.invoke(SimpleTacticals.class);
-            result = (Some<Proof>) function.apply(proof);
+            Function1<String, Function1<Proof, Option<Proof>>> function = (Function1<String, Function1<Proof,Option<Proof>>>) callee.invoke(SimpleTacticals.class);
+            result = (Some<Proof>) function.apply(getName()).apply(proof);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {

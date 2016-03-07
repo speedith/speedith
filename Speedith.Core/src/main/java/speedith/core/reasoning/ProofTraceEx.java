@@ -123,7 +123,7 @@ public class ProofTraceEx {
     }
 
     public ProofTraceEx applyRule(InferenceRule rule, RuleArg args) throws RuleApplicationException {
-        return applyRule(new RuleApplication(rule, args, RuleApplicationType.INTERACTIVE));
+        return applyRule(new RuleApplication(rule, args, RuleApplicationType.INTERACTIVE, ""));
     }
 
     public ProofTraceEx applyRule(RuleApplication ruleApplication) throws RuleApplicationException {

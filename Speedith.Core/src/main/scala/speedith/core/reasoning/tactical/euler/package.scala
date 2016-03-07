@@ -10,7 +10,7 @@ import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence
  *
  */
 package object euler {
-  type Tactical = Proof => Option[Proof]
+  type Tactical = String => Proof => Option[Proof]
   type Chooser[A] = SpiderDiagramOccurrence => Option[A]
   type Predicate = SpiderDiagramOccurrence => Boolean
 }

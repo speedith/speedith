@@ -31,11 +31,6 @@ public class PossibleRemoveShadedZoneApplication extends PossibleRuleApplication
         return zone;
     }
 
-    @Override
-    public boolean apply(Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
-        p.applyRule(getRule(), getArg(subGoalIndex), RuleApplicationType.AUTOMATIC);
-        return true;
-    }
 
 
     @Override

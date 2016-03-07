@@ -11,48 +11,46 @@ import speedith.core.reasoning.tactical.TacticApplicationException
  *
  */
 object BasicTacticals {
-  def THEN(tac1: Tactical, tac2: Tactical) = (state : Proof) => {
-    tac1(state) flatMap tac2
+  def THEN(tac1: Tactical, tac2: Tactical) = (name:String) => (state : Proof) => {
+    tac1(name)(state) flatMap tac2(name)
   }
 
-  def ORELSE(tac1 : Tactical, tac2 : Tactical) = (state : Proof) => {
-    val state1 = tac1(state)
+  def ORELSE(tac1 : Tactical, tac2 : Tactical) = (name:String) => (state : Proof) => {
+    val state1 = tac1(name)(state)
     if (state1.isEmpty) {
-      tac2(state)
+      tac2(name)(state)
     } else {
       state1
     }
   }
 
-  def id (state : Proof) = {
+  def id:Tactical = (name:String) => (state:Proof) => {
     Some(state)
   }
 
-  def fail(state:Proof) = {
+  def fail:Tactical = (name:String) =>(state:Proof) => {
     None
   }
 
-  def TRY(tac : Tactical) = (state:Proof) => {
-    ORELSE(tac, id)(state)
+  def TRY(tac : Tactical) = (name:String) => (state:Proof) => {
+    ORELSE(tac, id)(name)(state)
   }
 
-  def REPEAT(tac : Tactical): Tactical = (state : Proof) => {
-    ORELSE(THEN(tac, REPEAT(tac)), id )(state)
+  def REPEAT(tac : Tactical): Tactical = (name:String) =>(state : Proof) => {
+    ORELSE(THEN(tac, REPEAT(tac)), id )(name)(state)
   }
 
-  def DEPTH_FIRST (predicate:Proof => Boolean, tac:Tactical):Tactical = (state :Proof) => {
+  def DEPTH_FIRST (predicate:Proof => Boolean, tac:Tactical):Tactical =  (name:String) => (state :Proof) => {
     if (predicate(state)) {
-      id(state)
+      id(name)(state)
     } else {
-      THEN(tac, DEPTH_FIRST(predicate, tac))(state)
+      THEN(tac, DEPTH_FIRST(predicate, tac))(name)(state)
     }
   }
 
   @throws(classOf[TacticApplicationException])
-  def BY( tac : Tactical) = (state:Proof) =>  {
-      tac(state).getOrElse{
-        throw new TacticApplicationException("Tactic could not be applied to current subgoal")
-      }
+  def BY( tac : Tactical) = (name:String) => (state:Proof) =>  {
+      tac(name)(state)
   }
 
 }
