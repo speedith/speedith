@@ -463,14 +463,14 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     fileMenu.setMnemonic('F');
     fileMenu.setText("File");
 
-    openMenu.setText("Open");
+    openMenu.setText("Load");
     fileMenu.add(openMenu);
     saveMenu.setText("Save");
     fileMenu.add(saveMenu);
 
-    openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
-    openMenuItem.setMnemonic('O');
-    openMenuItem.setText("Open Goal");
+    openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK));
+    openMenuItem.setMnemonic('L');
+    openMenuItem.setText("Load Goal");
     openMenuItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
@@ -491,7 +491,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     saveMenu.add(saveMenuItem);
 
 
-    openProofMenuItem.setText("Open proof");
+    openProofMenuItem.setText("Load Proof");
     openProofMenuItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
@@ -500,7 +500,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     });
     openMenu.add(openProofMenuItem);
 
-    saveProofMenuItem.setText("Save current proof");
+    saveProofMenuItem.setText("Save Proof");
     saveProofMenuItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
@@ -589,6 +589,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     proofMenu.setMnemonic('P');
     proofMenu.setText("Proof");
 
+    cropProof.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
+    cropProof.setMnemonic('R');
     cropProof.setText("Reduce to selected Subgoal");
     cropProof.addActionListener(new ActionListener() {
       @Override
@@ -598,6 +600,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     });
     proofMenu.add(cropProof);
 
+    analyseItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
+    analyseItem.setMnemonic('A');
     analyseItem.setText("Analyse");
     analyseItem.addActionListener(new ActionListener() {
       @Override
