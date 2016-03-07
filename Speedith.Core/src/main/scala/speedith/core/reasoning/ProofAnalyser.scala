@@ -63,7 +63,23 @@ object ProofAnalyser  {
   def length(proof: Proof) : Int = proof.getRuleApplicationCount
 
   def numberOfInteractions(proof : Proof) : Int = {
-    proof.getRuleApplications.count(app => app.getType.equals(RuleApplicationType.INTERACTIVE))
+    val interactiveApps =  proof.getRuleApplications.count(app => app.getType.equals(RuleApplicationType.INTERACTIVE))
+    val methodInvocations = numberOfProofMethodInvocations(proof.getRuleApplications.toList)
+    interactiveApps + methodInvocations
+  }
+
+  def numberOfProofMethodInvocations(apps : List[RuleApplication]) : Int = apps match {
+    case Nil => 0
+    case app :: Nil => 0
+    case app1 :: app2 :: x =>
+     val rest = numberOfProofMethodInvocations(app2::x)
+      if(!app2.getType.equals(RuleApplicationType.INTERACTIVE) &&
+        (app1.getType != app2.getType || !app1.getTypeSpecifier.equals(app2.getTypeSpecifier)))
+      {
+        1+rest
+      } else {
+        0+rest
+      }
   }
 
   def averageInteractions(proof:Proof) : Double = {
@@ -72,8 +88,14 @@ object ProofAnalyser  {
 
   def maximalClutterVelocity(proof : Proof) : Int = {
     val goals = proof.getGoals.filter(g => !g.isEmpty).toList
-    val tuples = goals.sliding(2).map(t => t match { case List(x,y) => clutterScore(x)-clutterScore(y)})
-    val list = tuples.toList.map(i => if (i < 0) -i else i)
-    list.max
+    if (goals.size > 1) {
+      val tuples = goals.sliding(2).map(t => t match {
+        case List(x, y) => clutterScore(x) - clutterScore(y)
+      })
+      val list = tuples.toList.map(i => if (i < 0) -i else i)
+      list.max
+    } else {
+      0
+    }
   }
 }
