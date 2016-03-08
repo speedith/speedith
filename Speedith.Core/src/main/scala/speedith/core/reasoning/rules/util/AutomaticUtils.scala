@@ -84,9 +84,9 @@ object AutomaticUtils {
       val rightContours = target.getOperand(1).asInstanceOf[PrimarySpiderDiagramOccurrence].getAllContours
       val difference =  leftContours -- rightContours
       ( leftContours -- rightContours)
-          .map(c => new PossibleCopyContourApplication(target.getOperand(0), new CopyContours().asInstanceOf[InferenceRule[RuleArg]], c).asInstanceOf[PossibleRuleApplication]) ++
+          .map(c => new PossibleCopyContourApplication(target.getOperand(0), new CopyContoursTopological().asInstanceOf[InferenceRule[RuleArg]], c).asInstanceOf[PossibleRuleApplication]) ++
         (rightContours -- leftContours)
-          .map(c => new PossibleCopyContourApplication(target.getOperand(1), new CopyContours().asInstanceOf[InferenceRule[RuleArg]], c).asInstanceOf[PossibleRuleApplication])
+          .map(c => new PossibleCopyContourApplication(target.getOperand(1), new CopyContoursTopological().asInstanceOf[InferenceRule[RuleArg]], c).asInstanceOf[PossibleRuleApplication])
     } else {
       new java.util.HashSet[PossibleRuleApplication]()
     }
