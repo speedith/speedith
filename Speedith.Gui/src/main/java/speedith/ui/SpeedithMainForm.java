@@ -539,7 +539,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     goalSpiderDrawerInputMenuItem.setText("Use SpiderDrawer"); // NOI18N
     goalSpiderDrawerInputMenuItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        onSpiderDrawerClicked(evt);
+        onSpiderDrawerClicked();
       }
     });
     drawMenu.add(goalSpiderDrawerInputMenuItem);
@@ -702,7 +702,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     int length = ProofAnalyser.length(proofPanel1);
     int maxClutter = ProofAnalyser.maximumClutter(proofPanel1);
     double avgClutter = ProofAnalyser.averageClutter(proofPanel1);
-    int velo = ProofAnalyser.maximalClutterVelocity(proofPanel1);
+    int velocity = ProofAnalyser.maximalClutterVelocity(proofPanel1);
     int complexR = ProofAnalyser.complexRuleCount(proofPanel1);
     double avgComplex = ProofAnalyser.averageNumberOfComplexRules(proofPanel1);
     int interactions = ProofAnalyser.numberOfInteractions(proofPanel1);
@@ -716,7 +716,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
             "\nAverage Number of Complex Rules:\t"+String.format("%.2f", avgComplex)+
             "\nNumber of Interactions:\t"+interactions+
             "\nAverage Number of Interactions:\t"+String.format("%.2f",avgInteractions)+
-            "\nMaximal Clutter Velocity:\t"+velo +
+            "\nMaximal Clutter Velocity:\t"+velocity +
             "\nAutomatic Rule Applications:\t"+automatic);
   }
 
@@ -951,7 +951,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
   }
 
-  private void onSpiderDrawerClicked(ActionEvent evt) {
+  private void onSpiderDrawerClicked() {
     MainForm spiderDrawer = new MainForm(this, true, false);
     boolean done = spiderDrawer.showDialog();
 
