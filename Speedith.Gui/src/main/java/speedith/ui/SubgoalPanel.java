@@ -28,6 +28,8 @@ package speedith.ui;
 
 import speedith.core.lang.SpiderDiagram;
 
+import java.awt.*;
+
 /**
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
@@ -113,8 +115,11 @@ public class SubgoalPanel extends javax.swing.JPanel {
 
     public void setDiagram(SpiderDiagram diagram) {
         this.spiderDiagramPanel1.setDiagram(diagram);
-        this.setMinimumSize(this.spiderDiagramPanel1.getPreferredSize());
-        this.setPreferredSize(this.spiderDiagramPanel1.getPreferredSize());
+        this.setPreferredSize(new Dimension(spiderDiagramPanel1.getPreferredSize().width+ lblSubdiagramIndex.getPreferredSize().width,
+                spiderDiagramPanel1.getPreferredSize().height));
+        this.setMinimumSize(new Dimension(spiderDiagramPanel1.getMinimumSize().width+ lblSubdiagramIndex.getMinimumSize().width,
+                spiderDiagramPanel1.getMinimumSize().height));
+
     }
     // </editor-fold>
 
