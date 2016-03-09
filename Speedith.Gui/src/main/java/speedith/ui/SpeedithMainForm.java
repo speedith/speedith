@@ -106,7 +106,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenuItem useSdExample2MenuItem;
   private javax.swing.JMenuItem useSdExample3MenuItem;
   private javax.swing.JLabel lblAppliedRules;
-  private javax.swing.JList lstAppliedRules;
+  private javax.swing.JList<InfRuleListItem> lstAppliedRules;
   private javax.swing.JMenuBar menuBar;
   private javax.swing.JMenuItem goalTextInputMenuItem;
   private javax.swing.JPanel pnlRulesSidePane;
@@ -114,9 +114,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenu proofMenu;
   private javax.swing.JMenuItem cropProof;
   private javax.swing.JScrollPane scrlPnlAppliedRules;
-  private javax.swing.JMenu reasoningMenu;
+/*  private javax.swing.JMenu reasoningMenu;
   private javax.swing.JMenuItem proveAny;
-  private javax.swing.JMenuItem proveFromHere;
+  private javax.swing.JMenuItem proveFromHere;*/
   private javax.swing.JFileChooser goalFileChooser;
   private javax.swing.JFileChooser proofFileChooser;
   private javax.swing.JMenu tacticsMenu;
@@ -309,9 +309,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     proofMenu = new javax.swing.JMenu();
     cropProof = new javax.swing.JMenuItem();
     analyseItem = new javax.swing.JMenuItem();
-    reasoningMenu = new javax.swing.JMenu();
+    /*reasoningMenu = new javax.swing.JMenu();
     proveAny = new javax.swing.JMenuItem();
-    proveFromHere = new javax.swing.JMenuItem();
+    proveFromHere = new javax.swing.JMenuItem(); */
     tacticsMenu = new javax.swing.JMenu();
 
 
@@ -340,6 +340,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
     pnlRulesSidePane.add(lblAppliedRules, gridBagConstraints);
 
+    lstAppliedRules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     lstAppliedRules.setModel(getRulesList());
     lstAppliedRules.addMouseListener(new java.awt.event.MouseAdapter() {
       public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -403,7 +404,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     startAutoProver.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
-        onProveFromHere(evt);
+        onProveFromHere();
       }
     });
     replaceWithGenerated.setText("Solve");
@@ -474,7 +475,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     openMenuItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
-        onOpen(evt);
+        onOpen();
       }
     });
     openMenu.add(openMenuItem);
@@ -485,7 +486,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     saveMenuItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
-        onSave(evt);
+        onSave();
       }
     });
     saveMenu.add(saveMenuItem);
@@ -515,7 +516,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     settingsMenuItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
-        onSettings(evt);
+        onSettings();
       }
     });
     fileMenu.add(settingsMenuItem);
@@ -595,13 +596,13 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     cropProof.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
-        onCropProof(evt);
+        onCropProof();
       }
     });
     proofMenu.add(cropProof);
 
-    analyseItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
-    analyseItem.setMnemonic('A');
+    analyseItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
+    analyseItem.setMnemonic('n');
     analyseItem.setText("Analyse");
     analyseItem.addActionListener(new ActionListener() {
       @Override
@@ -656,10 +657,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         Proof autoProof = automaticProof.get();
         proofPanel1.extendProof(autoProof);
         fireProofChangedEvent(new ProofReplacedEvent(this));
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      } catch (ExecutionException e) {
-        e.printStackTrace();
+      } catch (InterruptedException|ExecutionException e) {
+        JOptionPane.showMessageDialog(this, "An error occurred:" +e.getLocalizedMessage());
       } catch (AutomaticProofException e) {
         JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
       }
@@ -673,10 +672,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       Proof autoProof = automaticProof.get();
       proofPanel1.extendByOneStep(autoProof);
       fireProofChangedEvent(new ProofExtendedByStepEvent(this));
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    } catch (ExecutionException e) {
-      e.printStackTrace();
+    } catch (InterruptedException|ExecutionException e) {
+      JOptionPane.showMessageDialog(this, "An error occurred:" +e.getLocalizedMessage());
     } catch (AutomaticProofException e) {
       JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
     }
@@ -784,7 +781,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
   }
 
-  private void onCropProof(ActionEvent evt) {
+  private void onCropProof() {
     if (proofPanel1.getSelected() != null) {
       proofPanel1.reduceToSelected();
       fireProofChangedEvent(new ProofReducedEvent( this));
@@ -792,7 +789,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }
 
 
-  private void onOpen(ActionEvent evt) {
+  private void onOpen() {
     int returnVal = goalFileChooser.showOpenDialog(this);
     if (returnVal == JFileChooser.APPROVE_OPTION) {
       File file = goalFileChooser.getSelectedFile();
@@ -817,7 +814,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
   }
 
-  private void onSave(ActionEvent evt) {
+  private void onSave() {
     if (proofPanel1.getGoals().isEmpty()) {
       JOptionPane.showMessageDialog(this, "No subgoal to be saved exists.");
       return;
@@ -849,7 +846,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       }
   }
 
-  private void onSettings(ActionEvent evt) {
+  private void onSettings() {
     SettingsDialog settings = new SettingsDialog(this, true);
     settings.setVisible(true);
     proofPanel1.setProver(settings.getSelectedProver());
@@ -862,7 +859,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     backgroundProofSearch = settings.isBackGroundSearchEnabled();
   }
 
-  private void onProveFromHere(ActionEvent evt) {
+  private void onProveFromHere() {
     if (activeDiagram != DiagramType.EulerDiagram) {
       JOptionPane.showMessageDialog(this,"The automatic provers only work for Euler diagrams");
       return;
