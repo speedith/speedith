@@ -707,6 +707,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     double avgComplex = ProofAnalyser.averageNumberOfComplexRules(proofPanel1);
     int interactions = ProofAnalyser.numberOfInteractions(proofPanel1);
     double avgInteractions = ProofAnalyser.averageInteractions(proofPanel1);
+    int automatic = ProofAnalyser.numberOfAutomaticRuleApplications(proofPanel1);
 
     JOptionPane.showMessageDialog(this, "Length:\t"+ length+
             "\nMaximum Clutter:\t"+maxClutter +
@@ -715,7 +716,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
             "\nAverage Number of Complex Rules:\t"+String.format("%.2f", avgComplex)+
             "\nNumber of Interactions:\t"+interactions+
             "\nAverage Number of Interactions:\t"+String.format("%.2f",avgInteractions)+
-            "\nMaximal Clutter Velocity:\t"+velo);
+            "\nMaximal Clutter Velocity:\t"+velo +
+            "\nAutomatic Rule Applications:\t"+automatic);
   }
 
   private void onSaveProof() {

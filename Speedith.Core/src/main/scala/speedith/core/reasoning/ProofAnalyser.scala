@@ -98,4 +98,8 @@ object ProofAnalyser  {
       0
     }
   }
+
+  def numberOfAutomaticRuleApplications(proof : Proof) : Int = {
+    proof.getRuleApplications.count(app => app.getType.equals(RuleApplicationType.AUTOMATIC))
+  }
 }
