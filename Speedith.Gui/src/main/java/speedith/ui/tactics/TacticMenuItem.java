@@ -17,6 +17,8 @@ public enum TacticMenuItem  { //implements Comparable<TacticMenuItem> {
 
     Vennify("Introduce all missing zones", "vennify"),
     DeVennify("Remove all shaded zones", "deVennify"),
+    DeVennifyFast("Remove all shaded zones (fast)", "deVennifyFast"),
+
     UnifyContours("Unify contours in premises", "unifyContourSets"),
     UnifyContoursFast("Unify contours in premises (fast)", "unifyContourSetsFast"),
     EraseContours("Erase all contours in premises",  "eraseAllContours"),

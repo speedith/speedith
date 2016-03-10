@@ -26,6 +26,10 @@ object SimpleTacticals {
     REPEAT(ORELSE(trivialTautology(0),removeShadedZone(0,anyShadedZone)))
   }
 
+  def deVennifyFast : Tactical = {
+    REPEAT(ORELSE(trivialTautology(0),removeShadedZone(0,allShadedZones)))
+  }
+
 
   def unifyContourSets : Tactical = (name:String) => (state:Proof) => {
     val contours = getContoursInSubGoal(0, state)
@@ -70,8 +74,8 @@ object SimpleTacticals {
           REPEAT(ORELSE(trivialTautology(0),
             introduceShadedZone(0,isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones))))),
         REPEAT(ORELSE(trivialTautology(0) ,
-          eraseShading(0,isPrimaryAndContainsShadedZones, someVisibleShadedZonesInGivenZones(concUnshadedZones))))),
-      REPEAT(ORELSE(trivialTautology(0), removeShadedZone(0,someVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)
+          eraseShading(0,isPrimaryAndContainsShadedZones, allVisibleShadedZonesInGivenZones(concUnshadedZones))))),
+      REPEAT(ORELSE(trivialTautology(0), removeShadedZone(0,allVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)
   }
 
   def matchConclusion : Tactical = (name:String) => (state:Proof) => {

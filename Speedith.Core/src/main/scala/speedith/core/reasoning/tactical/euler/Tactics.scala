@@ -110,7 +110,7 @@ object Tactics {
     }
   }
 
-  def removeShadedZone(subgoalIndex: Int, zoneChooser:Chooser[Zone]): Tactical = (name:String) => ( state: Proof) => {
+  def removeShadedZone(subgoalIndex: Int, zoneChooser:Chooser[Set[Zone]]): Tactical = (name:String) => ( state: Proof) => {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
@@ -120,12 +120,12 @@ object Tactics {
         case Some(diagram) =>
           val targetZone = zoneChooser(diagram)
           targetZone match {
-            case Some(zone) =>
-              if (zone.getInContoursCount == 0) {
+            case Some(zones) =>
+              if (zones.exists(_.getInContoursCount == 0)) {
                 throw new TacticApplicationException("Cannot remove outer zone")
               }
               createResults(target, state, new RemoveShadedZone().asInstanceOf[InferenceRule[RuleArg]],
-                new ZoneArg(subgoalIndex, diagram.getOccurrenceIndex, zone), name)
+                new MultipleRuleArgs(zones.map( z => new ZoneArg(subgoalIndex, diagram.getOccurrenceIndex, z)).toSeq:_*), name)
             case None => None
           }
 
@@ -156,7 +156,7 @@ object Tactics {
     }
   }
 
-  def eraseShading(subgoalIndex : Int, predicate: Predicate, zoneChooser : Chooser[Zone]) :  Tactical  = (name:String) =>(state : Proof) => {
+  def eraseShading(subgoalIndex : Int, predicate: Predicate, zoneChooser : Chooser[Set[Zone]]) :  Tactical  = (name:String) =>(state : Proof) => {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0), predicate)
@@ -164,9 +164,9 @@ object Tactics {
         case Some(diagram) =>
           val targetZone = zoneChooser(diagram)
           targetZone match {
-            case Some(zone) =>
+            case Some(zones) =>
               createResults(Some(diagram), state, new RemoveShading().asInstanceOf[InferenceRule[RuleArg]],
-                new ZoneArg(subgoalIndex, diagram.getOccurrenceIndex, zone),name)
+                new MultipleRuleArgs(zones.map(zone => new ZoneArg(subgoalIndex, diagram.getOccurrenceIndex, zone)).toSeq:_*),name)
             case None => None
           }
         case None => None
