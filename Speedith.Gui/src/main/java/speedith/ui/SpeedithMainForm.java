@@ -47,6 +47,8 @@ import speedith.ui.automatic.*;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
 import speedith.ui.tactics.TacticMenuItem;
+import speedith.ui.tactics.TacticMenuItemAccelerated;
+import speedith.ui.tactics.TacticMenuItemRegular;
 import spiderdrawer.ui.MainForm;
 
 import javax.imageio.ImageIO;
@@ -120,6 +122,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JFileChooser goalFileChooser;
   private javax.swing.JFileChooser proofFileChooser;
   private javax.swing.JMenu tacticsMenu;
+  private javax.swing.JMenu regularTacticsMenu;
+  private javax.swing.JMenu acceleratedTacticsMenu;
   private javax.swing.JMenu openMenu;
   private javax.swing.JMenu saveMenu;
   private javax.swing.JMenuItem analyseItem;
@@ -313,6 +317,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     proveAny = new javax.swing.JMenuItem();
     proveFromHere = new javax.swing.JMenuItem(); */
     tacticsMenu = new javax.swing.JMenu();
+    regularTacticsMenu = new javax.swing.JMenu();
+    acceleratedTacticsMenu = new javax.swing.JMenu();
+
 
 
 
@@ -633,7 +640,13 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     tacticsMenu.setText("Tactics");
 
-    for (final TacticMenuItem item:  TacticMenuItem.values()) {
+    regularTacticsMenu.setText("Regular");
+    acceleratedTacticsMenu.setText("Accelerated");
+
+    tacticsMenu.add(regularTacticsMenu);
+    tacticsMenu.add(acceleratedTacticsMenu);
+
+    for (final TacticMenuItemRegular item:  TacticMenuItemRegular.values()) {
 
       JMenuItem tacticalButton = new JMenuItem();
       tacticalButton.setText(item.getName());
@@ -643,10 +656,25 @@ public class SpeedithMainForm extends javax.swing.JFrame {
           applyTactical(item);
         }
       });
-      tacticsMenu.add(tacticalButton);
-      menuBar.add(tacticsMenu);
+      regularTacticsMenu.add(tacticalButton);
 
     }
+
+    for (final TacticMenuItemAccelerated item:  TacticMenuItemAccelerated.values()) {
+
+      JMenuItem tacticalButton = new JMenuItem();
+      tacticalButton.setText(item.getName());
+      tacticalButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+          applyTactical(item);
+        }
+      });
+      acceleratedTacticsMenu.add(tacticalButton);
+
+    }
+
+    menuBar.add(tacticsMenu);
 
     setJMenuBar(menuBar);
   }
