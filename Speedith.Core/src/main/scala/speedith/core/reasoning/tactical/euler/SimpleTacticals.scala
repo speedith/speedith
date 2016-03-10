@@ -44,7 +44,22 @@ object SimpleTacticals {
     THEN(unifyContourSets, THEN(vennify, THEN(combineAll, matchConclusion)))
   }
 
-
+  def matchConclusionFast : Tactical = (name:String) => (state: Proof) => {
+    val concContours =getContoursInConclusion(0,state)
+    val concShadedZones = getShadedZonesInConclusion(0,state)
+    val concUnshadedZones = getUnshadedZonesInConclusion(0,state)
+    val concVisibleZones = getVisibleZonesInConclusion(0,state)
+    THEN(
+      THEN(
+        THEN(
+          REPEAT(ORELSE(trivialTautology(0),
+            eraseContour(0, containsOtherContours(concContours ), allOfTheOtherContours(concContours)))),
+          REPEAT(ORELSE(trivialTautology(0),
+            introduceShadedZone(0,isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones))))),
+        REPEAT(ORELSE(trivialTautology(0) ,
+          eraseShading(0,isPrimaryAndContainsShadedZones, someVisibleShadedZonesInGivenZones(concUnshadedZones))))),
+      REPEAT(ORELSE(trivialTautology(0), removeShadedZone(0,someVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)
+  }
 
   def matchConclusion : Tactical = (name:String) => (state:Proof) => {
     val concContours =getContoursInConclusion(0,state)

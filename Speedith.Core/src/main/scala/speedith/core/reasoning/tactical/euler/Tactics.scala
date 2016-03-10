@@ -22,7 +22,7 @@ import scala.collection.JavaConversions._
   */
 object Tactics {
 
-  private def firstMatchingDiagram(sd: SpiderDiagramOccurrence, predicate: SpiderDiagramOccurrence => Boolean): Option[SpiderDiagramOccurrence] = {
+  private def firstMatchingDiagram(sd: SpiderDiagramOccurrence, predicate: Predicate): Option[SpiderDiagramOccurrence] = {
     if (predicate(sd)) {
       Some(sd)
     } else {
@@ -40,8 +40,8 @@ object Tactics {
 
   private def firstMatchingDiagramAndContour(sd: SpiderDiagramOccurrence,
                                              predicate: SpiderDiagramOccurrence => Boolean,
-                                             contourChooser: SpiderDiagramOccurrence => Option[String])
-  : Option[(SpiderDiagramOccurrence, Option[String])] = {
+                                             contourChooser: Chooser[Set[String]])
+  : Option[(SpiderDiagramOccurrence, Option[Set[String]])] = {
     if (predicate(sd)) {
       Some(Tuple2(sd, contourChooser(sd)))
     } else {
@@ -133,7 +133,7 @@ object Tactics {
     }
   }
 
-  def eraseContour(subgoalIndex: Int, predicate: Predicate, contourChooser: Chooser[String]): Tactical = (name:String) =>(state: Proof) => {
+  def eraseContour(subgoalIndex: Int, predicate: Predicate, contourChooser: Chooser[Set[String]]): Tactical = (name:String) =>(state: Proof) => {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagramAndContour(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
@@ -143,7 +143,7 @@ object Tactics {
           tupel._2 match {
             case Some(c) =>
               createResults(Some(tupel._1), state, new RemoveContour().asInstanceOf[InferenceRule[RuleArg]],
-                new MultipleRuleArgs(new ContourArg(subgoalIndex, tupel._1.getOccurrenceIndex, c)),name)
+                new MultipleRuleArgs(c.map( new ContourArg(subgoalIndex, tupel._1.getOccurrenceIndex, _)).toSeq:_*),name)
             case None => throw new TacticApplicationException("Could not find a suited contour in this diagram")
           }
         case None => None
