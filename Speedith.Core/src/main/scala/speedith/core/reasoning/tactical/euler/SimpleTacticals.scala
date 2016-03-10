@@ -19,11 +19,16 @@ object SimpleTacticals {
 
   def vennify : Tactical = {
     REPEAT(ORELSE(trivialTautology(0),
-      introduceShadedZone(0,isPrimaryAndContainsMissingZones,anyMissingZone)))
+      introduceShadedZone(0,isPrimaryAndContainsMissingZones,someMissingZone)))
+  }
+
+  def vennifyFast : Tactical = {
+    REPEAT(ORELSE(trivialTautology(0),
+      introduceShadedZone(0,isPrimaryAndContainsMissingZones,allMissingZones)))
   }
 
   def deVennify : Tactical = {
-    REPEAT(ORELSE(trivialTautology(0),removeShadedZone(0,anyShadedZone)))
+    REPEAT(ORELSE(trivialTautology(0),removeShadedZone(0,someShadedZone)))
   }
 
   def deVennifyFast : Tactical = {
@@ -58,7 +63,7 @@ object SimpleTacticals {
   }
 
   def vennStyleFast : Tactical = {
-    THEN(unifyContourSetsFast, THEN(vennify, THEN(combineAll, matchConclusionFast)))
+    THEN(unifyContourSetsFast, THEN(vennifyFast, THEN(combineAll, matchConclusionFast)))
   }
 
   def matchConclusionFast : Tactical = (name:String) => (state: Proof) => {
@@ -72,7 +77,7 @@ object SimpleTacticals {
           REPEAT(ORELSE(trivialTautology(0),
             eraseContour(0, containsOtherContours(concContours ), allInDiagramButNotInGivenContours(concContours)))),
           REPEAT(ORELSE(trivialTautology(0),
-            introduceShadedZone(0,isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones))))),
+            introduceShadedZone(0,isPrimaryAndContainsMissingZones, allMissingZonesInGivenZones(concVisibleZones))))),
         REPEAT(ORELSE(trivialTautology(0) ,
           eraseShading(0,isPrimaryAndContainsShadedZones, allVisibleShadedZonesInGivenZones(concUnshadedZones))))),
       REPEAT(ORELSE(trivialTautology(0), removeShadedZone(0,allVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)
@@ -98,7 +103,7 @@ object SimpleTacticals {
   def copyTopologicalInformation : Tactical = {
       REPEAT(ORELSE(trivialTautology(0),
         ORELSE(idempotency(0),
-          ORELSE(removeShadedZone(0,anyShadedZone),
+          ORELSE(removeShadedZone(0,someShadedZone),
             copyContour(0)))))
   }
 
@@ -106,6 +111,6 @@ object SimpleTacticals {
     REPEAT(ORELSE(trivialTautology(0),
       ORELSE(idempotency(0),
         ORELSE(copyShading(0),
-          introduceShadedZone(0,collectDiagramsWithMissingZonesThatCouldBeCopied(0,_).contains, anyMissingZone)))))
+          introduceShadedZone(0,collectDiagramsWithMissingZonesThatCouldBeCopied(0,_).contains, someMissingZone)))))
   }
 }

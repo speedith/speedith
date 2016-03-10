@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 public enum TacticMenuItem  { //implements Comparable<TacticMenuItem> {
 
     Vennify("Introduce all missing zones", "vennify"),
+    VennifyFast("Introduce all missing zones (fast)", "vennifyFast"),
     DeVennify("Remove all shaded zones", "deVennify"),
     DeVennifyFast("Remove all shaded zones (fast)", "deVennifyFast"),
 

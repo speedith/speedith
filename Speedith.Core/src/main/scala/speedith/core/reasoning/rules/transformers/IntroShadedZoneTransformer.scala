@@ -2,7 +2,7 @@ package speedith.core.reasoning.rules.transformers
 
 import speedith.core.lang._
 import speedith.core.reasoning.RuleApplicationException
-import speedith.core.reasoning.args.ZoneArg
+import speedith.core.reasoning.args.{SubDiagramIndexArg, ZoneArg}
 
 import scala.collection.JavaConversions._
 
@@ -11,7 +11,7 @@ import scala.collection.JavaConversions._
  * @author Sven Linker [s.linker@brighton.ac.uk]
  *
  */
-class IntroShadedZoneTransformer (target:  ZoneArg) extends IdTransformer {
+class IntroShadedZoneTransformer (target:  SubDiagramIndexArg, zones : java.util.List[ZoneArg]) extends IdTransformer {
   val subDiagramIndex = target.getSubDiagramIndex
 
   override def transform(psd: PrimarySpiderDiagram,
@@ -19,10 +19,10 @@ class IntroShadedZoneTransformer (target:  ZoneArg) extends IdTransformer {
                          parents: java.util.ArrayList[CompoundSpiderDiagram],
                          childIndices: java.util.ArrayList[java.lang.Integer]): SpiderDiagram = {
     if (diagramIndex == subDiagramIndex) {
-        if (!(psd.getShadedZones -- psd.getPresentZones).contains(target.getZone)) {
-          throw new RuleApplicationException("Selected zone is not missing.")
+        if ( (zones.map(_.getZone) -- (psd.getShadedZones -- psd.getPresentZones)).nonEmpty) {
+          throw new RuleApplicationException("One of the selected zones is not missing.")
         }
-        EulerDiagrams.createPrimaryEulerDiagram(psd.getShadedZones, psd.getPresentZones + target.getZone)
+        EulerDiagrams.createPrimaryEulerDiagram(psd.getShadedZones, psd.getPresentZones ++  zones.map(_.getZone))
     } else {
       null
     }

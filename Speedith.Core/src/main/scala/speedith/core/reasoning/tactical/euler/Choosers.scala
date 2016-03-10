@@ -124,7 +124,7 @@ object Choosers {
       }
   }
 
-  def anyShadedZone : Chooser[Set[Zone]] = {
+  def someShadedZone : Chooser[Set[Zone]] = {
     case sd: CompoundSpiderDiagramOccurrence => None
     case sd: PrimarySpiderDiagramOccurrence =>
       (sd.getPresentZones & sd.getShadedZones).headOption match {
@@ -143,15 +143,44 @@ object Choosers {
       }
   }
 
-  def someMissingZoneInGivenZones: Set[Zone] => Chooser[Zone] = (zones : Set[Zone]) =>  {
+  def someMissingZoneInGivenZones: Set[Zone] => Chooser[Set[Zone]] = (zones : Set[Zone]) =>  {
     case sd: CompoundSpiderDiagramOccurrence => None
     case sd:PrimarySpiderDiagramOccurrence =>
-      (( sd.getShadedZones -- sd.getPresentZones) & zones).headOption
+      (( sd.getShadedZones -- sd.getPresentZones) & zones).headOption match {
+        case None => None
+        case Some(z) => Some(Set(z))
+      }
+
   }
 
-  def anyMissingZone : Chooser[Zone] = {
+  def allMissingZonesInGivenZones: Set[Zone] => Chooser[Set[Zone]] = (zones : Set[Zone]) =>  {
+    case sd: CompoundSpiderDiagramOccurrence => None
+    case sd:PrimarySpiderDiagramOccurrence =>
+      val result = (sd.getShadedZones -- sd.getPresentZones) & zones
+      result.isEmpty match {
+        case true => None
+        case _ => Some(result.toSet)
+      }
+
+  }
+
+  def someMissingZone : Chooser[Set[Zone]] = {
     case sd: CompoundSpiderDiagramOccurrence => None
     case sd: PrimarySpiderDiagramOccurrence =>
-      (sd.getShadedZones -- sd.getPresentZones).headOption
+      (sd.getShadedZones -- sd.getPresentZones).headOption match {
+        case None => None
+        case Some(z) => Some(Set(z))
+      }
   }
+
+  def allMissingZones : Chooser[Set[Zone]] = {
+    case sd: CompoundSpiderDiagramOccurrence => None
+    case sd: PrimarySpiderDiagramOccurrence =>
+      val result = sd.getShadedZones -- sd.getPresentZones
+      result.isEmpty match {
+        case true => None
+        case _ => Some(result.toSet)
+      }
+  }
+
 }

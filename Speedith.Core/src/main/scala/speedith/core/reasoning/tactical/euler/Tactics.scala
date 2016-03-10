@@ -89,7 +89,7 @@ object Tactics {
     }
   }
 
-  def introduceShadedZone(subgoalIndex: Int, predicate: Proof => Predicate, zoneChooser : Chooser[Zone]): Tactical = (name:String) =>(state: Proof) => {
+  def introduceShadedZone(subgoalIndex: Int, predicate: Proof => Predicate, zoneChooser : Chooser[Set[Zone]]): Tactical = (name:String) =>(state: Proof) => {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
@@ -97,11 +97,11 @@ object Tactics {
       target match {
         case None => None
         case Some(diagram) =>
-          val targetZone = zoneChooser(diagram)
-          targetZone match {
-            case Some(zone) =>
+          val targetZones = zoneChooser(diagram)
+          targetZones match {
+            case Some(zones) =>
               createResults(target, state, new IntroShadedZone().asInstanceOf[InferenceRule[RuleArg]],
-                new ZoneArg(subgoalIndex, diagram.getOccurrenceIndex, zone), name)
+                new MultipleRuleArgs(zones.map( zone =>new ZoneArg(subgoalIndex, diagram.getOccurrenceIndex, zone)).toSeq:_*), name)
             case None => None
           }
       }
