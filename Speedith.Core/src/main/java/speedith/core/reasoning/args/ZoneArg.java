@@ -27,6 +27,7 @@
 package speedith.core.reasoning.args;
 
 import speedith.core.lang.Zone;
+import speedith.core.reasoning.RuleApplicationException;
 
 import java.io.Serializable;
 
@@ -68,4 +69,20 @@ public class ZoneArg extends SubDiagramIndexArg implements Serializable {
         return zone;
     }
     // </editor-fold>
+
+    public static ZoneArg getZoneArgFrom(RuleArg ruleArg) throws RuleApplicationException {
+        if (!(ruleArg instanceof ZoneArg)) {
+            throw new RuleApplicationException("The copy contours rule takes only contours as arguments.");
+        }
+        return (ZoneArg) ruleArg;
+    }
+
+    public static int assertSameSubDiagramIndices(int previousSubDiagramIndex, ZoneArg contourArg) throws RuleApplicationException {
+        if (previousSubDiagramIndex != -1 && previousSubDiagramIndex != contourArg.getSubDiagramIndex()) {
+            throw new RuleApplicationException("The zones must be from the same unitary spider diagram.");
+        } else {
+            previousSubDiagramIndex = contourArg.getSubDiagramIndex();
+        }
+        return previousSubDiagramIndex;
+    }
 }
