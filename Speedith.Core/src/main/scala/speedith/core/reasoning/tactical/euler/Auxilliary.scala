@@ -65,6 +65,11 @@ object Auxilliary {
     }
   }
 
+  def getContoursInSubGoal(subgoalIndex: Int, state:Proof) : Set[String]= {
+    val goal = state.getLastGoals.getGoalAt(subgoalIndex)
+    AutomaticUtils.collectContours(goal).toSet
+  }
+
   def collectShadedZones(diagram: SpiderDiagram): Set[Zone] = diagram match {
     case diagram : PrimarySpiderDiagram => (diagram.getPresentZones & diagram.getShadedZones).toSet
     case diagram : CompoundSpiderDiagram => diagram.getOperands.flatMap(collectShadedZones).toSet

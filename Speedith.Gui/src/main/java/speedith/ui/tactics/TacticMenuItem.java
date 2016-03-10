@@ -18,10 +18,13 @@ public enum TacticMenuItem  { //implements Comparable<TacticMenuItem> {
     Vennify("Introduce all missing zones", "vennify"),
     DeVennify("Remove all shaded zones", "deVennify"),
     UnifyContours("Unify contours in premises", "unifyContourSets"),
+    UnifyContoursFast("Unify contours in premises (fast)", "unifyContourSetsFast"),
     EraseContours("Erase all contours in premises",  "eraseAllContours"),
     CombineAll("Combine as much as possible","combineAll"),
     MatchConc("Match the premises with the conclusion", "matchConclusion"),
+    MatchConcFast("Match the premises with the conclusion (fast)", "matchConclusionFast"),
     VennStyle("Venn-Style reasoning", "vennStyle"),
+    VennStyleFast("Venn-Style reasoning (fast)", "vennStyleFast"),
     CopyContours("Copy contours as much as possible", "copyTopologicalInformation"),
     CopyShadings("Copy as much shading as possible", "copyShadings");
 
@@ -32,7 +35,7 @@ public enum TacticMenuItem  { //implements Comparable<TacticMenuItem> {
 
     /**
      * Creates a new TacticMenuItem. The method that will be called must return
-     * a function of the type {@link Proof} => {@link Option}<{@link Proof}>
+     * a function of the type {@link String} => {@link Proof} => {@link Option}<{@link Proof}>
      *
      * @param name The text that will be displayed in the menu
      * @param methodName The name of the method within {@link SimpleTacticals}.
@@ -53,10 +56,10 @@ public enum TacticMenuItem  { //implements Comparable<TacticMenuItem> {
      * @throws TacticApplicationException If the tactic could not be applied
      */
     public Proof apply(Proof proof) throws TacticApplicationException {
-        Some<Proof> result = null;
+        Option<Proof> result = null;
         try {
             Function1<String, Function1<Proof, Option<Proof>>> function = (Function1<String, Function1<Proof,Option<Proof>>>) callee.invoke(SimpleTacticals.class);
-            result = (Some<Proof>) function.apply(getName()).apply(proof);
+            result = function.apply(getName()).apply(proof);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {

@@ -1,6 +1,7 @@
 package speedith.core.reasoning.tactical.euler
 
 import speedith.core.reasoning.Proof
+import speedith.core.reasoning.rules.util.AutomaticUtils
 import speedith.core.reasoning.tactical.euler.Auxilliary._
 import speedith.core.reasoning.tactical.euler.Choosers._
 import speedith.core.reasoning.tactical.euler.Predicates._
@@ -26,8 +27,16 @@ object SimpleTacticals {
   }
 
 
-  def unifyContourSets : Tactical = {
-    DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram(0),  ORELSE(trivialTautology(0),introduceContour(0)))
+  def unifyContourSets : Tactical = (name:String) => (state:Proof) => {
+    val contours = getContoursInSubGoal(0, state)
+    DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram(0),
+      ORELSE(trivialTautology(0),introduceContour(0, containsLessContours(contours), someGivenContoursButNotInDiagram(contours))))(name)(state)
+  }
+
+  def unifyContourSetsFast : Tactical = (name:String) => (state:Proof) => {
+    val contours = getContoursInSubGoal(0, state)
+    DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram(0),
+      ORELSE(trivialTautology(0),introduceContour(0, containsLessContours(contours), allInGivenContoursButNotInDiagram(contours))))(name)(state)
   }
 
   def eraseAllContours : Tactical = {
@@ -44,6 +53,10 @@ object SimpleTacticals {
     THEN(unifyContourSets, THEN(vennify, THEN(combineAll, matchConclusion)))
   }
 
+  def vennStyleFast : Tactical = {
+    THEN(unifyContourSetsFast, THEN(vennify, THEN(combineAll, matchConclusionFast)))
+  }
+
   def matchConclusionFast : Tactical = (name:String) => (state: Proof) => {
     val concContours =getContoursInConclusion(0,state)
     val concShadedZones = getShadedZonesInConclusion(0,state)
@@ -53,7 +66,7 @@ object SimpleTacticals {
       THEN(
         THEN(
           REPEAT(ORELSE(trivialTautology(0),
-            eraseContour(0, containsOtherContours(concContours ), allOfTheOtherContours(concContours)))),
+            eraseContour(0, containsOtherContours(concContours ), allInDiagramButNotInGivenContours(concContours)))),
           REPEAT(ORELSE(trivialTautology(0),
             introduceShadedZone(0,isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones))))),
         REPEAT(ORELSE(trivialTautology(0) ,
@@ -70,7 +83,7 @@ object SimpleTacticals {
       THEN(
         THEN(
           REPEAT(ORELSE(trivialTautology(0),
-            eraseContour(0, containsOtherContours(concContours ), someOfTheOtherContours(concContours)))),
+            eraseContour(0, containsOtherContours(concContours ), someInDiagramButNotInGivenContours(concContours)))),
           REPEAT(ORELSE(trivialTautology(0),
             introduceShadedZone(0,isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones))))),
           REPEAT(ORELSE(trivialTautology(0) ,

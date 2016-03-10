@@ -16,7 +16,7 @@ object Choosers {
       works on sets of contours.
    */
 
-  def someOfTheGivenContours : Set[String] => Chooser[Set[String]] = (contours : Set[String]) => {
+  def someInDiagramAndInGivenContours : Set[String] => Chooser[Set[String]] = (contours : Set[String]) => {
     case sd : CompoundSpiderDiagramOccurrence => None
     case sd : PrimarySpiderDiagramOccurrence =>
       (sd.getAllContours & contours).headOption match {
@@ -25,7 +25,7 @@ object Choosers {
       }
   }
 
-  def allOfTheGivenContours : Set[String] => Chooser[Set[String]] = (contours : Set[String]) => {
+  def allInDiagramAndInGivenContours : Set[String] => Chooser[Set[String]] = (contours : Set[String]) => {
     case sd : CompoundSpiderDiagramOccurrence => None
     case sd : PrimarySpiderDiagramOccurrence =>
       val result = (sd.getAllContours & contours).toSet
@@ -35,7 +35,7 @@ object Choosers {
       }
   }
 
-  def someOfTheOtherContours : Set[String] => Chooser[Set[String]] = (contours : Set[String]) => {
+  def someInDiagramButNotInGivenContours : Set[String] => Chooser[Set[String]] = (contours : Set[String]) => {
     case sd: CompoundSpiderDiagramOccurrence => None
     case sd: PrimarySpiderDiagramOccurrence =>
         (sd.getAllContours -- contours).headOption match {
@@ -44,10 +44,29 @@ object Choosers {
         }
   }
 
-  def allOfTheOtherContours : Set[String] => Chooser[Set[String]] = (contours : Set[String]) => {
+  def allInDiagramButNotInGivenContours : Set[String] => Chooser[Set[String]] = (contours : Set[String]) => {
     case sd: CompoundSpiderDiagramOccurrence => None
     case sd: PrimarySpiderDiagramOccurrence =>
       val result = (sd.getAllContours -- contours).toSet
+      result.isEmpty match {
+        case true => None
+        case _ => Some(result)
+      }
+  }
+
+  def someGivenContoursButNotInDiagram : Set[String] => Chooser[Set[String]] = (contours : Set[String]) => {
+    case sd: CompoundSpiderDiagramOccurrence => None
+    case sd: PrimarySpiderDiagramOccurrence =>
+      (contours -- sd.getAllContours  ).headOption match {
+        case None => None
+        case Some(c) => Some(Set(c))
+      }
+  }
+
+  def allInGivenContoursButNotInDiagram : Set[String] => Chooser[Set[String]] = (contours : Set[String]) => {
+    case sd: CompoundSpiderDiagramOccurrence => None
+    case sd: PrimarySpiderDiagramOccurrence =>
+      val result = (contours -- sd.getAllContours).toSet
       result.isEmpty match {
         case true => None
         case _ => Some(result)

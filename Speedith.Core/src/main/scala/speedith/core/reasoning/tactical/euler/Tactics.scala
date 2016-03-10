@@ -68,18 +68,21 @@ object Tactics {
       Some(result._2)
   }
 
-  def introduceContour(subgoalIndex: Int):Tactical = (name:String) => ( state: Proof) => {
+  def introduceContour(subgoalIndex: Int, predicate : Predicate , contourChooser: Chooser[Set[String]]):Tactical = (name:String) => ( state: Proof) => {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
-      val contours = AutomaticUtils.collectContours(subgoal.getDiagram).toSet
-      val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
-        isPrimaryAndContainsMoreContours(contours))
+      val target = firstMatchingDiagramAndContour(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
+        d=> d.isInstanceOf[PrimarySpiderDiagramOccurrence] && predicate(d), contourChooser )
       target match {
         case None => None
-        case Some(diagram) =>
-          createResults(target, state, new IntroContour().asInstanceOf[InferenceRule[RuleArg]],
-            new MultipleRuleArgs(new ContourArg(subgoalIndex, diagram.getOccurrenceIndex,
-              (contours.toSet -- diagram.asInstanceOf[PrimarySpiderDiagramOccurrence].getAllContours).head)), name)
+        case Some(tupel) =>
+          tupel._2 match {
+            case Some(c) =>
+              createResults(Some(tupel._1), state, new IntroContour().asInstanceOf[InferenceRule[RuleArg]],
+                new MultipleRuleArgs(c.map(new ContourArg(subgoalIndex, tupel._1.getOccurrenceIndex, _)).toSeq: _*
+                ), name)
+            case None => None
+          }
       }
     } catch {
       case e: TacticApplicationException => None

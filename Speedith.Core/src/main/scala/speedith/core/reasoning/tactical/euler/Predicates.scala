@@ -117,6 +117,10 @@ object Predicates {
     case d: CompoundSpiderDiagramOccurrence => false
   }
 
+  def containsLessContours: Set[String] => Predicate  =  (contours : Set[String]) => {
+    case d: PrimarySpiderDiagramOccurrence => ( contours -- d.getAllContours ).nonEmpty
+    case d: CompoundSpiderDiagramOccurrence => false
+  }
 
 
 }

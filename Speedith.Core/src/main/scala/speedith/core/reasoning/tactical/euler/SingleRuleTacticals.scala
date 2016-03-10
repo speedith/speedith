@@ -18,7 +18,7 @@ object SingleRuleTacticals {
 
   @throws(classOf[TacticApplicationException])
   def introduceContour: Tactical = (name:String) => (state:Proof)  =>  {
-    BY(THEN(Tactics.introduceContour(0),TRY(Tactics.trivialTautology(0))))(name)(state)
+    BY(THEN(Tactics.introduceContour(0, _=>true, anyContour),TRY(Tactics.trivialTautology(0))))(name)(state)
   }
 
   @throws(classOf[TacticApplicationException])
@@ -33,7 +33,7 @@ object SingleRuleTacticals {
 
   @throws(classOf[TacticApplicationException])
   def eraseContour: Tactical = (name:String) => (state:Proof)  =>  {
-    BY(THEN(Tactics.eraseContour(0,_ => true,anyContour), TRY(Tactics.trivialTautology(0))))(name)(state)
+    BY(THEN(Tactics.eraseContour(0,containsContours,anyContour), TRY(Tactics.trivialTautology(0))))(name)(state)
   }
 
   @throws(classOf[TacticApplicationException])

@@ -774,7 +774,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         proofPanel1.extendCurrentProofTo(result);
         fireProofChangedEvent(new TacticAppliedEvent(this));
       } catch (TacticApplicationException e) {
-        e.printStackTrace();
+        e.printStackTrace(); //TODO remove debug msg
         JOptionPane.showMessageDialog(this, e.getMessage());
       }
 
