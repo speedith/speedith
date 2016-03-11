@@ -26,7 +26,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 
 /**
- * TODO: Description
+ * Tests for the "Remove shaded zone" rule
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

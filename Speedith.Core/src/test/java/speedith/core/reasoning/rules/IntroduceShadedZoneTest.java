@@ -14,19 +14,17 @@ import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.util.unitary.TestSpiderDiagrams;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 
 /**
- * TODO: Description
+ * Tests for the "Introduce shaded zone" rule
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
