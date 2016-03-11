@@ -102,4 +102,24 @@ public class ZoneArg extends SubDiagramIndexArg implements Serializable {
         }
         return previousSubDiagramIndex;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ZoneArg zoneArg = (ZoneArg) o;
+
+        if (getSubDiagramIndex() != zoneArg.getSubDiagramIndex()
+                || getSubgoalIndex() != zoneArg.getSubgoalIndex()) {
+            return false;
+        }
+        return getZone() != null ? getZone().equals(zoneArg.getZone()) : zoneArg.getZone() == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return getZone() != null ? getZone().hashCode() + getSubDiagramIndex() +getSubgoalIndex() : 0;
+    }
 }

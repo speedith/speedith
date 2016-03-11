@@ -4,6 +4,7 @@ import speedith.core.lang.Zone;
 import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplication;
+import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
@@ -30,26 +31,26 @@ public class PossibleRemoveShadingApplication extends PossibleRuleApplication {
     @Override
     public RuleArg getArg(int subgoalindex) {
         int targetIndex = getTarget().getOccurrenceIndex();
-        return new ZoneArg(subgoalindex, targetIndex, zone);
+        ZoneArg zoneArg = new ZoneArg(subgoalindex, targetIndex, zone);
+        return new MultipleRuleArgs(zoneArg);
     }
 
 
     @Override
     public boolean isSuperfluous(Proof p, int subGoalIndex) {
-        for (RuleApplication application : p.getRuleApplications() ) {
+        for (RuleApplication application : p.getRuleApplications()) {
             if (application.getInferenceRule() instanceof RemoveShading) {
-                ZoneArg args = (ZoneArg) application.getRuleArguments();
-                ZoneArg thisArgs = (ZoneArg) getArg(subGoalIndex);
+                MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
+                MultipleRuleArgs thisArgs = (MultipleRuleArgs) getArg(subGoalIndex);
                 // application is superfluous if the other rule
                 // a) works on the same subgoal
                 // b) and on the same subdiagram and
                 // c) both refer to the same zone
-                if (args.getSubgoalIndex() == thisArgs.getSubgoalIndex() &&
-                        getTarget().getOccurrenceIndex() == args.getSubDiagramIndex() && thisArgs.getZone().equals(args.getZone())) {
-                        return true;
-                    }
+                if (args.getRuleArgs().containsAll(thisArgs.getRuleArgs())) {
+                    return true;
                 }
             }
+        }
         return false;
     }
 }

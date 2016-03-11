@@ -1,6 +1,8 @@
 package speedith.ui.automatic;
 
+import speedith.core.lang.TransformationException;
 import speedith.core.reasoning.Proof;
+import speedith.core.reasoning.automatic.AutomaticProofException;
 import speedith.core.reasoning.automatic.AutomaticProver;
 
 import javax.swing.*;
