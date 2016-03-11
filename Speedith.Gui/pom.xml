@@ -31,47 +31,6 @@
       <version>1.2</version>
     </dependency>
 
-<!--<dependency>
-	<groupId>batik</groupId>
-	<artifactId>batik-svggen</artifactId>
-	<version>1.6-1</version>
-</dependency>
-
-  <dependency>
-	<groupId>batik</groupId>
-	<artifactId>batik-swing</artifactId>
-	<version>1.6-1</version>
-</dependency>
-<dependency>
-	<groupId>com.fasterxml.jackson.core</groupId>
-	<artifactId>jackson-annotations</artifactId>
-	<version>2.0.4</version>
-</dependency>
-
-    <dependency>
-	<groupId>com.fasterxml.jackson.core</groupId>
-	<artifactId>jackson-core</artifactId>
-	<version>2.0.4</version>
-</dependency>
-<dependency>
-	<groupId>com.fasterxml.jackson.core</groupId>
-	<artifactId>jackson-databind</artifactId>
-	<version>2.0.4</version>
-</dependency>
-<dependency>
-	<groupId>log4j</groupId>
-	<artifactId>log4j</artifactId>
-	<version>1.2.17</version>
-</dependency>
-
-    <dependency>
-      <groupId>si.urbas</groupId>
-      <artifactId>icircles</artifactId>
-      <version>0.0.2</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/src/main/resources/icircles-0.0.2-SNAPSHOT.jar</systemPath>
-    </dependency> -->
-
     <dependency>
       <groupId>si.urbas</groupId>
       <artifactId>spider-drawer</artifactId>
