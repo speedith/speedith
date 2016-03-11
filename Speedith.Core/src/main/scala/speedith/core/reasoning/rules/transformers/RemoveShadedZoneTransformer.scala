@@ -22,7 +22,7 @@ class RemoveShadedZoneTransformer (target:  SubDiagramIndexArg, zones : java.uti
                          childIndices: java.util.ArrayList[java.lang.Integer]): SpiderDiagram = {
     if (diagramIndex == subDiagramIndex) {
         if (( zones.map( zarg => zarg.getZone) -- (psd.getShadedZones & psd.getPresentZones)).nonEmpty  ) {
-          throw new RuleApplicationException("One of the selected zones is not shaded.")
+          throw new TransformationException("One of the selected zones is not shaded.")
         }
         if (zones.exists(_.getZone.getInContoursCount ==0)) {
           throw new RuleApplicationException("Cannot remove the outer zone")

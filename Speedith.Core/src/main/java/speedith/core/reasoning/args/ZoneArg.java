@@ -30,6 +30,8 @@ import speedith.core.lang.Zone;
 import speedith.core.reasoning.RuleApplicationException;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This argument contains a zone.
@@ -75,6 +77,21 @@ public class ZoneArg extends SubDiagramIndexArg implements Serializable {
             throw new RuleApplicationException("The copy contours rule takes only contours as arguments.");
         }
         return (ZoneArg) ruleArg;
+    }
+
+    public static ArrayList<ZoneArg> getZoneArgsFrom(MultipleRuleArgs multipleRuleArgs) throws RuleApplicationException {
+        int subDiagramIndex = -1;
+        int goalIndex = -1;
+        ArrayList<ZoneArg> zoneArgs = new ArrayList<>();
+        for (RuleArg ruleArg : multipleRuleArgs) {
+            if (ruleArg instanceof ZoneArg) {
+                ZoneArg zoneArg = ZoneArg.getZoneArgFrom(ruleArg);
+                subDiagramIndex = ZoneArg.assertSameSubDiagramIndices(subDiagramIndex, zoneArg);
+                goalIndex = ZoneArg.assertSameGoalIndices(goalIndex, zoneArg);
+                zoneArgs.add(zoneArg);
+            }
+        }
+        return zoneArgs;
     }
 
     public static int assertSameSubDiagramIndices(int previousSubDiagramIndex, ZoneArg contourArg) throws RuleApplicationException {

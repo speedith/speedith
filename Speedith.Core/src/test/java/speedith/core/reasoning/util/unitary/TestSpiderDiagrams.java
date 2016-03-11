@@ -38,6 +38,8 @@ public class TestSpiderDiagrams {
     public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG7_3_SHADED_C = getDiagramFromSpeedithPaper_Fig7_3rd_shaded();
 
     public static final PrimarySpiderDiagram EULER_DIAGRAM_A_SUBSET_B = getASubSetBDiagram();
+    public static final PrimarySpiderDiagram VENN_DIAGRAM_A_SUBSET_B = createPrimarySD(null,null, Collections.singleton(new Zone( Collections.singleton("A"), Collections.singleton("B"))), POWER_REGION_AB);
+    public static final PrimarySpiderDiagram VENN_DIAGRAM_EVERYTHING_A_OR_B = createPrimarySD(null,null, Collections.singleton(Zone.fromOutContours("A","B")), POWER_REGION_AB);
 
     public static final PrimarySpiderDiagram EULER_DIAGRAM_A_SUBSET_B_INTERSECT_C = getASubSetBAndCPresent();
 

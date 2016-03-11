@@ -36,10 +36,7 @@ import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.rules.transformers.IntroShadedZoneTransformer;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
@@ -61,7 +58,7 @@ public class IntroShadedZone extends SimpleInferenceRule<MultipleRuleArgs>
     public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
         MultipleRuleArgs ruleArgs = getTypedRuleArgs(args);
         MultipleRuleArgs.assertArgumentsNotEmpty(ruleArgs);
-        ArrayList<ZoneArg> zones = getZoneArgsFrom(ruleArgs);
+        ArrayList<ZoneArg> zones = ZoneArg.getZoneArgsFrom(ruleArgs);
         SubDiagramIndexArg target = getTargetDiagramArg(ruleArgs);
         return apply(target, zones, goals );
     }
@@ -71,25 +68,6 @@ public class IntroShadedZone extends SimpleInferenceRule<MultipleRuleArgs>
         SpiderDiagram targetSubgoal = getSubgoal(target, goals);
         newSubgoals[target.getSubgoalIndex()] = targetSubgoal.transform(new IntroShadedZoneTransformer(target, targetContours));
         return createRuleApplicationResult(newSubgoals);
-    }
-
-    public ArrayList<ZoneArg> getZoneArgsFrom(MultipleRuleArgs args) throws RuleApplicationException {
-        MultipleRuleArgs multipleRuleArgs = getTypedRuleArgs(args);
-        MultipleRuleArgs.assertArgumentsNotEmpty(multipleRuleArgs);
-        ArrayList<ZoneArg> contourArgs = new ArrayList<>();
-        int subDiagramIndex = -1;
-        int goalIndex = -1;
-        for (RuleArg ruleArg : multipleRuleArgs) {
-            // an interactive application of IntroContour contains also a SubDiagramIndexArg,
-            // to refer to the diagram the rule shall be applied to.
-            if (ruleArg instanceof ZoneArg) {
-                ZoneArg zoneArg = ZoneArg.getZoneArgFrom(ruleArg);
-                subDiagramIndex = ZoneArg.assertSameSubDiagramIndices(subDiagramIndex, zoneArg);
-                goalIndex = ZoneArg.assertSameGoalIndices(goalIndex, zoneArg);
-                contourArgs.add(zoneArg);
-            }
-        }
-        return contourArgs;
     }
 
     private SubDiagramIndexArg getTargetDiagramArg(MultipleRuleArgs args) throws RuleApplicationException {

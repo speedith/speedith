@@ -20,7 +20,7 @@ class IntroShadedZoneTransformer (target:  SubDiagramIndexArg, zones : java.util
                          childIndices: java.util.ArrayList[java.lang.Integer]): SpiderDiagram = {
     if (diagramIndex == subDiagramIndex) {
         if ( (zones.map(_.getZone) -- (psd.getShadedZones -- psd.getPresentZones)).nonEmpty) {
-          throw new RuleApplicationException("One of the selected zones is not missing.")
+          throw new TransformationException("One of the selected zones is not missing.")
         }
         EulerDiagrams.createPrimaryEulerDiagram(psd.getShadedZones, psd.getPresentZones ++  zones.map(_.getZone))
     } else {
