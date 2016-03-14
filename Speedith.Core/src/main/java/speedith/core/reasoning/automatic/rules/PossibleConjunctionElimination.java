@@ -5,6 +5,7 @@ import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
+import speedith.core.reasoning.rules.ConjunctionElimination;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,15 +15,15 @@ import java.util.List;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleConjunctionElimination extends PossibleRuleApplication {
+public class PossibleConjunctionElimination extends PossibleRuleApplication<MultipleRuleArgs> {
     final SpiderDiagramOccurrence child;
-    public PossibleConjunctionElimination(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, SpiderDiagramOccurrence child) {
+    public PossibleConjunctionElimination(SpiderDiagramOccurrence target, ConjunctionElimination rule, SpiderDiagramOccurrence child) {
         super(target, rule);
         this.child = child;
     }
 
     @Override
-    public RuleArg getArg(int subgoalindex) {
+    public MultipleRuleArgs getArg(int subgoalindex) {
         SubDiagramIndexArg compound  = new SubDiagramIndexArg(subgoalindex, getTarget().getOccurrenceIndex());
         SubDiagramIndexArg childArg = new SubDiagramIndexArg(subgoalindex, child.getOccurrenceIndex());
         List<SubDiagramIndexArg> args = new ArrayList<>();

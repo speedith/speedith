@@ -4,6 +4,7 @@ import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.ProofTrace;
 import speedith.core.reasoning.RuleApplicationException;
+import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;
@@ -80,7 +81,7 @@ public class HeuristicSearch extends AutomaticProver {
                 return currentProof;
             }
             SpiderDiagramOccurrence target = SpiderDiagramOccurrence.wrapDiagram(currentProof.getLastGoals().getGoalAt(subgoalindex), 0);
-            Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
+            Set<? extends PossibleRuleApplication<? extends RuleArg>> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
             // apply all possible rules to the current proof, creating a new proof for each application
             for(PossibleRuleApplication nextRule : applications) {
                 ProofTrace newCurrent = new ProofTrace(currentProof.getGoals(), currentProof.getRuleApplications());

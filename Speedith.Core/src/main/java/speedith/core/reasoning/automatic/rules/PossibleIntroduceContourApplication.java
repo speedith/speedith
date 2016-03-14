@@ -19,11 +19,11 @@ import java.util.Set;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleIntroduceContourApplication extends PossibleRuleApplication {
+public class PossibleIntroduceContourApplication extends PossibleRuleApplication<MultipleRuleArgs> {
 
     private final String contour;
 
-    public PossibleIntroduceContourApplication (PrimarySpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, String contour) {
+    public PossibleIntroduceContourApplication (PrimarySpiderDiagramOccurrence target, IntroContour rule, String contour) {
         super(target, rule);
         this.contour = contour;
     }
@@ -33,7 +33,7 @@ public class PossibleIntroduceContourApplication extends PossibleRuleApplication
     }
 
     @Override
-    public RuleArg getArg(int subgoalindex) {
+    public MultipleRuleArgs getArg(int subgoalindex) {
         int targetIndex = getTarget().getOccurrenceIndex();
         ContourArg arg = new ContourArg(subgoalindex, targetIndex, contour);
         return new MultipleRuleArgs(arg);

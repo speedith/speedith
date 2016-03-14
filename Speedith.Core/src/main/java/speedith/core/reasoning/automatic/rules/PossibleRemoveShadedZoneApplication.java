@@ -14,17 +14,17 @@ import speedith.core.reasoning.rules.RemoveShadedZone;
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleRemoveShadedZoneApplication extends PossibleRuleApplication {
+public class PossibleRemoveShadedZoneApplication extends PossibleRuleApplication<MultipleRuleArgs> {
 
     private final Zone zone;
 
-    public PossibleRemoveShadedZoneApplication(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, Zone zone) {
+    public PossibleRemoveShadedZoneApplication(SpiderDiagramOccurrence target, RemoveShadedZone rule, Zone zone) {
         super(target, rule);
         this.zone = zone;
     }
 
     @Override
-    public RuleArg getArg(int subgoalindex)  {
+    public MultipleRuleArgs getArg(int subgoalindex)  {
         int subDiagramIndex = getTarget().getOccurrenceIndex();
         ZoneArg zoneArg = new ZoneArg(subgoalindex, subDiagramIndex, zone);
         return new MultipleRuleArgs(zoneArg);

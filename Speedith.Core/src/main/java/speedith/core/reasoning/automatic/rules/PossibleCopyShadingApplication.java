@@ -19,17 +19,17 @@ import java.util.Set;
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleCopyShadingApplication extends PossibleRuleApplication {
+public class PossibleCopyShadingApplication extends PossibleRuleApplication<MultipleRuleArgs> {
 
     private final Set<Zone> region;
 
-    public PossibleCopyShadingApplication(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, Set<Zone> region) {
+    public PossibleCopyShadingApplication(SpiderDiagramOccurrence target, CopyShading rule, Set<Zone> region) {
         super(target, rule);
         this.region = region;
     }
 
     @Override
-    public RuleArg getArg(int subgoalindex)  {
+    public MultipleRuleArgs getArg(int subgoalindex)  {
         int targetIndex = getTarget().getOccurrenceIndex();
         List<ZoneArg> args = new ArrayList<>();
         for(Zone z : region) {

@@ -5,6 +5,7 @@ import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.ProofTrace;
 import speedith.core.reasoning.RuleApplicationException;
+import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;
@@ -12,6 +13,7 @@ import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 
 import java.util.*;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -63,9 +65,9 @@ public class BreadthFirstProver extends  AutomaticProver {
                 } else {
                     // create all possible proof rules for this unfinished proof
                     SpiderDiagramOccurrence target = SpiderDiagramOccurrence.wrapDiagram(current.getLastGoals().getGoalAt(subgoalindex), 0);
-                    Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
+                   Set<? extends PossibleRuleApplication<? extends RuleArg>> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
                     // apply all possible rules to the current proof, creating a new proof for each application
-                    for (PossibleRuleApplication nextRule : applications){
+                    for (PossibleRuleApplication nextRule : applications ){
                         ProofTrace newCurrent = new ProofTrace(current.getGoals(), current.getRuleApplications());
                         // create a new set of already applied rules for the current proof
                         AppliedRules alreadyApplied = new AppliedRules(rulesWithinProofs.get(current));

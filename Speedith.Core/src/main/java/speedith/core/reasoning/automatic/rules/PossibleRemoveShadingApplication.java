@@ -15,11 +15,11 @@ import speedith.core.reasoning.rules.RemoveShading;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleRemoveShadingApplication extends PossibleRuleApplication {
+public class PossibleRemoveShadingApplication extends PossibleRuleApplication<MultipleRuleArgs> {
 
     private final Zone zone;
 
-    public PossibleRemoveShadingApplication(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, Zone zone) {
+    public PossibleRemoveShadingApplication(SpiderDiagramOccurrence target, RemoveShading rule, Zone zone) {
         super(target, rule);
         this.zone = zone;
     }
@@ -29,7 +29,7 @@ public class PossibleRemoveShadingApplication extends PossibleRuleApplication {
     }
 
     @Override
-    public RuleArg getArg(int subgoalindex) {
+    public MultipleRuleArgs getArg(int subgoalindex) {
         int targetIndex = getTarget().getOccurrenceIndex();
         ZoneArg zoneArg = new ZoneArg(subgoalindex, targetIndex, zone);
         return new MultipleRuleArgs(zoneArg);

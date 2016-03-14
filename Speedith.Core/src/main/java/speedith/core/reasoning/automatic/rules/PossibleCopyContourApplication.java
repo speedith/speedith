@@ -9,6 +9,7 @@ import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.automatic.AppliedRules;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.CopyContours;
+import speedith.core.reasoning.rules.CopyContoursTopological;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,11 +19,11 @@ import java.util.Set;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleCopyContourApplication extends PossibleRuleApplication {
+public class PossibleCopyContourApplication extends PossibleRuleApplication<MultipleRuleArgs> {
 
     private final String contour;
 
-    public PossibleCopyContourApplication(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule, String contour) {
+    public PossibleCopyContourApplication(SpiderDiagramOccurrence target, CopyContoursTopological rule, String contour) {
         super(target, rule);
         this.contour = contour;
     }
@@ -32,7 +33,7 @@ public class PossibleCopyContourApplication extends PossibleRuleApplication {
     }
 
     @Override
-    public RuleArg getArg(int subgoalindex)  {
+    public MultipleRuleArgs getArg(int subgoalindex)  {
         int targetIndex = getTarget().getOccurrenceIndex();
         ContourArg arg = new ContourArg(subgoalindex, targetIndex, contour);
         return new MultipleRuleArgs(arg);

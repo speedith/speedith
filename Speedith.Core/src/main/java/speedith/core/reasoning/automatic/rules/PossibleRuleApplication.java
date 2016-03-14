@@ -16,13 +16,13 @@ import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public abstract class PossibleRuleApplication {
+public abstract class PossibleRuleApplication <TRuleArg extends RuleArg> {
 
-    private final InferenceRule<? super RuleArg> rule;
+    private final InferenceRule<TRuleArg> rule;
 
     private final SpiderDiagramOccurrence target;
 
-    public PossibleRuleApplication(SpiderDiagramOccurrence target, InferenceRule<? super RuleArg> rule) {
+    public PossibleRuleApplication(SpiderDiagramOccurrence target, InferenceRule<TRuleArg> rule) {
         this.target = target;
         this.rule = rule;
     }
@@ -31,7 +31,7 @@ public abstract class PossibleRuleApplication {
      * The rule that could be applied.
      * @return an instance of the rule
      */
-    public InferenceRule<? super RuleArg> getRule() { return rule; }
+    public InferenceRule<TRuleArg> getRule() { return rule; }
 
     /**
      * The target diagram to which the rule could be applied
@@ -39,7 +39,7 @@ public abstract class PossibleRuleApplication {
      */
     public SpiderDiagramOccurrence getTarget() { return target; }
 
-    public abstract RuleArg getArg(int subgoalindex) ;
+    public abstract TRuleArg getArg(int subgoalindex) ;
 
     public boolean apply (Proof p, int subGoalIndex, AppliedRules applied, String typeSpecifier) throws RuleApplicationException {
         p.applyRule(getRule(), getArg(subGoalIndex), RuleApplicationType.AUTOMATIC, typeSpecifier);

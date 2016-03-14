@@ -4,6 +4,7 @@ import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplicationException;
+import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;
@@ -55,7 +56,7 @@ public class DepthFirstProver extends AutomaticProver {
         SpiderDiagramOccurrence target = SpiderDiagramOccurrence.wrapDiagram(currentGoals.getGoalAt(subgoalindex), 0);
 //        AppliedRules applied = new AppliedRules(appliedRules);
 //        AppliedRules applied = appliedRules;
-        Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
+        Set<? extends PossibleRuleApplication<? extends RuleArg>> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
         for(PossibleRuleApplication nextRule : applications)  {
             boolean superfl = nextRule.isSuperfluous(p,subgoalindex);
             boolean hasBeenApplied = !superfl && nextRule.apply(p, subgoalindex, appliedRules, getPrettyName());
