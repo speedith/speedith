@@ -79,7 +79,7 @@ object AutomaticUtils {
 
 
 
-  private def createConjunctionEliminationApplication(target: CompoundSpiderDiagramOccurrence) : Set[ PossibleConjunctionElimination] = target.getCompoundDiagram.getOperator match  {
+  private def createConjunctionEliminationApplication(target: CompoundSpiderDiagramOccurrence) : Set[PossibleConjunctionElimination] = target.getCompoundDiagram.getOperator match  {
     case Operator.Conjunction  => Set() +
       new PossibleConjunctionElimination(target, new ConjunctionElimination(), target.getOperand(0)) +
       new PossibleConjunctionElimination(target, new ConjunctionElimination(), target.getOperand(1))
@@ -100,7 +100,7 @@ object AutomaticUtils {
     }
   }
 
-  private def createCopyShadingApplications(target: CompoundSpiderDiagramOccurrence) : util.Set[PossibleCopyShadingApplication] = {
+  private def createCopyShadingApplications(target: CompoundSpiderDiagramOccurrence) : Set[PossibleCopyShadingApplication] = {
     if (target.getOperands.forall(o => o.isInstanceOf[PrimarySpiderDiagramOccurrence])) {
       val leftDiagram = target.getOperand(0).getDiagram.asInstanceOf[PrimarySpiderDiagram]
       val rightDiagram = target.getOperand(1).getDiagram.asInstanceOf[PrimarySpiderDiagram]
@@ -123,30 +123,30 @@ object AutomaticUtils {
         leftResult ++ rightResult
       }
       else {
-        new util.HashSet[PossibleCopyShadingApplication]()
+        Set()
       }
     } else {
-      new util.HashSet[PossibleCopyShadingApplication]()
+      Set()
     }
   }
 
-  private def createCombiningApplications(target: CompoundSpiderDiagramOccurrence) : java.util.Set[PossibleCombiningApplication] = {
+  private def createCombiningApplications(target: CompoundSpiderDiagramOccurrence) : Set[PossibleCombiningApplication] = {
     if (target.getOperands.forall(o => o.isInstanceOf[PrimarySpiderDiagramOccurrence])) {
       val leftZones = target.getOperand(0).getDiagram.asInstanceOf[PrimarySpiderDiagram].getPresentZones
       val rightZones = target.getOperand(1).getDiagram.asInstanceOf[PrimarySpiderDiagram].getPresentZones
       if (leftZones.equals(rightZones)) {
-        new java.util.HashSet[PossibleCombiningApplication]() + new PossibleCombiningApplication(target, new Combining())
+        Set() + new PossibleCombiningApplication(target, new Combining())
       } else {
-        new java.util.HashSet[PossibleCombiningApplication]()
+       Set()
       }
     } else {
-    new java.util.HashSet[PossibleCombiningApplication]()
+    Set()
     }
   }
 
-  private def createRemoveContourApplications(target: PrimarySpiderDiagramOccurrence): java.util.Set[PossibleRemoveContourApplication] = {
+  private def createRemoveContourApplications(target: PrimarySpiderDiagramOccurrence): Set[PossibleRemoveContourApplication] = {
     target.getAllContours .
-      map(c => new PossibleRemoveContourApplication(target, new RemoveContour(), c))
+      map(c => new PossibleRemoveContourApplication(target, new RemoveContour(), c)).toSet
   }
 
   private def createRemoveShadedZoneApplications(target: PrimarySpiderDiagramOccurrence) : Set[PossibleRemoveShadedZoneApplication] = {
@@ -154,18 +154,18 @@ object AutomaticUtils {
       map(z => new PossibleRemoveShadedZoneApplication(target, new RemoveShadedZone(), z)).toSet
   }
 
-  private def createIntroducedShadedZoneApplications(target: PrimarySpiderDiagramOccurrence) : java.util.Set[PossibleIntroShadedZoneApplication] = {
+  private def createIntroducedShadedZoneApplications(target: PrimarySpiderDiagramOccurrence) :Set[PossibleIntroShadedZoneApplication] = {
     (target.getShadedZones -- target.getPresentZones).
-    map(z => new PossibleIntroShadedZoneApplication(target, new IntroShadedZone(), z))
+    map(z => new PossibleIntroShadedZoneApplication(target, new IntroShadedZone(), z)).toSet
   }
 
-  private def createRemoveShadingApplications(target: PrimarySpiderDiagramOccurrence): mutable.Set[PossibleRemoveShadingApplication] = {
+  private def createRemoveShadingApplications(target: PrimarySpiderDiagramOccurrence): Set[PossibleRemoveShadingApplication] = {
     (target.getShadedZones & target.getPresentZones).
-      map(z => new PossibleRemoveShadingApplication(target, new RemoveShading(), z))
+      map(z => new PossibleRemoveShadingApplication(target, new RemoveShading(), z)).toSet
   }
 
   private def createIntroduceContoursApplication(target: PrimarySpiderDiagramOccurrence,
-                                                 contours: java.util.Collection[String]): java.util.Set[PossibleIntroduceContourApplication] = {
+                                                 contours: java.util.Collection[String]): Set[PossibleIntroduceContourApplication] = {
     (contours.toSet  -- target.getAllContours).
       map(c => new PossibleIntroduceContourApplication(target, new IntroContour(), c))
   }
