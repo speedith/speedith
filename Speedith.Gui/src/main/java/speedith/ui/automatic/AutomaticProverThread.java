@@ -50,7 +50,8 @@ public class AutomaticProverThread extends SwingWorker<Proof, Object> {
 
     @Override
     protected Proof doInBackground() throws Exception {
-        Proof newProof = prover.extendProof(proof);
+        Proof newProof = null;
+        newProof = prover.extendProof(proof);
         proof = newProof;
         finished = (proof != null) && proof.getLastGoals().isEmpty();
         return newProof;

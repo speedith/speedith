@@ -1,7 +1,9 @@
 package speedith.core.reasoning.automatic;
 
 import speedith.core.lang.Zone;
+import speedith.core.reasoning.automatic.rules.*;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
+import speedith.core.reasoning.rules.RemoveContour;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,10 +25,6 @@ public class AppliedRules {
 
     private Map<SpiderDiagramOccurrence, Set<Zone>> removedShading;
 
-//    private Map<SpiderDiagramOccurrence, Set<Zone>> removedShadedZones;
-
-//    private Map<SpiderDiagramOccurrence, Set<Zone>> introducedShadedZones;
-
     private Map<SpiderDiagramOccurrence, Set<Set<Zone>>> copiedShadings;
 
 
@@ -34,8 +32,6 @@ public class AppliedRules {
         introContours = new HashMap<>();
         removeContours = new HashMap<>();
         removedShading = new HashMap<>();
-//        removedShadedZones= new HashMap<SpiderDiagramOccurrence, Set<Zone>>();
-//        introducedShadedZones = new HashMap<SpiderDiagramOccurrence, Set<Zone>>();
         copiedContours = new HashMap<>();
         copiedShadings = new HashMap<>();
 
@@ -58,34 +54,40 @@ public class AppliedRules {
         for (SpiderDiagramOccurrence key: old.removedShading.keySet()) {
             this.removedShading.put(key, new HashSet<>(old.removedShading.get(key)));
         }
-/*        this.removedShadedZones = new HashMap<>();
-        for (SpiderDiagramOccurrence key: old.removedShadedZones.keySet()) {
-            this.removedShadedZones.put(key, new HashSet<Zone>(old.removedShadedZones.get(key)));
-        }
-
-        this.introducedShadedZones = new HashMap<>();
-        for (SpiderDiagramOccurrence key: old.introducedShadedZones.keySet()) {
-            this.introducedShadedZones.put(key, new HashSet<Zone>(old.introducedShadedZones.get(key)));
-        }
-        */
         this.copiedShadings = new HashMap<>();
         for (SpiderDiagramOccurrence key: old.copiedShadings.keySet()) {
             this.copiedShadings.put(key, new HashSet<>(old.copiedShadings.get(key)));
         }
     }
 
+
+    public void add(PossibleRuleApplication rule, SpiderDiagramOccurrence psd) {
+        if (rule instanceof PossibleCopyContour) {
+            add((PossibleCopyContour) rule, psd);
+        } else if(rule instanceof PossibleCopyShading) {
+            add((PossibleCopyShading) rule, psd);
+        } else if (rule instanceof PossibleIntroduceContour) {
+            add((PossibleIntroduceContour) rule, psd);
+        } else  if(rule instanceof PossibleRemoveContour) {
+            add((PossibleRemoveContour) rule, psd);
+        } else if(rule instanceof PossibleRemoveShading) {
+            add((PossibleRemoveShading) rule, psd);
+        }
+    }
+
     /**
-     * Adds a contour to the set of already introduced contours for
+     * Adds the contour of the given rule to the set of already introduced contours for
      * the given primary spider diagram
+     *
+     * @param rule the instance of introduce contour
      * @param psd the Primary Spider diagram for which the contour shall be saved
      *            as already introduced
-     * @param c the name of the contour
      */
-    public void addIntroContour(SpiderDiagramOccurrence psd, String c) {
+    public void add(PossibleIntroduceContour rule, SpiderDiagramOccurrence psd) {
         if (!introContours.containsKey(psd)) {
             introContours.put(psd, new HashSet<String>());
         }
-        introContours.get(psd).add(c);
+        introContours.get(psd).add(rule.getContour());
     }
 
     /**
@@ -93,144 +95,112 @@ public class AppliedRules {
      * the given primary spider diagram
      * @param psd the Primary Spider diagram for which the contour shall be saved
      *            as already removed
-     * @param c the name of the contour
      */
-    public void addRemoveContour(SpiderDiagramOccurrence psd, String c) {
+    public void add(PossibleRemoveContour rule, SpiderDiagramOccurrence psd) {
         if (!removeContours.containsKey(psd)) {
             removeContours.put(psd, new HashSet<String>());
         }
-        removeContours.get(psd).add(c);
+        removeContours.get(psd).add(rule.getContour());
     }
 
-    public void addRemovedShading(SpiderDiagramOccurrence sd, Zone z) {
+    public void add(PossibleRemoveShading rule, SpiderDiagramOccurrence sd) {
         if (!removedShading.containsKey(sd)) {
             removedShading.put(sd, new HashSet<Zone>());
         }
-        removedShading.get(sd).add(z);
+        removedShading.get(sd).add(rule.getZone());
     }
 
-/*    public void addRemovedShadedZones(SpiderDiagramOccurrence sd, Zone z) {
-        if (!removedShadedZones.containsKey(sd)) {
-            removedShadedZones.put(sd, new HashSet<Zone>());
-        }
-        removedShadedZones.get(sd).add(z);
-    }
-
-    public void addIntroducedShadedZones(SpiderDiagramOccurrence sd, Zone z) {
-        if (!introducedShadedZones.containsKey(sd)) {
-            introducedShadedZones.put(sd, new HashSet<Zone>());
-        }
-        introducedShadedZones.get(sd).add(z);
-    }
-*/
-
-    public void addCopiedShadings(SpiderDiagramOccurrence sd, Set<Zone> z) {
+    public void add(PossibleCopyShading rule , SpiderDiagramOccurrence sd) {
         if (!copiedShadings.containsKey(sd)) {
             copiedShadings.put(sd, new HashSet<Set<Zone>>());
         }
-        copiedShadings.get(sd).add(z);
+        copiedShadings.get(sd).add(rule.getRegion());
     }
 
-    public Set<Set<Zone>> getCopiedShadings(SpiderDiagramOccurrence psd) {
-        if (!copiedShadings.containsKey(psd)) {
-            copiedShadings.put(psd, new HashSet<Set<Zone>>());
+    public void add(PossibleCopyContour rule, SpiderDiagramOccurrence sd) {
+        if (!copiedContours.containsKey(sd)) {
+            copiedContours.put(sd, new HashSet<String>());
         }
-        return copiedShadings.get(psd);
+        copiedContours.get(sd).add(rule.getContour());
     }
 
-    public Set<String> getIntroducedContours(SpiderDiagramOccurrence psd) {
-        if (!introContours.containsKey(psd)) {
-            introContours.put(psd, new HashSet<String>());
+    public boolean contains(PossibleRuleApplication rule, SpiderDiagramOccurrence psd) {
+        if (rule instanceof PossibleCopyContour) {
+            return contains((PossibleCopyContour) rule, psd);
+        } else if(rule instanceof PossibleCopyShading) {
+            return contains((PossibleCopyShading) rule, psd);
+        } else if (rule instanceof PossibleIntroduceContour) {
+            return contains((PossibleIntroduceContour) rule, psd);
+        } else  if(rule instanceof PossibleRemoveContour) {
+            return contains((PossibleRemoveContour) rule, psd);
+        } else if(rule instanceof PossibleRemoveShading) {
+            return contains((PossibleRemoveShading) rule, psd);
         }
-        return introContours.get(psd);
+        return false;
     }
 
-    public Set<String> getRemovedContours(SpiderDiagramOccurrence psd) {
-        if (!removeContours.containsKey(psd)) {
-            removeContours.put(psd, new HashSet<String>());
-        }
-        return removeContours.get(psd);
+    public boolean contains(PossibleIntroduceContour rule, SpiderDiagramOccurrence psd) {
+        return introContours.containsKey(psd) && introContours.get(psd).contains(rule.getContour());
     }
 
-    public Set<Zone> getRemovedShading(SpiderDiagramOccurrence sd) {
-        if (!removedShading.containsKey(sd)) {
-            removedShading.put(sd, new HashSet<Zone>());
-        }
-        return removedShading.get(sd);
-
+    public boolean contains(PossibleRemoveContour rule, SpiderDiagramOccurrence psd) {
+        return removeContours.containsKey(psd) && removeContours.get(psd).contains(rule.getContour());
     }
 
-/*    public Set<Zone> getRemovedShadedZones(SpiderDiagramOccurrence sd) {
-        if (!removedShadedZones.containsKey(sd)) {
-            removedShadedZones.put(sd, new HashSet<Zone>());
-        }
-        return removedShadedZones.get(sd);
-
+    public boolean contains(PossibleCopyContour rule, SpiderDiagramOccurrence psd) {
+        return copiedContours.containsKey(psd) && copiedContours.get(psd).contains(rule.getContour());
     }
 
-    public Set<Zone> getIntroducedShadedZones(SpiderDiagramOccurrence sd) {
-        if (!introducedShadedZones.containsKey(sd)) {
-            introducedShadedZones.put(sd, new HashSet<Zone>());
-        }
-        return introducedShadedZones.get(sd);
-
-    }
-    */
-    public Set<String> getCopiedContours(SpiderDiagramOccurrence psd) {
-        if (!copiedContours.containsKey(psd)) {
-            copiedContours.put(psd, new HashSet<String>());
-        }
-        return copiedContours.get(psd);
+    public boolean contains(PossibleCopyShading rule, SpiderDiagramOccurrence psd) {
+        return copiedShadings.containsKey(psd) && copiedShadings.get(psd).contains(rule.getRegion());
     }
 
-    public void addCopiedContour(SpiderDiagramOccurrence psd, String c) {
-        if (!copiedContours.containsKey(psd)) {
-            copiedContours.put(psd, new HashSet<String>());
-        }
-        copiedContours.get(psd).add(c);
+    public boolean contains(PossibleRemoveShading rule, SpiderDiagramOccurrence psd) {
+        return removedShading.containsKey(psd) && removedShading.get(psd).contains(rule.getZone());
     }
 
-    public void removeCopiedContour(SpiderDiagramOccurrence sd, String c) {
-        if (copiedContours.containsKey(sd)) {
-            copiedContours.get(sd).remove(c);
+    public void remove(PossibleRuleApplication rule, SpiderDiagramOccurrence sd) {
+        if (rule instanceof PossibleCopyContour) {
+            remove((PossibleCopyContour) rule, sd);
+        } else if(rule instanceof PossibleCopyShading) {
+            remove((PossibleCopyShading) rule, sd);
+        } else if (rule instanceof PossibleIntroduceContour) {
+            remove((PossibleIntroduceContour) rule, sd);
+        } else  if(rule instanceof PossibleRemoveContour) {
+            remove((PossibleRemoveContour) rule, sd);
+        } else if(rule instanceof PossibleRemoveShading) {
+            remove((PossibleRemoveShading) rule, sd);
         }
     }
 
+    public void remove(PossibleIntroduceContour rule, SpiderDiagramOccurrence sd) {
+        if (introContours.containsKey(sd)) {
+            introContours.get(sd).remove(rule.getContour());
+        }
+    }
 
-    public void removeRemovedShading(SpiderDiagramOccurrence sd, Zone z) {
+    public void remove(PossibleRemoveContour rule, SpiderDiagramOccurrence sd) {
+        if(removeContours.containsKey(sd)) {
+            removeContours.get(sd).remove(rule.getContour());
+        }
+    }
+
+    public void remove(PossibleRemoveShading rule, SpiderDiagramOccurrence sd) {
         if (removedShading.containsKey(sd)) {
-            removedShading.get(sd).remove(z);
+            removedShading.get(sd).remove(rule.getZone());
         }
     }
 
-/*    public void removeRemoveShadedZones(SpiderDiagramOccurrence sd, Zone z) {
-        if (removedShadedZones.containsKey(sd)) {
-            removedShadedZones.get(sd).remove(z);
-        }
-    }
-*/
-    public  void removeRemovedContours(SpiderDiagramOccurrence sd, String c) {
- //       if (removeContours.containsKey(sd)) {
-            removeContours.get(sd).remove(c);
-//        }
-    }
-
-    public  void removeIntroducedContours(SpiderDiagramOccurrence sd, String c) {
-        if(introContours.containsKey(sd)) {
-            introContours.get(sd).remove(c);
+    public void remove(PossibleCopyContour rule, SpiderDiagramOccurrence sd) {
+        if (copiedContours.containsKey(sd)) {
+            copiedContours.get(sd).remove(rule.getContour());
         }
     }
 
-    public void removeCopiedShading(SpiderDiagramOccurrence sd, Set<Zone> zones) {
+    public void remove(PossibleCopyShading rule, SpiderDiagramOccurrence sd) {
         if (copiedShadings.containsKey(sd)) {
-            copiedShadings.get(sd).remove(zones);
+            copiedShadings.get(sd).remove(rule.getRegion());
         }
     }
 
-/*    public void removeIntroducedShadedZone(SpiderDiagramOccurrence sd, Zone z) {
-        if (introducedShadedZones.containsKey(sd)) {
-            introducedShadedZones.get(sd).remove(z);
-        }
-    }
-    */
 }
