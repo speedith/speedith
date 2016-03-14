@@ -14,15 +14,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A possibility to apply remove contour.
+ * Represents the possibility to apply the rule Introduce Contour
+ * to a SpiderDiagram at a given subdiagram.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleRemoveContourApplication extends PossibleRuleApplication<MultipleRuleArgs> {
+public class PossibleIntroduceContour extends PossibleRuleApplication<MultipleRuleArgs> {
 
     private final String contour;
 
-    public PossibleRemoveContourApplication(PrimarySpiderDiagramOccurrence target, RemoveContour rule, String contour) {
+    public PossibleIntroduceContour(PrimarySpiderDiagramOccurrence target, IntroContour rule, String contour) {
         super(target, rule);
         this.contour = contour;
     }
@@ -38,14 +39,15 @@ public class PossibleRemoveContourApplication extends PossibleRuleApplication<Mu
         return new MultipleRuleArgs(arg);
     }
 
+
     @Override
     public boolean isSuperfluous(Proof p, int subGoalIndex) {
         boolean result = false;
         for (int i =0; i< p.getRuleApplicationCount();i++) {
             RuleApplication application = p.getRuleApplicationAt(i);
-            if (application.getInferenceRule() instanceof IntroContour) {
+            if (application.getInferenceRule() instanceof RemoveContour) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
-                MultipleRuleArgs thisArgs = (MultipleRuleArgs) getArg(subGoalIndex);
+                MultipleRuleArgs thisArgs =  getArg(subGoalIndex);
                 // application is superfluous if for all elements of the multiple arguments:
                 // a) both work on the same subgoal
                 // b) the result of the already applied rule is the premiss of the current rule
@@ -61,9 +63,9 @@ public class PossibleRemoveContourApplication extends PossibleRuleApplication<Mu
                                 thisArg.getContour().equals(arg.getContour()));
                     }
                 }
-            }  else if (application.getInferenceRule() instanceof RemoveContour) {
+            } else if (application.getInferenceRule() instanceof IntroContour) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
-                MultipleRuleArgs thisArgs = (MultipleRuleArgs) getArg(subGoalIndex);
+                MultipleRuleArgs thisArgs = getArg(subGoalIndex);
                 if (args.size() == thisArgs.size() && args.size() > 0) {
                     // application is superfluous if the other rule
                     // a) works on the same subgoal

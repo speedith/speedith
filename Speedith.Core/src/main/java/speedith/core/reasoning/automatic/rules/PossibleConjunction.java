@@ -15,9 +15,9 @@ import java.util.List;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleConjunctionElimination extends PossibleRuleApplication<MultipleRuleArgs> {
+public class PossibleConjunction extends PossibleRuleApplication<MultipleRuleArgs> {
     final SpiderDiagramOccurrence child;
-    public PossibleConjunctionElimination(SpiderDiagramOccurrence target, ConjunctionElimination rule, SpiderDiagramOccurrence child) {
+    public PossibleConjunction(SpiderDiagramOccurrence target, ConjunctionElimination rule, SpiderDiagramOccurrence child) {
         super(target, rule);
         this.child = child;
     }

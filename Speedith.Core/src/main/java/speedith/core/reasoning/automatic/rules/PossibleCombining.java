@@ -9,9 +9,9 @@ import speedith.core.reasoning.rules.Combining;
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleCombiningApplication extends PossibleRuleApplication<SubDiagramIndexArg> {
+public class PossibleCombining extends PossibleRuleApplication<SubDiagramIndexArg> {
 
-    public PossibleCombiningApplication(SpiderDiagramOccurrence target, Combining rule) {
+    public PossibleCombining(SpiderDiagramOccurrence target, Combining rule) {
         super(target, rule);
     }
 

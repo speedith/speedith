@@ -15,11 +15,11 @@ import speedith.core.reasoning.rules.RemoveShading;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleRemoveShadingApplication extends PossibleRuleApplication<MultipleRuleArgs> {
+public class PossibleRemoveShading extends PossibleRuleApplication<MultipleRuleArgs> {
 
     private final Zone zone;
 
-    public PossibleRemoveShadingApplication(SpiderDiagramOccurrence target, RemoveShading rule, Zone zone) {
+    public PossibleRemoveShading(SpiderDiagramOccurrence target, RemoveShading rule, Zone zone) {
         super(target, rule);
         this.zone = zone;
     }
@@ -41,7 +41,7 @@ public class PossibleRemoveShadingApplication extends PossibleRuleApplication<Mu
         for (RuleApplication application : p.getRuleApplications()) {
             if (application.getInferenceRule() instanceof RemoveShading) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
-                MultipleRuleArgs thisArgs = (MultipleRuleArgs) getArg(subGoalIndex);
+                MultipleRuleArgs thisArgs =  getArg(subGoalIndex);
                 // application is superfluous if the other rule
                 // a) works on the same subgoal
                 // b) and on the same subdiagram and

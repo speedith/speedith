@@ -79,28 +79,28 @@ object AutomaticUtils {
 
 
 
-  private def createConjunctionEliminationApplication(target: CompoundSpiderDiagramOccurrence) : Set[PossibleConjunctionElimination] = target.getCompoundDiagram.getOperator match  {
+  private def createConjunctionEliminationApplication(target: CompoundSpiderDiagramOccurrence) : Set[PossibleConjunction] = target.getCompoundDiagram.getOperator match  {
     case Operator.Conjunction  => Set() +
-      new PossibleConjunctionElimination(target, new ConjunctionElimination(), target.getOperand(0)) +
-      new PossibleConjunctionElimination(target, new ConjunctionElimination(), target.getOperand(1))
+      new PossibleConjunction(target, new ConjunctionElimination(), target.getOperand(0)) +
+      new PossibleConjunction(target, new ConjunctionElimination(), target.getOperand(1))
     case _ => Set();
   }
 
-  private def createCopyContourApplications(target: CompoundSpiderDiagramOccurrence) : Set[PossibleCopyContourApplication] = {
+  private def createCopyContourApplications(target: CompoundSpiderDiagramOccurrence) : Set[PossibleCopyContour] = {
     if (target.getOperands.forall(o => o.isInstanceOf[PrimarySpiderDiagramOccurrence])) {
       val leftContours= target.getOperand(0).asInstanceOf[PrimarySpiderDiagramOccurrence].getAllContours
       val rightContours = target.getOperand(1).asInstanceOf[PrimarySpiderDiagramOccurrence].getAllContours
       val difference =  leftContours -- rightContours
       (( leftContours -- rightContours)
-          .map(c => new PossibleCopyContourApplication(target.getOperand(0), new CopyContoursTopological(), c)) ++
+          .map(c => new PossibleCopyContour(target.getOperand(0), new CopyContoursTopological(), c)) ++
         (rightContours -- leftContours)
-          .map(c => new PossibleCopyContourApplication(target.getOperand(1), new CopyContoursTopological(), c))).toSet
+          .map(c => new PossibleCopyContour(target.getOperand(1), new CopyContoursTopological(), c))).toSet
     } else {
       Set()
     }
   }
 
-  private def createCopyShadingApplications(target: CompoundSpiderDiagramOccurrence) : Set[PossibleCopyShadingApplication] = {
+  private def createCopyShadingApplications(target: CompoundSpiderDiagramOccurrence) : Set[PossibleCopyShading] = {
     if (target.getOperands.forall(o => o.isInstanceOf[PrimarySpiderDiagramOccurrence])) {
       val leftDiagram = target.getOperand(0).getDiagram.asInstanceOf[PrimarySpiderDiagram]
       val rightDiagram = target.getOperand(1).getDiagram.asInstanceOf[PrimarySpiderDiagram]
@@ -113,13 +113,13 @@ object AutomaticUtils {
         val leftNonEmptyShadedRegions = leftVisibleShadedZones.subsets.toSet.filter(s => s.nonEmpty)
         val leftRegions = leftNonEmptyShadedRegions.map(region => Tuple2(region, CorrespondingRegions(leftDiagram, rightDiagram).correspondingRegion(new Region(region)))).filter(r => r._2.zones.nonEmpty)
         val leftResult = leftRegions.
-              map(r => new PossibleCopyShadingApplication(target.getOperand(0), new CopyShading(), r._1))
+              map(r => new PossibleCopyShading(target.getOperand(0), new CopyShading(), r._1))
         val rightShadedRegions = (rightDiagram.getShadedZones & rightDiagram.getPresentZones)
           .subsets.toSet.filter(r => r.nonEmpty)
         val rightRegions = rightShadedRegions.
           map(r => Tuple2(r, CorrespondingRegions(rightDiagram, leftDiagram).correspondingRegion(new Region(r)))).filter(t => t._2.zones.nonEmpty)
         val rightResult = rightRegions.
-          map(r => new PossibleCopyShadingApplication(target.getOperand(1), new CopyShading(), r._1))
+          map(r => new PossibleCopyShading(target.getOperand(1), new CopyShading(), r._1))
         leftResult ++ rightResult
       }
       else {
@@ -130,12 +130,12 @@ object AutomaticUtils {
     }
   }
 
-  private def createCombiningApplications(target: CompoundSpiderDiagramOccurrence) : Set[PossibleCombiningApplication] = {
+  private def createCombiningApplications(target: CompoundSpiderDiagramOccurrence) : Set[PossibleCombining] = {
     if (target.getOperands.forall(o => o.isInstanceOf[PrimarySpiderDiagramOccurrence])) {
       val leftZones = target.getOperand(0).getDiagram.asInstanceOf[PrimarySpiderDiagram].getPresentZones
       val rightZones = target.getOperand(1).getDiagram.asInstanceOf[PrimarySpiderDiagram].getPresentZones
       if (leftZones.equals(rightZones)) {
-        Set() + new PossibleCombiningApplication(target, new Combining())
+        Set() + new PossibleCombining(target, new Combining())
       } else {
        Set()
       }
@@ -144,30 +144,30 @@ object AutomaticUtils {
     }
   }
 
-  private def createRemoveContourApplications(target: PrimarySpiderDiagramOccurrence): Set[PossibleRemoveContourApplication] = {
+  private def createRemoveContourApplications(target: PrimarySpiderDiagramOccurrence): Set[PossibleRemoveContour] = {
     target.getAllContours .
-      map(c => new PossibleRemoveContourApplication(target, new RemoveContour(), c)).toSet
+      map(c => new PossibleRemoveContour(target, new RemoveContour(), c)).toSet
   }
 
-  private def createRemoveShadedZoneApplications(target: PrimarySpiderDiagramOccurrence) : Set[PossibleRemoveShadedZoneApplication] = {
+  private def createRemoveShadedZoneApplications(target: PrimarySpiderDiagramOccurrence) : Set[PossibleRemoveShadedZone] = {
     (target.getShadedZones & target.getPresentZones) .filter(z => z.getInContours.nonEmpty).
-      map(z => new PossibleRemoveShadedZoneApplication(target, new RemoveShadedZone(), z)).toSet
+      map(z => new PossibleRemoveShadedZone(target, new RemoveShadedZone(), z)).toSet
   }
 
-  private def createIntroducedShadedZoneApplications(target: PrimarySpiderDiagramOccurrence) :Set[PossibleIntroShadedZoneApplication] = {
+  private def createIntroducedShadedZoneApplications(target: PrimarySpiderDiagramOccurrence) :Set[PossibleIntroShadedZone] = {
     (target.getShadedZones -- target.getPresentZones).
-    map(z => new PossibleIntroShadedZoneApplication(target, new IntroShadedZone(), z)).toSet
+    map(z => new PossibleIntroShadedZone(target, new IntroShadedZone(), z)).toSet
   }
 
-  private def createRemoveShadingApplications(target: PrimarySpiderDiagramOccurrence): Set[PossibleRemoveShadingApplication] = {
+  private def createRemoveShadingApplications(target: PrimarySpiderDiagramOccurrence): Set[PossibleRemoveShading] = {
     (target.getShadedZones & target.getPresentZones).
-      map(z => new PossibleRemoveShadingApplication(target, new RemoveShading(), z)).toSet
+      map(z => new PossibleRemoveShading(target, new RemoveShading(), z)).toSet
   }
 
   private def createIntroduceContoursApplication(target: PrimarySpiderDiagramOccurrence,
-                                                 contours: java.util.Collection[String]): Set[PossibleIntroduceContourApplication] = {
+                                                 contours: java.util.Collection[String]): Set[PossibleIntroduceContour] = {
     (contours.toSet  -- target.getAllContours).
-      map(c => new PossibleIntroduceContourApplication(target, new IntroContour(), c))
+      map(c => new PossibleIntroduceContour(target, new IntroContour(), c))
   }
 
   // </editor-fold>

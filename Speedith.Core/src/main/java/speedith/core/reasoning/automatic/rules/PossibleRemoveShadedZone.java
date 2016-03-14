@@ -14,11 +14,11 @@ import speedith.core.reasoning.rules.RemoveShadedZone;
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleRemoveShadedZoneApplication extends PossibleRuleApplication<MultipleRuleArgs> {
+public class PossibleRemoveShadedZone extends PossibleRuleApplication<MultipleRuleArgs> {
 
     private final Zone zone;
 
-    public PossibleRemoveShadedZoneApplication(SpiderDiagramOccurrence target, RemoveShadedZone rule, Zone zone) {
+    public PossibleRemoveShadedZone(SpiderDiagramOccurrence target, RemoveShadedZone rule, Zone zone) {
         super(target, rule);
         this.zone = zone;
     }
@@ -42,7 +42,7 @@ public class PossibleRemoveShadedZoneApplication extends PossibleRuleApplication
             RuleApplication application = p.getRuleApplicationAt(i);
             if (application.getInferenceRule() instanceof IntroShadedZone) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
-                MultipleRuleArgs thisArgs = (MultipleRuleArgs) getArg(subGoalIndex);
+                MultipleRuleArgs thisArgs =  getArg(subGoalIndex);
                 // application is superfluous if :
                 // a) both rules work on the same subgoal
                 // b) the result of the already applied rule is the premiss of the current rule
@@ -55,7 +55,7 @@ public class PossibleRemoveShadedZoneApplication extends PossibleRuleApplication
                 }
             } else if (application.getInferenceRule() instanceof RemoveShadedZone) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
-                MultipleRuleArgs thisArgs = (MultipleRuleArgs) getArg(subGoalIndex);
+                MultipleRuleArgs thisArgs =  getArg(subGoalIndex);
                 // application is superfluous if the other rule
                 // a) works on the same subgoal
                 // b) and on the same subdiagram and

@@ -19,11 +19,11 @@ import java.util.Set;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleCopyContourApplication extends PossibleRuleApplication<MultipleRuleArgs> {
+public class PossibleCopyContour extends PossibleRuleApplication<MultipleRuleArgs> {
 
     private final String contour;
 
-    public PossibleCopyContourApplication(SpiderDiagramOccurrence target, CopyContoursTopological rule, String contour) {
+    public PossibleCopyContour(SpiderDiagramOccurrence target, CopyContoursTopological rule, String contour) {
         super(target, rule);
         this.contour = contour;
     }
@@ -45,7 +45,7 @@ public class PossibleCopyContourApplication extends PossibleRuleApplication<Mult
         for (RuleApplication application : p.getRuleApplications() ) {
             if (application.getInferenceRule() instanceof CopyContours) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
-                MultipleRuleArgs thisArgs = (MultipleRuleArgs) getArg(subGoalIndex);
+                MultipleRuleArgs thisArgs =  getArg(subGoalIndex);
                 if (args.size() == thisArgs.size() && args.size() > 0) {
                     // application is superfluous if the other rule
                     // a) works on the same subgoal
