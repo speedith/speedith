@@ -59,7 +59,7 @@ public class DepthFirstProver extends AutomaticProver {
         Set<? extends PossibleRuleApplication<? extends RuleArg>> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
         for(PossibleRuleApplication nextRule : applications)  {
             boolean superfl = nextRule.isSuperfluous(p,subgoalindex) || appliedRules.contains(nextRule, nextRule.getTarget());
-            boolean hasBeenApplied = !superfl && nextRule.apply(p, subgoalindex, appliedRules, getPrettyName());
+            boolean hasBeenApplied = !superfl && nextRule.apply(p, subgoalindex, getPrettyName());
             if (hasBeenApplied) {
                 appliedRules.add(nextRule, nextRule.getTarget());
                 p = proveRecursively(p, subgoalindex, appliedRules);

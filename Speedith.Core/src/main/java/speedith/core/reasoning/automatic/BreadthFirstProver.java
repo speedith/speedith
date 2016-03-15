@@ -54,27 +54,32 @@ public class BreadthFirstProver extends  AutomaticProver {
         }
         Proof finishedProof = null;
         long startTime= System.nanoTime();
-        while(finishedProof == null && !currentProofs.isEmpty() && !Thread.currentThread().isInterrupted()) {
+        while(!Thread.currentThread().isInterrupted() && finishedProof == null && !currentProofs.isEmpty()) {
             newProofs = new HashSet<>();
             for(ProofTrace current : currentProofs) {
                 current = (ProofTrace) tryToFinish(current, subgoalindex);
-                if (current.isFinished()) {
+                if (Thread.currentThread().isInterrupted()) {
+                    break;
+                } else  if (current.isFinished()) {
                     // we found a finished proof
                     finishedProof = current;
                     break;
                 } else {
                     // create all possible proof rules for this unfinished proof
                     SpiderDiagramOccurrence target = SpiderDiagramOccurrence.wrapDiagram(current.getLastGoals().getGoalAt(subgoalindex), 0);
-                   Set<? extends PossibleRuleApplication<? extends RuleArg>> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
+                    Set<? extends PossibleRuleApplication<? extends RuleArg>> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
                     // apply all possible rules to the current proof, creating a new proof for each application
                     for (PossibleRuleApplication nextRule : applications ){
                         ProofTrace newCurrent = new ProofTrace(current.getGoals(), current.getRuleApplications());
                         // create a new set of already applied rules for the current proof
                         AppliedRules alreadyApplied = new AppliedRules(rulesWithinProofs.get(current));
-                        boolean hasbeenApplied = nextRule.apply(newCurrent, subgoalindex, alreadyApplied, getPrettyName());
+                        boolean superfl = nextRule.isSuperfluous(newCurrent,subgoalindex) || alreadyApplied.contains(nextRule, nextRule.getTarget());
+                        boolean hasbeenApplied = !superfl && nextRule.apply(newCurrent, subgoalindex, getPrettyName());
                         if (hasbeenApplied) {
                             // save the new proof within the set of not yet considered proofs
                             newProofs.add(newCurrent);
+                            // add the rule to the set of already applied rules for this proof
+                            alreadyApplied.add(nextRule, nextRule.getTarget());
                             // save the rules that have already been applied for the new proof
                             rulesWithinProofs.put(newCurrent,alreadyApplied);
                         }

@@ -90,7 +90,7 @@ public class HeuristicSearch extends AutomaticProver {
                 boolean superfl = nextRule.isSuperfluous(newCurrent,subgoalindex);
                 if (superfl) numOfSuperFl++;
 
-                boolean hasBeenApplied =  !superfl  && nextRule.apply(newCurrent, subgoalindex, appliedRules, getPrettyName());
+                boolean hasBeenApplied =  !superfl  && nextRule.apply(newCurrent, subgoalindex, getPrettyName());
                 if (hasBeenApplied) {
                     // save the new proof within the set of not yet considered proofs
                     ProofAttempt newAttempt = new ProofAttempt(newCurrent, getStrategy());
