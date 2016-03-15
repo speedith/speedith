@@ -12,6 +12,7 @@ import speedith.core.reasoning.automatic.strategies.Strategy;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -36,13 +37,10 @@ public class BreadthFirstProver extends  AutomaticProver {
             return p;
         }
         // initialise the set of proofs to be considered
-        Set<ProofTrace> currentProofs = new HashSet<>();
-        Set<ProofTrace> closed = new HashSet<>();
-        currentProofs.add((ProofTrace) p);
-        // initialise the new set of proofs
-        Set<ProofTrace> newProofs ;
-        Map<ProofTrace, AppliedRules> rulesWithinProofs = new HashMap<>();
-        rulesWithinProofs.put((ProofTrace) p, new AppliedRules());
+        List<Proof> currentProofs = new LinkedList<>();
+        // we keep the set of closed proofs for statistics
+        Set<Proof> closed = new HashSet<>();
+        currentProofs.add( p);
 
          Goals currentGoals = p.getLastGoals();
         // get all names of contours present in the goals. This bounds the
@@ -53,50 +51,52 @@ public class BreadthFirstProver extends  AutomaticProver {
             contours.addAll( AutomaticUtils.collectContours(sd));
         }
         Proof finishedProof = null;
+        long numOfSuperFl = 0;
         long startTime= System.nanoTime();
-        while(!Thread.currentThread().isInterrupted() && finishedProof == null && !currentProofs.isEmpty()) {
-            newProofs = new HashSet<>();
-            for(ProofTrace current : currentProofs) {
-                current = (ProofTrace) tryToFinish(current, subgoalindex);
-                if (Thread.currentThread().isInterrupted()) {
-                    break;
-                } else  if (current.isFinished()) {
-                    // we found a finished proof
-                    finishedProof = current;
-                    break;
-                } else {
-                    // create all possible proof rules for this unfinished proof
-                    SpiderDiagramOccurrence target = SpiderDiagramOccurrence.wrapDiagram(current.getLastGoals().getGoalAt(subgoalindex), 0);
-                    Set<? extends PossibleRuleApplication<? extends RuleArg>> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
-                    // apply all possible rules to the current proof, creating a new proof for each application
-                    for (PossibleRuleApplication nextRule : applications ){
-                        ProofTrace newCurrent = new ProofTrace(current.getGoals(), current.getRuleApplications());
-                        // create a new set of already applied rules for the current proof
-                        AppliedRules alreadyApplied = new AppliedRules(rulesWithinProofs.get(current));
-                        boolean superfl = nextRule.isSuperfluous(newCurrent,subgoalindex) || alreadyApplied.contains(nextRule, nextRule.getTarget());
-                        boolean hasbeenApplied = !superfl && nextRule.apply(newCurrent, subgoalindex, getPrettyName());
-                        if (hasbeenApplied) {
-                            // save the new proof within the set of not yet considered proofs
-                            newProofs.add(newCurrent);
-                            // add the rule to the set of already applied rules for this proof
-                            alreadyApplied.add(nextRule, nextRule.getTarget());
-                            // save the rules that have already been applied for the new proof
-                            rulesWithinProofs.put(newCurrent,alreadyApplied);
-                        }
+        while (!Thread.currentThread().isInterrupted() && finishedProof == null && !currentProofs.isEmpty()) {
+            Proof current = currentProofs.remove(0);
+            current = tryToFinish(current, subgoalindex);
+            if (current.isFinished()) {
+                // we found a finished proof
+                finishedProof = current;
+            } else {
+                // create all possible proof rules for this unfinished proof
+                SpiderDiagramOccurrence target = SpiderDiagramOccurrence.wrapDiagram(current.getLastGoals().getGoalAt(subgoalindex), 0);
+                Set<? extends PossibleRuleApplication<? extends RuleArg>> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
+                // apply all possible rules to the current proof, creating a new proof for each application
+                for (PossibleRuleApplication nextRule : applications) {
+                    ProofTrace newCurrent = new ProofTrace(current.getGoals(), current.getRuleApplications());
+                    boolean superfl = nextRule.isSuperfluous(newCurrent, subgoalindex);
+                    if (superfl) numOfSuperFl++;
+                    boolean hasbeenApplied = !superfl && nextRule.apply(newCurrent, subgoalindex, getPrettyName());
+                    if (hasbeenApplied) {
+                        // save the new proof within the set of not yet considered proofs
+                        currentProofs.add(newCurrent);
                     }
                 }
-                // remove the applied rules for this proof (since we create a new proof for each step)
-                rulesWithinProofs.remove(current);
                 closed.add(current);
             }
-            // the new set of not yet considered proofs
-            currentProofs = newProofs;
         }
-        System.out.println("Considered "+closed.size()+ " proof attempts");
-        long duration = System.nanoTime() - startTime;
-        System.out.println("Time needed: "+ TimeUnit.NANOSECONDS.toMillis(duration)+"ms");
-        System.out.println("Average per Attempt: " + TimeUnit.NANOSECONDS.toMillis(duration)/closed.size() +"ms\n");
+        Set<Proof> attempts = new HashSet<>();
+        attempts.addAll(closed);
+        attempts.addAll(currentProofs);
+        // TODO remove statistics
+        printStatistics(closed, attempts, startTime, numOfSuperFl);
         return finishedProof;
+    }
+
+    private void printStatistics(Collection<Proof> closed, Collection<Proof> attempts, long startTime, long superfluousAttemps) {
+        long duration = System.nanoTime() - startTime;
+        DecimalFormat format = new DecimalFormat("###,###,###,###");
+        String fullNumber= format.format(closed.size()+attempts.size());
+        String considered = format.format(closed.size());
+        String superfluous = format.format(superfluousAttemps);
+        System.out.println("Prover: "+getPrettyName());
+        System.out.println("Considered proof attempts: "+considered);
+        System.out.println("Complete number of created proofs: "+fullNumber);
+        System.out.println("Number of prevented rule applications: "+superfluous);
+        System.out.println("Time needed: "+ TimeUnit.NANOSECONDS.toMillis(duration)+"ms ("+ TimeUnit.NANOSECONDS.toSeconds(duration)+"s)" );
+        System.out.println("Average per Attempt: " + TimeUnit.NANOSECONDS.toMillis(duration)/closed.size() +"ms\n");
     }
 
     @Override

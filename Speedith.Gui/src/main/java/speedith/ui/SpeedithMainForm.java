@@ -682,11 +682,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private void extendWithAutomaticProof() {
     if (automaticProof != null) {
       try {
-        Proof autoProof = automaticProof.get();
+        Proof autoProof = automaticProof.getProof();
         proofPanel1.extendProof(autoProof);
         fireProofChangedEvent(new ProofReplacedEvent(this));
-      } catch (InterruptedException|ExecutionException e) {
-        JOptionPane.showMessageDialog(this, "An error occurred:" +e.getLocalizedMessage());
       } catch (AutomaticProofException e) {
         JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
       }
@@ -697,12 +695,10 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private void extendByOneAutomatedStep() {
   if (automaticProof != null) {
     try {
-      Proof autoProof = automaticProof.get();
+      Proof autoProof = automaticProof.getProof();
       proofPanel1.extendByOneStep(autoProof);
       fireProofChangedEvent(new ProofExtendedByStepEvent(this));
-    } catch (InterruptedException|ExecutionException e) {
-      JOptionPane.showMessageDialog(this, "An error occurred:" +e.getLocalizedMessage());
-    } catch (AutomaticProofException e) {
+    } catch (Exception e) {
       JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
     }
 
@@ -714,7 +710,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       automaticProof.cancel(true);
       System.out.println("Was Cancelled: "+automaticProof.isCancelled());
       System.out.println("Is Finished: "+automaticProof.isFinished());
-
+      // remove the reference to the automatic prover thread so that the garbage
+      // collector can do its magic
+      automaticProof = null;
 
     }
     proofFoundIndicator.setText("Idle");
@@ -802,10 +800,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
         proofPanel1.extendCurrentProofTo(result);
         fireProofChangedEvent(new TacticAppliedEvent(this));
       } catch (TacticApplicationException e) {
-        e.printStackTrace(); //TODO remove debug msg
         JOptionPane.showMessageDialog(this, e.getMessage());
       }
-
     } else {
       JOptionPane.showMessageDialog(this, "No subgoals are open");
     }
@@ -899,8 +895,25 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
   private void startAutomatedReasoner() {
     disableAutomaticProofUI();
-    automaticProof = new AutomaticProverThread(proofPanel1.getProof(), proofPanel1.getProver());
-    automaticProof.addPropertyChangeListener(new PropertyChangeListener() {
+    automaticProof = new AutomaticProverThread(proofPanel1.getProof(), proofPanel1.getProver()) {
+      @Override
+      protected void done() {
+        if (isFinished()) {
+          try {
+            setProof(get());
+          } catch (InterruptedException| ExecutionException e) {
+            JOptionPane.showMessageDialog(proofPanel1.getRootPane(), "An error occurred:" +e.getLocalizedMessage());
+          }
+          System.out.println("Successful! ");
+          enableAutomaticProofUI();
+        } else {
+          System.out.println("Unsuccessful! ");
+          proofFoundIndicator.setText("Unable to solve");
+          cancelAutoProver.setEnabled(false);
+        }
+      }
+    };
+    /*automaticProof.addPropertyChangeListener(new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         if ("state".equals(propertyChangeEvent.getPropertyName())) {
@@ -916,7 +929,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
           }
         }
       }
-    });
+    });*/
     service.submit(automaticProof);
     proofFoundIndicator.setText("Searching...");
   }

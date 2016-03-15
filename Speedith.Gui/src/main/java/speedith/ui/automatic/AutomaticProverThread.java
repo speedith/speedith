@@ -6,6 +6,7 @@ import speedith.core.reasoning.automatic.AutomaticProofException;
 import speedith.core.reasoning.automatic.AutomaticProver;
 
 import javax.swing.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Thread that tries to finish the given {@link Proof proof object} with
@@ -31,7 +32,7 @@ public class AutomaticProverThread extends SwingWorker<Proof, Object> {
      * by the given prover object.
      *
      * @param proofToExtend The proof that will be extended to a finished proof if possible
-     * @param prover The proof method to be used
+     * @param prover        The proof method to be used
      */
     public AutomaticProverThread(Proof proofToExtend, AutomaticProver prover) {
         this.proof = proofToExtend;
@@ -42,6 +43,7 @@ public class AutomaticProverThread extends SwingWorker<Proof, Object> {
 
     /**
      * Returns true if the prover was able to finish the proof
+     *
      * @return true, if the proof could be finished
      */
     public boolean isFinished() {
@@ -50,10 +52,21 @@ public class AutomaticProverThread extends SwingWorker<Proof, Object> {
 
     @Override
     protected Proof doInBackground() throws Exception {
-        Proof newProof = null;
+        Proof newProof;
         newProof = prover.extendProof(proof);
         proof = newProof;
         finished = (proof != null) && proof.getLastGoals().isEmpty();
         return newProof;
     }
+
+
+
+    protected void setProof(Proof newProof){
+            proof = newProof;
+        }
+
+    public Proof getProof() {
+        return proof;
+    }
+
 }
