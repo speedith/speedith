@@ -75,7 +75,7 @@ object SimpleTacticals {
       THEN(
         THEN(
           REPEAT(ORELSE(trivialTautology(0),
-            eraseContour(0, containsOtherContours(concContours ), allInDiagramButNotInGivenContours(concContours)))),
+            eraseContour(0, containsOtherContours(concContours), allInDiagramButNotInGivenContours(concContours)))),
           REPEAT(ORELSE(trivialTautology(0),
             introduceShadedZone(0,isPrimaryAndContainsMissingZones, allMissingZonesInGivenZones(concVisibleZones))))),
         REPEAT(ORELSE(trivialTautology(0) ,

@@ -32,6 +32,8 @@
  */
 package speedith.ui;
 
+import scala.collection.JavaConversions;
+//import scala.collection.immutable.Set;
 import speedith.core.lang.*;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
@@ -41,6 +43,8 @@ import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.automatic.*;
 import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
+import speedith.core.reasoning.rules.util.AutomaticUtils;
+import speedith.core.reasoning.rules.util.HeuristicUtils;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
 import speedith.core.reasoning.tactical.TacticApplicationException;
 import speedith.ui.automatic.*;
@@ -54,6 +58,7 @@ import spiderdrawer.ui.MainForm;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
@@ -127,6 +132,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenu openMenu;
   private javax.swing.JMenu saveMenu;
   private javax.swing.JMenuItem analyseItem;
+  private javax.swing.JMenuItem heuristicItem;
 
   private javax.swing.JToolBar autoToolBar;
   private javax.swing.JButton replaceWithGenerated;
@@ -313,6 +319,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     proofMenu = new javax.swing.JMenu();
     cropProof = new javax.swing.JMenuItem();
     analyseItem = new javax.swing.JMenuItem();
+    heuristicItem = new javax.swing.JMenuItem();
     /*reasoningMenu = new javax.swing.JMenu();
     proveAny = new javax.swing.JMenuItem();
     proveFromHere = new javax.swing.JMenuItem(); */
@@ -618,6 +625,17 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       }
     });
     proofMenu.add(analyseItem);
+
+    heuristicItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_MASK));
+    heuristicItem.setText("Compute Basic Heuristic");
+    heuristicItem.setMnemonic('H');
+    heuristicItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        onComputeHeuristic();
+      }
+    });
+    proofMenu.add(heuristicItem);
     menuBar.add(proofMenu);
 
 /*    reasoningMenu.setMnemonic('A');
@@ -677,6 +695,51 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     menuBar.add(tacticsMenu);
 
     setJMenuBar(menuBar);
+  }
+
+  private void onComputeHeuristic() {
+    if (proofPanel1.getLastGoals() != null) {
+      int heuristic = 0;
+      int contourMetr = 0;
+      int zoneMetr =0;
+      int shZoneMetr =0;
+      int connMetr = 0;
+
+      try {
+        SpiderDiagram goal =       proofPanel1.getSelected();
+
+        if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+            CompoundSpiderDiagram impl = (CompoundSpiderDiagram) goal;
+            java.util.Set<String> contours = new HashSet<>(AutomaticUtils.collectContours(impl.getOperand(0)));
+            contours.addAll(AutomaticUtils.collectContours(impl.getOperand(1)));
+            scala.collection.immutable.Set<String> scalaContours = JavaConversions.asScalaSet(contours).toSet();
+            SpiderDiagram cform1 = HeuristicUtils.computeCForm(impl.getOperand(0), scalaContours);
+            SpiderDiagram cform2 = HeuristicUtils.computeCForm(impl.getOperand(1),scalaContours);
+            SpiderDiagram vennCForm1 = HeuristicUtils.computeVennForm(cform1);
+            SpiderDiagram vennCForm2 = HeuristicUtils.computeVennForm(cform2);
+            heuristic += HeuristicUtils.metric(impl.getOperand(0), impl.getOperand(1));
+            contourMetr += HeuristicUtils.contourDiffMetric(impl.getOperand(0), impl.getOperand(1));
+            zoneMetr += HeuristicUtils.zoneDiffMetric(cform1, cform2);
+            shZoneMetr += HeuristicUtils.shadingDiffMetric(vennCForm1, vennCForm2);
+            connMetr += HeuristicUtils.connectiveDiffMetric(impl.getOperand(0), impl.getOperand(1));
+
+
+          } else {
+            throw new AutomaticProofException("The selected goal is not an implication of conjunctions.");
+          }
+
+        int cost = proofPanel1.getProver().getStrategy().getCost(proofPanel1);
+        JOptionPane.showMessageDialog(this,"Cost: "+ cost +
+                "\nFull Heuristic: "+ heuristic +
+                "\nContour Heuristic: "+contourMetr+
+                "\nZone Heuristic: "+zoneMetr +
+                "\nShading Heuristic: "+shZoneMetr+
+                "\nConnective Heuristic: "+connMetr
+                ,"Heuristic of Selected Goal", JOptionPane.INFORMATION_MESSAGE);
+      } catch (AutomaticProofException e) {
+        JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
+      }
+    }
   }
 
   private void extendWithAutomaticProof() {

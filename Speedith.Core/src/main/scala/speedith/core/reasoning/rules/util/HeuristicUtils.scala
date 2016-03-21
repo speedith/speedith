@@ -28,7 +28,21 @@ object HeuristicUtils {
     val zoneMetr = zoneDiffMetric(cform1,cform2)
     val shadMetr = shadingDiffMetric(vennCForm1,vennCForm2)
     val connMetr = connectiveDiffMetric(d1,d2)
-    contMetr + zoneMetr +  math.max(shadMetr, connMetr)
+    val interim =  math.max(shadMetr, connMetr)
+    (zoneMetr + interim) + contMetr
+  }
+
+  def test(d1: SpiderDiagram, d2:SpiderDiagram) : Int = {
+    val contours = (AutomaticUtils.collectContours(d1) ++ AutomaticUtils.collectContours(d2)).toSet
+    val cform1 = computeCForm(d1,contours)
+    val cform2 = computeCForm(d2,contours)
+    val vennCForm1 = computeVennForm(cform1)
+    val vennCForm2 = computeVennForm(cform2)
+
+    val shadMetr = shadingDiffMetric(vennCForm1,vennCForm2)
+    val connMetr = connectiveDiffMetric(d1,d2)
+    math.max(shadMetr, connMetr)
+
   }
 
   def contourDiffMetric(d1: SpiderDiagram, d2: SpiderDiagram) : Int = {
@@ -100,7 +114,7 @@ object HeuristicUtils {
     )
   }
 
-  private def computeCForm(d1: SpiderDiagram, contours :Set[String]) : SpiderDiagram = d1 match  {
+  def computeCForm(d1: SpiderDiagram, contours :Set[String]) : SpiderDiagram = d1 match  {
     case d1 : PrimarySpiderDiagram  =>
       val newContours = contours -- d1.getAllContours
       EulerDiagrams.createPrimaryEulerDiagram(
@@ -175,7 +189,7 @@ object HeuristicUtils {
     )
   }
 
-  private def computeVennForm(d : SpiderDiagram) : SpiderDiagram = d match {
+  def computeVennForm(d : SpiderDiagram) : SpiderDiagram = d match {
     case d: PrimarySpiderDiagram => EulerDiagrams.createPrimaryEulerDiagram(d.getShadedZones, d.getPresentZones.toSet ++d.getShadedZones).asInstanceOf[SpiderDiagram]
     case d: CompoundSpiderDiagram => SpiderDiagrams.createCompoundSD(d.getOperator.getName, d.getOperands.map(computeVennForm).toSeq)
   }
