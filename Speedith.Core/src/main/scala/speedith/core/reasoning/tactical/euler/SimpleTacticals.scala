@@ -100,14 +100,15 @@ object SimpleTacticals {
             eraseShading(0,isPrimaryAndContainsShadedZones, someVisibleShadedZonesInGivenZones(concUnshadedZones))))),
       REPEAT(ORELSE(trivialTautology(0), removeShadedZone(0,someVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)
   }
+*/
 
-  def copyTopologicalInformation : Tactical = {
-      REPEAT(ORELSE(trivialTautology(0),
-        ORELSE(idempotency(0),
-          ORELSE(removeShadedZone(0,someShadedZone),
-            copyContour(0)))))
+  def copyTopologicalInformation : Tactical =  (name:String) => (state:Goals) => (subGoalIndex: Int) => (result:TacticApplicationResult) => {
+      REPEAT(ORELSE(trivialTautology,
+        ORELSE(idempotency,
+          ORELSE(removeShadedZone(someShadedZone),
+            copyContour))))(name)(state)(subGoalIndex)(result)
   }
-
+/*
   def copyShadings: Tactical = {
     REPEAT(ORELSE(trivialTautology(0),
       ORELSE(idempotency(0),

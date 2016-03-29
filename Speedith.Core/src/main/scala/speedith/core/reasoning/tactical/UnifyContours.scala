@@ -20,7 +20,10 @@ class UnifyContours extends SimpleTactic {
   override def apply(args: RuleArg, goals: Goals): TacticApplicationResult = {
     args match {
       case arg: SubgoalIndexArg =>
-         SimpleTacticals.unifyContourSets("Unify Contours")(goals)(arg.getSubgoalIndex)(new TacticApplicationResult())
+         SimpleTacticals.unifyContourSets("Unify Contours")(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {
+           case Some(result) => result
+           case None => throw new TacticApplicationException("Could not apply tactic "+getPrettyName())
+         }
 /*        result match {
           case None => throw new RuleApplicationException("Could not unify Contours")
           case Some(newGoals) => new TacticApplicationResult(newGoals)

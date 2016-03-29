@@ -58,14 +58,14 @@ object Tactics {
   }
 
 
-  private def createResults(goals: Option[Goals], rule: InferenceRule[RuleArg], args: RuleArg, name : String, oldResult : TacticApplicationResult): TacticApplicationResult = goals match {
-    case None => oldResult
+  private def createResults(goals: Option[Goals], rule: InferenceRule[RuleArg], args: RuleArg, name : String, oldResult : TacticApplicationResult): Option[TacticApplicationResult] = goals match {
+    case None => Some(oldResult)
     case Some(goal) =>
 //      val result = Tuple2(diagram, new ProofTrace(state))
       // intermediate is used to create the rule applications (applyRule changes the given proof and
       // returns a RuleApplicationResult!)
       val result = rule.apply(args, goal)
-       new TacticApplicationResult(oldResult.getApplicationList :+ result)
+       Some(new TacticApplicationResult(oldResult.getApplicationList :+ result))
 //      val intermediate = result._2.applyRule(rule, args, RuleApplicationType.TACTIC, name)
 //      Some(result._2)
   }
@@ -76,18 +76,18 @@ object Tactics {
       val target = firstMatchingDiagramAndContour(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
         d=> d.isInstanceOf[PrimarySpiderDiagramOccurrence] && predicate(d), contourChooser )
       target match {
-        case None => result
+        case None => None
         case Some(tupel) =>
           tupel._2 match {
             case Some(c) =>
               createResults(Some(state), new IntroContour().asInstanceOf[InferenceRule[RuleArg]],
                 new MultipleRuleArgs(c.map(new ContourArg(subGoalIndex, tupel._1.getOccurrenceIndex, _)).toSeq: _*
                 ), name, result)
-            case None => result
+            case None => None
           }
       }
     } catch {
-      case e: TacticApplicationException => result
+      case e: TacticApplicationException => None
     }
   }
 
@@ -111,10 +111,10 @@ object Tactics {
       case e: TacticApplicationException => None
     }
   }
-
-  def removeShadedZone(subgoalIndex: Int, zoneChooser:Chooser[Set[Zone]]): Tactical = (name:String) => ( state: Proof) => {
+*/
+  def removeShadedZone(zoneChooser:Chooser[Set[Zone]]): Tactical = (name:String) => ( state: Goals) => (subGoalIndex:Int) =>(result:TacticApplicationResult) => {
     try {
-      val subgoal = getSubgoal(subgoalIndex, state)
+      val subgoal = getSubGoal(subGoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
         isPrimaryAndContainsShadedZones)
       target match {
@@ -126,8 +126,9 @@ object Tactics {
               if (zones.exists(_.getInContoursCount == 0)) {
                 throw new TacticApplicationException("Cannot remove outer zone")
               }
-              createResults(target, state, new RemoveShadedZone().asInstanceOf[InferenceRule[RuleArg]],
-                new MultipleRuleArgs(zones.map( z => new ZoneArg(subgoalIndex, diagram.getOccurrenceIndex, z)).toSeq:_*), name)
+              createResults(Some(state), new RemoveShadedZone().asInstanceOf[InferenceRule[RuleArg]],
+                new MultipleRuleArgs(zones.map( z => new ZoneArg(subGoalIndex, diagram.getOccurrenceIndex, z)).toSeq:_*),
+                name, result)
             case None => None
           }
 
@@ -137,7 +138,7 @@ object Tactics {
       case e: RuleApplicationException => None
     }
   }
-
+/*
   def eraseContour(subgoalIndex: Int, predicate: Predicate, contourChooser: Chooser[Set[String]]): Tactical = (name:String) =>(state: Proof) => {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
@@ -193,10 +194,10 @@ object Tactics {
       case e: TacticApplicationException => None
     }
   }
-
-  def copyContour(subgoalIndex: Int): Tactical = (name:String) =>(state: Proof) => {
+*/
+  def copyContour: Tactical = (name:String) =>(state: Goals) => (subGoalIndex: Int) => (result:TacticApplicationResult) => {
     try {
-      val subgoal = getSubgoal(subgoalIndex, state)
+      val subgoal = getSubGoal(subGoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
         isConjunctionWithContoursToCopy)
       target match {
@@ -205,11 +206,11 @@ object Tactics {
           val op0 = diagram.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0).asInstanceOf[PrimarySpiderDiagramOccurrence]
           val op1 = diagram.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(1).asInstanceOf[PrimarySpiderDiagramOccurrence]
           if ((op0.getAllContours -- op1.getAllContours).nonEmpty) {
-            createResults(Some(op0), state, new CopyContoursTopological().asInstanceOf[InferenceRule[RuleArg]],
-              new MultipleRuleArgs(new ContourArg(subgoalIndex, op0.getOccurrenceIndex, (op0.getAllContours -- op1.getAllContours).head)),name)
+            createResults(Some( state), new CopyContoursTopological().asInstanceOf[InferenceRule[RuleArg]],
+              new MultipleRuleArgs(new ContourArg(subGoalIndex, op0.getOccurrenceIndex, (op0.getAllContours -- op1.getAllContours).head)),name, result)
           } else {
-            createResults(Some(op1), state, new CopyContoursTopological().asInstanceOf[InferenceRule[RuleArg]],
-              new MultipleRuleArgs(new ContourArg(subgoalIndex, op1.getOccurrenceIndex, (op1.getAllContours -- op0.getAllContours).head)),name)
+            createResults(Some(state), new CopyContoursTopological().asInstanceOf[InferenceRule[RuleArg]],
+              new MultipleRuleArgs(new ContourArg(subGoalIndex, op1.getOccurrenceIndex, (op1.getAllContours -- op0.getAllContours).head)),name,result)
           }
       }
     } catch {
@@ -217,6 +218,7 @@ object Tactics {
     }
   }
 
+  /*
   def copyShading(subgoalIndex: Int ) : Tactical = (name:String) => (state: Proof) =>{
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
@@ -258,16 +260,17 @@ object Tactics {
       case e: TacticApplicationException => None
     }
   }
+*/
 
-  def idempotency(subGoalIndex : Int) : Tactical = (name:String) => ( state:Proof) => {
+  def idempotency : Tactical = (name:String) => ( state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
     try {
-      val subgoal = getSubgoal(subGoalIndex, state)
+      val subgoal = getSubGoal(subGoalIndex, state)
       val target = firstMatchingDiagram(subgoal, isIdempotent)
       target match {
         case None => None
         case Some(diagram) =>
-          createResults(target, state, new Idempotency().asInstanceOf[InferenceRule[RuleArg]],
-            new SubDiagramIndexArg(subGoalIndex, diagram.getOccurrenceIndex),name)
+          createResults(Some(state), new Idempotency().asInstanceOf[InferenceRule[RuleArg]],
+            new SubDiagramIndexArg(subGoalIndex, diagram.getOccurrenceIndex),name, result)
       }
     }
     catch {
@@ -275,21 +278,21 @@ object Tactics {
       case e: TransformationException => None
     }
   }
-*/
+
   def trivialTautology :  Tactical = (name:String) =>( state: Goals) => (subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
     try {
       val subgoal = getSubGoal(subGoalIndex, state)
       val target = firstMatchingDiagram(subgoal, isImplication)
       target match {
-        case None => result
+        case None => None
         case Some(diagram) =>
           createResults(Some(state), new TrivialImplicationTautology().asInstanceOf[InferenceRule[RuleArg]],
             new SubDiagramIndexArg(subGoalIndex, diagram.getOccurrenceIndex),name, result)
       }
     }
     catch {
-      case e: TacticApplicationException => result
-      case e: TransformationException => result
+      case e: TacticApplicationException => None
+      case e: TransformationException => None
     }
   }
 

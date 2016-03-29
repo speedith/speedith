@@ -1417,6 +1417,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       InteractiveTacticApplication.applyTacticInteractively(this, selectedTactic.getTacticProvider().getTactic(), subgoalIndex, proofPanel1);
       fireProofChangedEvent(new TacticAppliedEvent(this));
     } catch (Exception ex) {
+      ex.printStackTrace();
       JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
     }
   }
@@ -1445,7 +1446,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     return new DefaultComboBoxModel<>(tactics);
   }
 
-  private static class TacticListItem implements Comparable<InfRuleListItem> {
+  private static class TacticListItem implements Comparable<TacticListItem> {
 
     private final TacticProvider tacticProvider;
 
@@ -1466,7 +1467,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
 
     @Override
-    public int compareTo(InfRuleListItem o) {
+    public int compareTo(TacticListItem o) {
       return tacticProvider.toString().compareToIgnoreCase(o.toString());
     }
   }

@@ -1,8 +1,11 @@
 package speedith.core.reasoning.tactical.euler
 
+import speedith.core.lang.NullSpiderDiagram
 import speedith.core.reasoning.args.SubgoalIndexArg
 import speedith.core.reasoning.{Goals, Proof}
 import speedith.core.reasoning.tactical.{TacticApplicationResult, TacticApplicationException}
+
+import scala.reflect.internal.util.Collections
 
 
 /**
@@ -12,14 +15,17 @@ import speedith.core.reasoning.tactical.{TacticApplicationResult, TacticApplicat
  *
  */
 object BasicTacticals {
+
+  val emptyGoals =  Goals.createGoalsFrom(NullSpiderDiagram.getInstance())
+
   def THEN(tac1: Tactical, tac2: Tactical) = (name:String) => (state : Goals) => (subgoalIndex:Int) => (result : TacticApplicationResult) =>{
     val res = tac1(name)(state)(subgoalIndex)(result)
-    tac2(name)(res.getGoals)(subgoalIndex)(res)
+    tac1(name)(state)(subgoalIndex)(result) flatMap (res => tac2(name)(res.getGoals)(subgoalIndex)(res))
   }
 
   def ORELSE(tac1 : Tactical, tac2 : Tactical) : Tactical = (name:String) => (state : Goals) =>(subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
     val state1 = tac1(name)(state)(subGoalIndex)(result)
-    if (state1.equals(result)) {
+    if (state1.isEmpty) {
       tac2(name)(state)(subGoalIndex)(result)
     } else {
       state1
@@ -27,19 +33,19 @@ object BasicTacticals {
   }
 
   def id:Tactical = (name:String) => (state:Goals) =>(subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
-    result
+    Some(result)
   }
 
   def fail:Tactical = (name:String) =>(state:Goals) => (subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
-    new TacticApplicationResult()
+    None
   }
 
   def TRY(tac : Tactical) = (name:String) => (state:Goals) =>(subGoalIndex:Int)=>(result : TacticApplicationResult) => {
     ORELSE(tac, id)(name)(state)(subGoalIndex)(result)
   }
 
-  def REPEAT(tac : Tactical): Tactical = {//(name:String) =>(state : Goals) => (subGoalIndex:Int) =>(result : TacticApplicationResult) =>{
-    ORELSE(THEN(tac, REPEAT(tac)), id )//(name)(state)(subGoalIndex)(result)
+  def REPEAT(tac : Tactical): Tactical = (name:String) =>(state : Goals) => (subGoalIndex:Int) =>(result : TacticApplicationResult) =>{
+    ORELSE(THEN(tac, REPEAT(tac)), id )(name)(state)(subGoalIndex)(result)
   }
 
   def DEPTH_FIRST (predicate:Goals => Boolean, tac:Tactical):Tactical =  (name:String) => (state :Goals) =>(subGoalIndex:Int)=> (result : TacticApplicationResult) =>{

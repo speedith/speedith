@@ -59,7 +59,7 @@ public class TacticApplicationResult implements InferenceApplicationResult {
 
 
     public Goals getGoals() {
-        return applications.get(applications.size() -1).getGoals();
+        return applications.size() > 0 ? applications.get(applications.size() -1).getGoals() : null;
     }
     //</editor-fold>
 

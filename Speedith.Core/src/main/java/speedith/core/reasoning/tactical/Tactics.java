@@ -24,6 +24,7 @@ public class Tactics {
 
     static {
         registerProvider(UnifyContours.class);
+        registerProvider(CopyContours.class);
     }
 
     private Tactics() {};
