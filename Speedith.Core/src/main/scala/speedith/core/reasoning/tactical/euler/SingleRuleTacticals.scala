@@ -1,7 +1,7 @@
 package speedith.core.reasoning.tactical.euler
 
-import speedith.core.reasoning.Proof
-import speedith.core.reasoning.tactical.TacticApplicationException
+import speedith.core.reasoning.{Goals, Proof}
+import speedith.core.reasoning.tactical.{TacticApplicationResult, TacticApplicationException}
 import speedith.core.reasoning.tactical.euler.Choosers._
 import speedith.core.reasoning.tactical.euler.Predicates._
 import speedith.core.reasoning.tactical.euler.BasicTacticals._
@@ -17,28 +17,28 @@ import speedith.core.reasoning.tactical.euler.BasicTacticals._
 object SingleRuleTacticals {
 
   @throws(classOf[TacticApplicationException])
-  def introduceContour: Tactical = (name:String) => (state:Proof)  =>  {
-    BY(THEN(Tactics.introduceContour(0, _=>true, anyContour),TRY(Tactics.trivialTautology(0))))(name)(state)
+  def introduceContour: Tactical = (name:String) => (state:Goals) => (subGoalIndex : Int) => (result : TacticApplicationResult) =>  {
+    BY(THEN(Tactics.introduceContour( _=>true, anyContour),TRY(Tactics.trivialTautology)))(name)(state)(subGoalIndex)(result)
   }
 
-  @throws(classOf[TacticApplicationException])
-  def introduceShadedZone: Tactical = (name:String) => (state:Proof)  =>  {
+  /*  @throws(classOf[TacticApplicationException])
+  def introduceShadedZone: Tactical = (name:String) => (state:Goals)  =>  {
     BY(THEN(Tactics.introduceShadedZone(0,isPrimaryAndContainsMissingZones,someMissingZone),TRY(Tactics.trivialTautology(0))))(name)(state)
   }
 
   @throws(classOf[TacticApplicationException])
-  def removeShadedZone: Tactical = (name:String) => (state:Proof)  =>  {
+  def removeShadedZone: Tactical = (name:String) => (state:Goals)  =>  {
     BY(THEN(Tactics.removeShadedZone(0,someShadedZone), TRY(Tactics.trivialTautology(0))))(name)(state)
   }
 
   @throws(classOf[TacticApplicationException])
-  def eraseContour: Tactical = (name:String) => (state:Proof)  =>  {
+  def eraseContour: Tactical = (name:String) => (state:Goals)  =>  {
     BY(THEN(Tactics.eraseContour(0,containsContours,anyContour), TRY(Tactics.trivialTautology(0))))(name)(state)
   }
-
+  */
   @throws(classOf[TacticApplicationException])
-  def trivialTautology : Tactical = (name:String) => (state:Proof)  =>  {
-    BY(Tactics.trivialTautology(0))(name)(state)
+  def trivialTautology : Tactical = (name:String) => (state:Goals)  => (subGoalIndex : Int) => (result : TacticApplicationResult) => {
+    BY(Tactics.trivialTautology)(name)(state)(subGoalIndex)(result)
   }
 
 

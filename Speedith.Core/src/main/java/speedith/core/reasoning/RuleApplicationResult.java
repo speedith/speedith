@@ -33,7 +33,7 @@ package speedith.core.reasoning;
  * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class RuleApplicationResult {
+public class RuleApplicationResult implements InferenceApplicationResult {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private Goals goals;

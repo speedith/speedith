@@ -5,7 +5,7 @@ import speedith.core.reasoning.args._
 import speedith.core.reasoning.automatic.wrappers._
 import speedith.core.reasoning.rules._
 import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
-import speedith.core.reasoning.tactical.TacticApplicationException
+import speedith.core.reasoning.tactical.{TacticApplicationResult, TacticApplicationException}
 import speedith.core.reasoning.tactical.euler.Auxilliary._
 import speedith.core.reasoning.tactical.euler.Predicates._
 
@@ -58,38 +58,40 @@ object Tactics {
   }
 
 
-  private def createResults(goals: Option[SpiderDiagramOccurrence], state: Proof, rule: InferenceRule[RuleArg], args: RuleArg, name : String): Option[Proof] = goals match {
-    case None => None
-    case Some(diagram) =>
-      val result = Tuple2(diagram, new ProofTrace(state))
+  private def createResults(goals: Option[Goals], rule: InferenceRule[RuleArg], args: RuleArg, name : String, oldResult : TacticApplicationResult): TacticApplicationResult = goals match {
+    case None => oldResult
+    case Some(goal) =>
+//      val result = Tuple2(diagram, new ProofTrace(state))
       // intermediate is used to create the rule applications (applyRule changes the given proof and
       // returns a RuleApplicationResult!)
-      val intermediate = result._2.applyRule(rule, args, RuleApplicationType.TACTIC, name)
-      Some(result._2)
+      val result = rule.apply(args, goal).getGoals
+       new TacticApplicationResult(oldResult.getGoalsList :+ result)
+//      val intermediate = result._2.applyRule(rule, args, RuleApplicationType.TACTIC, name)
+//      Some(result._2)
   }
 
-  def introduceContour(subgoalIndex: Int, predicate : Predicate , contourChooser: Chooser[Set[String]]):Tactical = (name:String) => ( state: Proof) => {
+  def introduceContour(predicate : Predicate , contourChooser: Chooser[Set[String]]):Tactical = (name:String) => (state: Goals) => (subGoalIndex:Int) =>(result : TacticApplicationResult) =>{
     try {
-      val subgoal = getSubgoal(subgoalIndex, state)
+      val subgoal = getSubGoal(subGoalIndex, state)
       val target = firstMatchingDiagramAndContour(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
         d=> d.isInstanceOf[PrimarySpiderDiagramOccurrence] && predicate(d), contourChooser )
       target match {
-        case None => None
+        case None => result
         case Some(tupel) =>
           tupel._2 match {
             case Some(c) =>
-              createResults(Some(tupel._1), state, new IntroContour().asInstanceOf[InferenceRule[RuleArg]],
-                new MultipleRuleArgs(c.map(new ContourArg(subgoalIndex, tupel._1.getOccurrenceIndex, _)).toSeq: _*
-                ), name)
-            case None => None
+              createResults(Some(state), new IntroContour().asInstanceOf[InferenceRule[RuleArg]],
+                new MultipleRuleArgs(c.map(new ContourArg(subGoalIndex, tupel._1.getOccurrenceIndex, _)).toSeq: _*
+                ), name, result)
+            case None => result
           }
       }
     } catch {
-      case e: TacticApplicationException => None
+      case e: TacticApplicationException => result
     }
   }
 
-  def introduceShadedZone(subgoalIndex: Int, predicate: Proof => Predicate, zoneChooser : Chooser[Set[Zone]]): Tactical = (name:String) =>(state: Proof) => {
+/*  def introduceShadedZone(subgoalIndex: Int, predicate: Proof => Predicate, zoneChooser : Chooser[Set[Zone]]): Tactical = (name:String) =>(state: Proof) => {
     try {
       val subgoal = getSubgoal(subgoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
@@ -273,21 +275,21 @@ object Tactics {
       case e: TransformationException => None
     }
   }
-
-  def trivialTautology(subgoalIndex: Int) :  Tactical = (name:String) =>( state: Proof) => {
+*/
+  def trivialTautology :  Tactical = (name:String) =>( state: Goals) => (subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
     try {
-      val subgoal = getSubgoal(subgoalIndex, state)
+      val subgoal = getSubGoal(subGoalIndex, state)
       val target = firstMatchingDiagram(subgoal, isImplication)
       target match {
-        case None => None
+        case None => result
         case Some(diagram) =>
-          createResults(target, state, new TrivialImplicationTautology().asInstanceOf[InferenceRule[RuleArg]],
-            new SubDiagramIndexArg(subgoalIndex, diagram.getOccurrenceIndex),name)
+          createResults(Some(state), new TrivialImplicationTautology().asInstanceOf[InferenceRule[RuleArg]],
+            new SubDiagramIndexArg(subGoalIndex, diagram.getOccurrenceIndex),name, result)
       }
     }
     catch {
-      case e: TacticApplicationException => None
-      case e: TransformationException => None
+      case e: TacticApplicationException => result
+      case e: TransformationException => result
     }
   }
 

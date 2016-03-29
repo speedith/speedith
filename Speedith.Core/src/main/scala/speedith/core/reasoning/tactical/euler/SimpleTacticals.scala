@@ -1,6 +1,7 @@
 package speedith.core.reasoning.tactical.euler
 
-import speedith.core.reasoning.Proof
+import speedith.core.reasoning.tactical.TacticApplicationResult
+import speedith.core.reasoning.{Goals, Proof}
 import speedith.core.reasoning.rules.util.AutomaticUtils
 import speedith.core.reasoning.tactical.euler.Auxilliary._
 import speedith.core.reasoning.tactical.euler.Choosers._
@@ -17,7 +18,7 @@ import speedith.core.reasoning.tactical.euler.Tactics._
  */
 object SimpleTacticals {
 
-  def vennify : Tactical = {
+  /*def vennify : Tactical = {
     REPEAT(ORELSE(trivialTautology(0),
       introduceShadedZone(0,isPrimaryAndContainsMissingZones,someMissingZone)))
   }
@@ -34,20 +35,20 @@ object SimpleTacticals {
   def deVennifyFast : Tactical = {
     REPEAT(ORELSE(trivialTautology(0),removeShadedZone(0,allShadedZones)))
   }
+*/
 
-
-  def unifyContourSets : Tactical = (name:String) => (state:Proof) => {
-    val contours = getContoursInSubGoal(0, state)
-    DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram(0),
-      ORELSE(trivialTautology(0),introduceContour(0, containsLessContours(contours), someGivenContoursButNotInDiagram(contours))))(name)(state)
+  def unifyContourSets : Tactical = (name:String) => (state:Goals) => (subGoalIndex : Int) => (result : TacticApplicationResult) =>{
+    val contours = getContoursInSubGoal(subGoalIndex, state)
+    DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram(subGoalIndex),
+      ORELSE(trivialTautology,introduceContour( containsLessContours(contours), someGivenContoursButNotInDiagram(contours))))(name)(state)(subGoalIndex)(result)
   }
 
-  def unifyContourSetsFast : Tactical = (name:String) => (state:Proof) => {
-    val contours = getContoursInSubGoal(0, state)
-    DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram(0),
-      ORELSE(trivialTautology(0),introduceContour(0, containsLessContours(contours), allInGivenContoursButNotInDiagram(contours))))(name)(state)
+  def unifyContourSetsFast : Tactical = (name:String) => (state:Goals) => (subGoalIndex : Int) => (result : TacticApplicationResult) =>{
+    val contours = getContoursInSubGoal(subGoalIndex, state)
+    DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram(subGoalIndex),
+      ORELSE(trivialTautology,introduceContour(containsLessContours(contours), allInGivenContoursButNotInDiagram(contours))))(name)(state)(subGoalIndex)(result)
   }
-
+/*
   def eraseAllContours : Tactical = {
     REPEAT(ORELSE(trivialTautology(0),
       eraseContour(0,containsContours, anyContour)))
@@ -66,7 +67,7 @@ object SimpleTacticals {
     THEN(unifyContourSetsFast, THEN(vennifyFast, THEN(combineAll, matchConclusionFast)))
   }
 
-  def matchConclusionFast : Tactical = (name:String) => (state: Proof) => {
+  def matchConclusionFast : Tactical = (name:String) => (state: Goals) => {
     val concContours =getContoursInConclusion(0,state)
     val concShadedZones = getShadedZonesInConclusion(0,state)
     val concUnshadedZones = getUnshadedZonesInConclusion(0,state)
@@ -83,7 +84,7 @@ object SimpleTacticals {
       REPEAT(ORELSE(trivialTautology(0), removeShadedZone(0,allVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)
   }
 
-  def matchConclusion : Tactical = (name:String) => (state:Proof) => {
+  def matchConclusion : Tactical = (name:String) => (state:Goals) => {
     val concContours =getContoursInConclusion(0,state)
     val concShadedZones = getShadedZonesInConclusion(0,state)
     val concUnshadedZones = getUnshadedZonesInConclusion(0,state)
@@ -112,5 +113,5 @@ object SimpleTacticals {
       ORELSE(idempotency(0),
         ORELSE(copyShading(0),
           introduceShadedZone(0,collectDiagramsWithMissingZonesThatCouldBeCopied(0,_).contains, someMissingZone)))))
-  }
+  } */
 }

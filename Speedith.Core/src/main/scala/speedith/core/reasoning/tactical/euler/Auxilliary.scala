@@ -1,7 +1,8 @@
 package speedith.core.reasoning.tactical.euler
 
 import speedith.core.lang._
-import speedith.core.reasoning.Proof
+import speedith.core.reasoning.{Goals, Proof}
+import speedith.core.reasoning.args.SubgoalIndexArg
 import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramOccurrence, PrimarySpiderDiagramOccurrence, SpiderDiagramOccurrence}
 import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
 import speedith.core.reasoning.tactical.TacticApplicationException
@@ -19,8 +20,8 @@ import scala.collection.JavaConversions._
 object Auxilliary {
 
 
-  def collectDiagramsWithMissingZonesThatCouldBeCopied(subGoalIndex: Int, state : Proof): Set[SpiderDiagramOccurrence ] =  {
-    val target =getSubgoal(subGoalIndex, state)
+  def collectDiagramsWithMissingZonesThatCouldBeCopied(subGoalIndex: Int, state : Goals): Set[SpiderDiagramOccurrence ] =  {
+    val target =getSubGoal(subGoalIndex, state)
     val result = getDiagramWithMissingZonesThatCouldBeCopied(target.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0))
     result
   }
@@ -56,8 +57,8 @@ object Auxilliary {
   }
 
 
-  def getContoursInConclusion(subgoalIndex : Int, state:Proof) : Set[String]= {
-    val goal = state.getLastGoals.getGoalAt(subgoalIndex)
+  def getContoursInConclusion(subgoalIndex : Int, state:Goals) : Set[String]= {
+    val goal = state.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
       AutomaticUtils.collectContours(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1)).toSet
     } else {
@@ -65,8 +66,8 @@ object Auxilliary {
     }
   }
 
-  def getContoursInSubGoal(subgoalIndex: Int, state:Proof) : Set[String]= {
-    val goal = state.getLastGoals.getGoalAt(subgoalIndex)
+  def getContoursInSubGoal(subgoalIndex: Int, state:Goals) : Set[String]= {
+    val goal = state.getGoalAt(subgoalIndex)
     AutomaticUtils.collectContours(goal).toSet
   }
 
@@ -75,8 +76,8 @@ object Auxilliary {
     case diagram : CompoundSpiderDiagram => diagram.getOperands.flatMap(collectShadedZones).toSet
   }
 
-  def getShadedZonesInConclusion(subgoalIndex : Int, state : Proof) : Set[Zone] = {
-    val goal = state.getLastGoals.getGoalAt(subgoalIndex)
+  def getShadedZonesInConclusion(subgoalIndex : Int, state : Goals) : Set[Zone] = {
+    val goal = state.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
         collectShadedZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
     } else {
@@ -89,8 +90,8 @@ object Auxilliary {
     case diagram : CompoundSpiderDiagram => diagram.getOperands.flatMap(collectShadedZones).toSet
   }
 
-  def getUnshadedZonesInConclusion(subgoalIndex : Int, state : Proof) : Set[Zone] = {
-    val goal = state.getLastGoals.getGoalAt(subgoalIndex)
+  def getUnshadedZonesInConclusion(subgoalIndex : Int, state : Goals) : Set[Zone] = {
+    val goal = state.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
       collectUnShadedZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
     } else {
@@ -103,8 +104,8 @@ object Auxilliary {
     case diagram : CompoundSpiderDiagram => diagram.getOperands.flatMap(collectShadedZones).toSet
   }
 
-  def getVisibleZonesInConclusion(subGoalIndex: Int, state: Proof) : Set[Zone] = {
-    val goal = state.getLastGoals.getGoalAt(subGoalIndex)
+  def getVisibleZonesInConclusion(subGoalIndex: Int, state: Goals) : Set[Zone] = {
+    val goal = state.getGoalAt(subGoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
       collectVisibleZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
     } else {
@@ -112,8 +113,8 @@ object Auxilliary {
     }
   }
 
-  def equalContourSetsInEachPrimaryDiagram(subgoalIndex : Int) :Proof => Boolean = (state:Proof) => {
-    val goal = state.getLastGoals.getGoalAt(subgoalIndex)
+  def equalContourSetsInEachPrimaryDiagram(subgoalIndex : Int) :Goals => Boolean = (state:Goals) => {
+    val goal = state.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
       val subDiagams = ReasoningUtils.getPrimaryDiagrams(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0))
       subDiagams.map(pd => pd.getAllContours.toSet).forall(subDiagams.head.getAllContours.toSet.sameElements)
@@ -140,6 +141,13 @@ object Auxilliary {
       if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
         SpiderDiagramOccurrence.wrapDiagram(goal, 0)
       } else throw new TacticApplicationException("No subgoal for this tactic")
+    } else throw new TacticApplicationException("No subgoal for this tactic")
+  }
+
+  def getSubGoal(subgoalIndex : Int, goals: Goals): SpiderDiagramOccurrence = {
+    val goal = goals.getGoalAt(subgoalIndex)
+    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      SpiderDiagramOccurrence.wrapDiagram(goal, 0)
     } else throw new TacticApplicationException("No subgoal for this tactic")
   }
 }
