@@ -10,7 +10,7 @@ import java.util.Locale;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public abstract class SimpleTactic implements Tactic<SubgoalIndexArg>, InferenceProvider<SubgoalIndexArg> {
+public abstract class SimpleTactic implements Tactic<SubgoalIndexArg>, TacticProvider {
 
     // <editor-fold defaultstate="collapsed" desc="InferenceProvider Implementation">
     @Override
@@ -36,5 +36,10 @@ public abstract class SimpleTactic implements Tactic<SubgoalIndexArg>, Inference
     @Override
     public Class<SubgoalIndexArg> getArgumentType() {
         return SubgoalIndexArg.class;
+    }
+
+    @Override
+    public Tactic<SubgoalIndexArg> getTactic() {
+        return this;
     }
 }

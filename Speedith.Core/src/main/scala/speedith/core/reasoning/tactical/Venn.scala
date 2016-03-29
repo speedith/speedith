@@ -5,7 +5,7 @@ import java.util.Locale
 
 import speedith.core.lang.DiagramType
 import speedith.core.reasoning.Goals
-import speedith.core.reasoning.args.RuleArg
+import speedith.core.reasoning.args.{SubgoalIndexArg, RuleArg}
 import scala.collection.JavaConversions._
 /**
   * TODO: Description
@@ -23,4 +23,5 @@ class Venn extends SimpleTactic{
   override def getApplicableTypes: util.Set[DiagramType] = Set(DiagramType.EulerDiagram)
 
   override def getInferenceName: String = ???
+
 }

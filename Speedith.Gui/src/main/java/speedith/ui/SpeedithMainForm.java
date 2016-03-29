@@ -47,9 +47,12 @@ import speedith.core.reasoning.rules.util.AutomaticUtils;
 import speedith.core.reasoning.rules.util.HeuristicUtils;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
 import speedith.core.reasoning.tactical.TacticApplicationException;
+import speedith.core.reasoning.tactical.TacticProvider;
+import speedith.core.reasoning.tactical.Tactics;
 import speedith.ui.automatic.*;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
+import speedith.ui.tactics.InteractiveTacticApplication;
 import speedith.ui.tactics.TacticMenuItem;
 import speedith.ui.tactics.TacticMenuItemAccelerated;
 import speedith.ui.tactics.TacticMenuItemRegular;
@@ -114,6 +117,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenuItem useSdExample3MenuItem;
   private javax.swing.JLabel lblAppliedRules;
   private javax.swing.JList<InfRuleListItem> lstAppliedRules;
+  private javax.swing.JLabel lblTactics;
+  private javax.swing.JList<TacticListItem> lstTactics;
   private javax.swing.JMenuBar menuBar;
   private javax.swing.JMenuItem goalTextInputMenuItem;
   private javax.swing.JPanel pnlRulesSidePane;
@@ -121,6 +126,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenu proofMenu;
   private javax.swing.JMenuItem cropProof;
   private javax.swing.JScrollPane scrlPnlAppliedRules;
+  private javax.swing.JScrollPane scrlPnlTactics;
+
 /*  private javax.swing.JMenu reasoningMenu;
   private javax.swing.JMenuItem proveAny;
   private javax.swing.JMenuItem proveFromHere;*/
@@ -298,6 +305,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     lblAppliedRules = new javax.swing.JLabel();
     scrlPnlAppliedRules = new javax.swing.JScrollPane();
     lstAppliedRules = new javax.swing.JList();
+    lblTactics = new javax.swing.JLabel();
+    lstTactics = new javax.swing.JList<>();
+    scrlPnlTactics = new javax.swing.JScrollPane();
     menuBar = new javax.swing.JMenuBar();
     fileMenu = new javax.swing.JMenu();
     openMenu = new javax.swing.JMenu();
@@ -362,7 +372,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       }
     });
     scrlPnlAppliedRules.setViewportView(lstAppliedRules);
-
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 1;
@@ -373,6 +382,36 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
     pnlRulesSidePane.add(scrlPnlAppliedRules, gridBagConstraints);
 
+    lblTactics.setLabelFor(lstTactics);
+    lblTactics.setText("Tactics");
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 0;
+    gridBagConstraints.gridy = 2;
+    gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+    gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+    gridBagConstraints.weightx = 1.0;
+    gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+    pnlRulesSidePane.add(lblTactics, gridBagConstraints);
+
+    lstTactics.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    lstTactics.setModel(getTacticsList());
+    lstTactics.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        onTacticClicked(e);
+      }
+
+    });
+    scrlPnlTactics.setViewportView(lstTactics);
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 0;
+    gridBagConstraints.gridy = 3;
+    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+    gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+    gridBagConstraints.weightx = 1.0;
+    gridBagConstraints.weighty = 1.0;
+    gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
+    pnlRulesSidePane.add(scrlPnlTactics,gridBagConstraints);
     mainSplitPane.setRightComponent(pnlRulesSidePane);
 
     initMenuBar();
@@ -404,6 +443,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
+
+
 
   private void initToolBar() {
     autoToolBar = new JToolBar();
@@ -656,7 +697,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 //    menuBar.add(reasoningMenu);
 
 
-    tacticsMenu.setText("Tactics");
+/*    tacticsMenu.setText("Tactics");
 
     regularTacticsMenu.setText("Regular");
     acceleratedTacticsMenu.setText("Accelerated");
@@ -693,7 +734,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
 
     menuBar.add(tacticsMenu);
-
+*/
     setJMenuBar(menuBar);
   }
 
@@ -1100,6 +1141,17 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
   }//GEN-LAST:event_onRuleItemClicked
 
+  private void onTacticClicked(MouseEvent e) {
+    if (e.getClickCount() == 2) {
+      if (!proofPanel1.isFinished()) {
+        int index = lstTactics.locationToIndex(e.getPoint());
+        DefaultComboBoxModel model = (DefaultComboBoxModel) lstTactics.getModel();
+        TacticListItem selectedRule = (TacticListItem) model.getElementAt(index);
+        applyTactic(selectedRule);
+      }
+    }
+  }
+
   private void onTextInputClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onTextInputClicked
     TextSDInputDialog dialog = new TextSDInputDialog(this, true);
     if (proofPanel1.getLastGoals() != null && !proofPanel1.getLastGoals().isEmpty()) {
@@ -1359,6 +1411,16 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
   }
 
+  private void applyTactic(TacticListItem selectedTactic) {
+    int subgoalIndex = 0;
+    try {
+      InteractiveTacticApplication.applyTacticInteractively(this, selectedTactic.getTacticProvider().getTactic(), subgoalIndex, proofPanel1);
+      fireProofChangedEvent(new TacticAppliedEvent(this));
+    } catch (Exception ex) {
+      JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
+    }
+  }
+
   private static Goals applyInferenceRule(String infRuleName, RuleArg ruleArg, Goals goals0) {
     InferenceRule<? extends RuleArg> infRule = InferenceRules.getInferenceRule(infRuleName);
     try {
@@ -1371,6 +1433,43 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }
 
   // </editor-fold>
+
+  private ListModel<TacticListItem> getTacticsList() {
+    Set<String> knownTactics = Tactics.getKnownTactics(activeDiagram);
+    TacticListItem[] tactics = new TacticListItem[knownTactics.size()];
+    int i = 0;
+    for (String providerName : knownTactics) {
+      tactics[i++] = new TacticListItem(Tactics.getProvider(providerName));
+    }
+    Arrays.sort(tactics);
+    return new DefaultComboBoxModel<>(tactics);
+  }
+
+  private static class TacticListItem implements Comparable<InfRuleListItem> {
+
+    private final TacticProvider tacticProvider;
+
+    public TacticListItem(TacticProvider tacticProvider) {
+      if (tacticProvider == null) {
+        throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_NULL_ARGUMENT", "infRuleProvider"));
+      }
+      this.tacticProvider = tacticProvider;
+    }
+
+    public TacticProvider getTacticProvider() {
+      return tacticProvider;
+    }
+
+    @Override
+    public String toString() {
+      return tacticProvider.getPrettyName();
+    }
+
+    @Override
+    public int compareTo(InfRuleListItem o) {
+      return tacticProvider.toString().compareToIgnoreCase(o.toString());
+    }
+  }
 
   // <editor-fold defaultstate="collapsed" desc="Private methods creating examples of regions and zones">
   private static Region regionA_B() {

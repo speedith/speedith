@@ -38,5 +38,4 @@ class UnifyContours extends SimpleTactic {
 
   override def getInferenceName: String = "unify_contours"
 
-
 }
