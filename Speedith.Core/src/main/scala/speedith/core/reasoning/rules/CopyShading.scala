@@ -14,7 +14,7 @@ import scala.collection.JavaConversions._
 class CopyShading extends SimpleInferenceRule[MultipleRuleArgs] with Serializable {
   def getInferenceRule: InferenceRule[MultipleRuleArgs] = this
 
-  def getInferenceRuleName: String = "copy_shading"
+  def getInferenceName: String = "copy_shading"
 
   def getApplicableTypes:  java.util.Set[DiagramType] = Set(DiagramType.EulerDiagram, DiagramType.SpiderDiagram)
 

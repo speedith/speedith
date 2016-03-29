@@ -54,7 +54,7 @@ public class EquivalenceElimination extends UnaryForwardRule implements Serializ
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

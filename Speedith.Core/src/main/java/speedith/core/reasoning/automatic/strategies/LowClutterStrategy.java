@@ -3,7 +3,7 @@ package speedith.core.reasoning.automatic.strategies;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.Proof;
-import speedith.core.reasoning.RuleApplication;
+import speedith.core.reasoning.InferenceApplication;
 import speedith.core.reasoning.automatic.AutomaticProofException;
 import speedith.core.reasoning.rules.*;
 import speedith.core.reasoning.rules.util.HeuristicUtils;
@@ -47,10 +47,10 @@ public class LowClutterStrategy implements Strategy, StrategyProvider {
     @Override
     public int getCost(Proof p) {
 
-        List<RuleApplication> applications = p.getRuleApplications();
+        List<InferenceApplication> applications = p.getInferenceApplications();
         int cost = 0;
-        for (RuleApplication app: applications) {
-            int debug = COSTS.get(app.getInferenceRule().getClass());
+        for (InferenceApplication app: applications) {
+            int debug = COSTS.get(app.getInference().getClass());
             cost +=  debug;
         }
         return cost;

@@ -54,7 +54,7 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
      * The name of this inference rule. <p>This value is returned by the
-     * {@link AddFeet#getInferenceRuleName()} method.</p>
+     * {@link AddFeet#getInferenceName()} method.</p>
      */
     public static final String InferenceRuleName = "add_feet";
 
@@ -83,7 +83,7 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

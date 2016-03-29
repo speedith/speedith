@@ -50,7 +50,7 @@ public class DoubleNegationIntroduction extends UnaryForwardRule implements Seri
     private static final long serialVersionUID = 3606221270559071843L;
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

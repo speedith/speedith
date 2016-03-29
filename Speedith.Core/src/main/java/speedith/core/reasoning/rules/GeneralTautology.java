@@ -52,7 +52,7 @@ public class GeneralTautology extends UnaryForwardRule implements Serializable {
     private static final long serialVersionUID = -5205748212133960769L;
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

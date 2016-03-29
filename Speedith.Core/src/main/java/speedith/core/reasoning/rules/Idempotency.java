@@ -56,7 +56,7 @@ public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> impleme
 
     /**
      * The name of this inference rule.
-     * <p>This value is returned by the {@link Idempotency#getInferenceRuleName()}
+     * <p>This value is returned by the {@link Idempotency#getInferenceName()}
      * method.</p>
      */
     public static final String InferenceRuleName = "idempotency";
@@ -78,7 +78,7 @@ public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> impleme
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

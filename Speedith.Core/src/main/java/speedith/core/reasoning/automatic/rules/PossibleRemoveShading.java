@@ -1,11 +1,9 @@
 package speedith.core.reasoning.automatic.rules;
 
 import speedith.core.lang.Zone;
-import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.Proof;
-import speedith.core.reasoning.RuleApplication;
+import speedith.core.reasoning.InferenceApplication;
 import speedith.core.reasoning.args.MultipleRuleArgs;
-import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.RemoveShading;
@@ -38,8 +36,8 @@ public class PossibleRemoveShading extends PossibleRuleApplication<MultipleRuleA
 
     @Override
     public boolean isSuperfluous(Proof p, int subGoalIndex) {
-        for (RuleApplication application : p.getRuleApplications()) {
-            if (application.getInferenceRule() instanceof RemoveShading) {
+        for (InferenceApplication application : p.getInferenceApplications()) {
+            if (application.getInference() instanceof RemoveShading) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
                 MultipleRuleArgs thisArgs =  getArg(subGoalIndex);
                 // application is superfluous if the other rule

@@ -1,11 +1,9 @@
 package speedith.core.reasoning.automatic.rules;
 
-import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.Proof;
-import speedith.core.reasoning.RuleApplication;
+import speedith.core.reasoning.InferenceApplication;
 import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
-import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.automatic.wrappers.PrimarySpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.IntroContour;
 import speedith.core.reasoning.rules.RemoveContour;
@@ -43,9 +41,9 @@ public class PossibleIntroduceContour extends PossibleRuleApplication<MultipleRu
     @Override
     public boolean isSuperfluous(Proof p, int subGoalIndex) {
         boolean result = false;
-        for (int i =0; i< p.getRuleApplicationCount();i++) {
-            RuleApplication application = p.getRuleApplicationAt(i);
-            if (application.getInferenceRule() instanceof RemoveContour) {
+        for (int i =0; i< p.getInferenceApplicationCount();i++) {
+            InferenceApplication application = p.getInferenceApplicationAt(i);
+            if (application.getInference() instanceof RemoveContour) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
                 MultipleRuleArgs thisArgs =  getArg(subGoalIndex);
                 // application is superfluous if for all elements of the multiple arguments:
@@ -63,7 +61,7 @@ public class PossibleIntroduceContour extends PossibleRuleApplication<MultipleRu
                                 thisArg.getContour().equals(arg.getContour()));
                     }
                 }
-            } else if (application.getInferenceRule() instanceof IntroContour) {
+            } else if (application.getInference() instanceof IntroContour) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
                 MultipleRuleArgs thisArgs = getArg(subGoalIndex);
                 if (args.size() == thisArgs.size() && args.size() > 0) {

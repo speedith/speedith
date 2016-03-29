@@ -50,7 +50,7 @@ public class DoubleNegationElimination extends UnaryForwardRule implements Seria
     private static final long serialVersionUID = 8293162053994300758L;
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

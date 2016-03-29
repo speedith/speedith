@@ -54,7 +54,7 @@ public class ExcludedMiddle extends UnaryForwardRule implements Serializable {
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

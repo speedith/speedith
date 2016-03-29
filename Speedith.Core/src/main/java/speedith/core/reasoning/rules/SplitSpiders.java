@@ -50,7 +50,7 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
-     * The name of this inference rule. <p>This value is returned by the {@link SplitSpiders#getInferenceRuleName()}
+     * The name of this inference rule. <p>This value is returned by the {@link SplitSpiders#getInferenceName()}
      * method.</p>
      */
     public static final String InferenceRuleName = "split_spiders";
@@ -76,7 +76,7 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

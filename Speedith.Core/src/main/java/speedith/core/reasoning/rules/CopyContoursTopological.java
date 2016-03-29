@@ -43,7 +43,7 @@ public class CopyContoursTopological extends SimpleInferenceRule<MultipleRuleArg
         }
 
         @Override
-        public String getInferenceRuleName() {
+        public String getInferenceName() {
             return InferenceRuleName;
         }
 

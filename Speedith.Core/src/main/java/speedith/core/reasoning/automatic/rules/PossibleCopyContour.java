@@ -1,12 +1,9 @@
 package speedith.core.reasoning.automatic.rules;
 
-import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.Proof;
-import speedith.core.reasoning.RuleApplication;
+import speedith.core.reasoning.InferenceApplication;
 import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
-import speedith.core.reasoning.args.RuleArg;
-import speedith.core.reasoning.automatic.AppliedRules;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.CopyContours;
 import speedith.core.reasoning.rules.CopyContoursTopological;
@@ -42,8 +39,8 @@ public class PossibleCopyContour extends PossibleRuleApplication<MultipleRuleArg
 
     @Override
     public boolean isSuperfluous(Proof p, int subGoalIndex) {
-        for (RuleApplication application : p.getRuleApplications() ) {
-            if (application.getInferenceRule() instanceof CopyContours) {
+        for (InferenceApplication application : p.getInferenceApplications() ) {
+            if (application.getInference() instanceof CopyContours) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
                 MultipleRuleArgs thisArgs =  getArg(subGoalIndex);
                 if (args.size() == thisArgs.size() && args.size() > 0) {

@@ -109,7 +109,7 @@ public final class InteractiveRuleApplication {
      * application failed (while the rule was being applied). This could be due
      * to invalid arguments or similar.
      */
-    public static RuleApplicationResult applyRuleInteractively(JFrame window, InferenceRule<? extends RuleArg> rule, int subgoalIndex, Goals goals) throws RuleApplicationException {
+    public static InferenceApplicationResult applyRuleInteractively(JFrame window, InferenceRule<? extends RuleArg> rule, int subgoalIndex, Goals goals) throws RuleApplicationException {
         return applyRuleInteractively(window, rule, subgoalIndex, null, goals);
     }
 
@@ -130,7 +130,7 @@ public final class InteractiveRuleApplication {
      * application failed (while the rule was being applied). This could be due
      * to invalid arguments or similar.
      */
-    public static RuleApplicationResult applyRuleInteractively(JFrame window, String rule, int subgoalIndex, Goals goals) throws RuleApplicationException {
+    public static InferenceApplicationResult applyRuleInteractively(JFrame window, String rule, int subgoalIndex, Goals goals) throws RuleApplicationException {
         return applyRuleInteractively(window, InferenceRules.getInferenceRule(rule), subgoalIndex, null, goals);
     }
 
@@ -150,7 +150,7 @@ public final class InteractiveRuleApplication {
      * application failed (while the rule was being applied). This could be due
      * to invalid arguments or similar.
      */
-    public static RuleApplicationResult applyRuleInteractively(JFrame window, String rule, Goals goals) throws RuleApplicationException {
+    public static InferenceApplicationResult applyRuleInteractively(JFrame window, String rule, Goals goals) throws RuleApplicationException {
         return applyRuleInteractively(window, InferenceRules.getInferenceRule(rule), 0, null, goals);
     }
 
@@ -168,7 +168,7 @@ public final class InteractiveRuleApplication {
      * application failed (while the rule was being applied). This could be due
      * to invalid arguments or similar.
      */
-    public static RuleApplicationResult applyRuleInteractively(String rule, Goals goals) throws RuleApplicationException {
+    public static InferenceApplicationResult applyRuleInteractively(String rule, Goals goals) throws RuleApplicationException {
         return applyRuleInteractively(null, InferenceRules.getInferenceRule(rule), 0, null, goals);
     }
 
@@ -185,7 +185,7 @@ public final class InteractiveRuleApplication {
      * application failed (while the rule was being applied). This could be due
      * to invalid arguments or similar.
      */
-    public static RuleApplicationResult applyRuleInteractively(String rule, SpiderDiagram diagram) throws RuleApplicationException {
+    public static InferenceApplicationResult applyRuleInteractively(String rule, SpiderDiagram diagram) throws RuleApplicationException {
         return applyRuleInteractively(null, InferenceRules.getInferenceRule(rule), 0, null, Goals.createGoalsFrom(diagram));
     }
 
@@ -228,7 +228,7 @@ public final class InteractiveRuleApplication {
      * @throws RuleApplicationException
      */
     @SuppressWarnings("unchecked")
-    private static RuleApplicationResult applyRuleInteractively(JFrame window, InferenceRule<? extends RuleArg> rule, int subgoalIndex, Proof proof, Goals goals) throws RuleApplicationException {
+    private static InferenceApplicationResult applyRuleInteractively(JFrame window, InferenceRule<? extends RuleArg> rule, int subgoalIndex, Proof proof, Goals goals) throws RuleApplicationException {
         // If the caller provided a proof object, use it to get the last goals
         // from and apply the rule one. Otherwise use the goals.
         // Throw an exception if not exactly one of them is null.
@@ -255,7 +255,7 @@ public final class InteractiveRuleApplication {
 
             // Finally, apply the inference rule.
             if (proof != null) {
-                return proof.applyRule((InferenceRule<RuleArg>) rule, ruleArg, RuleApplicationType.INTERACTIVE,"");
+                return proof.applyRule((Inference<RuleArg, RuleApplicationResult>) rule, ruleArg, RuleApplicationType.INTERACTIVE,"");
             } else {
                 return rule.apply(ruleArg, goals);
             }

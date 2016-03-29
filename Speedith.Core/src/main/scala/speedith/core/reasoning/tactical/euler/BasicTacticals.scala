@@ -14,7 +14,7 @@ import speedith.core.reasoning.tactical.{TacticApplicationResult, TacticApplicat
 object BasicTacticals {
   def THEN(tac1: Tactical, tac2: Tactical) = (name:String) => (state : Goals) => (subgoalIndex:Int) => (result : TacticApplicationResult) =>{
     val res = tac1(name)(state)(subgoalIndex)(result)
-    tac2(name)(res.getLastGoal)(subgoalIndex)(res)
+    tac2(name)(res.getGoals)(subgoalIndex)(res)
   }
 
   def ORELSE(tac1 : Tactical, tac2 : Tactical) : Tactical = (name:String) => (state : Goals) =>(subGoalIndex:Int)=> (result : TacticApplicationResult) =>{

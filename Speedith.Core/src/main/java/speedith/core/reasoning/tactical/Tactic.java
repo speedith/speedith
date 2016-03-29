@@ -10,7 +10,7 @@ import speedith.core.reasoning.args.RuleArg;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public interface Tactic extends Inference<TacticApplicationResult> {
+public interface Tactic<TArgs extends RuleArg> extends Inference<TArgs, TacticApplicationResult> {
 
     @Override
     TacticApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException;

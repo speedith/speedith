@@ -54,7 +54,7 @@ public class ConjunctionIntroduction extends UnaryForwardRule implements Seriali
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

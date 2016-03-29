@@ -64,8 +64,8 @@ object Tactics {
 //      val result = Tuple2(diagram, new ProofTrace(state))
       // intermediate is used to create the rule applications (applyRule changes the given proof and
       // returns a RuleApplicationResult!)
-      val result = rule.apply(args, goal).getGoals
-       new TacticApplicationResult(oldResult.getGoalsList :+ result)
+      val result = rule.apply(args, goal)
+       new TacticApplicationResult(oldResult.getApplicationList :+ result)
 //      val intermediate = result._2.applyRule(rule, args, RuleApplicationType.TACTIC, name)
 //      Some(result._2)
   }

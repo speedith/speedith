@@ -118,7 +118,7 @@ public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
 
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

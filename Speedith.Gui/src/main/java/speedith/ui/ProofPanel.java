@@ -152,16 +152,16 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Proof Interface Implementation">
-    public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<TRuleArg> rule, RuleApplicationType type, String typeSpecifier) throws RuleApplicationException {
+    public <TRuleArg extends RuleArg> InferenceApplicationResult applyRule(Inference<TRuleArg,?> rule, RuleApplicationType type, String typeSpecifier) throws RuleApplicationException {
         return applyRule(rule, null, type, typeSpecifier);
     }
 
-    public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args, RuleApplicationType type, String typeSpecifier) throws RuleApplicationException {
-        RuleApplicationResult appResult = proof.applyRule(rule, args, type, typeSpecifier);
+    public <TRuleArg extends RuleArg> InferenceApplicationResult applyRule(Inference<? super TRuleArg,?> rule, TRuleArg args, RuleApplicationType type, String typeSpecifier) throws RuleApplicationException {
+        InferenceApplicationResult appResult = proof.applyRule(rule, args, type, typeSpecifier);
         if (proof.isFinished()) {
             addProofFinished(rule, args, type, typeSpecifier);
         } else {
-            addGoals(proof.getGoalsCount() - 1, appResult.getGoals(), rule, args, proof.getRuleApplicationAt(proof.getRuleApplicationCount()-1));
+            addGoals(proof.getGoalsCount() - 1, appResult.getGoals(), rule, args, proof.getInferenceApplicationAt(proof.getInferenceApplicationCount()-1));
         }
         // Scroll the last component into view:
         scrlGoals.getVerticalScrollBar().setValue(scrlGoals.getVerticalScrollBar().getMaximum());
@@ -198,16 +198,16 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         return proof.getGoals();
     }
 
-    public List<RuleApplication> getRuleApplications() {
-        return proof.getRuleApplications();
+    public List<InferenceApplication> getInferenceApplications() {
+        return proof.getInferenceApplications();
     }
 
-    public RuleApplication getRuleApplicationAt(int index) {
-        return proof.getRuleApplicationAt(index);
+    public InferenceApplication getInferenceApplicationAt(int index) {
+        return proof.getInferenceApplicationAt(index);
     }
 
-    public int getRuleApplicationCount() {
-        return proof.getRuleApplicationCount();
+    public int getInferenceApplicationCount() {
+        return proof.getInferenceApplicationCount();
     }
 
     public boolean isFinished() {
@@ -230,9 +230,9 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         Proof tempProof = prover.generateProof(normalised);
         if (!(tempProof == null)) {
             newProof(normalised);
-            for (RuleApplication appl : tempProof.getRuleApplications()) {
+            for (InferenceApplication appl : tempProof.getInferenceApplications()) {
                 try {
-                    applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments(), RuleApplicationType.AUTOMATIC,prover.getPrettyName());
+                    applyRule((InferenceRule<? super RuleArg>) appl.getInference(), appl.getRuleArguments(), RuleApplicationType.AUTOMATIC,prover.getPrettyName());
                 } catch (RuleApplicationException e) {
                     e.printStackTrace();
                 }
@@ -246,11 +246,11 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         if (proof == null || proof.getLastGoals() == null) {
             throw new AutomaticProofException("No subgoal to prove");
         }
-        int currentLength = this.proof.getRuleApplicationCount();
-        int targetLength = newProof.getRuleApplicationCount();
-        for (RuleApplication appl : newProof.getRuleApplications().subList(currentLength, targetLength)) {
+        int currentLength = this.proof.getInferenceApplicationCount();
+        int targetLength = newProof.getInferenceApplicationCount();
+        for (InferenceApplication appl : newProof.getInferenceApplications().subList(currentLength, targetLength)) {
             try {
-                applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments(), appl.getType(),appl.getTypeSpecifier());
+                applyRule((InferenceRule<? super RuleArg>) appl.getInference(), appl.getRuleArguments(), appl.getType(),appl.getTypeSpecifier());
             } catch (RuleApplicationException e) {
                 e.printStackTrace();
             }
@@ -262,14 +262,14 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         if (proof == null || proof.getLastGoals() == null) {
             throw new AutomaticProofException("No subgoal to prove");
         }
-        int currentLength = this.proof.getRuleApplicationCount();
-        int targetLength = newProof.getRuleApplicationCount();
+        int currentLength = this.proof.getInferenceApplicationCount();
+        int targetLength = newProof.getInferenceApplicationCount();
         if (currentLength >= targetLength) {
             throw new AutomaticProofException("No new proof steps in given proof");
         }
-        RuleApplication appl = newProof.getRuleApplicationAt(currentLength);
+        InferenceApplication appl = newProof.getInferenceApplicationAt(currentLength);
         try {
-            applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments(), appl.getType(), appl.getTypeSpecifier());
+            applyRule((InferenceRule<? super RuleArg>) appl.getInference(), appl.getRuleArguments(), appl.getType(), appl.getTypeSpecifier());
         } catch (RuleApplicationException e) {
             e.printStackTrace();
         }
@@ -286,9 +286,9 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
     public void replaceCurrentProof( Proof proof) {
         if (!(proof==null)) {
             newProof(proof.getInitialGoals());
-            for (RuleApplication appl : proof.getRuleApplications()) {
+            for (InferenceApplication appl : proof.getInferenceApplications()) {
                 try {
-                    applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments(), appl.getType(), appl.getTypeSpecifier());
+                    applyRule((InferenceRule<? super RuleArg>) appl.getInference(), appl.getRuleArguments(), appl.getType(), appl.getTypeSpecifier());
                 } catch (RuleApplicationException e) {
                     e.printStackTrace();
                 }
@@ -298,11 +298,11 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
 
     public void extendCurrentProofTo(Proof proof) {
         if (!(proof == null)) {
-            int currentLength = this.proof.getRuleApplicationCount();
-            int targetLength  = proof.getRuleApplicationCount();
-            for (RuleApplication appl : proof.getRuleApplications().subList(currentLength, targetLength)) {
+            int currentLength = this.proof.getInferenceApplicationCount();
+            int targetLength  = proof.getInferenceApplicationCount();
+            for (InferenceApplication appl : proof.getInferenceApplications().subList(currentLength, targetLength)) {
                 try {
-                    applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments(), appl.getType(), appl.getTypeSpecifier());
+                    applyRule((InferenceRule<? super RuleArg>) appl.getInference(), appl.getRuleArguments(), appl.getType(), appl.getTypeSpecifier());
                 } catch (RuleApplicationException e) {
                     e.printStackTrace();
                 }
@@ -349,7 +349,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         subgoals.add(sgp);
     }
 
-    private <TRuleArg extends RuleArg> void addGoals(int stepIndex, Goals goals, InferenceRule<? super TRuleArg> rule, TRuleArg args, RuleApplication application) {
+    private <TRuleArg extends RuleArg> void addGoals(int stepIndex, Goals goals, Inference<? super TRuleArg,?> rule, TRuleArg args, InferenceApplication application) {
         GridBagConstraints gbc = new java.awt.GridBagConstraints();
         gbc.fill = java.awt.GridBagConstraints.BOTH;
         gbc.gridx = 0;
@@ -411,7 +411,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         }
     }
 
-    private <TRuleArg extends RuleArg> String getStepDescription(InferenceRule<? super TRuleArg> rule, TRuleArg args, RuleApplicationType type, String typeSpecifier) {
+    private <TRuleArg extends RuleArg> String getStepDescription(Inference<? super TRuleArg,?> rule, TRuleArg args, RuleApplicationType type, String typeSpecifier) {
         String spacer;
         if (typeSpecifier.isEmpty()) {
             spacer = "";
@@ -442,7 +442,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         selected = null;
     }
 
-    private <TRuleArg extends RuleArg> void addProofFinished(InferenceRule<? super TRuleArg> rule, TRuleArg args, RuleApplicationType type, String typeSpecifier) {
+    private <TRuleArg extends RuleArg> void addProofFinished(Inference<? super TRuleArg,?> rule, TRuleArg args, RuleApplicationType type, String typeSpecifier) {
         GridBagConstraints gbc = new java.awt.GridBagConstraints();
         gbc.fill = java.awt.GridBagConstraints.BOTH;
         gbc.gridx = 0;

@@ -2,9 +2,7 @@ package speedith.ui.selection;
 
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.Goals;
-import speedith.core.reasoning.InferenceRule;
-import speedith.core.reasoning.RuleApplication;
-import speedith.ui.SubgoalPanel;
+import speedith.core.reasoning.InferenceApplication;
 import speedith.ui.SubgoalsPanel;
 
 import javax.swing.*;
@@ -102,7 +100,7 @@ public class SubgoalSelectionDialog extends JDialog {
     }
 
 
-    public void setSubgoals(final java.util.List<Goals> goals, List<RuleApplication> ruleApplications) {
+    public void setSubgoals(final java.util.List<Goals> goals, List<InferenceApplication> inferenceApplications) {
         for(int stepIndex = 0; stepIndex < goals.size(); stepIndex++) {
             final Goals g = goals.get(stepIndex);
             String goalTitle ;
@@ -116,7 +114,7 @@ public class SubgoalSelectionDialog extends JDialog {
             if (stepIndex < 1) {
                 stepDescription = null;
             } else {
-                stepDescription = i18n("PROOF_PANEL_STEP_DESC_GENERAL", ruleApplications.get(stepIndex - 1).getInferenceRule().getProvider().getPrettyName());
+                stepDescription = "";//i18n("PROOF_PANEL_STEP_DESC_GENERAL", inferenceApplications.get(stepIndex - 1).getInference(); //.getProvider().getPrettyName());
             }
             final SubgoalsPanel select = new SubgoalsPanel(g, goalTitle, stepDescription, Color.GRAY);
 

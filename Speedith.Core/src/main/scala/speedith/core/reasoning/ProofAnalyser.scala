@@ -47,7 +47,7 @@ object ProofAnalyser  {
   }
 
   def complexRuleCount(proof : Proof) : Int = {
-    proof.getRuleApplications.map(r => r.getInferenceRule match  {
+    proof.getInferenceApplications.map(r => r.getInference match  {
       case r1 : CopyContours  => 1
       case r2 : CopyContoursTopological => 1
       case r3 : CopyShading => 1
@@ -60,15 +60,15 @@ object ProofAnalyser  {
     complexRuleCount(proof).toDouble / length(proof)
   }
 
-  def length(proof: Proof) : Int = proof.getRuleApplicationCount
+  def length(proof: Proof) : Int = proof.getInferenceApplicationCount
 
   def numberOfInteractions(proof : Proof) : Int = {
-    val interactiveApps =  proof.getRuleApplications.count(app => app.getType.equals(RuleApplicationType.INTERACTIVE))
-    val methodInvocations = numberOfProofMethodInvocations(proof.getRuleApplications.toList)
+    val interactiveApps =  proof.getInferenceApplications.count(app => app.getType.equals(RuleApplicationType.INTERACTIVE))
+    val methodInvocations = numberOfProofMethodInvocations(proof.getInferenceApplications.toList)
     interactiveApps + methodInvocations
   }
 
-  def numberOfProofMethodInvocations(apps : List[RuleApplication]) : Int = apps match {
+  def numberOfProofMethodInvocations(apps : List[InferenceApplication]) : Int = apps match {
     case Nil => 0
     case app :: Nil => 0
     case app1 :: app2 :: x =>
@@ -100,6 +100,6 @@ object ProofAnalyser  {
   }
 
   def numberOfAutomaticRuleApplications(proof : Proof) : Int = {
-    proof.getRuleApplications.count(app => app.getType.equals(RuleApplicationType.AUTOMATIC))
+    proof.getInferenceApplications.count(app => app.getType.equals(RuleApplicationType.AUTOMATIC))
   }
 }

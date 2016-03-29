@@ -54,7 +54,7 @@ public class EquivalenceIntroduction extends UnaryForwardRule implements Seriali
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

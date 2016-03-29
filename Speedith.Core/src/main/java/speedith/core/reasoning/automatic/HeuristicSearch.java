@@ -79,7 +79,7 @@ public class HeuristicSearch extends AutomaticProver {
             Set<? extends PossibleRuleApplication<? extends RuleArg>> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
             // apply all possible rules to the current proof, creating a new proof for each application
             for(PossibleRuleApplication nextRule : applications) {
-                ProofTrace newCurrent = new ProofTrace(currentProof.getGoals(), currentProof.getRuleApplications());
+                ProofTrace newCurrent = new ProofTrace(currentProof.getGoals(), currentProof.getInferenceApplications());
                 boolean superfl = nextRule.isSuperfluous(newCurrent,subgoalindex);
                 if (superfl) numOfSuperFl++;
                 boolean hasBeenApplied =  !superfl  && nextRule.apply(newCurrent, subgoalindex, getPrettyName());

@@ -114,7 +114,7 @@ public class CopyContoursTest {
 
     @Test
     public void user_facing_functions_should_return_some_strings() {
-        assertThat(copyContours.getInferenceRuleName(), not(isEmptyOrNullString()));
+        assertThat(copyContours.getInferenceName(), not(isEmptyOrNullString()));
         assertThat(copyContours.getDescription(), not(isEmptyOrNullString()));
         assertThat(copyContours.getCategory(), not(isEmptyOrNullString()));
         assertThat(copyContours.getPrettyName(), not(isEmptyOrNullString()));

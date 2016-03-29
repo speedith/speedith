@@ -21,7 +21,7 @@ public class BasicHeuristicStrategy implements Strategy, StrategyProvider {
 
     @Override
     public int getCost(Proof p) {
-        return p.getRuleApplicationCount();
+        return p.getInferenceApplicationCount();
     }
 
     @Override

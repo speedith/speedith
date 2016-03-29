@@ -51,7 +51,7 @@ public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> impl
 
     /**
      * The name of this inference rule.
-     * <p>This value is returned by the {@link SimpleInferenceRule#getInferenceRuleName()}
+     * <p>This value is returned by the {@link SimpleInferenceRule#getInferenceName()}
      * method.</p>
      */
     public static final String InferenceRuleName = "discharge_goal";
@@ -91,7 +91,7 @@ public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> impl
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

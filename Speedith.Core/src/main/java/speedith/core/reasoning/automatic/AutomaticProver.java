@@ -81,7 +81,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
             throw  new AutomaticProofException("The current goal is not normalised!");
         }
         // create a new proof object, so that we do not mess with the supplied proof
-        Proof initial = new ProofTrace(proof.getGoals(), proof.getRuleApplications());
+        Proof initial = new ProofTrace(proof.getGoals(), proof.getInferenceApplications());
 
         Proof result;
         try {

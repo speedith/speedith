@@ -60,7 +60,7 @@ public class RemoveShading extends SimpleInferenceRule<MultipleRuleArgs>
     private static final long serialVersionUID = -4093837815231375163L;
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

@@ -3,6 +3,7 @@ package speedith.core.reasoning.tactical;
 import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.InferenceApplicationResult;
 import speedith.core.reasoning.InferenceRule;
+import speedith.core.reasoning.RuleApplicationResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 public class TacticApplicationResult implements InferenceApplicationResult {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private List<Goals> goals;
+    private List<RuleApplicationResult> applications;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
@@ -24,17 +25,17 @@ public class TacticApplicationResult implements InferenceApplicationResult {
      * @param goals the goals that remained after the application of an
      * inference rule.
      */
-    public TacticApplicationResult(Goals goals) {
-        this.goals = new ArrayList<>();
-        this.goals.add(goals);
+    public TacticApplicationResult(RuleApplicationResult goals) {
+        this.applications = new ArrayList<>();
+        this.applications.add(goals);
     }
 
     public TacticApplicationResult() {
-        this.goals = new ArrayList<>();
+        this.applications = new ArrayList<>();
     }
 
-    public  TacticApplicationResult(List<Goals> goalList) {
-        this.goals = goalList;
+    public  TacticApplicationResult(List<RuleApplicationResult> applications) {
+        this.applications = applications;
     }
     //</editor-fold>
 
@@ -51,12 +52,14 @@ public class TacticApplicationResult implements InferenceApplicationResult {
      * inference rule yielded no subgoals. The same hold for an empty {@link Goals}
      * instance.</p>
      */
-    public List<Goals> getGoalsList() {
-        return goals;
+    public List<RuleApplicationResult> getApplicationList() {
+        return applications;
     }
 
-    public Goals getLastGoal() {
-        return goals.get(goals.size() -1);
+
+
+    public Goals getGoals() {
+        return applications.get(applications.size() -1).getGoals();
     }
     //</editor-fold>
 

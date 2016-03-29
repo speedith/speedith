@@ -51,7 +51,7 @@ public class ProofTrace implements Proof {
      * Contains all goals of this proof trace (including the initial goal).
      */
     private ArrayList<Goals> goals = new ArrayList<>();
-    private ArrayList<RuleApplication> ruleApplications = new ArrayList<>();
+    private ArrayList<InferenceApplication> inferenceApplications = new ArrayList<>();
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -103,15 +103,15 @@ public class ProofTrace implements Proof {
 
     /**
      * Copy constructor for this class. Creates a new instance of the lists holding
-     * the {@link Goals} and the {@link RuleApplication} instances (which themselves are
+     * the {@link Goals} and the {@link InferenceApplication} instances (which themselves are
      * immutable).
      *
      * @param goals the list of subgoals
      * @param ruleApplications a set of rule applications
      */
-    public ProofTrace(List<Goals> goals, List<RuleApplication> ruleApplications) {
+    public ProofTrace(List<Goals> goals, List<InferenceApplication> ruleApplications) {
         this.goals = new ArrayList<>(goals);
-        this.ruleApplications = new ArrayList<>(ruleApplications);
+        this.inferenceApplications = new ArrayList<>(ruleApplications);
     }
 
 
@@ -120,25 +120,25 @@ public class ProofTrace implements Proof {
      * @param proof the proof to copy
      */
     public ProofTrace(Proof proof) {
-        this(proof.getGoals(), proof.getRuleApplications());
+        this(proof.getGoals(), proof.getInferenceApplications());
     }
 
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Proof Interface Implementation">
     @Override
-    public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<TRuleArg> rule, RuleApplicationType type, String typeSpecifier) throws RuleApplicationException {
+    public <TRuleArg extends RuleArg> InferenceApplicationResult applyRule(Inference<TRuleArg, ? extends InferenceApplicationResult> rule, RuleApplicationType type, String typeSpecifier) throws RuleApplicationException {
         return applyRule(rule, null, type, typeSpecifier);
     }
 
     @Override
-    public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args, RuleApplicationType type, String typeSpecifier) throws RuleApplicationException {
+    public <TRuleArg extends RuleArg> InferenceApplicationResult applyRule(Inference<? super TRuleArg, ? extends InferenceApplicationResult> rule, TRuleArg args, RuleApplicationType type, String typeSpecifier) throws RuleApplicationException {
         if (isFinished()) {
             throw new RuleApplicationException(i18n("PROOF_TRACE_FINISHED"));
         }
-        RuleApplicationResult appResult = rule.apply(args, getLastGoals());
+        InferenceApplicationResult appResult = rule.apply(args, getLastGoals());
         if (appResult == null) {
-            throw new IllegalStateException(i18n("SRK_RULE_MUST_RETURN_NONNULL_RESULT", rule.getProvider().getInferenceRuleName()));
+            throw new IllegalStateException(i18n("SRK_RULE_MUST_RETURN_NONNULL_RESULT", rule.getProvider().getInferenceName()));
         }
         // Discharge any null-spider diagrams automatically.
         Goals newGoals = appResult.getGoals();
@@ -152,7 +152,9 @@ public class ProofTrace implements Proof {
             }
             newGoals = Goals.createGoalsFrom(remainingGoals);
         }
-        ruleApplications.add(new RuleApplication(rule, args, type, typeSpecifier));
+        InferenceApplication application = new InferenceApplication( rule, args, type, typeSpecifier);;
+       
+        inferenceApplications.add(application);
 //        goals.add(appResult.getGoals());
         goals.add(newGoals);
         return appResult;
@@ -184,18 +186,18 @@ public class ProofTrace implements Proof {
     }
 
     @Override
-    public List<RuleApplication> getRuleApplications() {
-        return Collections.unmodifiableList(ruleApplications);
+    public List<InferenceApplication> getInferenceApplications() {
+        return Collections.unmodifiableList(inferenceApplications);
     }
 
     @Override
-    public RuleApplication getRuleApplicationAt(int index) {
-        return ruleApplications.get(index);
+    public InferenceApplication getInferenceApplicationAt(int index) {
+        return inferenceApplications.get(index);
     }
 
     @Override
-    public int getRuleApplicationCount() {
-        return ruleApplications.size();
+    public int getInferenceApplicationCount() {
+        return inferenceApplications.size();
     }
 
     @Override
@@ -206,9 +208,9 @@ public class ProofTrace implements Proof {
 
     @Override
     public boolean undoStep() {
-        if (getRuleApplicationCount() > 0) {
+        if (getInferenceApplicationCount() > 0) {
             goals.remove(goals.size() - 1);
-            ruleApplications.remove(ruleApplications.size() - 1);
+            inferenceApplications.remove(inferenceApplications.size() - 1);
             return true;
         } else {
             return false;
@@ -223,7 +225,7 @@ public class ProofTrace implements Proof {
         if (obj == this) return true;
         if (obj instanceof ProofTrace) {
             ProofTrace other = (ProofTrace) obj;
-            return goals.equals(other.goals) && ruleApplications.equals(other.ruleApplications);
+            return goals.equals(other.goals) && inferenceApplications.equals(other.inferenceApplications);
         }
         return false;
     }
@@ -231,7 +233,7 @@ public class ProofTrace implements Proof {
     @Override
     public int hashCode() {
         int result = goals.hashCode();
-        result = 31 * result + ruleApplications.hashCode();
+        result = 31 * result + inferenceApplications.hashCode();
         return result;
     }
 }

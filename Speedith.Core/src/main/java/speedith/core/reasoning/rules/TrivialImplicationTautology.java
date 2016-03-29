@@ -23,7 +23,7 @@ import static speedith.core.i18n.Translations.i18n;
 public class TrivialImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg>, ForwardRule<SubDiagramIndexArg>, Serializable{
 
     /**
-     * The name of this inference rule. <p>This value is returned by the {@link TrivialImplicationTautology#getInferenceRuleName()}
+     * The name of this inference rule. <p>This value is returned by the {@link TrivialImplicationTautology#getInferenceName()}
      * method.</p>
      */
     public static final String InferenceRuleName = "trivial_implication_tautology";
@@ -56,7 +56,7 @@ public class TrivialImplicationTautology extends SimpleInferenceRule<SubDiagramI
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

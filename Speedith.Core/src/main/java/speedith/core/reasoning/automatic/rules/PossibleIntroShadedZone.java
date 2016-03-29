@@ -2,11 +2,9 @@ package speedith.core.reasoning.automatic.rules;
 
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Zone;
-import speedith.core.reasoning.InferenceRule;
 import speedith.core.reasoning.Proof;
-import speedith.core.reasoning.RuleApplication;
+import speedith.core.reasoning.InferenceApplication;
 import speedith.core.reasoning.args.MultipleRuleArgs;
-import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.IntroShadedZone;
@@ -48,9 +46,9 @@ public class PossibleIntroShadedZone extends PossibleRuleApplication<MultipleRul
 */
     @Override
     public boolean isSuperfluous(Proof p, int subGoalIndex) {
-        for (int i =0 ; i< p.getRuleApplicationCount(); i++) {
-            RuleApplication application = p.getRuleApplicationAt(i);
-            if (application.getInferenceRule() instanceof RemoveShadedZone) {
+        for (int i =0 ; i< p.getInferenceApplicationCount(); i++) {
+            InferenceApplication application = p.getInferenceApplicationAt(i);
+            if (application.getInference() instanceof RemoveShadedZone) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
                 MultipleRuleArgs thisArgs = getArg(subGoalIndex);
                 // application is superfluous if :
@@ -63,7 +61,7 @@ public class PossibleIntroShadedZone extends PossibleRuleApplication<MultipleRul
                     SpiderDiagram result = p.getGoalsAt(i + 1).getGoalAt(arg.getSubgoalIndex()).getSubDiagramAt(arg.getSubDiagramIndex());
                     return getTarget().getDiagram().equals(result);
                 }
-            } else if (application.getInferenceRule() instanceof IntroShadedZone) {
+            } else if (application.getInference() instanceof IntroShadedZone) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
                 MultipleRuleArgs thisArgs = getArg(subGoalIndex);
                 // application is superfluous if the other rule

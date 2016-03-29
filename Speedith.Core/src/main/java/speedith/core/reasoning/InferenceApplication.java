@@ -41,9 +41,9 @@ import static speedith.core.i18n.Translations.i18n;
  * <p>Instances of this class (and its derived classes) are immutable.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class RuleApplication implements Serializable {
+public class InferenceApplication implements Serializable {
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private InferenceRule<?> inferenceRule;
+    private Inference<?, ?> inferenceRule;
     private RuleArg ruleArguments;
     private RuleApplicationType type;
     private String typeSpecifier;
@@ -58,7 +58,7 @@ public class RuleApplication implements Serializable {
      * some set of spider diagrams with the given additional arguments).
      * @param ruleArguments the additional arguments to the inference rule.
      */
-    public RuleApplication(InferenceRule<?> inferenceRule, RuleArg ruleArguments, RuleApplicationType type, String typeSpecifier) {
+    public InferenceApplication(Inference<?, ?> inferenceRule, RuleArg ruleArguments, RuleApplicationType type, String typeSpecifier) {
         if (inferenceRule == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "inferenceRule"));
         }
@@ -73,21 +73,21 @@ public class RuleApplication implements Serializable {
     /**
      * Returns the inference rule stored in this object.
      * <p>If you want to apply this rule with the accompanying {@link
-     * RuleApplication#getRuleArguments() arguments} to a list of
-     * spider diagrams, you can use the {@link RuleApplication#applyTo(speedith.core.reasoning.Goals)}
+     * InferenceApplication#getRuleArguments() arguments} to a list of
+     * spider diagrams, you can use the {@link InferenceApplication#applyTo(speedith.core.reasoning.Goals)}
      * method.</p>
      * @return the inference rule stored in this object.
      */
-    public InferenceRule<?> getInferenceRule() {
+    public Inference<?,?> getInference() {
         return inferenceRule;
     }
-    
+
     /**
-     * Returns the arguments that will be passed to the {@link RuleApplication#getInferenceRule()
-     * inference rule} when calling the {@link RuleApplication#applyTo(speedith.core.reasoning.Goals)}
+     * Returns the arguments that will be passed to the {@link InferenceApplication#getInference()
+     * inference rule} when calling the {@link InferenceApplication#applyTo(speedith.core.reasoning.Goals)}
      * method.
-     * @return the arguments that will be passed to the {@link RuleApplication#getInferenceRule()
-     * inference rule} when calling the {@link RuleApplication#applyTo(speedith.core.reasoning.Goals)}
+     * @return the arguments that will be passed to the {@link InferenceApplication#getInference()
+     * inference rule} when calling the {@link InferenceApplication#applyTo(speedith.core.reasoning.Goals)}
      * method.
      */
     public RuleArg getRuleArguments() {
@@ -101,15 +101,15 @@ public class RuleApplication implements Serializable {
     
     // <editor-fold defaultstate="collapsed" desc="Rule Application">
     /**
-     * Applies the {@link RuleApplication#getInferenceRule() inference
-     * rule} with the current {@link RuleApplication#getRuleArguments()
+     * Applies the {@link InferenceApplication#getInference() inference
+     * rule} with the current {@link InferenceApplication#getRuleArguments()
      * arguments} to the given list of spider diagrams (goals).
      * @param goals a list of spider diagrams on which to apply the rule.
      * @return a modified list of spider diagrams.
      * @throws RuleApplicationException thrown if the rule application failed
      * for any reason.
      */
-    public RuleApplicationResult applyTo(Goals goals) throws RuleApplicationException {
+    public InferenceApplicationResult applyTo(Goals goals) throws RuleApplicationException {
         return inferenceRule.apply(ruleArguments, goals);
     }
     // </editor-fold>

@@ -4,9 +4,7 @@ import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Zone;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.MultipleRuleArgs;
-import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.ZoneArg;
-import speedith.core.reasoning.automatic.AppliedRules;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.IntroShadedZone;
 import speedith.core.reasoning.rules.RemoveShadedZone;
@@ -38,9 +36,9 @@ public class PossibleRemoveShadedZone extends PossibleRuleApplication<MultipleRu
 
     @Override
     public boolean isSuperfluous(Proof p, int subGoalIndex) {
-        for (int i = 0; i < p.getRuleApplicationCount(); i++) {
-            RuleApplication application = p.getRuleApplicationAt(i);
-            if (application.getInferenceRule() instanceof IntroShadedZone) {
+        for (int i = 0; i < p.getInferenceApplicationCount(); i++) {
+            InferenceApplication application = p.getInferenceApplicationAt(i);
+            if (application.getInference() instanceof IntroShadedZone) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
                 MultipleRuleArgs thisArgs =  getArg(subGoalIndex);
                 // application is superfluous if :
@@ -53,7 +51,7 @@ public class PossibleRemoveShadedZone extends PossibleRuleApplication<MultipleRu
                     SpiderDiagram result = p.getGoalsAt(i + 1).getGoalAt(arg.getSubgoalIndex()).getSubDiagramAt(arg.getSubDiagramIndex());
                     return getTarget().getDiagram().equals(result);
                 }
-            } else if (application.getInferenceRule() instanceof RemoveShadedZone) {
+            } else if (application.getInference() instanceof RemoveShadedZone) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
                 MultipleRuleArgs thisArgs =  getArg(subGoalIndex);
                 // application is superfluous if the other rule

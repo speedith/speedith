@@ -72,7 +72,7 @@ public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> impleme
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

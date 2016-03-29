@@ -90,7 +90,7 @@ public class ImplicationTautologyTest {
     public void testGetInferenceRuleName() {
         ImplicationTautology instance = new ImplicationTautology();
         String expResult = ImplicationTautology.InferenceRuleName;
-        String result = instance.getInferenceRuleName();
+        String result = instance.getInferenceName();
         assertEquals(expResult, result);
     }
 

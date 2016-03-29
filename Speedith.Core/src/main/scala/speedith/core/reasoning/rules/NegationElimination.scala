@@ -15,7 +15,7 @@ import scala.collection.JavaConversions._
 
 class NegationElimination extends UnaryForwardRule with Serializable {
 
-  def getInferenceRuleName: String = "negation_elimination"
+  def getInferenceName: String = "negation_elimination"
 
   def getDescription(locale: Locale): String = "Negation elimination converts rules of form ¬(UnitaryDiagram) into (UnitaryDiagram || ... || UnitaryDiagram)."
 

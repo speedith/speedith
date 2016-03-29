@@ -65,7 +65,7 @@ public class BreadthFirstProver extends  AutomaticProver {
                 Set<? extends PossibleRuleApplication<? extends RuleArg>> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
                 // apply all possible rules to the current proof, creating a new proof for each application
                 for (PossibleRuleApplication nextRule : applications) {
-                    ProofTrace newCurrent = new ProofTrace(current.getGoals(), current.getRuleApplications());
+                    ProofTrace newCurrent = new ProofTrace(current.getGoals(), current.getInferenceApplications());
                     boolean superfl = nextRule.isSuperfluous(newCurrent, subgoalindex);
                     if (superfl) numOfSuperFl++;
                     boolean hasbeenApplied = !superfl && nextRule.apply(newCurrent, subgoalindex, getPrettyName());

@@ -80,7 +80,7 @@ implements BasicInferenceRule<MultipleRuleArgs>, ForwardRule<MultipleRuleArgs>, 
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

@@ -67,7 +67,7 @@ public class CopyContours extends SimpleInferenceRule<MultipleRuleArgs> implemen
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 
