@@ -17,7 +17,7 @@ import scala.collection.JavaConversions._
 class MatchConclusion  extends SimpleTactic {
   override def apply(args: RuleArg, goals: Goals): TacticApplicationResult = args match {
     case arg: SubgoalIndexArg =>
-      SimpleTacticals.matchConclusion("Match Conclusion")(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {
+      SimpleTacticals.matchConclusion(getPrettyName())(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {
         case Some(result) => result.getApplicationList.isEmpty match {
           case false => result
           case true => throw new TacticApplicationException("Could not apply tactic "+getPrettyName())

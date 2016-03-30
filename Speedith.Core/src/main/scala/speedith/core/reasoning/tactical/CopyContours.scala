@@ -25,7 +25,7 @@ class CopyContours extends SimpleTactic {
 
   override def apply(args: RuleArg, goals: Goals): TacticApplicationResult = args match {
     case arg: SubgoalIndexArg =>
-      SimpleTacticals.copyTopologicalInformation("Copy Contours")(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {
+      SimpleTacticals.copyTopologicalInformation(getPrettyName())(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {
         case Some(result) => result.getApplicationList.isEmpty match {
           case false => result
           case true => throw new TacticApplicationException("Could not apply tactic "+getPrettyName())

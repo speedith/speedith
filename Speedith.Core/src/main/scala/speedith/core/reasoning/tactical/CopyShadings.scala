@@ -25,7 +25,7 @@ class CopyShadings extends SimpleTactic {
 
   override def apply(args: RuleArg, goals: Goals): TacticApplicationResult = args match {
     case arg: SubgoalIndexArg =>
-      SimpleTacticals.copyShadings("Copy Shadings")(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {
+      SimpleTacticals.copyShadings(getPrettyName())(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {
         case Some(result) => result.getApplicationList.isEmpty match {
           case false => result
           case true => throw new TacticApplicationException("Could not apply tactic "+getPrettyName())
