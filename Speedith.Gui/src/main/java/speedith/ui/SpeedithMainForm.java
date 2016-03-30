@@ -940,6 +940,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       activeDiagram = settings.getSelectedDiagramType();
       lstAppliedRules.setModel(getRulesList());
       lstAppliedRules.repaint();
+      lstTactics.setModel(getTacticsList());
+      lstTactics.repaint();
     }
     backgroundProofSearch = settings.isBackGroundSearchEnabled();
   }
