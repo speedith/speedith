@@ -54,15 +54,15 @@ public class InferenceApplication implements Serializable {
     /**
      * Initialises an instance of this class with the given inference rule and
      * arguments to the inference rule.
-     * @param inferenceRule the inference rule (that can be or was applied to
+     * @param inference the inference rule (that can be or was applied to
      * some set of spider diagrams with the given additional arguments).
      * @param ruleArguments the additional arguments to the inference rule.
      */
-    public InferenceApplication(Inference<?, ?> inferenceRule, RuleArg ruleArguments, RuleApplicationType type, String typeSpecifier) {
-        if (inferenceRule == null) {
-            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "inferenceRule"));
+    public InferenceApplication(Inference<?, ?> inference, RuleArg ruleArguments, RuleApplicationType type, String typeSpecifier) {
+        if (inference == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "inference"));
         }
-        this.inferenceRule = inferenceRule;
+        this.inferenceRule = inference;
         this.ruleArguments = ruleArguments;
         this.type = type;
         this.typeSpecifier = typeSpecifier;

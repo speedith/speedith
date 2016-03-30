@@ -1417,7 +1417,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       InteractiveTacticApplication.applyTacticInteractively(this, selectedTactic.getTacticProvider().getTactic(), subgoalIndex, proofPanel1);
       fireProofChangedEvent(new TacticAppliedEvent(this));
     } catch (Exception ex) {
-      ex.printStackTrace();
       JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
     }
   }

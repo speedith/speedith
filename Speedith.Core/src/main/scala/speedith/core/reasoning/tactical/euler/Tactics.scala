@@ -59,7 +59,7 @@ object Tactics {
 
 
   private def createResults(goals: Option[Goals], rule: InferenceRule[RuleArg], args: RuleArg, name : String, oldResult : TacticApplicationResult): Option[TacticApplicationResult] = goals match {
-    case None => Some(oldResult)
+    case None => None
     case Some(goal) =>
 //      val result = Tuple2(diagram, new ProofTrace(state))
       // intermediate is used to create the rule applications (applyRule changes the given proof and

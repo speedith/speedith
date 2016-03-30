@@ -17,17 +17,18 @@ public class TacticApplicationResult implements InferenceApplicationResult {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private List<RuleApplicationResult> applications;
+
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
      * Initialises an instance of the RuleApplicationResult class.
-     * @param goals the goals that remained after the application of an
+     * @param ruleApplication the goals that remained after the application of an
      * inference rule.
      */
-    public TacticApplicationResult(RuleApplicationResult goals) {
+    public TacticApplicationResult(RuleApplicationResult ruleApplication) {
         this.applications = new ArrayList<>();
-        this.applications.add(goals);
+        this.applications.add(ruleApplication);
     }
 
     public TacticApplicationResult() {
