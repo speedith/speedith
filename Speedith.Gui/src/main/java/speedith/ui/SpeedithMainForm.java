@@ -850,22 +850,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
   }
 
-  private void applyTactical(TacticMenuItem item) {
-    if (!proofPanel1.isFinished()) {
-      Proof intermediate = new ProofTrace(proofPanel1);
-      Proof result ;
-      try {
-        result = item.apply(intermediate);
-        proofPanel1.extendCurrentProofTo(result);
-        fireProofChangedEvent(new TacticAppliedEvent(this));
-      } catch (TacticApplicationException e) {
-        JOptionPane.showMessageDialog(this, e.getMessage());
-      }
-    } else {
-      JOptionPane.showMessageDialog(this, "No subgoals are open");
-    }
-  }
-
   private void onCropProof() {
     if (proofPanel1.getSelected() != null) {
       proofPanel1.reduceToSelected();
