@@ -1,7 +1,7 @@
 package speedith.core.reasoning.tactical.euler
 
 import speedith.core.lang.Operator
-import speedith.core.reasoning.Proof
+import speedith.core.reasoning.{Goals, Proof}
 import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramOccurrence, PrimarySpiderDiagramOccurrence, SpiderDiagramOccurrence}
 import scala.collection.JavaConversions._
 import speedith.core.reasoning.tactical.euler.Auxilliary._
@@ -40,7 +40,7 @@ object Predicates {
     case _ => false
   }
 
-  def isPrimaryAndContainsMissingZones: Proof =>  Predicate = (state:Proof) => {
+  def isPrimaryAndContainsMissingZones: Goals =>  Predicate = (state:Goals) => {
     case sd:PrimarySpiderDiagramOccurrence => (sd.getShadedZones--sd.getPresentZones).nonEmpty
     case _ => false
   }

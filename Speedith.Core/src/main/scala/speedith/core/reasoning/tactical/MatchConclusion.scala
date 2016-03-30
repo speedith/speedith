@@ -14,10 +14,10 @@ import scala.collection.JavaConversions._
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *
   */
-class Venn extends SimpleTactic{
+class MatchConclusion  extends SimpleTactic {
   override def apply(args: RuleArg, goals: Goals): TacticApplicationResult = args match {
     case arg: SubgoalIndexArg =>
-      SimpleTacticals.vennStyle("Venn-Style reasoning")(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {
+      SimpleTacticals.matchConclusion("Match Conclusion")(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {
         case Some(result) => result.getApplicationList.isEmpty match {
           case false => result
           case true => throw new TacticApplicationException("Could not apply tactic "+getPrettyName())
@@ -28,12 +28,11 @@ class Venn extends SimpleTactic{
       throw new RuleApplicationException("Wrong argument type")
   }
 
-  override def getDescription(locale: Locale): String = "Create Venn diagrams and combine as much as possible, then match the premises to the conclusion"
+  override def getPrettyName(locale: Locale): String = "Match Conclusion"
 
-  override def getPrettyName(locale: Locale): String = "Venn-Style reasoning"
+  override def getDescription(locale: Locale): String = "Add and remove contours and zones to match the premises to the conclusion"
 
   override def getApplicableTypes: util.Set[DiagramType] = Set(DiagramType.EulerDiagram)
 
-  override def getInferenceName: String = "venn_style"
-
+  override def getInferenceName: String = "match_conclusion"
 }

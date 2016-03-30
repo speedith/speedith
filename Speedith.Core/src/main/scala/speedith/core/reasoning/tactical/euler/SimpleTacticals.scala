@@ -18,24 +18,24 @@ import speedith.core.reasoning.tactical.euler.Tactics._
  */
 object SimpleTacticals {
 
-  /*def vennify : Tactical = {
-    REPEAT(ORELSE(trivialTautology(0),
-      introduceShadedZone(0,isPrimaryAndContainsMissingZones,someMissingZone)))
+  def vennify : Tactical = {
+    REPEAT(ORELSE(trivialTautology,
+      introduceShadedZone(isPrimaryAndContainsMissingZones,someMissingZone)))
   }
 
   def vennifyFast : Tactical = {
-    REPEAT(ORELSE(trivialTautology(0),
-      introduceShadedZone(0,isPrimaryAndContainsMissingZones,allMissingZones)))
+    REPEAT(ORELSE(trivialTautology,
+      introduceShadedZone(isPrimaryAndContainsMissingZones,allMissingZones)))
   }
 
   def deVennify : Tactical = {
-    REPEAT(ORELSE(trivialTautology(0),removeShadedZone(0,someShadedZone)))
+    REPEAT(ORELSE(trivialTautology,removeShadedZone(someShadedZone)))
   }
 
   def deVennifyFast : Tactical = {
-    REPEAT(ORELSE(trivialTautology(0),removeShadedZone(0,allShadedZones)))
+    REPEAT(ORELSE(trivialTautology,removeShadedZone(allShadedZones)))
   }
-*/
+
 
   def unifyContourSets : Tactical = (name:String) => (state:Goals) => (subGoalIndex : Int) => (result : TacticApplicationResult) =>{
     val contours = getContoursInSubGoal(subGoalIndex, state)
@@ -53,10 +53,10 @@ object SimpleTacticals {
     REPEAT(ORELSE(trivialTautology(0),
       eraseContour(0,containsContours, anyContour)))
   }
-
+*/
   def combineAll : Tactical = {
-    REPEAT(ORELSE(trivialTautology(0),
-      combine(0)))
+    REPEAT(ORELSE(trivialTautology,
+      combine))
   }
 
   def vennStyle : Tactical = {
@@ -67,40 +67,43 @@ object SimpleTacticals {
     THEN(unifyContourSetsFast, THEN(vennifyFast, THEN(combineAll, matchConclusionFast)))
   }
 
-  def matchConclusionFast : Tactical = (name:String) => (state: Goals) => {
-    val concContours =getContoursInConclusion(0,state)
-    val concShadedZones = getShadedZonesInConclusion(0,state)
-    val concUnshadedZones = getUnshadedZonesInConclusion(0,state)
-    val concVisibleZones = getVisibleZonesInConclusion(0,state)
+
+  def matchConclusionFast : Tactical = (name:String) => (state: Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) =>{
+    val concContours =getContoursInConclusion(subGoalIndex,state)
+    val concShadedZones = getShadedZonesInConclusion(subGoalIndex,state)
+    val concUnshadedZones = getUnshadedZonesInConclusion(subGoalIndex,state)
+    val concVisibleZones = getVisibleZonesInConclusion(subGoalIndex,state)
     THEN(
       THEN(
         THEN(
-          REPEAT(ORELSE(trivialTautology(0),
-            eraseContour(0, containsOtherContours(concContours), allInDiagramButNotInGivenContours(concContours)))),
-          REPEAT(ORELSE(trivialTautology(0),
-            introduceShadedZone(0,isPrimaryAndContainsMissingZones, allMissingZonesInGivenZones(concVisibleZones))))),
-        REPEAT(ORELSE(trivialTautology(0) ,
-          eraseShading(0,isPrimaryAndContainsShadedZones, allVisibleShadedZonesInGivenZones(concUnshadedZones))))),
-      REPEAT(ORELSE(trivialTautology(0), removeShadedZone(0,allVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)
+          REPEAT(ORELSE(trivialTautology,
+            eraseContour(containsOtherContours(concContours), allInDiagramButNotInGivenContours(concContours)))),
+          REPEAT(ORELSE(trivialTautology,
+            introduceShadedZone(isPrimaryAndContainsMissingZones, allMissingZonesInGivenZones(concVisibleZones))))),
+        REPEAT(ORELSE(trivialTautology ,
+          eraseShading(isPrimaryAndContainsShadedZones, allVisibleShadedZonesInGivenZones(concUnshadedZones))))),
+        REPEAT(ORELSE(trivialTautology,
+          removeShadedZone(allVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)(subGoalIndex)(result)
   }
 
-  def matchConclusion : Tactical = (name:String) => (state:Goals) => {
-    val concContours =getContoursInConclusion(0,state)
-    val concShadedZones = getShadedZonesInConclusion(0,state)
-    val concUnshadedZones = getUnshadedZonesInConclusion(0,state)
-    val concVisibleZones = getVisibleZonesInConclusion(0,state)
+  def matchConclusion : Tactical = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
+    val concContours =getContoursInConclusion(subGoalIndex,state)
+    val concShadedZones = getShadedZonesInConclusion(subGoalIndex,state)
+    val concUnshadedZones = getUnshadedZonesInConclusion(subGoalIndex,state)
+    val concVisibleZones = getVisibleZonesInConclusion(subGoalIndex,state)
     THEN(
       THEN(
         THEN(
-          REPEAT(ORELSE(trivialTautology(0),
-            eraseContour(0, containsOtherContours(concContours ), someInDiagramButNotInGivenContours(concContours)))),
-          REPEAT(ORELSE(trivialTautology(0),
-            introduceShadedZone(0,isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones))))),
-          REPEAT(ORELSE(trivialTautology(0) ,
-            eraseShading(0,isPrimaryAndContainsShadedZones, someVisibleShadedZonesInGivenZones(concUnshadedZones))))),
-      REPEAT(ORELSE(trivialTautology(0), removeShadedZone(0,someVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)
+          REPEAT(ORELSE(trivialTautology,
+            eraseContour(containsOtherContours(concContours ), someInDiagramButNotInGivenContours(concContours)))),
+          REPEAT(ORELSE(trivialTautology,
+            introduceShadedZone(isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones))))),
+          REPEAT(ORELSE(trivialTautology,
+            eraseShading(isPrimaryAndContainsShadedZones, someVisibleShadedZonesInGivenZones(concUnshadedZones))))),
+          REPEAT(ORELSE(trivialTautology,
+            removeShadedZone(someVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)(subGoalIndex)(result)
   }
-*/
+
 
   def copyTopologicalInformation : Tactical =  (name:String) => (state:Goals) => (subGoalIndex: Int) => (result:TacticApplicationResult) => {
       REPEAT(ORELSE(trivialTautology,

@@ -25,6 +25,8 @@ public class Tactics {
     static {
         registerProvider(UnifyContours.class);
         registerProvider(CopyContours.class);
+        registerProvider(MatchConclusion.class);
+        registerProvider(Venn.class);
     }
 
     private Tactics() {};
