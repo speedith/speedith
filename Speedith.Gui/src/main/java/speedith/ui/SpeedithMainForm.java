@@ -129,14 +129,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JScrollPane scrlPnlAppliedRules;
   private javax.swing.JScrollPane scrlPnlTactics;
 
-/*  private javax.swing.JMenu reasoningMenu;
-  private javax.swing.JMenuItem proveAny;
-  private javax.swing.JMenuItem proveFromHere;*/
+
   private javax.swing.JFileChooser goalFileChooser;
   private javax.swing.JFileChooser proofFileChooser;
-  private javax.swing.JMenu tacticsMenu;
-  private javax.swing.JMenu regularTacticsMenu;
-  private javax.swing.JMenu acceleratedTacticsMenu;
   private javax.swing.JMenu openMenu;
   private javax.swing.JMenu saveMenu;
   private javax.swing.JMenuItem analyseItem;
@@ -332,17 +327,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     analyseItem = new javax.swing.JMenuItem();
     heuristicItem = new javax.swing.JMenuItem();
     inspectProof = new javax.swing.JMenuItem();
-    /*reasoningMenu = new javax.swing.JMenu();
-    proveAny = new javax.swing.JMenuItem();
-    proveFromHere = new javax.swing.JMenuItem(); */
-    tacticsMenu = new javax.swing.JMenu();
-    regularTacticsMenu = new javax.swing.JMenu();
-    acceleratedTacticsMenu = new javax.swing.JMenu();
-
-
-
-
-
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("Speedith");

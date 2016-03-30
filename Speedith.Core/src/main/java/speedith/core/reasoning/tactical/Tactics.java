@@ -27,6 +27,7 @@ public class Tactics {
         registerProvider(CopyContours.class);
         registerProvider(MatchConclusion.class);
         registerProvider(Venn.class);
+        registerProvider(CopyShadings.class);
     }
 
     private Tactics() {};

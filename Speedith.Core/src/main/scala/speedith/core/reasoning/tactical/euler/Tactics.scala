@@ -61,16 +61,11 @@ object Tactics {
   private def createResults(goals: Option[Goals], rule: InferenceRule[RuleArg], args: RuleArg, name : String, oldResult : TacticApplicationResult): Option[TacticApplicationResult] = goals match {
     case None => None
     case Some(goal) =>
-//      val result = Tuple2(diagram, new ProofTrace(state))
-      // intermediate is used to create the rule applications (applyRule changes the given proof and
-      // returns a RuleApplicationResult!)
       val result = rule.apply(args, goal)
       val app = new InferenceApplication(rule, args, RuleApplicationType.TACTIC, name)
       val newGoals = result.getGoals.getGoals.filterNot(d => NullSpiderDiagram.getInstance().isSEquivalentTo(d))
       val newGoal = Goals.createGoalsFrom(newGoals)
        Some(new TacticApplicationResult(oldResult.getApplicationList :+ app, newGoal))
-//      val intermediate = result._2.applyRule(rule, args, RuleApplicationType.TACTIC, name)
-//      Some(result._2)
   }
 
   def introduceContour(predicate : Predicate , contourChooser: Chooser[Set[String]]):Tactical = (name:String) => (state: Goals) => (subGoalIndex:Int) =>(result : TacticApplicationResult) =>{
@@ -227,10 +222,11 @@ object Tactics {
     }
   }
 
-  /*
-  def copyShading(subgoalIndex: Int ) : Tactical = (name:String) => (state: Proof) =>{
+
+  def copyShading : Tactical =
+    (name:String) => (state: Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
     try {
-      val subgoal = getSubgoal(subgoalIndex, state)
+      val subgoal = getSubGoal(subGoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
         isConjunctionWithShadingToCopy)
       target match {
@@ -242,15 +238,17 @@ object Tactics {
             val maxZone = computeMaximalCorrespondingShadedRegion(op0, op1)
             maxZone match {
               case Some((r1: Set[Zone], r2: Set[Zone])) =>
-                createResults(Some(op0), state, new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
-                  new MultipleRuleArgs(r1.map(z => new ZoneArg(subgoalIndex, op0.getOccurrenceIndex, z)).toList),name)
+                createResults(Some(state), new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
+                  new MultipleRuleArgs(r1.map(z => new ZoneArg(subGoalIndex, op0.getOccurrenceIndex, z)).toList),
+                  name, result)
               case None =>
                 if (op1.getAllContours.subsetOf(op0.getAllContours)) {
                   val maxZone = computeMaximalCorrespondingShadedRegion(op1, op0)
                   maxZone match {
                     case Some((r1: Set[Zone], r2: Set[Zone])) =>
-                      createResults(Some(op1), state, new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
-                        new MultipleRuleArgs(r1.map(z => new ZoneArg(subgoalIndex, op1.getOccurrenceIndex, z)).toList),name)
+                      createResults(Some(state), new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
+                        new MultipleRuleArgs(r1.map(z => new ZoneArg(subGoalIndex, op1.getOccurrenceIndex, z)).toList),
+                        name, result)
                     case None => None
                   }
                 } else None
@@ -259,8 +257,9 @@ object Tactics {
             val maxZone = computeMaximalCorrespondingShadedRegion(op1, op0)
             maxZone match {
               case Some((r1: Set[Zone], r2: Set[Zone])) =>
-                createResults(Some(op1), state, new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
-                  new MultipleRuleArgs(r1.map(z => new ZoneArg(subgoalIndex, op1.getOccurrenceIndex, z)).toList),name )
+                createResults(Some(state), new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
+                  new MultipleRuleArgs(r1.map(z => new ZoneArg(subGoalIndex, op1.getOccurrenceIndex, z)).toList),
+                  name, result)
               case None => None
             }
           } else None
@@ -269,7 +268,7 @@ object Tactics {
       case e: TacticApplicationException => None
     }
   }
-*/
+
 
   def idempotency : Tactical = (name:String) => ( state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
     try {

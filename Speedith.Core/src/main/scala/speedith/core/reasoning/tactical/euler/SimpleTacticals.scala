@@ -111,11 +111,11 @@ object SimpleTacticals {
           ORELSE(removeShadedZone(someShadedZone),
             copyContour))))(name)(state)(subGoalIndex)(result)
   }
-/*
-  def copyShadings: Tactical = {
-    REPEAT(ORELSE(trivialTautology(0),
-      ORELSE(idempotency(0),
-        ORELSE(copyShading(0),
-          introduceShadedZone(0,collectDiagramsWithMissingZonesThatCouldBeCopied(0,_).contains, someMissingZone)))))
-  } */
+
+  def copyShadings: Tactical = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) =>{
+    REPEAT(ORELSE(trivialTautology,
+      ORELSE(idempotency,
+        ORELSE(copyShading,
+          introduceShadedZone(collectDiagramsWithMissingZonesThatCouldBeCopied(subGoalIndex,_).contains, someMissingZone)))))(name)(state)(subGoalIndex)(result)
+  }
 }
