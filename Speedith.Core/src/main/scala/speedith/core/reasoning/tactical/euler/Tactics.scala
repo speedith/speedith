@@ -58,10 +58,8 @@ object Tactics {
   }
 
 
-  private def createResults(goals: Option[Goals], rule: InferenceRule[RuleArg], args: RuleArg, name : String, oldResult : TacticApplicationResult): Option[TacticApplicationResult] = goals match {
-    case None => None
-    case Some(goal) =>
-      val result = rule.apply(args, goal)
+  private def createResults(goals: Goals, rule: InferenceRule[RuleArg], args: RuleArg, name : String, oldResult : TacticApplicationResult): Option[TacticApplicationResult] =  {
+      val result = rule.apply(args, goals)
       val app = new InferenceApplication(rule, args, RuleApplicationType.TACTIC, name)
       val newGoals = result.getGoals.getGoals.filterNot(d => NullSpiderDiagram.getInstance().isSEquivalentTo(d))
       val newGoal = Goals.createGoalsFrom(newGoals)
@@ -78,7 +76,7 @@ object Tactics {
         case Some(tupel) =>
           tupel._2 match {
             case Some(c) =>
-              createResults(Some(state), new IntroContour().asInstanceOf[InferenceRule[RuleArg]],
+              createResults(state, new IntroContour().asInstanceOf[InferenceRule[RuleArg]],
                 new MultipleRuleArgs(c.map(new ContourArg(subGoalIndex, tupel._1.getOccurrenceIndex, _)).toSeq: _*
                 ), name, result)
             case None => None
@@ -101,7 +99,7 @@ object Tactics {
           val targetZones = zoneChooser(diagram)
           targetZones match {
             case Some(zones) =>
-              createResults(Some(state), new IntroShadedZone().asInstanceOf[InferenceRule[RuleArg]],
+              createResults(state, new IntroShadedZone().asInstanceOf[InferenceRule[RuleArg]],
                 new MultipleRuleArgs(zones.map( zone =>new ZoneArg(subGoalIndex, diagram.getOccurrenceIndex, zone)).toSeq:_*),
                 name, result)
             case None => None
@@ -126,7 +124,7 @@ object Tactics {
               if (zones.exists(_.getInContoursCount == 0)) {
                 throw new TacticApplicationException("Cannot remove outer zone")
               }
-              createResults(Some(state), new RemoveShadedZone().asInstanceOf[InferenceRule[RuleArg]],
+              createResults(state, new RemoveShadedZone().asInstanceOf[InferenceRule[RuleArg]],
                 new MultipleRuleArgs(zones.map( z => new ZoneArg(subGoalIndex, diagram.getOccurrenceIndex, z)).toSeq:_*),
                 name, result)
             case None => None
@@ -149,7 +147,7 @@ object Tactics {
         case Some(tupel) =>
           tupel._2 match {
             case Some(c) =>
-              createResults(Some(state), new RemoveContour().asInstanceOf[InferenceRule[RuleArg]],
+              createResults(state, new RemoveContour().asInstanceOf[InferenceRule[RuleArg]],
                 new MultipleRuleArgs(c.map( new ContourArg(subGoalIndex, tupel._1.getOccurrenceIndex, _)).toSeq:_*),
                 name, result)
             case None => throw new TacticApplicationException("Could not find a suited contour in this diagram")
@@ -171,7 +169,7 @@ object Tactics {
           val targetZone = zoneChooser(diagram)
           targetZone match {
             case Some(zones) =>
-              createResults(Some(state), new RemoveShading().asInstanceOf[InferenceRule[RuleArg]],
+              createResults(state, new RemoveShading().asInstanceOf[InferenceRule[RuleArg]],
                 new MultipleRuleArgs(zones.map(zone => new ZoneArg(subGoalIndex, diagram.getOccurrenceIndex, zone)).toSeq:_*),
                 name, result)
             case None => None
@@ -191,7 +189,7 @@ object Tactics {
       target match {
         case None => None
         case Some(diagram) =>
-          createResults(Some(state), new Combining().asInstanceOf[InferenceRule[RuleArg]],
+          createResults(state, new Combining().asInstanceOf[InferenceRule[RuleArg]],
             new SubDiagramIndexArg(subGoalIndex, diagram.getOccurrenceIndex),name, result)
       }
     } catch {
@@ -210,10 +208,10 @@ object Tactics {
           val op0 = diagram.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0).asInstanceOf[PrimarySpiderDiagramOccurrence]
           val op1 = diagram.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(1).asInstanceOf[PrimarySpiderDiagramOccurrence]
           if ((op0.getAllContours -- op1.getAllContours).nonEmpty) {
-            createResults(Some( state), new CopyContoursTopological().asInstanceOf[InferenceRule[RuleArg]],
+            createResults(state, new CopyContoursTopological().asInstanceOf[InferenceRule[RuleArg]],
               new MultipleRuleArgs(new ContourArg(subGoalIndex, op0.getOccurrenceIndex, (op0.getAllContours -- op1.getAllContours).head)),name, result)
           } else {
-            createResults(Some(state), new CopyContoursTopological().asInstanceOf[InferenceRule[RuleArg]],
+            createResults(state, new CopyContoursTopological().asInstanceOf[InferenceRule[RuleArg]],
               new MultipleRuleArgs(new ContourArg(subGoalIndex, op1.getOccurrenceIndex, (op1.getAllContours -- op0.getAllContours).head)),name,result)
           }
       }
@@ -238,7 +236,7 @@ object Tactics {
             val maxZone = computeMaximalCorrespondingShadedRegion(op0, op1)
             maxZone match {
               case Some((r1: Set[Zone], r2: Set[Zone])) =>
-                createResults(Some(state), new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
+                createResults(state, new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
                   new MultipleRuleArgs(r1.map(z => new ZoneArg(subGoalIndex, op0.getOccurrenceIndex, z)).toList),
                   name, result)
               case None =>
@@ -246,7 +244,7 @@ object Tactics {
                   val maxZone = computeMaximalCorrespondingShadedRegion(op1, op0)
                   maxZone match {
                     case Some((r1: Set[Zone], r2: Set[Zone])) =>
-                      createResults(Some(state), new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
+                      createResults(state, new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
                         new MultipleRuleArgs(r1.map(z => new ZoneArg(subGoalIndex, op1.getOccurrenceIndex, z)).toList),
                         name, result)
                     case None => None
@@ -257,7 +255,7 @@ object Tactics {
             val maxZone = computeMaximalCorrespondingShadedRegion(op1, op0)
             maxZone match {
               case Some((r1: Set[Zone], r2: Set[Zone])) =>
-                createResults(Some(state), new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
+                createResults(state, new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
                   new MultipleRuleArgs(r1.map(z => new ZoneArg(subGoalIndex, op1.getOccurrenceIndex, z)).toList),
                   name, result)
               case None => None
@@ -277,7 +275,7 @@ object Tactics {
       target match {
         case None => None
         case Some(diagram) =>
-          createResults(Some(state), new Idempotency().asInstanceOf[InferenceRule[RuleArg]],
+          createResults(state, new Idempotency().asInstanceOf[InferenceRule[RuleArg]],
             new SubDiagramIndexArg(subGoalIndex, diagram.getOccurrenceIndex),name, result)
       }
     }
@@ -294,7 +292,7 @@ object Tactics {
       target match {
         case None => None
         case Some(diagram) =>
-          createResults(Some(state), new TrivialImplicationTautology().asInstanceOf[InferenceRule[RuleArg]],
+          createResults(state, new TrivialImplicationTautology().asInstanceOf[InferenceRule[RuleArg]],
             new SubDiagramIndexArg(subGoalIndex, diagram.getOccurrenceIndex),name, result)
       }
     }
