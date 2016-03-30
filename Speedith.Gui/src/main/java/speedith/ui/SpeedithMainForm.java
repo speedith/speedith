@@ -125,6 +125,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private speedith.ui.ProofPanel proofPanel1;
   private javax.swing.JMenu proofMenu;
   private javax.swing.JMenuItem cropProof;
+  private javax.swing.JMenuItem inspectProof;
   private javax.swing.JScrollPane scrlPnlAppliedRules;
   private javax.swing.JScrollPane scrlPnlTactics;
 
@@ -330,6 +331,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     cropProof = new javax.swing.JMenuItem();
     analyseItem = new javax.swing.JMenuItem();
     heuristicItem = new javax.swing.JMenuItem();
+    inspectProof = new javax.swing.JMenuItem();
     /*reasoningMenu = new javax.swing.JMenu();
     proveAny = new javax.swing.JMenuItem();
     proveFromHere = new javax.swing.JMenuItem(); */
@@ -677,65 +679,34 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       }
     });
     proofMenu.add(heuristicItem);
-    menuBar.add(proofMenu);
 
-/*    reasoningMenu.setMnemonic('A');
-    reasoningMenu.setText("Auto");
-
-    proveAny.setText("Prove");
-    proveAny.addActionListener(new ActionListener() {
+    inspectProof.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
+    inspectProof.setText("Inspect");
+    inspectProof.setMnemonic('i');
+    inspectProof.addActionListener(new ActionListener() {
       @Override
-      public void actionPerformed(ActionEvent evt) {
-        onProveAny(evt);
+      public void actionPerformed(ActionEvent actionEvent) {
+        onInspectProof();
       }
     });
-    reasoningMenu.add(proveAny);
+    proofMenu.add(inspectProof);
 
-    proveFromHere.setText("Prove from the current state");
-   // proveFromHere
-    reasoningMenu.add(proveFromHere); */
-//    menuBar.add(reasoningMenu);
+    menuBar.add(proofMenu);
 
-
-/*    tacticsMenu.setText("Tactics");
-
-    regularTacticsMenu.setText("Regular");
-    acceleratedTacticsMenu.setText("Accelerated");
-
-    tacticsMenu.add(regularTacticsMenu);
-    tacticsMenu.add(acceleratedTacticsMenu);
-
-    for (final TacticMenuItemRegular item:  TacticMenuItemRegular.values()) {
-
-      JMenuItem tacticalButton = new JMenuItem();
-      tacticalButton.setText(item.getName());
-      tacticalButton.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-          applyTactical(item);
-        }
-      });
-      regularTacticsMenu.add(tacticalButton);
-
-    }
-
-    for (final TacticMenuItemAccelerated item:  TacticMenuItemAccelerated.values()) {
-
-      JMenuItem tacticalButton = new JMenuItem();
-      tacticalButton.setText(item.getName());
-      tacticalButton.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-          applyTactical(item);
-        }
-      });
-      acceleratedTacticsMenu.add(tacticalButton);
-
-    }
-
-    menuBar.add(tacticsMenu);
-*/
     setJMenuBar(menuBar);
+  }
+
+  private void onInspectProof() {
+    ProofPanel fullProof = new ProofPanel();
+    try {
+      fullProof.createFlattenedProof(proofPanel1);
+      JDialog frame = new JDialog(this, "Full Proof", true);
+      frame.getContentPane().add(fullProof);
+      frame.pack();
+      frame.setVisible(true);
+    } catch (TacticApplicationException e) {
+      JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
+    }
   }
 
   private void onComputeHeuristic() {

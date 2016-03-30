@@ -1,9 +1,6 @@
 package speedith.core.reasoning.tactical;
 
-import speedith.core.reasoning.Goals;
-import speedith.core.reasoning.InferenceApplicationResult;
-import speedith.core.reasoning.InferenceRule;
-import speedith.core.reasoning.RuleApplicationResult;
+import speedith.core.reasoning.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,27 +13,21 @@ import java.util.List;
 public class TacticApplicationResult implements InferenceApplicationResult {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private List<RuleApplicationResult> applications;
+    private List<InferenceApplication> applications;
+
+    private Goals goals;
 
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
-    /**
-     * Initialises an instance of the RuleApplicationResult class.
-     * @param ruleApplication the goals that remained after the application of an
-     * inference rule.
-     */
-    public TacticApplicationResult(RuleApplicationResult ruleApplication) {
-        this.applications = new ArrayList<>();
-        this.applications.add(ruleApplication);
-    }
 
     public TacticApplicationResult() {
         this.applications = new ArrayList<>();
     }
 
-    public  TacticApplicationResult(List<RuleApplicationResult> applications) {
-        this.applications = applications;
+    public  TacticApplicationResult(List<InferenceApplication> applications, Goals goals) {
+        this.applications= applications;
+        this.goals = goals;
     }
     //</editor-fold>
 
@@ -53,14 +44,14 @@ public class TacticApplicationResult implements InferenceApplicationResult {
      * inference rule yielded no subgoals. The same hold for an empty {@link Goals}
      * instance.</p>
      */
-    public List<RuleApplicationResult> getApplicationList() {
+    public List<InferenceApplication> getApplicationList() {
         return applications;
     }
 
 
 
     public Goals getGoals() {
-        return applications.size() > 0 ? applications.get(applications.size() -1).getGoals() : null;
+        return goals;
     }
     //</editor-fold>
 

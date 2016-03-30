@@ -145,7 +145,7 @@ object Auxilliary {
   }
 
   def getSubGoal(subgoalIndex : Int, goals: Goals): SpiderDiagramOccurrence = {
-    if (goals == null )  throw new TacticApplicationException("Could not apply tactic")
+    if (goals == null || goals.getGoals == null)  throw new TacticApplicationException("Could not apply tactic")
     val goal = goals.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
       SpiderDiagramOccurrence.wrapDiagram(goal, 0)

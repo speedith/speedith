@@ -65,7 +65,10 @@ object Tactics {
       // intermediate is used to create the rule applications (applyRule changes the given proof and
       // returns a RuleApplicationResult!)
       val result = rule.apply(args, goal)
-       Some(new TacticApplicationResult(oldResult.getApplicationList :+ result))
+      val app = new InferenceApplication(rule, args, RuleApplicationType.TACTIC, name)
+      val newGoals = result.getGoals.getGoals.filterNot(d => NullSpiderDiagram.getInstance().isSEquivalentTo(d))
+      val newGoal = Goals.createGoalsFrom(newGoals)
+       Some(new TacticApplicationResult(oldResult.getApplicationList :+ app, newGoal))
 //      val intermediate = result._2.applyRule(rule, args, RuleApplicationType.TACTIC, name)
 //      Some(result._2)
   }
