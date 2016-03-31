@@ -4,6 +4,7 @@ import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.InferenceApplication;
+import speedith.core.reasoning.ProofAnalyser;
 import speedith.core.reasoning.automatic.AutomaticProofException;
 import speedith.core.reasoning.rules.*;
 import speedith.core.reasoning.rules.util.HeuristicUtils;
@@ -49,11 +50,11 @@ public class LowClutterStrategy implements Strategy, StrategyProvider {
 
         List<InferenceApplication> applications = p.getInferenceApplications();
         int cost = 0;
-        for (InferenceApplication app: applications) {
+/*        for (InferenceApplication app: applications) {
             int debug = COSTS.get(app.getInference().getClass());
             cost +=  debug;
-        }
-        return cost;
+        }*/
+        return p.getInferenceApplicationCount();
     }
 
     @Override
@@ -62,7 +63,7 @@ public class LowClutterStrategy implements Strategy, StrategyProvider {
         for (SpiderDiagram goal : p.getLastGoals().getGoals()) {
             if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
                 CompoundSpiderDiagram impl = (CompoundSpiderDiagram) goal;
-                heuristic += HeuristicUtils.metric(impl.getOperand(0), impl.getOperand(1));
+                heuristic += ProofAnalyser.clutterScore(impl.getOperand(0));
             } else {
                 throw new AutomaticProofException("The current goal is not an implication of conjunctions.");
             }
