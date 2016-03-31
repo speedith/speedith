@@ -47,7 +47,8 @@ public class InferenceApplication implements Serializable {
     private RuleArg ruleArguments;
     private RuleApplicationType type;
     private String typeSpecifier;
-    private static final long serialVersionUID = -5487436537034792892L;
+
+
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructor">

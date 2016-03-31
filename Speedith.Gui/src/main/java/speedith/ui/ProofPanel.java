@@ -253,7 +253,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         int targetLength = newProof.getInferenceApplicationCount();
         for (InferenceApplication appl : newProof.getInferenceApplications().subList(currentLength, targetLength)) {
             try {
-                applyRule((InferenceRule<? super RuleArg>) appl.getInference(), appl.getRuleArguments(), appl.getType(),appl.getTypeSpecifier());
+                applyRule((Inference<? super RuleArg,?>) appl.getInference(), appl.getRuleArguments(), appl.getType(),appl.getTypeSpecifier());
             } catch (RuleApplicationException e) {
                 e.printStackTrace();
             }
@@ -272,7 +272,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         }
         InferenceApplication appl = newProof.getInferenceApplicationAt(currentLength);
         try {
-            applyRule((InferenceRule<? super RuleArg>) appl.getInference(), appl.getRuleArguments(), appl.getType(), appl.getTypeSpecifier());
+            applyRule((Inference<? super RuleArg,?>) appl.getInference(), appl.getRuleArguments(), appl.getType(), appl.getTypeSpecifier());
         } catch (RuleApplicationException e) {
             e.printStackTrace();
         }
@@ -291,7 +291,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
             newProof(proof.getInitialGoals());
             for (InferenceApplication appl : proof.getInferenceApplications()) {
                 try {
-                    applyRule((InferenceRule<? super RuleArg>) appl.getInference(), appl.getRuleArguments(), appl.getType(), appl.getTypeSpecifier());
+                    applyRule((Inference<? super RuleArg,?>) appl.getInference(), appl.getRuleArguments(), appl.getType(), appl.getTypeSpecifier());
                 } catch (RuleApplicationException e) {
                     e.printStackTrace();
                 }

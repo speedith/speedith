@@ -2,6 +2,7 @@ package speedith.core.reasoning.tactical;
 
 import speedith.core.reasoning.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class TacticApplicationResult implements InferenceApplicationResult {
+public class TacticApplicationResult implements InferenceApplicationResult, Serializable {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private List<InferenceApplication> applications;

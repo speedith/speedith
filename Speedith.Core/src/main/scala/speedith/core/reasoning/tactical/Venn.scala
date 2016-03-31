@@ -14,7 +14,7 @@ import scala.collection.JavaConversions._
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *
   */
-class Venn extends SimpleTactic{
+class Venn extends SimpleTactic with Serializable{
   override def apply(args: RuleArg, goals: Goals): TacticApplicationResult = args match {
     case arg: SubgoalIndexArg =>
       SimpleTacticals.vennStyle(getPrettyName())(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {

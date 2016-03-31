@@ -4,7 +4,7 @@ import java.util
 import java.util.Locale
 
 import speedith.core.lang.DiagramType
-import speedith.core.reasoning.{InferenceProvider, RuleApplicationException, Goals}
+import speedith.core.reasoning.{RuleApplicationException, Goals}
 import speedith.core.reasoning.args.{SubgoalIndexArg, RuleArg}
 import speedith.core.reasoning.tactical.euler.SimpleTacticals
 
@@ -16,7 +16,7 @@ import scala.collection.JavaConversions._
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *
   */
-class UnifyContours extends SimpleTactic {
+class UnifyContours extends SimpleTactic with Serializable {
   override def apply(args: RuleArg, goals: Goals): TacticApplicationResult = {
     args match {
       case arg: SubgoalIndexArg =>
