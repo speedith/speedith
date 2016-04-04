@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleCopyShading extends PossibleInferenceApplication<MultipleRuleArgs> {
+public class PossibleCopyShading extends PossibleRuleApplication<MultipleRuleArgs> {
 
     private final Set<Zone> region;
 

@@ -24,10 +24,10 @@ public class Tactics {
 
     static {
         registerProvider(UnifyContours.class);
-        registerProvider(CopyContours.class);
+        registerProvider(CopyTopologicalInformation.class);
         registerProvider(MatchConclusion.class);
         registerProvider(Venn.class);
-        registerProvider(CopyShadings.class);
+        registerProvider(CopyShadingInformation.class);
     }
 
     private Tactics() {};

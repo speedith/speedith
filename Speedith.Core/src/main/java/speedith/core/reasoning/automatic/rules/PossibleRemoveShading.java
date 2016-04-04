@@ -13,7 +13,7 @@ import speedith.core.reasoning.rules.RemoveShading;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleRemoveShading extends PossibleInferenceApplication<MultipleRuleArgs> {
+public class PossibleRemoveShading extends PossibleRuleApplication<MultipleRuleArgs> {
 
     private final Zone zone;
 

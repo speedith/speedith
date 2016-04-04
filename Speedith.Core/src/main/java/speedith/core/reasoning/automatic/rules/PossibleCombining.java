@@ -7,7 +7,7 @@ import speedith.core.reasoning.rules.Combining;
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleCombining extends PossibleInferenceApplication<SubDiagramIndexArg> {
+public class PossibleCombining extends PossibleRuleApplication<SubDiagramIndexArg> {
 
     public PossibleCombining(int subGoalIndex, SpiderDiagramOccurrence target, Combining rule) {
         super(subGoalIndex, target, rule);

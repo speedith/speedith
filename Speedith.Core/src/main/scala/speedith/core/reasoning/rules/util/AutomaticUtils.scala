@@ -3,9 +3,11 @@ package speedith.core.reasoning.rules.util
 import java.util
 
 import speedith.core.lang.{CompoundSpiderDiagram, Operator, PrimarySpiderDiagram, Region, SpiderDiagram, Zone}
-import speedith.core.reasoning.InferenceRule
+import speedith.core.reasoning.tactical._
+import speedith.core.reasoning.{Goals, InferenceRule}
 import speedith.core.reasoning.args.{MultipleRuleArgs, RuleArg}
 import speedith.core.reasoning.automatic.rules._
+import speedith.core.reasoning.automatic.tactical.PossibleTacticApplication
 import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramOccurrence, PrimarySpiderDiagramOccurrence, SpiderDiagramOccurrence}
 import speedith.core.reasoning.rules._
 import speedith.core.reasoning.util.unitary.CorrespondingRegions
@@ -42,21 +44,25 @@ object AutomaticUtils {
       sd.getOperands.exists(containsEmptyZone)
   }
   // </editor-fold>
-
+  def createAllPossibleTacticApplications(subGoalIndex:Int) : java.util.Set[PossibleTacticApplication] = {
+    Set(new PossibleTacticApplication(subGoalIndex, new CopyTopologicalInformation), new PossibleTacticApplication(subGoalIndex, new CopyShadingInformation),
+      new PossibleTacticApplication(subGoalIndex, new MatchConclusion), new PossibleTacticApplication(subGoalIndex, new UnifyContours),
+      new PossibleTacticApplication(subGoalIndex,new Venn))
+  }
   // <editor-fold defaultstate="collapsed" desc="Creation of possible rule applications">
   /**
    * Creates all possible rule application for the given SpiderDiagram with respect to the given set of contours.
    *
-   * @param target The SpiderDiagramOccurrence for which the set of PossibleInferenceApplication will be created
+   * @param target The SpiderDiagramOccurrence for which the set of PossibleRuleApplication will be created
    * @param contours The set of contours present in the whole subgoal target is contained in
-   * @return A set of PossibleInferenceApplication denoting all rule applications possible to target
+   * @return A set of PossibleRuleApplication denoting all rule applications possible to target
    */
-  def createAllPossibleRuleApplications(subGoalIndex:Int, target: SpiderDiagramOccurrence, contours: util.Collection[String]):java.util.Set[_ <: PossibleInferenceApplication[_ <: RuleArg]]  = {
+  def createAllPossibleRuleApplications(subGoalIndex:Int, target: SpiderDiagramOccurrence, contours: util.Collection[String]):java.util.Set[_ <: PossibleRuleApplication[_ <: RuleArg]]  = {
    createAllPossibleRuleApplicationsRec(subGoalIndex, target, contours)
   }
 
 
-  private def createAllPossibleRuleApplicationsRec (subGoalIndex:Int, target: SpiderDiagramOccurrence, contours: util.Collection[String]):Set[_ <: PossibleInferenceApplication[_ <: RuleArg]] = target match {
+  private def createAllPossibleRuleApplicationsRec (subGoalIndex:Int, target: SpiderDiagramOccurrence, contours: util.Collection[String]):Set[_ <: PossibleRuleApplication[_ <: RuleArg]] = target match {
     case target : PrimarySpiderDiagramOccurrence =>
       createRemoveShadedZoneApplications(subGoalIndex, target) ++
         createRemoveShadingApplications(subGoalIndex,target) ++

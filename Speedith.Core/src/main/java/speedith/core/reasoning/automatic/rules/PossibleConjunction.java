@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleConjunction extends PossibleInferenceApplication<MultipleRuleArgs> {
+public class PossibleConjunction extends PossibleRuleApplication<MultipleRuleArgs> {
     final SpiderDiagramOccurrence child;
     public PossibleConjunction(int subGoalIndex, SpiderDiagramOccurrence target, ConjunctionElimination rule, SpiderDiagramOccurrence child) {
         super(subGoalIndex, target, rule);

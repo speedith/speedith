@@ -16,7 +16,7 @@ import java.util.Set;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleRemoveContour extends PossibleInferenceApplication<MultipleRuleArgs> {
+public class PossibleRemoveContour extends PossibleRuleApplication<MultipleRuleArgs> {
 
     private final String contour;
 

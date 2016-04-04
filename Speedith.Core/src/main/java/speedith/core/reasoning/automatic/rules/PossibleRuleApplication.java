@@ -2,6 +2,7 @@ package speedith.core.reasoning.automatic.rules;
 
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.automatic.PossibleInferenceApplication;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 
 /**
@@ -12,43 +13,21 @@ import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public abstract class PossibleInferenceApplication<TRuleArg extends RuleArg> {
-
-    private final Inference<TRuleArg,?> inference;
+public abstract class PossibleRuleApplication<TRuleArg extends RuleArg> extends PossibleInferenceApplication<TRuleArg>{
 
     private final SpiderDiagramOccurrence target;
 
-    private final int subGoalIndex;
-
-    public PossibleInferenceApplication(int subGoalIndex, SpiderDiagramOccurrence target, InferenceRule<TRuleArg> inference) {
+    public PossibleRuleApplication(int subGoalIndex, SpiderDiagramOccurrence target, InferenceRule<TRuleArg> inference) {
+        super(subGoalIndex, inference);
         this.target = target;
-        this.inference = inference;
-        this.subGoalIndex = subGoalIndex;
-    }
+   }
 
-    /**
-     * The inference that could be applied.
-     * @return an instance of the inference
-     */
-    public Inference<TRuleArg,?> getInference() { return inference; }
 
     /**
      * The target diagram to which the inference could be applied
      * @return the target diagram
      */
     public SpiderDiagramOccurrence getTarget() { return target; }
-
-    public int getSubGoalIndex() {
-        return subGoalIndex;
-    }
-
-    public abstract TRuleArg getArg() ;
-
-    public boolean apply(Proof p, String typeSpecifier) throws RuleApplicationException {
-        p.applyRule(getInference(), getArg(), RuleApplicationType.AUTOMATIC, typeSpecifier);
-        return true;
-    }
-
 
     /**
      * Check whether there is already an application of a proof inference within

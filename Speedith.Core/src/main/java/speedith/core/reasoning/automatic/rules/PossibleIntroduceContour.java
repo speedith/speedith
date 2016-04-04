@@ -17,7 +17,7 @@ import java.util.Set;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleIntroduceContour extends PossibleInferenceApplication<MultipleRuleArgs> {
+public class PossibleIntroduceContour extends PossibleRuleApplication<MultipleRuleArgs> {
 
     private final String contour;
 

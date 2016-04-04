@@ -60,7 +60,7 @@ public class AppliedRules {
     }
 
 
-    public void add(PossibleInferenceApplication rule, SpiderDiagramOccurrence psd) {
+    public void add(PossibleRuleApplication rule, SpiderDiagramOccurrence psd) {
         if (rule instanceof PossibleCopyContour) {
             add((PossibleCopyContour) rule, psd);
         } else if(rule instanceof PossibleCopyShading) {
@@ -123,7 +123,7 @@ public class AppliedRules {
         copiedContours.get(sd).add(rule.getContour());
     }
 
-    public boolean contains(PossibleInferenceApplication rule, SpiderDiagramOccurrence psd) {
+    public boolean contains(PossibleRuleApplication rule, SpiderDiagramOccurrence psd) {
         if (rule instanceof PossibleCopyContour) {
             return contains((PossibleCopyContour) rule, psd);
         } else if(rule instanceof PossibleCopyShading) {
@@ -158,7 +158,7 @@ public class AppliedRules {
         return removedShading.containsKey(psd) && removedShading.get(psd).contains(rule.getZone());
     }
 
-    public void remove(PossibleInferenceApplication rule, SpiderDiagramOccurrence sd) {
+    public void remove(PossibleRuleApplication rule, SpiderDiagramOccurrence sd) {
         if (rule instanceof PossibleCopyContour) {
             remove((PossibleCopyContour) rule, sd);
         } else if(rule instanceof PossibleCopyShading) {

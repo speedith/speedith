@@ -6,7 +6,7 @@ import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.ProofTrace;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.args.RuleArg;
-import speedith.core.reasoning.automatic.rules.PossibleInferenceApplication;
+import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
@@ -62,9 +62,9 @@ public class BreadthFirstProver extends  AutomaticProver {
             } else {
                 // create all possible proof rules for this unfinished proof
                 SpiderDiagramOccurrence target = SpiderDiagramOccurrence.wrapDiagram(current.getLastGoals().getGoalAt(subgoalindex), 0);
-                Set<? extends PossibleInferenceApplication<? extends RuleArg>> applications = AutomaticUtils.createAllPossibleRuleApplications(subgoalindex,target, contours);
+                Set<? extends PossibleRuleApplication<? extends RuleArg>> applications = AutomaticUtils.createAllPossibleRuleApplications(subgoalindex,target, contours);
                 // apply all possible rules to the current proof, creating a new proof for each application
-                for (PossibleInferenceApplication nextRule : applications) {
+                for (PossibleRuleApplication nextRule : applications) {
                     ProofTrace newCurrent = new ProofTrace(current.getGoals(), current.getInferenceApplications());
                     boolean superfl = nextRule.isSuperfluous(newCurrent);
                     if (superfl) numOfSuperFl++;
