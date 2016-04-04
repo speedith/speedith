@@ -41,7 +41,7 @@ public class PossibleCopyShading extends PossibleInferenceApplication<MultipleRu
 
 
     @Override
-    public boolean isSuperfluous(Proof p, int subGoalIndex) {
+    public boolean isSuperfluous(Proof p) {
         for (InferenceApplication application : p.getInferenceApplications() ) {
             if (application.getInference() instanceof CopyShading) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();

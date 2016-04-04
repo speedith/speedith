@@ -39,7 +39,7 @@ public class PossibleIntroduceContour extends PossibleInferenceApplication<Multi
 
 
     @Override
-    public boolean isSuperfluous(Proof p, int subGoalIndex) {
+    public boolean isSuperfluous(Proof p) {
         boolean result = false;
         for (int i =0; i< p.getInferenceApplicationCount();i++) {
             InferenceApplication application = p.getInferenceApplicationAt(i);

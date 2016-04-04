@@ -35,7 +35,7 @@ public class PossibleRemoveShading extends PossibleInferenceApplication<Multiple
 
 
     @Override
-    public boolean isSuperfluous(Proof p, int subGoalIndex) {
+    public boolean isSuperfluous(Proof p) {
         for (InferenceApplication application : p.getInferenceApplications()) {
             if (application.getInference() instanceof RemoveShading) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();

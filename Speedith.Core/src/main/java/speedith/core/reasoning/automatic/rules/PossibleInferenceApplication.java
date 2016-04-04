@@ -44,7 +44,7 @@ public abstract class PossibleInferenceApplication<TRuleArg extends RuleArg> {
 
     public abstract TRuleArg getArg() ;
 
-    public boolean apply(Proof p, int subGoalIndex, String typeSpecifier) throws RuleApplicationException {
+    public boolean apply(Proof p, String typeSpecifier) throws RuleApplicationException {
         p.applyRule(getInference(), getArg(), RuleApplicationType.AUTOMATIC, typeSpecifier);
         return true;
     }
@@ -59,10 +59,9 @@ public abstract class PossibleInferenceApplication<TRuleArg extends RuleArg> {
      * NOTE: The standard implementation always returns false
      *
      * @param p a proof
-     * @param subGoalIndex the subgoal index the proof inference shall be applied to
      * @return true, if the inference application would be superfluous
      */
-    public boolean isSuperfluous(Proof p, int subGoalIndex) {
+    public boolean isSuperfluous(Proof p) {
         return false;
     }
 }

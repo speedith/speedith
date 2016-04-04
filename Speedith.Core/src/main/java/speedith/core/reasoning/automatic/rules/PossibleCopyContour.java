@@ -38,7 +38,7 @@ public class PossibleCopyContour extends PossibleInferenceApplication<MultipleRu
 
 
     @Override
-    public boolean isSuperfluous(Proof p, int subGoalIndex) {
+    public boolean isSuperfluous(Proof p) {
         for (InferenceApplication application : p.getInferenceApplications() ) {
             if (application.getInference() instanceof CopyContours) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();

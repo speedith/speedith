@@ -80,9 +80,9 @@ public class HeuristicSearch extends AutomaticProver {
             // apply all possible rules to the current proof, creating a new proof for each application
             for(PossibleInferenceApplication nextRule : applications) {
                 ProofTrace newCurrent = new ProofTrace(currentProof.getGoals(), currentProof.getInferenceApplications());
-                boolean superfl = nextRule.isSuperfluous(newCurrent,subgoalindex);
+                boolean superfl = nextRule.isSuperfluous(newCurrent);
                 if (superfl) numOfSuperFl++;
-                boolean hasBeenApplied =  !superfl  && nextRule.apply(newCurrent, subgoalindex, getPrettyName());
+                boolean hasBeenApplied =  !superfl  && nextRule.apply(newCurrent, getPrettyName());
                 if (hasBeenApplied) {
                     // save the new proof within the set of not yet considered proofs
                     ProofAttempt newAttempt = new ProofAttempt(newCurrent, getStrategy());
