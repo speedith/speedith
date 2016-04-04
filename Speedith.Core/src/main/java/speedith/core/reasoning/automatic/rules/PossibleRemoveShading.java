@@ -13,12 +13,12 @@ import speedith.core.reasoning.rules.RemoveShading;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleRemoveShading extends PossibleRuleApplication<MultipleRuleArgs> {
+public class PossibleRemoveShading extends PossibleInferenceApplication<MultipleRuleArgs> {
 
     private final Zone zone;
 
-    public PossibleRemoveShading(SpiderDiagramOccurrence target, RemoveShading rule, Zone zone) {
-        super(target, rule);
+    public PossibleRemoveShading(int subGoalIndex, SpiderDiagramOccurrence target, RemoveShading rule, Zone zone) {
+        super(subGoalIndex, target, rule);
         this.zone = zone;
     }
 
@@ -27,9 +27,9 @@ public class PossibleRemoveShading extends PossibleRuleApplication<MultipleRuleA
     }
 
     @Override
-    public MultipleRuleArgs getArg(int subgoalindex) {
+    public MultipleRuleArgs getArg() {
         int targetIndex = getTarget().getOccurrenceIndex();
-        ZoneArg zoneArg = new ZoneArg(subgoalindex, targetIndex, zone);
+        ZoneArg zoneArg = new ZoneArg(getSubGoalIndex(), targetIndex, zone);
         return new MultipleRuleArgs(zoneArg);
     }
 
@@ -39,7 +39,7 @@ public class PossibleRemoveShading extends PossibleRuleApplication<MultipleRuleA
         for (InferenceApplication application : p.getInferenceApplications()) {
             if (application.getInference() instanceof RemoveShading) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
-                MultipleRuleArgs thisArgs =  getArg(subGoalIndex);
+                MultipleRuleArgs thisArgs =  getArg();
                 // application is superfluous if the other rule
                 // a) works on the same subgoal
                 // b) and on the same subdiagram and

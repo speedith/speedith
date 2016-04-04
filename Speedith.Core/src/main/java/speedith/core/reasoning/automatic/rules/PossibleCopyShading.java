@@ -16,21 +16,21 @@ import java.util.Set;
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleCopyShading extends PossibleRuleApplication<MultipleRuleArgs> {
+public class PossibleCopyShading extends PossibleInferenceApplication<MultipleRuleArgs> {
 
     private final Set<Zone> region;
 
-    public PossibleCopyShading(SpiderDiagramOccurrence target, CopyShading rule, Set<Zone> region) {
-        super(target, rule);
+    public PossibleCopyShading(int subGoalIndex, SpiderDiagramOccurrence target, CopyShading rule, Set<Zone> region) {
+        super(subGoalIndex, target, rule);
         this.region = region;
     }
 
     @Override
-    public MultipleRuleArgs getArg(int subgoalindex)  {
+    public MultipleRuleArgs getArg()  {
         int targetIndex = getTarget().getOccurrenceIndex();
         List<ZoneArg> args = new ArrayList<>();
         for(Zone z : region) {
-            args.add(new ZoneArg(subgoalindex, targetIndex, z));
+            args.add(new ZoneArg(getSubGoalIndex(), targetIndex, z));
         }
         return new MultipleRuleArgs(args);
     }
@@ -45,7 +45,7 @@ public class PossibleCopyShading extends PossibleRuleApplication<MultipleRuleArg
         for (InferenceApplication application : p.getInferenceApplications() ) {
             if (application.getInference() instanceof CopyShading) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
-                MultipleRuleArgs thisArgs =  getArg(subGoalIndex);
+                MultipleRuleArgs thisArgs =  getArg();
                 if (args.size() == thisArgs.size() && args.size() > 0) {
                     // application is superfluous if the other rule
                     // a) works on the same subgoal

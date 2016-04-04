@@ -13,19 +13,19 @@ import speedith.core.reasoning.rules.RemoveShadedZone;
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleIntroShadedZone extends PossibleRuleApplication<MultipleRuleArgs> {
+public class PossibleIntroShadedZone extends PossibleInferenceApplication<MultipleRuleArgs> {
 
     private final Zone zone;
 
-    public PossibleIntroShadedZone(SpiderDiagramOccurrence target, IntroShadedZone rule, Zone zone) {
-        super(target, rule);
+    public PossibleIntroShadedZone(int subGoalIndex, SpiderDiagramOccurrence target, IntroShadedZone rule, Zone zone) {
+        super(subGoalIndex, target, rule);
         this.zone = zone;
     }
 
     @Override
-    public MultipleRuleArgs getArg(int subgoalindex) {
+    public MultipleRuleArgs getArg() {
         int subDiagramIndex = getTarget().getOccurrenceIndex();
-        ZoneArg zoneArg = new ZoneArg(subgoalindex, subDiagramIndex, zone);
+        ZoneArg zoneArg = new ZoneArg(getSubGoalIndex(), subDiagramIndex, zone);
         return new MultipleRuleArgs(zoneArg);
     }
 
@@ -36,7 +36,7 @@ public class PossibleIntroShadedZone extends PossibleRuleApplication<MultipleRul
   /*  @Override
     public boolean apply(Proof p, int subGoalIndex, AppliedRules applied) throws RuleApplicationException {
         if (!applied.getIntroducedShadedZones(getTarget()).contains(zone)) {
-                p.applyRule(getRule(), getArg(subGoalIndex));
+                p.applyRule(getInference(), getArg(subGoalIndex));
             applied.addIntroducedShadedZones(getTarget(), zone);
             return true;
         } else {
@@ -50,7 +50,7 @@ public class PossibleIntroShadedZone extends PossibleRuleApplication<MultipleRul
             InferenceApplication application = p.getInferenceApplicationAt(i);
             if (application.getInference() instanceof RemoveShadedZone) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
-                MultipleRuleArgs thisArgs = getArg(subGoalIndex);
+                MultipleRuleArgs thisArgs = getArg();
                 // application is superfluous if :
                 // a) both rules work on the same subgoal
                 // b) the result of the already applied rule is the premiss of the current rule
@@ -63,7 +63,7 @@ public class PossibleIntroShadedZone extends PossibleRuleApplication<MultipleRul
                 }
             } else if (application.getInference() instanceof IntroShadedZone) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
-                MultipleRuleArgs thisArgs = getArg(subGoalIndex);
+                MultipleRuleArgs thisArgs = getArg();
                 // application is superfluous if the other rule
                 // a) works on the same subgoal
                 // b) and on the same subdiagram and

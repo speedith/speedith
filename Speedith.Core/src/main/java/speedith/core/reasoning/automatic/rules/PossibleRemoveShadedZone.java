@@ -12,19 +12,19 @@ import speedith.core.reasoning.rules.RemoveShadedZone;
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleRemoveShadedZone extends PossibleRuleApplication<MultipleRuleArgs> {
+public class PossibleRemoveShadedZone extends PossibleInferenceApplication<MultipleRuleArgs> {
 
     private final Zone zone;
 
-    public PossibleRemoveShadedZone(SpiderDiagramOccurrence target, RemoveShadedZone rule, Zone zone) {
-        super(target, rule);
+    public PossibleRemoveShadedZone(int subGoalIndex, SpiderDiagramOccurrence target, RemoveShadedZone rule, Zone zone) {
+        super( subGoalIndex, target, rule);
         this.zone = zone;
     }
 
     @Override
-    public MultipleRuleArgs getArg(int subgoalindex)  {
+    public MultipleRuleArgs getArg()  {
         int subDiagramIndex = getTarget().getOccurrenceIndex();
-        ZoneArg zoneArg = new ZoneArg(subgoalindex, subDiagramIndex, zone);
+        ZoneArg zoneArg = new ZoneArg(getSubGoalIndex(), subDiagramIndex, zone);
         return new MultipleRuleArgs(zoneArg);
     }
 
@@ -40,7 +40,7 @@ public class PossibleRemoveShadedZone extends PossibleRuleApplication<MultipleRu
             InferenceApplication application = p.getInferenceApplicationAt(i);
             if (application.getInference() instanceof IntroShadedZone) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
-                MultipleRuleArgs thisArgs =  getArg(subGoalIndex);
+                MultipleRuleArgs thisArgs =  getArg();
                 // application is superfluous if :
                 // a) both rules work on the same subgoal
                 // b) the result of the already applied rule is the premiss of the current rule
@@ -53,7 +53,7 @@ public class PossibleRemoveShadedZone extends PossibleRuleApplication<MultipleRu
                 }
             } else if (application.getInference() instanceof RemoveShadedZone) {
                 MultipleRuleArgs args = (MultipleRuleArgs) application.getRuleArguments();
-                MultipleRuleArgs thisArgs =  getArg(subGoalIndex);
+                MultipleRuleArgs thisArgs =  getArg();
                 // application is superfluous if the other rule
                 // a) works on the same subgoal
                 // b) and on the same subdiagram and

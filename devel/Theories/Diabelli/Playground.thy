@@ -11,7 +11,7 @@ lemma "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 
   by(iprover)
 
 (*lemma test_export_xSym: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A)) \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B)"
-  by(rule test_export)*)
+  by(inference test_export)*)
 
 (*lemma "(\<exists>f. distinct [s, s'] \<and> inj_on f {s, s'} \<and> f s \<in> A \<inter> B \<and> f s' \<in> (A - B) \<union> (B - A)) \<longleftrightarrow> sd_sem (UnitarySD [s, s'] {(s, {({A, B},{})}), (s', {({A},{B}), ({B},{A})})} {})"
   apply (auto)*)
@@ -117,7 +117,7 @@ lemma "(\<exists>s s'. s \<in> A \<inter> B \<and> s' \<in> (A - B) \<union> (B 
   oops
 
 lemma "(\<exists>x. P x) = (\<exists>f. P (f x))"
-  apply (rule iffI)
+  apply (inference iffI)
   apply (erule exE)
   apply (rule_tac x = "%x. xa" in exI)
   apply (assumption)
@@ -234,7 +234,7 @@ lemma rockets: "(\<forall>x. x \<in> R \<longrightarrow> x \<in> F) \<and> \<not
     (* So the FOL form does not imply the HOL form... *)
 (*lemma fol_implies_hol: "(\<exists>x y. (sp [x, y] (P x y)) \<and> distinct [s, s']) \<longrightarrow> (\<exists>f. sd [s, s'] f (P (f s) (f s')))"
   apply (simp add: sp_def sd_def)
-  apply (rule impI)
+  apply (inference impI)
   apply (erule exE)+
   apply (erule conjE)+
   apply (simp)
@@ -277,7 +277,7 @@ locale Test =
 begin
 
 lemma "IsSnake x \<longrightarrow> \<not>IsFurry x"
-  apply (rule impI)
+  apply (inference impI)
   apply (drule a2)
   by (drule a1, assumption)
 

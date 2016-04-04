@@ -1,7 +1,5 @@
 package speedith.core.reasoning.automatic.rules;
 
-import speedith.core.reasoning.InferenceRule;
-import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.Combining;
@@ -9,14 +7,14 @@ import speedith.core.reasoning.rules.Combining;
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class PossibleCombining extends PossibleRuleApplication<SubDiagramIndexArg> {
+public class PossibleCombining extends PossibleInferenceApplication<SubDiagramIndexArg> {
 
-    public PossibleCombining(SpiderDiagramOccurrence target, Combining rule) {
-        super(target, rule);
+    public PossibleCombining(int subGoalIndex, SpiderDiagramOccurrence target, Combining rule) {
+        super(subGoalIndex, target, rule);
     }
 
     @Override
-    public SubDiagramIndexArg getArg(int subgoalindex)  {
-        return new SubDiagramIndexArg(subgoalindex, getTarget().getOccurrenceIndex());
+    public SubDiagramIndexArg getArg()  {
+        return new SubDiagramIndexArg(getSubGoalIndex(), getTarget().getOccurrenceIndex());
     }
 }

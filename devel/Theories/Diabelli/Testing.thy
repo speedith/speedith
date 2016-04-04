@@ -19,7 +19,7 @@ lemma testA: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<a
   ML_prf {* MixR.get_goal_terms () *}
 
 lemma l1: "\<lbrakk> P \<longrightarrow> Q; P \<rbrakk> \<Longrightarrow> Q \<and> P"
-  apply (rule conjI)
+  apply (inference conjI)
   ML_prf {* MixR.get_goal_terms () *}
   ML_prf {* MixR.get_goal_terms () *}
 ML_prf {* Isar_Cmd.diag_state () *}

@@ -61,7 +61,7 @@ sig
   
   (* Starts speedith in batch mode. Passes to it the given term (converted to a
      spider diagram first), and instructs it to apply the inference rules given
-     by a list of rule description strings.
+     by a list of inference description strings.
 
      @param  1  the term to convert to a spider diagram and pass to Speedith.
 
