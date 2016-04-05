@@ -46,8 +46,9 @@ object AutomaticUtils {
   // </editor-fold>
   def createAllPossibleTacticApplications(subGoalIndex:Int) : java.util.Set[PossibleTacticApplication] = {
     Set(new PossibleTacticApplication(subGoalIndex, new CopyTopologicalInformation), new PossibleTacticApplication(subGoalIndex, new CopyShadingInformation),
-      new PossibleTacticApplication(subGoalIndex, new MatchConclusion), new PossibleTacticApplication(subGoalIndex, new UnifyContours),
-      new PossibleTacticApplication(subGoalIndex,new Venn))
+      new PossibleTacticApplication(subGoalIndex, new MatchConclusion), new PossibleTacticApplication(subGoalIndex, new UnifyContours))
+    //,
+    //  new PossibleTacticApplication(subGoalIndex,new Venn))
   }
   // <editor-fold defaultstate="collapsed" desc="Creation of possible rule applications">
   /**

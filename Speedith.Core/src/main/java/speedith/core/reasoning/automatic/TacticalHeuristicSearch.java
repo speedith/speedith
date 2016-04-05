@@ -67,11 +67,11 @@ public class TacticalHeuristicSearch extends AutomaticProver {
                 printStatistics(closed, attempts,startTime, numOfSuperFl);
                 return currentProof;
             }
+            // create tactic applications
             Set<PossibleTacticApplication> tacticApplications = AutomaticUtils.createAllPossibleTacticApplications(subgoalindex);
             for (PossibleTacticApplication app : tacticApplications) {
                 ProofTrace newCurrent = new ProofTrace(currentProof.getGoals(), currentProof.getInferenceApplications());
-                boolean hasBeenApplied = false;
-                hasBeenApplied = app.apply(newCurrent, getPrettyName());
+                boolean hasBeenApplied = app.apply(newCurrent, getPrettyName());
                 if (hasBeenApplied) {
                     ProofAttempt newAttempt = new ProofAttempt(newCurrent, getStrategy());
                     attempts.add(newAttempt);

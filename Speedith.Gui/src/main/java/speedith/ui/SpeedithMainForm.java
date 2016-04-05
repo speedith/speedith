@@ -69,6 +69,7 @@ import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -943,19 +944,26 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     automaticProof = new AutomaticProverThread(proofPanel1.getProof(), proofPanel1.getProver()) {
       @Override
       protected void done() {
-        if (isFinished()) {
           try {
-            setProof(get());
-          } catch (InterruptedException| ExecutionException e) {
-            JOptionPane.showMessageDialog(proofPanel1.getRootPane(), "An error occurred:" +e.getLocalizedMessage());
+            Proof result = get();
+            if (result != null && result.isFinished()) {
+              setProof(result);
+              System.out.println("Successful! ");
+              enableAutomaticProofUI();
+            } else {
+              System.out.println("Unsuccessful! ");
+              proofFoundIndicator.setText("Unable to solve");
+              cancelAutoProver.setEnabled(false);
+            }
+            } catch (InterruptedException| ExecutionException e) {
+            JOptionPane.showMessageDialog(proofPanel1.getRootPane(), "An error occurred:" +e);
+          } catch (CancellationException e) {
+            proofFoundIndicator.setText("Idle");
+            cancelAutoProver.setEnabled(false);
+            startAutoProver.setEnabled(true);
           }
-          System.out.println("Successful! ");
-          enableAutomaticProofUI();
-        } else {
-          System.out.println("Unsuccessful! ");
-          proofFoundIndicator.setText("Unable to solve");
-          cancelAutoProver.setEnabled(false);
-        }
+//        } else {
+//        }
       }
     };
     /*automaticProof.addPropertyChangeListener(new PropertyChangeListener() {
