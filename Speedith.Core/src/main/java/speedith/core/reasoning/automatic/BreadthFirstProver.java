@@ -11,6 +11,7 @@ import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
+import speedith.core.reasoning.tactical.TacticApplicationException;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -31,7 +32,7 @@ public class BreadthFirstProver extends  AutomaticProver {
     }
 
     @Override
-    protected Proof prove(Proof p, int subgoalindex) throws RuleApplicationException, AutomaticProofException {
+    protected Proof prove(Proof p, int subgoalindex) throws RuleApplicationException, TacticApplicationException, AutomaticProofException {
         p = tryToFinish(p, subgoalindex);
         if (p.isFinished()) {
             return p;

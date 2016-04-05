@@ -1,7 +1,9 @@
 package speedith.core.reasoning.automatic.strategies;
 
 import speedith.core.lang.CompoundSpiderDiagram;
+import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
+import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.automatic.AutomaticProofException;
 import speedith.core.reasoning.rules.util.HeuristicUtils;
@@ -27,12 +29,15 @@ public class BasicHeuristicStrategy implements Strategy, StrategyProvider {
     @Override
     public int getHeuristic(Proof p) throws AutomaticProofException{
         int heuristic = 0;
-        for (SpiderDiagram goal : p.getLastGoals().getGoals()) {
-            if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
-                CompoundSpiderDiagram impl = (CompoundSpiderDiagram) goal;
-                heuristic += HeuristicUtils.metric(impl.getOperand(0), impl.getOperand(1));
-            } else {
-                throw new AutomaticProofException("The current goal is not an implication of conjunctions.");
+        Goals target = p.getLastGoals();
+        if (!target.isEmpty()) {
+            for (SpiderDiagram goal : target.getGoals()) {
+                if (!(goal == null) && !goal.equals(NullSpiderDiagram.getInstance()) && ReasoningUtils.isImplicationOfConjunctions(goal)) {
+                    CompoundSpiderDiagram impl = (CompoundSpiderDiagram) goal;
+                    heuristic += HeuristicUtils.metric(impl.getOperand(0), impl.getOperand(1));
+                } else {
+                    throw new AutomaticProofException("The current goal is not an implication of conjunctions.");
+                }
             }
         }
         return heuristic;

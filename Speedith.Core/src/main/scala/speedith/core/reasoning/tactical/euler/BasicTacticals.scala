@@ -33,7 +33,7 @@ object BasicTacticals {
   }
 
   def id:Tactical = (name:String) => (state:Goals) =>(subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
-    Some(result)
+    Some(new TacticApplicationResult(result.getApplicationList, state))
   }
 
   def fail:Tactical = (name:String) =>(state:Goals) => (subGoalIndex:Int)=> (result : TacticApplicationResult) =>{

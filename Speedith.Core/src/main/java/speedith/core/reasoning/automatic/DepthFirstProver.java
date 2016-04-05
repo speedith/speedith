@@ -10,6 +10,7 @@ import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
+import speedith.core.reasoning.tactical.TacticApplicationException;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -40,7 +41,7 @@ public class DepthFirstProver extends AutomaticProver {
      * state of the given Proof p. The rules already applied to subdiagrams within
      * the current set of goals are saved in appliedRules
      */
-    private Proof proveRecursively(Proof p, int subgoalindex, AppliedRules appliedRules) throws RuleApplicationException {
+    private Proof proveRecursively(Proof p, int subgoalindex, AppliedRules appliedRules) throws RuleApplicationException, TacticApplicationException {
         p = tryToFinish(p, subgoalindex);
         if (p.isFinished()) {
             return p;
@@ -75,7 +76,7 @@ public class DepthFirstProver extends AutomaticProver {
     }
 
     @Override
-    protected Proof prove(Proof p, int subgoalindex) throws RuleApplicationException, AutomaticProofException {
+    protected Proof prove(Proof p, int subgoalindex) throws RuleApplicationException, TacticApplicationException, AutomaticProofException {
         return proveRecursively(p, subgoalindex, new AppliedRules());
     }
 

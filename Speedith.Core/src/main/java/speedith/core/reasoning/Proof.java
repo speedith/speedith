@@ -27,6 +27,7 @@
 package speedith.core.reasoning;
 
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.tactical.TacticApplicationException;
 
 import java.io.Serializable;
 import java.util.List;
@@ -48,7 +49,7 @@ public interface Proof extends Serializable {
      * @throws RuleApplicationException thrown if the rule could not be applied
      * for any reason.
      */
-    <TRuleArg extends RuleArg> InferenceApplicationResult applyRule(Inference<TRuleArg, ? extends InferenceApplicationResult> rule, RuleApplicationType type, String typeSpecifier) throws RuleApplicationException;
+    <TRuleArg extends RuleArg> InferenceApplicationResult applyRule(Inference<TRuleArg, ? extends InferenceApplicationResult> rule, RuleApplicationType type, String typeSpecifier) throws RuleApplicationException, TacticApplicationException;
 
     /**
      * Applies the rule with the given argument on the {@link Proof#getLastGoals()  current goals}
@@ -63,7 +64,7 @@ public interface Proof extends Serializable {
      * @throws RuleApplicationException thrown if the rule could not be applied
      * for any reason (e.g., if the proof is finished).
      */
-    <TRuleArg extends RuleArg> InferenceApplicationResult applyRule(Inference<? super TRuleArg, ? extends InferenceApplicationResult> rule, TRuleArg args, RuleApplicationType type, String typeSpecifier) throws RuleApplicationException;
+    <TRuleArg extends RuleArg> InferenceApplicationResult applyRule(Inference<? super TRuleArg, ? extends InferenceApplicationResult> rule, TRuleArg args, RuleApplicationType type, String typeSpecifier) throws RuleApplicationException,TacticApplicationException;
 
     /**
      * Returns the subgoals at the given index. At index 0 are the initial

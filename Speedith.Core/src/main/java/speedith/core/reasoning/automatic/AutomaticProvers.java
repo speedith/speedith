@@ -19,6 +19,7 @@ public class AutomaticProvers {
         registerProvider(DepthFirstProver.class);
         registerProvider(BreadthFirstProver.class);
         registerProvider(HeuristicSearch.class);
+        registerProvider(TacticalHeuristicSearch.class);
     }
 
     private AutomaticProvers() {

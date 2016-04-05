@@ -9,6 +9,7 @@ import speedith.core.reasoning.automatic.wrappers.PrimarySpiderDiagramOccurrence
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.TrivialImplicationTautology;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
+import speedith.core.reasoning.tactical.TacticApplicationException;
 
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
@@ -56,7 +57,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
         Proof result;
         try {
             result = prove(init, subGoalToProve);
-        } catch (RuleApplicationException e) {
+        } catch (RuleApplicationException|TacticApplicationException e) {
             throw new AutomaticProofException("Unable to prove current goal because of an illegal rule application",e);
         }
         if (result == null || !result.isFinished()) {
@@ -86,7 +87,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
         Proof result;
         try {
             result = prove(initial, subGoalToProve);
-        } catch (RuleApplicationException e) {
+        } catch (RuleApplicationException|TacticApplicationException e) {
             throw new AutomaticProofException("Unable to prove current goal because of an illegal rule application",e);
         }
         if (!Thread.currentThread().isInterrupted() && (result == null || !result.isFinished())) {
@@ -96,7 +97,7 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
 
     }
 
-    protected abstract Proof prove (Proof p, int subgoalindex) throws RuleApplicationException, AutomaticProofException;
+    protected abstract Proof prove (Proof p, int subgoalindex) throws RuleApplicationException, TacticApplicationException, AutomaticProofException;
 
 
     /**
@@ -107,7 +108,8 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
      * @return If ImplicationTautology was applied: the finished proof, otherwise the proof p
      * @throws RuleApplicationException
      */
-    protected Proof tryToFinish(Proof p, int subGoalIndex) throws  RuleApplicationException{
+    protected Proof tryToFinish(Proof p, int subGoalIndex) throws  RuleApplicationException, TacticApplicationException{
+        if (p.isFinished()) return p;
         TrivialImplicationTautology tautology = new TrivialImplicationTautology();
         SubDiagramIndexArg index = new SubDiagramIndexArg(subGoalIndex,0);
         try {

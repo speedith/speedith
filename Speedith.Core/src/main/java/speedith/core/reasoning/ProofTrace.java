@@ -152,7 +152,7 @@ public class ProofTrace implements Proof {
             }
             newGoals = Goals.createGoalsFrom(remainingGoals);
         }
-        InferenceApplication application = new InferenceApplication( rule, args, type, typeSpecifier);;
+        InferenceApplication application = new InferenceApplication( rule, args, type, typeSpecifier);
        
         inferenceApplications.add(application);
 //        goals.add(appResult.getGoals());

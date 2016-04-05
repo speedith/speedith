@@ -5,6 +5,7 @@ import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplicationException;
 import speedith.core.reasoning.RuleApplicationType;
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.tactical.TacticApplicationException;
 
 /**
  * TODO: Description
@@ -34,7 +35,7 @@ public abstract class PossibleInferenceApplication<TRuleArg extends RuleArg>  {
 
     public abstract TRuleArg getArg() ;
 
-    public boolean apply(Proof p, String typeSpecifier) throws RuleApplicationException {
+    public boolean apply(Proof p, String typeSpecifier) throws RuleApplicationException, TacticApplicationException {
         p.applyRule(getInference(), getArg(), RuleApplicationType.AUTOMATIC, typeSpecifier);
         return true;
     }

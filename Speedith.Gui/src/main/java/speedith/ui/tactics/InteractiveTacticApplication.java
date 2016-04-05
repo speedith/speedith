@@ -18,7 +18,7 @@ public final class InteractiveTacticApplication {
 
     private InteractiveTacticApplication() {}
 
-    public static boolean applyTacticInteractively(JFrame window, Tactic<? extends RuleArg> rule, int subgoalIndex, Proof proof) throws RuleApplicationException {
+    public static boolean applyTacticInteractively(JFrame window, Tactic<? extends RuleArg> rule, int subgoalIndex, Proof proof) throws RuleApplicationException,TacticApplicationException {
         return applyTacticInteractively(window, rule, subgoalIndex, proof, null) != null;
     }
 
@@ -36,7 +36,7 @@ public final class InteractiveTacticApplication {
      * @throws RuleApplicationException
      */
     @SuppressWarnings("unchecked")
-    private static InferenceApplicationResult applyTacticInteractively(JFrame window, Tactic<? extends RuleArg> rule, int subgoalIndex, Proof proof, Goals goals) throws RuleApplicationException {
+    private static InferenceApplicationResult applyTacticInteractively(JFrame window, Tactic<? extends RuleArg> rule, int subgoalIndex, Proof proof, Goals goals) throws RuleApplicationException,TacticApplicationException {
         // If the caller provided a proof object, use it to get the last goals
         // from and apply the rule one. Otherwise use the goals.
         // Throw an exception if not exactly one of them is null.

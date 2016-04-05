@@ -8,6 +8,7 @@ import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;
+import speedith.core.reasoning.automatic.tactical.PossibleTacticApplication;
 import speedith.core.reasoning.automatic.wrappers.ProofAttempt;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
@@ -21,30 +22,20 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Implements an A* search with the heuristic strategy currently loaded within
- * Speedith.
+ * TODO: Description
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class HeuristicSearch extends AutomaticProver {
+public class TacticalHeuristicSearch extends AutomaticProver {
 
-    private static final String proverName = "heuristic";
+    private final String proverName ="tactical_heuristic";
 
+    public TacticalHeuristicSearch() {super(new NoStrategy());}
 
-    /**
-     * Creates an instance of the heuristic prover without a certain strategy, i.e.,
-     * with a strategy that does not distinguish the costs of proof attempts.
-     *
-     */
-    public HeuristicSearch() {super(new NoStrategy());}
-
-    /**
-     * Creates an instance of the heuristic prover with the certain strategy.
-     * @param strategy The strategy that the provers uses to order proof attempts
-     */
-    public HeuristicSearch(Strategy strategy) {
+    public TacticalHeuristicSearch(Strategy strategy) {
         super(strategy);
     }
+
 
     @Override
     protected Proof prove(Proof p, int subgoalindex) throws RuleApplicationException, TacticApplicationException, AutomaticProofException {
@@ -76,6 +67,17 @@ public class HeuristicSearch extends AutomaticProver {
                 printStatistics(closed, attempts,startTime, numOfSuperFl);
                 return currentProof;
             }
+            Set<PossibleTacticApplication> tacticApplications = AutomaticUtils.createAllPossibleTacticApplications(subgoalindex);
+            for (PossibleTacticApplication app : tacticApplications) {
+                ProofTrace newCurrent = new ProofTrace(currentProof.getGoals(), currentProof.getInferenceApplications());
+                boolean hasBeenApplied = false;
+                hasBeenApplied = app.apply(newCurrent, getPrettyName());
+                if (hasBeenApplied) {
+                    ProofAttempt newAttempt = new ProofAttempt(newCurrent, getStrategy());
+                    attempts.add(newAttempt);
+                }
+            }
+            // create single rule applications
             SpiderDiagramOccurrence target = SpiderDiagramOccurrence.wrapDiagram(currentProof.getLastGoals().getGoalAt(subgoalindex), 0);
             Set<? extends PossibleRuleApplication<? extends RuleArg>> applications = AutomaticUtils.createAllPossibleRuleApplications(subgoalindex, target, contours);
             // apply all possible rules to the current proof, creating a new proof for each application
@@ -113,21 +115,21 @@ public class HeuristicSearch extends AutomaticProver {
 
     @Override
     public AutomaticProver getAutomaticProver() {
-        return this;
+        return this ;
     }
 
     @Override
     public String getAutomaticProverName() {
-        return proverName ;
+        return proverName;
     }
 
     @Override
     public String getDescription() {
-        return "A* search with the currently selected strategy";
+        return "A* search using single rules and tactics using the selected strategy";
     }
 
     @Override
     public String getPrettyName() {
-        return "Heuristic A* Search";
+        return "Tactical A* Search";
     }
 }
