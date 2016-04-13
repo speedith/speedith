@@ -60,7 +60,7 @@ object SimpleTacticals {
   }
 
   def vennStyle : Tactical = {
-    THEN(unifyContourSets, THEN(vennify, THEN(combineAll, matchConclusion)))
+    THEN(vennify, THEN(unifyContourSets, THEN(combineAll, matchConclusion)))
   }
 
   def vennStyleFast : Tactical = {

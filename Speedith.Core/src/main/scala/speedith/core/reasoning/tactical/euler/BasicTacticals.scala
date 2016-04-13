@@ -19,7 +19,7 @@ object BasicTacticals {
   val emptyGoals =  Goals.createGoalsFrom(NullSpiderDiagram.getInstance())
 
   def THEN(tac1: Tactical, tac2: Tactical) = (name:String) => (state : Goals) => (subgoalIndex:Int) => (result : TacticApplicationResult) =>{
-    val res = tac1(name)(state)(subgoalIndex)(result)
+   // val res = tac1(name)(state)(subgoalIndex)(result)
     tac1(name)(state)(subgoalIndex)(result) flatMap (res => tac2(name)(res.getGoals)(subgoalIndex)(res))
   }
 
