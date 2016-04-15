@@ -118,4 +118,11 @@ object SimpleTacticals {
         ORELSE(copyShading,
           introduceShadedZone(collectDiagramsWithMissingZonesThatCouldBeCopied(subGoalIndex,_).contains, someMissingZone)))))(name)(state)(subGoalIndex)(result)
   }
+
+  def copyEveryThing: Tactical = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
+    THEN(DEPTH_FIRST(isSingleUnitaryDiagram(subGoalIndex),
+      THEN(DEPTH_FIRST(containsNoDiagramsWithShadedZonesThatCouldBeCopied( subGoalIndex), copyShadings),
+        copyTopologicalInformation)),
+      matchConclusion)(name)(state)(subGoalIndex)(result)
+  }
 }

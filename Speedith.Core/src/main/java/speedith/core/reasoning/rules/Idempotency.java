@@ -137,11 +137,11 @@ public class Idempotency extends SimpleInferenceRule<SubDiagramIndexArg> impleme
                 // Is the compound diagram a conjunction or a disjunction?
                 // Is it an implication or an equivalence?
                 if (Operator.Conjunction.equals(csd.getOperator()) || Operator.Disjunction.equals(csd.getOperator())) {
-                    if (csd.getOperand(0).isSEquivalentTo(csd.getOperand(1))) {
+                    if (csd.getOperand(0).equals(csd.getOperand(1))) {
                         return csd.getOperand(1);
                     }
                 } else if (Operator.Equivalence.equals(csd.getOperator()) || Operator.Implication.equals(csd.getOperator())) {
-                    if (csd.getOperand(0).isSEquivalentTo(csd.getOperand(1))) {
+                    if (csd.getOperand(0).equals(csd.getOperand(1))) {
                         return SpiderDiagrams.createNullSD();
                     }
                 }

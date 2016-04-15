@@ -43,6 +43,31 @@ object Auxilliary {
     }
   }
 
+  def containsNoDiagramsWithShadedZonesThatCouldBeCopied(subGoalIndex:Int): Goals => Boolean = (state:Goals) => {
+    if (state.isEmpty) {
+      true
+    } else {
+      val goal = state.getGoalAt(subGoalIndex)
+      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+        !hasDiagramWithMissingZonesThatCouldBeCopied(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0))
+      } else {
+        true
+      }
+    }
+  }
+
+  private def hasDiagramWithMissingZonesThatCouldBeCopied(sd : SpiderDiagram) :Boolean = sd match {
+    case sd: PrimarySpiderDiagram => false
+    case sd: CompoundSpiderDiagram => (sd.getOperator, sd.getOperand(0), sd.getOperand(1)) match {
+      case (Operator.Conjunction, op0: PrimarySpiderDiagram, op1: PrimarySpiderDiagram) =>
+        op0.getAllContours.subsetOf(op1.getAllContours) && (op0.getShadedZones -- op0.getPresentZones).nonEmpty ||
+          op1.getAllContours.subsetOf(op0.getAllContours) && (op1.getShadedZones -- op1.getPresentZones).nonEmpty
+      case (Operator.Conjunction, _, _) => hasDiagramWithMissingZonesThatCouldBeCopied(sd.getOperand(0)) || hasDiagramWithMissingZonesThatCouldBeCopied(sd.getOperand(1))
+      case _ => false
+    }
+  }
+
+
   def computeCorrespondingShadedRegions(d1 :PrimarySpiderDiagramOccurrence, d2 : PrimarySpiderDiagramOccurrence) : Set[Region] = {
     val visibleShadedZones = d1.getShadedZones & d1.getPresentZones
     val nonEmptyShadedRegions = visibleShadedZones.subsets.toSet.filter(s => s.nonEmpty)
@@ -58,11 +83,15 @@ object Auxilliary {
 
 
   def getContoursInConclusion(subgoalIndex : Int, state:Goals) : Set[String]= {
-    val goal = state.getGoalAt(subgoalIndex)
-    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
-      AutomaticUtils.collectContours(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1)).toSet
-    } else {
+    if (state.isEmpty) {
       Set()
+    } else {
+      val goal = state.getGoalAt(subgoalIndex)
+      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+        AutomaticUtils.collectContours(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1)).toSet
+      } else {
+        Set()
+      }
     }
   }
 
@@ -77,11 +106,15 @@ object Auxilliary {
   }
 
   def getShadedZonesInConclusion(subgoalIndex : Int, state : Goals) : Set[Zone] = {
-    val goal = state.getGoalAt(subgoalIndex)
-    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
-        collectShadedZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
-    } else {
+    if (state.isEmpty) {
       Set()
+    } else {
+      val goal = state.getGoalAt(subgoalIndex)
+      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+        collectShadedZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
+      } else {
+        Set()
+      }
     }
   }
 
@@ -91,11 +124,15 @@ object Auxilliary {
   }
 
   def getUnshadedZonesInConclusion(subgoalIndex : Int, state : Goals) : Set[Zone] = {
-    val goal = state.getGoalAt(subgoalIndex)
-    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
-      collectUnShadedZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
-    } else {
+    if (state.isEmpty) {
       Set()
+    } else {
+      val goal = state.getGoalAt(subgoalIndex)
+      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+        collectUnShadedZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
+      } else {
+        Set()
+      }
     }
   }
 
@@ -105,11 +142,15 @@ object Auxilliary {
   }
 
   def getVisibleZonesInConclusion(subGoalIndex: Int, state: Goals) : Set[Zone] = {
-    val goal = state.getGoalAt(subGoalIndex)
-    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
-      collectVisibleZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
-    } else {
+    if (state.isEmpty) {
       Set()
+    } else {
+      val goal = state.getGoalAt(subGoalIndex)
+      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+        collectVisibleZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
+      } else {
+        Set()
+      }
     }
   }
 
@@ -120,6 +161,19 @@ object Auxilliary {
       subDiagams.map(pd => pd.getAllContours.toSet).forall(subDiagams.head.getAllContours.toSet.sameElements)
     } else {
       false
+    }
+  }
+
+  def isSingleUnitaryDiagram(subGoalIndex:Int) : Goals => Boolean = (state:Goals) => {
+    if (state.isEmpty) {
+      true
+    } else {
+      val goal = state.getGoalAt(subGoalIndex)
+      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+        goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0).isInstanceOf[PrimarySpiderDiagram]
+      } else {
+        false
+      }
     }
   }
 
