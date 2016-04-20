@@ -11,7 +11,12 @@ case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) ex
   val contoursToRemove = contourArgs.map(_.getContour).toSet
 
   private def regionWithoutContours(region: Set[Zone]): Set[Zone] = {
-    region.map(zone => new Zone(zone.getInContours -- contoursToRemove, zone.getOutContours -- contoursToRemove)).filter(zone => zone.getAllContours.nonEmpty)
+    val result = region.map(zone => new Zone(zone.getInContours -- contoursToRemove, zone.getOutContours -- contoursToRemove)).filter(zone => zone.getAllContours.nonEmpty)
+    if (result.nonEmpty) {
+      result
+    } else {
+      Set(new Zone())
+    }
   }
 
   private def shadedRegionWithoutContours(region: Set[Zone]): Set[Zone] = {
