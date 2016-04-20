@@ -118,8 +118,8 @@ object HeuristicUtils {
     case d1 : PrimarySpiderDiagram  =>
       val newContours = contours -- d1.getAllContours
       EulerDiagrams.createPrimaryEulerDiagram(
-        AutomaticUtils.regionWithNewContours(d1.getShadedZones.toSet, newContours),
-        AutomaticUtils.regionWithNewContours(d1.getPresentZones, newContours))
+        ReasoningUtils.shadedRegionWithNewContours(d1.getShadedZones.toSet, newContours),
+        ReasoningUtils.regionWithNewContours(d1.getPresentZones, newContours))
     case d1: CompoundSpiderDiagram =>
       SpiderDiagrams.createCompoundSD(d1.getOperator.getName, d1.getOperands.map(d => computeCForm(d, contours)).toSeq)
 

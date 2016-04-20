@@ -22,7 +22,8 @@ object ReasoningUtils {
    * Adds zones to the set of present zones in each subgoal. The added zones are taken from all
    * possible zones, without the shaded zones that are not in the set of currently present zones (i.e., that are
    * are missing zones, in the typical definition of Spider Diagrams).
-   * @param goals The set of goals to be normalised
+    *
+    * @param goals The set of goals to be normalised
    * @return
    */
   def normalize (goals : Goals) : Goals = new Goals(normalize(goals.getGoals))
@@ -57,7 +58,8 @@ object ReasoningUtils {
    * Checks whether the given SpiderDiagram consists of exactly one implication, where
    * both the premise and the conclusion are conjunctive diagrams, i.e., either
    * primary spider diagrams or a conjunction.
-   * @param goal The SpiderDiagram that will be analysed
+    *
+    * @param goal The SpiderDiagram that will be analysed
    * @return true if goal is of the described form, false otherwise
    */
   def isImplicationOfConjunctions(goal: SpiderDiagram): Boolean = goal match {
@@ -76,5 +78,20 @@ object ReasoningUtils {
     case sd:CompoundSpiderDiagram => getPrimaryDiagrams(sd.getOperand(0)) ++ getPrimaryDiagrams(sd.getOperand(1))
   }
 
+  def shadedRegionWithNewContours(region: Iterable[Zone], contoursToAdd: Set[String] ): Set[Zone] = {
+    val powSetContours = contoursToAdd.subsets.toSet
+    // if the region is empty, no new shaded zones will be created
+    powSetContours.flatMap(c  => region.map(zone => new Zone(zone.getInContours ++ c, zone.getOutContours ++ (contoursToAdd -- c))).toSet ++ region.map(zone => new Zone(zone.getInContours ++ (contoursToAdd -- c), zone.getOutContours ++ c)))
+  }
+
+  def regionWithNewContours(region: Iterable[Zone], contoursToAdd: Set[String] ): Set[Zone] = {
+    val powSetContours = contoursToAdd.subsets.toSet
+    if (region.nonEmpty) {
+      powSetContours.flatMap(c => region.map(zone => new Zone(zone.getInContours ++ c, zone.getOutContours ++ (contoursToAdd -- c))).toSet ++ region.map(zone => new Zone(zone.getInContours ++ (contoursToAdd -- c), zone.getOutContours ++ c)))
+    } else {
+      // if the region is empty, we create the new zones from scratch
+      powSetContours.flatMap(c => Set(new Zone( c, contoursToAdd -- c), new Zone(contoursToAdd -- c, c)))
+    }
+  }
 
 }

@@ -32,10 +32,7 @@ object AutomaticUtils {
     case sd : CompoundSpiderDiagram => sd.getOperator.equals(Operator.getConjunction) && sd.getOperands.forall(isConjunctive)
   }
 
-  def regionWithNewContours(region: Iterable[Zone], contoursToAdd: Set[String] ): Set[Zone] = {
-    val powSetContours = contoursToAdd.subsets.toSet
-    powSetContours.flatMap(c  => region.map(zone => new Zone(zone.getInContours ++ c, zone.getOutContours ++ (contoursToAdd -- c))).toSet ++ region.map(zone => new Zone(zone.getInContours ++ (contoursToAdd -- c), zone.getOutContours ++ c)))
-  }
+
 
   def containsEmptyZone (sd : SpiderDiagram): Boolean = sd match {
     case sd:PrimarySpiderDiagram =>
