@@ -76,8 +76,11 @@ object SimpleTacticals {
     THEN(
       THEN(
         THEN(
+          THEN(
+            REPEAT(ORELSE(trivialTautology,
+            introduceContour(containsLessContours(concContours), someGivenContoursButNotInDiagram(concContours)))),
           REPEAT(ORELSE(trivialTautology,
-            eraseContour(containsOtherContours(concContours), allInDiagramButNotInGivenContours(concContours)))),
+            eraseContour(containsOtherContours(concContours), allInDiagramButNotInGivenContours(concContours))))),
           REPEAT(ORELSE(trivialTautology,
             introduceShadedZone(isPrimaryAndContainsMissingZones, allMissingZonesInGivenZones(concVisibleZones))))),
         REPEAT(ORELSE(trivialTautology ,
@@ -94,8 +97,11 @@ object SimpleTacticals {
     THEN(
       THEN(
         THEN(
+          THEN(
+            REPEAT(ORELSE(trivialTautology,
+              introduceContour(containsLessContours(concContours), someGivenContoursButNotInDiagram(concContours)))),
           REPEAT(ORELSE(trivialTautology,
-            eraseContour(containsOtherContours(concContours ), someInDiagramButNotInGivenContours(concContours)))),
+            eraseContour(containsOtherContours(concContours ), someInDiagramButNotInGivenContours(concContours))))),
           REPEAT(ORELSE(trivialTautology,
             introduceShadedZone(isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones))))),
           REPEAT(ORELSE(trivialTautology,

@@ -129,7 +129,10 @@ object Choosers {
     case sd: PrimarySpiderDiagramOccurrence =>
       (sd.getPresentZones & sd.getShadedZones).headOption match {
         case None => None
-        case Some(z) => Some(Set(z))
+        case Some(z) => z.getInContoursCount match {
+          case 0 => None
+          case _ => Some (Set (z) )
+        }
       }
   }
 
