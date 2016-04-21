@@ -1,11 +1,10 @@
 package speedith.core.reasoning.util.unitary;
 
 import org.junit.Test;
+import propity.util.Sets;
 import speedith.core.lang.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertFalse;
@@ -43,13 +42,17 @@ public class ContourRelationsTest {
 
     @Test
     public void areContoursDisjoint_should_return_false_when_not_all_shared_zones_are_shaded() {
-        ContourRelations contourRelations = new ContourRelations(SpiderDiagrams.createPrimarySD(null, null, getZonesInsideAllContours(POWER_REGION_ABCD, "A", "B", "C"), null));
+        Set<Zone> present = new HashSet<>();
+        present.add(Zone.fromOutContours("A","B","C","D"));
+        ContourRelations contourRelations = new ContourRelations(SpiderDiagrams.createPrimarySD(null, null, getZonesInsideAllContours(POWER_REGION_ABCD, "A", "B", "C"), present));
         assertFalse(contourRelations.areContoursDisjoint("A", "D"));
     }
 
     @Test
     public void areContoursDisjoint_should_return_true_when_there_are_multiple_zones_and_all_shared_zones_are_shaded() {
-        ContourRelations contourRelations = new ContourRelations(SpiderDiagrams.createPrimarySD(null, null, getZonesInsideAllContours(POWER_REGION_ABCD, "A", "D"), null));
+        Set<Zone> present = new HashSet<>();
+        present.add(Zone.fromOutContours("A","B","C","D"));
+        ContourRelations contourRelations = new ContourRelations(SpiderDiagrams.createPrimarySD(null, null, getZonesInsideAllContours(POWER_REGION_ABCD, "A", "D"), present));
         assertTrue(contourRelations.areContoursDisjoint("A", "D"));
     }
 
@@ -58,7 +61,9 @@ public class ContourRelationsTest {
         TreeMap<String, Region> habitats = new TreeMap<>();
         String spider = "s";
         habitats.put(spider, new Region(Zone.fromInContours("A", "C", "D").withOutContours("B")));
-        PrimarySpiderDiagram diagramWithASpiderInTheIntersection = SpiderDiagrams.createPrimarySD(asList(spider), habitats, getZonesInsideAllContours(POWER_REGION_ABCD, "A", "D"), null);
+        Set<Zone> present = new HashSet<>();
+        present.add(Zone.fromOutContours("A","B","C","D"));
+        PrimarySpiderDiagram diagramWithASpiderInTheIntersection = SpiderDiagrams.createPrimarySD(asList(spider), habitats, getZonesInsideAllContours(POWER_REGION_ABCD, "A", "D"), present);
         ContourRelations contourRelations = new ContourRelations(diagramWithASpiderInTheIntersection);
         assertFalse(contourRelations.areContoursDisjoint("A", "D"));
     }
@@ -68,7 +73,9 @@ public class ContourRelationsTest {
         TreeMap<String, Region> habitats = new TreeMap<>();
         String spider = "s";
         habitats.put(spider, new Region(Zone.fromInContours("A", "C").withOutContours("B", "D")));
-        PrimarySpiderDiagram diagramWithASpiderInTheIntersection = SpiderDiagrams.createPrimarySD(asList(spider), habitats, getZonesInsideAllContours(POWER_REGION_ABCD, "A", "D"), null);
+        Set<Zone> present = new HashSet<>();
+        present.add(Zone.fromOutContours("A","B","C","D"));
+        PrimarySpiderDiagram diagramWithASpiderInTheIntersection = SpiderDiagrams.createPrimarySD(asList(spider), habitats, getZonesInsideAllContours(POWER_REGION_ABCD, "A", "D"), present);
         ContourRelations contourRelations = new ContourRelations(diagramWithASpiderInTheIntersection);
         assertTrue(contourRelations.areContoursDisjoint("A", "D"));
     }

@@ -59,6 +59,7 @@ public class TestSpiderDiagrams {
         presentZones.removeAll(shaded_E_A);
         presentZones.removeAll(shaded_C);
         presentZones.removeAll(shaded_F_ACE);
+        presentZones.add(Zone.fromOutContours("E","A","C","F"));
 
         TreeSet<Zone> shadedZones = new TreeSet<>();
         shadedZones.addAll(shaded_E_A);
@@ -86,6 +87,7 @@ public class TestSpiderDiagrams {
 
         ArrayList<Zone> presentZones = new ArrayList<>(POWER_REGION_ABCD);
         presentZones.removeAll(shadedZones);
+        //presentZones.add(Zone.fromOutContours("A","B","C","D"));
 
         TreeMap<String, Region> habitats = new TreeMap<>();
         habitats.put("s", new Region(
@@ -101,6 +103,7 @@ public class TestSpiderDiagrams {
 
         TreeSet<Zone> presentZones = new TreeSet<>(POWER_REGION_ABC);
         presentZones.removeAll(zonesInsideAC_outsideC);
+        presentZones.add(Zone.fromOutContours("A","B","C"));
 
         return SpiderDiagrams.createPrimarySD(null, null, zonesInsideAC_outsideC, presentZones);
     }

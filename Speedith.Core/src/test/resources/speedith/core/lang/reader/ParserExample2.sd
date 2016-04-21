@@ -3,11 +3,13 @@ BinarySD {
 	arg1 = PrimarySD {
 		spiders = ["s1", "s2", "s3"],
 		habitats = [("s1", [(["B"], ["A", "C"])]), ("s2", [(["B"], ["A", "C"])]), ("s3", [(["A"], ["B", "C"]), (["A", "B"], ["C"]), (["A", "B", "C"], [])])],
-		sh_zones = [(["B"],["A", "C"])]
+		sh_zones = [(["B"],["A", "C"])],
+		present_zones = [([],["A","B","C"])]
 	},
 	arg2 = PrimarySD {
 		spiders = ["t1", "t2", "t3"],
 		habitats = [("t1", [(["B"], [])]), ("t2", [(["B"], [])]), ("t3", [(["B"], []), ([], ["B"])]) ],
-		sh_zones = []
+		sh_zones = [],
+		present_zones = [([],["B"])]
 	}
 }

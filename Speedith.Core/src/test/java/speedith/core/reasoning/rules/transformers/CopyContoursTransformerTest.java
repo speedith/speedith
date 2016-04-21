@@ -5,7 +5,9 @@ import speedith.core.lang.*;
 import speedith.core.reasoning.args.ContourArg;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -18,7 +20,7 @@ public class CopyContoursTransformerTest {
     public static final Zone zoneBMinusA = Zone.fromInContours("B").withOutContours("A");
     public static final Zone zoneAMinusB = Zone.fromInContours("A").withOutContours("B");
     public static final CompoundSpiderDiagram conjunctiveNullDiagrams = createConjunction(NullSpiderDiagram.getInstance(), NullSpiderDiagram.getInstance());
-    public static final PrimarySpiderDiagram diagramWithContourA = createPrimarySD(null, null, null, asList(Zone.fromInContours("A")));
+    public static final PrimarySpiderDiagram diagramWithContourA = createPrimarySD(null, null, null, asList(Zone.fromInContours("A"), Zone.fromOutContours("A")));
     public static final PrimarySpiderDiagram diagramWithASpider = createPrimarySD(asList("s"), getSpiderInRegion("s", new Region(Zone.fromInContours("A"))), null, null);
 
     @Test(expected = TransformationException.class)
@@ -87,10 +89,12 @@ public class CopyContoursTransformerTest {
 
     @Test
     public void should_not_copy_the_contour_to_the_empty_primary_diagram() {
-        CompoundSpiderDiagram nestedConjunction = createConjunction(createPrimarySD(), diagramWithContourA);
+        Set<Zone> present = new HashSet<>();
+        present.add(new Zone());
+        CompoundSpiderDiagram nestedConjunction = createConjunction(createPrimarySD(null, null, null,present ), diagramWithContourA);
         CompoundSpiderDiagram outerConjunction = createConjunction(conjunctiveNullDiagrams, createConjunction(nestedConjunction, nestedConjunction));
         String contourToCopy = "A";
-        CompoundSpiderDiagram expectedResult = createConjunction(conjunctiveNullDiagrams, createConjunction(nestedConjunction, createConjunction(createPrimarySD(), diagramWithContourA)));
+        CompoundSpiderDiagram expectedResult = createConjunction(conjunctiveNullDiagrams, createConjunction(nestedConjunction, createConjunction(diagramWithContourA, diagramWithContourA)));
 
         assertEquals(
                 expectedResult,

@@ -34,6 +34,7 @@ import speedith.core.reasoning.util.unitary.TestSpiderDiagrams;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.TreeSet;
@@ -49,7 +50,7 @@ public class SpiderDiagramsReaderTest {
     public static final String SD_EXAMPLE_2 = "UnarySD {operator = \"op not\", arg1 = BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [])]), (\"s'\", [([\"B\"], [])])], sh_zones = []}, operator = \"op -->\" }}";
     public static final String SD_EXAMPLE_3 = "UnarySD {operator = \"op not\", arg1 = BinarySD {operator = \"op &\", arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = NullSD {} }}";
     public static final String SD_EXAMPLE_4 = "NullSD {}";
-    public static final String SD_EXAMPLE_5 = "PrimarySD { spiders = [], sh_zones = [], habitats = []}";
+    public static final String SD_EXAMPLE_5 = "PrimarySD { spiders = [], sh_zones = [], habitats = [], present_zones=[([],[])]}";
     public static final String SD_EXAMPLE_6 = "UnarySD {operator = \"op not\", arg1 = NullSD {}}";
     public static final String SD_EXAMPLE_7 = "BinarySD {operator = \"op &\", arg1 = NullSD {}, arg2 = NullSD {}}";
     public static final String SD_EXAMPLE_8 = "BinarySD {operator = \"op -->\", arg1 = NullSD {}, arg2 = NullSD {}}";
@@ -59,9 +60,9 @@ public class SpiderDiagramsReaderTest {
     public static final String SD_EXAMPLE_12 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op <-->\" }";
     public static final String SD_EXAMPLE_13 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op &\" }";
     public static final String SD_EXAMPLE_14 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op |\" }";
-    public static final String SD_EXAMPLE_15 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [\"B\"])]), (\"s'\", [([\"B\"], [\"A\"])])], sh_zones = []}, operator = \"op -->\" }";
-    public static final String SD_EXAMPLE_16 = "PrimarySD { spiders = [\"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s'\", [([\"A\"], [\"C\", \"D\", \"B\"]), ([\"A\", \"D\"], [\"C\", \"B\"])])]}";
-    public static final String SD_EXAMPLE_17 = "PrimarySD { spiders = [\"s1\", \"s2\"], sh_zones = [([\"A\", \"B\"], [])], habitats = [(\"s1\", [([\"A\"], [\"B\"])]), (\"s2\", [([\"B\"], [\"A\"])])], present_zones = [([\"A\", \"B\"], [])]}";
+    public static final String SD_EXAMPLE_15 = "BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])], present_zones = [([],[\"A\",\"B\"])]}, arg2 = PrimarySD {spiders = [\"s\", \"s'\"], habitats = [(\"s\", [([\"A\"], [\"B\"])]), (\"s'\", [([\"B\"], [\"A\"])])], sh_zones = [], present_zones = [([],[\"A\",\"B\"])]}, operator = \"op -->\" }";
+    public static final String SD_EXAMPLE_16 = "PrimarySD { spiders = [\"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s'\", [([\"A\"], [\"C\", \"D\", \"B\"]), ([\"A\", \"D\"], [\"C\", \"B\"])])], present_zones=[([],[\"A\",\"B\",\"C\",\"D\"])]}";
+    public static final String SD_EXAMPLE_17 = "PrimarySD { spiders = [\"s1\", \"s2\"], sh_zones = [([\"A\", \"B\"], [])], habitats = [(\"s1\", [([\"A\"], [\"B\"])]), (\"s2\", [([\"B\"], [\"A\"])])], present_zones = [([\"A\", \"B\"], []),([],[\"A\", \"B\"])]}";
     public static final String SD_EXAMPLE_18 = "PrimarySD { spiders = [\"s1\", \"s2\", \"s3\", \"s4\"], sh_zones = [([\"A\", \"B\"], [])], habitats = [(\"s1\", [([\"A\"], [\"B\"])]), (\"s2\", [([\"B\"], [\"A\"])]), (\"s3\", [([\"B\"], [\"A\"])]), (\"s4\", [([\"B\"], [\"A\"])])], present_zones = [([\"A\", \"B\"], [])]}";
     public static final String SD_EXAMPLE_19 = "PrimarySD { spiders = [\"s1\", \"s2\"], sh_zones = [([\"A\", \"B\"], [])], habitats = [(\"s1\", [([\"A\"], [\"B\"]), ([\"A\", \"B\"], [])]), (\"s2\", [([\"B\"], [\"A\"])])], present_zones = [([\"A\", \"B\"], [])]}";
     public static final String SD_EXAMPLE_ERR_1 = "UnarySD {operator = \"op not\", ar1 = BinarySD {operator = \"op &\", arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [([\"A\", \"B\"],[\"C\", \"D\"])], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = NullSD {} }}";
@@ -166,11 +167,11 @@ public class SpiderDiagramsReaderTest {
         assertEquals(2, psd.getSpidersCount());
         assertEquals(2, psd.getHabitatsCount());
         assertEquals(1, psd.getShadedZonesCount());
-        assertEquals(1, psd.getPresentZonesCount());
+        assertEquals(2, psd.getPresentZonesCount());
         assertEquals(1, sd.getSubDiagramCount());
         assertEquals(new TreeSet<>(Arrays.asList("s1", "s2")), psd.getSpiders());
         assertEquals(new TreeSet<>(Arrays.asList(Zone.fromInContours("A", "B"))), psd.getShadedZones());
-        assertEquals(new TreeSet<>(Arrays.asList(Zone.fromInContours("A", "B"))), psd.getPresentZones());
+        assertEquals(new TreeSet<>(Arrays.asList(Zone.fromInContours("A", "B"), Zone.fromOutContours("A","B"))), psd.getPresentZones());
         assertEquals(Maps.createTreeMap(Arrays.asList("s1", "s2"), Arrays.asList(new Region(Zone.fromInContours("A").withOutContours("B")), new Region(Zone.fromInContours("B").withOutContours("A")))), psd.getHabitats());
     }
 

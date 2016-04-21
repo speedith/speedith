@@ -651,14 +651,20 @@ public class PrimarySpiderDiagram extends SpiderDiagram implements Serializable 
     }
 
     private boolean arePresentZonesValid(SortedSet<String> contours) {
+        // we need the outer zone (outside of all contours)
+        // to be present at all times
+        boolean outerZonePresent = false;
         if (this.presentZones != null) {
             for (Zone zone : presentZones) {
+                if (zone.getInContoursCount() == 0) {
+                    outerZonePresent = true;
+                }
                 if (!zone.isValid(contours)) {
                     return false;
                 }
             }
         }
-        return true;
+        return outerZonePresent;
     }
 
     private boolean areShadedZonesValid(SortedSet<String> contours) {
