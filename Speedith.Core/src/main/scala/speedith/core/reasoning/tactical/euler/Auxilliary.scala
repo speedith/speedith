@@ -78,7 +78,8 @@ object Auxilliary {
     val shadedZones = (d1.getShadedZones & d1.getPresentZones).toSet
     val nonEmptyShadedRegions = shadedZones.subsets.toSet.filter(s => s.nonEmpty)
     val regions = nonEmptyShadedRegions.map(region => Tuple2(region, CorrespondingRegions(d1.getPrimaryDiagram, d2.getPrimaryDiagram).correspondingRegion(new Region(region)).zones)).filter(m => m._2.nonEmpty)
-    maxCorrespondingRegion(regions.to[collection.immutable.List])
+    val unShadedTargets = regions.filter(t => t._2.exists((d2.getPresentZones -- d2.getShadedZones).contains ))
+    maxCorrespondingRegion(unShadedTargets.to[collection.immutable.List])
   }
 
 
