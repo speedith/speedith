@@ -7,11 +7,11 @@ import speedith.core.lang.{DiagramType, SpiderDiagram}
 import speedith.core.reasoning.args.{MultipleRuleArgs, RuleArg, ZoneArg}
 import speedith.core.reasoning.rules.instructions.SelectZonesInstruction
 import speedith.core.reasoning.rules.transformers.CopyShadingTransformer
-import speedith.core.reasoning.{Goals, InferenceRule, RuleApplicationInstruction, RuleApplicationResult}
+import speedith.core.reasoning._
 
 import scala.collection.JavaConversions._
 
-class CopyShading extends SimpleInferenceRule[MultipleRuleArgs] with Serializable {
+class CopyShading extends SimpleInferenceRule[MultipleRuleArgs] with Serializable with ForwardRule[MultipleRuleArgs] {
   def getInferenceRule: InferenceRule[MultipleRuleArgs] = this
 
   def getInferenceName: String = "copy_shading"
@@ -32,6 +32,10 @@ class CopyShading extends SimpleInferenceRule[MultipleRuleArgs] with Serializabl
 
   def apply(args: RuleArg, goals: Goals): RuleApplicationResult = {
     apply(getTypedRuleArgs(args), goals)
+  }
+
+  def applyForwards(args: RuleArg, goals: Goals): RuleApplicationResult = {
+    apply(args, goals)
   }
 
   private def apply(argsUntyped: MultipleRuleArgs, goals: Goals): RuleApplicationResult = {

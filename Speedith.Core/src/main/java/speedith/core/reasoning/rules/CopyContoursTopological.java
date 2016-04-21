@@ -21,7 +21,7 @@ import java.util.Set;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class CopyContoursTopological extends SimpleInferenceRule<MultipleRuleArgs> implements Serializable {
+public class CopyContoursTopological extends SimpleInferenceRule<MultipleRuleArgs> implements Serializable, ForwardRule<MultipleRuleArgs> {
 
         /**
          * The name of this inference rule.
@@ -90,5 +90,10 @@ public class CopyContoursTopological extends SimpleInferenceRule<MultipleRuleArg
         int indexOfParent = targetSubgoal.getParentIndexOf(inferenceTarget.getSubDiagramIndex());
         newSubgoals[inferenceTarget.getSubgoalIndex()] = targetSubgoal.transform(new CopyContoursTopologicalTransformer(indexOfParent, targetContours));
         return createRuleApplicationResult(newSubgoals);
+    }
+
+    @Override
+    public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
+        return apply(args, goals);
     }
 }

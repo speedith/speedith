@@ -49,7 +49,7 @@ case class CorrespondingRegions(sourceDiagram: PrimarySpiderDiagram, destination
   private def withoutEmptyZones(rawCorrespondingRegion: mutable.Buffer[Zone]): mutable.Buffer[Zone] = {
     rawCorrespondingRegion.filterNot {
       destinationZone =>
-        destinationDiagram.getShadedZones.contains(destinationZone) &&
+        (destinationDiagram.getShadedZones -- destinationDiagram.getPresentZones ).contains(destinationZone) &&
           !destinationDiagram.getHabitats.exists {
             case (spider, habitat) => habitat.zones.contains(destinationZone)
           }

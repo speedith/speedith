@@ -50,8 +50,12 @@ object ReasoningUtils {
 
 
   def expand(zone :Zone, newContours : util.Set[String]) : Set[Zone] = {
-    newContours.subsets.flatMap(cs => new util.HashSet[Zone]() +
-      new Zone(zone.getInContours.toSet ++ cs,zone.getOutContours.toSet ++ newContours.diff(cs))).toSet
+    if (newContours.isEmpty) {
+      Set(zone)
+    }  else {
+      newContours.subsets.flatMap(cs => new util.HashSet[Zone]() +
+        new Zone(zone.getInContours.toSet ++ cs, zone.getOutContours.toSet ++ newContours.diff(cs))).toSet
+    }
   }
 
   /**

@@ -45,7 +45,7 @@ import java.util.Set;
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> implements Serializable {
+public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> implements Serializable, ForwardRule<MultipleRuleArgs> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
@@ -106,5 +106,10 @@ public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> impleme
     @Override
     public Set<DiagramType> getApplicableTypes() {
         return applicableTypes;
+    }
+
+    @Override
+    public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
+        return apply(args, goals);
     }
 }
