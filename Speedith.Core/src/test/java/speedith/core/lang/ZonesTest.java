@@ -22,7 +22,9 @@ public class ZonesTest {
 
     @Test
     public void allZonesForContours_should_return_an_empty_list_of_zones_when_given_no_contours() throws Exception {
-        assertEquals(new ArrayList<Zone>(), Zones.allZonesForContours());
+        List<Zone> zonesNoContours = new ArrayList<>();
+        zonesNoContours.add(new Zone());
+        assertEquals(zonesNoContours, Zones.allZonesForContours());
     }
 
     @Test
