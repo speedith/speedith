@@ -4,6 +4,7 @@ import java.util
 
 import speedith.core.lang._
 import speedith.core.reasoning.Goals
+import speedith.core.reasoning.util.unitary.CorrespondingRegions
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -95,6 +96,16 @@ object ReasoningUtils {
     } else {
       // if the region is empty, we create the new zones from scratch
       powSetContours.flatMap(c => Set(new Zone( c, contoursToAdd -- c), new Zone(contoursToAdd -- c, c)))
+    }
+  }
+
+  def getCorrespondingShadedRegionInSource(source: PrimarySpiderDiagram, target:PrimarySpiderDiagram, targetRegion: Region):Region = {
+    val possibleRegions = (source.getShadedZones & source.getPresentZones).subsets().toSet.filter(_.nonEmpty)
+    val corr = CorrespondingRegions(source, target)
+    possibleRegions.filter(testRegion => targetRegion.equals(corr.correspondingRegion(new Region(testRegion))))
+    possibleRegions.headOption match {
+      case Some(r) => new Region(r)
+      case _ => new Region()
     }
   }
 
