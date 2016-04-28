@@ -27,11 +27,11 @@ object AutomaticUtils {
     case spiderDiagram: CompoundSpiderDiagram => spiderDiagram.getOperands.flatMap(collectContours)
   }
 
-  def isConjunctive(sd : SpiderDiagram) : Boolean =  sd match {
+/*  def isConjunctive(sd : SpiderDiagram) : Boolean =  sd match {
     case sd : PrimarySpiderDiagram => true
     case sd : CompoundSpiderDiagram => sd.getOperator.equals(Operator.getConjunction) && sd.getOperands.forall(isConjunctive)
   }
-
+*/
 
 
   def containsEmptyZone (sd : SpiderDiagram): Boolean = sd match {

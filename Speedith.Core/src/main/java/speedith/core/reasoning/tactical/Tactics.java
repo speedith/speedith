@@ -29,6 +29,7 @@ public class Tactics {
         registerProvider(Venn.class);
         registerProvider(CopyShadingInformation.class);
         registerProvider(CopyEverything.class);
+        registerProvider(VennFocused.class);
     }
 
     private Tactics() {};

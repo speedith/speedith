@@ -101,6 +101,11 @@ object Auxilliary {
     AutomaticUtils.collectContours(goal).toSet
   }
 
+  def collectContours(diagram : SpiderDiagramOccurrence) : Set[String] = diagram match {
+    case diagram:PrimarySpiderDiagramOccurrence => diagram.getAllContours.toSet
+    case diagram : CompoundSpiderDiagramOccurrence => diagram.getOperands.flatMap(collectContours).toSet
+  }
+
   def collectShadedZones(diagram: SpiderDiagram): Set[Zone] = diagram match {
     case diagram : PrimarySpiderDiagram => (diagram.getPresentZones & diagram.getShadedZones).toSet
     case diagram : CompoundSpiderDiagram => diagram.getOperands.flatMap(collectShadedZones).toSet
@@ -162,6 +167,27 @@ object Auxilliary {
       subDiagams.map(pd => pd.getAllContours.toSet).forall(subDiagams.head.getAllContours.toSet.sameElements)
     } else {
       false
+    }
+  }
+
+  def getDeepestNestedDiagram(subgoalIndex: Int): Goals => Option[CompoundSpiderDiagramOccurrence] = (state:Goals) => {
+    val goal = getSubGoal(subgoalIndex, state)
+    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      getDeepestNestedDiagram(goal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0))
+    } else {
+      None
+    }
+  }
+
+  def getDeepestNestedDiagram(sd: SpiderDiagramOccurrence) : Option[CompoundSpiderDiagramOccurrence] = sd match {
+    case sd:PrimarySpiderDiagramOccurrence => None
+    case sd:CompoundSpiderDiagramOccurrence => sd.getOperator match  {
+      case Operator.Conjunction => (sd.getOperand(0), sd.getOperand(1)) match {
+        case (op0:PrimarySpiderDiagramOccurrence, op1:PrimarySpiderDiagramOccurrence) => Some(sd)
+        case (op0:CompoundSpiderDiagramOccurrence, _) => getDeepestNestedDiagram(op0)
+        case (_, op1:CompoundSpiderDiagramOccurrence) => getDeepestNestedDiagram(op1)
+      }
+      case _ => None
     }
   }
 

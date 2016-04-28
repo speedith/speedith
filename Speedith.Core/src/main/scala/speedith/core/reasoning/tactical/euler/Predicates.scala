@@ -1,5 +1,6 @@
 package speedith.core.reasoning.tactical.euler
 
+import antlr.debug.SemanticPredicateAdapter
 import speedith.core.lang.Operator
 import speedith.core.reasoning.{Goals, Proof}
 import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramOccurrence, PrimarySpiderDiagramOccurrence, SpiderDiagramOccurrence}
@@ -35,12 +36,17 @@ object Predicates {
     case _ => false
   }
 
+  def isOperand(csd:CompoundSpiderDiagramOccurrence):  Predicate = {
+    case sd:PrimarySpiderDiagramOccurrence => csd.getOperands.map(op => op.getOccurrenceIndex).contains(sd.getOccurrenceIndex)
+    case _ => false
+  }
+
   def isPrimaryAndContainsMoreContours :  Set[String] => Predicate = (contours : Set[String]) =>  {
     case sd:PrimarySpiderDiagramOccurrence => (contours -- sd.getAllContours).nonEmpty
     case _ => false
   }
 
-  def isPrimaryAndContainsMissingZones: Goals =>  Predicate = (state:Goals) => {
+  def isPrimaryAndContainsMissingZones: Predicate =  {
     case sd:PrimarySpiderDiagramOccurrence => (sd.getShadedZones--sd.getPresentZones).nonEmpty
     case _ => false
   }
@@ -122,5 +128,7 @@ object Predicates {
     case d: CompoundSpiderDiagramOccurrence => false
   }
 
-
+  def AND (pred1 : Predicate, pred2: Predicate) : Predicate = (sd:SpiderDiagramOccurrence) => {
+    pred1(sd) && pred2(sd)
+  }
 }

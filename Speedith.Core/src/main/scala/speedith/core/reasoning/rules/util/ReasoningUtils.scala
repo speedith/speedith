@@ -4,6 +4,7 @@ import java.util
 
 import speedith.core.lang._
 import speedith.core.reasoning.Goals
+import speedith.core.reasoning.automatic.wrappers.{PrimarySpiderDiagramOccurrence, CompoundSpiderDiagramOccurrence, SpiderDiagramOccurrence}
 import speedith.core.reasoning.util.unitary.CorrespondingRegions
 
 import scala.collection.JavaConversions._
@@ -72,10 +73,31 @@ object ReasoningUtils {
       case  Operator.Implication  =>
         val premise: SpiderDiagram = goal.getOperand(0)
         val conclusion: SpiderDiagram = goal.getOperand(1)
-        AutomaticUtils.isConjunctive(premise) && AutomaticUtils.isConjunctive(conclusion)
+        isConjunctive(premise) && isConjunctive(conclusion)
       case _ => false
     }
     case _ => false
+  }
+
+  def isImplicationOfConjunctions(goal: SpiderDiagramOccurrence): Boolean = goal match {
+    case goal : CompoundSpiderDiagramOccurrence => goal.getOperator match {
+      case  Operator.Implication  =>
+        val premise: SpiderDiagramOccurrence = goal.getOperand(0)
+        val conclusion: SpiderDiagramOccurrence = goal.getOperand(1)
+        isConjunctive(premise) && isConjunctive(conclusion)
+      case _ => false
+    }
+    case _ => false
+  }
+
+  def isConjunctive(sd : SpiderDiagram) : Boolean =  sd match {
+    case sd : PrimarySpiderDiagram => true
+    case sd : CompoundSpiderDiagram => sd.getOperator.equals(Operator.getConjunction) && sd.getOperands.forall(isConjunctive)
+  }
+
+  def isConjunctive(sd : SpiderDiagramOccurrence) : Boolean =  sd match {
+    case sd : PrimarySpiderDiagramOccurrence => true
+    case sd : CompoundSpiderDiagramOccurrence => sd.getOperator.equals(Operator.getConjunction) && sd.getOperands.forall(isConjunctive)
   }
 
   def getPrimaryDiagrams(sd: SpiderDiagram): Seq[PrimarySpiderDiagram] = sd match {
