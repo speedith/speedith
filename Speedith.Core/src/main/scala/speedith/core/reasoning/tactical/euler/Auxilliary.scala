@@ -2,7 +2,6 @@ package speedith.core.reasoning.tactical.euler
 
 import speedith.core.lang._
 import speedith.core.reasoning.{Goals, Proof}
-import speedith.core.reasoning.args.SubgoalIndexArg
 import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramOccurrence, PrimarySpiderDiagramOccurrence, SpiderDiagramOccurrence}
 import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
 import speedith.core.reasoning.tactical.TacticApplicationException
@@ -72,6 +71,12 @@ object Auxilliary {
     val visibleShadedZones = d1.getShadedZones & d1.getPresentZones
     val nonEmptyShadedRegions = visibleShadedZones.subsets.toSet.filter(s => s.nonEmpty)
     nonEmptyShadedRegions.map(region => CorrespondingRegions(d1.getPrimaryDiagram, d2.getPrimaryDiagram).correspondingRegion(new Region(region))).filter(r => r.zones.nonEmpty)
+  }
+
+  def computeCorrespondingMissingRegions(d1 : PrimarySpiderDiagramOccurrence, d2 : PrimarySpiderDiagramOccurrence) : Set[Region] = {
+    val missingZones = d1.getShadedZones -- d1.getPresentZones
+    val nonEmptyMissingRegions = missingZones.subsets().toSet.filter(_.nonEmpty)
+    nonEmptyMissingRegions.map(r => CorrespondingRegions(d1.getPrimaryDiagram, d2.getPrimaryDiagram).correspondingRegion(new Region(r))).filter(r => r.zones.nonEmpty)
   }
 
   def computeMaximalCorrespondingShadedRegion(d1 : PrimarySpiderDiagramOccurrence, d2 : PrimarySpiderDiagramOccurrence): Option[(Set[Zone], Set[Zone])] = {
@@ -214,22 +219,63 @@ object Auxilliary {
     * implements some general checks
     *
     * @param subgoalIndex the index of subgoal which shall be returned
-    * @param state the proof from in which the subgoal will be searched
+    * @param goals the set of goals in which the subgoal will be searched
     */
-  def getSubgoal( subgoalIndex : Int, state:Proof ): SpiderDiagramOccurrence  = {
-    if (!state.isFinished) {
-      val goal = state.getLastGoals.getGoalAt(subgoalIndex)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
-        SpiderDiagramOccurrence.wrapDiagram(goal, 0)
-      } else throw new TacticApplicationException("No subgoal for this tactic")
-    } else throw new TacticApplicationException("No subgoal for this tactic")
-  }
-
   def getSubGoal(subgoalIndex : Int, goals: Goals): SpiderDiagramOccurrence = {
     if (goals == null || goals.getGoals == null)  throw new TacticApplicationException("Could not apply tactic")
     val goal = goals.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
       SpiderDiagramOccurrence.wrapDiagram(goal, 0)
     } else throw new TacticApplicationException("No subgoal for this tactic")
+  }
+
+  def firstMatchingDiagram(sd: SpiderDiagramOccurrence, predicate: Predicate): Option[SpiderDiagramOccurrence] = {
+    if (predicate(sd)) {
+      Some(sd)
+    } else {
+      sd match {
+        case sd: CompoundSpiderDiagramOccurrence =>
+          val matching = firstMatchingDiagram(sd.getOperand(0), predicate)
+          matching match {
+            case None => firstMatchingDiagram(sd.getOperand(1), predicate)
+            case _ => matching
+          }
+        case sd: PrimarySpiderDiagramOccurrence => None
+      }
+    }
+  }
+
+  def firstMatchingDiagramTest(sd: SpiderDiagramOccurrence) :Predicate => Option[SpiderDiagramOccurrence] = (predicate:Predicate) =>{
+    if (predicate(sd)) {
+      Some(sd)
+    } else {
+      sd match {
+        case sd: CompoundSpiderDiagramOccurrence =>
+          val matching = firstMatchingDiagram(sd.getOperand(0), predicate)
+          matching match {
+            case None => firstMatchingDiagram(sd.getOperand(1), predicate)
+            case _ => matching
+          }
+        case sd: PrimarySpiderDiagramOccurrence => None
+      }
+    }
+  }
+  def firstMatchingDiagramAndContour(sd: SpiderDiagramOccurrence,
+                                     predicate: SpiderDiagramOccurrence => Boolean,
+                                     contourChooser: Chooser[Set[String]])
+  : Option[(SpiderDiagramOccurrence, Option[Set[String]])] = {
+    if (predicate(sd)) {
+      Some(Tuple2(sd, contourChooser(sd)))
+    } else {
+      sd match {
+        case sd: CompoundSpiderDiagramOccurrence =>
+          val matching = firstMatchingDiagramAndContour(sd.getOperand(0), predicate, contourChooser)
+          matching match {
+            case None => firstMatchingDiagramAndContour(sd.getOperand(1), predicate, contourChooser)
+            case _ => matching
+          }
+        case sd: PrimarySpiderDiagramOccurrence => None
+      }
+    }
   }
 }

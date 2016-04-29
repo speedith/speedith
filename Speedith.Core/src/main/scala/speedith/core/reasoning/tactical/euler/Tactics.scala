@@ -15,47 +15,16 @@ import speedith.core.reasoning._
 import scala.collection.JavaConversions._
 
 /**
-  * Contains the main tactics to apply single rules to a given proof.
+  * Contains the main tactics to apply single rules to a given proof. The targets of these tactics
+  * have to be specificed by suited Predicate and Chooser[A] functions.
   *
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *
   */
 object Tactics {
 
-  private def firstMatchingDiagram(sd: SpiderDiagramOccurrence, predicate: Predicate): Option[SpiderDiagramOccurrence] = {
-    if (predicate(sd)) {
-      Some(sd)
-    } else {
-      sd match {
-        case sd: CompoundSpiderDiagramOccurrence =>
-          val matching = firstMatchingDiagram(sd.getOperand(0), predicate)
-          matching match {
-            case None => firstMatchingDiagram(sd.getOperand(1), predicate)
-            case _ => matching
-          }
-        case sd: PrimarySpiderDiagramOccurrence => None
-      }
-    }
-  }
 
-  private def firstMatchingDiagramAndContour(sd: SpiderDiagramOccurrence,
-                                             predicate: SpiderDiagramOccurrence => Boolean,
-                                             contourChooser: Chooser[Set[String]])
-  : Option[(SpiderDiagramOccurrence, Option[Set[String]])] = {
-    if (predicate(sd)) {
-      Some(Tuple2(sd, contourChooser(sd)))
-    } else {
-      sd match {
-        case sd: CompoundSpiderDiagramOccurrence =>
-          val matching = firstMatchingDiagramAndContour(sd.getOperand(0), predicate, contourChooser)
-          matching match {
-            case None => firstMatchingDiagramAndContour(sd.getOperand(1), predicate, contourChooser)
-            case _ => matching
-          }
-        case sd: PrimarySpiderDiagramOccurrence => None
-      }
-    }
-  }
+
 
 
   private def createResults(goals: Goals, rule: InferenceRule[RuleArg], args: RuleArg, name : String, oldResult : TacticApplicationResult): Option[TacticApplicationResult] =  {
@@ -70,7 +39,7 @@ object Tactics {
     try {
       val subgoal = getSubGoal(subGoalIndex, state)
       val target = firstMatchingDiagramAndContour(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
-        d=> d.isInstanceOf[PrimarySpiderDiagramOccurrence] && predicate(d), contourChooser )
+          predicate, contourChooser )
       target match {
         case None => None
         case Some(tupel) =>
@@ -87,12 +56,11 @@ object Tactics {
     }
   }
 
-  def introduceShadedZone(predicate: Goals => Predicate, zoneChooser : Chooser[Set[Zone]]): Tactical =
+  def introduceShadedZone(predicate: Predicate, zoneChooser : Chooser[Set[Zone]]): Tactical =
     (name:String) =>(state: Goals) => (subGoalIndex : Int) => (result : TacticApplicationResult) => {
     try {
       val subgoal = getSubGoal(subGoalIndex, state)
-      val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
-        d => d.isInstanceOf[PrimarySpiderDiagramOccurrence] && predicate(state)(d))
+      val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0), predicate)
       target match {
         case None => None
         case Some(diagram) =>
@@ -110,7 +78,7 @@ object Tactics {
     }
   }
 
-  def   removeShadedZone(zoneChooser:Chooser[Set[Zone]]): Tactical = (name:String) => ( state: Goals) => (subGoalIndex:Int) =>(result:TacticApplicationResult) => {
+  def removeShadedZone(zoneChooser:Chooser[Set[Zone]]): Tactical = (name:String) => ( state: Goals) => (subGoalIndex:Int) =>(result:TacticApplicationResult) => {
     try {
       val subgoal = getSubGoal(subGoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
@@ -142,7 +110,7 @@ object Tactics {
     try {
       val subgoal = getSubGoal(subGoalIndex, state)
       val target = firstMatchingDiagramAndContour(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
-        d => d.isInstanceOf[PrimarySpiderDiagramOccurrence] && predicate(d), contourChooser)
+        predicate, contourChooser)
       target match {
         case Some(tupel) =>
           tupel._2 match {

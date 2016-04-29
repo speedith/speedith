@@ -4,7 +4,8 @@ import speedith.core.lang.Zone
 import speedith.core.reasoning.automatic.wrappers.{PrimarySpiderDiagramOccurrence, CompoundSpiderDiagramOccurrence, SpiderDiagramOccurrence}
 import scala.collection.JavaConversions._
 /**
-  * TODO: Description
+  * Chooser functions to select arguments for single rule tactics within a diagram
+  * selected by a Predicate function (see [[Tactics]])
   *
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *

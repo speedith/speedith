@@ -1,31 +1,35 @@
 package speedith.core.reasoning.tactical.euler
 
+import speedith.core.reasoning.automatic.wrappers.CompoundSpiderDiagramOccurrence
 import speedith.core.reasoning.tactical.TacticApplicationResult
 import speedith.core.reasoning.{Goals, Proof}
-import speedith.core.reasoning.rules.util.AutomaticUtils
+import speedith.core.reasoning.rules.util.{ReasoningUtils, AutomaticUtils}
 import speedith.core.reasoning.tactical.euler.Auxilliary._
 import speedith.core.reasoning.tactical.euler.Choosers._
 import speedith.core.reasoning.tactical.euler.Predicates._
 import speedith.core.reasoning.tactical.euler.BasicTacticals._
 import speedith.core.reasoning.tactical.euler.Tactics._
 
-/**
- * Basic tacticals to work on a proof. The tacticals chain several tactics
-  * by using the [[BasicTacticals basic tacticals]].
- *
- * @author Sven Linker [s.linker@brighton.ac.uk]
- *
- */
+  /**
+  * Tactics to work on a proof. The Tactics chain several tactics
+  * by using the [[BasicTacticals basic tacticals]]. Some of these
+  * tactics are normally able to remove a subgoal, as long as it consists
+  * of an implication, where the conclusion is a single unitary diagram (and if the
+  * conclusion is a consequence of the premises)
+   *
+  * @author Sven Linker [s.linker@brighton.ac.uk]
+  *
+  */
 object SimpleTacticals {
 
   def vennify : Tactical = {
     REPEAT(ORELSE(trivialTautology,
-      introduceShadedZone(s =>isPrimaryAndContainsMissingZones,someMissingZone)))
+      introduceShadedZone(isPrimaryAndContainsMissingZones,someMissingZone)))
   }
 
   def vennifyFast : Tactical = {
     REPEAT(ORELSE(trivialTautology,
-      introduceShadedZone(s =>isPrimaryAndContainsMissingZones,allMissingZones)))
+      introduceShadedZone(isPrimaryAndContainsMissingZones,allMissingZones)))
   }
 
   def deVennify : Tactical = {
@@ -72,7 +76,7 @@ object SimpleTacticals {
     val target = getDeepestNestedDiagram(subGoalIndex)(state)
     target match {
       case None => id(name)(state)(subGoalIndex)(result)
-      case Some(diagram) => REPEAT(ORELSE(trivialTautology, introduceShadedZone(s => AND(isOperand(diagram), isPrimaryAndContainsMissingZones), someMissingZone)))(name)(state)(subGoalIndex)(result)
+      case Some(diagram) => REPEAT(ORELSE(trivialTautology, introduceShadedZone( AND(isOperand(diagram), isPrimaryAndContainsMissingZones), someMissingZone)))(name)(state)(subGoalIndex)(result)
     }
   }
 
@@ -80,10 +84,9 @@ object SimpleTacticals {
     val target = getDeepestNestedDiagram(subGoalIndex)(state)
     target match {
       case None => id(name)(state)(subGoalIndex)(result)
-      case Some(diagram) => {
+      case Some(diagram) =>
         val contours = collectContours(diagram)
         REPEAT(ORELSE(trivialTautology, introduceContour(AND(isOperand(diagram), containsLessContours(contours)) , someGivenContoursButNotInDiagram(contours))))(name)(state)(subGoalIndex)(result)
-      }
     }
   }
 
@@ -110,7 +113,7 @@ object SimpleTacticals {
           REPEAT(ORELSE(trivialTautology,
             eraseContour(containsOtherContours(concContours), allInDiagramButNotInGivenContours(concContours))))),
           REPEAT(ORELSE(trivialTautology,
-            introduceShadedZone(s =>isPrimaryAndContainsMissingZones, allMissingZonesInGivenZones(concVisibleZones))))),
+            introduceShadedZone(isPrimaryAndContainsMissingZones, allMissingZonesInGivenZones(concVisibleZones))))),
         REPEAT(ORELSE(trivialTautology ,
           eraseShading(isPrimaryAndContainsShadedZones, allVisibleShadedZonesInGivenZones(concUnshadedZones))))),
         REPEAT(ORELSE(trivialTautology,
@@ -131,7 +134,7 @@ object SimpleTacticals {
           REPEAT(ORELSE(trivialTautology,
             eraseContour(containsOtherContours(concContours ), someInDiagramButNotInGivenContours(concContours))))),
           REPEAT(ORELSE(trivialTautology,
-            introduceShadedZone(s =>isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones))))),
+            introduceShadedZone(isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones))))),
           REPEAT(ORELSE(trivialTautology,
             eraseShading(isPrimaryAndContainsShadedZones, someVisibleShadedZonesInGivenZones(concUnshadedZones))))),
           REPEAT(ORELSE(trivialTautology,
@@ -150,7 +153,8 @@ object SimpleTacticals {
     REPEAT(ORELSE(trivialTautology,
       ORELSE(idempotency,
         ORELSE(copyShading,
-          introduceShadedZone(collectDiagramsWithMissingZonesThatCouldBeCopied(subGoalIndex,_).contains, someMissingZone)))))(name)(state)(subGoalIndex)(result)
+          introduceMissingZonesToCopy
+        ))))(name)(state)(subGoalIndex)(result)
   }
 
   def copyEveryThing: Tactical = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
@@ -158,5 +162,16 @@ object SimpleTacticals {
       THEN(DEPTH_FIRST(containsNoDiagramsWithShadedZonesThatCouldBeCopied( subGoalIndex), copyShadings),
         copyTopologicalInformation)),
       matchConclusion)(name)(state)(subGoalIndex)(result)
+  }
+
+  def introduceMissingZonesToCopy : Tactical = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) =>{
+    val goal = getSubGoal(subGoalIndex,state)
+    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      val target = firstMatchingDiagram(goal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0), isConjunctionContainingMissingZonesToCopy).asInstanceOf[Option[CompoundSpiderDiagramOccurrence]]
+      target match {
+        case None => fail(name)(state)(subGoalIndex)(result)
+       case Some(d) => REPEAT(ORELSE(trivialTautology, introduceShadedZone(AND(isOperand(d), isPrimaryAndContainsMissingZones), someMissingZone)))(name)(state)(subGoalIndex)(result)
+      }
+    } else { fail(name)(state)(subGoalIndex)(result) }
   }
 }
