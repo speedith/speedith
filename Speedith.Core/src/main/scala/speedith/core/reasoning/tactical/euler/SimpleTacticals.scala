@@ -2,8 +2,8 @@ package speedith.core.reasoning.tactical.euler
 
 import speedith.core.reasoning.automatic.wrappers.CompoundSpiderDiagramOccurrence
 import speedith.core.reasoning.tactical.TacticApplicationResult
-import speedith.core.reasoning.{Goals, Proof}
-import speedith.core.reasoning.rules.util.{ReasoningUtils, AutomaticUtils}
+import speedith.core.reasoning.Goals
+import speedith.core.reasoning.rules.util.ReasoningUtils
 import speedith.core.reasoning.tactical.euler.Auxilliary._
 import speedith.core.reasoning.tactical.euler.Choosers._
 import speedith.core.reasoning.tactical.euler.Predicates._
@@ -52,12 +52,7 @@ object SimpleTacticals {
     DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram(subGoalIndex),
       ORELSE(trivialTautology,introduceContour(containsLessContours(contours), allInGivenContoursButNotInDiagram(contours))))(name)(state)(subGoalIndex)(result)
   }
-/*
-  def eraseAllContours : Tactical = {
-    REPEAT(ORELSE(trivialTautology(0),
-      eraseContour(0,containsContours, anyContour)))
-  }
-*/
+
   def combineAll : Tactical = {
     REPEAT(ORELSE(trivialTautology,
       combine))
@@ -90,6 +85,12 @@ object SimpleTacticals {
     }
   }
 
+    /**
+      * Chooses one conjunction of primary diagrams, changes both conjuncts into Venn diagrams and unifies their
+      * contour sets. Afterwards combines the diagrams. Repeats this procedure as long as only a unitary
+      * diagram is left.
+      * @return
+      */
   def vennStyleFocused : Tactical = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
     THEN(DEPTH_FIRST(isSingleUnitaryDiagram(subGoalIndex),
     THEN(THEN(vennifyFocused,
@@ -142,6 +143,13 @@ object SimpleTacticals {
   }
 
 
+    /**
+      * Applies Copy Contour as often as possible. Also uses Remove Shaded Zone to increase the semantic information that
+      * is copied. (If a zone is visible and shaded, this shading information is not taken into account by Copy Contour.
+      * If the zone is missing however, its information is used in the copy procedure)
+     *
+      * @return
+      */
   def copyTopologicalInformation : Tactical =  (name:String) => (state:Goals) => (subGoalIndex: Int) => (result:TacticApplicationResult) => {
       REPEAT(ORELSE(trivialTautology,
         ORELSE(idempotency,
@@ -149,11 +157,17 @@ object SimpleTacticals {
             copyContour))))(name)(state)(subGoalIndex)(result)
   }
 
+    /**
+      * Tries to apply Copy Shading to the goal as often as possible (while copying maximal shaded regions). If
+      * no shaded zones that can be copied exist, it tries to introduce shaded zones to create new possibilities to
+      * copy shadings.
+      *
+      * @return
+      */
   def copyShadings: Tactical = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) =>{
     REPEAT(ORELSE(trivialTautology,
       ORELSE(idempotency,
-        ORELSE(copyShading,
-          introduceMissingZonesToCopy
+        ORELSE(copyShading,introduceMissingZonesToCopy
         ))))(name)(state)(subGoalIndex)(result)
   }
 
@@ -164,6 +178,10 @@ object SimpleTacticals {
       matchConclusion)(name)(state)(subGoalIndex)(result)
   }
 
+    /**
+      * Applies Introduce Shaded Zone to create new possibilites to for Copy Shading to be applied.
+      * @return
+      */
   def introduceMissingZonesToCopy : Tactical = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) =>{
     val goal = getSubGoal(subGoalIndex,state)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
