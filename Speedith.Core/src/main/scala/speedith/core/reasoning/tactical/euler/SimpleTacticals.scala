@@ -43,13 +43,13 @@ object SimpleTacticals {
 
   def unifyContourSets : Tactical = (name:String) => (state:Goals) => (subGoalIndex : Int) => (result : TacticApplicationResult) =>{
     val contours = getContoursInSubGoal(subGoalIndex, state)
-    DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram(subGoalIndex),
+    DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram)(
       ORELSE(trivialTautology,introduceContour( containsLessContours(contours), someGivenContoursButNotInDiagram(contours))))(name)(state)(subGoalIndex)(result)
   }
 
   def unifyContourSetsFast : Tactical = (name:String) => (state:Goals) => (subGoalIndex : Int) => (result : TacticApplicationResult) =>{
     val contours = getContoursInSubGoal(subGoalIndex, state)
-    DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram(subGoalIndex),
+    DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram)(
       ORELSE(trivialTautology,introduceContour(containsLessContours(contours), allInGivenContoursButNotInDiagram(contours))))(name)(state)(subGoalIndex)(result)
   }
 
@@ -92,7 +92,7 @@ object SimpleTacticals {
       * @return
       */
   def vennStyleFocused : Tactical = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
-    THEN(DEPTH_FIRST(isSingleUnitaryDiagram(subGoalIndex),
+    THEN(DEPTH_FIRST(isUnitaryDiagram)(
     THEN(THEN(vennifyFocused,
       unifyContourSetsFocused),
       combineAll)), matchConclusion)(name)(state)(subGoalIndex)(result)
@@ -172,10 +172,10 @@ object SimpleTacticals {
   }
 
   def copyEveryThing: Tactical = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
-    THEN(DEPTH_FIRST(isSingleUnitaryDiagram(subGoalIndex),
-      THEN(DEPTH_FIRST(containsNoDiagramsWithShadedZonesThatCouldBeCopied( subGoalIndex), copyShadings),
-        copyTopologicalInformation)),
-      matchConclusion)(name)(state)(subGoalIndex)(result)
+     THEN(DEPTH_FIRST(isUnitaryDiagram)(
+      THEN(DEPTH_FIRST(containsNoDiagramsWithShadedZonesThatCouldBeCopied)( copyShadings),
+             COND(isUnitaryDiagram)(id)(copyTopologicalInformation)
+      )),      matchConclusion)(name)(state)(subGoalIndex)(result)
   }
 
     /**

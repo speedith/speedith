@@ -39,19 +39,27 @@ object BasicTacticals {
     None
   }
 
-  def TRY(tac : Tactical) = (name:String) => (state:Goals) =>(subGoalIndex:Int)=>(result : TacticApplicationResult) => {
-    ORELSE(tac, id)(name)(state)(subGoalIndex)(result)
+  def TRY(tac : Tactical) =  {
+    ORELSE(tac, id)
   }
 
   def REPEAT(tac : Tactical): Tactical = (name:String) =>(state : Goals) => (subGoalIndex:Int) =>(result : TacticApplicationResult) =>{
     ORELSE(THEN(tac, REPEAT(tac)), id )(name)(state)(subGoalIndex)(result)
   }
 
-  def DEPTH_FIRST (predicate:Goals => Boolean, tac:Tactical):Tactical =  (name:String) => (state :Goals) =>(subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
-    if (predicate(state)) {
+  def DEPTH_FIRST :(Goals => Int => Boolean)=>Tactical => Tactical = (predicate:Goals => Int => Boolean)=> (tac:Tactical) => (name:String) => (state :Goals) =>(subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
+    if (predicate(state)(subGoalIndex)) {
       id(name)(state)(subGoalIndex)(result)
     } else {
-      THEN(tac, DEPTH_FIRST(predicate, tac))(name)(state)(subGoalIndex)(result )
+      THEN(tac, DEPTH_FIRST(predicate)(tac))(name)(state)(subGoalIndex)(result )
+    }
+  }
+
+  def COND: (Goals => Int => Boolean) => Tactical => Tactical=>Tactical = (p : Goals =>Int => Boolean) => (tac1:Tactical) => (tac2:Tactical) => (name:String) =>(state : Goals) => (subGoalIndex:Int) =>(result : TacticApplicationResult) =>{
+    if (p(state)(subGoalIndex)) {
+      tac1(name)(state)(subGoalIndex)(result)
+    } else {
+      tac2(name)(state)(subGoalIndex)(result)
     }
   }
 

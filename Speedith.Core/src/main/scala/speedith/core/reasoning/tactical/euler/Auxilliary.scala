@@ -42,7 +42,7 @@ object Auxilliary {
     }
   }
 
-  def containsNoDiagramsWithShadedZonesThatCouldBeCopied(subGoalIndex:Int): Goals => Boolean = (state:Goals) => {
+  def containsNoDiagramsWithShadedZonesThatCouldBeCopied: Goals =>Int => Boolean = (state:Goals) => (subGoalIndex:Int) =>{
     if (state.isEmpty) {
       true
     } else {
@@ -176,7 +176,7 @@ object Auxilliary {
     }
   }
 
-  def equalContourSetsInEachPrimaryDiagram(subgoalIndex : Int) :Goals => Boolean = (state:Goals) => {
+  def equalContourSetsInEachPrimaryDiagram :Goals => Int =>Boolean = (state:Goals) => (subgoalIndex : Int) =>{
     val goal = state.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
       val subDiagams = ReasoningUtils.getPrimaryDiagrams(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0))
@@ -208,6 +208,19 @@ object Auxilliary {
   }
 
   def isSingleUnitaryDiagram(subGoalIndex:Int) : Goals => Boolean = (state:Goals) => {
+    if (state.isEmpty) {
+      true
+    } else {
+      val goal = state.getGoalAt(subGoalIndex)
+      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+        goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0).isInstanceOf[PrimarySpiderDiagram]
+      } else {
+        false
+      }
+    }
+  }
+
+  def isUnitaryDiagram: Goals => Int => Boolean = (state:Goals) => (subGoalIndex : Int) => {
     if (state.isEmpty) {
       true
     } else {
