@@ -152,4 +152,14 @@ public interface Proof extends Serializable {
      */
     boolean undoStep();
 
+
+    /**
+     * Creates a version of the this Proof object where all tactic applications
+     * are replaced with the applications of the rules used in the tactic.
+     *
+     * The created proofs may be very long!
+     *
+     * @return a flattened version of this proof
+     */
+    Proof createFlattenedProof() throws TacticApplicationException;
 }

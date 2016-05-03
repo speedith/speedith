@@ -29,6 +29,9 @@ package speedith.core.reasoning;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.tactical.Tactic;
+import speedith.core.reasoning.tactical.TacticApplicationException;
+import speedith.core.reasoning.tactical.TacticApplicationResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -235,5 +238,32 @@ public class ProofTrace implements Proof {
         int result = goals.hashCode();
         result = 31 * result + inferenceApplications.hashCode();
         return result;
+    }
+
+    @Override
+    public Proof createFlattenedProof() throws TacticApplicationException {
+        Proof newProof = null;
+        newProof = new ProofTrace(getInitialGoals());
+        for (InferenceApplication appl : getInferenceApplications()) {
+            try {
+                if (appl.getInference() instanceof Tactic) {
+                    Goals currentGoals = newProof.getLastGoals();
+                    TacticApplicationResult result = (TacticApplicationResult) appl.applyTo(currentGoals);
+                    for (InferenceApplication app : result.getApplicationList()) {
+                        newProof.applyRule((InferenceRule<? super RuleArg>) app.getInference(), app.getRuleArguments(), app.getType(), app.getTypeSpecifier());
+                    }
+                        /*if (!getLastGoals().equals(result.getGoals())) {
+                            throw new TacticApplicationException("Unexpected result of tactic application");
+                        }*/
+                } else {
+                    newProof.applyRule((InferenceRule<? super RuleArg>) appl.getInference(), appl.getRuleArguments(), appl.getType(), appl.getTypeSpecifier());
+                }
+            } catch (RuleApplicationException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        return newProof;
     }
 }

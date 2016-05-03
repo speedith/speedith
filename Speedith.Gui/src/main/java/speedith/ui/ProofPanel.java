@@ -313,29 +313,8 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         }
     }
 
-    public void createFlattenedProof(Proof proof) throws TacticApplicationException {
-        if (!(proof == null)) {
-            newProof(proof.getInitialGoals());
-            for (InferenceApplication appl : proof.getInferenceApplications()) {
-                try {
-                    if (appl.getInference() instanceof Tactic) {
-                        Goals currentGoals = getLastGoals();
-                        TacticApplicationResult result = (TacticApplicationResult) appl.applyTo(currentGoals);
-                        for (InferenceApplication app : result.getApplicationList()) {
-                            applyRule((InferenceRule<? super RuleArg>) app.getInference(), app.getRuleArguments(), app.getType(), app.getTypeSpecifier());
-                        }
-                        /*if (!getLastGoals().equals(result.getGoals())) {
-                            throw new TacticApplicationException("Unexpected result of tactic application");
-                        }*/
-                    } else {
-                        applyRule((InferenceRule<? super RuleArg>) appl.getInference(), appl.getRuleArguments(), appl.getType(), appl.getTypeSpecifier());
-                    }
-                } catch (RuleApplicationException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
+    public Proof createFlattenedProof() throws TacticApplicationException {
+        return proof.createFlattenedProof();
     }
 
     //</editor-fold>

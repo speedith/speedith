@@ -684,7 +684,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private void onInspectProof() {
     ProofPanel fullProof = new ProofPanel();
     try {
-      fullProof.createFlattenedProof(proofPanel1);
+      fullProof.replaceCurrentProof(proofPanel1.createFlattenedProof());
       JDialog frame = new JDialog(this, "Full Proof", true);
       frame.getContentPane().add(fullProof);
       frame.pack();
@@ -785,25 +785,31 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       JOptionPane.showMessageDialog(this, "No proof to analyse.");
       return;
     }
-    int length = ProofAnalyser.length(proofPanel1);
-    int maxClutter = ProofAnalyser.maximumClutter(proofPanel1);
-    double avgClutter = ProofAnalyser.averageClutter(proofPanel1);
-    int velocity = ProofAnalyser.maximalClutterVelocity(proofPanel1);
-    int complexR = ProofAnalyser.complexRuleCount(proofPanel1);
-    double avgComplex = ProofAnalyser.averageNumberOfComplexRules(proofPanel1);
-    int interactions = ProofAnalyser.numberOfInteractions(proofPanel1);
-    double avgInteractions = ProofAnalyser.averageInteractions(proofPanel1);
-    int automatic = ProofAnalyser.numberOfAutomaticRuleApplications(proofPanel1);
+    try {
+      Proof fullProof = proofPanel1.createFlattenedProof();
+      int length = ProofAnalyser.length(fullProof);
+      int maxClutter = ProofAnalyser.maximumClutter(fullProof);
+      double avgClutter = ProofAnalyser.averageClutter(fullProof);
+      int velocity = ProofAnalyser.maximalClutterVelocity(fullProof);
+      int complexR = ProofAnalyser.complexRuleCount(fullProof);
+      double avgComplex = ProofAnalyser.averageNumberOfComplexRules(fullProof);
+      int interactions = ProofAnalyser.numberOfInteractions(fullProof);
+      double avgInteractions = ProofAnalyser.averageInteractions(fullProof);
+      int automatic = ProofAnalyser.numberOfAutomaticRuleApplications(fullProof);
 
-    JOptionPane.showMessageDialog(this, "Length:\t"+ length+
-            "\nMaximum Clutter:\t"+maxClutter +
-            "\nAverage Clutter:\t"+String.format("%.2f", avgClutter)+
-            "\nNumber of Complex Rules:\t"+complexR +
-            "\nAverage Number of Complex Rules:\t"+String.format("%.2f", avgComplex)+
-            "\nNumber of Interactions:\t"+interactions+
-            "\nAverage Number of Interactions:\t"+String.format("%.2f",avgInteractions)+
-            "\nMaximal Clutter Velocity:\t"+velocity +
-            "\nAutomatic Rule Applications:\t"+automatic);
+      JOptionPane.showMessageDialog(this, "Length:\t" + length +
+              "\nMaximum Clutter:\t" + maxClutter +
+              "\nAverage Clutter:\t" + String.format("%.2f", avgClutter) +
+              "\nNumber of Complex Rules:\t" + complexR +
+              "\nAverage Number of Complex Rules:\t" + String.format("%.2f", avgComplex) +
+              "\nNumber of Interactions:\t" + interactions +
+              "\nAverage Number of Interactions:\t" + String.format("%.2f", avgInteractions) +
+              "\nMaximal Clutter Velocity:\t" + velocity +
+              "\nAutomatic Rule Applications:\t" + automatic);
+    } catch (TacticApplicationException e) {
+      JOptionPane.showMessageDialog(this, "An error occurred while applying a tactic:\n" + e.getLocalizedMessage());
+
+    }
   }
 
   private void onSaveProof() {
