@@ -2,6 +2,7 @@ package speedith.analyser;
 
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.ProofAnalyser;
+import speedith.core.reasoning.tactical.TacticApplicationException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -45,14 +46,15 @@ public class ProofAnalyserVisitor extends SimpleFileVisitor<Path> {
                     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
                 inputProof = (Proof) objectInputStream.readObject();
                 if (inputProof != null) {
-                    int length = ProofAnalyser.length(inputProof);
-                    int maxClutter = ProofAnalyser.maximumClutter(inputProof);
-                    double avgClutter = ProofAnalyser.averageClutter(inputProof);
-                    int velo = ProofAnalyser.maximalClutterVelocity(inputProof);
-                    int complexR = ProofAnalyser.complexRuleCount(inputProof);
-                    double avgComplex = ProofAnalyser.averageNumberOfComplexRules(inputProof);
-                    int interactions = ProofAnalyser.numberOfInteractions(inputProof);
-                    double avgInteractions = ProofAnalyser.averageInteractions(inputProof);
+                    Proof flattened = inputProof.createFlattenedProof();
+                    int length = ProofAnalyser.length(flattened);
+                    int maxClutter = ProofAnalyser.maximumClutter(flattened);
+                    double avgClutter = ProofAnalyser.averageClutter(flattened);
+                    int velo = ProofAnalyser.maximalClutterVelocity(flattened);
+                    int complexR = ProofAnalyser.complexRuleCount(flattened);
+                    double avgComplex = ProofAnalyser.averageNumberOfComplexRules(flattened);
+                    int interactions = ProofAnalyser.numberOfInteractions(flattened);
+                    double avgInteractions = ProofAnalyser.averageInteractions(flattened);
 
                     result.append(file.getFileName()).append(", ")
                             .append(length).append(", ")
@@ -66,7 +68,7 @@ public class ProofAnalyserVisitor extends SimpleFileVisitor<Path> {
 
                 }
 
-            }  catch (ClassNotFoundException e) {
+            }  catch (ClassNotFoundException|TacticApplicationException e) {
                 e.printStackTrace();
             }
         }
