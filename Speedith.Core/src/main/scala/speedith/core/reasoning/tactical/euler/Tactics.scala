@@ -200,7 +200,7 @@ object Tactics {
         case Some(diagram) =>
           val op0 = diagram.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0).asInstanceOf[PrimarySpiderDiagramOccurrence]
           val op1 = diagram.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(1).asInstanceOf[PrimarySpiderDiagramOccurrence]
-          if (op0.getAllContours.subsetOf(op1.getAllContours)) {
+/*          if (op0.getAllContours.subsetOf(op1.getAllContours)) {
             val maxZone = computeMaximalCorrespondingShadedRegion(op0, op1)
             maxZone match {
               case Some((r1: Set[Zone], r2: Set[Zone])) =>
@@ -229,6 +229,24 @@ object Tactics {
               case None => None
             }
           } else None
+          */
+          val leftToRight = getCorrespondingShadedRegion(op0,op1)
+          leftToRight match {
+            case Some((r1: Set[Zone], r2: Set[Zone])) => createResults(state, new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
+              new MultipleRuleArgs(r1.map(z => new ZoneArg(subGoalIndex, op0.getOccurrenceIndex, z)).toList),
+              name, result)
+            case None =>
+                val rightToLeft = getCorrespondingShadedRegion(op1,op0)
+              rightToLeft match {
+                case Some((r1: Set[Zone], r2: Set[Zone])) =>
+                  createResults(state, new CopyShading().asInstanceOf[InferenceRule[RuleArg]],
+                    new MultipleRuleArgs(r1.map(z => new ZoneArg(subGoalIndex, op1.getOccurrenceIndex, z)).toList),
+                    name, result)
+                case None => None
+              }
+
+
+          }
       }
     } catch {
       case e: TacticApplicationException => None

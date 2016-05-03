@@ -88,7 +88,7 @@ object Predicates {
     case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match {
       case Operator.Conjunction => (sd.getOperand(0), sd.getOperand(1)) match {
         case (op0: PrimarySpiderDiagramOccurrence, op1: PrimarySpiderDiagramOccurrence) =>
-          if (op0.getAllContours.subsetOf(op1.getAllContours)) {
+          /* if (op0.getAllContours.subsetOf(op1.getAllContours)) {
             val leftRegions = computeCorrespondingShadedRegions(op0, op1)
             if (leftRegions.nonEmpty) {
               true
@@ -104,6 +104,11 @@ object Predicates {
               val rightRegions = computeCorrespondingShadedRegions(op1, op0)
               rightRegions.nonEmpty
             } else false
+          } */
+          if (containsCorrespondingShadedRegions(op0, op1)) {
+            true
+          } else {
+            containsCorrespondingShadedRegions(op1,op0)
           }
         case _ => false
       }
@@ -116,12 +121,18 @@ object Predicates {
     case sd:CompoundSpiderDiagramOccurrence => sd.getOperator match {
       case Operator.Conjunction => (sd.getOperand(0), sd.getOperand(1)) match {
         case (op0:PrimarySpiderDiagramOccurrence, op1:PrimarySpiderDiagramOccurrence) =>
-          val miss1 = computeCorrespondingMissingRegions(op0,op1)
+        /*  val miss1 = computeCorrespondingMissingRegions(op0,op1)
          if (miss1.nonEmpty) {
            true
          } else {
            computeCorrespondingMissingRegions(op1,op0).nonEmpty
          }
+         */
+          if (isCorrespondingMissingRegion(op0,op1)) {
+            true
+          } else {
+            isCorrespondingMissingRegion(op1,op0)
+          }
         case _ => false
       }
       case _ => false

@@ -73,16 +73,48 @@ object Auxilliary {
     nonEmptyShadedRegions.map(region => CorrespondingRegions(d1.getPrimaryDiagram, d2.getPrimaryDiagram).correspondingRegion(new Region(region))).filter(r => r.zones.nonEmpty)
   }
 
+  def containsCorrespondingShadedRegions(d1 : PrimarySpiderDiagramOccurrence, d2: PrimarySpiderDiagramOccurrence) : Boolean = {
+    // to maximise the effect of copying and to somewhat counter the explosion of possible regions
+    // we bundle the shaded zones according to their in-sets (the sets they are contained in).
+    // The outer zone is element of all those regions so that it can be copied as well
+    val contoursLeft = d1.getAllContours
+    val shadedZones = (d1.getShadedZones & d1.getPresentZones).toSet
+    val shadedRegionsPerContour = contoursLeft.map(c => shadedZones.filter(z => z.getInContours.contains(c) || z.getInContours.isEmpty)).filter(_.nonEmpty)
+    shadedRegionsPerContour exists (r => CorrespondingRegions(d1.getPrimaryDiagram, d2.getPrimaryDiagram).correspondingRegion(new Region(r)).zones.nonEmpty)
+  }
+
   def computeCorrespondingMissingRegions(d1 : PrimarySpiderDiagramOccurrence, d2 : PrimarySpiderDiagramOccurrence) : Set[Region] = {
     val missingZones = d1.getShadedZones -- d1.getPresentZones
     val nonEmptyMissingRegions = missingZones.subsets().toSet.filter(_.nonEmpty)
     nonEmptyMissingRegions.map(r => CorrespondingRegions(d1.getPrimaryDiagram, d2.getPrimaryDiagram).correspondingRegion(new Region(r))).filter(r => r.zones.nonEmpty)
   }
 
+  def isCorrespondingMissingRegion(d1:PrimarySpiderDiagramOccurrence, d2 : PrimarySpiderDiagramOccurrence) : Boolean  = {
+    // to maximise the effect of copying and to somewhat counter the explosion of possible regions
+    // we bundle the shaded zones according to their in-sets (the sets they are contained in).
+    // The outer zone is element of all those regions so that it can be copied as well
+    val contoursLeft = d1.getAllContours
+    val missingZones = (d1.getShadedZones -- d1.getPresentZones).toSet
+    val missingRegionsPerContour = contoursLeft.map(c => missingZones.filter(z => z.getInContours.contains(c))).filter(_.nonEmpty)
+    missingRegionsPerContour exists (r => CorrespondingRegions(d1.getPrimaryDiagram, d2.getPrimaryDiagram).correspondingRegion(new Region(r)).zones.nonEmpty)
+  }
+
   def computeMaximalCorrespondingShadedRegion(d1 : PrimarySpiderDiagramOccurrence, d2 : PrimarySpiderDiagramOccurrence): Option[(Set[Zone], Set[Zone])] = {
     val shadedZones = (d1.getShadedZones & d1.getPresentZones).toSet
     val nonEmptyShadedRegions = shadedZones.subsets.toSet.filter(s => s.nonEmpty)
     val regions = nonEmptyShadedRegions.map(region => Tuple2(region, CorrespondingRegions(d1.getPrimaryDiagram, d2.getPrimaryDiagram).correspondingRegion(new Region(region)).zones)).filter(m => m._2.nonEmpty)
+    val unShadedTargets = regions.filter(t => t._2.exists((d2.getPresentZones -- d2.getShadedZones).contains ))
+    maxCorrespondingRegion(unShadedTargets.to[collection.immutable.List])
+  }
+
+  def getCorrespondingShadedRegion(d1 : PrimarySpiderDiagramOccurrence, d2:PrimarySpiderDiagramOccurrence): Option[(Set[Zone], Set[Zone])] = {
+    // to maximise the effect of copying and to somewhat counter the explosion of possible regions
+    // we bundle the shaded zones according to their in-sets (the sets they are contained in).
+    // The outer zone is element of all those regions so that it can be copied as well
+    val contoursLeft = d1.getAllContours
+    val shadedZones = (d1.getShadedZones & d1.getPresentZones).toSet
+    val shadedRegionsPerContour = contoursLeft.map(c => shadedZones.filter(z => z.getInContours.contains(c) || z.getInContours.isEmpty)).filter(_.nonEmpty)
+    val regions = shadedRegionsPerContour.map(region => Tuple2(region, CorrespondingRegions(d1.getPrimaryDiagram, d2.getPrimaryDiagram).correspondingRegion(new Region(region)).zones)).filter(m => m._2.nonEmpty)
     val unShadedTargets = regions.filter(t => t._2.exists((d2.getPresentZones -- d2.getShadedZones).contains ))
     maxCorrespondingRegion(unShadedTargets.to[collection.immutable.List])
   }

@@ -177,6 +177,19 @@ object Choosers {
       }
   }
 
+  def allMissingZonesContainingOneContour : Chooser[Set[Zone]] = {
+    case sd: CompoundSpiderDiagramOccurrence => None
+    case sd: PrimarySpiderDiagramOccurrence =>
+      val missing = (sd.getShadedZones -- sd.getPresentZones).toSet
+      val contours = sd.getAllContours
+      val contoursWithMissingZones= contours.filter(c => missing.exists(z => z.getInContours.contains(c)))
+      contoursWithMissingZones.headOption match {
+        case None => None
+        case Some(c) => Some(missing.filter(_.getInContours.contains(c)))
+      }
+
+  }
+
   def allMissingZones : Chooser[Set[Zone]] = {
     case sd: CompoundSpiderDiagramOccurrence => None
     case sd: PrimarySpiderDiagramOccurrence =>

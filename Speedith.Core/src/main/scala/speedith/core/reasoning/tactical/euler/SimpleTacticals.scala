@@ -188,7 +188,7 @@ object SimpleTacticals {
       val target = firstMatchingDiagram(goal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0), isConjunctionContainingMissingZonesToCopy).asInstanceOf[Option[CompoundSpiderDiagramOccurrence]]
       target match {
         case None => fail(name)(state)(subGoalIndex)(result)
-       case Some(d) => REPEAT(ORELSE(trivialTautology, introduceShadedZone(AND(isOperand(d), isPrimaryAndContainsMissingZones), someMissingZone)))(name)(state)(subGoalIndex)(result)
+        case Some(d) => introduceShadedZone(AND(isOperand(d), isPrimaryAndContainsMissingZones), allMissingZonesContainingOneContour)(name)(state)(subGoalIndex)(result)
       }
     } else { fail(name)(state)(subGoalIndex)(result) }
   }
