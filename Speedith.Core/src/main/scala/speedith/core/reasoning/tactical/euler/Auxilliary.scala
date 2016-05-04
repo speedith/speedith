@@ -82,7 +82,7 @@ object Auxilliary {
     // The outer zone is element of all those regions so that it can be copied as well
     val contoursLeft = d1.getAllContours
     val missingZones = (d1.getShadedZones -- d1.getPresentZones).toSet
-    val missingRegionsPerContour = contoursLeft.map(c => missingZones.filter(z => z.getInContours.contains(c))).filter(_.nonEmpty)
+    val missingRegionsPerContour = contoursLeft map (c => missingZones.filter(_.getInContours.contains(c))) filter (_.nonEmpty)
     missingRegionsPerContour exists (r => CorrespondingRegions(d1.getPrimaryDiagram, d2.getPrimaryDiagram).correspondingRegion(new Region(r)).zones.nonEmpty)
   }
 
@@ -92,9 +92,9 @@ object Auxilliary {
     // The outer zone is element of all those regions so that it can be copied as well
     val contoursLeft = d1.getAllContours
     val shadedZones = (d1.getShadedZones & d1.getPresentZones).toSet
-    val shadedRegionsPerContour = contoursLeft.map(c => shadedZones.filter(z => z.getInContours.contains(c) || z.getInContours.isEmpty)).filter(_.nonEmpty)
-    val regions = shadedRegionsPerContour.map(region => Tuple2(region, CorrespondingRegions(d1.getPrimaryDiagram, d2.getPrimaryDiagram).correspondingRegion(new Region(region)).zones)).filter(m => m._2.nonEmpty)
-    val unShadedTargets = regions.filter(t => t._2.exists((d2.getPresentZones -- d2.getShadedZones).contains ))
+    val shadedRegionsPerContour = contoursLeft map (c => shadedZones filter (z => z.getInContours.contains(c) ||z.getInContours.isEmpty)) filter (_.nonEmpty)
+    val regions = shadedRegionsPerContour map (region => Tuple2(region, CorrespondingRegions(d1.getPrimaryDiagram, d2.getPrimaryDiagram).correspondingRegion(new Region(region)).zones)) filter (m => m._2.nonEmpty)
+    val unShadedTargets = regions filter (_._2.exists((d2.getPresentZones -- d2.getShadedZones).contains ))
     maxCorrespondingRegion(unShadedTargets.to[collection.immutable.List])
   }
 
@@ -119,12 +119,12 @@ object Auxilliary {
 
   def collectContours(diagram : SpiderDiagramOccurrence) : Set[String] = diagram match {
     case diagram:PrimarySpiderDiagramOccurrence => diagram.getAllContours.toSet
-    case diagram : CompoundSpiderDiagramOccurrence => diagram.getOperands.flatMap(collectContours).toSet
+    case diagram : CompoundSpiderDiagramOccurrence => (diagram.getOperands flatMap collectContours).toSet
   }
 
   def collectShadedZones(diagram: SpiderDiagram): Set[Zone] = diagram match {
     case diagram : PrimarySpiderDiagram => (diagram.getPresentZones & diagram.getShadedZones).toSet
-    case diagram : CompoundSpiderDiagram => diagram.getOperands.flatMap(collectShadedZones).toSet
+    case diagram : CompoundSpiderDiagram => (diagram.getOperands flatMap collectShadedZones).toSet
   }
 
   def getShadedZonesInConclusion(subgoalIndex : Int, state : Goals) : Set[Zone] = {
@@ -142,7 +142,7 @@ object Auxilliary {
 
   def collectUnShadedZones(diagram: SpiderDiagram): Set[Zone] =  diagram match {
     case diagram : PrimarySpiderDiagram => (diagram.getPresentZones -- diagram.getShadedZones).toSet
-    case diagram : CompoundSpiderDiagram => diagram.getOperands.flatMap(collectShadedZones).toSet
+    case diagram : CompoundSpiderDiagram => (diagram.getOperands flatMap collectUnShadedZones).toSet
   }
 
   def getUnshadedZonesInConclusion(subgoalIndex : Int, state : Goals) : Set[Zone] = {
@@ -160,7 +160,7 @@ object Auxilliary {
 
   def collectVisibleZones(diagram: SpiderDiagram): Set[Zone] = diagram match {
     case diagram : PrimarySpiderDiagram => diagram.getPresentZones.toSet
-    case diagram : CompoundSpiderDiagram => diagram.getOperands.flatMap(collectShadedZones).toSet
+    case diagram : CompoundSpiderDiagram => (diagram.getOperands flatMap collectVisibleZones).toSet
   }
 
   def getVisibleZonesInConclusion(subGoalIndex: Int, state: Goals) : Set[Zone] = {
@@ -180,7 +180,7 @@ object Auxilliary {
     val goal = state.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
       val subDiagams = ReasoningUtils.getPrimaryDiagrams(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0))
-      subDiagams.map(pd => pd.getAllContours.toSet).forall(subDiagams.head.getAllContours.toSet.sameElements)
+      subDiagams map (pd => pd.getAllContours.toSet) forall subDiagams.head.getAllContours.toSet.sameElements
     } else {
       false
     }
