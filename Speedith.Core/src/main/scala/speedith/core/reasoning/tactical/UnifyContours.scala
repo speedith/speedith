@@ -6,7 +6,7 @@ import java.util.Locale
 import speedith.core.lang.DiagramType
 import speedith.core.reasoning.{RuleApplicationException, Goals}
 import speedith.core.reasoning.args.{SubgoalIndexArg, RuleArg}
-import speedith.core.reasoning.tactical.euler.SimpleTacticals
+import speedith.core.reasoning.tactical.euler.BasicTactics
 
 import scala.collection.JavaConversions._
 
@@ -20,7 +20,7 @@ class UnifyContours extends SimpleTactic with Serializable {
   override def apply(args: RuleArg, goals: Goals): TacticApplicationResult = {
     args match {
       case arg: SubgoalIndexArg =>
-         SimpleTacticals.unifyContourSets(getPrettyName())(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {
+         BasicTactics.unifyContourSets(getPrettyName())(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {
            case Some(result) => result.getApplicationList.isEmpty match {
              case false => result
              case true => throw new TacticApplicationException("Could not apply tactic "+getPrettyName())

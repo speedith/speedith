@@ -11,7 +11,7 @@ import scala.collection.JavaConversions._
 
 /**
  * Helper functions and predicates for the use with [[Tacticals basic tacticals]]
-  * and [[SimpleTacticals simple tacticals]].
+  * and [[BasicTactics simple tacticals]].
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  *
@@ -82,7 +82,7 @@ object Auxilliary {
     // The outer zone is element of all those regions so that it can be copied as well
     val contoursLeft = d1.getAllContours
     val missingZones = (d1.getShadedZones -- d1.getPresentZones).toSet
-    val missingRegionsPerContour = contoursLeft map (c => missingZones.filter(_.getInContours.contains(c))) filter (_.nonEmpty)
+    val missingRegionsPerContour = contoursLeft map (c => missingZones filter(_.getInContours.contains(c))) filter (_.nonEmpty)
     missingRegionsPerContour exists (r => CorrespondingRegions(d1.getPrimaryDiagram, d2.getPrimaryDiagram).correspondingRegion(new Region(r)).zones.nonEmpty)
   }
 

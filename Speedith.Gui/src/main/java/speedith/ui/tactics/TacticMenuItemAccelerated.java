@@ -4,7 +4,7 @@ import scala.Function1;
 import scala.Option;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.tactical.TacticApplicationException;
-import speedith.core.reasoning.tactical.euler.SimpleTacticals;
+import speedith.core.reasoning.tactical.euler.BasicTactics;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -33,12 +33,12 @@ public enum TacticMenuItemAccelerated implements TacticMenuItem {
      * a function of the type {@link String} => {@link Proof} => {@link Option}<{@link Proof}>
      *
      * @param name The text that will be displayed in the menu
-     * @param methodName The name of the method within {@link SimpleTacticals}.
+     * @param methodName The name of the method within {@link BasicTactics}.
      */
     TacticMenuItemAccelerated(String name, String methodName) {
         this.name = name;
         try {
-            this.callee = SimpleTacticals.class.getDeclaredMethod(methodName);
+            this.callee = BasicTactics.class.getDeclaredMethod(methodName);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -54,7 +54,7 @@ public enum TacticMenuItemAccelerated implements TacticMenuItem {
     public Proof apply(Proof proof) throws TacticApplicationException {
         Option<Proof> result = null;
         try {
-            Function1<String, Function1<Proof, Option<Proof>>> function = (Function1<String, Function1<Proof,Option<Proof>>>) callee.invoke(SimpleTacticals.class);
+            Function1<String, Function1<Proof, Option<Proof>>> function = (Function1<String, Function1<Proof,Option<Proof>>>) callee.invoke(BasicTactics.class);
             result = function.apply(getName()).apply(proof);
         } catch (IllegalAccessException e) {
             e.printStackTrace();

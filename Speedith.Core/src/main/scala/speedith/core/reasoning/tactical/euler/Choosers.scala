@@ -5,7 +5,7 @@ import speedith.core.reasoning.automatic.wrappers.{PrimarySpiderDiagramOccurrenc
 import scala.collection.JavaConversions._
 /**
   * Chooser functions to select arguments for single rule tactics within a diagram
-  * selected by a Predicate function (see [[Tactics]])
+  * selected by a Predicate function (see [[RuleTactics]])
   *
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *
@@ -187,7 +187,18 @@ object Choosers {
         case None => None
         case Some(c) => Some(missing.filter(_.getInContours.contains(c)))
       }
+  }
 
+  def allShadedZonesContainingOneContour: Chooser[Set[Zone]] = {
+    case sd: CompoundSpiderDiagramOccurrence => None
+    case sd: PrimarySpiderDiagramOccurrence =>
+      val shaded = (sd.getShadedZones & sd.getPresentZones).toSet
+      val contours = sd.getAllContours
+      val contoursWithshadedZones= contours filter (c => shaded.exists(_.getInContours.contains(c)))
+      contoursWithshadedZones.headOption match {
+        case None => None
+        case Some(c) => Some(shaded filter (_.getInContours.contains(c)))
+      }
   }
 
   def allMissingZones : Chooser[Set[Zone]] = {

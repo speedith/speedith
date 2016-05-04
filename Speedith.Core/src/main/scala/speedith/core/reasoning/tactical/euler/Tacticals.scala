@@ -16,8 +16,6 @@ import scala.reflect.internal.util.Collections
  */
 object Tacticals {
 
-  val emptyGoals =  Goals.createGoalsFrom(NullSpiderDiagram.getInstance())
-
   def THEN: Tactic => Tactic => Tactic = (tac1: Tactic) => (tac2: Tactic) => (name:String) => (state : Goals) => (subgoalIndex:Int) => (result : TacticApplicationResult) =>{
     tac1(name)(state)(subgoalIndex)(result) flatMap (res => tac2(name)(res.getGoals)(subgoalIndex)(res))
   }

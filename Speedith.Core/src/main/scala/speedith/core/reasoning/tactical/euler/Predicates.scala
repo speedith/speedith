@@ -6,7 +6,7 @@ import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramOccurren
 import scala.collection.JavaConversions._
 import speedith.core.reasoning.tactical.euler.Auxilliary._
 /**
-  * Predicate functions to select possible target diagrams for the application of single rule tactics (see [[Tactics]])
+  * Predicate functions to select possible target diagrams for the application of single rule tactics (see [[RuleTactics]])
   *
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *
@@ -35,8 +35,13 @@ object Predicates {
     case _ => false
   }
 
-  def isOperand(csd:CompoundSpiderDiagramOccurrence):  Predicate = {
-    case sd:PrimarySpiderDiagramOccurrence => csd.getOperands.map(op => op.getOccurrenceIndex).contains(sd.getOccurrenceIndex)
+  def isOperandOf(csd:CompoundSpiderDiagramOccurrence):  Predicate = {
+    case sd:PrimarySpiderDiagramOccurrence => csd.getOperands map (_.getOccurrenceIndex) contains sd.getOccurrenceIndex
+    case _ => false
+  }
+
+  def is(csd:PrimarySpiderDiagramOccurrence) : Predicate = {
+    case sd:PrimarySpiderDiagramOccurrence => csd.getOccurrenceIndex == sd.getOccurrenceIndex
     case _ => false
   }
 
@@ -121,13 +126,6 @@ object Predicates {
     case sd:CompoundSpiderDiagramOccurrence => sd.getOperator match {
       case Operator.Conjunction => (sd.getOperand(0), sd.getOperand(1)) match {
         case (op0:PrimarySpiderDiagramOccurrence, op1:PrimarySpiderDiagramOccurrence) =>
-        /*  val miss1 = computeCorrespondingMissingRegions(op0,op1)
-         if (miss1.nonEmpty) {
-           true
-         } else {
-           computeCorrespondingMissingRegions(op1,op0).nonEmpty
-         }
-         */
           if (isCorrespondingMissingRegion(op0,op1)) {
             true
           } else {
