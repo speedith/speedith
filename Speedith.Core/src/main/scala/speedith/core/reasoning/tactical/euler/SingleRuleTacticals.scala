@@ -18,7 +18,7 @@ object SingleRuleTacticals {
 
   @throws(classOf[TacticApplicationException])
   def introduceContour: Tactical = (name:String) => (state:Goals) => (subGoalIndex : Int) => (result : TacticApplicationResult) =>  {
-    BY(THEN(Tactics.introduceContour( _=>true, anyContour),TRY(Tactics.trivialTautology)))(name)(state)(subGoalIndex)(result)
+    BY(THEN(Tactics.introduceContour( _=>true, anyContour))(TRY(Tactics.trivialTautology)))(name)(state)(subGoalIndex)(result)
   }
 
   /*  @throws(classOf[TacticApplicationException])

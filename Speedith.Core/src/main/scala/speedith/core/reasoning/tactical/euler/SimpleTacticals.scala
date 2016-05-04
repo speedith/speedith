@@ -23,47 +23,48 @@ import speedith.core.reasoning.tactical.euler.Tactics._
 object SimpleTacticals {
 
   def vennify : Tactical = {
-    REPEAT(ORELSE(trivialTautology,
+    REPEAT(
+      ORELSE(trivialTautology)(
       introduceShadedZone(isPrimaryAndContainsMissingZones,someMissingZone)))
   }
 
   def vennifyFast : Tactical = {
-    REPEAT(ORELSE(trivialTautology,
+    REPEAT(ORELSE(trivialTautology)(
       introduceShadedZone(isPrimaryAndContainsMissingZones,allMissingZones)))
   }
 
   def deVennify : Tactical = {
-    REPEAT(ORELSE(trivialTautology,removeShadedZone(someShadedZone)))
+    REPEAT(ORELSE(trivialTautology)(removeShadedZone(someShadedZone)))
   }
 
   def deVennifyFast : Tactical = {
-    REPEAT(ORELSE(trivialTautology,removeShadedZone(allShadedZones)))
+    REPEAT(ORELSE(trivialTautology)(removeShadedZone(allShadedZones)))
   }
 
 
   def unifyContourSets : Tactical = (name:String) => (state:Goals) => (subGoalIndex : Int) => (result : TacticApplicationResult) =>{
     val contours = getContoursInSubGoal(subGoalIndex, state)
     DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram)(
-      ORELSE(trivialTautology,introduceContour( containsLessContours(contours), someGivenContoursButNotInDiagram(contours))))(name)(state)(subGoalIndex)(result)
+      ORELSE(trivialTautology)(introduceContour( containsLessContours(contours), someGivenContoursButNotInDiagram(contours))))(name)(state)(subGoalIndex)(result)
   }
 
   def unifyContourSetsFast : Tactical = (name:String) => (state:Goals) => (subGoalIndex : Int) => (result : TacticApplicationResult) =>{
     val contours = getContoursInSubGoal(subGoalIndex, state)
     DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram)(
-      ORELSE(trivialTautology,introduceContour(containsLessContours(contours), allInGivenContoursButNotInDiagram(contours))))(name)(state)(subGoalIndex)(result)
+      ORELSE(trivialTautology)(introduceContour(containsLessContours(contours), allInGivenContoursButNotInDiagram(contours))))(name)(state)(subGoalIndex)(result)
   }
 
   def combineAll : Tactical = {
-    REPEAT(ORELSE(trivialTautology,
+    REPEAT(ORELSE(trivialTautology)(
       combine))
   }
 
   def vennStyle : Tactical = {
-    THEN(vennify, THEN(unifyContourSets, THEN(combineAll, matchConclusion)))
+    THEN(vennify)(THEN(unifyContourSets)(THEN(combineAll)(matchConclusion)))
   }
 
   def vennStyleFast : Tactical = {
-    THEN(unifyContourSetsFast, THEN(vennifyFast, THEN(combineAll, matchConclusionFast)))
+    THEN(unifyContourSetsFast)(THEN(vennifyFast)(THEN(combineAll)(matchConclusionFast)))
   }
 
 
@@ -71,7 +72,7 @@ object SimpleTacticals {
     val target = getDeepestNestedDiagram(subGoalIndex)(state)
     target match {
       case None => id(name)(state)(subGoalIndex)(result)
-      case Some(diagram) => REPEAT(ORELSE(trivialTautology, introduceShadedZone( AND(isOperand(diagram), isPrimaryAndContainsMissingZones), someMissingZone)))(name)(state)(subGoalIndex)(result)
+      case Some(diagram) => REPEAT(ORELSE(trivialTautology)( introduceShadedZone( AND(isOperand(diagram), isPrimaryAndContainsMissingZones), someMissingZone)))(name)(state)(subGoalIndex)(result)
     }
   }
 
@@ -81,7 +82,15 @@ object SimpleTacticals {
       case None => id(name)(state)(subGoalIndex)(result)
       case Some(diagram) =>
         val contours = collectContours(diagram)
-        REPEAT(ORELSE(trivialTautology, introduceContour(AND(isOperand(diagram), containsLessContours(contours)) , someGivenContoursButNotInDiagram(contours))))(name)(state)(subGoalIndex)(result)
+        REPEAT(
+          ORELSE(
+            trivialTautology)(
+            introduceContour(
+              AND(isOperand(diagram), containsLessContours(contours)),
+              someGivenContoursButNotInDiagram(contours)
+            )
+          )
+        )(name)(state)(subGoalIndex)(result)
     }
   }
 
@@ -92,10 +101,14 @@ object SimpleTacticals {
       * @return
       */
   def vennStyleFocused : Tactical = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
-    THEN(DEPTH_FIRST(isUnitaryDiagram)(
-    THEN(THEN(vennifyFocused,
-      unifyContourSetsFocused),
-      combineAll)), matchConclusion)(name)(state)(subGoalIndex)(result)
+      THEN(
+        DEPTH_FIRST(isUnitaryDiagram)(
+          THEN(
+            THEN(
+              vennifyFocused)(
+              unifyContourSetsFocused))(
+            combineAll)))(
+        matchConclusion)(name)(state)(subGoalIndex)(result)
 
   }
 
@@ -109,16 +122,16 @@ object SimpleTacticals {
       THEN(
         THEN(
           THEN(
-            REPEAT(ORELSE(trivialTautology,
-            introduceContour(containsLessContours(concContours), someGivenContoursButNotInDiagram(concContours)))),
-          REPEAT(ORELSE(trivialTautology,
-            eraseContour(containsOtherContours(concContours), allInDiagramButNotInGivenContours(concContours))))),
-          REPEAT(ORELSE(trivialTautology,
-            introduceShadedZone(isPrimaryAndContainsMissingZones, allMissingZonesInGivenZones(concVisibleZones))))),
-        REPEAT(ORELSE(trivialTautology ,
-          eraseShading(isPrimaryAndContainsShadedZones, allVisibleShadedZonesInGivenZones(concUnshadedZones))))),
-        REPEAT(ORELSE(trivialTautology,
-          removeShadedZone(allVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)(subGoalIndex)(result)
+            REPEAT(ORELSE(trivialTautology)(
+              introduceContour(containsLessContours(concContours), someGivenContoursButNotInDiagram(concContours)))))(
+            REPEAT(ORELSE(trivialTautology)(
+              eraseContour(containsOtherContours(concContours), allInDiagramButNotInGivenContours(concContours))))))(
+          REPEAT(ORELSE(trivialTautology)(
+            introduceShadedZone(isPrimaryAndContainsMissingZones, allMissingZonesInGivenZones(concVisibleZones))))))(
+        REPEAT(ORELSE(trivialTautology)(
+          eraseShading(isPrimaryAndContainsShadedZones, allVisibleShadedZonesInGivenZones(concUnshadedZones))))))(
+      REPEAT(ORELSE(trivialTautology)(
+        removeShadedZone(allVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)(subGoalIndex)(result)
   }
 
   def matchConclusion : Tactical = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
@@ -130,16 +143,16 @@ object SimpleTacticals {
       THEN(
         THEN(
           THEN(
-            REPEAT(ORELSE(trivialTautology,
-              introduceContour(containsLessContours(concContours), someGivenContoursButNotInDiagram(concContours)))),
-          REPEAT(ORELSE(trivialTautology,
-            eraseContour(containsOtherContours(concContours ), someInDiagramButNotInGivenContours(concContours))))),
-          REPEAT(ORELSE(trivialTautology,
-            introduceShadedZone(isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones))))),
-          REPEAT(ORELSE(trivialTautology,
-            eraseShading(isPrimaryAndContainsShadedZones, someVisibleShadedZonesInGivenZones(concUnshadedZones))))),
-          REPEAT(ORELSE(trivialTautology,
-            removeShadedZone(someVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)(subGoalIndex)(result)
+            REPEAT(ORELSE(trivialTautology)(
+              introduceContour(containsLessContours(concContours), someGivenContoursButNotInDiagram(concContours)))))(
+            REPEAT(ORELSE(trivialTautology)(
+              eraseContour(containsOtherContours(concContours), someInDiagramButNotInGivenContours(concContours))))))(
+          REPEAT(ORELSE(trivialTautology)(
+            introduceShadedZone(isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones))))))(
+        REPEAT(ORELSE(trivialTautology)(
+          eraseShading(isPrimaryAndContainsShadedZones, someVisibleShadedZonesInGivenZones(concUnshadedZones))))))(
+      REPEAT(ORELSE(trivialTautology)(
+        removeShadedZone(someVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)(subGoalIndex)(result)
   }
 
 
@@ -151,10 +164,18 @@ object SimpleTacticals {
       * @return
       */
   def copyTopologicalInformation : Tactical =  (name:String) => (state:Goals) => (subGoalIndex: Int) => (result:TacticApplicationResult) => {
-      REPEAT(ORELSE(trivialTautology,
-        ORELSE(idempotency,
-          ORELSE(removeShadedZone(someShadedZone),
-            copyContour))))(name)(state)(subGoalIndex)(result)
+      REPEAT(
+        ORELSE(
+          trivialTautology)(
+          ORELSE(
+            idempotency)(
+            ORELSE(
+              removeShadedZone(someShadedZone)
+            )(
+              copyContour)
+          )
+        )
+      )(name)(state)(subGoalIndex)(result)
   }
 
     /**
@@ -165,17 +186,31 @@ object SimpleTacticals {
       * @return
       */
   def copyShadings: Tactical = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) =>{
-    REPEAT(ORELSE(trivialTautology,
-      ORELSE(idempotency,
-        ORELSE(copyShading,introduceMissingZonesToCopy
-        ))))(name)(state)(subGoalIndex)(result)
+      REPEAT(
+        ORELSE(
+          trivialTautology)(
+          ORELSE(
+            idempotency)(
+            ORELSE(
+              copyShading)(
+              introduceMissingZonesToCopy
+            )
+          )
+        )
+      )(name)(state)(subGoalIndex)(result)
   }
 
-  def copyEveryThing: Tactical = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
-     THEN(DEPTH_FIRST(isUnitaryDiagram)(
-      THEN(DEPTH_FIRST(containsNoDiagramsWithShadedZonesThatCouldBeCopied)( copyShadings),
-             COND(isUnitaryDiagram)(id)(copyTopologicalInformation)
-      )),      matchConclusion)(name)(state)(subGoalIndex)(result)
+  def copyEveryThing: Tactical =  { //(name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
+     THEN(
+       DEPTH_FIRST(isUnitaryDiagram)(
+          THEN(
+            DEPTH_FIRST(containsNoDiagramsWithShadedZonesThatCouldBeCopied)( copyShadings)
+          )(
+            COND(isUnitaryDiagram)(id)(copyTopologicalInformation)
+          )
+        )
+     )(matchConclusion)
+     //(name)(state)(subGoalIndex)(result)
   }
 
     /**

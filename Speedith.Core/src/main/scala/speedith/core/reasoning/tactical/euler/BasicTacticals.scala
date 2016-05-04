@@ -18,11 +18,12 @@ object BasicTacticals {
 
   val emptyGoals =  Goals.createGoalsFrom(NullSpiderDiagram.getInstance())
 
-  def THEN(tac1: Tactical, tac2: Tactical) = (name:String) => (state : Goals) => (subgoalIndex:Int) => (result : TacticApplicationResult) =>{
+  def THEN: Tactical => Tactical => Tactical =  (tac1: Tactical) => (tac2: Tactical) => (name:String) => (state : Goals) => (subgoalIndex:Int) => (result : TacticApplicationResult) =>{
     tac1(name)(state)(subgoalIndex)(result) flatMap (res => tac2(name)(res.getGoals)(subgoalIndex)(res))
   }
 
-  def ORELSE(tac1 : Tactical, tac2 : Tactical) : Tactical = (name:String) => (state : Goals) =>(subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
+  def ORELSE : Tactical => Tactical => Tactical =
+    (tac1: Tactical) => (tac2: Tactical) => (name: String) => (state: Goals) => (subGoalIndex: Int) => (result: TacticApplicationResult) => {
     val state1 = tac1(name)(state)(subGoalIndex)(result)
     if (state1.isEmpty) {
       tac2(name)(state)(subGoalIndex)(result)
@@ -40,22 +41,25 @@ object BasicTacticals {
   }
 
   def TRY(tac : Tactical) =  {
-    ORELSE(tac, id)
+    ORELSE(tac)(id)
   }
 
-  def REPEAT(tac : Tactical): Tactical = (name:String) =>(state : Goals) => (subGoalIndex:Int) =>(result : TacticApplicationResult) =>{
-    ORELSE(THEN(tac, REPEAT(tac)), id )(name)(state)(subGoalIndex)(result)
+  def REPEAT: Tactical => Tactical =
+    (tac : Tactical) =>(name:String) =>(state : Goals) => (subGoalIndex:Int) =>(result : TacticApplicationResult) => {
+    ORELSE(THEN(tac)(REPEAT(tac)))(id)(name)(state)(subGoalIndex)(result)
   }
 
-  def DEPTH_FIRST :(Goals => Int => Boolean)=>Tactical => Tactical = (predicate:Goals => Int => Boolean)=> (tac:Tactical) => (name:String) => (state :Goals) =>(subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
+  def DEPTH_FIRST :(Goals => Int => Boolean) => Tactical => Tactical =
+    (predicate:Goals => Int => Boolean)=> (tac:Tactical) => (name:String) => (state :Goals) =>(subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
     if (predicate(state)(subGoalIndex)) {
       id(name)(state)(subGoalIndex)(result)
     } else {
-      THEN(tac, DEPTH_FIRST(predicate)(tac))(name)(state)(subGoalIndex)(result )
+      THEN(tac)(DEPTH_FIRST(predicate)(tac))(name)(state)(subGoalIndex)(result )
     }
   }
 
-  def COND: (Goals => Int => Boolean) => Tactical => Tactical=>Tactical = (p : Goals =>Int => Boolean) => (tac1:Tactical) => (tac2:Tactical) => (name:String) =>(state : Goals) => (subGoalIndex:Int) =>(result : TacticApplicationResult) =>{
+  def COND: (Goals => Int => Boolean) => Tactical => Tactical=>Tactical =
+    (p : Goals =>Int => Boolean) => (tac1:Tactical) => (tac2:Tactical) => (name:String) =>(state : Goals) => (subGoalIndex:Int) =>(result : TacticApplicationResult) =>{
     if (p(state)(subGoalIndex)) {
       tac1(name)(state)(subGoalIndex)(result)
     } else {
