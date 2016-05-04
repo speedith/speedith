@@ -10,7 +10,7 @@ import speedith.core.reasoning.util.unitary.CorrespondingRegions
 import scala.collection.JavaConversions._
 
 /**
- * Helper functions and predicates for the use with [[BasicTacticals basic tacticals]]
+ * Helper functions and predicates for the use with [[Tacticals basic tacticals]]
   * and [[SimpleTacticals simple tacticals]].
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]

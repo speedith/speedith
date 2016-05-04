@@ -7,12 +7,12 @@ import speedith.core.reasoning.rules.util.ReasoningUtils
 import speedith.core.reasoning.tactical.euler.Auxilliary._
 import speedith.core.reasoning.tactical.euler.Choosers._
 import speedith.core.reasoning.tactical.euler.Predicates._
-import speedith.core.reasoning.tactical.euler.BasicTacticals._
+import speedith.core.reasoning.tactical.euler.Tacticals._
 import speedith.core.reasoning.tactical.euler.Tactics._
 
   /**
   * Tactics to work on a proof. The Tactics chain several tactics
-  * by using the [[BasicTacticals basic tacticals]]. Some of these
+  * by using the [[Tacticals basic tacticals]]. Some of these
   * tactics are normally able to remove a subgoal, as long as it consists
   * of an implication, where the conclusion is a single unitary diagram (and if the
   * conclusion is a consequence of the premises)
@@ -22,29 +22,29 @@ import speedith.core.reasoning.tactical.euler.Tactics._
   */
 object SimpleTacticals {
 
-  def vennify: Tactical = {
+  def vennify: Tactic = {
     REPEAT(
       ORELSE(trivialTautology)(
         introduceShadedZone(isPrimaryAndContainsMissingZones, someMissingZone))
     )
   }
 
-  def vennifyFast : Tactical = {
+  def vennifyFast : Tactic = {
     REPEAT(ORELSE(trivialTautology)(
       introduceShadedZone(isPrimaryAndContainsMissingZones,allMissingZones))
     )
   }
 
-  def deVennify : Tactical = {
+  def deVennify : Tactic = {
     REPEAT(ORELSE(trivialTautology)(removeShadedZone(someShadedZone)))
   }
 
-  def deVennifyFast : Tactical = {
+  def deVennifyFast : Tactic = {
     REPEAT(ORELSE(trivialTautology)(removeShadedZone(allShadedZones)))
   }
 
 
-  def unifyContourSets: Tactical =
+  def unifyContourSets: Tactic =
     (name: String) => (state: Goals) => (subGoalIndex: Int) => (result: TacticApplicationResult) => {
     val contours = getContoursInSubGoal(subGoalIndex, state)
     DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram)(
@@ -57,28 +57,28 @@ object SimpleTacticals {
     )(name)(state)(subGoalIndex)(result)
   }
 
-    def unifyContourSetsFast: Tactical =
+    def unifyContourSetsFast: Tactic =
       (name: String) => (state: Goals) => (subGoalIndex: Int) => (result: TacticApplicationResult) => {
         val contours = getContoursInSubGoal(subGoalIndex, state)
         DEPTH_FIRST(equalContourSetsInEachPrimaryDiagram)(
           ORELSE(trivialTautology)(introduceContour(containsLessContours(contours), allInGivenContoursButNotInDiagram(contours))))(name)(state)(subGoalIndex)(result)
       }
 
-    def combineAll : Tactical = {
+    def combineAll : Tactic = {
     REPEAT(ORELSE(trivialTautology)(
       combine))
   }
 
-  def vennStyle : Tactical = {
+  def vennStyle : Tactic = {
     THEN(vennify)(THEN(unifyContourSets)(THEN(combineAll)(matchConclusion)))
   }
 
-  def vennStyleFast : Tactical = {
+  def vennStyleFast : Tactic = {
     THEN(unifyContourSetsFast)(THEN(vennifyFast)(THEN(combineAll)(matchConclusionFast)))
   }
 
 
-  def vennifyFocused : Tactical = (name:String) => (state:Goals) => (subGoalIndex : Int) => (result : TacticApplicationResult) => {
+  def vennifyFocused : Tactic = (name:String) => (state:Goals) => (subGoalIndex : Int) => (result : TacticApplicationResult) => {
     val target = getDeepestNestedDiagram(subGoalIndex)(state)
     target match {
       case None => id(name)(state)(subGoalIndex)(result)
@@ -86,7 +86,7 @@ object SimpleTacticals {
     }
   }
 
-  def unifyContourSetsFocused : Tactical = (name:String) => (state:Goals) => (subGoalIndex : Int) => (result : TacticApplicationResult) => {
+  def unifyContourSetsFocused : Tactic = (name:String) => (state:Goals) => (subGoalIndex : Int) => (result : TacticApplicationResult) => {
     val target = getDeepestNestedDiagram(subGoalIndex)(state)
     target match {
       case None => id(name)(state)(subGoalIndex)(result)
@@ -113,7 +113,7 @@ object SimpleTacticals {
       *
       * @return
       */
-  def vennStyleFocused : Tactical = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
+  def vennStyleFocused : Tactic = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
       THEN(
         DEPTH_FIRST(isUnitaryDiagram)(
           THEN(
@@ -126,7 +126,7 @@ object SimpleTacticals {
   }
 
 
-  def matchConclusionFast : Tactical = (name:String) => (state: Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) =>{
+  def matchConclusionFast : Tactic = (name:String) => (state: Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) =>{
     val concContours =getContoursInConclusion(subGoalIndex,state)
     val concShadedZones = getShadedZonesInConclusion(subGoalIndex,state)
     val concUnshadedZones = getUnshadedZonesInConclusion(subGoalIndex,state)
@@ -147,7 +147,7 @@ object SimpleTacticals {
         removeShadedZone(allVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)(subGoalIndex)(result)
   }
 
-  def matchConclusion: Tactical =
+  def matchConclusion: Tactic =
     (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
     val concContours = getContoursInConclusion(subGoalIndex, state)
     val concShadedZones = getShadedZonesInConclusion(subGoalIndex, state)
@@ -177,7 +177,7 @@ object SimpleTacticals {
      *
       * @return
       */
-  def copyTopologicalInformation : Tactical = {
+  def copyTopologicalInformation : Tactic = {
       REPEAT(
         ORELSE(
           trivialTautology)(
@@ -195,7 +195,7 @@ object SimpleTacticals {
       *
       * @return
       */
-  def copyShadings: Tactical = {
+  def copyShadings: Tactic = {
     REPEAT(
       ORELSE(
         trivialTautology)(
@@ -206,7 +206,7 @@ object SimpleTacticals {
             introduceMissingZonesToCopy))))
   }
 
-  def copyEveryThing: Tactical =  { //(name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
+  def copyEveryThing: Tactic =  { //(name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
     THEN(
       DEPTH_FIRST(
         isUnitaryDiagram)(
@@ -223,7 +223,7 @@ object SimpleTacticals {
       *
       * @return
       */
-  def introduceMissingZonesToCopy : Tactical = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) =>{
+  def introduceMissingZonesToCopy : Tactic = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) =>{
     val goal = getSubGoal(subGoalIndex,state)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
       val target = firstMatchingDiagram(goal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0), isConjunctionContainingMissingZonesToCopy).asInstanceOf[Option[CompoundSpiderDiagramOccurrence]]

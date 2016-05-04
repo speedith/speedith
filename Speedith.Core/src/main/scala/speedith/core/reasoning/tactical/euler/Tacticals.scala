@@ -14,16 +14,16 @@ import scala.reflect.internal.util.Collections
  * @author Sven Linker [s.linker@brighton.ac.uk]
  *
  */
-object BasicTacticals {
+object Tacticals {
 
   val emptyGoals =  Goals.createGoalsFrom(NullSpiderDiagram.getInstance())
 
-  def THEN: Tactical => Tactical => Tactical =  (tac1: Tactical) => (tac2: Tactical) => (name:String) => (state : Goals) => (subgoalIndex:Int) => (result : TacticApplicationResult) =>{
+  def THEN: Tactic => Tactic => Tactic = (tac1: Tactic) => (tac2: Tactic) => (name:String) => (state : Goals) => (subgoalIndex:Int) => (result : TacticApplicationResult) =>{
     tac1(name)(state)(subgoalIndex)(result) flatMap (res => tac2(name)(res.getGoals)(subgoalIndex)(res))
   }
 
-  def ORELSE : Tactical => Tactical => Tactical =
-    (tac1: Tactical) => (tac2: Tactical) => (name: String) => (state: Goals) => (subGoalIndex: Int) => (result: TacticApplicationResult) => {
+  def ORELSE : Tactic => Tactic => Tactic =
+    (tac1: Tactic) => (tac2: Tactic) => (name: String) => (state: Goals) => (subGoalIndex: Int) => (result: TacticApplicationResult) => {
     val state1 = tac1(name)(state)(subGoalIndex)(result)
     if (state1.isEmpty) {
       tac2(name)(state)(subGoalIndex)(result)
@@ -32,25 +32,25 @@ object BasicTacticals {
     }
   }
 
-  def id:Tactical = (name:String) => (state:Goals) =>(subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
+  def id:Tactic = (name:String) => (state:Goals) => (subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
     Some(new TacticApplicationResult(result.getApplicationList, state))
   }
 
-  def fail:Tactical = (name:String) =>(state:Goals) => (subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
+  def fail:Tactic = (name:String) => (state:Goals) => (subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
     None
   }
 
-  def TRY(tac : Tactical) =  {
+  def TRY(tac : Tactic) =  {
     ORELSE(tac)(id)
   }
 
-  def REPEAT: Tactical => Tactical =
-    (tac : Tactical) =>(name:String) =>(state : Goals) => (subGoalIndex:Int) =>(result : TacticApplicationResult) => {
+  def REPEAT: Tactic => Tactic =
+    (tac : Tactic) => (name:String) => (state : Goals) => (subGoalIndex:Int) => (result : TacticApplicationResult) => {
     ORELSE(THEN(tac)(REPEAT(tac)))(id)(name)(state)(subGoalIndex)(result)
   }
 
-  def DEPTH_FIRST :(Goals => Int => Boolean) => Tactical => Tactical =
-    (predicate:Goals => Int => Boolean)=> (tac:Tactical) => (name:String) => (state :Goals) =>(subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
+  def DEPTH_FIRST :(Goals => Int => Boolean) => Tactic => Tactic =
+    (predicate:Goals => Int => Boolean)=> (tac:Tactic) => (name:String) => (state :Goals) => (subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
     if (predicate(state)(subGoalIndex)) {
       id(name)(state)(subGoalIndex)(result)
     } else {
@@ -58,8 +58,8 @@ object BasicTacticals {
     }
   }
 
-  def COND: (Goals => Int => Boolean) => Tactical => Tactical=>Tactical =
-    (p : Goals =>Int => Boolean) => (tac1:Tactical) => (tac2:Tactical) => (name:String) =>(state : Goals) => (subGoalIndex:Int) =>(result : TacticApplicationResult) =>{
+  def COND: (Goals => Int => Boolean) => Tactic => Tactic=>Tactic =
+    (p : Goals =>Int => Boolean) => (tac1:Tactic) => (tac2:Tactic) => (name:String) => (state : Goals) => (subGoalIndex:Int) => (result : TacticApplicationResult) =>{
     if (p(state)(subGoalIndex)) {
       tac1(name)(state)(subGoalIndex)(result)
     } else {
@@ -68,7 +68,7 @@ object BasicTacticals {
   }
 
   @throws(classOf[TacticApplicationException])
-  def BY( tac : Tactical) = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result : TacticApplicationResult) => {
+  def BY( tac : Tactic) = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result : TacticApplicationResult) => {
       tac(name)(state)(subGoalIndex)(result)
   }
 
