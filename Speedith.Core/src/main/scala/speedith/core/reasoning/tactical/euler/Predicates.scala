@@ -29,7 +29,7 @@ object Predicates {
   def isIdempotent : Predicate = {
     case sd:CompoundSpiderDiagramOccurrence => sd.getOperator match {
       case Operator.Conjunction | Operator.Disjunction | Operator.Equivalence | Operator.Implication =>
-        sd.getOperand(0).getDiagram.isSEquivalentTo(sd.getOperand(1).getDiagram)
+        sd.getOperand(0).getDiagram.equals(sd.getOperand(1).getDiagram)
       case _ => false
     }
     case _ => false
