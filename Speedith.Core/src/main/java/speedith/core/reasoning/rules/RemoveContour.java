@@ -33,6 +33,7 @@ import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectContoursInstruction;
 import speedith.core.reasoning.rules.transformers.RemoveContoursTransformer;
 
@@ -60,10 +61,7 @@ public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> impleme
     //<editor-fold defaultstate="collapsed" desc="Inference Rule Implementation">
     @Override
     public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
-        ArrayList<ContourArg> contourArgs = ContourArg.getContourArgsFrom(getTypedRuleArgs(args));
-        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
-        newSubgoals[contourArgs.get(0).getSubgoalIndex()] = getSubgoal(contourArgs.get(0), goals).transform(new RemoveContoursTransformer(contourArgs));
-        return createRuleApplicationResult(newSubgoals);
+        return apply(args, goals, ApplyStyle.GoalBased);
     }
 
     @Override
@@ -110,6 +108,14 @@ public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> impleme
 
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
-        return apply(args, goals);
+        return apply(args, goals, ApplyStyle.Forward);
     }
+
+    protected RuleApplicationResult apply(final RuleArg args, Goals goals, ApplyStyle applyStyle) throws RuleApplicationException {
+        ArrayList<ContourArg> contourArgs = ContourArg.getContourArgsFrom(getTypedRuleArgs(args));
+        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
+        newSubgoals[contourArgs.get(0).getSubgoalIndex()] = getSubgoal(contourArgs.get(0), goals).transform(new RemoveContoursTransformer(contourArgs, applyStyle));
+        return createRuleApplicationResult(newSubgoals);
+    }
+
 }

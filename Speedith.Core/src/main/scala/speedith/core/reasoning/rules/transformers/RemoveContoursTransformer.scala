@@ -1,11 +1,14 @@
 package speedith.core.reasoning.rules.transformers
 
+import speedith.core.i18n.Translations._
 import speedith.core.lang._
+import speedith.core.reasoning.ApplyStyle
 import speedith.core.reasoning.args.ContourArg
+import speedith.core.reasoning.rules.SimpleInferenceRule
 
 import scala.collection.JavaConversions._
 
-case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) extends IdTransformer {
+case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg], applyStyle: ApplyStyle) extends IdTransformer {
 
   val subDiagramIndex = contourArgs(0).getSubDiagramIndex
   val contoursToRemove = contourArgs.map(_.getContour).toSet
@@ -36,6 +39,13 @@ case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) ex
                          parents: java.util.ArrayList[CompoundSpiderDiagram],
                          childIndices: java.util.ArrayList[java.lang.Integer]): SpiderDiagram = {
     if (subDiagramIndex == diagramIndex) {
+      if (!SimpleInferenceRule.isAtFittingPosition(parents, childIndices, applyStyle, true)) {
+        if (applyStyle == ApplyStyle.GoalBased) {
+          throw new TransformationException(i18n("RULE_NOT_NEGATIVE_POSITION"))
+        } else {
+          throw new TransformationException(i18n("RULE_NOT_POSITIVE_POSITION"))
+        }
+      }
       if (!psd.getAllContours.containsAll(contoursToRemove)) {
         throw new TransformationException("The contours to be removed do not exist in the target diagram")
       }
