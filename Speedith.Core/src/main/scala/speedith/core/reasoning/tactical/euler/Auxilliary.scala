@@ -70,16 +70,20 @@ object Auxilliary {
     // to maximise the effect of copying and to somewhat counter the explosion of possible regions
     // we bundle the shaded zones according to their in-sets (the sets they are contained in).
     // The outer zone is element of all those regions so that it can be copied as well
+    val shadedRight = (d2.getShadedZones & d2.getPresentZones).toSet
     val contoursLeft = d1.getAllContours
     val shadedZones = (d1.getShadedZones & d1.getPresentZones).toSet
     val shadedRegionsPerContour = contoursLeft.map(c => shadedZones.filter(z => z.getInContours.contains(c) || z.getInContours.isEmpty)).filter(_.nonEmpty)
-    shadedRegionsPerContour exists (r => CorrespondingRegions(d1.getPrimaryDiagram, d2.getPrimaryDiagram).correspondingRegion(new Region(r)).zones.nonEmpty)
+    val regionsRight = shadedRegionsPerContour map (r => CorrespondingRegions(d1.getPrimaryDiagram, d2.getPrimaryDiagram).correspondingRegion(new Region(r)).zones)
+    val nonShadedRight = regionsRight filterNot (r => r.subsetOf(shadedRight))
+    nonShadedRight exists (_.nonEmpty)
   }
 
   def isCorrespondingMissingRegion(d1:PrimarySpiderDiagramOccurrence, d2 : PrimarySpiderDiagramOccurrence) : Boolean  = {
     // to maximise the effect of copying and to somewhat counter the explosion of possible regions
     // we bundle the shaded zones according to their in-sets (the sets they are contained in).
     // The outer zone is element of all those regions so that it can be copied as well
+    val shadedRegionRight = (d2.getShadedZones & d2.getPresentZones).toSet
     val contoursLeft = d1.getAllContours
     val missingZones = (d1.getShadedZones -- d1.getPresentZones).toSet
     val missingRegionsPerContour = contoursLeft map (c => missingZones filter(_.getInContours.contains(c))) filter (_.nonEmpty)

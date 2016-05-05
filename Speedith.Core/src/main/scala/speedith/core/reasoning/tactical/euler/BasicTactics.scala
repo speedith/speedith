@@ -186,7 +186,7 @@ object BasicTactics {
           ORELSE(
             idempotency)(
             ORELSE(
-              removeShadedZonesToCopy)(
+              removeShadedZonesForCopyContour)(
               copyContour))))
   }
 
@@ -206,7 +206,7 @@ object BasicTactics {
           idempotency)(
           ORELSE(
             copyShading)(
-            introduceMissingZonesToCopy))))
+            introduceMissingZonesForCopyShading))))
   }
 
   def copyEveryThing: Tactic =  {
@@ -214,9 +214,7 @@ object BasicTactics {
       DEPTH_FIRST(
         isUnitaryDiagram)(
         THEN(
-          DEPTH_FIRST(
-            containsNoDiagramsWithShadedZonesThatCouldBeCopied)(
-            copyShadings))(
+          COND(isUnitaryDiagram)(id)(copyShadings))(// )(
           COND(isUnitaryDiagram)(id)(copyTopologicalInformation))))(
       matchConclusion)
   }
@@ -226,7 +224,7 @@ object BasicTactics {
       *
       * @return
       */
-  def introduceMissingZonesToCopy : Tactic = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) =>{
+  def introduceMissingZonesForCopyShading : Tactic = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) =>{
     val goal = getSubGoal(subGoalIndex,state)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
       // get a conjunction of primary diagrams, where one conjunct contains a missing region that
@@ -254,7 +252,7 @@ object BasicTactics {
     }
   }
 
-    def removeShadedZonesToCopy: Tactic =  (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
+    def removeShadedZonesForCopyContour: Tactic = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
       val goal = getSubGoal(subGoalIndex, state)
       if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
         val target = firstMatchingDiagram(goal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0), isConjunctionWithContoursToCopy).asInstanceOf[Option[CompoundSpiderDiagramOccurrence]]

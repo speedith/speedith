@@ -6,7 +6,7 @@ import speedith.core.reasoning.args.SubgoalIndexArg;
 import java.util.Locale;
 
 /**
- * TODO: Description
+ * Common functionality of tactic objects.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
