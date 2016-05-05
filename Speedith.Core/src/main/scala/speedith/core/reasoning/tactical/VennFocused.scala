@@ -31,7 +31,7 @@ class VennFocused extends SimpleTactic with Serializable{
 
   override def getDescription(locale: Locale): String = "Create Venn diagrams and combine as much as possible, then match the premises to the conclusion. Focus one conjunction at a time."
 
-  override def getPrettyName(locale: Locale): String = "Focused Venn-Style reasoning"
+  override def getPrettyName(locale: Locale): String = "Venn-Style reasoning (Focused)"
 
   override def getApplicableTypes: util.Set[DiagramType] = Set(DiagramType.EulerDiagram)
 
