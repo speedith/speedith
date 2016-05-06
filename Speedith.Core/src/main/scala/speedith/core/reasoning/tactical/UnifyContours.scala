@@ -34,7 +34,7 @@ class UnifyContours extends SimpleTactic with Serializable {
 
   override def getDescription(locale: Locale): String = "Introduces contours until all premises contain all contours"
 
-  override def getPrettyName(locale: Locale): String = "Unify Contours in Premises"
+  override def getPrettyName(locale: Locale): String = "Introduce All Contours"
 
   override def getApplicableTypes: util.Set[DiagramType] = Set(DiagramType.EulerDiagram)
 

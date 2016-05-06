@@ -16,7 +16,7 @@ import scala.collection.JavaConversions._
   */
 class CopyShadingInformation extends SimpleTactic with Serializable {
 
-  override def getPrettyName(locale: Locale): String = "Copy Shading Information"
+  override def getPrettyName(locale: Locale): String = "Propagate Shading"
 
   override def getDescription(locale: Locale): String = "Introduce shaded zones and copy as much shading as possible"
 

@@ -29,7 +29,7 @@ class CopyEverything extends SimpleTactic with Serializable  {
       throw new RuleApplicationException("Wrong argument type")
   }
 
-  override def getPrettyName(locale: Locale): String = "Copy as many elements as possible"
+  override def getPrettyName(locale: Locale): String = "Copy Shading And Contours"
 
   override def getDescription(locale: Locale): String = "Apply copy contours and copy shadings until only one unitary diagram remains"
 

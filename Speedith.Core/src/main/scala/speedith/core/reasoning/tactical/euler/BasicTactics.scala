@@ -214,7 +214,7 @@ object BasicTactics {
       DEPTH_FIRST(
         isUnitaryDiagram)(
         THEN(
-          COND(isUnitaryDiagram)(id)(copyShadings))(// )(
+          COND(isUnitaryDiagram)(id)(copyShadings))(
           COND(isUnitaryDiagram)(id)(copyTopologicalInformation))))(
       matchConclusion)
   }

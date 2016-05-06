@@ -30,7 +30,7 @@ class Venn extends SimpleTactic with Serializable{
 
   override def getDescription(locale: Locale): String = "Create Venn diagrams and combine as much as possible, then match the premises to the conclusion"
 
-  override def getPrettyName(locale: Locale): String = "Venn-Style reasoning (Breadth-First)"
+  override def getPrettyName(locale: Locale): String = "Venn (Breadth)"
 
   override def getApplicableTypes: util.Set[DiagramType] = Set(DiagramType.EulerDiagram)
 
