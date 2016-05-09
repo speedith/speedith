@@ -5,7 +5,7 @@ import speedith.core.reasoning.args._
 import speedith.core.reasoning.automatic.wrappers._
 import speedith.core.reasoning.rules._
 import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
-import speedith.core.reasoning.tactical.{Chooser, TacticApplicationResult, TacticApplicationException, Predicate, Tactic}
+import speedith.core.reasoning.tactical.{Chooser, TacticApplicationResult, TacticApplicationException, DiagramPredicate, Tactic}
 import speedith.core.reasoning.tactical.euler.Auxilliary._
 import speedith.core.reasoning.tactical.euler.Predicates._
 
@@ -30,7 +30,7 @@ object RuleTactics {
        Some(new TacticApplicationResult(oldResult.getApplicationList :+ app, newGoal))
   }
 
-  def introduceContour(predicate : Predicate , contourChooser: Chooser[Set[String]]):Tactic = (name:String) => (state: Goals) => (subGoalIndex:Int) => (result : TacticApplicationResult) =>{
+  def introduceContour(predicate : DiagramPredicate, contourChooser: Chooser[Set[String]]):Tactic = (name:String) => (state: Goals) => (subGoalIndex:Int) => (result : TacticApplicationResult) =>{
     try {
       val subgoal = getSubGoal(subGoalIndex, state)
       val target = firstMatchingDiagramAndContour(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
@@ -51,7 +51,7 @@ object RuleTactics {
     }
   }
 
-  def introduceShadedZone(predicate: Predicate, zoneChooser : Chooser[Set[Zone]]): Tactic =
+  def introduceShadedZone(predicate: DiagramPredicate, zoneChooser : Chooser[Set[Zone]]): Tactic =
     (name:String) =>(state: Goals) => (subGoalIndex : Int) => (result : TacticApplicationResult) => {
     try {
       val subgoal = getSubGoal(subGoalIndex, state)
@@ -73,7 +73,7 @@ object RuleTactics {
     }
   }
 
-  def removeShadedZone(predicate : Predicate, zoneChooser:Chooser[Set[Zone]]): Tactic = (name:String) => (state: Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
+  def removeShadedZone(predicate : DiagramPredicate, zoneChooser:Chooser[Set[Zone]]): Tactic = (name:String) => (state: Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
     try {
       val subgoal = getSubGoal(subGoalIndex, state)
       val target = firstMatchingDiagram(subgoal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0),
@@ -100,7 +100,7 @@ object RuleTactics {
     }
   }
 
-  def eraseContour(predicate: Predicate, contourChooser: Chooser[Set[String]]): Tactic =
+  def eraseContour(predicate: DiagramPredicate, contourChooser: Chooser[Set[String]]): Tactic =
     (name:String) =>(state: Goals) => (subGoalIndex : Int) => (result:TacticApplicationResult) => {
     try {
       val subgoal = getSubGoal(subGoalIndex, state)
@@ -122,7 +122,7 @@ object RuleTactics {
     }
   }
 
-  def eraseShading(predicate: Predicate, zoneChooser : Chooser[Set[Zone]]) :  Tactic  =
+  def eraseShading(predicate: DiagramPredicate, zoneChooser : Chooser[Set[Zone]]) :  Tactic  =
     (name:String) =>(state : Goals) => (subGoalIndex : Int) => (result:TacticApplicationResult) =>  {
     try {
       val subgoal = getSubGoal(subGoalIndex, state)

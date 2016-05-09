@@ -11,8 +11,8 @@ import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence
 package object tactical {
   type Tactic = String => Goals => Int => TacticApplicationResult => Option[TacticApplicationResult]
   type Chooser[A] = SpiderDiagramOccurrence => Option[A]
-  type Predicate = SpiderDiagramOccurrence => Boolean
-
+  type DiagramPredicate = SpiderDiagramOccurrence => Boolean
+  type GoalPredicate = Goals => Int => Boolean
 
 
 

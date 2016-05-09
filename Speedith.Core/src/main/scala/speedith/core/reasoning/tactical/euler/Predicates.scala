@@ -3,7 +3,7 @@ package speedith.core.reasoning.tactical.euler
 
 import speedith.core.lang.Operator
 import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramOccurrence, PrimarySpiderDiagramOccurrence, SpiderDiagramOccurrence}
-import speedith.core.reasoning.tactical.Predicate
+import speedith.core.reasoning.tactical.DiagramPredicate
 import scala.collection.JavaConversions._
 import speedith.core.reasoning.tactical.euler.Auxilliary._
 /**
@@ -14,12 +14,12 @@ import speedith.core.reasoning.tactical.euler.Auxilliary._
   */
 object Predicates {
 
-  def containsContours : Predicate = {
+  def containsContours : DiagramPredicate = {
     case d : PrimarySpiderDiagramOccurrence => d.getAllContours.nonEmpty
     case _ => false
   }
 
-  def isImplication : Predicate = {
+  def isImplication : DiagramPredicate = {
     case sd:CompoundSpiderDiagramOccurrence => sd.getOperator match {
       case Operator.Implication => true
       case _ => false
@@ -27,7 +27,7 @@ object Predicates {
     case _ => false
   }
 
-  def isIdempotent : Predicate = {
+  def isIdempotent : DiagramPredicate = {
     case sd:CompoundSpiderDiagramOccurrence => sd.getOperator match {
       case Operator.Conjunction | Operator.Disjunction | Operator.Equivalence | Operator.Implication =>
         sd.getOperand(0).getDiagram.equals(sd.getOperand(1).getDiagram)
@@ -36,37 +36,37 @@ object Predicates {
     case _ => false
   }
 
-  def isOperandOf(csd:CompoundSpiderDiagramOccurrence):  Predicate = {
+  def isOperandOf(csd:CompoundSpiderDiagramOccurrence):  DiagramPredicate = {
     case sd:PrimarySpiderDiagramOccurrence => csd.getOperands map (_.getOccurrenceIndex) contains sd.getOccurrenceIndex
     case _ => false
   }
 
-  def is(csd:PrimarySpiderDiagramOccurrence) : Predicate = {
+  def is(csd:PrimarySpiderDiagramOccurrence) : DiagramPredicate = {
     case sd:PrimarySpiderDiagramOccurrence => csd.getOccurrenceIndex == sd.getOccurrenceIndex
     case _ => false
   }
 
-  def isPrimaryAndContainsMoreContours :  Set[String] => Predicate = (contours : Set[String]) =>  {
+  def isPrimaryAndContainsMoreContours :  Set[String] => DiagramPredicate = (contours : Set[String]) =>  {
     case sd:PrimarySpiderDiagramOccurrence => (contours -- sd.getAllContours).nonEmpty
     case _ => false
   }
 
-  def isPrimaryAndContainsMissingZones: Predicate =  {
+  def isPrimaryAndContainsMissingZones: DiagramPredicate =  {
     case sd:PrimarySpiderDiagramOccurrence => (sd.getShadedZones--sd.getPresentZones).nonEmpty
     case _ => false
   }
 
-  def isPrimaryAndContainsShadedZones : Predicate = {
+  def isPrimaryAndContainsShadedZones : DiagramPredicate = {
     case sd:PrimarySpiderDiagramOccurrence => (sd.getShadedZones & sd.getPresentZones).nonEmpty
     case _ => false
   }
 
-  def isPrimaryAndContainsContours : Predicate = {
+  def isPrimaryAndContainsContours : DiagramPredicate = {
     case sd:PrimarySpiderDiagramOccurrence => sd.getAllContours.nonEmpty
     case _ => false
   }
 
-  def isConjunctionOfPrimaryDiagramsWithEqualZoneSets : Predicate = {
+  def isConjunctionOfPrimaryDiagramsWithEqualZoneSets : DiagramPredicate = {
     case sd: PrimarySpiderDiagramOccurrence => false
     case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match {
       case Operator.Conjunction => (sd.getOperand(0), sd.getOperand(1)) match {
@@ -78,7 +78,7 @@ object Predicates {
     }
   }
 
-  def isConjunctionWithContoursToCopy : Predicate = {
+  def isConjunctionWithContoursToCopy : DiagramPredicate = {
     case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match  {
       case Operator.Conjunction => (sd.getOperand(0), sd.getOperand(1)) match {
         case (op0: PrimarySpiderDiagramOccurrence, op1: PrimarySpiderDiagramOccurrence) =>
@@ -90,7 +90,7 @@ object Predicates {
     case _ => false
   }
 
-  def isConjunctionWithShadingToCopy : Predicate = {
+  def isConjunctionWithShadingToCopy : DiagramPredicate = {
     case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match {
       case Operator.Conjunction => (sd.getOperand(0), sd.getOperand(1)) match {
         case (op0: PrimarySpiderDiagramOccurrence, op1: PrimarySpiderDiagramOccurrence) =>
@@ -106,7 +106,7 @@ object Predicates {
     case _ => false
   }
 
-  def isConjunctionContainingMissingZonesToCopy : Predicate = {
+  def isConjunctionContainingMissingZonesToCopy : DiagramPredicate = {
     case sd:CompoundSpiderDiagramOccurrence => sd.getOperator match {
       case Operator.Conjunction => (sd.getOperand(0), sd.getOperand(1)) match {
         case (op0:PrimarySpiderDiagramOccurrence, op1:PrimarySpiderDiagramOccurrence) =>
@@ -122,30 +122,30 @@ object Predicates {
     case _ => false
   }
 
-  def containsGivenContours : Set[String] => Predicate  = (contours : Set[String]) => {
+  def containsGivenContours : Set[String] => DiagramPredicate  = (contours : Set[String]) => {
     case d: PrimarySpiderDiagramOccurrence => (d.getAllContours & contours).nonEmpty
     case d: CompoundSpiderDiagramOccurrence => false
   }
 
-  def containsOtherContours :  Set[String] => Predicate  =  (contours : Set[String]) => {
+  def containsOtherContours :  Set[String] => DiagramPredicate  = (contours : Set[String]) => {
     case d: PrimarySpiderDiagramOccurrence => (d.getAllContours -- contours).nonEmpty
     case d: CompoundSpiderDiagramOccurrence => false
   }
 
-  def containsLessContours: Set[String] => Predicate  =  (contours : Set[String]) => {
+  def containsLessContours: Set[String] => DiagramPredicate  = (contours : Set[String]) => {
     case d: PrimarySpiderDiagramOccurrence => ( contours -- d.getAllContours ).nonEmpty
     case d: CompoundSpiderDiagramOccurrence => false
   }
 
   /**
     * Combines two predicates to compute their conjunction
- *
+    *
     * @param p1 predicate 1
     * @param p2 predicate 2
     * @return the conjunction of predicate 1 and predicate 2
     */
 
-  def AND (p1 : Predicate, p2: Predicate) : Predicate = (sd:SpiderDiagramOccurrence) => {
+  def AND (p1 : DiagramPredicate, p2: DiagramPredicate) : DiagramPredicate = (sd:SpiderDiagramOccurrence) => {
     p1(sd) && p2(sd)
   }
 }

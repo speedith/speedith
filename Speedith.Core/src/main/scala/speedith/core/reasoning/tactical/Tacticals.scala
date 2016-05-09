@@ -42,8 +42,8 @@ object Tacticals {
       ORELSE(THEN(tac)(REPEAT(tac)))(id)(name)(state)(subGoalIndex)(result)
     }
 
-  def DEPTH_FIRST: (Goals => Int => Boolean) => Tactic => Tactic =
-    (predicate: Goals => Int => Boolean) => (tac: Tactic) => (name: String) => (state: Goals) => (subGoalIndex: Int) => (result: TacticApplicationResult) => {
+  def DEPTH_FIRST: GoalPredicate => Tactic => Tactic =
+    (predicate: GoalPredicate) => (tac: Tactic) => (name: String) => (state: Goals) => (subGoalIndex: Int) => (result: TacticApplicationResult) => {
       if (predicate(state)(subGoalIndex)) {
         id(name)(state)(subGoalIndex)(result)
       } else {
@@ -51,8 +51,8 @@ object Tacticals {
       }
     }
 
-  def COND: (Goals => Int => Boolean) => Tactic => Tactic => Tactic =
-    (p: Goals => Int => Boolean) => (tac1: Tactic) => (tac2: Tactic) => (name: String) => (state: Goals) => (subGoalIndex: Int) => (result: TacticApplicationResult) => {
+  def COND: GoalPredicate => Tactic => Tactic => Tactic =
+    (p: GoalPredicate) => (tac1: Tactic) => (tac2: Tactic) => (name: String) => (state: Goals) => (subGoalIndex: Int) => (result: TacticApplicationResult) => {
       if (p(state)(subGoalIndex)) {
         tac1(name)(state)(subGoalIndex)(result)
       } else {

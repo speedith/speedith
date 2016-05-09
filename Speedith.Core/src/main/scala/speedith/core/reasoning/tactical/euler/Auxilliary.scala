@@ -4,7 +4,7 @@ import speedith.core.lang._
 import speedith.core.reasoning.Goals
 import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramOccurrence, PrimarySpiderDiagramOccurrence, SpiderDiagramOccurrence}
 import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
-import speedith.core.reasoning.tactical.{Chooser, Predicate, TacticApplicationException}
+import speedith.core.reasoning.tactical.{GoalPredicate, Chooser, DiagramPredicate, TacticApplicationException}
 import speedith.core.reasoning.util.unitary.CorrespondingRegions
 
 import scala.collection.JavaConversions._
@@ -42,7 +42,7 @@ object Auxilliary {
     }
   }
 
-  def containsNoDiagramsWithShadedZonesThatCouldBeCopied: Goals =>Int => Boolean = (state:Goals) => (subGoalIndex:Int) =>{
+  def containsNoDiagramsWithShadedZonesThatCouldBeCopied: GoalPredicate = (state:Goals) => (subGoalIndex:Int) =>{
     if (state.isEmpty) {
       true
     } else {
@@ -180,7 +180,7 @@ object Auxilliary {
     }
   }
 
-  def equalContourSetsInEachPrimaryDiagram :Goals => Int =>Boolean = (state:Goals) => (subgoalIndex : Int) =>{
+  def equalContourSetsInEachPrimaryDiagram: GoalPredicate = (state:Goals) => (subgoalIndex : Int) =>{
     val goal = state.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
       val subDiagams = ReasoningUtils.getPrimaryDiagrams(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0))
@@ -211,20 +211,7 @@ object Auxilliary {
     }
   }
 
-  def isSingleUnitaryDiagram(subGoalIndex:Int) : Goals => Boolean = (state:Goals) => {
-    if (state.isEmpty) {
-      true
-    } else {
-      val goal = state.getGoalAt(subGoalIndex)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
-        goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0).isInstanceOf[PrimarySpiderDiagram]
-      } else {
-        false
-      }
-    }
-  }
-
-  def isUnitaryDiagram: Goals => Int => Boolean = (state:Goals) => (subGoalIndex : Int) => {
+  def isUnitaryDiagram: GoalPredicate = (state:Goals) => (subGoalIndex : Int) => {
     if (state.isEmpty) {
       true
     } else {
@@ -257,7 +244,7 @@ object Auxilliary {
     } else throw new TacticApplicationException("No subgoal for this tactic")
   }
 
-  def firstMatchingDiagram(sd: SpiderDiagramOccurrence, predicate: Predicate): Option[SpiderDiagramOccurrence] = {
+  def firstMatchingDiagram(sd: SpiderDiagramOccurrence, predicate: DiagramPredicate): Option[SpiderDiagramOccurrence] = {
     if (predicate(sd)) {
       Some(sd)
     } else {
@@ -273,7 +260,7 @@ object Auxilliary {
     }
   }
 
-  def firstMatchingDiagramTest(sd: SpiderDiagramOccurrence) :Predicate => Option[SpiderDiagramOccurrence] = (predicate:Predicate) =>{
+  def firstMatchingDiagramTest(sd: SpiderDiagramOccurrence) :DiagramPredicate => Option[SpiderDiagramOccurrence] = (predicate:DiagramPredicate) =>{
     if (predicate(sd)) {
       Some(sd)
     } else {
@@ -289,7 +276,7 @@ object Auxilliary {
     }
   }
   def firstMatchingDiagramAndContour(sd: SpiderDiagramOccurrence,
-                                     predicate: Predicate,
+                                     predicate: DiagramPredicate,
                                      contourChooser: Chooser[Set[String]])
   : Option[(SpiderDiagramOccurrence, Option[Set[String]])] = {
     if (predicate(sd)) {
