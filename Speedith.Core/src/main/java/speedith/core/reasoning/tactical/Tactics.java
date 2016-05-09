@@ -119,11 +119,20 @@ public class Tactics {
      *
      * @return a set of names of all currently supported inference rules.
      */
-    public static Set<String> getKnownTactics(DiagramType diagramType) {
+    public static Set<String> getKnownTactics(DiagramType diagramType, Boolean includingLowLevel) {
         HashMap<String,TacticProvider> intermediate = new HashMap<>();
-        for (Map.Entry<String, TacticProvider > entry : providers.entrySet()) {
-            if(entry.getValue().getApplicableTypes().contains(diagramType)) {
-                intermediate.put(entry.getKey(), entry.getValue());
+        if (includingLowLevel) {
+            for (Map.Entry<String, TacticProvider> entry : providers.entrySet()) {
+                if (entry.getValue().getApplicableTypes().contains(diagramType)) {
+                    intermediate.put(entry.getKey(), entry.getValue());
+                }
+            }
+        } else {
+            // only show high level rules
+            for (Map.Entry<String, TacticProvider> entry : providers.entrySet()) {
+                if (entry.getValue().isHighLevel() && entry.getValue().getApplicableTypes().contains(diagramType)) {
+                    intermediate.put(entry.getKey(), entry.getValue());
+                }
             }
         }
         return Collections.unmodifiableSet(intermediate.keySet());

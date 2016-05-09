@@ -275,6 +275,10 @@ public class SettingsDialog  extends javax.swing.JDialog {
         return backgroundSearchCheckbox.isSelected();
     }
 
+    public Boolean isShowLowLevelTacticsEnabled() {
+        return levelCheckbox.isSelected();
+    }
+
     public DiagramType getSelectedDiagramType() {
         return (DiagramType) diagramTypeCombo.getSelectedItem();
     }

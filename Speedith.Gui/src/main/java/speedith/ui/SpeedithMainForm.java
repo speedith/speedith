@@ -46,6 +46,7 @@ import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 import speedith.core.reasoning.rules.util.HeuristicUtils;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
+import speedith.core.reasoning.tactical.Tactic;
 import speedith.core.reasoning.tactical.TacticApplicationException;
 import speedith.core.reasoning.tactical.TacticProvider;
 import speedith.core.reasoning.tactical.Tactics;
@@ -102,6 +103,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private Map<Boolean, Icon> proofFoundIcon;
   private DiagramType activeDiagram;
   private Boolean backgroundProofSearch;
+  private Boolean showLowLevelTactics;
 
   private JMenuItem goalSpiderDrawerInputMenuItem;
   private javax.swing.JMenu drawMenu;
@@ -290,7 +292,15 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     } else {
       backgroundProofSearch = Boolean.FALSE;
     }
+
+    selected = prefs.get(Tactics.level_preference, null);
+    if (selected != null) {
+      showLowLevelTactics = Boolean.valueOf(selected);
+    } else {
+      showLowLevelTactics = Boolean.FALSE;
+    }
   }
+
 
   @SuppressWarnings("unchecked")
   private void initComponents() {
@@ -935,6 +945,11 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       lstTactics.repaint();
     }
     backgroundProofSearch = settings.isBackGroundSearchEnabled();
+    if (settings.isShowLowLevelTacticsEnabled() != showLowLevelTactics) {
+      showLowLevelTactics = settings.isShowLowLevelTacticsEnabled();
+      lstTactics.setModel(getTacticsList());
+      lstTactics.repaint();
+    }
   }
 
   private void onProveFromHere() {
@@ -1391,7 +1406,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   // </editor-fold>
 
   private ListModel<TacticListItem> getTacticsList() {
-    Set<String> knownTactics = Tactics.getKnownTactics(activeDiagram);
+    Set<String> knownTactics = Tactics.getKnownTactics(activeDiagram, showLowLevelTactics);
     TacticListItem[] tactics = new TacticListItem[knownTactics.size()];
     int i = 0;
     for (String providerName : knownTactics) {
