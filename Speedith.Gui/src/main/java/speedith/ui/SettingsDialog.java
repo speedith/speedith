@@ -8,6 +8,7 @@ import speedith.core.reasoning.automatic.AutomaticProvers;
 import speedith.core.reasoning.automatic.strategies.Strategies;
 import speedith.core.reasoning.automatic.strategies.Strategy;
 import speedith.core.reasoning.automatic.strategies.StrategyProvider;
+import speedith.core.reasoning.tactical.Tactics;
 import speedith.ui.automatic.AutomaticProverThread;
 
 import javax.swing.*;
@@ -29,6 +30,7 @@ public class SettingsDialog  extends javax.swing.JDialog {
     private JComboBox<StrategyListItem> strategyCombo;
     private JComboBox<DiagramType> diagramTypeCombo;
     private JCheckBox backgroundSearchCheckbox = new JCheckBox();
+    private JCheckBox levelCheckbox = new JCheckBox();
 
     public SettingsDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -44,6 +46,9 @@ public class SettingsDialog  extends javax.swing.JDialog {
         JLabel typeLabel = new JLabel();
         JLabel strategyLabel = new JLabel();
         JPanel diagramsPanel = new JPanel();
+        JPanel tacticsPanel  = new JPanel();
+        JLabel levelLabel = new JLabel();
+
         JLabel backgroundSearchLabel = new JLabel();
         final JLabel explanationLabel = new JLabel();
         final JLabel strategyExplanationLabel = new JLabel();
@@ -80,8 +85,25 @@ public class SettingsDialog  extends javax.swing.JDialog {
         groupLayout.setVerticalGroup(groupLayout.createSequentialGroup().addComponent(diagramTypeCombo,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
                 GroupLayout.PREFERRED_SIZE));
         settingsTab.addTab("Diagram Type", diagramsPanel);
-        backgroundSearchCheckbox.setSelected(getBackGroundSearchEnabled());
 
+
+        levelLabel.setText("Show low-level tactics");
+        levelCheckbox.setSelected(getShowLowLevelTactics());
+        groupLayout = new javax.swing.GroupLayout(tacticsPanel);
+        tacticsPanel.setLayout(groupLayout);
+        tacticsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        groupLayout.setAutoCreateGaps(true);
+        groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup().addComponent(levelLabel,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                GroupLayout.PREFERRED_SIZE).addComponent(levelCheckbox,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                GroupLayout.PREFERRED_SIZE));
+        groupLayout.setVerticalGroup(groupLayout.createParallelGroup().addComponent(levelLabel,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                GroupLayout.PREFERRED_SIZE).addComponent(levelCheckbox,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                GroupLayout.PREFERRED_SIZE));
+        settingsTab.addTab("Tactics", tacticsPanel);
+
+
+
+        backgroundSearchCheckbox.setSelected(getBackGroundSearchEnabled());
         typeLabel.setText("Type");
         strategyLabel.setText("Strategy");
         backgroundSearchLabel.setText("Enable automatic proof search in the background");
@@ -171,6 +193,8 @@ public class SettingsDialog  extends javax.swing.JDialog {
         prefs.put(InferenceRules.diagram_type_preference, diagrams.name());
         Boolean backgroundSearch = backgroundSearchCheckbox.isSelected();
         prefs.put(AutomaticProverThread.background_preference, backgroundSearch.toString());
+        Boolean showLowLevel = levelCheckbox.isSelected();
+        prefs.put(Tactics.level_preference, showLowLevel.toString());
         dispose();
     }
 
@@ -236,6 +260,15 @@ public class SettingsDialog  extends javax.swing.JDialog {
         }
         return Boolean.FALSE;
 
+    }
+
+    private Boolean getShowLowLevelTactics() {
+        Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
+        String selected = prefs.get(Tactics.level_preference, null);
+        if (selected != null) {
+            return Boolean.valueOf(selected);
+        }
+        return Boolean.FALSE;
     }
 
     public Boolean isBackGroundSearchEnabled() {
