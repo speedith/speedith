@@ -14,7 +14,7 @@ import scala.collection.JavaConversions._
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *
   */
-class DeVennify extends SimpleTactic with Serializable{
+class DeVennify extends SimpleInferenceTactic with Serializable{
   override def apply(args: RuleArg, goals: Goals): TacticApplicationResult = args match {
     case arg: SubgoalIndexArg =>
       BasicTactics.deVennify(getPrettyName())(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {

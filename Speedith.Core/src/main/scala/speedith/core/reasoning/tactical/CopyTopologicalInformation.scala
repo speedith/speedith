@@ -14,7 +14,7 @@ import scala.collection.JavaConversions._
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *
   */
-class CopyTopologicalInformation extends SimpleTactic with Serializable {
+class CopyTopologicalInformation extends SimpleInferenceTactic with Serializable {
 
   override def getDescription(locale: Locale): String = "Copys contours as often as possible"
 

@@ -3,6 +3,7 @@ package speedith.core.reasoning.tactical.euler
 
 import speedith.core.lang.Operator
 import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramOccurrence, PrimarySpiderDiagramOccurrence, SpiderDiagramOccurrence}
+import speedith.core.reasoning.tactical.Predicate
 import scala.collection.JavaConversions._
 import speedith.core.reasoning.tactical.euler.Auxilliary._
 /**
@@ -138,6 +139,7 @@ object Predicates {
 
   /**
     * Combines two predicates to compute their conjunction
+ *
     * @param p1 predicate 1
     * @param p2 predicate 2
     * @return the conjunction of predicate 1 and predicate 2

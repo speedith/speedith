@@ -1,16 +1,16 @@
 package speedith.core.reasoning.tactical.euler
 
 import speedith.core.lang._
-import speedith.core.reasoning.{Goals, Proof}
+import speedith.core.reasoning.Goals
 import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramOccurrence, PrimarySpiderDiagramOccurrence, SpiderDiagramOccurrence}
 import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
-import speedith.core.reasoning.tactical.TacticApplicationException
+import speedith.core.reasoning.tactical.{Chooser, Predicate, TacticApplicationException}
 import speedith.core.reasoning.util.unitary.CorrespondingRegions
 
 import scala.collection.JavaConversions._
 
 /**
- * Helper functions and predicates for the use with [[Tacticals basic tacticals]]
+ * Helper functions and predicates for the use with [[speedith.core.reasoning.tactical.Tacticals basic tacticals]]
   * and [[BasicTactics simple tacticals]].
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]

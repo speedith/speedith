@@ -15,7 +15,7 @@ import scala.collection.JavaConversions._
   *
   */
 
-class MatchConclusion  extends SimpleTactic with Serializable  {
+class MatchConclusion  extends SimpleInferenceTactic with Serializable  {
 
   override def apply(args: RuleArg, goals: Goals): TacticApplicationResult = args match {
     case arg: SubgoalIndexArg =>

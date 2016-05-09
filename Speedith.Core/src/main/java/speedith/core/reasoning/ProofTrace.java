@@ -29,7 +29,7 @@ package speedith.core.reasoning;
 import speedith.core.lang.NullSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.args.RuleArg;
-import speedith.core.reasoning.tactical.Tactic;
+import speedith.core.reasoning.tactical.InferenceTactic;
 import speedith.core.reasoning.tactical.TacticApplicationException;
 import speedith.core.reasoning.tactical.TacticApplicationResult;
 
@@ -246,7 +246,7 @@ public class ProofTrace implements Proof {
         newProof = new ProofTrace(getInitialGoals());
         for (InferenceApplication appl : getInferenceApplications()) {
             try {
-                if (appl.getInference() instanceof Tactic) {
+                if (appl.getInference() instanceof InferenceTactic) {
                     Goals currentGoals = newProof.getLastGoals();
                     TacticApplicationResult result = (TacticApplicationResult) appl.applyTo(currentGoals);
                     for (InferenceApplication app : result.getApplicationList()) {

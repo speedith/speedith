@@ -15,7 +15,7 @@ import scala.collection.JavaConversions._
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *
   */
-class CopyEverything extends SimpleTactic with Serializable  {
+class CopyEverything extends SimpleInferenceTactic with Serializable  {
   override def apply(args: RuleArg, goals: Goals): TacticApplicationResult = args match {
     case arg: SubgoalIndexArg =>
       BasicTactics.copyEveryThing(getPrettyName())(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {

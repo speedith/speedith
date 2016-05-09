@@ -46,7 +46,6 @@ import speedith.core.reasoning.rules.SplitSpiders;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 import speedith.core.reasoning.rules.util.HeuristicUtils;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
-import speedith.core.reasoning.tactical.Tactic;
 import speedith.core.reasoning.tactical.TacticApplicationException;
 import speedith.core.reasoning.tactical.TacticProvider;
 import speedith.core.reasoning.tactical.Tactics;
@@ -54,19 +53,13 @@ import speedith.ui.automatic.*;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
 import speedith.ui.tactics.InteractiveTacticApplication;
-import speedith.ui.tactics.TacticMenuItem;
-import speedith.ui.tactics.TacticMenuItemAccelerated;
-import speedith.ui.tactics.TacticMenuItemRegular;
 import spiderdrawer.ui.MainForm;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -1387,7 +1380,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       InteractiveTacticApplication.applyTacticInteractively(this, selectedTactic.getTacticProvider().getTactic(), subgoalIndex, proofPanel1);
       fireProofChangedEvent(new TacticAppliedEvent(this));
     } catch (Exception ex) {
-      ex.printStackTrace();
       JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
     }
   }

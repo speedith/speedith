@@ -34,9 +34,7 @@ import speedith.core.reasoning.automatic.*;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategies;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
-import speedith.core.reasoning.tactical.Tactic;
 import speedith.core.reasoning.tactical.TacticApplicationException;
-import speedith.core.reasoning.tactical.TacticApplicationResult;
 
 import javax.swing.*;
 import java.awt.*;

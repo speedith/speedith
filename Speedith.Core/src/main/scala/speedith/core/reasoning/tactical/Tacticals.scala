@@ -1,11 +1,6 @@
-package speedith.core.reasoning.tactical.euler
+package speedith.core.reasoning.tactical
 
-import speedith.core.lang.NullSpiderDiagram
-import speedith.core.reasoning.args.SubgoalIndexArg
-import speedith.core.reasoning.{Goals, Proof}
-import speedith.core.reasoning.tactical.{TacticApplicationResult, TacticApplicationException}
-
-import scala.reflect.internal.util.Collections
+import speedith.core.reasoning.Goals
 
 
 /**

@@ -1,13 +1,13 @@
 package speedith.core.reasoning.tactical.euler
 
 import speedith.core.reasoning.automatic.wrappers.{PrimarySpiderDiagramOccurrence, CompoundSpiderDiagramOccurrence}
-import speedith.core.reasoning.tactical.TacticApplicationResult
+import speedith.core.reasoning.tactical.{Tactic, Tacticals, TacticApplicationResult}
 import speedith.core.reasoning.Goals
 import speedith.core.reasoning.rules.util.ReasoningUtils
 import speedith.core.reasoning.tactical.euler.Auxilliary._
 import speedith.core.reasoning.tactical.euler.Choosers._
 import speedith.core.reasoning.tactical.euler.Predicates._
-import speedith.core.reasoning.tactical.euler.Tacticals._
+import Tacticals._
 import speedith.core.reasoning.tactical.euler.RuleTactics._
 import scala.collection.JavaConversions._
 

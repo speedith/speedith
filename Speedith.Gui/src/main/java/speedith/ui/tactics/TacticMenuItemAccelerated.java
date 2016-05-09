@@ -65,7 +65,7 @@ public enum TacticMenuItemAccelerated implements TacticMenuItem {
             }
         }
         if (result == null || result.isEmpty()) {
-            throw new TacticApplicationException("Tactic could not be applied");
+            throw new TacticApplicationException("InferenceTactic could not be applied");
         }
         return result.get();
     }

@@ -3,7 +3,7 @@ package speedith.ui.tactics;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
-import speedith.core.reasoning.tactical.Tactic;
+import speedith.core.reasoning.tactical.InferenceTactic;
 import speedith.core.reasoning.tactical.TacticApplicationException;
 import speedith.core.reasoning.tactical.TacticApplicationResult;
 
@@ -18,7 +18,7 @@ public final class InteractiveTacticApplication {
 
     private InteractiveTacticApplication() {}
 
-    public static boolean applyTacticInteractively(JFrame window, Tactic<? extends RuleArg> rule, int subgoalIndex, Proof proof) throws RuleApplicationException,TacticApplicationException {
+    public static boolean applyTacticInteractively(JFrame window, InferenceTactic<? extends RuleArg> rule, int subgoalIndex, Proof proof) throws RuleApplicationException,TacticApplicationException {
         return applyTacticInteractively(window, rule, subgoalIndex, proof, null) != null;
     }
 
@@ -36,7 +36,7 @@ public final class InteractiveTacticApplication {
      * @throws RuleApplicationException
      */
     @SuppressWarnings("unchecked")
-    private static InferenceApplicationResult applyTacticInteractively(JFrame window, Tactic<? extends RuleArg> rule, int subgoalIndex, Proof proof, Goals goals) throws RuleApplicationException,TacticApplicationException {
+    private static InferenceApplicationResult applyTacticInteractively(JFrame window, InferenceTactic<? extends RuleArg> rule, int subgoalIndex, Proof proof, Goals goals) throws RuleApplicationException,TacticApplicationException {
         // If the caller provided a proof object, use it to get the last goals
         // from and apply the rule one. Otherwise use the goals.
         // Throw an exception if not exactly one of them is null.

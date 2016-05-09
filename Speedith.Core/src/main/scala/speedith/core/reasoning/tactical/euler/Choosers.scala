@@ -2,6 +2,7 @@ package speedith.core.reasoning.tactical.euler
 
 import speedith.core.lang.Zone
 import speedith.core.reasoning.automatic.wrappers.{PrimarySpiderDiagramOccurrence, CompoundSpiderDiagramOccurrence, SpiderDiagramOccurrence}
+import speedith.core.reasoning.tactical.Chooser
 import scala.collection.JavaConversions._
 /**
   * Chooser functions to select arguments for single rule tactics within a diagram

@@ -44,7 +44,7 @@ public class Tactics {
 
     private Tactics() {}
     /**
-     * The main method for fetching a Spider-diagrammatic {@link Tactic
+     * The main method for fetching a Spider-diagrammatic {@link InferenceTactic
      * tactic}.
      * <p>You can get the tactics by name.</p>
      * <p>This method throws an exception if the inference rule does not
@@ -54,10 +54,10 @@ public class Tactics {
      * about the inference rule before fetching an actual one.</p>
      *
      * @param tactic the name of the inference rule to fetch.
-     * @return an {@link Tactic inference rule} that operates on spider
+     * @return an {@link InferenceTactic inference rule} that operates on spider
      *         diagrams.
      */
-    public static Tactic<? extends RuleArg> getTactic(String tactic) {
+    public static InferenceTactic<? extends RuleArg> getTactic(String tactic) {
         if (tactic == null) {
             throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "inferenceRule"));
         }

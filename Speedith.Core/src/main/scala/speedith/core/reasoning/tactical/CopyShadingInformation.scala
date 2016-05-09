@@ -9,12 +9,12 @@ import speedith.core.reasoning.args.{SubgoalIndexArg, RuleArg}
 import speedith.core.reasoning.tactical.euler.BasicTactics
 import scala.collection.JavaConversions._
 /**
-  * Integration of scala Copy Shading Tactic into Speedith reasoning framework.
+  * Integration of scala Copy Shading InferenceTactic into Speedith reasoning framework.
   *
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *
   */
-class CopyShadingInformation extends SimpleTactic with Serializable {
+class CopyShadingInformation extends SimpleInferenceTactic with Serializable {
 
   override def getPrettyName(locale: Locale): String = "Propagate Shading"
 

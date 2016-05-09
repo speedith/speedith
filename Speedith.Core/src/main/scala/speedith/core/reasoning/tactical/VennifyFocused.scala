@@ -14,7 +14,7 @@ import scala.collection.JavaConversions._
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *
   */
-class VennifyFocused extends SimpleTactic with Serializable{
+class VennifyFocused extends SimpleInferenceTactic with Serializable{
   override def apply(args: RuleArg, goals: Goals): TacticApplicationResult = args match {
     case arg: SubgoalIndexArg =>
       BasicTactics.vennifyFocused(getPrettyName())(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {

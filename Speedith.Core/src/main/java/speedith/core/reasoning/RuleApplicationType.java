@@ -11,7 +11,7 @@ public enum RuleApplicationType {
 
     INTERACTIVE("Interactive", new Color(0xEE5555)),
     AUTOMATIC("Automatic",new Color(0x9999FF)),
-    TACTIC("Tactic", new Color(0x55AA55));
+    TACTIC("InferenceTactic", new Color(0x55AA55));
 
     private final String name;
 
