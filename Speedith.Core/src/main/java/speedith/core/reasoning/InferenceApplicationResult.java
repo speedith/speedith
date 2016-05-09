@@ -1,7 +1,8 @@
 package speedith.core.reasoning;
 
 /**
- * TODO: Description
+ * Contains the result of successfully applying an inference
+ * to a proof.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

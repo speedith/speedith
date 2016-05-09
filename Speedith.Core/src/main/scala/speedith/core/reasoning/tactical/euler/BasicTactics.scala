@@ -1,20 +1,20 @@
 package speedith.core.reasoning.tactical.euler
 
 import speedith.core.reasoning.automatic.wrappers.{PrimarySpiderDiagramOccurrence, CompoundSpiderDiagramOccurrence}
-import speedith.core.reasoning.tactical.{Tactic, Tacticals, TacticApplicationResult}
+import speedith.core.reasoning.tactical.{Tactic, TacticApplicationResult}
 import speedith.core.reasoning.Goals
 import speedith.core.reasoning.rules.util.ReasoningUtils
 import speedith.core.reasoning.tactical.euler.Auxilliary._
 import speedith.core.reasoning.tactical.euler.Choosers._
 import speedith.core.reasoning.tactical.euler.Predicates._
-import Tacticals._
 import speedith.core.reasoning.tactical.euler.RuleTactics._
 import scala.collection.JavaConversions._
+import speedith.core.reasoning.tactical._
 
 
   /**
   * Tactics to work on a proof. The Tactics chain several tactics
-  * by using the [[Tacticals basic tacticals]]. Some of these
+  * by using the tacticals. Some of these
   * tactics are normally able to remove a subgoal, as long as it consists
   * of an implication, where the conclusion is a single unitary diagram (and if the
   * conclusion is a consequence of the premises)

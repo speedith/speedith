@@ -1,9 +1,11 @@
 package speedith.core.reasoning.tactical.euler
 
 
-import speedith.core.lang.Operator
+import speedith.core.lang.{PrimarySpiderDiagram, SpiderDiagram, CompoundSpiderDiagram, Operator}
+import speedith.core.reasoning.Goals
 import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramOccurrence, PrimarySpiderDiagramOccurrence, SpiderDiagramOccurrence}
-import speedith.core.reasoning.tactical.DiagramPredicate
+import speedith.core.reasoning.rules.util.ReasoningUtils
+import speedith.core.reasoning.tactical._
 import scala.collection.JavaConversions._
 import speedith.core.reasoning.tactical.euler.Auxilliary._
 /**
@@ -147,5 +149,53 @@ object Predicates {
 
   def AND (p1 : DiagramPredicate, p2: DiagramPredicate) : DiagramPredicate = (sd:SpiderDiagramOccurrence) => {
     p1(sd) && p2(sd)
+  }
+
+
+  def containsNoDiagramsWithShadedZonesThatCouldBeCopied: GoalPredicate = (state:Goals) => (subGoalIndex:Int) =>{
+    if (state.isEmpty) {
+      true
+    } else {
+      val goal = state.getGoalAt(subGoalIndex)
+      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+        !hasDiagramWithMissingZonesThatCouldBeCopied(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0))
+      } else {
+        true
+      }
+    }
+  }
+
+  private def hasDiagramWithMissingZonesThatCouldBeCopied(sd : SpiderDiagram) :Boolean = sd match {
+    case sd: PrimarySpiderDiagram => false
+    case sd: CompoundSpiderDiagram => (sd.getOperator, sd.getOperand(0), sd.getOperand(1)) match {
+      case (Operator.Conjunction, op0: PrimarySpiderDiagram, op1: PrimarySpiderDiagram) =>
+        op0.getAllContours.subsetOf(op1.getAllContours) && (op0.getShadedZones -- op0.getPresentZones).nonEmpty ||
+          op1.getAllContours.subsetOf(op0.getAllContours) && (op1.getShadedZones -- op1.getPresentZones).nonEmpty
+      case (Operator.Conjunction, _, _) => hasDiagramWithMissingZonesThatCouldBeCopied(sd.getOperand(0)) || hasDiagramWithMissingZonesThatCouldBeCopied(sd.getOperand(1))
+      case _ => false
+    }
+  }
+
+  def equalContourSetsInEachPrimaryDiagram: GoalPredicate = (state:Goals) => (subgoalIndex : Int) =>{
+    val goal = state.getGoalAt(subgoalIndex)
+    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      val subDiagams = ReasoningUtils.getPrimaryDiagrams(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0))
+      subDiagams map (pd => pd.getAllContours.toSet) forall subDiagams.head.getAllContours.toSet.sameElements
+    } else {
+      false
+    }
+  }
+
+  def isUnitaryDiagram: GoalPredicate = (state:Goals) => (subGoalIndex : Int) => {
+    if (state.isEmpty) {
+      true
+    } else {
+      val goal = state.getGoalAt(subGoalIndex)
+      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+        goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0).isInstanceOf[PrimarySpiderDiagram]
+      } else {
+        false
+      }
+    }
   }
 }

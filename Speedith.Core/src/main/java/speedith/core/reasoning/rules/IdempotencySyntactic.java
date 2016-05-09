@@ -16,7 +16,10 @@ import java.util.Set;
 import static speedith.core.i18n.Translations.i18n;
 
 /**
- * TODO: Description
+ * The implementation of the idempotency rule. It
+ * can be applied to a CompoundSpiderDiagram and checks whether
+ * the whole diagram can be replaced by one of its operands. This implementation checks for
+ * exact syntactic equality of the operands.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

@@ -11,7 +11,8 @@ import java.util.Set;
 import static speedith.core.i18n.Translations.i18n;
 
 /**
- * TODO: Description
+ * Hosts the difference Tactics that are available within Speedith. A new
+ * tactic has to be registered in this class to be presented in the UI.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

@@ -3,7 +3,12 @@ package speedith.core.reasoning;
 import speedith.core.reasoning.args.RuleArg;
 
 /**
- * TODO: Description
+ * The interface for every inference in Speedith. This could
+ * be an {@link InferenceRule} or an {@link speedith.core.reasoning.tactical.InferenceTactic}.
+
+ * @param <TArgs> the type of arguments the provided inference expects. Use
+ * the type {@link RuleArg} to specify that the inference rule does not expect
+ * any specific arguments.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */

@@ -10,8 +10,7 @@ import speedith.core.reasoning.util.unitary.CorrespondingRegions
 import scala.collection.JavaConversions._
 
 /**
- * Helper functions and predicates for the use with [[speedith.core.reasoning.tactical.Tacticals basic tacticals]]
-  * and [[BasicTactics simple tacticals]].
+ * Helper functions and predicates for the use with  [[BasicTactics basic tactics]].
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  *
@@ -42,29 +41,6 @@ object Auxilliary {
     }
   }
 
-  def containsNoDiagramsWithShadedZonesThatCouldBeCopied: GoalPredicate = (state:Goals) => (subGoalIndex:Int) =>{
-    if (state.isEmpty) {
-      true
-    } else {
-      val goal = state.getGoalAt(subGoalIndex)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
-        !hasDiagramWithMissingZonesThatCouldBeCopied(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0))
-      } else {
-        true
-      }
-    }
-  }
-
-  private def hasDiagramWithMissingZonesThatCouldBeCopied(sd : SpiderDiagram) :Boolean = sd match {
-    case sd: PrimarySpiderDiagram => false
-    case sd: CompoundSpiderDiagram => (sd.getOperator, sd.getOperand(0), sd.getOperand(1)) match {
-      case (Operator.Conjunction, op0: PrimarySpiderDiagram, op1: PrimarySpiderDiagram) =>
-        op0.getAllContours.subsetOf(op1.getAllContours) && (op0.getShadedZones -- op0.getPresentZones).nonEmpty ||
-          op1.getAllContours.subsetOf(op0.getAllContours) && (op1.getShadedZones -- op1.getPresentZones).nonEmpty
-      case (Operator.Conjunction, _, _) => hasDiagramWithMissingZonesThatCouldBeCopied(sd.getOperand(0)) || hasDiagramWithMissingZonesThatCouldBeCopied(sd.getOperand(1))
-      case _ => false
-    }
-  }
 
   def containsCorrespondingShadedRegions(d1 : PrimarySpiderDiagramOccurrence, d2: PrimarySpiderDiagramOccurrence) : Boolean = {
     // to maximise the effect of copying and to somewhat counter the explosion of possible regions
@@ -180,15 +156,7 @@ object Auxilliary {
     }
   }
 
-  def equalContourSetsInEachPrimaryDiagram: GoalPredicate = (state:Goals) => (subgoalIndex : Int) =>{
-    val goal = state.getGoalAt(subgoalIndex)
-    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
-      val subDiagams = ReasoningUtils.getPrimaryDiagrams(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0))
-      subDiagams map (pd => pd.getAllContours.toSet) forall subDiagams.head.getAllContours.toSet.sameElements
-    } else {
-      false
-    }
-  }
+
 
   def getDeepestNestedDiagram(subgoalIndex: Int): Goals => Option[CompoundSpiderDiagramOccurrence] = (state:Goals) => {
     val goal = getSubGoal(subgoalIndex, state)
@@ -211,18 +179,7 @@ object Auxilliary {
     }
   }
 
-  def isUnitaryDiagram: GoalPredicate = (state:Goals) => (subGoalIndex : Int) => {
-    if (state.isEmpty) {
-      true
-    } else {
-      val goal = state.getGoalAt(subGoalIndex)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
-        goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0).isInstanceOf[PrimarySpiderDiagram]
-      } else {
-        false
-      }
-    }
-  }
+
 
   def maxCorrespondingRegion(regionMatch: List[(Set[Zone], Set[Zone])]) : Option[(Set[Zone], Set[Zone])]  = regionMatch match {
     case Nil => None
