@@ -289,7 +289,7 @@ object Auxilliary {
     }
   }
   def firstMatchingDiagramAndContour(sd: SpiderDiagramOccurrence,
-                                     predicate: SpiderDiagramOccurrence => Boolean,
+                                     predicate: Predicate,
                                      contourChooser: Chooser[Set[String]])
   : Option[(SpiderDiagramOccurrence, Option[Set[String]])] = {
     if (predicate(sd)) {

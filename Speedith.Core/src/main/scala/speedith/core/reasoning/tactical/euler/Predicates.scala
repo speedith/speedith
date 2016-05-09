@@ -93,23 +93,6 @@ object Predicates {
     case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match {
       case Operator.Conjunction => (sd.getOperand(0), sd.getOperand(1)) match {
         case (op0: PrimarySpiderDiagramOccurrence, op1: PrimarySpiderDiagramOccurrence) =>
-          /* if (op0.getAllContours.subsetOf(op1.getAllContours)) {
-            val leftRegions = computeCorrespondingShadedRegions(op0, op1)
-            if (leftRegions.nonEmpty) {
-              true
-            }
-            else {
-              if (op1.getAllContours.subsetOf(op0.getAllContours)) {
-                val rightRegions = computeCorrespondingShadedRegions(op1, op0)
-                rightRegions.nonEmpty
-              } else false
-            }
-          } else {
-            if (op1.getAllContours.subsetOf(op0.getAllContours)) {
-              val rightRegions = computeCorrespondingShadedRegions(op1, op0)
-              rightRegions.nonEmpty
-            } else false
-          } */
           if (containsCorrespondingShadedRegions(op0, op1)) {
             true
           } else {

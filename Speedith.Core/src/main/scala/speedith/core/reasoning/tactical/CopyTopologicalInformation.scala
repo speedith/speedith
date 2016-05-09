@@ -37,5 +37,5 @@ class CopyTopologicalInformation extends SimpleTactic with Serializable {
       throw new RuleApplicationException("Wrong argument type")
   }
 
-  override def isHighLevel: Boolean = false
+  override def isHighLevel: Boolean = true
 }
