@@ -36,4 +36,5 @@ class Venn extends SimpleTactic with Serializable{
 
   override def getInferenceName: String = "venn_style"
 
+  override def isHighLevel: Boolean = true
 }

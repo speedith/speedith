@@ -40,4 +40,5 @@ class UnifyContoursFocused extends SimpleTactic with Serializable {
 
   override def getInferenceName: String = "unify_contours_focused"
 
+  override def isHighLevel: Boolean = false
 }

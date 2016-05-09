@@ -36,5 +36,5 @@ class Vennify extends SimpleTactic with Serializable{
 
   override def getInferenceName: String = "vennify"
 
-
+  override def isHighLevel: Boolean = false
 }

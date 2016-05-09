@@ -37,4 +37,5 @@ class CopyEverything extends SimpleTactic with Serializable  {
 
   override def getInferenceName: String = "copy_everything"
 
+  override def isHighLevel: Boolean = true
 }

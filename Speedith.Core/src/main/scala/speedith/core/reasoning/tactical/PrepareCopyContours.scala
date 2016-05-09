@@ -4,7 +4,6 @@ import java.util
 import java.util.Locale
 
 import speedith.core.lang.DiagramType
-import speedith.core.reasoning.tactical.{TacticApplicationException, TacticApplicationResult, SimpleTactic}
 import speedith.core.reasoning.{RuleApplicationException, Goals}
 import speedith.core.reasoning.args.{SubgoalIndexArg, RuleArg}
 import speedith.core.reasoning.tactical.euler.BasicTactics
@@ -40,4 +39,5 @@ class PrepareCopyContours extends SimpleTactic with Serializable {
 
   override def getInferenceName: String = "prepare_copy_contours"
 
+  override def isHighLevel: Boolean = false
 }

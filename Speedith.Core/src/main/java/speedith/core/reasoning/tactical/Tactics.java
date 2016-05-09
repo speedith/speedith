@@ -17,6 +17,8 @@ import static speedith.core.i18n.Translations.i18n;
  */
 public class Tactics {
 
+    public static String level_preference = "level";
+
     /**
      * The map containing all currently registered tactic providers.
      */
@@ -40,7 +42,7 @@ public class Tactics {
 
     }
 
-    private Tactics() {};
+    private Tactics() {}
     /**
      * The main method for fetching a Spider-diagrammatic {@link Tactic
      * tactic}.

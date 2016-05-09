@@ -39,4 +39,5 @@ class PrepareCopyShading extends SimpleTactic with Serializable {
 
   override def getInferenceName: String = "prepare_copy_shading"
 
+  override def isHighLevel: Boolean = false
 }

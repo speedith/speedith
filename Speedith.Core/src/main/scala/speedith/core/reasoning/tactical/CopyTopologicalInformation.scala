@@ -15,6 +15,7 @@ import scala.collection.JavaConversions._
   *
   */
 class CopyTopologicalInformation extends SimpleTactic with Serializable {
+
   override def getDescription(locale: Locale): String = "Copys contours as often as possible"
 
   override def getPrettyName(locale: Locale): String = "Copy Contours"
@@ -35,4 +36,6 @@ class CopyTopologicalInformation extends SimpleTactic with Serializable {
     case _ =>
       throw new RuleApplicationException("Wrong argument type")
   }
+
+  override def isHighLevel: Boolean = false
 }

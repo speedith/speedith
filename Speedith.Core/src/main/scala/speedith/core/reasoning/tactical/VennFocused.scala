@@ -37,4 +37,5 @@ class VennFocused extends SimpleTactic with Serializable{
 
   override def getInferenceName: String = "focused_venn_style"
 
+  override def isHighLevel: Boolean = true
 }

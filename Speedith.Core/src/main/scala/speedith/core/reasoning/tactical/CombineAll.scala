@@ -38,4 +38,5 @@ class CombineAll extends SimpleTactic with Serializable{
 
   override def getInferenceName: String = "combineAll"
 
-}
+    override def isHighLevel: Boolean = false
+  }

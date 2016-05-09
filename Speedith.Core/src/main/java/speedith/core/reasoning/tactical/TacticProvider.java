@@ -11,4 +11,6 @@ import speedith.core.reasoning.args.SubgoalIndexArg;
 public interface TacticProvider extends InferenceProvider<SubgoalIndexArg> {
 
     Tactic<SubgoalIndexArg> getTactic();
+
+    boolean isHighLevel();
 }

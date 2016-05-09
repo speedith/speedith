@@ -16,6 +16,7 @@ import scala.collection.JavaConversions._
   */
 
 class MatchConclusion  extends SimpleTactic with Serializable  {
+
   override def apply(args: RuleArg, goals: Goals): TacticApplicationResult = args match {
     case arg: SubgoalIndexArg =>
       BasicTactics.matchConclusion(getPrettyName())(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {
@@ -36,4 +37,6 @@ class MatchConclusion  extends SimpleTactic with Serializable  {
   override def getApplicableTypes: util.Set[DiagramType] = Set(DiagramType.EulerDiagram)
 
   override def getInferenceName: String = "match_conclusion"
+
+  override def isHighLevel: Boolean = false
 }

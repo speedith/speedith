@@ -36,4 +36,6 @@ class CopyShadingInformation extends SimpleTactic with Serializable {
     case _ =>
       throw new RuleApplicationException("Wrong argument type")
   }
+
+  override def isHighLevel: Boolean = false
 }
