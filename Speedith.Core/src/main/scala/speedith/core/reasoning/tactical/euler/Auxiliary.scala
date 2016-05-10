@@ -15,7 +15,7 @@ import scala.collection.JavaConversions._
  * @author Sven Linker [s.linker@brighton.ac.uk]
  *
  */
-object Auxilliary {
+object Auxiliary {
 
 
   def collectDiagramsWithMissingZonesThatCouldBeCopied(subGoalIndex: Int, state : Goals): Set[SpiderDiagramOccurrence ] =  {

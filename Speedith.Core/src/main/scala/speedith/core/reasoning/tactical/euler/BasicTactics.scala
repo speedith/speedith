@@ -4,7 +4,7 @@ import speedith.core.reasoning.automatic.wrappers.{PrimarySpiderDiagramOccurrenc
 import speedith.core.reasoning.tactical.{Tactic, TacticApplicationResult}
 import speedith.core.reasoning.Goals
 import speedith.core.reasoning.rules.util.ReasoningUtils
-import speedith.core.reasoning.tactical.euler.Auxilliary._
+import speedith.core.reasoning.tactical.euler.Auxiliary._
 import speedith.core.reasoning.tactical.euler.Choosers._
 import speedith.core.reasoning.tactical.euler.Predicates._
 import speedith.core.reasoning.tactical.euler.RuleTactics._

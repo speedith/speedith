@@ -7,7 +7,7 @@ import speedith.core.reasoning.automatic.wrappers.{CompoundSpiderDiagramOccurren
 import speedith.core.reasoning.rules.util.ReasoningUtils
 import speedith.core.reasoning.tactical._
 import scala.collection.JavaConversions._
-import speedith.core.reasoning.tactical.euler.Auxilliary._
+import speedith.core.reasoning.tactical.euler.Auxiliary._
 /**
   * Predicate functions to select possible target diagrams for the application of single rule tactics (see [[RuleTactics]])
   *
