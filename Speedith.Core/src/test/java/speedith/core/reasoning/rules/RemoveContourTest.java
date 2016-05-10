@@ -94,15 +94,25 @@ public class RemoveContourTest {
     }
 
     @Test
-    public void apply_must_remove_the_contour_from_in_and_out_sets_of_all_zones_euler_diagram()  throws RuleApplicationException {
+    public void applyForwards_must_remove_the_contour_from_in_and_out_sets_of_all_zones_euler_diagram()  throws RuleApplicationException {
         PrimarySpiderDiagram target = TestSpiderDiagrams.EULER_DIAGRAM_A_SUBSET_B_INTERSECT_C;
         Goals targetOfInference = Goals.createGoalsFrom(target);
         SpiderDiagram expectedResult = TestSpiderDiagrams.EULER_DIAGRAM_A_SUBSET_B;
 
-        RuleApplicationResult result = removeContour.apply(new MultipleRuleArgs(new ContourArg(0,0,"C")), targetOfInference);
+        RuleApplicationResult result = removeContour.applyForwards(new MultipleRuleArgs(new ContourArg(0,0,"C")), targetOfInference);
 
         assertThat(result.getGoals().getGoalAt(0),
                 equalTo(expectedResult));
+
+    }
+
+    @Test(expected = TransformationException.class)
+    public void apply_should_throw_exception_when_not_in_fitting_position() throws RuleApplicationException {
+        PrimarySpiderDiagram target = TestSpiderDiagrams.EULER_DIAGRAM_A_SUBSET_B_INTERSECT_C;
+        Goals targetOfInference = Goals.createGoalsFrom(target);
+
+
+        RuleApplicationResult result = removeContour.apply(new MultipleRuleArgs(new ContourArg(0,0,"C")), targetOfInference);
 
     }
 }
