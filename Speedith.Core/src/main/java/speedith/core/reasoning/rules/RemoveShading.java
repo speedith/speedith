@@ -81,7 +81,11 @@ public class RemoveShading extends SimpleInferenceRule<MultipleRuleArgs>
 
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
-        return apply(args, goals);
+        MultipleRuleArgs ruleArgs = getTypedRuleArgs(args);
+        MultipleRuleArgs.assertArgumentsNotEmpty(ruleArgs);
+        ArrayList<ZoneArg> zones = getZoneArgsFrom(ruleArgs);
+        SubDiagramIndexArg target = getTargetDiagramArg(ruleArgs);
+        return apply(target, zones, goals, ApplyStyle.Forward);
     }
 
     @Override
@@ -90,13 +94,15 @@ public class RemoveShading extends SimpleInferenceRule<MultipleRuleArgs>
         MultipleRuleArgs.assertArgumentsNotEmpty(ruleArgs);
         ArrayList<ZoneArg> zones = getZoneArgsFrom(ruleArgs);
         SubDiagramIndexArg target = getTargetDiagramArg(ruleArgs);
-        return apply(target, zones, goals );
+        return apply(target, zones, goals, ApplyStyle.GoalBased );
     }
 
-    private RuleApplicationResult apply(SubDiagramIndexArg target, ArrayList<ZoneArg> targetContours, Goals goals) throws RuleApplicationException {
+
+
+    protected RuleApplicationResult apply(SubDiagramIndexArg target, ArrayList<ZoneArg> targetContours, Goals goals, ApplyStyle applyStyle) throws RuleApplicationException {
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
         SpiderDiagram targetSubgoal = getSubgoal(target, goals);
-        newSubgoals[target.getSubgoalIndex()] = targetSubgoal.transform(new RemoveShadingTransformer(target, targetContours));
+        newSubgoals[target.getSubgoalIndex()] = targetSubgoal.transform(new RemoveShadingTransformer(target, targetContours, applyStyle));
         return createRuleApplicationResult(newSubgoals);
     }
 

@@ -1,8 +1,10 @@
 package speedith.core.reasoning.rules.transformers
 
 
+import speedith.core.i18n.Translations._
 import speedith.core.lang._
-import speedith.core.reasoning.RuleApplicationException
+import speedith.core.reasoning.rules.SimpleInferenceRule
+import speedith.core.reasoning.{ApplyStyle, RuleApplicationException}
 import speedith.core.reasoning.args.{SubDiagramIndexArg, ZoneArg}
 
 import scala.collection.JavaConversions._
@@ -14,7 +16,7 @@ import scala.collection.JavaConversions._
   *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-class RemoveShadingTransformer (target : SubDiagramIndexArg, zones :  java.util.List[ZoneArg]) extends IdTransformer{
+class RemoveShadingTransformer (target : SubDiagramIndexArg, zones :  java.util.List[ZoneArg], applyStyle: ApplyStyle) extends IdTransformer{
   val subDiagramIndex = target.getSubDiagramIndex
 
   override def transform(psd: PrimarySpiderDiagram,
@@ -22,10 +24,17 @@ class RemoveShadingTransformer (target : SubDiagramIndexArg, zones :  java.util.
                          parents: java.util.ArrayList[CompoundSpiderDiagram],
                          childIndices: java.util.ArrayList[java.lang.Integer]): SpiderDiagram = {
     if (diagramIndex == subDiagramIndex) {
-        if (( zones.map( zarg => zarg.getZone) -- (psd.getShadedZones & psd.getPresentZones)).nonEmpty ) {
-          throw new RuleApplicationException("One of the selected zones is not shaded.")
+      if (!SimpleInferenceRule.isAtFittingPosition(parents, childIndices, applyStyle, true)) {
+        if (applyStyle == ApplyStyle.GoalBased) {
+          throw new TransformationException(i18n("RULE_NOT_NEGATIVE_POSITION"))
+        } else {
+          throw new TransformationException(i18n("RULE_NOT_POSITIVE_POSITION"))
         }
-        EulerDiagrams.createPrimaryEulerDiagram(psd.getShadedZones -- zones.map(zarg => zarg.getZone), psd.getPresentZones)
+      }
+      if ((zones.map(zarg => zarg.getZone) -- (psd.getShadedZones & psd.getPresentZones)).nonEmpty) {
+        throw new RuleApplicationException("One of the selected zones is not shaded.")
+      }
+      EulerDiagrams.createPrimaryEulerDiagram(psd.getShadedZones -- zones.map(zarg => zarg.getZone), psd.getPresentZones)
     }
     else {
       null
