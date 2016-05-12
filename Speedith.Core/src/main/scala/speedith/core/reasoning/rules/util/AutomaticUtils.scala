@@ -108,12 +108,28 @@ object AutomaticUtils {
     if (target.getOperands.forall(o => o.isInstanceOf[PrimarySpiderDiagramOccurrence])) {
       val leftDiagram = target.getOperand(0).getDiagram.asInstanceOf[PrimarySpiderDiagram]
       val rightDiagram = target.getOperand(1).getDiagram.asInstanceOf[PrimarySpiderDiagram]
-      val leftContours= leftDiagram.getAllContours
-      val rightContours = rightDiagram.getAllContours
-      if (leftContours.subsetOf(rightContours) || rightContours.subsetOf(leftContours)) {
+      val leftContours= leftDiagram.getAllContours.toSet
+      val rightContours = rightDiagram.getAllContours.toSet
+//      if (leftContours.subsetOf(rightContours) || rightContours.subsetOf(leftContours)) {
 //        val contoursOnlyInLeft = leftContours -- rightContours
 //        val contoursOnlyInRight = rightContours -- leftContours
-        val leftVisibleShadedZones = leftDiagram.getShadedZones & leftDiagram.getPresentZones
+//      val leftVisibleShadedZones = leftDiagram.getShadedZones & leftDiagram.getPresentZones
+      val shadedZonesLeft = (leftDiagram.getShadedZones & leftDiagram.getPresentZones).toSet
+      val shadedRegionsPerContourLeft = leftContours map (c => shadedZonesLeft filter (z => z.getInContours.contains(c) ||z.getInContours.isEmpty)) filter (_.nonEmpty)
+      val regionsLeft = shadedRegionsPerContourLeft map (region => Tuple2(region, CorrespondingRegions(leftDiagram, rightDiagram).correspondingRegion(new Region(region)).zones)) filter (m => m._2.nonEmpty)
+      val unShadedTargetsLeft = regionsLeft filter (_._2.exists((rightDiagram.getPresentZones -- rightDiagram.getShadedZones).contains ))
+      val leftResult = unShadedTargetsLeft.
+        map(r => new PossibleCopyShading(subGoalIndex,target.getOperand(0), new CopyShading(), r._1))
+
+//      val rightVisibleShadedZones = rightDiagram.getShadedZones & rightDiagram.getPresentZones
+      val shadedZonesRight = (rightDiagram.getShadedZones & leftDiagram.getPresentZones).toSet
+      val shadedRegionsPerContourRight = rightContours map (c => shadedZonesRight filter (z => z.getInContours.contains(c) ||z.getInContours.isEmpty)) filter (_.nonEmpty)
+      val regionsRight = shadedRegionsPerContourRight map (region => Tuple2(region, CorrespondingRegions(rightDiagram, leftDiagram).correspondingRegion(new Region(region)).zones)) filter (m => m._2.nonEmpty)
+      val unShadedTargetsRight = regionsRight filter (_._2.exists((leftDiagram.getPresentZones -- leftDiagram.getShadedZones).contains ))
+      val rightResult = unShadedTargetsRight.
+        map(r => new PossibleCopyShading(subGoalIndex,target.getOperand(1), new CopyShading(), r._1))
+
+      /*
         val leftNonEmptyShadedRegions = leftVisibleShadedZones.subsets.toSet.filter(s => s.nonEmpty)
         val leftRegions = leftNonEmptyShadedRegions.map(region => Tuple2(region, CorrespondingRegions(leftDiagram, rightDiagram).correspondingRegion(new Region(region)))).filter(r => r._2.zones.nonEmpty)
         val leftResult = leftRegions.
@@ -124,14 +140,15 @@ object AutomaticUtils {
           map(r => Tuple2(r, CorrespondingRegions(rightDiagram, leftDiagram).correspondingRegion(new Region(r)))).filter(t => t._2.zones.nonEmpty)
         val rightResult = rightRegions.
           map(r => new PossibleCopyShading(subGoalIndex,target.getOperand(1), new CopyShading(), r._1))
+          */
         leftResult ++ rightResult
       }
       else {
         Set()
       }
-    } else {
+     /* } else {
       Set()
-    }
+    }*/
   }
 
   private def createCombiningApplications(subGoalIndex : Int,target: CompoundSpiderDiagramOccurrence) : Set[PossibleCombining] = {
@@ -149,9 +166,25 @@ object AutomaticUtils {
   }
 
   private def createRemoveContourApplications(subGoalIndex : Int,target: PrimarySpiderDiagramOccurrence): Set[PossibleRemoveContour] = {
-    target.getAllContours .
-      map(c => new PossibleRemoveContour(subGoalIndex,target, new RemoveContour(), c)).toSet
+    val targetShadedZones = (target.getPresentZones & target.getShadedZones).toSet
+    val targetUnshadedZones = target.getPresentZones.toSet -- target.getShadedZones.toSet
+      val safeContours = target.getAllContours.toSet filterNot (
+      c => targetShadedZones.exists (
+          z1 => z1.getInContours.contains(c) && (
+            targetUnshadedZones.exists (z2 => z2.getOutContours.contains(c) &&
+                z2.getInContours.containsAll(z1.getInContours - c) &&
+                z2.getOutContours.containsAll(z1.getOutContours + c) ))))
+    val safeContours2 = safeContours filterNot (
+        c => targetUnshadedZones.exists (
+          z1 => z1.getInContours.contains(c) &&
+          (targetShadedZones.exists (
+            z2 => z2.getOutContours.contains(c)
+              && z2.getInContours.containsAll(z1.getInContours - c)
+              && z2.getOutContours.containsAll(z1.getOutContours + c) ))
+        ))
+      safeContours2 map (new PossibleRemoveContour(subGoalIndex, target, new RemoveContour(), _))
   }
+
 
   private def createRemoveShadedZoneApplications(subGoalIndex : Int,target: PrimarySpiderDiagramOccurrence) : Set[PossibleRemoveShadedZone] = {
     (target.getShadedZones & target.getPresentZones) .filter(z => z.getInContours.nonEmpty).
