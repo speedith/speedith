@@ -27,7 +27,10 @@ class RemoveShadedZoneTransformer (target:  SubDiagramIndexArg, zones : java.uti
         if (zones.exists(_.getZone.getInContoursCount ==0)) {
           throw new RuleApplicationException("Cannot remove the outer zone")
         }
-        EulerDiagrams.createPrimaryEulerDiagram(psd.getShadedZones , psd.getPresentZones-- zones.map(_.getZone))
+        if (psd.getHabitats.values exists (r => (r.zones & (zones map (arg => arg.getZone)).toSet).nonEmpty)) {
+          throw new RuleApplicationException("Cannot remove zone that contains a spider")
+        }
+        SpiderDiagrams.createPrimarySD(psd.getHabitats, psd.getShadedZones , psd.getPresentZones-- zones.map(_.getZone))
     } else {
       null
     }
