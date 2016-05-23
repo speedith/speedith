@@ -34,7 +34,8 @@ class RemoveShadingTransformer (target : SubDiagramIndexArg, zones :  java.util.
       if ((zones.map(zarg => zarg.getZone) -- (psd.getShadedZones & psd.getPresentZones)).nonEmpty) {
         throw new RuleApplicationException("One of the selected zones is not shaded.")
       }
-      EulerDiagrams.createPrimaryEulerDiagram(psd.getShadedZones -- zones.map(zarg => zarg.getZone), psd.getPresentZones)
+      SpiderDiagrams.createPrimarySD(psd.getHabitats, psd.getShadedZones -- zones.map(zarg => zarg.getZone), psd.getPresentZones)
+//      EulerDiagrams.createPrimaryEulerDiagram(psd.getShadedZones -- zones.map(zarg => zarg.getZone), psd.getPresentZones)
     }
     else {
       null

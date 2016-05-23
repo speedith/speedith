@@ -2,7 +2,7 @@ package speedith.core.reasoning.util.unitary
 
 import java.util
 
-import speedith.core.lang.{EulerDiagrams, PrimarySpiderDiagram, Zone, Zones}
+import speedith.core.lang._
 import speedith.core.reasoning.rules.util.ReasoningUtils
 
 import scala.collection.JavaConversions._
@@ -68,6 +68,13 @@ class ZoneTransferTopological(sourceDiagram: PrimarySpiderDiagram, destinationDi
     val zonesOut = outZones ++ freeOutZones
     val zonesSplit = splitZones ++ freeSplitZones
 
+    val spiderHabitats = destinationDiagram.getHabitats.map {
+      case (spider, habitat) => (spider, new Region(
+        (zonesOut ++ zonesSplit).intersect(habitat.zones).map(addOutContourToZone(_, contourFromSource)) ++
+          (zonesIn ++ zonesSplit).intersect(habitat.zones).map(addInContourToZone(_, contourFromSource))
+      ))
+    }
+
     val shadedZones = Zones.sameRegionWithNewContours(destinationDiagram.getShadedZones, contourFromSource) ++
       zonesOut.map(addInContourToZone(_, contourFromSource)) ++
       zonesIn.map(addOutContourToZone(_, contourFromSource))
@@ -76,7 +83,7 @@ class ZoneTransferTopological(sourceDiagram: PrimarySpiderDiagram, destinationDi
     val presentZones = (zonesOut.intersect(allVisibleZonesInDestinationDiagram) ++ zonesSplit).map(zone => addOutContourToZone(zone, contourFromSource)) ++
       (zonesIn.intersect(allVisibleZonesInDestinationDiagram) ++ zonesSplit).map(zone => addInContourToZone(zone, contourFromSource))
 
-    EulerDiagrams.createPrimaryEulerDiagram(shadedZones, presentZones)
+    SpiderDiagrams.createPrimarySD(spiderHabitats, shadedZones, presentZones)
   }
 
   private def addInContourToZone(zone: Zone, contourFromSource: String): Zone = {
