@@ -45,7 +45,7 @@ import java.util.Set;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class ConjunctionElimination extends SimpleInferenceRule<MultipleRuleArgs> implements Serializable {
+public class ConjunctionElimination extends SimpleInferenceRule<MultipleRuleArgs> implements Serializable, ForwardRule<MultipleRuleArgs>{
 
     /**
      * The name of this inference rule.
@@ -57,14 +57,18 @@ public class ConjunctionElimination extends SimpleInferenceRule<MultipleRuleArgs
 
     @Override
     public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
+        return apply(args, goals, ApplyStyle.GoalBased);
+    }
+
+    private RuleApplicationResult apply(RuleArg args, Goals goals, ApplyStyle applyStyle) throws RuleApplicationException {
         MultipleRuleArgs mult = getTypedRuleArgs(args);
         SubDiagramIndexArg operatorDiagram = (SubDiagramIndexArg) mult.get(0);
         SubDiagramIndexArg targetChild = (SubDiagramIndexArg) mult.get(1);
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
-        newSubgoals[operatorDiagram.getSubgoalIndex()] = getSubgoal(operatorDiagram, goals).transform(new ConjunctionEliminationTransformer(operatorDiagram.getSubDiagramIndex(), targetChild));
+        newSubgoals[operatorDiagram.getSubgoalIndex()] = getSubgoal(operatorDiagram, goals).transform(new ConjunctionEliminationTransformer(operatorDiagram.getSubDiagramIndex(), targetChild, applyStyle));
         return createRuleApplicationResult(newSubgoals);
     }
-    
+
     @Override
     public InferenceRule<MultipleRuleArgs> getInferenceRule() {
         return this;
@@ -103,5 +107,10 @@ public class ConjunctionElimination extends SimpleInferenceRule<MultipleRuleArgs
     @Override
     public RuleApplicationInstruction<MultipleRuleArgs> getInstructions() {
         return new SelectOperatorAndSubDiagramInstruction();
+    }
+
+    @Override
+    public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
+        return apply(args, goals, ApplyStyle.Forward);
     }
 }
