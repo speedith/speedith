@@ -36,6 +36,7 @@ import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.rules.instructions.SelectContoursInstruction;
 import speedith.core.reasoning.rules.transformers.CopyContoursTransformer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Locale;
@@ -44,7 +45,7 @@ import java.util.Set;
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class CopyContours extends SimpleInferenceRule<MultipleRuleArgs> {
+public class CopyContours extends SimpleInferenceRule<MultipleRuleArgs> implements Serializable {
 
     /**
      * The name of this inference rule.
@@ -52,6 +53,7 @@ public class CopyContours extends SimpleInferenceRule<MultipleRuleArgs> {
     public static final String InferenceRuleName = "copy_contours";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
+    private static final long serialVersionUID = -3569161621056814002L;
 
 
     @Override
@@ -65,7 +67,7 @@ public class CopyContours extends SimpleInferenceRule<MultipleRuleArgs> {
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

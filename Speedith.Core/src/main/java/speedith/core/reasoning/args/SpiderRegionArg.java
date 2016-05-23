@@ -28,6 +28,8 @@ package speedith.core.reasoning.args;
 
 import speedith.core.lang.Region;
 
+import java.io.Serializable;
+
 /**
  * This inference rule argument provides the following (in addition to data
  * provided by {@link SpiderArg}): <ul> <li>a sub-{@link Region region} of the {@link
@@ -39,8 +41,9 @@ import speedith.core.lang.Region;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SpiderRegionArg extends SpiderArg {
+public class SpiderRegionArg extends SpiderArg implements Serializable {
 
+    private static final long serialVersionUID = -1953985205147594029L;
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private final Region region;
     // </editor-fold>

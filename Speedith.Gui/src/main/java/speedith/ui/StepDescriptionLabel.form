@@ -44,7 +44,7 @@
           <Font name="Dialog" size="12" style="2"/>
         </Property>
         <Property name="horizontalAlignment" type="int" value="4"/>
-        <Property name="text" type="java.lang.String" value="Applied rule: split spiders"/>
+        <Property name="text" type="java.lang.String" value="Applied inference: split spiders"/>
       </Properties>
     </Component>
   </SubComponents>

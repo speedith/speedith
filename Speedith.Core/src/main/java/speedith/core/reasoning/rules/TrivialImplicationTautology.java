@@ -7,6 +7,7 @@ import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Locale;
@@ -15,19 +16,20 @@ import java.util.Set;
 import static speedith.core.i18n.Translations.i18n;
 
 /**
- * TODO: Description
+ * Removes the subgoal, if it consists of an implication, where premiss and conclusion are equal.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class TrivialImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg>, ForwardRule<SubDiagramIndexArg> {
+public class TrivialImplicationTautology extends SimpleInferenceRule<SubDiagramIndexArg> implements BasicInferenceRule<SubDiagramIndexArg>, ForwardRule<SubDiagramIndexArg>, Serializable{
 
     /**
-     * The name of this inference rule. <p>This value is returned by the {@link TrivialImplicationTautology#getInferenceRuleName()}
+     * The name of this inference rule. <p>This value is returned by the {@link TrivialImplicationTautology#getInferenceName()}
      * method.</p>
      */
     public static final String InferenceRuleName = "trivial_implication_tautology";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
+    private static final long serialVersionUID = -5152228212901382731L;
 
 
     @Override
@@ -54,7 +56,7 @@ public class TrivialImplicationTautology extends SimpleInferenceRule<SubDiagramI
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

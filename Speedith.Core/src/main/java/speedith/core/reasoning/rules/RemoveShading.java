@@ -30,11 +30,15 @@ import speedith.core.i18n.Translations;
 import speedith.core.lang.DiagramType;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
+import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleZoneInstruction;
 import speedith.core.reasoning.rules.transformers.RemoveShadingTransformer;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
@@ -47,15 +51,16 @@ import java.util.Set;
  * @author Sven Linker [s.linker@brighton.ac.uk]
  *
  */
-public class RemoveShading extends SimpleInferenceRule<ZoneArg>
-        implements BasicInferenceRule<ZoneArg>, ForwardRule<ZoneArg> {
+public class RemoveShading extends SimpleInferenceRule<MultipleRuleArgs>
+        implements BasicInferenceRule<MultipleRuleArgs>, ForwardRule<MultipleRuleArgs>, Serializable {
 
     public static final String InferenceRuleName = "Erase Shading";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram);
+    private static final long serialVersionUID = -4093837815231375163L;
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 
@@ -70,26 +75,62 @@ public class RemoveShading extends SimpleInferenceRule<ZoneArg>
     }
 
     @Override
-    public RuleApplicationInstruction<ZoneArg> getInstructions() {
+    public RuleApplicationInstruction<MultipleRuleArgs> getInstructions() {
         return new SelectSingleZoneInstruction();
     }
 
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
-        return apply(args, goals);
+        MultipleRuleArgs ruleArgs = getTypedRuleArgs(args);
+        MultipleRuleArgs.assertArgumentsNotEmpty(ruleArgs);
+        ArrayList<ZoneArg> zones = getZoneArgsFrom(ruleArgs);
+        SubDiagramIndexArg target = getTargetDiagramArg(ruleArgs);
+        return apply(target, zones, goals, ApplyStyle.Forward);
     }
 
     @Override
     public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
+        MultipleRuleArgs ruleArgs = getTypedRuleArgs(args);
+        MultipleRuleArgs.assertArgumentsNotEmpty(ruleArgs);
+        ArrayList<ZoneArg> zones = getZoneArgsFrom(ruleArgs);
+        SubDiagramIndexArg target = getTargetDiagramArg(ruleArgs);
+        return apply(target, zones, goals, ApplyStyle.GoalBased );
+    }
+
+
+
+    protected RuleApplicationResult apply(SubDiagramIndexArg target, ArrayList<ZoneArg> targetContours, Goals goals, ApplyStyle applyStyle) throws RuleApplicationException {
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
-        ZoneArg subgoal = (ZoneArg) args;
-        SpiderDiagram targetSubgoal = getSubgoal(subgoal, goals);
-        newSubgoals[subgoal.getSubgoalIndex()] = targetSubgoal.transform(new RemoveShadingTransformer(subgoal));
+        SpiderDiagram targetSubgoal = getSubgoal(target, goals);
+        newSubgoals[target.getSubgoalIndex()] = targetSubgoal.transform(new RemoveShadingTransformer(target, targetContours, applyStyle));
         return createRuleApplicationResult(newSubgoals);
     }
 
+    public ArrayList<ZoneArg> getZoneArgsFrom(MultipleRuleArgs args) throws RuleApplicationException {
+        MultipleRuleArgs multipleRuleArgs = getTypedRuleArgs(args);
+        MultipleRuleArgs.assertArgumentsNotEmpty(multipleRuleArgs);
+        ArrayList<ZoneArg> contourArgs = new ArrayList<>();
+        int subDiagramIndex = -1;
+        int goalIndex = -1;
+        for (RuleArg ruleArg : multipleRuleArgs) {
+            // an interactive application of IntroContour contains also a SubDiagramIndexArg,
+            // to refer to the diagram the rule shall be applied to.
+            if (ruleArg instanceof ZoneArg) {
+                ZoneArg zoneArg = ZoneArg.getZoneArgFrom(ruleArg);
+                subDiagramIndex = ZoneArg.assertSameSubDiagramIndices(subDiagramIndex, zoneArg);
+                goalIndex = ZoneArg.assertSameGoalIndices(goalIndex, zoneArg);
+                contourArgs.add(zoneArg);
+            }
+        }
+        return contourArgs;
+    }
+
+    private SubDiagramIndexArg getTargetDiagramArg(MultipleRuleArgs args) throws RuleApplicationException {
+        return (SubDiagramIndexArg) args.get(0);
+    }
+
     @Override
-    public InferenceRule<ZoneArg> getInferenceRule() {
+    public InferenceRule<MultipleRuleArgs> getInferenceRule() {
         return this;
     }
 
@@ -99,8 +140,8 @@ public class RemoveShading extends SimpleInferenceRule<ZoneArg>
     }
 
     @Override
-    public Class<ZoneArg> getArgumentType() {
-        return ZoneArg.class;
+    public Class<MultipleRuleArgs> getArgumentType() {
+        return MultipleRuleArgs.class;
     }
 
     @Override

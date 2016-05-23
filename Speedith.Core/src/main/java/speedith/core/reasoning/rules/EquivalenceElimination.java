@@ -33,6 +33,7 @@ import speedith.core.reasoning.ApplyStyle;
 import speedith.core.reasoning.RuleApplicationInstruction;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 
+import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
@@ -40,11 +41,12 @@ import java.util.Set;
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class EquivalenceElimination extends UnaryForwardRule {
+public class EquivalenceElimination extends UnaryForwardRule implements Serializable {
 
     public static final String InferenceRuleName = "Equivalence Elimination";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.noneOf(DiagramType.class);
+    private static final long serialVersionUID = -7367459578472934603L;
 
     @Override
     protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
@@ -52,7 +54,7 @@ public class EquivalenceElimination extends UnaryForwardRule {
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

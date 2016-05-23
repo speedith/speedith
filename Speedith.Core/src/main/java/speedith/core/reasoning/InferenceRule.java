@@ -44,7 +44,7 @@ import speedith.core.reasoning.rules.SplitSpiders;
  * any specific arguments.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface InferenceRule<TArgs extends RuleArg> {
+public interface InferenceRule<TArgs extends RuleArg>  extends Inference<TArgs, RuleApplicationResult> {
 
     /**
      * An inference rule in spider diagrams takes a set of goals and returns new
@@ -98,6 +98,7 @@ public interface InferenceRule<TArgs extends RuleArg> {
      * @throws RuleApplicationException thrown if the inference rule could not
      * be applied on the given goals with the given arguments.
      */
+    @Override
     RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException;
 
     /**

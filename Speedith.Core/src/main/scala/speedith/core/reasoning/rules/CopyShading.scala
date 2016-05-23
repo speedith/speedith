@@ -7,14 +7,14 @@ import speedith.core.lang.{DiagramType, SpiderDiagram}
 import speedith.core.reasoning.args.{MultipleRuleArgs, RuleArg, ZoneArg}
 import speedith.core.reasoning.rules.instructions.SelectZonesInstruction
 import speedith.core.reasoning.rules.transformers.CopyShadingTransformer
-import speedith.core.reasoning.{Goals, InferenceRule, RuleApplicationInstruction, RuleApplicationResult}
+import speedith.core.reasoning._
 
 import scala.collection.JavaConversions._
 
-class CopyShading extends SimpleInferenceRule[MultipleRuleArgs] {
+class CopyShading extends SimpleInferenceRule[MultipleRuleArgs] with Serializable with ForwardRule[MultipleRuleArgs] {
   def getInferenceRule: InferenceRule[MultipleRuleArgs] = this
 
-  def getInferenceRuleName: String = "copy_shading"
+  def getInferenceName: String = "copy_shading"
 
   def getApplicableTypes:  java.util.Set[DiagramType] = Set(DiagramType.EulerDiagram, DiagramType.SpiderDiagram)
 
@@ -34,12 +34,16 @@ class CopyShading extends SimpleInferenceRule[MultipleRuleArgs] {
     apply(getTypedRuleArgs(args), goals)
   }
 
+  def applyForwards(args: RuleArg, goals: Goals): RuleApplicationResult = {
+    apply(args, goals)
+  }
+
   private def apply(argsUntyped: MultipleRuleArgs, goals: Goals): RuleApplicationResult = {
     val zoneArgs = argsUntyped.getRuleArgs.map(_.asInstanceOf[ZoneArg])
     val newSubgoals = goals.getGoals.toList.toArray[SpiderDiagram]
-    val targetSubgoal = SimpleInferenceRule.getSubgoal(zoneArgs(0), goals)
-    val indexOfParent = targetSubgoal.getParentIndexOf(zoneArgs(0).getSubDiagramIndex)
-    newSubgoals(zoneArgs(0).getSubgoalIndex) = targetSubgoal.transform(CopyShadingTransformer(indexOfParent, zoneArgs))
+    val targetSubgoal = SimpleInferenceRule.getSubgoal(zoneArgs.head, goals)
+    val indexOfParent = targetSubgoal.getParentIndexOf(zoneArgs.head.getSubDiagramIndex)
+    newSubgoals(zoneArgs.head.getSubgoalIndex) = targetSubgoal.transform(CopyShadingTransformer(indexOfParent, zoneArgs))
     new RuleApplicationResult(Goals.createGoalsFrom(seqAsJavaList(newSubgoals)))
   }
 }

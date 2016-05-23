@@ -5,13 +5,13 @@ import speedith.core.reasoning.automatic.strategies.Strategy;
 
 
 /**
- * TODO: Description
+ * Computes the cost and heuristic function for the proof wrapped inside.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 public class ProofAttempt implements Comparable<ProofAttempt>{
 
-    private Proof proof;
+    private final Proof proof;
 
     private int cost;
 

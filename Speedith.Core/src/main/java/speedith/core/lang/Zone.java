@@ -29,6 +29,7 @@ package speedith.core.lang;
 import propity.util.Sets;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 import static propity.util.Sets.equal;
@@ -43,7 +44,8 @@ import static speedith.core.i18n.Translations.i18n;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class Zone implements Comparable<Zone>, SpiderDiagramElement {
+public class Zone implements Comparable<Zone>, SpiderDiagramElement, Serializable {
+
 
     // <editor-fold defaultstate="collapsed" desc="Private Fields">
     private TreeSet<String> inContours;
@@ -51,6 +53,7 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement {
     private boolean hashInvalid = true;
     private int hash;
     private SortedSet<String> allContours;
+    private static final long serialVersionUID = 4268941198100631182L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">

@@ -27,13 +27,19 @@
 package speedith.core.reasoning.args;
 
 import speedith.core.lang.Zone;
+import speedith.core.reasoning.RuleApplicationException;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This argument contains a zone.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class ZoneArg extends SubDiagramIndexArg {
+public class ZoneArg extends SubDiagramIndexArg implements Serializable {
 
+    private static final long serialVersionUID = -9202275269070794992L;
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private final Zone zone;
     // </editor-fold>
@@ -65,4 +71,55 @@ public class ZoneArg extends SubDiagramIndexArg {
         return zone;
     }
     // </editor-fold>
+
+    public static ZoneArg getZoneArgFrom(RuleArg ruleArg) throws RuleApplicationException {
+        if (!(ruleArg instanceof ZoneArg)) {
+            throw new RuleApplicationException("The copy contours rule takes only contours as arguments.");
+        }
+        return (ZoneArg) ruleArg;
+    }
+
+    public static ArrayList<ZoneArg> getZoneArgsFrom(MultipleRuleArgs multipleRuleArgs) throws RuleApplicationException {
+        int subDiagramIndex = -1;
+        int goalIndex = -1;
+        ArrayList<ZoneArg> zoneArgs = new ArrayList<>();
+        for (RuleArg ruleArg : multipleRuleArgs) {
+            if (ruleArg instanceof ZoneArg) {
+                ZoneArg zoneArg = ZoneArg.getZoneArgFrom(ruleArg);
+                subDiagramIndex = ZoneArg.assertSameSubDiagramIndices(subDiagramIndex, zoneArg);
+                goalIndex = ZoneArg.assertSameGoalIndices(goalIndex, zoneArg);
+                zoneArgs.add(zoneArg);
+            }
+        }
+        return zoneArgs;
+    }
+
+    public static int assertSameSubDiagramIndices(int previousSubDiagramIndex, ZoneArg contourArg) throws RuleApplicationException {
+        if (previousSubDiagramIndex != -1 && previousSubDiagramIndex != contourArg.getSubDiagramIndex()) {
+            throw new RuleApplicationException("The zones must be from the same unitary spider diagram.");
+        } else {
+            previousSubDiagramIndex = contourArg.getSubDiagramIndex();
+        }
+        return previousSubDiagramIndex;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ZoneArg zoneArg = (ZoneArg) o;
+
+        if (getSubDiagramIndex() != zoneArg.getSubDiagramIndex()
+                || getSubgoalIndex() != zoneArg.getSubgoalIndex()) {
+            return false;
+        }
+        return getZone() != null ? getZone().equals(zoneArg.getZone()) : zoneArg.getZone() == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return getZone() != null ? getZone().hashCode() + getSubDiagramIndex() +getSubgoalIndex() : 0;
+    }
 }

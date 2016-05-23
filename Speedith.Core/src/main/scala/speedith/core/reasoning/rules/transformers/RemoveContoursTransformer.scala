@@ -1,17 +1,25 @@
 package speedith.core.reasoning.rules.transformers
 
+import speedith.core.i18n.Translations._
 import speedith.core.lang._
+import speedith.core.reasoning.ApplyStyle
 import speedith.core.reasoning.args.ContourArg
+import speedith.core.reasoning.rules.SimpleInferenceRule
 
 import scala.collection.JavaConversions._
 
-case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) extends IdTransformer {
+case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg], applyStyle: ApplyStyle) extends IdTransformer {
 
   val subDiagramIndex = contourArgs(0).getSubDiagramIndex
   val contoursToRemove = contourArgs.map(_.getContour).toSet
 
   private def regionWithoutContours(region: Set[Zone]): Set[Zone] = {
-    region.map(zone => new Zone(zone.getInContours -- contoursToRemove, zone.getOutContours -- contoursToRemove)).filter(zone => zone.getAllContours.nonEmpty)
+    val result = region.map(zone => new Zone(zone.getInContours -- contoursToRemove, zone.getOutContours -- contoursToRemove)).filter(zone => zone.getAllContours.nonEmpty)
+    if (result.nonEmpty) {
+      result
+    } else {
+      Set(new Zone())
+    }
   }
 
   private def shadedRegionWithoutContours(region: Set[Zone]): Set[Zone] = {
@@ -21,7 +29,7 @@ case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) ex
         zone.getInContours.contains(contourToRemove) &&
           shadedRegion.contains(new Zone(zone.getInContours - contourToRemove, zone.getOutContours + contourToRemove))
       )
-      shadedRegion = shadedRegion.map(zone => new Zone(zone.getInContours - contourToRemove, zone.getOutContours - contourToRemove)).toSet
+      shadedRegion = shadedRegion.map(zone => new Zone(zone.getInContours - contourToRemove, zone.getOutContours - contourToRemove))
     }
     shadedRegion
   }
@@ -31,10 +39,16 @@ case class RemoveContoursTransformer(contourArgs: java.util.List[ContourArg]) ex
                          parents: java.util.ArrayList[CompoundSpiderDiagram],
                          childIndices: java.util.ArrayList[java.lang.Integer]): SpiderDiagram = {
     if (subDiagramIndex == diagramIndex) {
-        /*val normalised = ReasoningUtils.normalize(psd)
-        if (!normalised.equals(psd)) {
-          throw new RuleApplicationException("Rule can only be applied to a normalised diagram (all visible zones have to be included in the set of present zones in the abstract syntax)")
-        }*/
+      if (!SimpleInferenceRule.isAtFittingPosition(parents, childIndices, applyStyle, true)) {
+        if (applyStyle == ApplyStyle.GoalBased) {
+          throw new TransformationException(i18n("RULE_NOT_NEGATIVE_POSITION"))
+        } else {
+          throw new TransformationException(i18n("RULE_NOT_POSITIVE_POSITION"))
+        }
+      }
+      if (!psd.getAllContours.containsAll(contoursToRemove)) {
+        throw new TransformationException("The contours to be removed do not exist in the target diagram")
+      }
         SpiderDiagrams.createPrimarySD(
           psd.getSpiders,
           psd.getHabitats.map {

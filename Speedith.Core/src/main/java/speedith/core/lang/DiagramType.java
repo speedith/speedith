@@ -1,7 +1,7 @@
 package speedith.core.lang;
 
 /**
- * TODO: Description
+ * The types of diagrams the different rules and provers within Speedith can be applied to.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
@@ -9,6 +9,7 @@ public enum DiagramType {
 
     SpiderDiagram("spider_diagram", "Spider Diagrams"),
     EulerDiagram("euler_diagram", "Euler Diagrams");
+
 
     private final String preferenceKey;
 

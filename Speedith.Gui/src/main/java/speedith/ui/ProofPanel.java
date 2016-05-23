@@ -26,15 +26,6 @@
  */
 package speedith.ui;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.prefs.Preferences;
-import javax.swing.*;
-
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
@@ -42,8 +33,16 @@ import speedith.core.reasoning.args.SubgoalIndexArg;
 import speedith.core.reasoning.automatic.*;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategies;
-import speedith.core.reasoning.rules.util.AutomaticUtils;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
+import speedith.core.reasoning.tactical.TacticApplicationException;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.prefs.Preferences;
 
 import static speedith.i18n.Translations.i18n;
 
@@ -55,7 +54,11 @@ import static speedith.i18n.Translations.i18n;
  */
 public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticProof {
 
+    private static final long serialVersionUID = 6560236682608445666L;
+
     // <editor-fold defaultstate="collapsed" desc="Fields">
+
+
     private ProofTrace proof;
 
     private AutomaticProver prover;
@@ -150,16 +153,16 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Proof Interface Implementation">
-    public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<TRuleArg> rule) throws RuleApplicationException {
-        return applyRule(rule, null);
+    public <TRuleArg extends RuleArg> InferenceApplicationResult applyRule(Inference<TRuleArg,?> rule, RuleApplicationType type, String typeSpecifier) throws RuleApplicationException {
+        return applyRule(rule, null, type, typeSpecifier);
     }
 
-    public <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException {
-        RuleApplicationResult appResult = proof.applyRule(rule, args);
+    public <TRuleArg extends RuleArg> InferenceApplicationResult applyRule(Inference<? super TRuleArg,?> rule, TRuleArg args, RuleApplicationType type, String typeSpecifier) throws RuleApplicationException {
+        InferenceApplicationResult appResult = proof.applyRule(rule, args, type, typeSpecifier);
         if (proof.isFinished()) {
-            addProofFinished(rule, args);
+            addProofFinished(rule, args, type, typeSpecifier);
         } else {
-            addGoals(proof.getGoalsCount() - 1, appResult.getGoals(), rule, args);
+            addGoals(proof.getGoalsCount() - 1, appResult.getGoals(), rule, args, proof.getInferenceApplicationAt(proof.getInferenceApplicationCount()-1));
         }
         // Scroll the last component into view:
         scrlGoals.getVerticalScrollBar().setValue(scrlGoals.getVerticalScrollBar().getMaximum());
@@ -169,8 +172,9 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
     public boolean undoStep() {
         final boolean didUndo = proof.undoStep();
         if (didUndo) {
-            // TODO: Refresh the GUI. Remove the last set of goals and step description labels.
-            throw new UnsupportedOperationException();
+            SubgoalsPanel lastGoals = subgoals.remove(subgoals.size()-1);
+            pnlGoals.remove(lastGoals);
+            validate();
         }
         return didUndo;
     }
@@ -195,16 +199,16 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         return proof.getGoals();
     }
 
-    public List<RuleApplication> getRuleApplications() {
-        return proof.getRuleApplications();
+    public List<InferenceApplication> getInferenceApplications() {
+        return proof.getInferenceApplications();
     }
 
-    public RuleApplication getRuleApplicationAt(int index) {
-        return proof.getRuleApplicationAt(index);
+    public InferenceApplication getInferenceApplicationAt(int index) {
+        return proof.getInferenceApplicationAt(index);
     }
 
-    public int getRuleApplicationCount() {
-        return proof.getRuleApplicationCount();
+    public int getInferenceApplicationCount() {
+        return proof.getInferenceApplicationCount();
     }
 
     public boolean isFinished() {
@@ -227,9 +231,9 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         Proof tempProof = prover.generateProof(normalised);
         if (!(tempProof == null)) {
             newProof(normalised);
-            for (RuleApplication appl : tempProof.getRuleApplications()) {
+            for (InferenceApplication appl : tempProof.getInferenceApplications()) {
                 try {
-                    applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments());
+                    applyRule((InferenceRule<? super RuleArg>) appl.getInference(), appl.getRuleArguments(), RuleApplicationType.AUTOMATIC,prover.getPrettyName());
                 } catch (RuleApplicationException e) {
                     e.printStackTrace();
                 }
@@ -239,47 +243,53 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
     }
 
     @Override
-    public Proof extendProof(Proof proof) throws AutomaticProofException {
+    public Proof extendProof(Proof newProof) throws AutomaticProofException {
         if (proof == null || proof.getLastGoals() == null) {
-            throw  new AutomaticProofException("No subgoal to prove");
+            throw new AutomaticProofException("No subgoal to prove");
         }
-        Proof extendedProof = prover.extendProof(proof);
-        if (!(extendedProof==null)) {
-            newProof(extendedProof.getInitialGoals());
-            for (RuleApplication appl : extendedProof.getRuleApplications()) {
-                try {
-                    applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments());
-                } catch (RuleApplicationException e) {
-                    e.printStackTrace();
-                }
+        int currentLength = this.proof.getInferenceApplicationCount();
+        int targetLength = newProof.getInferenceApplicationCount();
+        for (InferenceApplication appl : newProof.getInferenceApplications().subList(currentLength, targetLength)) {
+            try {
+                applyRule((Inference<? super RuleArg,?>) appl.getInference(), appl.getRuleArguments(), appl.getType(),appl.getTypeSpecifier());
+            } catch (RuleApplicationException e) {
+                e.printStackTrace();
             }
         }
         return this.proof;
     }
 
-    public void reduceToSelected() {
-        ProofTrace newProof;
-        if (selectedNumber > 0) {
-            newProof = new ProofTrace(proof.getGoals().subList(0, selectedNumber), proof.getRuleApplications().subList(0, selectedNumber));
-        } else {
-            newProof = new ProofTrace(proof.getInitialGoals());
+    public Proof extendByOneStep(Proof newProof) throws AutomaticProofException {
+        if (proof == null || proof.getLastGoals() == null) {
+            throw new AutomaticProofException("No subgoal to prove");
         }
-        newProof(newProof.getInitialGoals());
-        for (RuleApplication appl : newProof.getRuleApplications()) {
-            try {
-                applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments());
-            } catch (RuleApplicationException e) {
-                e.printStackTrace();
-            }
+        int currentLength = this.proof.getInferenceApplicationCount();
+        int targetLength = newProof.getInferenceApplicationCount();
+        if (currentLength >= targetLength) {
+            throw new AutomaticProofException("No new proof steps in given proof");
+        }
+        InferenceApplication appl = newProof.getInferenceApplicationAt(currentLength);
+        try {
+            applyRule((Inference<? super RuleArg,?>) appl.getInference(), appl.getRuleArguments(), appl.getType(), appl.getTypeSpecifier());
+        } catch (RuleApplicationException e) {
+            e.printStackTrace();
+        }
+        return this.proof;
+    }
+
+    public void reduceToSelected() {
+        int currentLength = proof.getGoalsCount()-1;
+        for (int i = 0; i < currentLength - selectedNumber; i++) {
+            undoStep();
         }
     }
 
     public void replaceCurrentProof( Proof proof) {
         if (!(proof==null)) {
             newProof(proof.getInitialGoals());
-            for (RuleApplication appl : proof.getRuleApplications()) {
+            for (InferenceApplication appl : proof.getInferenceApplications()) {
                 try {
-                    applyRule((InferenceRule<? super RuleArg>) appl.getInferenceRule(), appl.getRuleArguments());
+                    applyRule((Inference<? super RuleArg,?>) appl.getInference(), appl.getRuleArguments(), appl.getType(), appl.getTypeSpecifier());
                 } catch (RuleApplicationException e) {
                     e.printStackTrace();
                 }
@@ -287,7 +297,29 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         }
     }
 
+    public void extendCurrentProofTo(Proof proof) {
+        if (!(proof == null)) {
+            int currentLength = this.proof.getInferenceApplicationCount();
+            int targetLength  = proof.getInferenceApplicationCount();
+            for (InferenceApplication appl : proof.getInferenceApplications().subList(currentLength, targetLength)) {
+                try {
+                    applyRule((InferenceRule<? super RuleArg>) appl.getInference(), appl.getRuleArguments(), appl.getType(), appl.getTypeSpecifier());
+                } catch (RuleApplicationException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public Proof createFlattenedProof() throws TacticApplicationException {
+        return proof.createFlattenedProof();
+    }
+
     //</editor-fold>
+
+    public Proof getProof() {
+        return proof;
+    }
 
     // <editor-fold defaultstate="collapsed" desc="UI Related Methods">
     private void displayInitialGoals() {
@@ -305,26 +337,36 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         gbc.fill = java.awt.GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        SubgoalsPanel sgp = new SubgoalsPanel(initialGoals, getSubgoalsTitle(0), (String) null);
-        sgp.setTitleBackground(Color.BLUE);
-        pnlGoals.add(sgp, gbc);
+        SubgoalsPanel sgp = new SubgoalsPanel(initialGoals, getSubgoalsTitle(0), (String) null, Color.BLUE);
+        addSubgoal(gbc, sgp);
         registerMouseSelectionListener(initialGoals, sgp);
     }
 
-    private <TRuleArg extends RuleArg> void addGoals(int stepIndex, Goals goals, InferenceRule<? super TRuleArg> rule, TRuleArg args) {
+    /**
+     * Adds the given {@link SubgoalsPanel panel} to the UI of this ProofPanel and updates the
+     * internal list of subgoals.
+     *
+     * @param gbc the constraints for the layout of the panel
+     * @param sgp the subgoalspanel to be added to the proof panel
+     */
+    private void addSubgoal(GridBagConstraints gbc, SubgoalsPanel sgp) {
+        pnlGoals.add(sgp, gbc);
+        subgoals.add(sgp);
+    }
+
+    private <TRuleArg extends RuleArg> void addGoals(int stepIndex, Goals goals, Inference<? super TRuleArg,?> rule, TRuleArg args, InferenceApplication application) {
         GridBagConstraints gbc = new java.awt.GridBagConstraints();
         gbc.fill = java.awt.GridBagConstraints.BOTH;
         gbc.gridx = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        final SubgoalsPanel sgp = new SubgoalsPanel(goals, getSubgoalsTitle(stepIndex), getStepDescription(rule, args));
-        pnlGoals.add(sgp, gbc);
+        final SubgoalsPanel sgp = new SubgoalsPanel(goals, getSubgoalsTitle(stepIndex), getStepDescription(rule, args, application.getType(), application.getTypeSpecifier()), application.getType().getColor());
+        addSubgoal(gbc, sgp);
         registerMouseSelectionListener(goals, sgp);
         validate();
     }
 
     private void registerMouseSelectionListener(final Goals goals, final SubgoalsPanel sgp) {
-        subgoals.add(sgp);
         if (!goals.isEmpty()) {
             sgp.addMouseListener(new MouseListener() {
                 final int stepNumber = subgoals.size()-1;
@@ -334,13 +376,8 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
                 public void mouseClicked(MouseEvent mouseEvent) {
                     if (mouseEvent.getComponent() == sgp) {
                         for (SubgoalsPanel s : subgoals) {
-
                             s.setBorder(BorderFactory.createEmptyBorder());
-                            if (s.equals(subgoals.get(0))) {
-                                s.setTitleBackground(Color.BLUE);
-                            } else {
-                                s.setTitleBackground(Color.GRAY);
-                            }
+                            s.setTitleBackground(s.getColor());
                         }
                         sgp.setTitleBackground(Color.RED);
                         sgp.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
@@ -379,13 +416,21 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         }
     }
 
-    private <TRuleArg extends RuleArg> String getStepDescription(InferenceRule<? super TRuleArg> rule, TRuleArg args) {
-        if (args instanceof SubgoalIndexArg) {
-            return i18n("PROOF_PANEL_STEP_DESC_SUBGOAL", rule.getProvider().getPrettyName(), ((SubgoalIndexArg) args).getSubgoalIndex() + 1);
+    private <TRuleArg extends RuleArg> String getStepDescription(Inference<? super TRuleArg,?> rule, TRuleArg args, RuleApplicationType type, String typeSpecifier) {
+        String spacer;
+        if (typeSpecifier.isEmpty()) {
+            spacer = "";
         } else {
-            return i18n("PROOF_PANEL_STEP_DESC_GENERAL", rule.getProvider().getPrettyName());
+            spacer = ": ";
+        }
+        if (args instanceof SubgoalIndexArg) {
+            return i18n("PROOF_PANEL_STEP_DESC_SUBGOAL", rule.getProvider().getPrettyName(), ((SubgoalIndexArg) args).getSubgoalIndex() + 1, type.getName()+spacer+typeSpecifier);
+        } else {
+            return i18n("PROOF_PANEL_STEP_DESC_GENERAL", rule.getProvider().getPrettyName(), type.getName()+spacer+typeSpecifier);
         }
     }
+
+
 
     /**
      * Puts a header saying there are no goals on which one could apply
@@ -402,15 +447,14 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         selected = null;
     }
 
-    private <TRuleArg extends RuleArg> void addProofFinished(InferenceRule<? super TRuleArg> rule, TRuleArg args) {
+    private <TRuleArg extends RuleArg> void addProofFinished(Inference<? super TRuleArg,?> rule, TRuleArg args, RuleApplicationType type, String typeSpecifier) {
         GridBagConstraints gbc = new java.awt.GridBagConstraints();
         gbc.fill = java.awt.GridBagConstraints.BOTH;
         gbc.gridx = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        SubgoalsPanel sgp = new SubgoalsPanel(i18n("PROOF_PANEL_PROOF_FINISHED"), getStepDescription(rule, args));
-        sgp.setTitleBackground(Color.GREEN);
-        pnlGoals.add(sgp, gbc);
+        SubgoalsPanel sgp = new SubgoalsPanel(i18n("PROOF_PANEL_PROOF_FINISHED"), getStepDescription(rule, args, type, typeSpecifier), Color.GREEN);
+        addSubgoal(gbc, sgp);
         validate();
     }
 

@@ -29,6 +29,7 @@ package speedith.core.lang;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 import static speedith.core.i18n.Translations.i18n;
@@ -43,7 +44,7 @@ import static speedith.core.i18n.Translations.i18n;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class CompoundSpiderDiagram extends SpiderDiagram {
+public class CompoundSpiderDiagram extends SpiderDiagram implements Serializable {
 
     /**
      * The identifier of the unary spider diagram in the textual representation
@@ -76,6 +77,8 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      * diagrams (see {@link SpiderDiagram#toString()}).</p>
      */
     public static final String SDTextOperatorAttribute = "operator";
+
+
     /**
      * The operator which to apply on the {@link CompoundSpiderDiagram#getOperands()
      * operands}. <p>See {@link Operator#knownOperatorNames()} for a list of all
@@ -90,7 +93,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     private boolean hashInvalid = true;
     private int hash;
     private int subDiagramCount = -1;
-
+    private static final long serialVersionUID = 6756171788260505819L;
 
     /**
      * Initialises a new n-ary spider diagram.
@@ -102,7 +105,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
      *                 to the {@link CompoundSpiderDiagram#getOperator() operator}.
      */
     CompoundSpiderDiagram(String operator, Collection<SpiderDiagram> operands) {
-        this(Operator.fromString(operator), operands == null ? null : new ArrayList<SpiderDiagram>(operands));
+        this(Operator.fromString(operator), operands == null ? null : new ArrayList<>(operands));
     }
 
     /**
@@ -197,8 +200,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
             return this;
         } else if (index > 0) {
             --index;
-            for (int i = 0; i < operands.size(); i++) {
-                SpiderDiagram sub = operands.get(i);
+            for (SpiderDiagram sub : operands) {
                 int subCount = sub.getSubDiagramCount();
                 if (subCount > index) {
                     return sub.getSubDiagramAt(index);
@@ -213,8 +215,8 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
     public int getSubDiagramCount() {
         if (subDiagramCount < 0) {
             subDiagramCount = 1;
-            for (int i = 0; i < operands.size(); i++) {
-                subDiagramCount += operands.get(i).getSubDiagramCount();
+            for (SpiderDiagram operand : operands) {
+                subDiagramCount += operand.getSubDiagramCount();
             }
         }
         return subDiagramCount;
@@ -271,7 +273,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
             if (csdToIterateThrough == null) {
                 throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "csdToIterateThrough"));
             }
-            iterationStack = new ArrayList<CompoundSDIterationCursor>();
+            iterationStack = new ArrayList<>();
             iterationStack.add(new CompoundSDIterationCursor(csdToIterateThrough, -1));
         }
 
@@ -500,7 +502,7 @@ public class CompoundSpiderDiagram extends SpiderDiagram {
                 // of transformed children.
                 if (transformedSD != null && !transformedSD.equals(childSD)) {
                     if (transformedChildren == null) {
-                        transformedChildren = new ArrayList<SpiderDiagram>(curSD.operands);
+                        transformedChildren = new ArrayList<>(curSD.operands);
                     }
                     transformedChildren.set(childIndex, transformedSD);
                 }

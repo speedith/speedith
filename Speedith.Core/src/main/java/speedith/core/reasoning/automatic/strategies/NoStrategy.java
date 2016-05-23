@@ -3,28 +3,14 @@ package speedith.core.reasoning.automatic.strategies;
 import speedith.core.reasoning.Proof;
 
 /**
- * Implements a non-strategy, i.e., it just picks the next rule that is available without
- * any further consideration.
+ * Implements a non-strategy, i.e., does not compute any particular costs and
+ * heuristic function, but return 0 in every case.
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 public class NoStrategy implements Strategy, StrategyProvider {
 
     private static final String strategyName = "no_strategy";
-
-    /*
-    @Override
-    public PossibleRuleApplication select(Proof p, Set<PossibleRuleApplication> possible) {
-        Iterator<PossibleRuleApplication> it = possible.iterator();
-        if (it.hasNext()) {
-            PossibleRuleApplication selected = it.next();
-            it.remove();
-            return selected;
-        } else {
-            return null;
-        }
-    }
-    */
 
     @Override
     public int getCost(Proof p) {

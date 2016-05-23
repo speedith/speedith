@@ -37,6 +37,7 @@ import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleSubDiagramAndContourInstruction;
 import speedith.core.reasoning.rules.transformers.IntroduceContoursTransformer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Locale;
@@ -46,11 +47,12 @@ import java.util.Set;
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
 public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
-        implements BasicInferenceRule<MultipleRuleArgs>, ForwardRule<MultipleRuleArgs> {
+        implements BasicInferenceRule<MultipleRuleArgs>, ForwardRule<MultipleRuleArgs>, Serializable {
 
     public static final String InferenceRuleName = "Introduce Contour";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram);
+    private static final long serialVersionUID = 276871128317847228L;
 
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
@@ -72,11 +74,23 @@ public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
         return (SubDiagramIndexArg) args.get(0);
     }
 
-    private ArrayList<ContourArg> getContourArgsFrom(MultipleRuleArgs args) throws RuleApplicationException {
+
+    private RuleApplicationResult apply(SubDiagramIndexArg target, ArrayList<ContourArg> targetContours, Goals goals) throws RuleApplicationException {
+        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
+        SpiderDiagram targetSubgoal = getSubgoal(target, goals);
+        newSubgoals[target.getSubgoalIndex()] = targetSubgoal.transform(new IntroduceContoursTransformer(target, targetContours));
+        return createRuleApplicationResult(newSubgoals);
+    }
+
+    public ArrayList<ContourArg> getContourArgsFrom(MultipleRuleArgs args) throws RuleApplicationException {
+        MultipleRuleArgs multipleRuleArgs = getTypedRuleArgs(args);
+        MultipleRuleArgs.assertArgumentsNotEmpty(multipleRuleArgs);
         ArrayList<ContourArg> contourArgs = new ArrayList<>();
         int subDiagramIndex = -1;
         int goalIndex = -1;
-        for (RuleArg ruleArg : args) {
+        for (RuleArg ruleArg : multipleRuleArgs) {
+            // an interactive application of IntroContour contains also a SubDiagramIndexArg,
+            // to refer to the diagram the rule shall be applied to.
             if (ruleArg instanceof ContourArg) {
                 ContourArg contourArg = ContourArg.getContourArgFrom(ruleArg);
                 subDiagramIndex = ContourArg.assertSameSubDiagramIndices(subDiagramIndex, contourArg);
@@ -85,13 +99,6 @@ public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
             }
         }
         return contourArgs;
-    }
-
-    private RuleApplicationResult apply(SubDiagramIndexArg target, ArrayList<ContourArg> targetContours, Goals goals) throws RuleApplicationException {
-        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
-        SpiderDiagram targetSubgoal = getSubgoal(target, goals);
-        newSubgoals[target.getSubgoalIndex()] = targetSubgoal.transform(new IntroduceContoursTransformer(target, targetContours));
-        return createRuleApplicationResult(newSubgoals);
     }
 
     @Override
@@ -111,7 +118,7 @@ public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
 
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

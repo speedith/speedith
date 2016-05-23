@@ -36,6 +36,7 @@ import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
 import speedith.core.reasoning.rules.util.CombiningUtils;
 
+import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
@@ -43,15 +44,16 @@ import java.util.Set;
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class Combining extends UnaryForwardRule {
+public class Combining extends UnaryForwardRule implements Serializable {
 
   public static final String InferenceRuleName = "Combining";
 
   private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
+  private static final long serialVersionUID = -1556054106670781741L;
 
 
   @Override
-  public String getInferenceRuleName() {
+  public String getInferenceName() {
     return InferenceRuleName;
   }
 

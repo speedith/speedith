@@ -3,7 +3,8 @@ package speedith.core.reasoning.automatic.strategies;
 import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.Proof;
-import speedith.core.reasoning.RuleApplication;
+import speedith.core.reasoning.InferenceApplication;
+import speedith.core.reasoning.ProofAnalyser;
 import speedith.core.reasoning.automatic.AutomaticProofException;
 import speedith.core.reasoning.rules.*;
 import speedith.core.reasoning.rules.util.HeuristicUtils;
@@ -26,7 +27,7 @@ public class LowClutterStrategy implements Strategy, StrategyProvider {
     private static final Map<Class, Integer> COSTS = createCosts();
 
     private static Map<Class, Integer> createCosts() {
-        Map<Class, Integer> result = new HashMap<Class, Integer>();
+        Map<Class, Integer> result = new HashMap<>();
         result.put(IntroContour.class, 5);
         result.put(IntroShadedZone.class, 5);
         result.put(CopyContours.class, 7);
@@ -47,14 +48,13 @@ public class LowClutterStrategy implements Strategy, StrategyProvider {
     @Override
     public int getCost(Proof p) {
 
-        List<RuleApplication> applications = p.getRuleApplications();
+        List<InferenceApplication> applications = p.getInferenceApplications();
         int cost = 0;
-        for (RuleApplication app: applications) {
-            Class cl = app.getClass();
-            int debug = COSTS.get(app.getInferenceRule().getClass());
+/*        for (InferenceApplication app: applications) {
+            int debug = COSTS.get(app.getInference().getClass());
             cost +=  debug;
-        }
-        return cost;
+        }*/
+        return p.getInferenceApplicationCount();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class LowClutterStrategy implements Strategy, StrategyProvider {
         for (SpiderDiagram goal : p.getLastGoals().getGoals()) {
             if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
                 CompoundSpiderDiagram impl = (CompoundSpiderDiagram) goal;
-                heuristic += HeuristicUtils.metric(impl.getOperand(0), impl.getOperand(1));
+                heuristic += ProofAnalyser.clutterScore(impl.getOperand(0));
             } else {
                 throw new AutomaticProofException("The current goal is not an implication of conjunctions.");
             }

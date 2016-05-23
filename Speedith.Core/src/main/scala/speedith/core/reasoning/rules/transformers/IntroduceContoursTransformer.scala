@@ -4,7 +4,7 @@ package speedith.core.reasoning.rules.transformers
 import speedith.core.lang._
 import speedith.core.reasoning.RuleApplicationException
 import speedith.core.reasoning.args.{ContourArg, SubDiagramIndexArg}
-import speedith.core.reasoning.rules.util.AutomaticUtils
+import speedith.core.reasoning.rules.util.{ReasoningUtils, AutomaticUtils}
 
 import scala.collection.JavaConversions._
 /** @author Sven Linker [s.linker@brighton.ac.uk]
@@ -25,21 +25,14 @@ case class IntroduceContoursTransformer(target : SubDiagramIndexArg, contours : 
                          parents: java.util.ArrayList[CompoundSpiderDiagram],
                          childIndices: java.util.ArrayList[java.lang.Integer]): SpiderDiagram = {
     if (subDiagramIndex == diagramIndex) {
-      try {
         if ((contoursToAdd & psd.getAllContours).nonEmpty ) {
-          throw new RuleApplicationException("The contours to be introduced must not be contained in the target diagram.")
+          throw new TransformationException("The contours to be introduced must not be contained in the target diagram.")
         }
         EulerDiagrams.createPrimaryEulerDiagram(
-          AutomaticUtils.regionWithNewContours(psd.getShadedZones.toSet,contoursToAdd),
-          AutomaticUtils.regionWithNewContours(psd.getPresentZones,contoursToAdd)
+          ReasoningUtils.shadedRegionWithNewContours(psd.getShadedZones.toSet,contoursToAdd),
+          ReasoningUtils.regionWithNewContours(psd.getPresentZones,contoursToAdd)
         )
-      }
-      catch {
-        case e: Throwable =>
-          println(e)
-          e.printStackTrace()
-          throw e
-      }
+
     } else {
       null
     }

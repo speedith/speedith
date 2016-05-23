@@ -99,12 +99,12 @@ public class RegionTest {
                     ZoneTest.m_zone7,
                     ZoneTest.m_zone10});
         m_region2 = new Region(m_zones2);
-        m_zones3 = new TreeSet<Zone>(Arrays.asList(new Zone[]{ZoneTest.m_zone1,
-                    ZoneTest.m_zone3,
-                    ZoneTest.m_zone5,
-                    ZoneTest.m_zone6,
-                    ZoneTest.m_zone7,
-                    ZoneTest.m_zone10}));
+        m_zones3 = new TreeSet<>(Arrays.asList(new Zone[]{ZoneTest.m_zone1,
+                ZoneTest.m_zone3,
+                ZoneTest.m_zone5,
+                ZoneTest.m_zone6,
+                ZoneTest.m_zone7,
+                ZoneTest.m_zone10}));
         m_region3 = new Region(m_zones3);
         m_zones8 = Arrays.asList(new Zone[]{ZoneTest.m_zone1,
                     ZoneTest.m_zone2,
@@ -137,19 +137,19 @@ public class RegionTest {
         m_region5 = new Region((Collection<Zone>)null);
         m_region6 = new Region((TreeSet<Zone>)null);
         m_region7 = new Region((Collection<Zone>)null);
-        m_zones11 = new TreeSet<Zone>(Arrays.asList(new Zone[]{}));
+        m_zones11 = new TreeSet<>(Arrays.asList(new Zone[]{}));
         m_region11 = new Region(m_zones11);
         m_zones12 = Arrays.asList(new Zone[]{});
         m_region12 = new Region(m_zones12);
         
         // 4
-        m_zones9 = new TreeSet<Zone>(Arrays.asList(new Zone[]{ZoneTest.m_zone3,
-                    ZoneTest.m_zone5,
-                    ZoneTest.m_zone7}));
+        m_zones9 = new TreeSet<>(Arrays.asList(new Zone[]{ZoneTest.m_zone3,
+                ZoneTest.m_zone5,
+                ZoneTest.m_zone7}));
         m_region9 = new Region(m_zones9);
         
         // 5
-        m_zones10 = new TreeSet<Zone>(Arrays.asList(new Zone[]{ZoneTest.m_zone5}));
+        m_zones10 = new TreeSet<>(Arrays.asList(new Zone[]{ZoneTest.m_zone5}));
         m_region10 = new Region(m_zones10);
     }
 
@@ -252,7 +252,7 @@ public class RegionTest {
 
     @Test
     public void testHashSet() {
-        HashSet<Region> rgns = new HashSet<Region>();
+        HashSet<Region> rgns = new HashSet<>();
         rgns.add(m_region1);
         rgns.add(m_region2);
         rgns.add(m_region3);

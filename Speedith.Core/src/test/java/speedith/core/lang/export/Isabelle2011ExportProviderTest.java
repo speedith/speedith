@@ -111,7 +111,7 @@ public class Isabelle2011ExportProviderTest {
     }
 
     private <T extends RuleArg> SpiderDiagram assertInferenceStep(InferenceRuleProvider<T> inferenceRule, T ruleArg, SpiderDiagram diagram, String expectedIsaFormula) throws RuleApplicationException, ExportException {
-        return assertInferenceStep(inferenceRule.getInferenceRuleName(), ruleArg, diagram, expectedIsaFormula);
+        return assertInferenceStep(inferenceRule.getInferenceName(), ruleArg, diagram, expectedIsaFormula);
     }
 
     private void assertFormulaEquals(String expectedIsaFormula, String isaFormula) {

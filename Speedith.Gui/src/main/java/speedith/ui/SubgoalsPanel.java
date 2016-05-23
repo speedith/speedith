@@ -51,28 +51,37 @@ public class SubgoalsPanel extends javax.swing.JPanel {
      * Creates new form SubgoalsPanel
      */
     public SubgoalsPanel() {
-        this(null, null, null);
+        this(null, null, null, Color.GRAY);
     }
 
     public SubgoalsPanel(Goals goals) {
-        this(goals, null, null);
+        this(goals, null, null, Color.GRAY);
     }
 
     public SubgoalsPanel(String goalTitle) {
-        this(null, goalTitle, null);
+        this(null, goalTitle, null, Color.GRAY);
     }
 
     public SubgoalsPanel(String goalTitle, String stepDescription) {
-        this(null, goalTitle, stepDescription);
+        this(null, goalTitle, stepDescription, Color.GRAY);
     }
 
-    public SubgoalsPanel(Goals goals, String title, String stepDescription) {
+    public SubgoalsPanel(String goalTitle, String stepDescription, Color color) {
+        this(null, goalTitle, stepDescription, color);
+    }
+
+
+    public SubgoalsPanel(Goals goals, String title, String stepDescription, Color color) {
+        this.color = color;
         initComponents();
         initTitleLabel(title);
         initStepDescriptionLabel(stepDescription);
         putGoalPanels(goals);
+        setTitleBackground(color);
     }
     //</editor-fold>
+
+    private Color color;
 
     //<editor-fold defaultstate="collapsed" desc="Generated Code">
     /**
@@ -187,4 +196,6 @@ public class SubgoalsPanel extends javax.swing.JPanel {
         this.pnlTitle.setBackground(backgroundColour);
     }
     // </editor-fold>
+
+    public Color getColor() { return  color;}
 }

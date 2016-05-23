@@ -1,0 +1,15 @@
+BinarySD {
+	 operator = "op -->",
+	 arg1 = BinarySD {
+	      operator = "op &", 
+	      arg1 = BinarySD {
+	      	   operator = "op &",
+		   arg1 = PrimarySD {spiders = [], habitats = [], sh_zones = [ (["A","E"], [])], present_zones = [([], ["A", "E"]), (["A"], ["E"]), (["E"], ["A"])]},
+		   arg2 = BinarySD {
+	      	   	operator = "op &",
+	      	   	arg1 = PrimarySD {spiders = [], habitats = [], sh_zones = [(["B"], ["E"])], present_zones = [([], ["B","E"]),(["B","E"], []),(["B","E"], [])]},
+		   	arg2 = PrimarySD {spiders = [], habitats = [], sh_zones = [(["C"], ["D"])], present_zones = [([], ["C", "D"]), (["D"], ["C"]), (["D","C"], [])]}}},
+	      arg2 =  PrimarySD {spiders = [], habitats = [], sh_zones = [(["E","D"], [])], present_zones = [([], ["D", "E"]), (["D"], ["E"]), ([ "E"], ["D"])]}
+		   },
+	arg2 = PrimarySD {spiders = [], habitats = [], sh_zones = [ (["A","B","C"], [])], present_zones = [ (["A","B","C"], []),([], ["A", "B","C"]), (["A"], ["B","C"]), (["B"], ["A","C"]), (["C"], ["A","B"]), (["A","B"], ["C"]), (["A","C"], ["B"]), (["C","B"], ["A"])]}
+}	

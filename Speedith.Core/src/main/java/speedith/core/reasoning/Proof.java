@@ -27,7 +27,9 @@
 package speedith.core.reasoning;
 
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.tactical.TacticApplicationException;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -35,7 +37,7 @@ import java.util.List;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public interface Proof {
+public interface Proof extends Serializable {
 
     /**
      * Applies the rule on the {@link Proof#getLastGoals()  current goals} (if
@@ -47,7 +49,7 @@ public interface Proof {
      * @throws RuleApplicationException thrown if the rule could not be applied
      * for any reason.
      */
-    <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<TRuleArg> rule) throws RuleApplicationException;
+    <TRuleArg extends RuleArg> InferenceApplicationResult applyRule(Inference<TRuleArg, ? extends InferenceApplicationResult> rule, RuleApplicationType type, String typeSpecifier) throws RuleApplicationException, TacticApplicationException;
 
     /**
      * Applies the rule with the given argument on the {@link Proof#getLastGoals()  current goals}
@@ -62,7 +64,7 @@ public interface Proof {
      * @throws RuleApplicationException thrown if the rule could not be applied
      * for any reason (e.g., if the proof is finished).
      */
-    <TRuleArg extends RuleArg> RuleApplicationResult applyRule(InferenceRule<? super TRuleArg> rule, TRuleArg args) throws RuleApplicationException;
+    <TRuleArg extends RuleArg> InferenceApplicationResult applyRule(Inference<? super TRuleArg, ? extends InferenceApplicationResult> rule, TRuleArg args, RuleApplicationType type, String typeSpecifier) throws RuleApplicationException,TacticApplicationException;
 
     /**
      * Returns the subgoals at the given index. At index 0 are the initial
@@ -114,7 +116,7 @@ public interface Proof {
      *
      * @return an unmodifiable list of rule applications in this proof.
      */
-    List<RuleApplication> getRuleApplications();
+    List<InferenceApplication> getInferenceApplications();
 
     /**
      * Returns the rule application at the given index.
@@ -122,14 +124,14 @@ public interface Proof {
      * @param index the index of the rule application information to get.
      * @return the rule application at the given index.
      */
-    RuleApplication getRuleApplicationAt(int index);
+    InferenceApplication getInferenceApplicationAt(int index);
 
     /**
      * Returns the number of rule application in this proof.
      *
      * @return the number of rule application in this proof.
      */
-    int getRuleApplicationCount();
+    int getInferenceApplicationCount();
 
     /**
      * Indicates whether the proof is finished (i.e. whether there are any goals
@@ -150,4 +152,14 @@ public interface Proof {
      */
     boolean undoStep();
 
+
+    /**
+     * Creates a version of the this Proof object where all tactic applications
+     * are replaced with the applications of the rules used in the tactic.
+     *
+     * The created proofs may be very long!
+     *
+     * @return a flattened version of this proof
+     */
+    Proof createFlattenedProof() throws TacticApplicationException;
 }

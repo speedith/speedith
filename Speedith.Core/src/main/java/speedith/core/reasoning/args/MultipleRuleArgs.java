@@ -28,6 +28,7 @@ package speedith.core.reasoning.args;
 
 import speedith.core.reasoning.RuleApplicationException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -38,8 +39,9 @@ import static java.util.Arrays.asList;
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class MultipleRuleArgs implements RuleArg, Iterable<RuleArg> {
+public class MultipleRuleArgs implements RuleArg, Iterable<RuleArg>, Serializable {
 
+    private static final long serialVersionUID = -2168028613782815627L;
     private final ArrayList<RuleArg> ruleArgs;
 
     public MultipleRuleArgs(List<? extends RuleArg> ruleArgs) {

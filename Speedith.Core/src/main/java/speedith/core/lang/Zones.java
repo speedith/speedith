@@ -6,6 +6,7 @@ public final class Zones {
 
     public static ArrayList<Zone> allZonesForContours(String... contours) {
         ArrayList<Zone> powerRegion = new ArrayList<>();
+        powerRegion.add(new Zone());
         for (String contour : contours) {
             addContourToPowerRegion(powerRegion, contour);
         }

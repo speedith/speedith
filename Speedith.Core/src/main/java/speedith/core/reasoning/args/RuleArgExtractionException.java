@@ -33,6 +33,8 @@ package speedith.core.reasoning.args;
  */
 public class RuleArgExtractionException extends Exception {
 
+    private static final long serialVersionUID = -8934564627194542289L;
+
     public RuleArgExtractionException(Throwable cause) {
         super(cause);
     }

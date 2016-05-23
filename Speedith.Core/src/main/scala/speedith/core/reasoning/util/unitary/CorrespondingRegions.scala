@@ -25,7 +25,8 @@ case class CorrespondingRegions(sourceDiagram: PrimarySpiderDiagram, destination
     } else if (sourceDiagram.getAllContours.subsetOf(destinationDiagram.getAllContours)) {
       getRegionWhenSourceContoursAreSubset(regionInSourceDiagram)
     } else {
-      throw new UnsupportedOperationException("Cannot calculate corresponding regions for diagrams that have distinct contours.")
+      getRegionGeneral(regionInSourceDiagram)
+//      throw new UnsupportedOperationException("Cannot calculate corresponding regions for diagrams that have distinct contours.")
     }
     new Region(withoutEmptyZones(rawCorrespondingRegion))
   }
@@ -49,7 +50,7 @@ case class CorrespondingRegions(sourceDiagram: PrimarySpiderDiagram, destination
   private def withoutEmptyZones(rawCorrespondingRegion: mutable.Buffer[Zone]): mutable.Buffer[Zone] = {
     rawCorrespondingRegion.filterNot {
       destinationZone =>
-        destinationDiagram.getShadedZones.contains(destinationZone) &&
+        (destinationDiagram.getShadedZones -- destinationDiagram.getPresentZones ).contains(destinationZone) &&
           !destinationDiagram.getHabitats.exists {
             case (spider, habitat) => habitat.zones.contains(destinationZone)
           }
@@ -68,6 +69,23 @@ case class CorrespondingRegions(sourceDiagram: PrimarySpiderDiagram, destination
           })
 
     }
+  }
+
+  private def getRegionGeneral(regionInSourceDiagram: Region) : mutable.Buffer[Zone] = {
+    val contoursOnlyInSource = sourceDiagram.getAllContours -- destinationDiagram.getAllContours
+    val contoursOnlyInTarget = destinationDiagram.getAllContours -- sourceDiagram.getAllContours
+    val sourceExpansion = ReasoningUtils.expand(regionInSourceDiagram.zones, contoursOnlyInTarget)
+    val sourceMissing = ReasoningUtils.expand((sourceDiagram.getShadedZones -- sourceDiagram.getPresentZones).toSet, contoursOnlyInTarget)
+    val targetMissing = ReasoningUtils.expand((destinationDiagram.getShadedZones -- destinationDiagram.getShadedZones).toSet, contoursOnlyInSource)
+    allPossibleZonesInDestination.filter( {
+      destinationZone =>
+        ReasoningUtils.expand(destinationZone, contoursOnlyInSource).forall( ex =>
+          (sourceExpansion ++ sourceMissing ++ targetMissing).exists {
+            sourceZone =>
+              ex.equals(sourceZone)
+          }
+        )
+    })
   }
 
   private def assertContoursOfRegionMatchContoursInDiagram(regionInSourceDiagram: Region, diagram: PrimarySpiderDiagram) {

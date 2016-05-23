@@ -46,8 +46,8 @@ public class ProofTraceEx {
     // can return their proof traces without the fear of them being modified).
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private Goals initialGoals;
-    private ArrayList<RuleApplication> inferenceRules;
-    private ArrayList<RuleApplicationResult> applicationResults;
+    private ArrayList<InferenceApplication> inferenceRules;
+    private ArrayList<InferenceApplicationResult> applicationResults;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
@@ -59,8 +59,8 @@ public class ProofTraceEx {
      */
     public ProofTraceEx(Goals initialGoals) {
         this.initialGoals = initialGoals;
-        inferenceRules = new ArrayList<RuleApplication>();
-        applicationResults = new ArrayList<RuleApplicationResult>();
+        inferenceRules = new ArrayList<>();
+        applicationResults = new ArrayList<>();
     }
     // </editor-fold>
 
@@ -106,7 +106,7 @@ public class ProofTraceEx {
         } else if (__isAppResultsListEmpty()) {
             return null;
         } else {
-            RuleApplicationResult appResult = applicationResults.get(index - 1);
+            InferenceApplicationResult appResult = applicationResults.get(index - 1);
             if (appResult == null) {
                 return null;
             }
@@ -123,15 +123,15 @@ public class ProofTraceEx {
     }
 
     public ProofTraceEx applyRule(InferenceRule rule, RuleArg args) throws RuleApplicationException {
-        return applyRule(new RuleApplication(rule, args));
+        return applyRule(new InferenceApplication(rule, args, RuleApplicationType.INTERACTIVE, ""));
     }
 
-    public ProofTraceEx applyRule(RuleApplication ruleApplication) throws RuleApplicationException {
-        if (ruleApplication == null) {
-            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "ruleApplication"));
+    public ProofTraceEx applyRule(InferenceApplication inferenceApplication) throws RuleApplicationException {
+        if (inferenceApplication == null) {
+            throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "inferenceApplication"));
         }
-        RuleApplicationResult appResult = ruleApplication.applyTo(getLastGoals());
-        inferenceRules.add(ruleApplication);
+        InferenceApplicationResult appResult = inferenceApplication.applyTo(getLastGoals());
+        inferenceRules.add(inferenceApplication);
         applicationResults.add(appResult);
         return this;
     }

@@ -40,8 +40,8 @@ lemma test5: "(\<exists>s1 s2 s3. distinct[s1, s2, s3] \<and> s1 \<in> A \<and> 
 (* Spider Diagram translation test. *)
 lemma test3: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
               \<longrightarrow> (\<exists>t1 t2. distinct[t1, t2] \<and> t1 \<in> A \<and> t2 \<in> B) \<and> A \<inter> B \<noteq> {}"
-  apply(rule impI)
-  apply(rule conjI)
+  apply(inference impI)
+  apply(inference conjI)
 
 
   oops
@@ -211,7 +211,7 @@ lemma "MixRVars [About[Humans, Mortal]] ''NatLang: All humans are mortal''
        \<and> MixRVars [About[Greeks, Humans]] ''NatLang: All Greeks are human.''
        \<and> g \<in> Greeks
        \<longrightarrow> g \<in> Mortal"
-  apply(rule impI)
+  apply(inference impI)
   apply(erule conjE)+
   apply(drule Inference4 Inference5)+
   by(auto)
@@ -222,7 +222,7 @@ lemma "MixRVars [About[Mortal, Greeks]] ''NatLang: All humans are mortal''
        \<and> MixRVars [About[Humans, Mortal]] ''NatLang: All Greeks are human.''
        \<and> h \<in> Humans
        \<longrightarrow> h \<in> Greeks"
-  apply(rule impI)
+  apply(inference impI)
   apply(erule conjE)+
   apply(drule Inference4 Inference5)+
   by(auto)
@@ -268,11 +268,11 @@ lemma "MixRVars [About[(0::int), 1]] ''x is greater than y'' \<Longrightarrow> (
 section {* Backward and forward reasoning in MixR *}
 
 lemma backward_step:
-      assumes premise: "\<lbrakk>A; B'\<rbrakk> \<Longrightarrow> B" and rule: "B' \<Longrightarrow> B" and rest: "A \<Longrightarrow> B'"
+      assumes premise: "\<lbrakk>A; B'\<rbrakk> \<Longrightarrow> B" and inference: "B' \<Longrightarrow> B" and rest: "A \<Longrightarrow> B'"
       shows concl:     "A \<Longrightarrow> B"
 proof -
   assume a: "A"
-  show ?thesis using a premise rule rest
+  show ?thesis using a premise inference rest
     by auto
 qed
 

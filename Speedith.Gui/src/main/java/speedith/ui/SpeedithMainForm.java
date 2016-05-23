@@ -32,41 +32,41 @@
  */
 package speedith.ui;
 
-import scala.Function1;
-import scala.collection.Seq;
+import scala.collection.JavaConversions;
+//import scala.collection.immutable.Set;
 import speedith.core.lang.*;
 import speedith.core.lang.reader.ReadingException;
 import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
-import speedith.core.reasoning.automatic.AutomaticProofException;
+import speedith.core.reasoning.automatic.*;
 import speedith.core.reasoning.rules.AddFeet;
 import speedith.core.reasoning.rules.SplitSpiders;
+import speedith.core.reasoning.rules.util.AutomaticUtils;
+import speedith.core.reasoning.rules.util.HeuristicUtils;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
 import speedith.core.reasoning.tactical.TacticApplicationException;
-import speedith.core.reasoning.tactical.euler.BasicTacticals;
-import speedith.core.reasoning.tactical.euler.SimpleTacticals;
-import speedith.core.reasoning.tactical.euler.SingleRuleTacticals;
-import speedith.core.reasoning.tactical.euler.Tactics;
+import speedith.core.reasoning.tactical.TacticProvider;
+import speedith.core.reasoning.tactical.Tactics;
+import speedith.ui.automatic.*;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
+import speedith.ui.tactics.InteractiveTacticApplication;
 import spiderdrawer.ui.MainForm;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.awt.event.*;
+import java.io.*;
+import java.net.URL;
 import java.util.*;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -88,12 +88,23 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     "SpeedithIconVennDiagram-128.png"
   };
 
+
+  private ExecutorService service;
+  private AutomaticProverThread automaticProof;
+  private java.util.List<ProofChangedListener> proofChangedListeners;
+
+  private Map<Boolean, Icon> proofFoundIcon;
   private DiagramType activeDiagram;
+  private Boolean backgroundProofSearch;
+  private Boolean showLowLevelTactics;
 
   private JMenuItem goalSpiderDrawerInputMenuItem;
   private javax.swing.JMenu drawMenu;
   private javax.swing.JMenuItem openMenuItem;
   private javax.swing.JMenuItem saveMenuItem;
+  private javax.swing.JMenuItem openProofMenuItem;
+  private javax.swing.JMenuItem saveProofMenuItem;
+
   private javax.swing.JMenuItem exitMenuItem;
   private javax.swing.JMenuItem settingsMenuItem;
   private javax.swing.JMenu fileMenu;
@@ -101,28 +112,60 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenuItem useSdExample2MenuItem;
   private javax.swing.JMenuItem useSdExample3MenuItem;
   private javax.swing.JLabel lblAppliedRules;
-  private javax.swing.JList lstAppliedRules;
+  private javax.swing.JList<InfRuleListItem> lstAppliedRules;
+  private javax.swing.JLabel lblTactics;
+  private javax.swing.JList<TacticListItem> lstTactics;
   private javax.swing.JMenuBar menuBar;
   private javax.swing.JMenuItem goalTextInputMenuItem;
   private javax.swing.JPanel pnlRulesSidePane;
   private speedith.ui.ProofPanel proofPanel1;
   private javax.swing.JMenu proofMenu;
   private javax.swing.JMenuItem cropProof;
+  private javax.swing.JMenuItem inspectProof;
   private javax.swing.JScrollPane scrlPnlAppliedRules;
-  private javax.swing.JMenu reasoningMenu;
-  private javax.swing.JMenuItem proveAny;
-  private javax.swing.JMenuItem proveFromHere;
-  private javax.swing.JFileChooser fileChooser;
-  private javax.swing.JMenu tacticsMenu;
+  private javax.swing.JScrollPane scrlPnlTactics;
+
+
+  private javax.swing.JFileChooser goalFileChooser;
+  private javax.swing.JFileChooser proofFileChooser;
+  private javax.swing.JMenu openMenu;
+  private javax.swing.JMenu saveMenu;
+  private javax.swing.JMenuItem analyseItem;
+  private javax.swing.JMenuItem heuristicItem;
+
+  private javax.swing.JToolBar autoToolBar;
+  private javax.swing.JButton replaceWithGenerated;
+  private javax.swing.JButton cancelAutoProver;
+  private javax.swing.JLabel proofFoundIndicator;
+  private javax.swing.JButton startAutoProver;
+  private javax.swing.JButton extendByOneStep;
 
   /**
    * Creates new form SpeedithMainForm
    */
   public SpeedithMainForm() {
-    readDiagramType();
+    readPreferences();
+    proofFoundIcon = new HashMap<>(2);
+    URL onUrl = SpeedithMainForm.class.getResource("lightbulb.png");
+    if (onUrl != null) {
+      ImageIcon onIcon = new ImageIcon(onUrl);
+      proofFoundIcon.put(Boolean.TRUE, onIcon);
+    } else {
+      throw new RuntimeException("Lightbulb not found");
+    }
+    URL offUrl = SpeedithMainForm.class.getResource("lightbulb_off.png");
+    if (offUrl != null) {
+      ImageIcon offIcon = new ImageIcon(offUrl);
+      proofFoundIcon.put(Boolean.FALSE, offIcon);
+    } else {
+      throw new RuntimeException("Lightbulb_off not found");
+    }
+
     initComponents();
+
+    proofChangedListeners = new ArrayList<>();
     try {
-      ArrayList<Image> icons = new ArrayList<Image>();
+      ArrayList<Image> icons = new ArrayList<>();
       // Set the icon of this window:
       for (String path : SpeedithIcons) {
         InputStream imgStream = this.getClass().getResourceAsStream(path);
@@ -132,9 +175,102 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     } catch (IOException ex) {
       Logger.getLogger(SpeedithMainForm.class.getName()).log(Level.WARNING, "Speedith's icons could not have been loaded.", ex);
     }
+
+
+    initThreading();
   }
 
-  private void readDiagramType() {
+  private void initThreading() {
+    service = Executors.newFixedThreadPool(1);
+    this.addWindowListener(new WindowListener() {
+      @Override
+      public void windowOpened(WindowEvent windowEvent) {
+
+      }
+
+      @Override
+      public void windowClosing(WindowEvent windowEvent) {
+        if (automaticProof != null) {
+          automaticProof.cancel(true);
+        }
+        if (service != null) {
+          service.shutdown();
+        }
+      }
+
+      @Override
+      public void windowClosed(WindowEvent windowEvent) {
+
+      }
+
+      @Override
+      public void windowIconified(WindowEvent windowEvent) {
+
+      }
+
+      @Override
+      public void windowDeiconified(WindowEvent windowEvent) {
+
+      }
+
+      @Override
+      public void windowActivated(WindowEvent windowEvent) {
+
+      }
+
+      @Override
+      public void windowDeactivated(WindowEvent windowEvent) {
+
+      }
+    });
+    this.addProofChangedListener(new ProofChangedListener() {
+      @Override
+      public void interactiveRuleApplied(InteractiveRuleAppliedEvent e) {
+        restartAutomatedReasoner();
+      }
+
+      @Override
+      public void tacticApplied(TacticAppliedEvent e) {
+        restartAutomatedReasoner();
+      }
+
+      @Override
+      public void proofReplaced(ProofReplacedEvent e) {
+        System.out.println("Proof replaced");
+        disableAutomaticProofUI();
+        if (proofPanel1.isFinished()) {
+          cancelAutoProver.setEnabled(false);
+          startAutoProver.setEnabled(false);
+          extendByOneStep.setEnabled(false);
+          replaceWithGenerated.setEnabled(false);
+          proofFoundIndicator.setText("Idle");
+        } else {
+          restartAutomatedReasoner();
+        }
+      }
+
+      @Override
+      public void proofReduced(ProofReducedEvent e) {
+        restartAutomatedReasoner();
+      }
+
+      @Override
+      public void proofExtendedByStep(ProofExtendedByStepEvent e) {
+        System.out.println("Proof extended by a single step");
+        if (proofPanel1.isFinished()) {
+          disableAutomaticProofUI();
+          cancelAutoProver.setEnabled(false);
+          startAutoProver.setEnabled(false);
+          extendByOneStep.setEnabled(false);
+          replaceWithGenerated.setEnabled(false);
+          proofFoundIndicator.setText("Idle");
+        }
+      }
+    });
+
+  }
+
+  private void readPreferences() {
     Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
     String selected = prefs.get(InferenceRules.diagram_type_preference, null);
     if (selected != null) {
@@ -143,7 +279,21 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       // startup with spider diagrams as the default.
       activeDiagram = DiagramType.SpiderDiagram;
     }
+    selected = prefs.get(AutomaticProverThread.background_preference, null);
+    if (selected != null) {
+      backgroundProofSearch = Boolean.valueOf(selected);
+    } else {
+      backgroundProofSearch = Boolean.FALSE;
+    }
+
+    selected = prefs.get(Tactics.level_preference, null);
+    if (selected != null) {
+      showLowLevelTactics = Boolean.valueOf(selected);
+    } else {
+      showLowLevelTactics = Boolean.FALSE;
+    }
   }
+
 
   @SuppressWarnings("unchecked")
   private void initComponents() {
@@ -155,12 +305,21 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     lblAppliedRules = new javax.swing.JLabel();
     scrlPnlAppliedRules = new javax.swing.JScrollPane();
     lstAppliedRules = new javax.swing.JList();
+    lblTactics = new javax.swing.JLabel();
+    lstTactics = new javax.swing.JList<>();
+    scrlPnlTactics = new javax.swing.JScrollPane();
     menuBar = new javax.swing.JMenuBar();
     fileMenu = new javax.swing.JMenu();
+    openMenu = new javax.swing.JMenu();
+    saveMenu = new javax.swing.JMenu();
+
     settingsMenuItem = new javax.swing.JMenuItem();
     exitMenuItem = new javax.swing.JMenuItem();
     openMenuItem = new javax.swing.JMenuItem();
     saveMenuItem = new javax.swing.JMenuItem();
+    openProofMenuItem = new javax.swing.JMenuItem();
+    saveProofMenuItem = new javax.swing.JMenuItem();
+
     drawMenu = new javax.swing.JMenu();
     goalSpiderDrawerInputMenuItem = new javax.swing.JMenuItem();
     goalTextInputMenuItem = new javax.swing.JMenuItem();
@@ -169,12 +328,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     useSdExample3MenuItem = new javax.swing.JMenuItem();
     proofMenu = new javax.swing.JMenu();
     cropProof = new javax.swing.JMenuItem();
-    reasoningMenu = new javax.swing.JMenu();
-    proveAny = new javax.swing.JMenuItem();
-    proveFromHere = new javax.swing.JMenuItem();
-    tacticsMenu = new javax.swing.JMenu();
-    //vennify = new javax.swing.JMenuItem();
-    //devennify = new javax.swing.JMenuItem();
+    analyseItem = new javax.swing.JMenuItem();
+    heuristicItem = new javax.swing.JMenuItem();
+    inspectProof = new javax.swing.JMenuItem();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("Speedith");
@@ -198,6 +354,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
     pnlRulesSidePane.add(lblAppliedRules, gridBagConstraints);
 
+    lstAppliedRules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     lstAppliedRules.setModel(getRulesList());
     lstAppliedRules.addMouseListener(new java.awt.event.MouseAdapter() {
       public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -205,7 +362,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       }
     });
     scrlPnlAppliedRules.setViewportView(lstAppliedRules);
-
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 1;
@@ -216,49 +372,205 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
     pnlRulesSidePane.add(scrlPnlAppliedRules, gridBagConstraints);
 
+    lblTactics.setLabelFor(lstTactics);
+    lblTactics.setText("Tactics");
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 0;
+    gridBagConstraints.gridy = 2;
+    gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+    gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+    gridBagConstraints.weightx = 1.0;
+    gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+    pnlRulesSidePane.add(lblTactics, gridBagConstraints);
+
+    lstTactics.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    lstTactics.setModel(getTacticsList());
+    lstTactics.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        onTacticClicked(e);
+      }
+
+    });
+    scrlPnlTactics.setViewportView(lstTactics);
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 0;
+    gridBagConstraints.gridy = 3;
+    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+    gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+    gridBagConstraints.weightx = 1.0;
+    gridBagConstraints.weighty = 1.0;
+    gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
+    pnlRulesSidePane.add(scrlPnlTactics,gridBagConstraints);
     mainSplitPane.setRightComponent(pnlRulesSidePane);
 
+    initMenuBar();
+
+    initToolBar();
+
+    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+    getContentPane().setLayout(layout);
+    layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(autoToolBar)
+                    .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 995, Short.MAX_VALUE)
+    );
+    layout.setVerticalGroup(
+            layout.createSequentialGroup()
+                    .addComponent(autoToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                            GroupLayout.PREFERRED_SIZE)
+                    .addComponent(mainSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+    );
+
+
+    goalFileChooser = new JFileChooser();
+    goalFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Speedith diagram files", "sdt"));
+    goalFileChooser.setMultiSelectionEnabled(false);
+
+    proofFileChooser = new JFileChooser();
+    proofFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Speedith proof files", "prf"));
+    proofFileChooser.setMultiSelectionEnabled(false);
+
+    pack();
+  }// </editor-fold>//GEN-END:initComponents
+
+
+
+  private void initToolBar() {
+    autoToolBar = new JToolBar();
+    startAutoProver = new javax.swing.JButton();
+    replaceWithGenerated = new javax.swing.JButton();
+    cancelAutoProver = new javax.swing.JButton();
+    extendByOneStep = new javax.swing.JButton();
+
+    startAutoProver.setText("Start");
+    startAutoProver.setEnabled(false);
+    startAutoProver.setToolTipText("Start automated proof search");
+    startAutoProver.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onProveFromHere();
+      }
+    });
+    replaceWithGenerated.setText("Solve");
+    replaceWithGenerated.setEnabled(false);
+    replaceWithGenerated.setToolTipText("Extend the current proof by the automatic prover");
+    replaceWithGenerated.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        extendWithAutomaticProof();
+      }
+    });
+
+    cancelAutoProver.setText("Cancel");
+    cancelAutoProver.setEnabled(false);
+    cancelAutoProver.setToolTipText("Cancel the automatic proof attempt");
+    cancelAutoProver.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        cancelAutomaticProof();
+      }
+    });
+
+    extendByOneStep.setText("Hint");
+    extendByOneStep.setEnabled(false);
+    extendByOneStep.setToolTipText("Show a possible next proof step");
+    extendByOneStep.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        extendByOneAutomatedStep();
+      }
+    });
+
+    proofFoundIndicator = new JLabel();
+    proofFoundIndicator.setIcon(proofFoundIcon.get(Boolean.TRUE));
+    proofFoundIndicator.setDisabledIcon(proofFoundIcon.get(Boolean.FALSE));
+    proofFoundIndicator.setEnabled(false);
+    proofFoundIndicator.setToolTipText("Lights up, if a proof has been found automatically");
+    proofFoundIndicator.setText("Idle");
+
+    JLabel description = new JLabel();
+    description.setText("Automatic Prover:");
+
+    autoToolBar.addSeparator();
+    autoToolBar.add(description);
+    autoToolBar.addSeparator();
+    autoToolBar.add(startAutoProver);
+    autoToolBar.add(cancelAutoProver);
+    autoToolBar.add(extendByOneStep);
+    autoToolBar.add(replaceWithGenerated);
+    autoToolBar.add(proofFoundIndicator);
+    autoToolBar.setFloatable(false);
+  }
+
+
+
+  private void initMenuBar() {
     fileMenu.setMnemonic('F');
     fileMenu.setText("File");
 
-    openMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-    openMenuItem.setMnemonic('O');
-    openMenuItem.setText("Open Goal");
+    openMenu.setText("Load");
+    fileMenu.add(openMenu);
+    saveMenu.setText("Save");
+    fileMenu.add(saveMenu);
+
+    openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK));
+    openMenuItem.setMnemonic('L');
+    openMenuItem.setText("Load Goal");
     openMenuItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
-        onOpen(evt);
+        onOpen();
       }
     });
-    fileMenu.add(openMenuItem);
+    openMenu.add(openMenuItem);
 
-    saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+    saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
     saveMenuItem.setMnemonic('S');
     saveMenuItem.setText("Save selected Subgoal");
     saveMenuItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
-        onSave(evt);
+        onSave();
       }
     });
-    fileMenu.add(saveMenuItem);
+    saveMenu.add(saveMenuItem);
 
-    settingsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
+
+    openProofMenuItem.setText("Load Proof");
+    openProofMenuItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onOpenProof();
+      }
+    });
+    openMenu.add(openProofMenuItem);
+
+    saveProofMenuItem.setText("Save Proof");
+    saveProofMenuItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        onSaveProof();
+      }
+    });
+    saveMenu.add(saveProofMenuItem);
+
+    settingsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
     settingsMenuItem.setMnemonic('P');
     settingsMenuItem.setText("Preferences");
     settingsMenuItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
-        onSettings(evt);
+        onSettings();
       }
     });
     fileMenu.add(settingsMenuItem);
 
-    exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+    exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
     exitMenuItem.setMnemonic('x');
     exitMenuItem.setText("Exit");
-    exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
+    exitMenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
         exitMenuItemActionPerformed(evt);
       }
     });
@@ -270,49 +582,49 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     drawMenu.setText("Draw");
 
     goalSpiderDrawerInputMenuItem.setText("Use SpiderDrawer"); // NOI18N
-    goalSpiderDrawerInputMenuItem.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        onSpiderDrawerClicked(evt);
+    goalSpiderDrawerInputMenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        onSpiderDrawerClicked();
       }
     });
     drawMenu.add(goalSpiderDrawerInputMenuItem);
 
-    goalTextInputMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK));
-    goalTextInputMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("speedith/i18n/strings").getString("MAIN_FORM_TEXT_INPUT_MNEMONIC").charAt(0));
-    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("speedith/i18n/strings"); // NOI18N
+    goalTextInputMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_MASK));
+    goalTextInputMenuItem.setMnemonic(ResourceBundle.getBundle("speedith/i18n/strings").getString("MAIN_FORM_TEXT_INPUT_MNEMONIC").charAt(0));
+    ResourceBundle bundle = ResourceBundle.getBundle("speedith/i18n/strings"); // NOI18N
     goalTextInputMenuItem.setText(bundle.getString("MAIN_FORM_TEXT_INPUT")); // NOI18N
-    goalTextInputMenuItem.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
+    goalTextInputMenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
         onTextInputClicked(evt);
       }
     });
     drawMenu.add(goalTextInputMenuItem);
 
-    useSdExample1MenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.CTRL_MASK));
+    useSdExample1MenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_MASK));
     useSdExample1MenuItem.setMnemonic(i18n("MAIN_FORM_USE_EXAMPLE1_MNEMONIC").charAt(0));
     useSdExample1MenuItem.setText(i18n("MAIN_FORM_USE_EXAMPLE1")); // NOI18N
-    useSdExample1MenuItem.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
+    useSdExample1MenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
         onExample1(evt);
       }
     });
     drawMenu.add(useSdExample1MenuItem);
 
-    useSdExample2MenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.CTRL_MASK));
+    useSdExample2MenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_MASK));
     useSdExample2MenuItem.setMnemonic(i18n("MAIN_FORM_USE_EXAMPLE2_MNEMONIC").charAt(0));
     useSdExample2MenuItem.setText(i18n("MAIN_FORM_USE_EXAMPLE2")); // NOI18N
-    useSdExample2MenuItem.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
+    useSdExample2MenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
         onExample2(evt);
       }
     });
     drawMenu.add(useSdExample2MenuItem);
 
-    useSdExample3MenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.CTRL_MASK));
+    useSdExample3MenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_MASK));
     useSdExample3MenuItem.setMnemonic(i18n("MAIN_FORM_USE_EXAMPLE3_MNEMONIC").charAt(0));
     useSdExample3MenuItem.setText(i18n("MAIN_FORM_USE_EXAMPLE3")); // NOI18N
-    useSdExample3MenuItem.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
+    useSdExample3MenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
         onExample3(evt);
       }
     });
@@ -323,183 +635,274 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     proofMenu.setMnemonic('P');
     proofMenu.setText("Proof");
 
-    cropProof.setText("Reduce Proof to selected Subgoal");
+    cropProof.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
+    cropProof.setMnemonic('R');
+    cropProof.setText("Reduce to selected Subgoal");
     cropProof.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
-        onCropProof(evt);
+        onCropProof();
       }
     });
     proofMenu.add(cropProof);
+
+    analyseItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
+    analyseItem.setMnemonic('n');
+    analyseItem.setText("Analyse");
+    analyseItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        analyseProof();
+      }
+    });
+    proofMenu.add(analyseItem);
+
+    heuristicItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_MASK));
+    heuristicItem.setText("Compute Basic Heuristic");
+    heuristicItem.setMnemonic('H');
+    heuristicItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        onComputeHeuristic();
+      }
+    });
+    proofMenu.add(heuristicItem);
+
+    inspectProof.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
+    inspectProof.setText("Inspect");
+    inspectProof.setMnemonic('i');
+    inspectProof.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        onInspectProof();
+      }
+    });
+    proofMenu.add(inspectProof);
+
     menuBar.add(proofMenu);
 
-    reasoningMenu.setMnemonic('A');
-    reasoningMenu.setText("Auto");
-
-    proveAny.setText("Prove");
-    proveAny.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent evt) {
-        onProveAny(evt);
-      }
-    });
-    reasoningMenu.add(proveAny);
-
-    proveFromHere.setText("Prove from the current state");
-    proveFromHere.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent evt) {
-        onProveFromHere(evt);
-      }
-    });
-    reasoningMenu.add(proveFromHere);
-    menuBar.add(reasoningMenu);
-
-    tacticsMenu.setText("Tactics");
-    JMenu tacticSubmenu = new javax.swing.JMenu();
-    tacticSubmenu.setText("Apply rule tactic");
-    Method[] tactics = SingleRuleTacticals.class.getDeclaredMethods();
-    Arrays.sort(tactics, new Comparator<Method>() {
-      @Override
-      public int compare(Method method, Method t1) {
-        return method.getName().compareTo(t1.getName());
-      }
-    });
-    for (final Method tactic: tactics  ) {
-      JMenuItem tacticButton = new javax.swing.JMenuItem();
-      tacticButton.setText(tactic.getName());
-      tacticButton.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-          applyTactic(tactic);
-        }
-      });
-      tacticSubmenu.add(tacticButton);
-      tacticsMenu.add(tacticSubmenu);
-
-    }
-
-    Method[] tacticals =    SimpleTacticals.class.getDeclaredMethods();
-    Arrays.sort(tacticals, new Comparator<Method>() {
-      @Override
-      public int compare(Method method, Method t1) {
-        return method.getName().compareTo(t1.getName());
-      }
-    });
-    for (final Method tactical:  tacticals) {
-      JMenuItem tacticalButton = new javax.swing.JMenuItem();
-      tacticalButton.setText(tactical.getName());
-      tacticalButton.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-          applyTactical(tactical);
-        }
-      });
-      tacticsMenu.add(tacticalButton);
-      menuBar.add(tacticsMenu);
-
-    }
-
     setJMenuBar(menuBar);
+  }
 
-    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-    getContentPane().setLayout(layout);
-    layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 995, Short.MAX_VALUE)
-    );
-    layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
-    );
-
-
-    fileChooser = new JFileChooser();
-
-    pack();
-  }// </editor-fold>//GEN-END:initComponents
-
-  private void applyTactic(Method tactic) {
-    if (!proofPanel1.isFinished()) {
-      Proof intermediate = new ProofTrace(proofPanel1);
-      Proof result = null;
-      try {
-        result = (Proof) tactic.invoke(SingleRuleTacticals.class, intermediate);
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
-      } catch (InvocationTargetException e) {
-        if (e.getCause() instanceof TacticApplicationException) {
-          TacticApplicationException tacticE = (TacticApplicationException) e.getCause();
-          JOptionPane.showMessageDialog(this, tacticE.getMessage());
-        }
-      }
-      proofPanel1.replaceCurrentProof(result);
-    } else {
-      JOptionPane.showMessageDialog(this, "No subgoals are open");
+  private void onInspectProof() {
+    ProofPanel fullProof = new ProofPanel();
+    try {
+      fullProof.replaceCurrentProof(proofPanel1.createFlattenedProof());
+      JDialog frame = new JDialog(this, "Full Proof", true);
+      frame.getContentPane().add(fullProof);
+      frame.pack();
+      frame.setVisible(true);
+    } catch (TacticApplicationException e) {
+      JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
     }
   }
 
+  private void onComputeHeuristic() {
+    if (proofPanel1.getLastGoals() != null) {
+      int heuristic = 0;
+      int contourMetr = 0;
+      int zoneMetr =0;
+      int shZoneMetr =0;
+      int connMetr = 0;
 
-
-
-  private void applyTactical(Method tactical) {
-    if (!proofPanel1.isFinished()) {
-      Proof intermediate = new ProofTrace(proofPanel1);
-      Seq<Proof> result = null;
       try {
-        result = (Seq<Proof>) tactical.invoke(SimpleTacticals.class, intermediate);
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
-      } catch (InvocationTargetException e) {
-        if (e.getCause() instanceof TacticApplicationException) {
-          TacticApplicationException tacticE = (TacticApplicationException) e.getCause();
-          JOptionPane.showMessageDialog(this, tacticE.getMessage());
-        }
+        SpiderDiagram goal =       proofPanel1.getSelected();
+
+        if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+            CompoundSpiderDiagram impl = (CompoundSpiderDiagram) goal;
+            java.util.Set<String> contours = new HashSet<>(AutomaticUtils.collectContours(impl.getOperand(0)));
+            contours.addAll(AutomaticUtils.collectContours(impl.getOperand(1)));
+            scala.collection.immutable.Set<String> scalaContours = JavaConversions.asScalaSet(contours).toSet();
+            SpiderDiagram cform1 = HeuristicUtils.computeCForm(impl.getOperand(0), scalaContours);
+            SpiderDiagram cform2 = HeuristicUtils.computeCForm(impl.getOperand(1),scalaContours);
+            SpiderDiagram vennCForm1 = HeuristicUtils.computeVennForm(cform1);
+            SpiderDiagram vennCForm2 = HeuristicUtils.computeVennForm(cform2);
+            heuristic += HeuristicUtils.metric(impl.getOperand(0), impl.getOperand(1));
+            contourMetr += HeuristicUtils.contourDiffMetric(impl.getOperand(0), impl.getOperand(1));
+            zoneMetr += HeuristicUtils.zoneDiffMetric(cform1, cform2);
+            shZoneMetr += HeuristicUtils.shadingDiffMetric(vennCForm1, vennCForm2);
+            connMetr += HeuristicUtils.connectiveDiffMetric(impl.getOperand(0), impl.getOperand(1));
+
+
+          } else {
+            throw new AutomaticProofException("The selected goal is not an implication of conjunctions.");
+          }
+
+        int cost = proofPanel1.getProver().getStrategy().getCost(proofPanel1);
+        JOptionPane.showMessageDialog(this,"Cost: "+ cost +
+                "\nFull Heuristic: "+ heuristic +
+                "\nContour Heuristic: "+contourMetr+
+                "\nZone Heuristic: "+zoneMetr +
+                "\nShading Heuristic: "+shZoneMetr+
+                "\nConnective Heuristic: "+connMetr
+                ,"Heuristic of Selected Goal", JOptionPane.INFORMATION_MESSAGE);
+      } catch (AutomaticProofException e) {
+        JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
       }
-      if (result !=null && result.nonEmpty()) {
-        proofPanel1.replaceCurrentProof(result.head());
-      } else {
-        System.out.println(result);
-        JOptionPane.showMessageDialog(this, "Tactic could not be applied");
-      }
-    } else {
-      JOptionPane.showMessageDialog(this, "No subgoals are open");
     }
   }
 
-  private void onCropProof(ActionEvent evt) {
+  private void extendWithAutomaticProof() {
+    if (automaticProof != null) {
+      try {
+        Proof autoProof = automaticProof.getProof();
+        proofPanel1.extendProof(autoProof);
+        fireProofChangedEvent(new ProofReplacedEvent(this));
+      } catch (AutomaticProofException e) {
+        JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
+      }
+
+    }
+  }
+
+  private void extendByOneAutomatedStep() {
+  if (automaticProof != null) {
+    try {
+      Proof autoProof = automaticProof.getProof();
+      proofPanel1.extendByOneStep(autoProof);
+      fireProofChangedEvent(new ProofExtendedByStepEvent(this));
+    } catch (Exception e) {
+      JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
+    }
+
+  }
+  }
+
+  private void cancelAutomaticProof() {
+    if (automaticProof != null) {
+      automaticProof.cancel(true);
+      System.out.println("Was Cancelled: "+automaticProof.isCancelled());
+      System.out.println("Is Finished: "+automaticProof.isFinished());
+      // remove the reference to the automatic prover thread so that the garbage
+      // collector can do its magic
+      automaticProof = null;
+
+    }
+    proofFoundIndicator.setText("Idle");
+    cancelAutoProver.setEnabled(false);
+    startAutoProver.setEnabled(true);
+  }
+
+  private void analyseProof() {
+    if (proofPanel1.getGoals().isEmpty()) {
+      JOptionPane.showMessageDialog(this, "No proof to analyse.");
+      return;
+    }
+    try {
+      Proof fullProof = proofPanel1.createFlattenedProof();
+      int length = ProofAnalyser.length(fullProof);
+      int maxClutter = ProofAnalyser.maximumClutter(fullProof);
+      double avgClutter = ProofAnalyser.averageClutter(fullProof);
+      int velocity = ProofAnalyser.maximalClutterVelocity(fullProof);
+      int complexR = ProofAnalyser.complexRuleCount(fullProof);
+      double avgComplex = ProofAnalyser.averageNumberOfComplexRules(fullProof);
+      int interactions = ProofAnalyser.numberOfInteractions(fullProof);
+      double avgInteractions = ProofAnalyser.averageInteractions(fullProof);
+      int automatic = ProofAnalyser.numberOfAutomaticRuleApplications(fullProof);
+
+      JOptionPane.showMessageDialog(this, "Length:\t" + length +
+              "\nMaximum Clutter:\t" + maxClutter +
+              "\nAverage Clutter:\t" + String.format("%.2f", avgClutter) +
+              "\nNumber of Complex Rules:\t" + complexR +
+              "\nAverage Number of Complex Rules:\t" + String.format("%.2f", avgComplex) +
+              "\nNumber of Interactions:\t" + interactions +
+              "\nAverage Number of Interactions:\t" + String.format("%.2f", avgInteractions) +
+              "\nMaximal Clutter Velocity:\t" + velocity +
+              "\nAutomatic Rule Applications:\t" + automatic);
+    } catch (TacticApplicationException e) {
+      JOptionPane.showMessageDialog(this, "An error occurred while applying a tactic:\n" + e.getLocalizedMessage());
+
+    }
+  }
+
+  private void onSaveProof() {
+    if (proofPanel1.getGoals().isEmpty()) {
+      JOptionPane.showMessageDialog(this, "No proof to be saved exists.");
+      return;
+    }
+    int returnVal = proofFileChooser.showSaveDialog(this);
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      File file = proofFileChooser.getSelectedFile();
+      if (file.exists()) {
+        int reallySave = JOptionPane.showConfirmDialog(this, "File " + file.getName() + " exists at given path. Save anyway?", "File already exists", JOptionPane.YES_NO_OPTION);
+        if (reallySave == JOptionPane.NO_OPTION) {
+          return;
+        }
+      }
+      try (
+              FileOutputStream fileStream = new FileOutputStream(file);
+              ObjectOutputStream objectStream = new ObjectOutputStream(fileStream)) {
+        objectStream.writeObject(proofPanel1.getProof());
+        objectStream.flush();
+      } catch (IOException ioe) {
+        JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
+      }
+    }
+  }
+
+  private void onOpenProof() {
+    int returnVal = proofFileChooser.showOpenDialog(this);
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      File file = proofFileChooser.getSelectedFile();
+      Proof inputProof = null;
+      try (
+        FileInputStream inputStream = new FileInputStream(file);
+        ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+        inputProof = (Proof) objectInputStream.readObject();
+
+      } catch (IOException ioe) {
+        JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
+      }  catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      }
+      proofPanel1.replaceCurrentProof(inputProof);
+      this.setTitle("Speedith"+": " + file.getName());
+    }
+  }
+
+  private void onCropProof() {
     if (proofPanel1.getSelected() != null) {
       proofPanel1.reduceToSelected();
+      fireProofChangedEvent(new ProofReducedEvent( this));
     }
   }
 
 
-  private void onOpen(ActionEvent evt) {
-    int returnVal = fileChooser.showOpenDialog(this);
+  private void onOpen() {
+    int returnVal = goalFileChooser.showOpenDialog(this);
     if (returnVal == JFileChooser.APPROVE_OPTION) {
-      File file = fileChooser.getSelectedFile();
+      File file = goalFileChooser.getSelectedFile();
       try {
         SpiderDiagram input = SpiderDiagramsReader.readSpiderDiagram(file);
+        if (!input.isValid()) {
+          throw new ReadingException("The spider diagram contained in the file is not valid.");
+        }
         proofPanel1.newProof(Goals.createGoalsFrom(ReasoningUtils.normalize(input)));
+        this.setTitle("Speedith"+": " + file.getName());
+        cancelAutomaticProof();
+        if (backgroundProofSearch) {
+          startAutomatedReasoner();
+        } else {
+          startAutoProver.setEnabled(true);
+        }
       } catch (IOException ioe) {
         JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
       } catch (ReadingException re) {
         JOptionPane.showMessageDialog(this, "An error occurred while reading the contents of the file:\n" + re.getLocalizedMessage());
       }
-      this.setTitle("Speedith"+": " + file.getName());
     }
   }
 
-  private void onSave(ActionEvent evt) {
+  private void onSave() {
     if (proofPanel1.getGoals().isEmpty()) {
       JOptionPane.showMessageDialog(this, "No subgoal to be saved exists.");
       return;
     }
     if (proofPanel1.getSelected() != null) {
         SpiderDiagram toSave = proofPanel1.getSelected();
-        int returnVal = fileChooser.showSaveDialog(this);
+        int returnVal = goalFileChooser.showSaveDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-          File file = fileChooser.getSelectedFile();
+          File file = goalFileChooser.getSelectedFile();
           if (file.exists()) {
             int reallySave = JOptionPane.showConfirmDialog(this, "File " + file.getName() + " exists at given path. Save anyway?", "File already exists", JOptionPane.YES_NO_OPTION);
             if (reallySave == JOptionPane.NO_OPTION) {
@@ -520,10 +923,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       } else {
         JOptionPane.showMessageDialog(this, "No subgoal selected", "No subgoal selected", JOptionPane.ERROR_MESSAGE);
       }
-
-
   }
-  private void onSettings(ActionEvent evt) {
+
+  private void onSettings() {
     SettingsDialog settings = new SettingsDialog(this, true);
     settings.setVisible(true);
     proofPanel1.setProver(settings.getSelectedProver());
@@ -532,27 +934,132 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       activeDiagram = settings.getSelectedDiagramType();
       lstAppliedRules.setModel(getRulesList());
       lstAppliedRules.repaint();
+      lstTactics.setModel(getTacticsList());
+      lstTactics.repaint();
+    }
+    backgroundProofSearch = settings.isBackGroundSearchEnabled();
+    if (settings.isShowLowLevelTacticsEnabled() != showLowLevelTactics) {
+      showLowLevelTactics = settings.isShowLowLevelTacticsEnabled();
+      lstTactics.setModel(getTacticsList());
+      lstTactics.repaint();
     }
   }
 
-  private void onProveAny(ActionEvent evt) {
-    Goals initial =  proofPanel1.getInitialGoals();
-    try {
-       proofPanel1.generateProof(initial);
-    } catch (AutomaticProofException e) {
-      JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
+  private void onProveFromHere() {
+    if (activeDiagram != DiagramType.EulerDiagram) {
+      JOptionPane.showMessageDialog(this,"The automatic provers only work for Euler diagrams");
+      return;
+    }
+    startAutomatedReasoner();
+  }
+
+  private void startAutomatedReasoner() {
+    disableAutomaticProofUI();
+    automaticProof = new AutomaticProverThread(proofPanel1.getProof(), proofPanel1.getProver()) {
+      @Override
+      protected void done() {
+          try {
+            Proof result = get();
+            if (result != null && result.isFinished()) {
+              setProof(result);
+              System.out.println("Successful! ");
+              enableAutomaticProofUI();
+            } else {
+              System.out.println("Unsuccessful! ");
+              proofFoundIndicator.setText("Unable to solve");
+              cancelAutoProver.setEnabled(false);
+            }
+            } catch (InterruptedException| ExecutionException e) {
+            JOptionPane.showMessageDialog(proofPanel1.getRootPane(), "An error occurred:" +e);
+          } catch (CancellationException e) {
+            proofFoundIndicator.setText("Idle");
+            cancelAutoProver.setEnabled(false);
+            startAutoProver.setEnabled(true);
+          }
+//        } else {
+//        }
+      }
+    };
+    /*automaticProof.addPropertyChangeListener(new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        if ("state".equals(propertyChangeEvent.getPropertyName())) {
+          if (SwingWorker.StateValue.DONE.equals(propertyChangeEvent.getNewValue())) {
+            if (automaticProof.isFinished()) {
+              System.out.println("Successful! "+propertyChangeEvent.getNewValue());
+              enableAutomaticProofUI();
+            } else {
+              System.out.println("Unsuccessful! "+propertyChangeEvent.getNewValue());
+              proofFoundIndicator.setText("Unable to solve");
+              cancelAutoProver.setEnabled(false);
+            }
+          }
+        }
+      }
+    });*/
+    service.submit(automaticProof);
+    proofFoundIndicator.setText("Searching...");
+  }
+
+  private void restartAutomatedReasoner() {
+    cancelAutomaticProof();
+    if (backgroundProofSearch) {
+      startAutomatedReasoner();
+    } else {
+      startAutoProver.setEnabled(true);
     }
   }
 
-  private void onProveFromHere(ActionEvent evt) {
-    try {
-      proofPanel1.extendProof(proofPanel1);
-    } catch (AutomaticProofException e) {
-      JOptionPane.showMessageDialog(this, e.getLocalizedMessage());
+  private void enableAutomaticProofUI() {
+    startAutoProver.setEnabled(false);
+    replaceWithGenerated.setEnabled(true);
+    extendByOneStep.setEnabled(true);
+    proofFoundIndicator.setEnabled(true);
+    proofFoundIndicator.setText("Success!");
+    cancelAutoProver.setEnabled(false);
+  }
+
+  private void disableAutomaticProofUI() {
+    startAutoProver.setEnabled(false);
+    replaceWithGenerated.setEnabled(false);
+    extendByOneStep.setEnabled(false);
+    proofFoundIndicator.setEnabled(false);
+    cancelAutoProver.setEnabled(true);
+  }
+
+  public void addProofChangedListener(ProofChangedListener l) {
+    proofChangedListeners.add(l);
+  }
+
+  public void removeProofChangedListener(ProofChangedListener l) {
+    proofChangedListeners.remove(l);
+  }
+
+  private void fireProofChangedEvent(ProofChangedEvent e) {
+    if (e instanceof InteractiveRuleAppliedEvent) {
+      for(ProofChangedListener l : proofChangedListeners) {
+        l.interactiveRuleApplied((InteractiveRuleAppliedEvent) e);
+      }
+    } else if (e instanceof TacticAppliedEvent) {
+      for (ProofChangedListener l: proofChangedListeners) {
+        l.tacticApplied((TacticAppliedEvent) e);
+      }
+    } else if (e instanceof ProofReplacedEvent) {
+      for (ProofChangedListener l: proofChangedListeners) {
+        l.proofReplaced((ProofReplacedEvent) e);
+      }
+    } else if (e instanceof ProofReducedEvent) {
+      for (ProofChangedListener l: proofChangedListeners) {
+        l.proofReduced((ProofReducedEvent) e);
+      }
+    } else if (e instanceof ProofExtendedByStepEvent) {
+      for (ProofChangedListener l: proofChangedListeners) {
+        l.proofExtendedByStep((ProofExtendedByStepEvent) e);
+      }
     }
   }
 
-  private void onSpiderDrawerClicked(ActionEvent evt) {
+  private void onSpiderDrawerClicked() {
     MainForm spiderDrawer = new MainForm(this, true, false);
     boolean done = spiderDrawer.showDialog();
 
@@ -568,7 +1075,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }
 
   private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
-    this.dispose();
+    this.processWindowEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
   }//GEN-LAST:event_exitMenuItemActionPerformed
 
   private void onExample1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onExample1
@@ -596,6 +1103,17 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       }
     }
   }//GEN-LAST:event_onRuleItemClicked
+
+  private void onTacticClicked(MouseEvent e) {
+    if (e.getClickCount() == 2) {
+      if (!proofPanel1.isFinished()) {
+        int index = lstTactics.locationToIndex(e.getPoint());
+        DefaultComboBoxModel model = (DefaultComboBoxModel) lstTactics.getModel();
+        TacticListItem selectedRule = (TacticListItem) model.getElementAt(index);
+        applyTactic(selectedRule);
+      }
+    }
+  }
 
   private void onTextInputClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onTextInputClicked
     TextSDInputDialog dialog = new TextSDInputDialog(this, true);
@@ -644,6 +1162,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     });
   }
 
+  // <editor-fold defaultstate="collapsed" desc="Static methods for example creation">
   /**
    * The first main example used in most of our papers. Useful for testing the
    * rules: split spider, add feet, idempotency, and tautology of implication.
@@ -804,17 +1323,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     return csd;
   }
 
-  private ComboBoxModel getRulesComboList() {
-    Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules(activeDiagram);
-    InfRuleListItem[] infRules = new InfRuleListItem[knownInferenceRules.size()];
-    int i = 0;
-    for (String providerName : knownInferenceRules) {
-      infRules[i++] = new InfRuleListItem(InferenceRules.getProvider(providerName));
-    }
-    Arrays.sort(infRules);
-    return new DefaultComboBoxModel<>(infRules);
-  }
+ // </editor-fold>
 
+  // <editor-fold defaultstate="collapsed" desc="Inference rule list and application">
   private ListModel<InfRuleListItem> getRulesList() {
     Set<String> knownInferenceRules = InferenceRules.getKnownInferenceRules(activeDiagram);
     InfRuleListItem[] infRules = new InfRuleListItem[knownInferenceRules.size()];
@@ -853,6 +1364,26 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
   }
 
+  private void applyRule(InfRuleListItem selectedRule) {
+    int subgoalIndex = 0;
+    try {
+      InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proofPanel1);
+      fireProofChangedEvent(new InteractiveRuleAppliedEvent(this));
+    } catch (Exception ex) {
+      JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
+    }
+  }
+
+  private void applyTactic(TacticListItem selectedTactic) {
+    int subgoalIndex = 0;
+    try {
+      InteractiveTacticApplication.applyTacticInteractively(this, selectedTactic.getTacticProvider().getTactic(), subgoalIndex, proofPanel1);
+      fireProofChangedEvent(new TacticAppliedEvent(this));
+    } catch (Exception ex) {
+      JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
+    }
+  }
+
   private static Goals applyInferenceRule(String infRuleName, RuleArg ruleArg, Goals goals0) {
     InferenceRule<? extends RuleArg> infRule = InferenceRules.getInferenceRule(infRuleName);
     try {
@@ -864,6 +1395,46 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     return goals0;
   }
 
+  // </editor-fold>
+
+  private ListModel<TacticListItem> getTacticsList() {
+    Set<String> knownTactics = Tactics.getKnownTactics(activeDiagram, showLowLevelTactics);
+    TacticListItem[] tactics = new TacticListItem[knownTactics.size()];
+    int i = 0;
+    for (String providerName : knownTactics) {
+      tactics[i++] = new TacticListItem(Tactics.getProvider(providerName));
+    }
+    Arrays.sort(tactics);
+    return new DefaultComboBoxModel<>(tactics);
+  }
+
+  private static class TacticListItem implements Comparable<TacticListItem> {
+
+    private final TacticProvider tacticProvider;
+
+    public TacticListItem(TacticProvider tacticProvider) {
+      if (tacticProvider == null) {
+        throw new IllegalArgumentException(speedith.core.i18n.Translations.i18n("GERR_NULL_ARGUMENT", "infRuleProvider"));
+      }
+      this.tacticProvider = tacticProvider;
+    }
+
+    public TacticProvider getTacticProvider() {
+      return tacticProvider;
+    }
+
+    @Override
+    public String toString() {
+      return tacticProvider.getPrettyName();
+    }
+
+    @Override
+    public int compareTo(TacticListItem o) {
+      return tacticProvider.toString().compareToIgnoreCase(o.toString());
+    }
+  }
+
+  // <editor-fold defaultstate="collapsed" desc="Private methods creating examples of regions and zones">
   private static Region regionA_B() {
     return new Region(zoneA_B());
   }
@@ -900,13 +1471,5 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     return Zone.fromInContours("B").withOutContours("A");
   }
 
-  private void applyRule(InfRuleListItem selectedRule) {
-    int subgoalIndex = 0;
-    try {
-     boolean test =  InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proofPanel1);
-   //   System.out.println("Cost:"+ proofPanel1.getProver().getStrategy().getCost(proofPanel1)+"\tHeuristic:"+proofPanel1.getProver().getStrategy().getHeuristic(proofPanel1));
-    } catch (Exception ex) {
-      JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
-    }
-  }
+  //</editor-fold>
 }

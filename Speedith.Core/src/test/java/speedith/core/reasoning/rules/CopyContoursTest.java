@@ -11,9 +11,7 @@ import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.rules.instructions.SelectContoursInstruction;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
@@ -41,7 +39,9 @@ public class CopyContoursTest {
 
     @Test(expected = TransformationException.class)
     public void apply_should_throw_an_exception_when_copying_a_contour_that_already_exists_in_the_other_unitary_diagram() throws RuleApplicationException {
-        PrimarySpiderDiagram leftAndRightUnitaryDiagram = SpiderDiagrams.createPrimarySD().addSpider("s", new Region(Zone.fromInContours("A")));
+        Set<Zone> present = new HashSet<>();
+        present.add(Zone.fromOutContours("A"));
+        PrimarySpiderDiagram leftAndRightUnitaryDiagram = SpiderDiagrams.createPrimarySD(null, null, null, present).addSpider("s", new Region(Zone.fromInContours("A")));
         CompoundSpiderDiagram conjunctiveCompoundDiagram = SpiderDiagrams.createCompoundSD(Operator.Conjunction, leftAndRightUnitaryDiagram, leftAndRightUnitaryDiagram);
         Goals targetOfInference = Goals.createGoalsFrom(conjunctiveCompoundDiagram);
 
@@ -114,7 +114,7 @@ public class CopyContoursTest {
 
     @Test
     public void user_facing_functions_should_return_some_strings() {
-        assertThat(copyContours.getInferenceRuleName(), not(isEmptyOrNullString()));
+        assertThat(copyContours.getInferenceName(), not(isEmptyOrNullString()));
         assertThat(copyContours.getDescription(), not(isEmptyOrNullString()));
         assertThat(copyContours.getCategory(), not(isEmptyOrNullString()));
         assertThat(copyContours.getPrettyName(), not(isEmptyOrNullString()));

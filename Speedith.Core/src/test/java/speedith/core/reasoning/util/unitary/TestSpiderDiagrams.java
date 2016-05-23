@@ -37,6 +37,12 @@ public class TestSpiderDiagrams {
     public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG7_5 = getDiagramFromSpeedithPaper_Fig7_5th();
     public static final PrimarySpiderDiagram DIAGRAM_SPEEDITH_PAPER_FIG7_3_SHADED_C = getDiagramFromSpeedithPaper_Fig7_3rd_shaded();
 
+    public static final PrimarySpiderDiagram EULER_DIAGRAM_A_SUBSET_B = getASubSetBDiagram();
+    public static final PrimarySpiderDiagram VENN_DIAGRAM_A_SUBSET_B = createPrimarySD(null,null, Collections.singleton(new Zone( Collections.singleton("A"), Collections.singleton("B"))), POWER_REGION_AB);
+    public static final PrimarySpiderDiagram VENN_DIAGRAM_EVERYTHING_A_OR_B = createPrimarySD(null,null, Collections.singleton(Zone.fromOutContours("A","B")), POWER_REGION_AB);
+
+    public static final PrimarySpiderDiagram EULER_DIAGRAM_A_SUBSET_B_INTERSECT_C = getASubSetBAndCPresent();
+
     public static SpiderDiagram diagramSpeedithPaperFig7Goal() {
         return tryReadSpiderDiagramFromSDTFile(3);
     }
@@ -53,6 +59,7 @@ public class TestSpiderDiagrams {
         presentZones.removeAll(shaded_E_A);
         presentZones.removeAll(shaded_C);
         presentZones.removeAll(shaded_F_ACE);
+        presentZones.add(Zone.fromOutContours("E","A","C","F"));
 
         TreeSet<Zone> shadedZones = new TreeSet<>();
         shadedZones.addAll(shaded_E_A);
@@ -80,6 +87,7 @@ public class TestSpiderDiagrams {
 
         ArrayList<Zone> presentZones = new ArrayList<>(POWER_REGION_ABCD);
         presentZones.removeAll(shadedZones);
+        //presentZones.add(Zone.fromOutContours("A","B","C","D"));
 
         TreeMap<String, Region> habitats = new TreeMap<>();
         habitats.put("s", new Region(
@@ -95,6 +103,7 @@ public class TestSpiderDiagrams {
 
         TreeSet<Zone> presentZones = new TreeSet<>(POWER_REGION_ABC);
         presentZones.removeAll(zonesInsideAC_outsideC);
+        presentZones.add(Zone.fromOutContours("A","B","C"));
 
         return SpiderDiagrams.createPrimarySD(null, null, zonesInsideAC_outsideC, presentZones);
     }
@@ -231,5 +240,37 @@ public class TestSpiderDiagrams {
         ));
 
         return SpiderDiagrams.createPrimarySD(habitats.keySet(), habitats, shadedZones, presentZones);
+    }
+
+    private static PrimarySpiderDiagram getASubSetBDiagram() {
+        Set<Zone> presentZones = new HashSet<>();
+        presentZones.add(new Zone(Arrays.asList("B"),Arrays.asList("A")));
+        presentZones.add(new Zone(null, Arrays.asList("A","B")));
+        presentZones.add(new Zone("A","B"));
+
+        Set<Zone> shadedZones = new HashSet<>();
+        shadedZones.add(new Zone(Arrays.asList("A"),Arrays.asList("B")));
+
+        return EulerDiagrams.createPrimaryEulerDiagram(shadedZones, presentZones);
+
+
+    }
+
+    private static PrimarySpiderDiagram getASubSetBAndCPresent() {
+        Set<Zone> presentZones = new HashSet<>();
+        presentZones.add(new Zone(null, Arrays.asList("A","B","C")));
+        presentZones.add(new Zone(Arrays.asList("B"),Arrays.asList("A","C")));
+        presentZones.add(new Zone(Arrays.asList("C"),Arrays.asList("A","B")));
+        presentZones.add(new Zone(Arrays.asList("A","B"),Arrays.asList("C")));
+        presentZones.add(new Zone(Arrays.asList("C","B"),Arrays.asList("A")));
+        presentZones.add(new Zone("A","B","C"));
+
+        Set<Zone> shadedZones = new HashSet<>();
+        shadedZones.add(new Zone(Arrays.asList("A"),Arrays.asList("B","C")));
+        shadedZones.add(new Zone(Arrays.asList("A","C"),Arrays.asList("B")));
+
+        return EulerDiagrams.createPrimaryEulerDiagram(shadedZones, presentZones);
+
+
     }
 }

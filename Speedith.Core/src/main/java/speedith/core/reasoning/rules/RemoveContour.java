@@ -33,9 +33,11 @@ import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectContoursInstruction;
 import speedith.core.reasoning.rules.transformers.RemoveContoursTransformer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Locale;
@@ -44,7 +46,7 @@ import java.util.Set;
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> {
+public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> implements Serializable, ForwardRule<MultipleRuleArgs> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
@@ -53,15 +55,13 @@ public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> {
     public static final String InferenceRuleName = "remove_contour";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.SpiderDiagram,DiagramType.EulerDiagram);
+    private static final long serialVersionUID = -869717711275052747L;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Inference Rule Implementation">
     @Override
     public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
-        ArrayList<ContourArg> contourArgs = ContourArg.getContourArgsFrom(getTypedRuleArgs(args));
-        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
-        newSubgoals[contourArgs.get(0).getSubgoalIndex()] = getSubgoal(contourArgs.get(0), goals).transform(new RemoveContoursTransformer(contourArgs));
-        return createRuleApplicationResult(newSubgoals);
+        return apply(args, goals, ApplyStyle.GoalBased);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> {
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 
@@ -105,4 +105,17 @@ public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> {
     public Set<DiagramType> getApplicableTypes() {
         return applicableTypes;
     }
+
+    @Override
+    public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
+        return apply(args, goals, ApplyStyle.Forward);
+    }
+
+    protected RuleApplicationResult apply(final RuleArg args, Goals goals, ApplyStyle applyStyle) throws RuleApplicationException {
+        ArrayList<ContourArg> contourArgs = ContourArg.getContourArgsFrom(getTypedRuleArgs(args));
+        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
+        newSubgoals[contourArgs.get(0).getSubgoalIndex()] = getSubgoal(contourArgs.get(0), goals).transform(new RemoveContoursTransformer(contourArgs, applyStyle));
+        return createRuleApplicationResult(newSubgoals);
+    }
+
 }

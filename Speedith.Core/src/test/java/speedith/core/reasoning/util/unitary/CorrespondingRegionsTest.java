@@ -75,15 +75,17 @@ public class CorrespondingRegionsTest {
   }
   @Test
   public void correspondingRegion_of_shaded_venn3_zone_should_return_empty_set() {
-    String sourceString = " PrimarySD {spiders = [], habitats = [], sh_zones = [([\"C\"], [\"A\", \"B\"])], present_zones = [([\"C\"], [\"A\", \"B\"])]}";
-    String targetString = "PrimarySD {spiders = [], habitats = [], sh_zones = [], present_zones = [ ([\"C\"], [])]}}";
-    Set<Zone> source_sh_zones = new HashSet<Zone>();
+    String sourceString = " PrimarySD {spiders = [], habitats = [], sh_zones = [([\"C\"], [\"A\", \"B\"])], present_zones = [([\"C\"], [\"A\", \"B\"]), ([], [\"A\", \"B\",\"C\"])]}";
+    String targetString = "PrimarySD {spiders = [], habitats = [], sh_zones = [], present_zones = [ ([\"C\"], []),([], [\"C\"])]}}";
+    Set<Zone> source_sh_zones = new HashSet<>();
     source_sh_zones.add(Zone.fromInContours("C").withOutContours("A","B"));
     Set<Zone> source_present_zones= new HashSet<>();
     source_present_zones.add(Zone.fromInContours("C").withOutContours("A", "B"));
+    source_present_zones.add(Zone.fromOutContours("A","B","C"));
     PrimarySpiderDiagram sourceDiagram = EulerDiagrams.createPrimaryEulerDiagram(source_sh_zones, source_present_zones);
     Set<Zone> target_present_zones = new HashSet<>();
     target_present_zones.add(Zone.fromInContours("C"));
+    target_present_zones.add(Zone.fromOutContours("C"));
     PrimarySpiderDiagram targetDiagram = EulerDiagrams.createPrimaryEulerDiagram(new HashSet<Zone>(), target_present_zones);
 
     Region createdRegion = new CorrespondingRegions(sourceDiagram, targetDiagram).correspondingRegion(new Region(Zone.fromInContours("C").withOutContours("A","B")));

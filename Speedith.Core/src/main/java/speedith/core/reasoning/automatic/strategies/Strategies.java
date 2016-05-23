@@ -18,6 +18,7 @@ public class Strategies {
         registerProvider(NoStrategy.class);
         registerProvider(BasicHeuristicStrategy.class);
         registerProvider(LowClutterStrategy.class);
+        registerProvider(LengthStrategy.class);
     }
 
     private Strategies() {

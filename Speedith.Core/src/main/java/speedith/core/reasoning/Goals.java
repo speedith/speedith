@@ -28,6 +28,7 @@ package speedith.core.reasoning;
 
 import speedith.core.lang.SpiderDiagram;
 
+import java.io.Serializable;
 import java.util.*;
 
 import static speedith.core.i18n.Translations.i18n;
@@ -40,8 +41,9 @@ import static speedith.core.i18n.Translations.i18n;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class Goals {
+public class Goals implements Serializable {
 
+    private static final long serialVersionUID = -5994853267156830447L;
     private final ArrayList<SpiderDiagram> goals;
 
     /**

@@ -42,6 +42,7 @@ import speedith.core.lang.reader.SpiderDiagramsReader;
 import speedith.core.reasoning.args.selection.SelectionStep;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -177,12 +178,12 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
     /**
      * Returns the set of flags that determines which elements of the diagram
      * may be highlighted with the mouse. <p>This flag can be a (binary)
-     * combination of the following flags: <ul> <li>{@link SpeedithCirclesPanel#Spiders}:
+     * combination of the following flags: <ul> <li>{@link SelectionStep#Spiders}:
      * which indicates that spiders will be highlighted when the user hovers
-     * over them.</li> <li>{@link SpeedithCirclesPanel#Zones}: which indicates that
-     * zones will be highlighted when the user hovers over them.</li> <li>{@link SpeedithCirclesPanel#Contours}:
+     * over them.</li> <li>{@link SelectionStep#Zones}: which indicates that
+     * zones will be highlighted when the user hovers over them.</li> <li>{@link SelectionStep#Contours}:
      * which indicates that circle contours will be highlighted when the user
-     * hovers over them.</li> </ul></p> <p> The {@link SpeedithCirclesPanel#All} and {@link SpeedithCirclesPanel#None}
+     * hovers over them.</li> </ul></p> <p> The {@link SelectionStep#All} and {@link SelectionStep#None}
      * flags can also be used. These indicate that all diagram or no elements
      * (respectively) can be highlighted with the mouse.</p>
      *
@@ -381,7 +382,24 @@ public class SpiderDiagramPanel extends javax.swing.JPanel {
 
     private int addSpiderDiagramPanel(int nextSubdiagramIndex, SpiderDiagram curSD, int gridx) throws CannotDrawException {
         GridBagConstraints gridBagConstraints;
-        JPanel sdp = registerSubdiagramClickListener(DiagramVisualisation.getSpiderDiagramPanel(curSD), nextSubdiagramIndex);
+        JPanel result;
+        // a CannotDrawException can only be thrown, if curSD is a PrimarySpiderDiagram
+        // (only then do we create a SpeedithCirclesPanel). If drawing fails, explicitly create
+        // a SpiderDiagramPanel for the primary diagram. This triggers the error label
+        // drawing in the constructor.
+        // This is a hack to catch the exception as early as possible, so that the rest
+        // of a compound diagram can still be drawn. To change this, the structure of SpiderDiagramPanel
+        // and the logic of drawing SpiderDiagrams would have to be changed significantly.
+        // One disadvantage of this solution: If a diagram cannot be drawn, iCircles is
+        // called twice to draw it (one time here, and the other time in the constructor in the
+        // catch clause)
+        try {
+            result = DiagramVisualisation.getSpiderDiagramPanel(curSD);
+        } catch (CannotDrawException e) {
+            result = new SpiderDiagramPanel(curSD);
+            result.setBorder(BorderFactory.createEmptyBorder());
+        }
+        JPanel sdp = registerSubdiagramClickListener(result, nextSubdiagramIndex);
         gridBagConstraints = getSubdiagramLayoutConstraints(gridx, true, sdp.getPreferredSize().width, 1);
         diagrams.add(sdp, gridBagConstraints);
         return nextSubdiagramIndex + curSD.getSubDiagramCount();

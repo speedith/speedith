@@ -40,16 +40,12 @@ public class CompoundSpiderDiagramOccurrence extends SpiderDiagramOccurrence {
 
     @Override
     public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        } else if (other instanceof CompoundSpiderDiagramOccurrence) {
-            return hashCode() == other.hashCode()
-                    && getDiagram().equals(((CompoundSpiderDiagramOccurrence) other).getDiagram())
-                    ;
-        } else {
-            return false;
-        }
+        return other == this ||
+                other instanceof CompoundSpiderDiagramOccurrence &&
+                        hashCode() == other.hashCode() &&
+                        getDiagram().equals(((CompoundSpiderDiagramOccurrence) other).getDiagram());
     }
+
 
     @Override
     public int hashCode() {

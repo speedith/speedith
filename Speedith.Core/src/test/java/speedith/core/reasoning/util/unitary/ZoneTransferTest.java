@@ -8,6 +8,8 @@ import speedith.core.lang.reader.ReadingException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
@@ -35,7 +37,9 @@ public class ZoneTransferTest {
 
     @Test
     public void contoursOnlyInSource_returns_an_empty_set_when_the_source_diagram_has_no_contours() throws Exception {
-        ZoneTransfer zoneTransfer = new ZoneTransfer(createPrimarySD(), diagramWithBCZones);
+        Set<Zone> present = new HashSet<>();
+        present.add(new Zone());
+        ZoneTransfer zoneTransfer = new ZoneTransfer(createPrimarySD(null,null,null,present), diagramWithBCZones);
         assertThat(
                 zoneTransfer.contoursOnlyInSource(),
                 hasSize(0)
@@ -148,7 +152,9 @@ public class ZoneTransferTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void transferContour_should_throw_an_exception_if_the_source_diagram_does_not_contain_the_contour_to_transfer() {
-        new ZoneTransfer(diagramWithABZones, createPrimarySD()).transferContour("C");
+        Set<Zone> present = new HashSet<>();
+        present.add(new Zone());
+        new ZoneTransfer(diagramWithABZones, createPrimarySD(null,null,null,present)).transferContour("C");
     }
 
     @Test
@@ -201,8 +207,10 @@ public class ZoneTransferTest {
         assertThat(
                 diagramWithTransferredContour.getPresentZones(),
                 contains(
+                        Zone.fromOutContours("A","B","C","D"),
                         Zone.fromInContours("C").withOutContours("A", "B", "D"),
                         Zone.fromInContours("C", "D").withOutContours("A", "B")
+
                 )
         );
     }
@@ -217,6 +225,6 @@ public class ZoneTransferTest {
     }
 
     private static PrimarySpiderDiagram getDiagramWithABZones() {
-        return createPrimarySD(null, null, null, asList(Zone.fromInContours("A", "B")));
+        return createPrimarySD(null, null, null, asList(Zone.fromInContours("A", "B"), Zone.fromOutContours("A","B")));
     }
 }

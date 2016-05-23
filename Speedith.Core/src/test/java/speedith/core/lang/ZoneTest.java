@@ -74,14 +74,14 @@ public class ZoneTest {
 
     static {
         // 1
-        m_inContours1 = new LinkedList<String>();
+        m_inContours1 = new LinkedList<>();
         m_inContours1.add("A");
         m_inContours1.add("C");
         m_inContours1.add("C");
         m_inContours1.add("U");
         m_inContours1.add("foo");
         m_inContours1.add("foo");
-        m_outContours1 = new ArrayList<String>();
+        m_outContours1 = new ArrayList<>();
         m_outContours1.add("B");
         m_outContours1.add("F");
         m_outContours1.add("F");
@@ -90,33 +90,33 @@ public class ZoneTest {
         m_outContours1.add("bar");
         m_zone1 = new Zone(m_inContours1, m_outContours1);
 
-        m_inContours2 = new TreeSet<String>();
+        m_inContours2 = new TreeSet<>();
         m_inContours2.add("A");
         m_inContours2.add("C");
         m_inContours2.add("U");
         m_inContours2.add("foo");
-        m_outContours2 = new HashSet<String>();
+        m_outContours2 = new HashSet<>();
         m_outContours2.add("B");
         m_outContours2.add("F");
         m_outContours2.add("bar");
         m_zone2 = new Zone(m_inContours2, m_outContours2);
 
-        m_inContours4 = new TreeSet<String>();
+        m_inContours4 = new TreeSet<>();
         m_inContours4.add("A");
         m_inContours4.add("C");
         m_inContours4.add("U");
         m_inContours4.add("foo");
-        m_outContours4 = new TreeSet<String>();
+        m_outContours4 = new TreeSet<>();
         m_outContours4.add("B");
         m_outContours4.add("F");
         m_outContours4.add("bar");
         m_zone4 = new Zone(m_inContours4, m_outContours4);
 
         // 2
-        m_inContours3 = new TreeSet<String>();
+        m_inContours3 = new TreeSet<>();
         m_inContours3.add("A");
         m_inContours3.add("B");
-        m_outContours3 = new TreeSet<String>();
+        m_outContours3 = new TreeSet<>();
         m_outContours3.add("C");
         m_outContours3.add("D");
         m_outContours3.add("E");
@@ -124,27 +124,27 @@ public class ZoneTest {
         m_zone3 = new Zone(m_inContours3, m_outContours3);
 
         // 3
-        m_inContours5 = new TreeSet<String>();
+        m_inContours5 = new TreeSet<>();
         m_inContours5.add("01s");
         m_inContours5.add("dsaknj");
         m_inContours5.add("dsanksaj");
         m_inContours5.add("otj332_");
         m_inContours5.add("_sadsakjn dsasa");
-        m_outContours5 = new TreeSet<String>();
+        m_outContours5 = new TreeSet<>();
         m_outContours5.add("po3nns");
         m_outContours5.add("sdfajkdni3329");
         m_outContours5.add("oifned32903");
         m_zone5 = new Zone(m_inContours5, m_outContours5);
 
         // 4
-        m_outContours6 = new TreeSet<String>();
+        m_outContours6 = new TreeSet<>();
         m_outContours6.add("po3nns");
         m_outContours6.add("sdfajkdni3329");
         m_outContours6.add("oifned32903");
         m_zone6 = new Zone(null, m_outContours6);
 
         // 5
-        m_inContours7 = new TreeSet<String>();
+        m_inContours7 = new TreeSet<>();
         m_inContours7.add("01s");
         m_inContours7.add("dsaknj");
         m_inContours7.add("dsanksaj");
@@ -396,7 +396,7 @@ public class ZoneTest {
      */
     @Test
     public void testHashMap() {
-        HashSet<Zone> sds = new HashSet<Zone>();
+        HashSet<Zone> sds = new HashSet<>();
         sds.add(m_zone1);
         sds.add(m_zone2);
         sds.add(m_zone3);
@@ -461,7 +461,7 @@ public class ZoneTest {
 
     @Test
     public void testIsValid() {
-        SortedSet<String> contours = new TreeSet<String>(Arrays.asList("A", "B", "C", "D", "E", "F"));
+        SortedSet<String> contours = new TreeSet<>(Arrays.asList("A", "B", "C", "D", "E", "F"));
         Zone instance = m_zone3;
         boolean expResult = true;
         boolean result = instance.isValid(contours);
@@ -470,7 +470,7 @@ public class ZoneTest {
 
     @Test
     public void testIsValid2() {
-        SortedSet<String> contours = new TreeSet<String>(Arrays.asList("A", "B", "C", "D", "E"));
+        SortedSet<String> contours = new TreeSet<>(Arrays.asList("A", "B", "C", "D", "E"));
         Zone instance = m_zone3;
         boolean expResult = false;
         boolean result = instance.isValid(contours);
@@ -479,7 +479,7 @@ public class ZoneTest {
 
     @Test
     public void testIsValid3() {
-        SortedSet<String> contours = new TreeSet<String>(Arrays.asList("A", "B", "C", "D", "E", "F", "G"));
+        SortedSet<String> contours = new TreeSet<>(Arrays.asList("A", "B", "C", "D", "E", "F", "G"));
         Zone instance = m_zone3;
         boolean expResult = false;
         boolean result = instance.isValid(contours);
@@ -488,7 +488,7 @@ public class ZoneTest {
 
     @Test
     public void testIsValid4() {
-        SortedSet<String> contours = new TreeSet<String>(Arrays.asList("A", "B", "C", "D", "E"));
+        SortedSet<String> contours = new TreeSet<>(Arrays.asList("A", "B", "C", "D", "E"));
         Zone instance = m_zone13;
         boolean expResult = false;
         boolean result = instance.isValid(contours);

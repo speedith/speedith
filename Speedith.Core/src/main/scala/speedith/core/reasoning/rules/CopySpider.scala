@@ -13,12 +13,12 @@ import speedith.core.reasoning.{Goals, InferenceRule, RuleApplicationInstruction
 
 import scala.collection.JavaConversions._
 
-class CopySpider extends SimpleInferenceRule[SpiderArg] {
+class CopySpider extends SimpleInferenceRule[SpiderArg] with Serializable {
   def getInferenceRule: InferenceRule[SpiderArg] = {
     this
   }
 
-  def getInferenceRuleName: String = "copy_spider"
+  def getInferenceName: String = "copy_spider"
 
   def getApplicableTypes: java.util.Set[DiagramType] = Set(DiagramType.SpiderDiagram)
 

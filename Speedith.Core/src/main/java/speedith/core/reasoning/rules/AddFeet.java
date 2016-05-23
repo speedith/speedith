@@ -33,6 +33,7 @@ import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.rules.instructions.AddFeetRuleInstruction;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Locale;
@@ -48,16 +49,17 @@ import static speedith.core.i18n.Translations.i18n;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg>, ForwardRule<SpiderRegionArg> {
+public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg>, ForwardRule<SpiderRegionArg>, Serializable {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
      * The name of this inference rule. <p>This value is returned by the
-     * {@link AddFeet#getInferenceRuleName()} method.</p>
+     * {@link AddFeet#getInferenceName()} method.</p>
      */
     public static final String InferenceRuleName = "add_feet";
 
     private static final Set<DiagramType> applicableTo = EnumSet.of(DiagramType.SpiderDiagram);
+    private static final long serialVersionUID = 3758267039172032810L;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
@@ -81,7 +83,7 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

@@ -1,10 +1,7 @@
 package speedith.core.reasoning.automatic;
 
 import speedith.core.lang.TransformationException;
-import speedith.core.reasoning.Goals;
-import speedith.core.reasoning.Proof;
-import speedith.core.reasoning.ProofTrace;
-import speedith.core.reasoning.RuleApplicationException;
+import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.automatic.strategies.Strategy;
 import speedith.core.reasoning.automatic.wrappers.CompoundSpiderDiagramOccurrence;
@@ -12,6 +9,7 @@ import speedith.core.reasoning.automatic.wrappers.PrimarySpiderDiagramOccurrence
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.TrivialImplicationTautology;
 import speedith.core.reasoning.rules.util.ReasoningUtils;
+import speedith.core.reasoning.tactical.TacticApplicationException;
 
 /**
  * @author Sven Linker [s.linker@brighton.ac.uk]
@@ -59,11 +57,8 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
         Proof result;
         try {
             result = prove(init, subGoalToProve);
-        } catch (RuleApplicationException e) {
-            AutomaticProofException exc = new AutomaticProofException("Unable to prove current goal because of an illegal rule application");
-            exc.initCause(e);
-            e.printStackTrace();  //TODO: for debugging. Remove if not needed anymore
-            throw exc;
+        } catch (RuleApplicationException|TacticApplicationException e) {
+            throw new AutomaticProofException("Unable to prove current goal because of an illegal rule application",e);
         }
         if (result == null || !result.isFinished()) {
             throw  new AutomaticProofException("Unable to prove current goal");
@@ -75,6 +70,11 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
     public Proof extendProof(Proof proof) throws AutomaticProofException {
         // workaround as long as Speedith doesn't support several subgoals at once
         int subGoalToProve = 0;
+        if (proof.isFinished()) {
+            System.out.println("Proof already finished");
+            return proof;
+//            throw new AutomaticProofException("The proof is already finished");
+        }
         if (!ReasoningUtils.isImplicationOfConjunctions(proof.getLastGoals().getGoalAt(subGoalToProve))) {
             throw new AutomaticProofException("The current goal is not an implication of conjunctions");
         }
@@ -84,25 +84,22 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
             throw  new AutomaticProofException("The current goal is not normalised!");
         }
         // create a new proof object, so that we do not mess with the supplied proof
-        Proof initial = new ProofTrace(proof.getGoals(), proof.getRuleApplications());
+        Proof initial = new ProofTrace(proof.getGoals(), proof.getInferenceApplications());
 
         Proof result;
         try {
             result = prove(initial, subGoalToProve);
-        } catch (RuleApplicationException e) {
-            AutomaticProofException exc = new AutomaticProofException("Unable to prove current goal because of an illegal rule application");
-            exc.initCause(e);
-            e.printStackTrace();  //TODO: for debugging. Remove if not needed anymore
-            throw exc;
+        } catch (RuleApplicationException|TacticApplicationException e) {
+            throw new AutomaticProofException("Unable to prove current goal because of an illegal rule application",e);
         }
-        if (result == null || !result.isFinished()) {
+        if (!Thread.currentThread().isInterrupted() && (result == null || !result.isFinished())) {
             throw  new AutomaticProofException("Unable to prove current goal");
         }
         return result;
 
     }
 
-    protected abstract Proof prove (Proof p, int subgoalindex) throws RuleApplicationException, AutomaticProofException;
+    protected abstract Proof prove (Proof p, int subgoalindex) throws RuleApplicationException, TacticApplicationException, AutomaticProofException;
 
 
     /**
@@ -113,11 +110,12 @@ public abstract class AutomaticProver  implements  AutomaticProof, AutomaticProv
      * @return If ImplicationTautology was applied: the finished proof, otherwise the proof p
      * @throws RuleApplicationException
      */
-    protected Proof tryToFinish(Proof p, int subGoalIndex) throws  RuleApplicationException{
+    protected Proof tryToFinish(Proof p, int subGoalIndex) throws  RuleApplicationException, TacticApplicationException{
+        if (p.isFinished()) return p;
         TrivialImplicationTautology tautology = new TrivialImplicationTautology();
         SubDiagramIndexArg index = new SubDiagramIndexArg(subGoalIndex,0);
         try {
-            p.applyRule(tautology, index);
+            p.applyRule(tautology, index, RuleApplicationType.AUTOMATIC, getPrettyName());
         } catch (TransformationException e) {
             // TrivialImplicationTautology throws a TransformationException, if the rule
             // could not be applied (i.e., if the syntactic equivalence could not

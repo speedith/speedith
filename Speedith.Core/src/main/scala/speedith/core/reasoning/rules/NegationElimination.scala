@@ -13,9 +13,9 @@ import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstructio
 
 import scala.collection.JavaConversions._
 
-class NegationElimination extends UnaryForwardRule {
+class NegationElimination extends UnaryForwardRule with Serializable {
 
-  def getInferenceRuleName: String = "negation_elimination"
+  def getInferenceName: String = "negation_elimination"
 
   def getDescription(locale: Locale): String = "Negation elimination converts rules of form ¬(UnitaryDiagram) into (UnitaryDiagram || ... || UnitaryDiagram)."
 
@@ -41,7 +41,7 @@ class NegationElimination extends UnaryForwardRule {
         unsupported()
       }
       val psd = csd.getOperand(0).asInstanceOf[PrimarySpiderDiagram]
-      if (HabitatUtils.zonesToSpiders(psd).values.count(_.size > 0) != 1) {
+      if (HabitatUtils.zonesToSpiders(psd).values.count(_.nonEmpty) != 1) {
         throw new TransformationException("Elimination negation requires that there must be exactly one zone with some spiders.")
       }
       NegationElimination.apply(psd)

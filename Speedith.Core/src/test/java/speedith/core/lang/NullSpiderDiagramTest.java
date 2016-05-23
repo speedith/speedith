@@ -126,11 +126,11 @@ public class NullSpiderDiagramTest {
 
     @Test
     public void hashMap() {
-        HashSet<SpiderDiagram> sds1 = new HashSet<SpiderDiagram>();
+        HashSet<SpiderDiagram> sds1 = new HashSet<>();
         sds1.add(m_nsdInstance);
         sds1.add(m_nsdInstance2);
         sds1.add(NullSpiderDiagram.getInstance());
-        HashSet<SpiderDiagram> sds2 = new HashSet<SpiderDiagram>();
+        HashSet<SpiderDiagram> sds2 = new HashSet<>();
         sds2.add(m_nsdInstance);
         assertTrue(Sets.equal(sds1, sds2));
         assertEquals(sds1.size(), 1);
@@ -139,11 +139,11 @@ public class NullSpiderDiagramTest {
 
     @Test
     public void hashMap1() {
-        HashSet<SpiderDiagram> sds1 = new HashSet<SpiderDiagram>();
+        HashSet<SpiderDiagram> sds1 = new HashSet<>();
         sds1.add(m_nsdInstance);
         sds1.add(m_nsdInstance2);
         sds1.add(NullSpiderDiagram.getInstance());
-        HashSet<SpiderDiagram> sds2 = new HashSet<SpiderDiagram>();
+        HashSet<SpiderDiagram> sds2 = new HashSet<>();
         assertFalse(Sets.equal(sds1, sds2));
         assertEquals(sds2.size(), 0);
         assertEquals(sds1.size(), 1);

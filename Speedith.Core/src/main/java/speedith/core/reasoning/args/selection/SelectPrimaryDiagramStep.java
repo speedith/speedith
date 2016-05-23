@@ -1,7 +1,10 @@
 package speedith.core.reasoning.args.selection;
 
 /**
- * Created by sl542 on 10/11/15.
+ * A selection step denoting the necessity to select a single
+ * primary diagram.
+ *
+ * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 public class SelectPrimaryDiagramStep extends SelectSubDiagramStep {
 

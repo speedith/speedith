@@ -29,23 +29,25 @@ package speedith.core.reasoning.rules;
 import speedith.core.lang.DiagramType;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.*;
+import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.rules.transformers.IntroShadedZoneTransformer;
 
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class IntroShadedZone extends SimpleInferenceRule<ZoneArg>
-        implements BasicInferenceRule<ZoneArg>, ForwardRule<ZoneArg> {
+public class IntroShadedZone extends SimpleInferenceRule<MultipleRuleArgs>
+        implements BasicInferenceRule<MultipleRuleArgs>, ForwardRule<MultipleRuleArgs>, Serializable {
 
     public static final String InferenceRuleName = "Introduce Shaded Zone";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram);
+    private static final long serialVersionUID = 5113694271453004231L;
 
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
@@ -54,15 +56,27 @@ public class IntroShadedZone extends SimpleInferenceRule<ZoneArg>
 
     @Override
     public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
+        MultipleRuleArgs ruleArgs = getTypedRuleArgs(args);
+        MultipleRuleArgs.assertArgumentsNotEmpty(ruleArgs);
+        ArrayList<ZoneArg> zones = ZoneArg.getZoneArgsFrom(ruleArgs);
+        SubDiagramIndexArg target = getTargetDiagramArg(ruleArgs);
+        return apply(target, zones, goals );
+    }
+
+    private RuleApplicationResult apply(SubDiagramIndexArg target, ArrayList<ZoneArg> targetContours, Goals goals) throws RuleApplicationException {
         SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
-        ZoneArg subgoal = (ZoneArg) args;
-        SpiderDiagram targetSubgoal = getSubgoal(subgoal, goals);
-        newSubgoals[subgoal.getSubgoalIndex()] = targetSubgoal.transform(new IntroShadedZoneTransformer(subgoal));
+        SpiderDiagram targetSubgoal = getSubgoal(target, goals);
+        newSubgoals[target.getSubgoalIndex()] = targetSubgoal.transform(new IntroShadedZoneTransformer(target, targetContours));
         return createRuleApplicationResult(newSubgoals);
     }
 
+    private SubDiagramIndexArg getTargetDiagramArg(MultipleRuleArgs args) throws RuleApplicationException {
+        return (SubDiagramIndexArg) args.get(0);
+    }
+
+
     @Override
-    public InferenceRule<ZoneArg> getInferenceRule() {
+    public InferenceRule<MultipleRuleArgs> getInferenceRule() {
         return this;
     }
 
@@ -72,12 +86,12 @@ public class IntroShadedZone extends SimpleInferenceRule<ZoneArg>
     }
 
     @Override
-    public Class<ZoneArg> getArgumentType() {
-        return ZoneArg.class;
+    public Class<MultipleRuleArgs> getArgumentType() {
+        return MultipleRuleArgs.class;
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 
@@ -92,7 +106,7 @@ public class IntroShadedZone extends SimpleInferenceRule<ZoneArg>
     }
 
     @Override
-    public RuleApplicationInstruction<ZoneArg> getInstructions() {
+    public RuleApplicationInstruction<MultipleRuleArgs> getInstructions() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

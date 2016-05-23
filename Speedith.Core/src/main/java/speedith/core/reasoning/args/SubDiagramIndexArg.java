@@ -30,6 +30,8 @@ import speedith.core.lang.CompoundSpiderDiagram;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.InferenceRule;
 
+import java.io.Serializable;
+
 /**
  * Along with the {@link SubgoalIndexArg subgoal index} this class also
  * provides the <span style="font-style:italic;">sub-diagram index</span> as an
@@ -41,7 +43,8 @@ import speedith.core.reasoning.InferenceRule;
  * children.</p>
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SubDiagramIndexArg extends SubgoalIndexArg implements RuleArg {
+public class SubDiagramIndexArg extends SubgoalIndexArg implements RuleArg, Serializable {
+    private static final long serialVersionUID = 6981659648623954249L;
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private final int subDiagramIndex;
     // </editor-fold>

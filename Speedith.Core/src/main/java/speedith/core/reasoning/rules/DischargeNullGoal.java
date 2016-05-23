@@ -35,6 +35,7 @@ import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
 
+import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
@@ -46,16 +47,17 @@ import static speedith.core.i18n.Translations.i18n;
  * list of current goals.
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> implements BasicInferenceRule<SubgoalIndexArg> {
+public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> implements BasicInferenceRule<SubgoalIndexArg>, Serializable {
 
     /**
      * The name of this inference rule.
-     * <p>This value is returned by the {@link SimpleInferenceRule#getInferenceRuleName()}
+     * <p>This value is returned by the {@link SimpleInferenceRule#getInferenceName()}
      * method.</p>
      */
     public static final String InferenceRuleName = "discharge_goal";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
+    private static final long serialVersionUID = -905890625282823817L;
 
     @Override
     public RuleApplicationResult apply(final RuleArg args, Goals goals) throws RuleApplicationException {
@@ -89,7 +91,7 @@ public class DischargeNullGoal extends SimpleInferenceRule<SubgoalIndexArg> impl
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

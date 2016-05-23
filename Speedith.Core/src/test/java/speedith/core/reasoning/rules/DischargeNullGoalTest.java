@@ -109,7 +109,7 @@ public class DischargeNullGoalTest {
     public void testGetInferenceRuleName() {
         DischargeNullGoal instance = new DischargeNullGoal();
         String expResult = DischargeNullGoal.InferenceRuleName;
-        String result = instance.getInferenceRuleName();
+        String result = instance.getInferenceName();
         assertEquals(expResult, result);
     }
 

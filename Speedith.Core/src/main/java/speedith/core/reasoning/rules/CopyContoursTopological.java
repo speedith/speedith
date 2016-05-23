@@ -10,6 +10,7 @@ import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.rules.instructions.SelectContoursInstruction;
 import speedith.core.reasoning.rules.transformers.CopyContoursTopologicalTransformer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Locale;
@@ -20,7 +21,7 @@ import java.util.Set;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class CopyContoursTopological extends SimpleInferenceRule<MultipleRuleArgs> {
+public class CopyContoursTopological extends SimpleInferenceRule<MultipleRuleArgs> implements Serializable, ForwardRule<MultipleRuleArgs> {
 
         /**
          * The name of this inference rule.
@@ -28,9 +29,10 @@ public class CopyContoursTopological extends SimpleInferenceRule<MultipleRuleArg
         public static final String InferenceRuleName = "copy_contours_topological";
 
         private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
+    private static final long serialVersionUID = 1065391918870981170L;
 
 
-        @Override
+    @Override
         public RuleApplicationResult apply(RuleArg args, Goals goals) throws RuleApplicationException {
             return apply(getContourArgsFrom(args), goals);
         }
@@ -41,7 +43,7 @@ public class CopyContoursTopological extends SimpleInferenceRule<MultipleRuleArg
         }
 
         @Override
-        public String getInferenceRuleName() {
+        public String getInferenceName() {
             return InferenceRuleName;
         }
 
@@ -88,5 +90,10 @@ public class CopyContoursTopological extends SimpleInferenceRule<MultipleRuleArg
         int indexOfParent = targetSubgoal.getParentIndexOf(inferenceTarget.getSubDiagramIndex());
         newSubgoals[inferenceTarget.getSubgoalIndex()] = targetSubgoal.transform(new CopyContoursTopologicalTransformer(indexOfParent, targetContours));
         return createRuleApplicationResult(newSubgoals);
+    }
+
+    @Override
+    public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
+        return apply(args, goals);
     }
 }

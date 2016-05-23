@@ -77,6 +77,7 @@ public class InferenceRules {
         registerProvider(ModusPonens.class);
         registerProvider(ModusTolens.class);
         registerProvider(Idempotency.class);
+        registerProvider(IdempotencySyntactic.class);
         registerProvider(GeneralTautology.class);
         registerProvider(TrivialImplicationTautology.class);
         registerProvider(ImplicationTautology.class);
@@ -175,7 +176,7 @@ public class InferenceRules {
             @SuppressWarnings("unchecked")
             InferenceRuleProvider<? extends RuleArg> theProvider = providerClass.asSubclass(InferenceRuleProvider.class).getConstructor().newInstance();
             synchronized (providers) {
-                providers.put(theProvider.getInferenceRuleName(), theProvider);
+                providers.put(theProvider.getInferenceName(), theProvider);
             }
         } catch (Exception ex) {
             throw new IllegalArgumentException(i18n("ERR_EXPORT_PROVIDER_CLASS"), ex);

@@ -8,7 +8,8 @@ BinarySD {
                 ("s", [(["D"], ["B"]), ([], ["B", "D"])]),
                 ("s1", [(["B"], ["D"]), ([], ["B", "D"])])
             ],
-	        sh_zones = [(["B", "D"], [])]
+	        sh_zones = [(["B", "D"], [])],
+		present_zones=[([],["B","D"])]
         },
         arg2 = PrimarySD {
 	        spiders = ["s", "s1"],
@@ -16,7 +17,8 @@ BinarySD {
                 ("s", [(["D"], ["B"]), ([], ["B", "D"])]),
                 ("s1", [(["B"], ["D"]), ([], ["B", "D"])])
             ],
-	        sh_zones = [(["B", "D"], [])]
+	        sh_zones = [(["B", "D"], [])],
+		present_zones=[([],["B","D"])]
         }
     },
     arg2 = PrimarySD {
@@ -25,6 +27,7 @@ BinarySD {
             ("s", [(["D"], ["B"]), ([], ["B", "D"])]),
             ("s1", [(["B"], ["D"]), ([], ["B", "D"])])
         ],
-	    sh_zones = [(["B", "D"], [])]
+	    sh_zones = [(["B", "D"], [])],
+	    present_zones=[([],["B","D"])]
     }
 }

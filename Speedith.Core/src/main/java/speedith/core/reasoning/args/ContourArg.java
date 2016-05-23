@@ -28,6 +28,7 @@ package speedith.core.reasoning.args;
 
 import speedith.core.reasoning.RuleApplicationException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -35,8 +36,9 @@ import java.util.ArrayList;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class ContourArg extends SubDiagramIndexArg {
+public class ContourArg extends SubDiagramIndexArg implements Serializable {
 
+    private static final long serialVersionUID = 4883774230687002322L;
     private final String contour;
 
     /**

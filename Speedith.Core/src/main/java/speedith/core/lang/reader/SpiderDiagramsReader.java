@@ -236,11 +236,11 @@ public final class SpiderDiagramsReader {
     private static class ZoneTranslator extends ElementTranslator<Zone> {
 
         public static final ZoneTranslator Instance = new ZoneTranslator();
-        public static final ListTranslator<Zone> ZoneListTranslator = new ListTranslator<Zone>(Instance);
+        public static final ListTranslator<Zone> ZoneListTranslator = new ListTranslator<>(Instance);
         private ListTranslator<ArrayList<String>> translator;
 
         private ZoneTranslator() {
-            translator = new ListTranslator<ArrayList<String>>(SpiderDiagramsParser.SLIST, ListTranslator.StringListTranslator);
+            translator = new ListTranslator<>(SpiderDiagramsParser.SLIST, ListTranslator.StringListTranslator);
         }
 
         @Override
@@ -260,7 +260,7 @@ public final class SpiderDiagramsReader {
 
         @SuppressWarnings("unchecked")
         private HabitatTranslator() {
-            regionListTranslator = new ListTranslator<ArrayList<Object>>(new TupleTranslator<Object>(new ElementTranslator<?>[]{StringTranslator.Instance, ZoneTranslator.ZoneListTranslator}));
+            regionListTranslator = new ListTranslator<>(new TupleTranslator<>(new ElementTranslator<?>[]{StringTranslator.Instance, ZoneTranslator.ZoneListTranslator}));
         }
 
         @Override
@@ -270,7 +270,7 @@ public final class SpiderDiagramsReader {
             if (rawHabitats == null || rawHabitats.size() < 1) {
                 return null;
             }
-            HashMap<String, Region> habitats = new HashMap<String, Region>();
+            HashMap<String, Region> habitats = new HashMap<>();
             for (ArrayList<Object> rawHabitat : rawHabitats) {
                 if (rawHabitat.size() == 2) {
                     habitats.put((String) rawHabitat.get(0), new Region((ArrayList<Zone>) rawHabitat.get(1)));
@@ -315,12 +315,12 @@ public final class SpiderDiagramsReader {
         private TreeSet<String> mandatoryAttributes;
 
         private GeneralSDTranslator(int headTokenType) {
-            keyValueMapTranslator = new GeneralMapTranslator<Object>(headTokenType, new HashMap<String, ElementTranslator<? extends Object>>(), null);
+            keyValueMapTranslator = new GeneralMapTranslator<>(headTokenType, new HashMap<String, ElementTranslator<? extends Object>>(), null);
         }
 
          <T> void addMandatoryAttribute(String key, ElementTranslator<T> valueTranslator) {
             if (mandatoryAttributes == null) {
-                mandatoryAttributes = new TreeSet<String>();
+                mandatoryAttributes = new TreeSet<>();
             }
             mandatoryAttributes.add(key);
             keyValueMapTranslator.typedValueTranslators.put(key, valueTranslator);
@@ -399,7 +399,7 @@ public final class SpiderDiagramsReader {
         @Override
         CompoundSpiderDiagram createSD(Map<String, Entry<Object, CommonTree>> attributes, CommonTree mainNode) throws ReadingException {
             String operator = (String) attributes.remove(SDTextOperatorAttribute).getKey();
-            ArrayList<SpiderDiagram> operands = new ArrayList<SpiderDiagram>();
+            ArrayList<SpiderDiagram> operands = new ArrayList<>();
             int i = 1;
             Entry<Object, CommonTree> curSD, lastSD = null;
             while ((curSD = attributes.remove(CompoundSpiderDiagram.SDTextArgAttribute + i++)) != null && curSD.getKey() instanceof SpiderDiagram) {
@@ -428,8 +428,8 @@ public final class SpiderDiagramsReader {
             super(SpiderDiagramsParser.SD_PRIMARY);
             addMandatoryAttribute(SDTextSpidersAttribute, ListTranslator.StringListTranslator);
             addMandatoryAttribute(SDTextHabitatsAttribute, HabitatTranslator.Instance);
-            addMandatoryAttribute(SDTextShadedZonesAttribute, new ListTranslator<Zone>(ZoneTranslator.Instance));
-            addOptionalAttribute(SDTextPresentZonesAttribute, new ListTranslator<Zone>(ZoneTranslator.Instance));
+            addMandatoryAttribute(SDTextShadedZonesAttribute, new ListTranslator<>(ZoneTranslator.Instance));
+            addOptionalAttribute(SDTextPresentZonesAttribute, new ListTranslator<>(ZoneTranslator.Instance));
         }
 
         @Override
@@ -476,7 +476,7 @@ public final class SpiderDiagramsReader {
                 if (treeNode.getChildCount() < 1) {
                     return null;
                 }
-                ArrayList<V> objs = new ArrayList<V>(treeNode.getChildCount());
+                ArrayList<V> objs = new ArrayList<>(treeNode.getChildCount());
                 int i = 0;
                 for (Object obj : treeNode.getChildren()) {
                     objs.add(fromASTChildAt(i++, (CommonTree) obj));
@@ -502,7 +502,7 @@ public final class SpiderDiagramsReader {
 
     private static class ListTranslator<V> extends CollectionTranslator<V> {
 
-        public static final ListTranslator<String> StringListTranslator = new ListTranslator<String>(StringTranslator.Instance);
+        public static final ListTranslator<String> StringListTranslator = new ListTranslator<>(StringTranslator.Instance);
         ElementTranslator<? extends V> valueTranslator = null;
 
         public ListTranslator(ElementTranslator<? extends V> valueTranslator) {
@@ -596,7 +596,7 @@ public final class SpiderDiagramsReader {
                 if (treeNode.getChildCount() < 1) {
                     return null;
                 }
-                HashMap<String, Entry<V, CommonTree>> kVals = new HashMap<String, Entry<V, CommonTree>>();
+                HashMap<String, Entry<V, CommonTree>> kVals = new HashMap<>();
                 for (Object obj : treeNode.getChildren()) {
                     CommonTree node = (CommonTree) obj;
                     if (node.token != null && node.token.getType() == SpiderDiagramsParser.PAIR && node.getChildCount() == 2) {
@@ -613,7 +613,7 @@ public final class SpiderDiagramsReader {
                             }
                         }
                         V value = translator.fromASTNode((CommonTree) node.getChild(1));
-                        kVals.put(key, new SimpleEntry<V, CommonTree>(value, node));
+                        kVals.put(key, new SimpleEntry<>(value, node));
                     } else {
                         throw new ReadingException(i18n("ERR_TRANSLATE_UNEXPECTED_ELEMENT", i18n("TRANSLATE_KEY_VALUE_PAIR")), node);
                     }

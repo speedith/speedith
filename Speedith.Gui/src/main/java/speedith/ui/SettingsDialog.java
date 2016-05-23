@@ -8,10 +8,10 @@ import speedith.core.reasoning.automatic.AutomaticProvers;
 import speedith.core.reasoning.automatic.strategies.Strategies;
 import speedith.core.reasoning.automatic.strategies.Strategy;
 import speedith.core.reasoning.automatic.strategies.StrategyProvider;
+import speedith.core.reasoning.tactical.Tactics;
+import speedith.ui.automatic.AutomaticProverThread;
 
 import javax.swing.*;
-import javax.swing.event.ListDataListener;
-import javax.swing.plaf.TabbedPaneUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,19 +24,13 @@ import java.util.prefs.Preferences;
  */
 public class SettingsDialog  extends javax.swing.JDialog {
 
-    private JTabbedPane settingsTab;
+    private static final long serialVersionUID = 7227563068597417669L;
 
-    private JPanel autoProverPanel;
-    private JLabel typeLabel;
-    private JLabel strategyLabel;
-    private JComboBox typeCombo;
-    private JComboBox strategyCombo;
-    private JButton okButton;
-
-    private JPanel settingsPanel;
-    private JPanel diagramsPanel;
-    private JComboBox diagramTypeCombo;
-
+    private JComboBox<ProverListItem> typeCombo;
+    private JComboBox<StrategyListItem> strategyCombo;
+    private JComboBox<DiagramType> diagramTypeCombo;
+    private JCheckBox backgroundSearchCheckbox = new JCheckBox();
+    private JCheckBox levelCheckbox = new JCheckBox();
 
     public SettingsDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -44,102 +38,152 @@ public class SettingsDialog  extends javax.swing.JDialog {
     }
 
     private void initComponents() {
-        settingsPanel = new JPanel();
-        okButton = new JButton();
-        autoProverPanel = new JPanel();
-        settingsTab = new JTabbedPane();
-        typeLabel = new JLabel();
-        typeCombo = new JComboBox(getProverComboList());
-        strategyLabel = new JLabel();
-        strategyCombo = new JComboBox(getStrategyComboList());
+        this.setTitle("Preferences");
+        JPanel settingsPanel = new JPanel();
+        JButton okButton = new JButton();
+        JPanel autoProverPanel = new JPanel();
+        JTabbedPane settingsTab = new JTabbedPane();
+        JLabel typeLabel = new JLabel();
+        JLabel strategyLabel = new JLabel();
+        JPanel diagramsPanel = new JPanel();
+        JPanel tacticsPanel  = new JPanel();
+        JLabel levelLabel = new JLabel();
 
-        diagramsPanel = new JPanel();
-        diagramTypeCombo = new JComboBox(getDiagramTypesComboList());
-
-        autoProverPanel.setLayout(new GridBagLayout());
-        autoProverPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-
-        GridBagConstraints c = new GridBagConstraints();
-
-        c.gridx = 0;
-        c.gridy = 0;
-        c.ipadx = 5;
-        c.ipady = 5;
-        c.anchor = GridBagConstraints.LINE_START;
-        typeLabel.setText("Type");
-        autoProverPanel.add(typeLabel, c);
-
-
-        c.gridx = 2;
-        c.gridy = 0;
-        c.ipadx = 5;
-        c.ipady = 5;
-        c.anchor = GridBagConstraints.LINE_END;
-        autoProverPanel.add(typeCombo,c);
+        JLabel backgroundSearchLabel = new JLabel();
+        final JLabel explanationLabel = new JLabel();
+        final JLabel strategyExplanationLabel = new JLabel();
 
 
 
-        c.gridx = 0;
-        c.gridy = 1;
-        c.ipadx = 5;
-        c.ipady = 5;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.LINE_START;
-        strategyLabel.setText("Strategy");
-        autoProverPanel.add(strategyLabel, c);
+
+        javax.swing.GroupLayout groupLayout;
+
+        typeCombo = new JComboBox<>(getProverComboList());
+        strategyCombo = new JComboBox<>(getStrategyComboList());
+        diagramTypeCombo = new JComboBox<>(getDiagramTypesComboList());
+
+        typeCombo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                ProverListItem item = (ProverListItem) typeCombo.getSelectedItem();
+                explanationLabel.setText(item.getAutomaticProverProvider().getDescription());
+            }
+        });
+        strategyCombo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                StrategyListItem item = (StrategyListItem) strategyCombo.getSelectedItem();
+                strategyExplanationLabel.setText(item.getStrategyProvider().getDescription());
+            }
+        });
 
 
-
-        c.gridx = 2;
-        c.gridy = 1;
-        c.ipadx = 5;
-        c.ipady = 5;
-        c.anchor = GridBagConstraints.LINE_END;
-        autoProverPanel.add(strategyCombo, c);
-
-        settingsTab.addTab("Auto Prover", autoProverPanel);
-
-
-        javax.swing.GroupLayout groupLayout = new javax.swing.GroupLayout(diagramsPanel);
+        groupLayout = new javax.swing.GroupLayout(diagramsPanel);
         diagramsPanel.setLayout(groupLayout);
+        groupLayout.setAutoCreateContainerGaps(true);
         groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup().addComponent(diagramTypeCombo));
         groupLayout.setVerticalGroup(groupLayout.createSequentialGroup().addComponent(diagramTypeCombo,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
                 GroupLayout.PREFERRED_SIZE));
         settingsTab.addTab("Diagram Type", diagramsPanel);
 
-        settingsPanel.setLayout(new GridBagLayout());
-        c.anchor = GridBagConstraints.CENTER;
-        c = new GridBagConstraints();
-        c.gridy = 0;
-        c.gridx = 0;
-        c.fill = GridBagConstraints.BOTH;
-        settingsPanel.add(settingsTab, c);
+
+        levelLabel.setText("Show low-level tactics");
+        levelCheckbox.setSelected(getShowLowLevelTactics());
+        groupLayout = new javax.swing.GroupLayout(tacticsPanel);
+        tacticsPanel.setLayout(groupLayout);
+        tacticsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        groupLayout.setAutoCreateGaps(true);
+        groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup().addComponent(levelLabel,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                GroupLayout.PREFERRED_SIZE).addComponent(levelCheckbox,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                GroupLayout.PREFERRED_SIZE));
+        groupLayout.setVerticalGroup(groupLayout.createParallelGroup().addComponent(levelLabel,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                GroupLayout.PREFERRED_SIZE).addComponent(levelCheckbox,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                GroupLayout.PREFERRED_SIZE));
+        settingsTab.addTab("Tactics", tacticsPanel);
+
+
+
+        backgroundSearchCheckbox.setSelected(getBackGroundSearchEnabled());
+        typeLabel.setText("Type");
+        strategyLabel.setText("Strategy");
+        backgroundSearchLabel.setText("Enable automatic proof search in the background");
+        ProverListItem item = (ProverListItem) typeCombo.getSelectedItem();
+        explanationLabel.setText(item.getAutomaticProverProvider().getDescription());
+        StrategyListItem item2 = (StrategyListItem) strategyCombo.getSelectedItem();
+        strategyExplanationLabel.setText(item2.getStrategyProvider().getDescription());
+
+
+
+        groupLayout = new javax.swing.GroupLayout(autoProverPanel);
+        autoProverPanel.setLayout(groupLayout);
+        autoProverPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        groupLayout.setAutoCreateContainerGaps(true);
+        groupLayout.setHorizontalGroup(
+                groupLayout.createSequentialGroup()
+                        .addGroup(
+                                groupLayout.createParallelGroup()
+                                        .addComponent(typeLabel)
+                                        .addComponent(strategyLabel)
+                                        .addComponent(backgroundSearchLabel))
+
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(
+                                groupLayout.createParallelGroup()
+                                        .addComponent(typeCombo)
+                                        .addComponent(explanationLabel)
+                                        .addComponent(strategyCombo)
+                                        .addComponent(strategyExplanationLabel)
+                                        .addComponent(backgroundSearchCheckbox))
+        );
+        groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
+                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(typeLabel).addComponent(typeCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                        GroupLayout.PREFERRED_SIZE))
+                .addComponent(explanationLabel)
+                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(strategyLabel).addComponent(strategyCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                        GroupLayout.PREFERRED_SIZE))
+                .addComponent(strategyExplanationLabel)
+                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(backgroundSearchLabel).addComponent(backgroundSearchCheckbox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                        GroupLayout.PREFERRED_SIZE))
+        );
+
+
+        settingsTab.addTab("Auto Prover", autoProverPanel);
+
+
+
 
         okButton.setText("Ok");
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                okbuttonClicked(actionEvent);
+                okbuttonClicked();
             }
         });
-        c.gridy = 1;
-        c.gridx = 0;
-        c.anchor = GridBagConstraints.LINE_START;
-        c.fill = GridBagConstraints.NONE;
-        settingsPanel.add(okButton, c);
 
+        JSeparator sep = new JSeparator();
 
-        GridBagLayout layout = new GridBagLayout();
-        getContentPane().setLayout(new BorderLayout());
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor =GridBagConstraints.LINE_START;
+        groupLayout = new javax.swing.GroupLayout(settingsPanel);
+        settingsPanel.setLayout(groupLayout);
+        groupLayout.setAutoCreateContainerGaps(false);
+        groupLayout.setHorizontalGroup(groupLayout.createParallelGroup()
+                .addComponent(settingsTab).addComponent(sep)
+                .addGroup(groupLayout.createSequentialGroup().addContainerGap().addComponent(okButton)));
+        groupLayout.setVerticalGroup(
+                groupLayout.createSequentialGroup()
+                        .addComponent(settingsTab)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                     GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(sep,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                                GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(okButton)
+                        .addContainerGap());
         getContentPane().add(settingsPanel, BorderLayout.CENTER);
 
         pack();
     }
 
-    private void okbuttonClicked(ActionEvent actionEvent) {
+    private void okbuttonClicked() {
         Preferences prefs =  Preferences.userNodeForPackage(SettingsDialog.class);
         ProverListItem selectedProver = (ProverListItem) typeCombo.getSelectedItem();
         prefs.put(AutomaticProvers.prover_preference, selectedProver.getAutomaticProverProvider().getAutomaticProverName());
@@ -147,10 +191,14 @@ public class SettingsDialog  extends javax.swing.JDialog {
         prefs.put(Strategies.strategy_preference, selectedStrategy.getStrategyProvider().getStrategyName());
         DiagramType diagrams = (DiagramType) diagramTypeCombo.getSelectedItem();
         prefs.put(InferenceRules.diagram_type_preference, diagrams.name());
+        Boolean backgroundSearch = backgroundSearchCheckbox.isSelected();
+        prefs.put(AutomaticProverThread.background_preference, backgroundSearch.toString());
+        Boolean showLowLevel = levelCheckbox.isSelected();
+        prefs.put(Tactics.level_preference, showLowLevel.toString());
         dispose();
     }
 
-    private ComboBoxModel getProverComboList() {
+    private ComboBoxModel<ProverListItem> getProverComboList() {
         Set<String> provers = AutomaticProvers.getKnownAutomaticProvers();
         ProverListItem[] proverItems = new ProverListItem[provers.size()];
         int i = 0;
@@ -158,7 +206,7 @@ public class SettingsDialog  extends javax.swing.JDialog {
             proverItems[i++] = new ProverListItem(AutomaticProvers.getProvider(providerName));
         }
         Arrays.sort(proverItems);
-        ComboBoxModel model = new DefaultComboBoxModel<>(proverItems);
+        ComboBoxModel<ProverListItem> model = new DefaultComboBoxModel<>(proverItems);
         Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
         String prover = prefs.get(AutomaticProvers.prover_preference, null);
         if (prover != null) {
@@ -172,7 +220,7 @@ public class SettingsDialog  extends javax.swing.JDialog {
         return selected.getAutomaticProverProvider().getAutomaticProver();
     }
 
-    private ComboBoxModel getStrategyComboList() {
+    private ComboBoxModel<StrategyListItem> getStrategyComboList() {
         Set<String> strategies = Strategies.getKnownStrategies();
         StrategyListItem[] stragetyItems = new StrategyListItem[strategies.size()];
         int i = 0;
@@ -180,7 +228,7 @@ public class SettingsDialog  extends javax.swing.JDialog {
             stragetyItems[i++] = new StrategyListItem(Strategies.getProvider(strategyName));
         }
         Arrays.sort(stragetyItems);
-        ComboBoxModel model = new DefaultComboBoxModel<>(stragetyItems);
+        ComboBoxModel<StrategyListItem> model = new DefaultComboBoxModel<>(stragetyItems);
         Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
         String selected = prefs.get(Strategies.strategy_preference, null);
         if (selected != null) {
@@ -202,6 +250,33 @@ public class SettingsDialog  extends javax.swing.JDialog {
             model.setSelectedItem(DiagramType.valueOf(selected));
         }
         return model;
+    }
+
+    private Boolean getBackGroundSearchEnabled() {
+        Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
+        String selected = prefs.get(AutomaticProverThread.background_preference, null);
+        if (selected != null) {
+            return Boolean.valueOf(selected);
+        }
+        return Boolean.FALSE;
+
+    }
+
+    private Boolean getShowLowLevelTactics() {
+        Preferences prefs = Preferences.userNodeForPackage(SettingsDialog.class);
+        String selected = prefs.get(Tactics.level_preference, null);
+        if (selected != null) {
+            return Boolean.valueOf(selected);
+        }
+        return Boolean.FALSE;
+    }
+
+    public Boolean isBackGroundSearchEnabled() {
+        return backgroundSearchCheckbox.isSelected();
+    }
+
+    public Boolean isShowLowLevelTacticsEnabled() {
+        return levelCheckbox.isSelected();
     }
 
     public DiagramType getSelectedDiagramType() {

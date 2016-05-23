@@ -33,6 +33,7 @@ import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.rules.instructions.SelectFeetOfSpiderInstruction;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Locale;
@@ -45,16 +46,17 @@ import static speedith.core.i18n.Translations.i18n;
  *
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg>, ForwardRule<SpiderRegionArg> {
+public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implements BasicInferenceRule<SpiderRegionArg>, ForwardRule<SpiderRegionArg>, Serializable {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     /**
-     * The name of this inference rule. <p>This value is returned by the {@link SplitSpiders#getInferenceRuleName()}
+     * The name of this inference rule. <p>This value is returned by the {@link SplitSpiders#getInferenceName()}
      * method.</p>
      */
     public static final String InferenceRuleName = "split_spiders";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.SpiderDiagram);
+    private static final long serialVersionUID = -7372701195353809532L;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="InferenceRule Implementation">
@@ -74,7 +76,7 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
     }
 
     @Override
-    public String getInferenceRuleName() {
+    public String getInferenceName() {
         return InferenceRuleName;
     }
 

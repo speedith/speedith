@@ -361,12 +361,12 @@ begin
 declare region_map.simps [simp add]
 declare zone_map.simps [simp add]
 
-(* Spider diagram transformation rule 3 (split spider). *)
+(* Spider diagram transformation inference 3 (split spider). *)
 lemma sd_rule_split_spider: "(smap s \<in> r \<squnion> r') = (smap s \<in> rmap r \<or> smap s \<in> rmap r')"
   by (auto simp add: regionunion_def)
 
-(* Spider diagram transformation rule 'adding feet to a spider'.
-   Note: this rule is very obvious and quite frankly trivial in Isabelle, but it
+(* Spider diagram transformation inference 'adding feet to a spider'.
+   Note: this inference is very obvious and quite frankly trivial in Isabelle, but it
    has a very interesting diagrammatic equivalent\<dots> so why not 'formalise' it
    here. *)
 lemma sd_rule_add_feet: "\<lbrakk> smap s \<in> rmap r; r \<subseteq> r' \<rbrakk> \<Longrightarrow> smap s \<in> rmap r'"
@@ -374,7 +374,7 @@ lemma sd_rule_add_feet: "\<lbrakk> smap s \<in> rmap r; r \<subseteq> r' \<rbrak
 lemma sd_rule_add_feet_2: "\<lbrakk> hab s \<subseteq> r; r \<subseteq> r' \<rbrakk> \<Longrightarrow> hab s \<subseteq> r'"
   by (simp)
 
-(* Spider diagram transformation rule 'swap feet'. *)
+(* Spider diagram transformation inference 'swap feet'. *)
 lemma sd_rule_swap_feet_2: "\<lbrakk> smap s \<in> rmap r; smap s' \<in> rmap r'; r' \<subset> r; rs \<subseteq> r - r' \<rbrakk> \<Longrightarrow> \<exists>s1 s1'. smap s1 \<in> rmap (r' \<union>  rs) \<and> smap s1' \<in> rmap (r - rs)"
   by (auto)
 
@@ -509,7 +509,7 @@ lemma ex_1_a: "(smap 1 \<in> rmap {{ 0, 1 }} \<and> smap 2 \<in> rmap {{0}, {1}}
   apply (rule_tac x = "2" in exI)
   by (auto)
 
-(* Spider diagram transformation rule 'swap feet'. *)
+(* Spider diagram transformation inference 'swap feet'. *)
 (*lemma sd_rule_swap_feet_N: "\<exists>s1 s2. s1 \<noteq> s2 \<and> s1 \<in> r1 \<and> s2 \<in> r2 \<and> r1 \<subset> r2 \<and> rs \<subseteq> r2 - r1"
   sorry
 lemma sd_rule_swap_feet: "\<lbrakk> s \<noteq> s'; smap s \<in> rmap r; smap s' \<in> rmap r'; r' \<subset> r; rs \<subseteq> r - r' \<rbrakk> \<Longrightarrow> \<exists>ss ss'. ss \<noteq> ss' \<and> ss \<in> rmap (r' \<union>  rs) \<and> ss' \<in> rmap (r - rs)"

@@ -190,7 +190,7 @@ qed
 
 
 (*
-    Part of the inference rule: remove shaded zone
+    Part of the inference inference: remove shaded zone
 
     If we remove a shaded zone from a primary spider diagram \<phi>, we get a new
     PSD \<psi>, where \<phi> entails \<psi>.
@@ -309,7 +309,7 @@ SPIDER DIAGRAMMATIC INFERENCE RULES FORMALISATION
 
 
 (*
-    Inference rule: Remove habitat
+    Inference inference: Remove habitat
 
     If there are no shaded zones, then we can remove arbitrary habitats.
 *)
@@ -319,14 +319,14 @@ lemma psd_remove_habitats: "psd_sem habs {} \<Longrightarrow>
 
 
 (*
-    Inference rule: Add feet
+    Inference inference: Add feet
 *)
 lemma psd_add_feet: "\<lbrakk> psd_sem (h#habs) sh_zones; h \<subset> h' \<rbrakk> \<Longrightarrow> psd_sem (h'#habs) sh_zones"
   by auto
 
 
 (*
-    A formalisation of the first version of the 'add feet' inference rule (i.e.:
+    A formalisation of the first version of the 'add feet' inference inference (i.e.:
     t(A) \<longrightarrow> \<psi> \<turnstile> A \<longrightarrow> \<psi>
 *)
 lemma sd_rule_add_feet: "\<lbrakk> h \<subset> h'; sd_sem (BinarySD (op -->) (PrimarySD (h'#hs) shzs) \<psi>) \<rbrakk> \<Longrightarrow>
@@ -335,7 +335,7 @@ lemma sd_rule_add_feet: "\<lbrakk> h \<subset> h'; sd_sem (BinarySD (op -->) (Pr
 
 
 (*
-    A formalisation of the second version of the 'add feet' inference rule (i.e.:
+    A formalisation of the second version of the 'add feet' inference inference (i.e.:
     t(A) \<and> \<phi> \<longrightarrow> \<psi> \<turnstile> A \<and> \<phi> \<longrightarrow> \<psi>
 *)
 lemma sd_rule_add_feet_con: "\<lbrakk> h \<subset> h'; sd_sem (BinarySD (op -->) (BinarySD (op &) (PrimarySD (h'#hs) shzs) \<phi>) \<psi>) \<rbrakk> \<Longrightarrow>
@@ -344,7 +344,7 @@ lemma sd_rule_add_feet_con: "\<lbrakk> h \<subset> h'; sd_sem (BinarySD (op -->)
 
 
 (*
-    A formalisation of the third version of the 'add feet' inference rule (i.e.:
+    A formalisation of the third version of the 'add feet' inference inference (i.e.:
     t(A) \<or> \<phi> \<longrightarrow> \<psi> \<turnstile> A \<or> \<phi> \<longrightarrow> \<psi>
 *)
 lemma sd_rule_add_feet_disj: "\<lbrakk> h \<subset> h'; sd_sem (BinarySD (op -->) (BinarySD (op \<or>) (PrimarySD (h'#hs) shzs) \<phi>) \<psi>) \<rbrakk> \<Longrightarrow>
@@ -353,7 +353,7 @@ lemma sd_rule_add_feet_disj: "\<lbrakk> h \<subset> h'; sd_sem (BinarySD (op -->
 
 
 (*
-    A formalisation of the 'split spider' inference rule:
+    A formalisation of the 'split spider' inference inference:
 
         A \<longleftrightarrow> t_{h, habA}(A, spider) \<or> t_{h, habB}(A, spider)
 
@@ -368,7 +368,7 @@ lemma sd_rule_split_spiders: "\<lbrakk> habs = (h#hs); habA \<union> habB = h \<
 
 
 (*
-    A formalisation of the 'split spider' inference rule---using the BinarySD
+    A formalisation of the 'split spider' inference inference---using the BinarySD
     data structure.
 *)
 lemma sd_rule_split_spiders_B: "\<lbrakk> habs = (h#hs); habA \<union> habB = h \<rbrakk> \<Longrightarrow>
@@ -410,7 +410,7 @@ method_setup sd_tac = {*
               fun get_sp xs = ((Args.$$$ "sp" -- Args.colon -- Parse.string) >> get_option) xs
               fun get_r xs = ((Args.$$$ "r" -- Args.colon -- Parse.string) >> get_option) xs
               fun get_args xs = (Scan.repeat (Scan.first [get_sdi, get_sp, get_r])) xs
-              fun get_rule_and_args xs = (Parse.short_ident -- get_args >> (fn (rule, args) => ("ir", rule)::args)) xs
+              fun get_rule_and_args xs = (Parse.short_ident -- get_args >> (fn (inference, args) => ("ir", inference)::args)) xs
           in
               ((Scan.lift (get_rule_and_args)) >> (fn args => (fn ctxt => (Method.SIMPLE_METHOD' (MixR.sd_tac args ctxt))))) xs
           end)
@@ -454,9 +454,9 @@ lemma step3B: "\<And>s1 s2. \<lbrakk>distinct [s1, s2]; s1 \<in> A \<inter> B; s
 
 lemma testC: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
               \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B) \<and> (A \<inter> B) \<noteq> {}"
-  apply (rule impI)                                           (* Implication introduction *)
+  apply (inference impI)                                           (* Implication introduction *)
   apply (erule exE | erule conjE)+                            (* Repeated existential and conjunction elimination *)
-  apply (rule conjI, simp)                                    (* Conjunction introduction and simplification of sets *)
+  apply (inference conjI, simp)                                    (* Conjunction introduction and simplification of sets *)
   apply (erule conjE | erule disjE)+                          (* Repeated conjunction and disjunction elimination *)
   apply (rule_tac x = "s2" in exI, rule_tac x = "s1" in exI)  (* Existential introduction with instantiation of spiders *)
   apply (fast)                                                (* Proves the goal from the assumptions. *)
@@ -468,8 +468,8 @@ lemma our: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and
               \<longrightarrow> (\<exists>t1 t2. distinct[t1, t2] \<and> t1 \<in> A \<and> t2 \<in> B) \<and> (A \<inter> B) \<noteq> {}"
 (*apply auto*)
 (*  apply (auto simp del: distinct.simps)*)
-  apply (rule impI)
-  apply (rule conjI)
+  apply (inference impI)
+  apply (inference conjI)
   apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
   apply (sd_tac add_feet sdi: 2 sp: "s2" r: "[([\"A\", \"B\"],[])]")
   apply (sd_tac add_feet sdi: 2 sp: "s1" r: "[([\"B\"],[\"A\"])]")
@@ -482,8 +482,8 @@ apply (sd_tac add_feet sdi: 3 sp: "s2" r: "[([\"A\", \"B\"],[])]")
 
 lemma example1: "(\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<inter> B \<and> s2 \<in> (A - B) \<union> (B - A))
               \<longrightarrow> (\<exists>s1 s2. distinct[s1, s2] \<and> s1 \<in> A \<and> s2 \<in> B) \<and> (A \<inter> B) \<noteq> {}"
-  apply (rule impI)
-  apply (rule conjI)
+  apply (inference impI)
+  apply (inference conjI)
   apply (sd_tac split_spiders sdi: 1 sp: "s2" r: "[([\"A\"],[\"B\"])]")
   apply (sd_tac add_feet sdi: 2 sp: "s2" r: "[([\"A\", \"B\"],[])]")
   apply (sd_tac add_feet sdi: 2 sp: "s1" r: "[([\"B\"],[\"A\"])]")

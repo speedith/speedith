@@ -4,11 +4,13 @@ import speedith.core.lang.SpiderDiagram;
 import speedith.core.reasoning.Goals;
 import speedith.core.reasoning.Proof;
 import speedith.core.reasoning.RuleApplicationException;
+import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
+import speedith.core.reasoning.tactical.TacticApplicationException;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,7 +41,7 @@ public class DepthFirstProver extends AutomaticProver {
      * state of the given Proof p. The rules already applied to subdiagrams within
      * the current set of goals are saved in appliedRules
      */
-    private Proof proveRecursively(Proof p, int subgoalindex, AppliedRules appliedRules) throws RuleApplicationException, AutomaticProofException {
+    private Proof proveRecursively(Proof p, int subgoalindex, AppliedRules appliedRules) throws RuleApplicationException, TacticApplicationException {
         p = tryToFinish(p, subgoalindex);
         if (p.isFinished()) {
             return p;
@@ -55,16 +57,18 @@ public class DepthFirstProver extends AutomaticProver {
         SpiderDiagramOccurrence target = SpiderDiagramOccurrence.wrapDiagram(currentGoals.getGoalAt(subgoalindex), 0);
 //        AppliedRules applied = new AppliedRules(appliedRules);
 //        AppliedRules applied = appliedRules;
-        Set<PossibleRuleApplication> applications = AutomaticUtils.createAllPossibleRuleApplications(target, contours);
+        Set<? extends PossibleRuleApplication<? extends RuleArg>> applications = AutomaticUtils.createAllPossibleRuleApplications(subgoalindex,target, contours);
         for(PossibleRuleApplication nextRule : applications)  {
-            boolean hasBeenApplied = nextRule.apply(p, subgoalindex, appliedRules);
+            boolean superfl = nextRule.isSuperfluous(p) || appliedRules.contains(nextRule, nextRule.getTarget());
+            boolean hasBeenApplied = !superfl && nextRule.apply(p, getPrettyName());
             if (hasBeenApplied) {
+                appliedRules.add(nextRule, nextRule.getTarget());
                 p = proveRecursively(p, subgoalindex, appliedRules);
-                if (p.isFinished()) {
+                if (p.isFinished() || Thread.currentThread().isInterrupted()) {
                     return p;
                 }
                 p.undoStep();
-                //nextRule.removeFrom(appliedRules);
+ //               appliedRules.remove(nextRule, nextRule.getTarget());
             }
         }
 
@@ -72,7 +76,7 @@ public class DepthFirstProver extends AutomaticProver {
     }
 
     @Override
-    protected Proof prove(Proof p, int subgoalindex) throws RuleApplicationException, AutomaticProofException {
+    protected Proof prove(Proof p, int subgoalindex) throws RuleApplicationException, TacticApplicationException, AutomaticProofException {
         return proveRecursively(p, subgoalindex, new AppliedRules());
     }
 

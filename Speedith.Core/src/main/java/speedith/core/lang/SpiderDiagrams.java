@@ -43,7 +43,7 @@ import static speedith.core.i18n.Translations.i18n;
  */
 public class SpiderDiagrams {
 
-  private static final WeakHashMap<SpiderDiagram, WeakReference<SpiderDiagram>> pool = new WeakHashMap<SpiderDiagram, WeakReference<SpiderDiagram>>();
+  private static final WeakHashMap<SpiderDiagram, WeakReference<SpiderDiagram>> pool = new WeakHashMap<>();
 
   private SpiderDiagrams() {
   }
@@ -184,7 +184,7 @@ public class SpiderDiagrams {
     if (operands == null) {
       return __createCompoundSD(new CompoundSpiderDiagram(operator, null), true, operator.getName(), null);
     } else {
-      ArrayList<SpiderDiagram> operandsTmp = new ArrayList<SpiderDiagram>(Arrays.asList(operands));
+      ArrayList<SpiderDiagram> operandsTmp = new ArrayList<>(Arrays.asList(operands));
       return __createCompoundSD(new CompoundSpiderDiagram(operator, operandsTmp), false, operator.getName(), null);
     }
   }
@@ -264,10 +264,10 @@ public class SpiderDiagrams {
                              presentZones == null ? null : (TreeSet<Zone>) presentZones,
                              copyCollections);
     } else {
-      TreeSet<String> spidersCopy = spiders == null ? null : new TreeSet<String>(spiders);
-      TreeMap<String, Region> habitatsCopy = habitats == null ? null : new TreeMap<String, Region>(habitats);
-      TreeSet<Zone> shadedZonesCopy = shadedZones == null ? null : new TreeSet<Zone>(shadedZones);
-      TreeSet<Zone> presentZonesCopy = presentZones == null ? null : new TreeSet<Zone>(presentZones);
+      TreeSet<String> spidersCopy = spiders == null ? null : new TreeSet<>(spiders);
+      TreeMap<String, Region> habitatsCopy = habitats == null ? null : new TreeMap<>(habitats);
+      TreeSet<Zone> shadedZonesCopy = shadedZones == null ? null : new TreeSet<>(shadedZones);
+      TreeSet<Zone> presentZonesCopy = presentZones == null ? null : new TreeSet<>(presentZones);
       return __createPrimarySD(spidersCopy, habitatsCopy, shadedZonesCopy, presentZonesCopy, false);
     }
   }
@@ -310,7 +310,7 @@ public class SpiderDiagrams {
         // after we fetched it from the pool and before the reference
         // was assigned to the local variable). So, add it again to the
         // pool.
-        pool.put(exPsd, new WeakReference<SpiderDiagram>(exPsd));
+        pool.put(exPsd, new WeakReference<>(exPsd));
         return (PrimarySpiderDiagram) exPsd;
       }
     }
@@ -347,7 +347,7 @@ public class SpiderDiagrams {
       // after we fetched it from the pool and before the reference
       // was assigned to the local variable). So, add it again to the
       // pool.
-      pool.put(exCsd, new WeakReference<SpiderDiagram>(exCsd));
+      pool.put(exCsd, new WeakReference<>(exCsd));
       return (CompoundSpiderDiagram) exCsd;
     }
   }

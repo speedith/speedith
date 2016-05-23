@@ -9,7 +9,10 @@ import java.util.Locale;
 import static speedith.core.i18n.Translations.i18n;
 
 /**
- * Created by sl542 on 11/11/15.
+ * A selection step denoting the necessity to select a single
+ * zone from within a diagram.
+ *
+ * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 public class SelectSingleZoneStep extends SelectionStep {
     private SelectSingleZoneStep() {

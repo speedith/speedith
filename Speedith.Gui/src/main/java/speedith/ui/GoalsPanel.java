@@ -33,6 +33,9 @@
 package speedith.ui;
 
 import speedith.core.reasoning.Goals;
+
+import java.awt.*;
+
 import static speedith.i18n.Translations.i18n;
 
 /**
@@ -84,7 +87,7 @@ public class GoalsPanel extends javax.swing.JPanel {
         pnlTitle.setMinimumSize(new java.awt.Dimension(0, 0));
         pnlTitle.setPreferredSize(new java.awt.Dimension(0, 0));
 
-        lblGoal.setFont(new java.awt.Font("Dialog", 3, 14)); // NOI18N
+        lblGoal.setFont(new java.awt.Font("Dialog", Font.PLAIN, 14)); // NOI18N
         lblGoal.setForeground(new java.awt.Color(255, 255, 255));
         lblGoal.setText(getGoalLabel());
         lblGoal.setPreferredSize(new java.awt.Dimension(0, 0));
@@ -169,12 +172,12 @@ public class GoalsPanel extends javax.swing.JPanel {
     /**
      * Returns the set of flags that determines which elements of the diagram
      * may be highlighted with the mouse. <p>This flag can be a (binary)
-     * combination of the following flags: <ul> <li>{@link SpeedithCirclesPanel#Spiders}:
+     * combination of the following flags: <ul> <li>{@link speedith.core.reasoning.args.selection.SelectionStep#Spiders}:
      * which indicates that spiders will be highlighted when the user hovers
-     * over them.</li> <li>{@link SpeedithCirclesPanel#Zones}: which indicates that
-     * zones will be highlighted when the user hovers over them.</li> <li>{@link SpeedithCirclesPanel#Contours}:
+     * over them.</li> <li>{@link speedith.core.reasoning.args.selection.SelectionStep#Zones}: which indicates that
+     * zones will be highlighted when the user hovers over them.</li> <li>{@link speedith.core.reasoning.args.selection.SelectionStep#Contours}:
      * which indicates that circle contours will be highlighted when the user
-     * hovers over them.</li> </ul></p> <p> The {@link SpeedithCirclesPanel#All} and {@link SpeedithCirclesPanel#None}
+     * hovers over them.</li> </ul></p> <p> The {@link speedith.core.reasoning.args.selection.SelectionStep#All} and {@link speedith.core.reasoning.args.selection.SelectionStep#None}
      * flags can also be used. These indicate that all diagram or no elements
      * (respectively) can be highlighted with the mouse.</p>
      *
