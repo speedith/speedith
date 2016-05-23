@@ -211,7 +211,7 @@ object BasicTactics {
 
   def copyEveryThing: Tactic =  {
     THEN(
-      DEPTH_FIRST(
+       DEPTH_FIRST(
         isUnitaryDiagram)(
         THEN(
           COND(isUnitaryDiagram)(id)(copyShadings))(

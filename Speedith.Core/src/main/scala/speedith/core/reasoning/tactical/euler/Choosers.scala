@@ -194,11 +194,12 @@ object Choosers {
     case sd: CompoundSpiderDiagramOccurrence => None
     case sd: PrimarySpiderDiagramOccurrence =>
       val shaded = (sd.getShadedZones & sd.getPresentZones).toSet
+      val habitats = sd.getHabitats flatMap ( entry => entry._2.zones )
       val contours = sd.getAllContours
       val contoursWithshadedZones= contours filter (c => shaded.exists(_.getInContours.contains(c)))
       contoursWithshadedZones.headOption match {
         case None => None
-        case Some(c) => Some(shaded filter (_.getInContours.contains(c)))
+        case Some(c) => Some((shaded filter (_.getInContours.contains(c))) -- habitats)
       }
   }
 
