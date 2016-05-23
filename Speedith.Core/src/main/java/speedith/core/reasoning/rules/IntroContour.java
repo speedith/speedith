@@ -44,14 +44,17 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
+ * Implementation of "Introduce Contour" rule
+ *
  * @author Matej Urbas [matej.urbas@gmail.com]
+ * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
         implements BasicInferenceRule<MultipleRuleArgs>, ForwardRule<MultipleRuleArgs>, Serializable {
 
     public static final String InferenceRuleName = "Introduce Contour";
 
-    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram);
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram,DiagramType.SpiderDiagram);
     private static final long serialVersionUID = 276871128317847228L;
 
     @Override

@@ -1180,7 +1180,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
    */
   public static SpiderDiagram getExampleB() {
     try {
-      return SpiderDiagramsReader.readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op &\" }");
+      return SpiderDiagramsReader.readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])], present_zones=[([],[\"A\",\"B\"])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])], present_zones=[([],[\"A\",\"B\"])]}, operator = \"op &\" }");
     } catch (Exception ex) {
       throw new RuntimeException();
     }
@@ -1191,7 +1191,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
    */
   public static SpiderDiagram getExampleC() {
     try {
-      return SpiderDiagramsReader.readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op -->\" }");
+      return SpiderDiagramsReader.readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])], present_zones=[([],[\"A\",\"B\"])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])], present_zones=[([],[\"A\",\"B\"])]}, operator = \"op -->\" }");
     } catch (Exception ex) {
       throw new RuntimeException();
     }
@@ -1201,7 +1201,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
    * s1: A, B s2: AB
    */
   public static PrimarySpiderDiagram getSDExample1() {
-    PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
+    Set<Zone> present = new HashSet<>();
+    present.add(Zone.fromOutContours("A","B"));
+    PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, present);
     Region s1Region = regionA_B__B_A();
     Region s2Region = regionAB();
     emptyPSD = emptyPSD.addSpider("t1", s1Region);
@@ -1234,7 +1236,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
    * s1: A, AB s2: B, AB
    */
   public static PrimarySpiderDiagram getSDExample7() {
-    PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
+    Set<Zone> present = new HashSet<>();
+    present.add(Zone.fromOutContours("A","B"));
+    PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, present);
     Region s1Region = regionA_B__AB();
     Region s2Region = regionB_A__AB();
     emptyPSD = emptyPSD.addSpider("u1", s1Region);

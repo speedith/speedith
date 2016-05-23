@@ -1,12 +1,13 @@
 package speedith.core.reasoning.rules.transformers
 
-
 import speedith.core.lang._
-import speedith.core.reasoning.RuleApplicationException
+
 import speedith.core.reasoning.args.{ContourArg, SubDiagramIndexArg}
-import speedith.core.reasoning.rules.util.{ReasoningUtils, AutomaticUtils}
+import speedith.core.reasoning.rules.util.ReasoningUtils
 
 import scala.collection.JavaConversions._
+import scala.collection.SortedMap
+
 /** @author Sven Linker [s.linker@brighton.ac.uk]
   *
   *         Only works for Euler Diagrams!
@@ -20,6 +21,10 @@ case class IntroduceContoursTransformer(target : SubDiagramIndexArg, contours : 
     region.map(zone => new Zone(zone.getInContours ++ contoursToAdd, zone.getOutContours )).toSet ++ region.map(zone => new Zone(zone.getInContours , zone.getOutContours ++ contoursToAdd )).toSet
   }
 
+  def createHabitats(habitats: Map[String, Region], contoursToAdd: Set[String]): Map[String, Region] = {
+    habitats map (s  => (s._1,Region(ReasoningUtils.regionWithNewContours(s._2.zones, contoursToAdd))))
+  }
+
   override def transform(psd: PrimarySpiderDiagram,
                          diagramIndex: Int,
                          parents: java.util.ArrayList[CompoundSpiderDiagram],
@@ -28,10 +33,13 @@ case class IntroduceContoursTransformer(target : SubDiagramIndexArg, contours : 
         if ((contoursToAdd & psd.getAllContours).nonEmpty ) {
           throw new TransformationException("The contours to be introduced must not be contained in the target diagram.")
         }
-        EulerDiagrams.createPrimaryEulerDiagram(
+        SpiderDiagrams.createPrimarySD(createHabitats(psd.getHabitats.toMap, contoursToAdd), ReasoningUtils.shadedRegionWithNewContours(psd.getShadedZones.toSet,contoursToAdd),
+          ReasoningUtils.regionWithNewContours(psd.getPresentZones,contoursToAdd) )
+
+      /*        EulerDiagrams.createPrimaryEulerDiagram(
           ReasoningUtils.shadedRegionWithNewContours(psd.getShadedZones.toSet,contoursToAdd),
           ReasoningUtils.regionWithNewContours(psd.getPresentZones,contoursToAdd)
-        )
+        ) */
 
     } else {
       null
