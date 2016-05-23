@@ -168,20 +168,19 @@ object AutomaticUtils {
   private def createRemoveContourApplications(subGoalIndex : Int,target: PrimarySpiderDiagramOccurrence): Set[PossibleRemoveContour] = {
     val targetShadedZones = (target.getPresentZones & target.getShadedZones).toSet
     val targetUnshadedZones = target.getPresentZones.toSet -- target.getShadedZones.toSet
-      val safeContours = target.getAllContours.toSet filterNot (
+    val safeContours = target.getAllContours.toSet filterNot (
       c => targetShadedZones.exists (
-          z1 => z1.getInContours.contains(c) && (
+          z1 => z1.getInContours.contains(c) &&
             targetUnshadedZones.exists (z2 => z2.getOutContours.contains(c) &&
                 z2.getInContours.containsAll(z1.getInContours - c) &&
-                z2.getOutContours.containsAll(z1.getOutContours + c) ))))
+                z2.getOutContours.containsAll(z1.getOutContours + c))))
     val safeContours2 = safeContours filterNot (
         c => targetUnshadedZones.exists (
           z1 => z1.getInContours.contains(c) &&
-          (targetShadedZones.exists (
+          targetShadedZones.exists (
             z2 => z2.getOutContours.contains(c)
               && z2.getInContours.containsAll(z1.getInContours - c)
-              && z2.getOutContours.containsAll(z1.getOutContours + c) ))
-        ))
+              && z2.getOutContours.containsAll(z1.getOutContours + c))))
       safeContours2 map (new PossibleRemoveContour(subGoalIndex, target, new RemoveContour(), _))
   }
 

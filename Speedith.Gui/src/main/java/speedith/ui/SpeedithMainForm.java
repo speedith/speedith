@@ -970,6 +970,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
               cancelAutoProver.setEnabled(false);
             }
             } catch (InterruptedException| ExecutionException e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(proofPanel1.getRootPane(), "An error occurred:" +e);
           } catch (CancellationException e) {
             proofFoundIndicator.setText("Idle");

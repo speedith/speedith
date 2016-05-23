@@ -9,7 +9,7 @@ import speedith.core.reasoning.automatic.strategies.Strategy;
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  */
-public class ProofAttempt implements Comparable<ProofAttempt>{
+public class ProofAttempt {
 
     private final Proof proof;
 
@@ -28,11 +28,6 @@ public class ProofAttempt implements Comparable<ProofAttempt>{
 
     public Proof getProof() {
         return proof;
-    }
-
-    @Override
-    public int compareTo(ProofAttempt o) {
-        return (cost+getHeuristic()) - (o.getCost()+o.getHeuristic());
     }
 
     @Override
