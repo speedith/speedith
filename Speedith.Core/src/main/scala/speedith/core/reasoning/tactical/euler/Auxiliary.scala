@@ -198,7 +198,7 @@ object Auxiliary {
     val goal = goals.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
       SpiderDiagramOccurrence.wrapDiagram(goal, 0)
-    } else throw new TacticApplicationException("No subgoal for this tactic")
+    } else throw new TacticApplicationException("Could not apply tactic:\nGoal is not an implication of conjunctions.")
   }
 
   def firstMatchingDiagram(sd: SpiderDiagramOccurrence, predicate: DiagramPredicate): Option[SpiderDiagramOccurrence] = {

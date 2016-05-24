@@ -155,21 +155,23 @@ object BasicTactics {
     val concShadedZones = getShadedZonesInConclusion(subGoalIndex, state)
     val concUnshadedZones = getUnshadedZonesInConclusion(subGoalIndex, state)
     val concVisibleZones = getVisibleZonesInConclusion(subGoalIndex, state)
-    THEN(
       THEN(
         THEN(
           THEN(
-            REPEAT(ORELSE(trivialTautology)(
-              introduceContour(containsLessContours(concContours), someGivenContoursButNotInDiagram(concContours)))))(
-            REPEAT(ORELSE(trivialTautology)(
-              eraseContour(containsOtherContours(concContours), someInDiagramButNotInGivenContours(concContours))))))(
-          REPEAT(ORELSE(trivialTautology)(
-            introduceShadedZone(isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones))))))(
-        REPEAT(ORELSE(trivialTautology)(
-          eraseShading(isPrimaryAndContainsShadedZones, someVisibleShadedZonesInGivenZones(concUnshadedZones))))))(
-      REPEAT(ORELSE(trivialTautology)(
-        removeShadedZone(isPrimaryAndContainsShadedZones, someVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)(subGoalIndex)(result)
-  }
+            THEN(
+              THEN(
+                REPEAT(introduceContour(containsLessContours(concContours), someGivenContoursButNotInDiagram(concContours))
+                ))(
+                REPEAT(eraseContour(containsOtherContours(concContours), someInDiagramButNotInGivenContours(concContours)))
+              ))(
+              REPEAT(introduceShadedZone(isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones)))
+            ))(
+            REPEAT(eraseShading(isPrimaryAndContainsShadedZones, someVisibleShadedZonesInGivenZones(concUnshadedZones)))
+          ))(
+          REPEAT(removeShadedZone(isPrimaryAndContainsShadedZones, someVisibleShadedZoneNotInGivenZones(concShadedZones)))
+        ))(TRY(trivialTautology)
+      )(name)(state)(subGoalIndex)(result)
+    }
 
 
     /**
