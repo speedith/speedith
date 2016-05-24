@@ -7,7 +7,9 @@ import speedith.core.reasoning.rules.SimpleInferenceRule
 import speedith.core.reasoning.rules.transformers.util.InferenceTargetChecks._
 
 /**
-  * TODO: Description
+  * Transforms a Spider diagram into a diagram, where the selected disjunction is replaced
+  * by one of the disjuncts. This transformer should be used twice, to create one subgoal for each
+  * operand (during backwards reasoning)
   *
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *

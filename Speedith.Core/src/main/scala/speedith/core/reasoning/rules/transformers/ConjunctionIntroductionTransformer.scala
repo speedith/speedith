@@ -11,7 +11,9 @@ import speedith.core.reasoning.rules.transformers.util.InferenceTargetChecks._
 
 
 /**
-  * TODO: Description
+  * Transforms a Spider diagram into a diagram, where the selected conjunction is replaced
+  * by one of the conjuncts. This transformer should be used twice, to create one subgoal for each
+  * operand (during backwards reasoning)
   *
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *
