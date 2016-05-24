@@ -47,6 +47,10 @@ public class ConjunctionIntroduction extends UnaryForwardRule implements Seriali
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.SpiderDiagram, DiagramType.EulerDiagram);
     private static final long serialVersionUID = 5705804693584296643L;
 
+    /*
+     * Not used by this implementation! The right transformer is directly created
+     * in the method apply(RuleArg, Goals, ApplyStyle)
+     */
     @Override
     protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
         return new IdTransformer();
