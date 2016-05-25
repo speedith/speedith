@@ -1370,9 +1370,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }
 
   private void applyRule(InfRuleListItem selectedRule) {
-    int subgoalIndex = 0;
+
     try {
-      InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proofPanel1);
+      InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), proofPanel1);
       fireProofChangedEvent(new InteractiveRuleAppliedEvent(this));
     } catch (Exception ex) {
       JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
@@ -1381,6 +1381,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
   private void applyTactic(TacticListItem selectedTactic) {
     int subgoalIndex = 0;
+
     try {
       InteractiveTacticApplication.applyTacticInteractively(this, selectedTactic.getTacticProvider().getTactic(), subgoalIndex, proofPanel1);
       fireProofChangedEvent(new TacticAppliedEvent(this));
