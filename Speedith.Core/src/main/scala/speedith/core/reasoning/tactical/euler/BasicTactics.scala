@@ -211,7 +211,7 @@ object BasicTactics {
             introduceMissingZonesForCopyShading))))
   }
 
-  def copyEveryThing: Tactic =  {
+  def copyEveryThingOnce: Tactic =  {
     THEN(
        DEPTH_FIRST(
         isUnitaryDiagram)(
@@ -220,6 +220,16 @@ object BasicTactics {
           COND(isUnitaryDiagram)(id)(copyTopologicalInformation))))(
       matchConclusion)
   }
+
+    def copyEveryThingRepeated: Tactic =  {
+      REPEAT(COND(isEmptyGoalList)(fail)(THEN(
+        DEPTH_FIRST(
+          isUnitaryDiagram)(
+          THEN(
+            COND(isUnitaryDiagram)(id)(copyShadings))(
+            COND(isUnitaryDiagram)(id)(copyTopologicalInformation))))(
+        matchConclusion)))
+    }
 
     /**
       * Applies Introduce Shaded Zone to create new possibilites to for Copy Shading to be applied.

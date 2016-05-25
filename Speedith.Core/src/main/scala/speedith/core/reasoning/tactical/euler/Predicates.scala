@@ -198,4 +198,9 @@ object Predicates {
       }
     }
   }
+
+  def isEmptyGoalList : GoalPredicate = (state:Goals) => (subGoalIndex:Int) => {
+    state.isEmpty
+  }
+
 }
