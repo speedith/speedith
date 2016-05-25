@@ -11,6 +11,12 @@ Speedith is a diagrammatic theorem prover for [spider diagrams](http://en.wikipe
 
 --------------------------------------------------------------------------------
 
+# Licence
+
+Speedith is licenced under the MIT licence. Please read [LICENCE.md](LICENCE.md) for more information.
+
+--------------------------------------------------------------------------------
+
 # Developer's Guide to _Speedith_ #
 
 --------------------------------------------------------------------------------
