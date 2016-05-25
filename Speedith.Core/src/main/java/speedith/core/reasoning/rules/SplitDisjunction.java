@@ -31,7 +31,7 @@ import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
-import speedith.core.reasoning.rules.transformers.DisjunctionEliminationTransformer;
+import speedith.core.reasoning.rules.transformers.SplitDisjunctionTransformer;
 
 import java.io.Serializable;
 import java.util.*;
@@ -39,9 +39,9 @@ import java.util.*;
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class DisjunctionElimination extends UnaryForwardRule implements Serializable {
+public class SplitDisjunction extends UnaryForwardRule implements Serializable {
 
-    public static final String InferenceRuleName = "Disjunction Elimination";
+    public static final String InferenceRuleName = "Split Disjunction";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
     private static final long serialVersionUID = 8744415346744101321L;
@@ -85,9 +85,9 @@ public class DisjunctionElimination extends UnaryForwardRule implements Serializ
             if (i == arg.getSubgoalIndex()) {
                 SpiderDiagram target = getSubgoal(arg, goals);
                 newSubgoals.add(
-                        target.transform(new DisjunctionEliminationTransformer(arg.getSubDiagramIndex(), applyStyle, 0)));
+                        target.transform(new SplitDisjunctionTransformer(arg.getSubDiagramIndex(), applyStyle, 0)));
                 newSubgoals.add(
-                        target.transform(new DisjunctionEliminationTransformer(arg.getSubDiagramIndex(), applyStyle, 1)));
+                        target.transform(new SplitDisjunctionTransformer(arg.getSubDiagramIndex(), applyStyle, 1)));
             } else {
                 newSubgoals.add(goals.getGoalAt(i));
             }

@@ -31,8 +31,7 @@ import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
 import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
-import speedith.core.reasoning.rules.instructions.SelectSingleSubDiagramInstruction;
-import speedith.core.reasoning.rules.transformers.ConjunctionIntroductionTransformer;
+import speedith.core.reasoning.rules.transformers.SplitConjunctionTransformer;
 
 import java.io.Serializable;
 import java.util.*;
@@ -40,9 +39,9 @@ import java.util.*;
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class ConjunctionIntroduction extends UnaryForwardRule implements Serializable {
+public class SplitConjunction extends UnaryForwardRule implements Serializable {
 
-    public static final String InferenceRuleName = "Conjunction Introduction";
+    public static final String InferenceRuleName = "Split Conjunction";
 
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.SpiderDiagram, DiagramType.EulerDiagram);
     private static final long serialVersionUID = 5705804693584296643L;
@@ -89,9 +88,9 @@ public class ConjunctionIntroduction extends UnaryForwardRule implements Seriali
             if (i == arg.getSubgoalIndex()) {
                 SpiderDiagram target = getSubgoal(arg, goals);
                 newSubgoals.add(
-                        target.transform(new ConjunctionIntroductionTransformer(arg.getSubDiagramIndex(), applyStyle, 0)));
+                        target.transform(new SplitConjunctionTransformer(arg.getSubDiagramIndex(), applyStyle, 0)));
                 newSubgoals.add(
-                        target.transform(new ConjunctionIntroductionTransformer(arg.getSubDiagramIndex(), applyStyle, 1)));
+                        target.transform(new SplitConjunctionTransformer(arg.getSubDiagramIndex(), applyStyle, 1)));
             } else {
                 newSubgoals.add(goals.getGoalAt(i));
             }
