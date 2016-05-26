@@ -29,6 +29,60 @@ object Predicates {
     case _ => false
   }
 
+  def isConjunction:DiagramPredicate = {
+    case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match {
+      case Operator.Conjunction => true
+      case _ => false
+    }
+    case _ => false
+  }
+
+  def isDisjunction:DiagramPredicate = {
+    case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match {
+      case Operator.Disjunction=> true
+      case _ => false
+    }
+    case _ => false
+  }
+
+
+  def isAtPositivePosition(parent: SpiderDiagramOccurrence): DiagramPredicate = (sd : SpiderDiagramOccurrence) =>{
+    if (sd.equals(parent)) {
+      true
+    } else {
+      parent match {
+        case parent:PrimarySpiderDiagramOccurrence => false
+        case parent:CompoundSpiderDiagramOccurrence => parent.getOperator match {
+          case Operator.Conjunction|Operator.Disjunction|Operator.Equivalence =>
+            isAtPositivePosition(parent.getOperand(0))(sd) || isAtPositivePosition(parent.getOperand(1))(sd)
+          case Operator.Implication =>
+            isAtNegativePosition(parent.getOperand(0))(sd) || isAtPositivePosition(parent.getOperand(1))(sd)
+          case Operator.Negation =>
+            isAtNegativePosition(parent.getOperand(0))(sd)
+        }
+      }
+    }
+  }
+
+  def isAtNegativePosition(parent: SpiderDiagramOccurrence): DiagramPredicate = (sd : SpiderDiagramOccurrence) =>{
+    if (sd.equals(parent)) {
+      false
+    } else {
+      parent match {
+        case parent:PrimarySpiderDiagramOccurrence => false
+        case parent:CompoundSpiderDiagramOccurrence => parent.getOperator match {
+          case Operator.Conjunction|Operator.Disjunction|Operator.Equivalence =>
+            isAtNegativePosition(parent.getOperand(0))(sd) || isAtNegativePosition(parent.getOperand(1))(sd)
+          case Operator.Implication =>
+            isAtPositivePosition(parent.getOperand(0))(sd) || isAtNegativePosition(parent.getOperand(1))(sd)
+          case Operator.Negation =>
+            isAtPositivePosition(parent.getOperand(0))(sd)
+        }
+      }
+    }
+  }
+
+
   def isIdempotent : DiagramPredicate = {
     case sd:CompoundSpiderDiagramOccurrence => sd.getOperator match {
       case Operator.Conjunction | Operator.Disjunction | Operator.Equivalence | Operator.Implication =>
@@ -151,13 +205,25 @@ object Predicates {
     p1(sd) && p2(sd)
   }
 
+  def OR(p1 : DiagramPredicate, p2: DiagramPredicate) : DiagramPredicate = (sd:SpiderDiagramOccurrence) => {
+    p1(sd) || p2(sd)
+  }
+
+  def GAND(p1 : GoalPredicate, p2:GoalPredicate) : GoalPredicate= (state:Goals) => (index:Int) => {
+    p1(state)(index) && p2(state)(index)
+  }
+
+  def GOR(p1 : GoalPredicate, p2:GoalPredicate) : GoalPredicate= (state:Goals) => (index:Int) => {
+    p1(state)(index) || p2(state)(index)
+  }
+
 
   def containsNoDiagramsWithShadedZonesThatCouldBeCopied: GoalPredicate = (state:Goals) => (subGoalIndex:Int) =>{
     if (state.isEmpty) {
       true
     } else {
       val goal = state.getGoalAt(subGoalIndex)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      if (ReasoningUtils.isImplication(goal)) {
         !hasDiagramWithMissingZonesThatCouldBeCopied(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0))
       } else {
         true
@@ -178,7 +244,7 @@ object Predicates {
 
   def equalContourSetsInEachPrimaryDiagram: GoalPredicate = (state:Goals) => (subgoalIndex : Int) =>{
     val goal = state.getGoalAt(subgoalIndex)
-    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+    if (ReasoningUtils.isImplication(goal)) {
       val subDiagams = ReasoningUtils.getPrimaryDiagrams(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0))
       subDiagams map (pd => pd.getAllContours.toSet) forall subDiagams.head.getAllContours.toSet.sameElements
     } else {
@@ -191,13 +257,31 @@ object Predicates {
       true
     } else {
       val goal = state.getGoalAt(subGoalIndex)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      if (ReasoningUtils.isImplication(goal)) {
         goal.asInstanceOf[CompoundSpiderDiagram].getOperand(0).isInstanceOf[PrimarySpiderDiagram]
       } else {
         false
       }
     }
   }
+
+  def containsDisjunction : GoalPredicate =(state:Goals) => (subGoalIndex:Int) => {
+    if (state.isEmpty) {
+      false
+    } else {
+      val goal = getSubGoal(subGoalIndex, state)
+      if (ReasoningUtils.isImplication(goal)) {
+        val premiss  = firstMatchingDiagram(goal, isDisjunction)
+        premiss match {
+          case Some(diagram) => true
+          case None => false
+        }
+      } else {
+        false
+      }
+    }
+  }
+
 
   def isEmptyGoalList : GoalPredicate = (state:Goals) => (subGoalIndex:Int) => {
     state.isEmpty

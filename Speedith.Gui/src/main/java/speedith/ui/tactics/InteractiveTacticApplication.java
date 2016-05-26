@@ -56,6 +56,8 @@ public final class InteractiveTacticApplication {
 
             RuleArg ruleArg;
             int subgoalIndex = 0;
+            // if there is more than one current subgoal, let
+            // the user select the subgoal the tactic should work on
             if (goals.getGoalsCount() > 1) {
                 try {
                     SelectSubgoalDialog dsd = new SelectSubgoalDialog(window, true, goals);

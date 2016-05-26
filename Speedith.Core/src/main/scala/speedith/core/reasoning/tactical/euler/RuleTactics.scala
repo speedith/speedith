@@ -252,6 +252,41 @@ object RuleTactics {
   }
 
 
+  def splitConjunction :  Tactic = (name:String) => (state: Goals) => (subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
+    try {
+      val subgoal = getSubGoal(subGoalIndex, state)
+      val target = firstMatchingDiagram(subgoal, AND(isConjunction,isAtPositivePosition(subgoal)))
+      target match {
+        case None => None
+        case Some(diagram) =>
+          createResults(state, new SplitConjunction().asInstanceOf[InferenceRule[RuleArg]],
+            new SubDiagramIndexArg(subGoalIndex, diagram.getOccurrenceIndex),name, result)
+      }
+    }
+    catch {
+      case e: TacticApplicationException => None
+      case e: TransformationException => None
+    }
+  }
+
+  def splitDisjunction:  Tactic = (name:String) => (state: Goals) => (subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
+    try {
+      val subgoal = getSubGoal(subGoalIndex, state)
+      val target = firstMatchingDiagram(subgoal, AND(isDisjunction,isAtNegativePosition(subgoal)))
+      target match {
+        case None => None
+        case Some(diagram) =>
+          createResults(state, new SplitDisjunction().asInstanceOf[InferenceRule[RuleArg]],
+            new SubDiagramIndexArg(subGoalIndex, diagram.getOccurrenceIndex),name, result)
+      }
+    }
+    catch {
+      case e: TacticApplicationException => None
+      case e: TransformationException => None
+    }
+  }
+
+
 }
 
 

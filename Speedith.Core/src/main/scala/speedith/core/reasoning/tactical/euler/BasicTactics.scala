@@ -231,6 +231,31 @@ object BasicTactics {
         matchConclusion)))
     }
 
+    def autoCopy: Tactic = {
+      REPEAT(COND(isEmptyGoalList)(fail)(
+        THEN(
+      DEPTH_FIRST(GOR(isUnitaryDiagram, containsDisjunction))(
+          THEN(
+            COND(isUnitaryDiagram)(id)(copyShadings))(
+            COND(isUnitaryDiagram)(id)(copyTopologicalInformation)))//(
+      )(ORELSE(ORELSE(splitDisjunction)(splitConjunction))(
+        matchConclusion))))
+
+    }
+
+    def autoVenn: Tactic = {
+      REPEAT(COND(isEmptyGoalList)(fail)(
+        THEN(
+          DEPTH_FIRST(GOR(isUnitaryDiagram, containsDisjunction))(
+            THEN(
+              THEN(
+                vennifyFocused)(
+                unifyContourSetsFocused))(
+              combineAll))
+        )(ORELSE(ORELSE(splitDisjunction)(splitConjunction))(
+          matchConclusion))))
+    }
+
     /**
       * Applies Introduce Shaded Zone to create new possibilites to for Copy Shading to be applied.
       *
@@ -238,7 +263,7 @@ object BasicTactics {
       */
   def introduceMissingZonesForCopyShading : Tactic = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) =>{
     val goal = getSubGoal(subGoalIndex,state)
-    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+    if (ReasoningUtils.isImplication(goal)) {
       // get a conjunction of primary diagrams, where one conjunct contains a missing region that
       // corresponds to a region in the other operand
       val target = firstMatchingDiagram(goal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0), isConjunctionContainingMissingZonesToCopy).asInstanceOf[Option[CompoundSpiderDiagramOccurrence]]
@@ -266,7 +291,7 @@ object BasicTactics {
 
     def removeShadedZonesForCopyContour: Tactic = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
       val goal = getSubGoal(subGoalIndex, state)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      if (ReasoningUtils.isImplication(goal)) {
         val target = firstMatchingDiagram(goal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0), isConjunctionWithContoursToCopy).asInstanceOf[Option[CompoundSpiderDiagramOccurrence]]
         target match {
           case None => fail(name)(state)(subGoalIndex)(result)

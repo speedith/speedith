@@ -84,7 +84,7 @@ object Auxiliary {
       Set()
     } else {
       val goal = state.getGoalAt(subgoalIndex)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      if (ReasoningUtils.isImplication(goal)) {
         AutomaticUtils.collectContours(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1)).toSet
       } else {
         Set()
@@ -112,7 +112,7 @@ object Auxiliary {
       Set()
     } else {
       val goal = state.getGoalAt(subgoalIndex)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      if (ReasoningUtils.isImplication(goal)) {
         collectShadedZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
       } else {
         Set()
@@ -130,7 +130,7 @@ object Auxiliary {
       Set()
     } else {
       val goal = state.getGoalAt(subgoalIndex)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      if (ReasoningUtils.isImplication(goal)) {
         collectUnShadedZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
       } else {
         Set()
@@ -148,7 +148,7 @@ object Auxiliary {
       Set()
     } else {
       val goal = state.getGoalAt(subGoalIndex)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      if (ReasoningUtils.isImplication(goal)) {
         collectVisibleZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
       } else {
         Set()
@@ -160,7 +160,7 @@ object Auxiliary {
 
   def getDeepestNestedDiagram(subgoalIndex: Int): Goals => Option[CompoundSpiderDiagramOccurrence] = (state:Goals) => {
     val goal = getSubGoal(subgoalIndex, state)
-    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+    if (ReasoningUtils.isImplication(goal)) {
       getDeepestNestedDiagram(goal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0))
     } else {
       None
@@ -196,9 +196,9 @@ object Auxiliary {
   def getSubGoal(subgoalIndex : Int, goals: Goals): SpiderDiagramOccurrence = {
     if (goals == null || goals.getGoals == null)  throw new TacticApplicationException("Could not apply tactic")
     val goal = goals.getGoalAt(subgoalIndex)
-    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+    if (ReasoningUtils.isImplication(goal)) {
       SpiderDiagramOccurrence.wrapDiagram(goal, 0)
-    } else throw new TacticApplicationException("Could not apply tactic:\nGoal is not an implication of conjunctions.")
+    } else throw new TacticApplicationException("Could not apply tactic:\nGoal is not an implication.")
   }
 
   def firstMatchingDiagram(sd: SpiderDiagramOccurrence, predicate: DiagramPredicate): Option[SpiderDiagramOccurrence] = {
@@ -207,10 +207,14 @@ object Auxiliary {
     } else {
       sd match {
         case sd: CompoundSpiderDiagramOccurrence =>
-          val matching = firstMatchingDiagram(sd.getOperand(0), predicate)
-          matching match {
-            case None => firstMatchingDiagram(sd.getOperand(1), predicate)
-            case _ => matching
+          sd.getOperator match {
+            case Operator.Negation => firstMatchingDiagram(sd.getOperand(0), predicate)
+            case _ =>
+              val matching = firstMatchingDiagram(sd.getOperand(0), predicate)
+              matching match {
+                case None => firstMatchingDiagram(sd.getOperand(1), predicate)
+                case _ => matching
+              }
           }
         case sd: PrimarySpiderDiagramOccurrence => None
       }

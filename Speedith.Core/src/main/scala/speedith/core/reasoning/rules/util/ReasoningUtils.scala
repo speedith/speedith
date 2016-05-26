@@ -60,6 +60,22 @@ object ReasoningUtils {
     }
   }
 
+  def isImplication(goal: SpiderDiagram): Boolean = goal match {
+    case goal: CompoundSpiderDiagram => goal.getOperator match {
+      case Operator.Implication => true
+      case _ => false
+    }
+    case _ => false
+  }
+
+  def isImplication(goal: SpiderDiagramOccurrence): Boolean = goal match {
+    case goal: CompoundSpiderDiagramOccurrence => goal.getOperator match {
+      case Operator.Implication => true
+      case _ => false
+    }
+    case _ => false
+  }
+
   /**
    * Checks whether the given SpiderDiagram consists of exactly one implication, where
    * both the premise and the conclusion are conjunctive diagrams, i.e., either
