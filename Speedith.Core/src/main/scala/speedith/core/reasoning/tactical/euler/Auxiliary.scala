@@ -175,6 +175,7 @@ object Auxiliary {
         case (op0:CompoundSpiderDiagramOccurrence, _) => getDeepestNestedDiagram(op0)
         case (_, op1:CompoundSpiderDiagramOccurrence) => getDeepestNestedDiagram(op1)
       }
+      case Operator.Negation => getDeepestNestedDiagram(sd.getOperand(0))
       case _ => None
     }
   }
@@ -245,10 +246,15 @@ object Auxiliary {
     } else {
       sd match {
         case sd: CompoundSpiderDiagramOccurrence =>
-          val matching = firstMatchingDiagramAndContour(sd.getOperand(0), predicate, contourChooser)
-          matching match {
-            case None => firstMatchingDiagramAndContour(sd.getOperand(1), predicate, contourChooser)
-            case _ => matching
+          sd.getOperator match {
+            case Operator.Negation =>
+              firstMatchingDiagramAndContour(sd.getOperand(0), predicate, contourChooser)
+            case _ =>
+              val matching = firstMatchingDiagramAndContour(sd.getOperand(0), predicate, contourChooser)
+              matching match {
+                case None => firstMatchingDiagramAndContour(sd.getOperand(1), predicate, contourChooser)
+                case _ => matching
+              }
           }
         case sd: PrimarySpiderDiagramOccurrence => None
       }

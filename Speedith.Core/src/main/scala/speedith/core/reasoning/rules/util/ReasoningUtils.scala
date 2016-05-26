@@ -118,7 +118,8 @@ object ReasoningUtils {
 
   def getPrimaryDiagrams(sd: SpiderDiagram): Seq[PrimarySpiderDiagram] = sd match {
     case sd:PrimarySpiderDiagram => Seq(sd)
-    case sd:CompoundSpiderDiagram => getPrimaryDiagrams(sd.getOperand(0)) ++ getPrimaryDiagrams(sd.getOperand(1))
+    case sd:CompoundSpiderDiagram => sd.getOperands flatMap getPrimaryDiagrams
+//      getPrimaryDiagrams(sd.getOperand(0)) ++ getPrimaryDiagrams(sd.getOperand(1))
   }
 
   def shadedRegionWithNewContours(region: Iterable[Zone], contoursToAdd: Set[String] ): Set[Zone] = {

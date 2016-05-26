@@ -45,6 +45,14 @@ object Predicates {
     case _ => false
   }
 
+  def isNegation:DiagramPredicate = {
+    case sd: CompoundSpiderDiagramOccurrence => sd.getOperator match {
+      case Operator.Negation=> true
+      case _ => false
+    }
+    case _ => false
+  }
+
 
   def isAtPositivePosition(parent: SpiderDiagramOccurrence): DiagramPredicate = (sd : SpiderDiagramOccurrence) =>{
     if (sd.equals(parent)) {
@@ -282,6 +290,22 @@ object Predicates {
     }
   }
 
+  def containsNegation : GoalPredicate = (state:Goals) => (subGoalIndex:Int) => {
+    if (state.isEmpty) {
+      false
+    } else {
+      val goal = getSubGoal(subGoalIndex, state)
+      if (ReasoningUtils.isImplication(goal)) {
+        val premiss  = firstMatchingDiagram(goal, isNegation)
+        premiss match {
+          case Some(diagram) => true
+          case None => false
+        }
+      } else {
+        false
+      }
+    }
+  }
 
   def isEmptyGoalList : GoalPredicate = (state:Goals) => (subGoalIndex:Int) => {
     state.isEmpty
