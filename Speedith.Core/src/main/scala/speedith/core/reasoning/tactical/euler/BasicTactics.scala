@@ -1,7 +1,7 @@
 package speedith.core.reasoning.tactical.euler
 
 import speedith.core.reasoning.automatic.wrappers.{PrimarySpiderDiagramOccurrence, CompoundSpiderDiagramOccurrence}
-import speedith.core.reasoning.tactical.{Tactic, TacticApplicationResult}
+import speedith.core.reasoning.tactical.TacticApplicationResult
 import speedith.core.reasoning.Goals
 import speedith.core.reasoning.rules.util.ReasoningUtils
 import speedith.core.reasoning.tactical.euler.Auxiliary._
@@ -14,10 +14,7 @@ import speedith.core.reasoning.tactical._
 
   /**
   * Tactics to work on a proof. The Tactics chain several tactics
-  * by using the tacticals. Some of these
-  * tactics are normally able to remove a subgoal, as long as it consists
-  * of an implication, where the conclusion is a single unitary diagram (and if the
-  * conclusion is a consequence of the premises)
+  * by using the tacticals.
    *
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *
@@ -188,7 +185,7 @@ object BasicTactics {
           ORELSE(
             idempotency)(
             ORELSE(
-              removeShadedZonesForCopyContour)(
+              hideShadedZonesForCopyContour)(
               copyContour))))
   }
 
@@ -232,21 +229,21 @@ object BasicTactics {
     }
 
     def autoCopy: Tactic = {
-      REPEAT(COND(isEmptyGoalList)(fail)(
+      REPEAT_TIMES(1000)(COND(isEmptyGoalList)(fail)(
         THEN(
-      DEPTH_FIRST(GOR(isUnitaryDiagram, containsDisjunction))(
-          THEN(
-            COND(isUnitaryDiagram)(id)(copyShadings))(
-            COND(isUnitaryDiagram)(id)(copyTopologicalInformation)))//(
-      )(ORELSE(ORELSE(splitDisjunction)(splitConjunction))(
-        matchConclusion))))
+          DEPTH_FIRST_TIMES(1000)(GOR(isUnitaryDiagram, containsDisjunction))(
+            THEN(
+              COND(isUnitaryDiagram)(id)(copyShadings))(
+              COND(isUnitaryDiagram)(id)(copyTopologicalInformation))) //(
+        )(ORELSE(ORELSE(splitDisjunction)(splitConjunction))(
+          matchConclusion))))
 
     }
 
     def autoVenn: Tactic = {
-      REPEAT(COND(isEmptyGoalList)(fail)(
+      REPEAT_TIMES(1000)(COND(isEmptyGoalList)(fail)(
         THEN(
-          DEPTH_FIRST(GOR(isUnitaryDiagram, containsDisjunction))(
+          DEPTH_FIRST_TIMES(1000)(GOR(isUnitaryDiagram, containsDisjunction))(
             THEN(
               THEN(
                 vennifyFocused)(
@@ -289,7 +286,7 @@ object BasicTactics {
     }
   }
 
-    def removeShadedZonesForCopyContour: Tactic = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
+    def hideShadedZonesForCopyContour: Tactic = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
       val goal = getSubGoal(subGoalIndex, state)
       if (ReasoningUtils.isImplication(goal)) {
         val target = firstMatchingDiagram(goal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0), isConjunctionWithContoursToCopy).asInstanceOf[Option[CompoundSpiderDiagramOccurrence]]

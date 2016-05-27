@@ -23,6 +23,7 @@ package object tactical {
   /**
     * Type for functions choosing elements from a given [[SpiderDiagramOccurrence]]. Returns [[None]], if no
     * suitable elements is found.
+    *
     * @tparam A The type of the elements to choose
     */
   type Chooser[A]       = SpiderDiagramOccurrence => Option[A]
@@ -47,6 +48,7 @@ package object tactical {
     * Takes two tactics as parameters. It executes the first and afterwards
     * executes the second on the result of the first. This combinator fails
     * if any of the two parameters fail.
+    *
     * @return
     */
   def THEN: Tactic => Tactic => Tactic = (tac1: Tactic) => (tac2: Tactic) => (name: String) => (state: Goals) => (subgoalIndex: Int) => (result: TacticApplicationResult) => {
@@ -57,6 +59,7 @@ package object tactical {
     * Executes the tactic it gets as a first parameter and returns its result if it succeeds.
     * If the tactic fails, it executes the second tactic. This combinator fails if both
     * parameters fail on the given state.
+    *
     * @return
     */
   def ORELSE: Tactic => Tactic => Tactic =
@@ -71,6 +74,7 @@ package object tactical {
 
   /**
     * Tactic that always succeeds on the given state.
+    *
     * @return
     */
   def id: Tactic = (name: String) => (state: Goals) => (subGoalIndex: Int) => (result: TacticApplicationResult) => {
@@ -79,6 +83,7 @@ package object tactical {
 
   /**
     * Tactic that always fails on the given state.
+    *
     * @return
     */
   def fail: Tactic = (name: String) => (state: Goals) => (subGoalIndex: Int) => (result: TacticApplicationResult) => {
@@ -88,6 +93,7 @@ package object tactical {
   /**
     * Executes the tactic it gets as a parameter. If this tactic fails, it returns the
     * original state. This combinator never fails.
+    *
     * @return
     */
   def TRY: Tactic => Tactic = (tac : Tactic) =>  {
@@ -97,6 +103,7 @@ package object tactical {
   /**
     * Applies the given tactic repeatedly to the given state until it fails.
     * This combinator never fails.
+    *
     * @return
     */
   def REPEAT: Tactic => Tactic =
@@ -107,6 +114,7 @@ package object tactical {
   /**
     * Applies the given tactic as often as the integer parameter defines, or until it fails.
     * This combinator only fails if the number of executions exceeds the integer parameter.
+    *
     * @return
     */
   def REPEAT_TIMES: Int => Tactic => Tactic = (i : Int) => (tac: Tactic) => (name: String) => (state: Goals) => (subGoalIndex: Int) => (result: TacticApplicationResult) =>
@@ -121,6 +129,7 @@ package object tactical {
   /**
     * Applies the given tactic until the predicate is true. This combinator fails if the tactic
     * cannot be applied anymore, but the predicate is still false on the given subgoal.
+    *
     * @return
     */
   def DEPTH_FIRST: GoalPredicate => Tactic => Tactic =
@@ -132,11 +141,25 @@ package object tactical {
       }
     }
 
+  def DEPTH_FIRST_TIMES: Int => GoalPredicate => Tactic => Tactic =
+    (i:Int) => (predicate: GoalPredicate) => (tac: Tactic) => (name: String) => (state: Goals) => (subGoalIndex: Int) => (result: TacticApplicationResult) => {
+      if (predicate(state)(subGoalIndex)) {
+        id(name)(state)(subGoalIndex)(result)
+      } else {
+        if (i <=0) {
+          fail(name)(state)(subGoalIndex)(result)
+        } else {
+          THEN(tac)(DEPTH_FIRST_TIMES(i-1)(predicate)(tac))(name)(state)(subGoalIndex)(result)
+        }
+      }
+    }
+
 
   /**
     * Evaluates the predicate on the current state. If it returns true, the combinator executes the first
     * tactic, otherwise it executes the second, Fails if the predicate is true and the first tactic
     * fails or if the predicate is false and the second tactic fails.
+    *
     * @return
     */
   def COND: GoalPredicate => Tactic => Tactic => Tactic =
@@ -150,6 +173,7 @@ package object tactical {
 
   /**
     * Applies the given tactic to the current state once. Fails if the tactic fails.
+    *
     * @return
     */
   def BY: Tactic => Tactic = (tac: Tactic) => (name: String) => (state: Goals) => (subGoalIndex: Int) => (result: TacticApplicationResult) => {
@@ -186,6 +210,7 @@ package object tactical {
 
   /**
     * Creates the negation of a [[DiagramPredicate]].
+    *
     * @param p a predicate
     * @return the negation of p
     */
@@ -217,6 +242,7 @@ package object tactical {
 
   /**
     * Creates the negation of a [[GoalPredicate]].
+    *
     * @param p a predicate
     * @return the negation of p
     */

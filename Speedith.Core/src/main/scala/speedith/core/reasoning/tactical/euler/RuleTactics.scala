@@ -4,11 +4,10 @@ import speedith.core.lang._
 import speedith.core.reasoning.args._
 import speedith.core.reasoning.automatic.wrappers._
 import speedith.core.reasoning.rules._
-import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
 import speedith.core.reasoning.tactical.{Chooser, TacticApplicationResult, TacticApplicationException, DiagramPredicate, Tactic}
 import speedith.core.reasoning.tactical.euler.Auxiliary._
 import speedith.core.reasoning.tactical.euler.Predicates._
-
+import speedith.core.reasoning.tactical._
 import speedith.core.reasoning._
 
 import scala.collection.JavaConversions._
