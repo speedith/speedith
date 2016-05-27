@@ -24,15 +24,8 @@ object AutomaticUtils {
 
   def collectContours  (spiderDiagram: SpiderDiagram) : java.util.Collection[String] = spiderDiagram  match {
     case spiderDiagram : PrimarySpiderDiagram => spiderDiagram.getAllContours
-    case spiderDiagram: CompoundSpiderDiagram => spiderDiagram.getOperands.flatMap(collectContours)
+    case spiderDiagram: CompoundSpiderDiagram => spiderDiagram.getOperands.flatMap (collectContours)
   }
-
-/*  def isConjunctive(sd : SpiderDiagram) : Boolean =  sd match {
-    case sd : PrimarySpiderDiagram => true
-    case sd : CompoundSpiderDiagram => sd.getOperator.equals(Operator.getConjunction) && sd.getOperands.forall(isConjunctive)
-  }
-*/
-
 
   def containsEmptyZone (sd : SpiderDiagram): Boolean = sd match {
     case sd:PrimarySpiderDiagram =>
@@ -44,8 +37,6 @@ object AutomaticUtils {
   def createAllPossibleTacticApplications(subGoalIndex:Int) : java.util.Set[PossibleTacticApplication] = {
     Set(new PossibleTacticApplication(subGoalIndex, new CopyTopologicalInformation), new PossibleTacticApplication(subGoalIndex, new CopyShadingInformation),
       new PossibleTacticApplication(subGoalIndex, new MatchConclusion), new PossibleTacticApplication(subGoalIndex, new UnifyContours))
-    //,
-    //  new PossibleTacticApplication(subGoalIndex,new Venn))
   }
   // <editor-fold defaultstate="collapsed" desc="Creation of possible rule applications">
   /**

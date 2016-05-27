@@ -163,7 +163,9 @@ object Auxiliary {
     if (ReasoningUtils.isImplication(goal)) {
       getDeepestNestedDiagram(goal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0))
     } else {
-      None
+      throw new TacticApplicationException("Could not apply tactic:\nGoal is not an implication.")
+
+//      None
     }
   }
 
