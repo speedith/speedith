@@ -10,7 +10,7 @@ import speedith.core.reasoning.util.unitary.CorrespondingRegions
 import scala.collection.JavaConversions._
 
 /**
- * Helper functions and predicates for the use with  [[BasicTactics basic tactics]].
+ * Helper functions and predicates for the use with [[BasicTactics]].
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  *
@@ -222,21 +222,6 @@ object Auxiliary {
     }
   }
 
-  def firstMatchingDiagramTest(sd: SpiderDiagramOccurrence) :DiagramPredicate => Option[SpiderDiagramOccurrence] = (predicate:DiagramPredicate) =>{
-    if (predicate(sd)) {
-      Some(sd)
-    } else {
-      sd match {
-        case sd: CompoundSpiderDiagramOccurrence =>
-          val matching = firstMatchingDiagram(sd.getOperand(0), predicate)
-          matching match {
-            case None => firstMatchingDiagram(sd.getOperand(1), predicate)
-            case _ => matching
-          }
-        case sd: PrimarySpiderDiagramOccurrence => None
-      }
-    }
-  }
   def firstMatchingDiagramAndContour(sd: SpiderDiagramOccurrence,
                                      predicate: DiagramPredicate,
                                      contourChooser: Chooser[Set[String]])

@@ -42,12 +42,12 @@ object ReasoningUtils {
   }
 
 
-  def expand(zones: Set[Zone], newContours: util.Set[String]) : Set[Zone] = {
-    zones.flatMap(z => newContours.subsets.
-      flatMap(cs => new util.HashSet[Zone]() + new Zone(z.getInContours.toSet ++ cs,z.getOutContours.toSet ++newContours.diff(cs))
+  def expand(zones: Set[Zone], newContours: util.Set[String]): Set[Zone] = {
+    zones flatMap (
+      z => newContours.subsets flatMap (
+        cs => new util.HashSet[Zone]() + new Zone(z.getInContours.toSet ++ cs, z.getOutContours.toSet ++ newContours.diff(cs))
+        )
       )
-
-    )
   }
 
 
@@ -119,7 +119,6 @@ object ReasoningUtils {
   def getPrimaryDiagrams(sd: SpiderDiagram): Seq[PrimarySpiderDiagram] = sd match {
     case sd:PrimarySpiderDiagram => Seq(sd)
     case sd:CompoundSpiderDiagram => sd.getOperands flatMap getPrimaryDiagrams
-//      getPrimaryDiagrams(sd.getOperand(0)) ++ getPrimaryDiagrams(sd.getOperand(1))
   }
 
   def shadedRegionWithNewContours(region: Iterable[Zone], contoursToAdd: Set[String] ): Set[Zone] = {

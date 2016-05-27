@@ -146,9 +146,6 @@ object AutomaticUtils {
       else {
         Set()
       }
-     /* } else {
-      Set()
-    }*/
   }
 
   private def createCombiningApplications(subGoalIndex : Int,target: CompoundSpiderDiagramOccurrence) : Set[PossibleCombining] = {

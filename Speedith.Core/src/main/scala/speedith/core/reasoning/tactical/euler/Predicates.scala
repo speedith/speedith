@@ -201,31 +201,6 @@ object Predicates {
     case d: CompoundSpiderDiagramOccurrence => false
   }
 
-  /**
-    * Combines two predicates to compute their conjunction
-    *
-    * @param p1 predicate 1
-    * @param p2 predicate 2
-    * @return the conjunction of predicate 1 and predicate 2
-    */
-
-  def AND (p1 : DiagramPredicate, p2: DiagramPredicate) : DiagramPredicate = (sd:SpiderDiagramOccurrence) => {
-    p1(sd) && p2(sd)
-  }
-
-  def OR(p1 : DiagramPredicate, p2: DiagramPredicate) : DiagramPredicate = (sd:SpiderDiagramOccurrence) => {
-    p1(sd) || p2(sd)
-  }
-
-  def GAND(p1 : GoalPredicate, p2:GoalPredicate) : GoalPredicate= (state:Goals) => (index:Int) => {
-    p1(state)(index) && p2(state)(index)
-  }
-
-  def GOR(p1 : GoalPredicate, p2:GoalPredicate) : GoalPredicate= (state:Goals) => (index:Int) => {
-    p1(state)(index) || p2(state)(index)
-  }
-
-
   def containsNoDiagramsWithShadedZonesThatCouldBeCopied: GoalPredicate = (state:Goals) => (subGoalIndex:Int) =>{
     if (state.isEmpty) {
       true

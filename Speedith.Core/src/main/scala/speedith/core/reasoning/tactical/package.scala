@@ -19,8 +19,23 @@ package object tactical {
     * TacticApplicationResult: Prior rule application from tactics
     */
   type Tactic           = String => Goals => Int => TacticApplicationResult => Option[TacticApplicationResult]
+
+  /**
+    * Type for functions choosing elements from a given [[SpiderDiagramOccurrence]]. Returns [[None]], if no
+    * suitable elements is found.
+    * @tparam A The type of the elements to choose
+    */
   type Chooser[A]       = SpiderDiagramOccurrence => Option[A]
+
+  /**
+    * Type for predicates working on a single [[SpiderDiagramOccurrence]].
+    */
   type DiagramPredicate = SpiderDiagramOccurrence => Boolean
+
+  /**
+    * Type for predicates analysing a whole list of subgoals. The given index may
+    * be used to only analyse a single subgoal
+    */
   type GoalPredicate    = Goals => Int => Boolean
 
 
@@ -29,7 +44,7 @@ package object tactical {
    */
 
   /**
-    * THEN takes two tactics as parameters. It executes the first and afterwards
+    * Takes two tactics as parameters. It executes the first and afterwards
     * executes the second on the result of the first. This combinator fails
     * if any of the two parameters fail.
     * @return
@@ -139,6 +154,74 @@ package object tactical {
     */
   def BY: Tactic => Tactic = (tac: Tactic) => (name: String) => (state: Goals) => (subGoalIndex: Int) => (result: TacticApplicationResult) => {
     tac(name)(state)(subGoalIndex)(result)
+  }
+
+  /*
+    Combinators for Boolean combinations of predicates. Divided into combinators for
+    DiagramPredicate and GoalPredicate (prefix 'G'), since erasure of types would give
+    them the same type internally.
+   */
+
+  /**
+    * Combines [[DiagramPredicate]]s to compute their conjunction
+    *
+    * @param p1 predicate 1 first conjunct
+    * @param p2 predicate 2 second conjunct
+    * @return the conjunction of predicate 1 and predicate 2
+    */
+  def AND (p1 : DiagramPredicate, p2: DiagramPredicate) : DiagramPredicate = (sd:SpiderDiagramOccurrence) => {
+    p1(sd) && p2(sd)
+  }
+
+  /**
+    * Combines [[DiagramPredicate]]s to compute their disjunction
+    *
+    * @param p1 predicate 1 first disjunct
+    * @param p2 predicate 2 second disjunct
+    * @return the disjunction of predicate 1 and predicate 2
+    */
+  def OR(p1 : DiagramPredicate, p2: DiagramPredicate) : DiagramPredicate = (sd:SpiderDiagramOccurrence) => {
+    p1(sd) || p2(sd)
+  }
+
+  /**
+    * Creates the negation of a [[DiagramPredicate]].
+    * @param p a predicate
+    * @return the negation of p
+    */
+  def NOT(p : DiagramPredicate) : DiagramPredicate = (sd:SpiderDiagramOccurrence) => {
+    !p(sd)
+  }
+
+  /**
+    * Combines [[GoalPredicate]]s to compute their conjunction
+    *
+    * @param p1 predicate 1 first conjunct
+    * @param p2 predicate 2 second conjunct
+    * @return the conjunction of predicate 1 and predicate 2
+    */
+  def GAND(p1 : GoalPredicate, p2:GoalPredicate) : GoalPredicate= (state:Goals) => (index:Int) => {
+    p1(state)(index) && p2(state)(index)
+  }
+
+  /**
+    * Combines [[GoalPredicate]]s to compute their disjunction
+    *
+    * @param p1 predicate 1 first disjunct
+    * @param p2 predicate 2 second disjunct
+    * @return the disjunction of predicate 1 and predicate 2
+    */
+  def GOR(p1 : GoalPredicate, p2:GoalPredicate) : GoalPredicate= (state:Goals) => (index:Int) => {
+    p1(state)(index) || p2(state)(index)
+  }
+
+  /**
+    * Creates the negation of a [[GoalPredicate]].
+    * @param p a predicate
+    * @return the negation of p
+    */
+  def GNOT(p:GoalPredicate) : GoalPredicate = (state:Goals) => (index:Int) => {
+    !p(state)(index)
   }
 
 }
