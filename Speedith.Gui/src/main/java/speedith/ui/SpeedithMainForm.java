@@ -111,19 +111,14 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenuItem useSdExample1MenuItem;
   private javax.swing.JMenuItem useSdExample2MenuItem;
   private javax.swing.JMenuItem useSdExample3MenuItem;
-  private javax.swing.JLabel lblAppliedRules;
   private javax.swing.JList<InfRuleListItem> lstAppliedRules;
-  private javax.swing.JLabel lblTactics;
   private javax.swing.JList<TacticListItem> lstTactics;
   private javax.swing.JMenuBar menuBar;
   private javax.swing.JMenuItem goalTextInputMenuItem;
-  private javax.swing.JPanel pnlRulesSidePane;
   private speedith.ui.ProofPanel proofPanel1;
   private javax.swing.JMenu proofMenu;
   private javax.swing.JMenuItem cropProof;
   private javax.swing.JMenuItem inspectProof;
-  private javax.swing.JScrollPane scrlPnlAppliedRules;
-  private javax.swing.JScrollPane scrlPnlTactics;
 
 
   private javax.swing.JFileChooser goalFileChooser;
@@ -301,13 +296,13 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     javax.swing.JSplitPane mainSplitPane = new javax.swing.JSplitPane();
     proofPanel1 = new speedith.ui.ProofPanel();
-    pnlRulesSidePane = new javax.swing.JPanel();
-    lblAppliedRules = new javax.swing.JLabel();
-    scrlPnlAppliedRules = new javax.swing.JScrollPane();
+    JPanel pnlRulesSidePane = new JPanel();
+    JLabel lblAppliedRules = new JLabel();
+    JScrollPane scrlPnlAppliedRules = new JScrollPane();
     lstAppliedRules = new javax.swing.JList();
-    lblTactics = new javax.swing.JLabel();
+    JLabel lblTactics = new JLabel();
     lstTactics = new javax.swing.JList<>();
-    scrlPnlTactics = new javax.swing.JScrollPane();
+    JScrollPane scrlPnlTactics = new JScrollPane();
     menuBar = new javax.swing.JMenuBar();
     fileMenu = new javax.swing.JMenu();
     openMenu = new javax.swing.JMenu();
