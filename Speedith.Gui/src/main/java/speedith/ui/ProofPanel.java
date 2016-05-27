@@ -65,7 +65,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
 
     private List<SubgoalsPanel> subgoals;
 
-    private SpiderDiagram selected;
+    private Goals selected;
 
     private int selectedNumber;
     // </editor-fold>
@@ -215,7 +215,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         return proof.isFinished();
     }
 
-    public SpiderDiagram getSelected() { return selected; }
+    public Goals getSelected() { return selected; }
 
 
     //</editor-fold>
@@ -381,7 +381,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
                         }
                         sgp.setTitleBackground(Color.RED);
                         sgp.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-                        selected = goal.getGoalAt(0);
+                        selected = goal;
                         selectedNumber = stepNumber;
                         pnlGoals.repaint();
                     }
