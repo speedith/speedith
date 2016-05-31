@@ -231,7 +231,7 @@ object BasicTactics {
     def autoCopy: Tactic = {
       REPEAT_TIMES(1000)(COND(isEmptyGoalList)(fail)(
         THEN(
-          DEPTH_FIRST_TIMES(1000)(GOR(isUnitaryDiagram, containsDisjunction))(
+          DEPTH_FIRST_TIMES(1000)(GOR(isSubGoalSolved, GOR(isUnitaryDiagram, containsDisjunction)))(
             THEN(
               COND(isUnitaryDiagram)(id)(copyShadings))(
               COND(isUnitaryDiagram)(id)(copyTopologicalInformation))) //(
@@ -243,7 +243,7 @@ object BasicTactics {
     def autoVenn: Tactic = {
       REPEAT_TIMES(1000)(COND(isEmptyGoalList)(fail)(
         THEN(
-          DEPTH_FIRST_TIMES(1000)(GOR(isUnitaryDiagram, containsDisjunction))(
+          DEPTH_FIRST_TIMES(1000)(GOR(isSubGoalSolved, GOR(isUnitaryDiagram, containsDisjunction)))(
             THEN(
               THEN(
                 vennifyFocused)(

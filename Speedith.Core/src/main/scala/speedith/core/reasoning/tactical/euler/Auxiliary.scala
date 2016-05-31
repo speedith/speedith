@@ -80,7 +80,7 @@ object Auxiliary {
 
 
   def getContoursInConclusion(subgoalIndex : Int, state:Goals) : Set[String]= {
-    if (state.isEmpty) {
+    if (state.isEmpty || subgoalIndex >=state.getGoalsCount) {
       Set()
     } else {
       val goal = state.getGoalAt(subgoalIndex)
@@ -108,7 +108,7 @@ object Auxiliary {
   }
 
   def getShadedZonesInConclusion(subgoalIndex : Int, state : Goals) : Set[Zone] = {
-    if (state.isEmpty) {
+    if (state.isEmpty || subgoalIndex >=state.getGoalsCount) {
       Set()
     } else {
       val goal = state.getGoalAt(subgoalIndex)
@@ -126,7 +126,7 @@ object Auxiliary {
   }
 
   def getUnshadedZonesInConclusion(subgoalIndex : Int, state : Goals) : Set[Zone] = {
-    if (state.isEmpty) {
+    if (state.isEmpty|| subgoalIndex >=state.getGoalsCount) {
       Set()
     } else {
       val goal = state.getGoalAt(subgoalIndex)
@@ -144,7 +144,7 @@ object Auxiliary {
   }
 
   def getVisibleZonesInConclusion(subGoalIndex: Int, state: Goals) : Set[Zone] = {
-    if (state.isEmpty) {
+    if (state.isEmpty|| subGoalIndex >=state.getGoalsCount) {
       Set()
     } else {
       val goal = state.getGoalAt(subGoalIndex)
@@ -198,6 +198,7 @@ object Auxiliary {
     */
   def getSubGoal(subgoalIndex : Int, goals: Goals): SpiderDiagramOccurrence = {
     if (goals == null || goals.getGoals == null)  throw new TacticApplicationException("Could not apply tactic")
+    if (subgoalIndex >= goals.getGoalsCount) throw new TacticApplicationException("No subgoal with this index")
     val goal = goals.getGoalAt(subgoalIndex)
     if (ReasoningUtils.isImplication(goal)) {
       SpiderDiagramOccurrence.wrapDiagram(goal, 0)

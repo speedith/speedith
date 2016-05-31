@@ -248,6 +248,10 @@ object Predicates {
     }
   }
 
+  def isSubGoalSolved: GoalPredicate = (state:Goals) => (subGoalIndex : Int) => {
+    state.isEmpty || subGoalIndex >= state.getGoalsCount
+  }
+
   def containsDisjunction : GoalPredicate =(state:Goals) => (subGoalIndex:Int) => {
     if (state.isEmpty) {
       false
