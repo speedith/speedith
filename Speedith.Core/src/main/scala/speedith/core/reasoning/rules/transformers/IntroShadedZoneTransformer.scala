@@ -22,7 +22,7 @@ class IntroShadedZoneTransformer (target:  SubDiagramIndexArg, zones : java.util
         if ( (zones.map(_.getZone) -- (psd.getShadedZones -- psd.getPresentZones)).nonEmpty) {
           throw new TransformationException("One of the selected zones is not missing.")
         }
-        EulerDiagrams.createPrimaryEulerDiagram(psd.getShadedZones, psd.getPresentZones ++  zones.map(_.getZone))
+        SpiderDiagrams.createPrimarySD(psd.getHabitats,psd.getShadedZones, psd.getPresentZones ++  zones.map(_.getZone))
     } else {
       null
     }

@@ -15,10 +15,10 @@ import scala.collection.JavaConversions._
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *
   */
-class CopyEverything extends SimpleInferenceTactic with Serializable  {
+class AutoVenn extends SimpleInferenceTactic with Serializable{
   override def apply(args: RuleArg, goals: Goals): TacticApplicationResult = args match {
     case arg: SubgoalIndexArg =>
-      BasicTactics.copyEveryThingOnce(getPrettyName())(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {
+      BasicTactics.autoVenn(getPrettyName())(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {
         case Some(result) => result.getApplicationList.isEmpty match {
           case false => result
           case true => throw new TacticApplicationException("Could not apply tactic "+getPrettyName())
@@ -29,13 +29,14 @@ class CopyEverything extends SimpleInferenceTactic with Serializable  {
       throw new RuleApplicationException("Wrong argument type")
   }
 
-  override def getPrettyName(locale: Locale): String = "Copy Shading And Contours"
+  override def getDescription(locale: Locale): String = "Reduce subgoals as much as possible using Venn style reasoning"
 
-  override def getDescription(locale: Locale): String = "Apply copy contours and copy shadings until only one unitary diagram remains"
+  override def getPrettyName(locale: Locale): String = "Auto (Venn)"
 
   override def getApplicableTypes: util.Set[DiagramType] = Set(DiagramType.EulerDiagram)
 
-  override def getInferenceName: String = "copy_everything"
+  override def getInferenceName: String = "autoVenn"
 
   override def isHighLevel: Boolean = true
+
 }

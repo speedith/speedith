@@ -42,12 +42,12 @@ object ReasoningUtils {
   }
 
 
-  def expand(zones: Set[Zone], newContours: util.Set[String]) : Set[Zone] = {
-    zones.flatMap(z => newContours.subsets.
-      flatMap(cs => new util.HashSet[Zone]() + new Zone(z.getInContours.toSet ++ cs,z.getOutContours.toSet ++newContours.diff(cs))
+  def expand(zones: Set[Zone], newContours: util.Set[String]): Set[Zone] = {
+    zones flatMap (
+      z => newContours.subsets flatMap (
+        cs => new util.HashSet[Zone]() + new Zone(z.getInContours.toSet ++ cs, z.getOutContours.toSet ++ newContours.diff(cs))
+        )
       )
-
-    )
   }
 
 
@@ -58,6 +58,22 @@ object ReasoningUtils {
       newContours.subsets.flatMap(cs => new util.HashSet[Zone]() +
         new Zone(zone.getInContours.toSet ++ cs, zone.getOutContours.toSet ++ newContours.diff(cs))).toSet
     }
+  }
+
+  def isImplication(goal: SpiderDiagram): Boolean = goal match {
+    case goal: CompoundSpiderDiagram => goal.getOperator match {
+      case Operator.Implication => true
+      case _ => false
+    }
+    case _ => false
+  }
+
+  def isImplication(goal: SpiderDiagramOccurrence): Boolean = goal match {
+    case goal: CompoundSpiderDiagramOccurrence => goal.getOperator match {
+      case Operator.Implication => true
+      case _ => false
+    }
+    case _ => false
   }
 
   /**
@@ -102,7 +118,7 @@ object ReasoningUtils {
 
   def getPrimaryDiagrams(sd: SpiderDiagram): Seq[PrimarySpiderDiagram] = sd match {
     case sd:PrimarySpiderDiagram => Seq(sd)
-    case sd:CompoundSpiderDiagram => getPrimaryDiagrams(sd.getOperand(0)) ++ getPrimaryDiagrams(sd.getOperand(1))
+    case sd:CompoundSpiderDiagram => sd.getOperands flatMap getPrimaryDiagrams
   }
 
   def shadedRegionWithNewContours(region: Iterable[Zone], contoursToAdd: Set[String] ): Set[Zone] = {

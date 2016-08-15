@@ -12,6 +12,13 @@ public class InferenceTargetChecks {
         }
     }
 
+    public static void assertIsDisjunction(CompoundSpiderDiagram currentDiagram) {
+        if (currentDiagram.getOperator() != Operator.Disjunction) {
+            throw new TransformationException("The target of the inference rule is not a disjunctive compound diagram.");
+        }
+    }
+
+
     public static void assertOperandsAreUnitary(CompoundSpiderDiagram compoundSpiderDiagram) {
         if (!(compoundSpiderDiagram.getOperand(0) instanceof PrimarySpiderDiagram) ||
             !(compoundSpiderDiagram.getOperand(1) instanceof PrimarySpiderDiagram)) {

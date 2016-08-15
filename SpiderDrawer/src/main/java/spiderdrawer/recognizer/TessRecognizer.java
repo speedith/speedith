@@ -10,7 +10,7 @@ import spiderdrawer.shape.Freeform;
 import net.sourceforge.tess4j.TessAPI;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
-import net.sourceforge.tess4j.TessAPI.TessPageSegMode;
+import net.sourceforge.tess4j.ITessAPI.TessPageSegMode;
 
 public class TessRecognizer {
 

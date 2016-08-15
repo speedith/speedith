@@ -26,28 +26,30 @@
  */
 package speedith.core.reasoning.rules;
 
-import speedith.core.lang.DiagramType;
-import speedith.core.lang.IdTransformer;
-import speedith.core.lang.Transformer;
-import speedith.core.reasoning.ApplyStyle;
-import speedith.core.reasoning.RuleApplicationInstruction;
+import speedith.core.lang.*;
+import speedith.core.reasoning.*;
+import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
+import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
+import speedith.core.reasoning.rules.transformers.SplitConjunctionTransformer;
 
 import java.io.Serializable;
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class DisjunctionElimination extends UnaryForwardRule implements Serializable {
+public class SplitConjunction extends UnaryForwardRule implements Serializable {
 
-    public static final String InferenceRuleName = "Disjunction Elimination";
+    public static final String InferenceRuleName = "Split Conjunction";
 
-    private static final Set<DiagramType> applicableTypes = EnumSet.noneOf(DiagramType.class);
-    private static final long serialVersionUID = 8744415346744101321L;
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.SpiderDiagram, DiagramType.EulerDiagram);
+    private static final long serialVersionUID = 5705804693584296643L;
 
+    /*
+     * Not used by this implementation! The right transformer is directly created
+     * in the method apply(RuleArg, Goals, ApplyStyle)
+     */
     @Override
     protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
         return new IdTransformer();
@@ -70,12 +72,33 @@ public class DisjunctionElimination extends UnaryForwardRule implements Serializ
 
     @Override
     public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new SelectSingleOperatorInstruction(Operator.Conjunction);
     }
 
     @Override
     public Set<DiagramType> getApplicableTypes() {
         return applicableTypes;
+    }
+
+    @Override
+    protected RuleApplicationResult apply(final RuleArg args, Goals goals, ApplyStyle applyStyle) throws RuleApplicationException {
+        SubDiagramIndexArg arg = getTypedRuleArgs(args);
+        List<SpiderDiagram> newSubgoals = new LinkedList<>();
+        for (int i=0; i< goals.getGoalsCount();i++) {
+            if (i == arg.getSubgoalIndex()) {
+                SpiderDiagram target = getSubgoal(arg, goals);
+                newSubgoals.add(
+                        target.transform(new SplitConjunctionTransformer(arg.getSubDiagramIndex(), applyStyle, 0)));
+                newSubgoals.add(
+                        target.transform(new SplitConjunctionTransformer(arg.getSubDiagramIndex(), applyStyle, 1)));
+            } else {
+                newSubgoals.add(goals.getGoalAt(i));
+            }
+
+        }
+//        SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
+ //       newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(getSententialTransformer(arg, applyStyle));
+        return createRuleApplicationResult(newSubgoals.toArray(new SpiderDiagram[goals.getGoalsCount()+1]));
     }
 
 }

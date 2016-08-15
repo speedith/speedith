@@ -52,6 +52,7 @@ import speedith.core.reasoning.tactical.Tactics;
 import speedith.ui.automatic.*;
 import speedith.ui.input.TextSDInputDialog;
 import speedith.ui.rules.InteractiveRuleApplication;
+import speedith.ui.selection.SelectSubgoalDialog;
 import speedith.ui.tactics.InteractiveTacticApplication;
 import spiderdrawer.ui.MainForm;
 
@@ -111,19 +112,14 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenuItem useSdExample1MenuItem;
   private javax.swing.JMenuItem useSdExample2MenuItem;
   private javax.swing.JMenuItem useSdExample3MenuItem;
-  private javax.swing.JLabel lblAppliedRules;
   private javax.swing.JList<InfRuleListItem> lstAppliedRules;
-  private javax.swing.JLabel lblTactics;
   private javax.swing.JList<TacticListItem> lstTactics;
   private javax.swing.JMenuBar menuBar;
   private javax.swing.JMenuItem goalTextInputMenuItem;
-  private javax.swing.JPanel pnlRulesSidePane;
   private speedith.ui.ProofPanel proofPanel1;
   private javax.swing.JMenu proofMenu;
   private javax.swing.JMenuItem cropProof;
   private javax.swing.JMenuItem inspectProof;
-  private javax.swing.JScrollPane scrlPnlAppliedRules;
-  private javax.swing.JScrollPane scrlPnlTactics;
 
 
   private javax.swing.JFileChooser goalFileChooser;
@@ -301,13 +297,13 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
     javax.swing.JSplitPane mainSplitPane = new javax.swing.JSplitPane();
     proofPanel1 = new speedith.ui.ProofPanel();
-    pnlRulesSidePane = new javax.swing.JPanel();
-    lblAppliedRules = new javax.swing.JLabel();
-    scrlPnlAppliedRules = new javax.swing.JScrollPane();
+    JPanel pnlRulesSidePane = new JPanel();
+    JLabel lblAppliedRules = new JLabel();
+    JScrollPane scrlPnlAppliedRules = new JScrollPane();
     lstAppliedRules = new javax.swing.JList();
-    lblTactics = new javax.swing.JLabel();
+    JLabel lblTactics = new JLabel();
     lstTactics = new javax.swing.JList<>();
-    scrlPnlTactics = new javax.swing.JScrollPane();
+    JScrollPane scrlPnlTactics = new JScrollPane();
     menuBar = new javax.swing.JMenuBar();
     fileMenu = new javax.swing.JMenu();
     openMenu = new javax.swing.JMenu();
@@ -706,7 +702,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       int connMetr = 0;
 
       try {
-        SpiderDiagram goal =       proofPanel1.getSelected();
+        SpiderDiagram goal = proofPanel1.getSelected().getGoalAt(0);
 
         if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
             CompoundSpiderDiagram impl = (CompoundSpiderDiagram) goal;
@@ -898,32 +894,49 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       JOptionPane.showMessageDialog(this, "No subgoal to be saved exists.");
       return;
     }
-    if (proofPanel1.getSelected() != null) {
-        SpiderDiagram toSave = proofPanel1.getSelected();
-        int returnVal = goalFileChooser.showSaveDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-          File file = goalFileChooser.getSelectedFile();
-          if (file.exists()) {
-            int reallySave = JOptionPane.showConfirmDialog(this, "File " + file.getName() + " exists at given path. Save anyway?", "File already exists", JOptionPane.YES_NO_OPTION);
-            if (reallySave == JOptionPane.NO_OPTION) {
-              return;
-            }
-          }
-          try {
+    if (proofPanel1.getSelected() == null) {
+      JOptionPane.showMessageDialog(this, "No subgoal selected", "No subgoal selected", JOptionPane.ERROR_MESSAGE);
+      return;
+    }
 
-            FileWriter writer = new FileWriter(file);
-            writer.write(toSave.toString());
-            writer.flush();
-            writer.close();
-          } catch (IOException ioe) {
-            JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
-          }
-        }
+    Goals selectedGoals = proofPanel1.getSelected();
+    SpiderDiagram toSave = null;
+    int subgoalindex = 0;
+    if (selectedGoals.getGoalsCount() > 1) {
+      SelectSubgoalDialog dsd = new SelectSubgoalDialog(this, true, selectedGoals);
+      dsd.pack();
+      dsd.setVisible(true);
 
+      if (!dsd.isCancelled()) {
+        subgoalindex = dsd.getSelectedIndex();
       } else {
-        JOptionPane.showMessageDialog(this, "No subgoal selected", "No subgoal selected", JOptionPane.ERROR_MESSAGE);
+        // stop selection
+        return;
       }
+    }
+    toSave = selectedGoals.getGoalAt(subgoalindex);
+    int returnVal = goalFileChooser.showSaveDialog(this);
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      File file = goalFileChooser.getSelectedFile();
+      if (file.exists()) {
+        int reallySave = JOptionPane.showConfirmDialog(this, "File " + file.getName() + " exists at given path. Save anyway?", "File already exists", JOptionPane.YES_NO_OPTION);
+        if (reallySave == JOptionPane.NO_OPTION) {
+          return;
+        }
+      }
+      try {
+
+        FileWriter writer = new FileWriter(file);
+        writer.write(toSave.toString());
+        writer.flush();
+        writer.close();
+      } catch (IOException ioe) {
+        JOptionPane.showMessageDialog(this, "An error occurred while accessing the file:\n" + ioe.getLocalizedMessage());
+      }
+    }
+
   }
+
 
   private void onSettings() {
     SettingsDialog settings = new SettingsDialog(this, true);
@@ -970,6 +983,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
               cancelAutoProver.setEnabled(false);
             }
             } catch (InterruptedException| ExecutionException e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(proofPanel1.getRootPane(), "An error occurred:" +e);
           } catch (CancellationException e) {
             proofFoundIndicator.setText("Idle");
@@ -1179,7 +1193,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
    */
   public static SpiderDiagram getExampleB() {
     try {
-      return SpiderDiagramsReader.readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op &\" }");
+      return SpiderDiagramsReader.readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])], present_zones=[([],[\"A\",\"B\"])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])], present_zones=[([],[\"A\",\"B\"])]}, operator = \"op &\" }");
     } catch (Exception ex) {
       throw new RuntimeException();
     }
@@ -1190,7 +1204,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
    */
   public static SpiderDiagram getExampleC() {
     try {
-      return SpiderDiagramsReader.readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])]}, operator = \"op -->\" }");
+      return SpiderDiagramsReader.readSpiderDiagram("BinarySD {arg1 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s\", [([\"A\", \"B\"], [])]), (\"s'\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])], present_zones=[([],[\"A\",\"B\"])]}, arg2 = PrimarySD { spiders = [\"s\", \"s'\"], sh_zones = [], habitats = [(\"s'\", [([\"A\", \"B\"], [])]), (\"s\", [([\"A\"], [\"B\"]), ([\"B\"], [\"A\"])])], present_zones=[([],[\"A\",\"B\"])]}, operator = \"op -->\" }");
     } catch (Exception ex) {
       throw new RuntimeException();
     }
@@ -1200,7 +1214,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
    * s1: A, B s2: AB
    */
   public static PrimarySpiderDiagram getSDExample1() {
-    PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
+    Set<Zone> present = new HashSet<>();
+    present.add(Zone.fromOutContours("A","B"));
+    PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, present);
     Region s1Region = regionA_B__B_A();
     Region s2Region = regionAB();
     emptyPSD = emptyPSD.addSpider("t1", s1Region);
@@ -1233,7 +1249,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
    * s1: A, AB s2: B, AB
    */
   public static PrimarySpiderDiagram getSDExample7() {
-    PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, null);
+    Set<Zone> present = new HashSet<>();
+    present.add(Zone.fromOutContours("A","B"));
+    PrimarySpiderDiagram emptyPSD = SpiderDiagrams.createPrimarySD(null, null, null, present);
     Region s1Region = regionA_B__AB();
     Region s2Region = regionB_A__AB();
     emptyPSD = emptyPSD.addSpider("u1", s1Region);
@@ -1365,9 +1383,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }
 
   private void applyRule(InfRuleListItem selectedRule) {
-    int subgoalIndex = 0;
+
     try {
-      InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), subgoalIndex, proofPanel1);
+      InteractiveRuleApplication.applyRuleInteractively(this, selectedRule.getInfRuleProvider().getInferenceRule(), proofPanel1);
       fireProofChangedEvent(new InteractiveRuleAppliedEvent(this));
     } catch (Exception ex) {
       JOptionPane.showMessageDialog(this, ex.getLocalizedMessage());
@@ -1376,6 +1394,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
   private void applyTactic(TacticListItem selectedTactic) {
     int subgoalIndex = 0;
+
     try {
       InteractiveTacticApplication.applyTacticInteractively(this, selectedTactic.getTacticProvider().getTactic(), subgoalIndex, proofPanel1);
       fireProofChangedEvent(new TacticAppliedEvent(this));

@@ -82,8 +82,8 @@ public class InferenceRules {
         registerProvider(TrivialImplicationTautology.class);
         registerProvider(ImplicationTautology.class);
         registerProvider(ConjunctionElimination.class);
-        registerProvider(ConjunctionIntroduction.class);
-        registerProvider(DisjunctionElimination.class);
+        registerProvider(SplitConjunction.class);
+        registerProvider(SplitDisjunction.class);
         registerProvider(DisjunctionIntroduction.class);
         registerProvider(EquivalenceElimination.class);
         registerProvider(EquivalenceIntroduction.class);

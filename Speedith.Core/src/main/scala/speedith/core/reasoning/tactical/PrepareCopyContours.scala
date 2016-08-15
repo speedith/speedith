@@ -19,7 +19,7 @@ class PrepareCopyContours extends SimpleInferenceTactic with Serializable {
   override def apply(args: RuleArg, goals: Goals): TacticApplicationResult = {
     args match {
       case arg: SubgoalIndexArg =>
-        BasicTactics.removeShadedZonesForCopyContour(getPrettyName())(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {
+        BasicTactics.hideShadedZonesForCopyContour(getPrettyName())(goals)(arg.getSubgoalIndex)(new TacticApplicationResult()) match {
           case Some(result) => result.getApplicationList.isEmpty match {
             case false => result
             case true => throw new TacticApplicationException("Could not apply tactic "+getPrettyName())

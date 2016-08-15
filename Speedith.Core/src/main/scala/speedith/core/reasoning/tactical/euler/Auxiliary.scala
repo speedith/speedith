@@ -10,7 +10,7 @@ import speedith.core.reasoning.util.unitary.CorrespondingRegions
 import scala.collection.JavaConversions._
 
 /**
- * Helper functions and predicates for the use with  [[BasicTactics basic tactics]].
+ * Helper functions and predicates for the use with [[BasicTactics]].
  *
  * @author Sven Linker [s.linker@brighton.ac.uk]
  *
@@ -80,11 +80,11 @@ object Auxiliary {
 
 
   def getContoursInConclusion(subgoalIndex : Int, state:Goals) : Set[String]= {
-    if (state.isEmpty) {
+    if (state.isEmpty || subgoalIndex >=state.getGoalsCount) {
       Set()
     } else {
       val goal = state.getGoalAt(subgoalIndex)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      if (ReasoningUtils.isImplication(goal)) {
         AutomaticUtils.collectContours(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1)).toSet
       } else {
         Set()
@@ -108,11 +108,11 @@ object Auxiliary {
   }
 
   def getShadedZonesInConclusion(subgoalIndex : Int, state : Goals) : Set[Zone] = {
-    if (state.isEmpty) {
+    if (state.isEmpty || subgoalIndex >=state.getGoalsCount) {
       Set()
     } else {
       val goal = state.getGoalAt(subgoalIndex)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      if (ReasoningUtils.isImplication(goal)) {
         collectShadedZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
       } else {
         Set()
@@ -126,11 +126,11 @@ object Auxiliary {
   }
 
   def getUnshadedZonesInConclusion(subgoalIndex : Int, state : Goals) : Set[Zone] = {
-    if (state.isEmpty) {
+    if (state.isEmpty|| subgoalIndex >=state.getGoalsCount) {
       Set()
     } else {
       val goal = state.getGoalAt(subgoalIndex)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      if (ReasoningUtils.isImplication(goal)) {
         collectUnShadedZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
       } else {
         Set()
@@ -144,11 +144,11 @@ object Auxiliary {
   }
 
   def getVisibleZonesInConclusion(subGoalIndex: Int, state: Goals) : Set[Zone] = {
-    if (state.isEmpty) {
+    if (state.isEmpty|| subGoalIndex >=state.getGoalsCount) {
       Set()
     } else {
       val goal = state.getGoalAt(subGoalIndex)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      if (ReasoningUtils.isImplication(goal)) {
         collectVisibleZones(goal.asInstanceOf[CompoundSpiderDiagram].getOperand(1))
       } else {
         Set()
@@ -160,10 +160,12 @@ object Auxiliary {
 
   def getDeepestNestedDiagram(subgoalIndex: Int): Goals => Option[CompoundSpiderDiagramOccurrence] = (state:Goals) => {
     val goal = getSubGoal(subgoalIndex, state)
-    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+    if (ReasoningUtils.isImplication(goal)) {
       getDeepestNestedDiagram(goal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0))
     } else {
-      None
+      throw new TacticApplicationException("Could not apply tactic:\nGoal is not an implication.")
+
+//      None
     }
   }
 
@@ -175,6 +177,7 @@ object Auxiliary {
         case (op0:CompoundSpiderDiagramOccurrence, _) => getDeepestNestedDiagram(op0)
         case (_, op1:CompoundSpiderDiagramOccurrence) => getDeepestNestedDiagram(op1)
       }
+      case Operator.Negation => getDeepestNestedDiagram(sd.getOperand(0))
       case _ => None
     }
   }
@@ -195,10 +198,11 @@ object Auxiliary {
     */
   def getSubGoal(subgoalIndex : Int, goals: Goals): SpiderDiagramOccurrence = {
     if (goals == null || goals.getGoals == null)  throw new TacticApplicationException("Could not apply tactic")
+    if (subgoalIndex >= goals.getGoalsCount) throw new TacticApplicationException("No subgoal with this index")
     val goal = goals.getGoalAt(subgoalIndex)
-    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+    if (ReasoningUtils.isImplication(goal)) {
       SpiderDiagramOccurrence.wrapDiagram(goal, 0)
-    } else throw new TacticApplicationException("No subgoal for this tactic")
+    } else throw new TacticApplicationException("Could not apply tactic:\nGoal is not an implication.")
   }
 
   def firstMatchingDiagram(sd: SpiderDiagramOccurrence, predicate: DiagramPredicate): Option[SpiderDiagramOccurrence] = {
@@ -207,31 +211,20 @@ object Auxiliary {
     } else {
       sd match {
         case sd: CompoundSpiderDiagramOccurrence =>
-          val matching = firstMatchingDiagram(sd.getOperand(0), predicate)
-          matching match {
-            case None => firstMatchingDiagram(sd.getOperand(1), predicate)
-            case _ => matching
+          sd.getOperator match {
+            case Operator.Negation => firstMatchingDiagram(sd.getOperand(0), predicate)
+            case _ =>
+              val matching = firstMatchingDiagram(sd.getOperand(0), predicate)
+              matching match {
+                case None => firstMatchingDiagram(sd.getOperand(1), predicate)
+                case _ => matching
+              }
           }
         case sd: PrimarySpiderDiagramOccurrence => None
       }
     }
   }
 
-  def firstMatchingDiagramTest(sd: SpiderDiagramOccurrence) :DiagramPredicate => Option[SpiderDiagramOccurrence] = (predicate:DiagramPredicate) =>{
-    if (predicate(sd)) {
-      Some(sd)
-    } else {
-      sd match {
-        case sd: CompoundSpiderDiagramOccurrence =>
-          val matching = firstMatchingDiagram(sd.getOperand(0), predicate)
-          matching match {
-            case None => firstMatchingDiagram(sd.getOperand(1), predicate)
-            case _ => matching
-          }
-        case sd: PrimarySpiderDiagramOccurrence => None
-      }
-    }
-  }
   def firstMatchingDiagramAndContour(sd: SpiderDiagramOccurrence,
                                      predicate: DiagramPredicate,
                                      contourChooser: Chooser[Set[String]])
@@ -241,10 +234,15 @@ object Auxiliary {
     } else {
       sd match {
         case sd: CompoundSpiderDiagramOccurrence =>
-          val matching = firstMatchingDiagramAndContour(sd.getOperand(0), predicate, contourChooser)
-          matching match {
-            case None => firstMatchingDiagramAndContour(sd.getOperand(1), predicate, contourChooser)
-            case _ => matching
+          sd.getOperator match {
+            case Operator.Negation =>
+              firstMatchingDiagramAndContour(sd.getOperand(0), predicate, contourChooser)
+            case _ =>
+              val matching = firstMatchingDiagramAndContour(sd.getOperand(0), predicate, contourChooser)
+              matching match {
+                case None => firstMatchingDiagramAndContour(sd.getOperand(1), predicate, contourChooser)
+                case _ => matching
+              }
           }
         case sd: PrimarySpiderDiagramOccurrence => None
       }

@@ -45,6 +45,7 @@ import java.util.Set;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
+ * @author Sven Linker [s.linker@brighton.ac.uk]
  */
 public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> implements Serializable, ForwardRule<MultipleRuleArgs> {
 

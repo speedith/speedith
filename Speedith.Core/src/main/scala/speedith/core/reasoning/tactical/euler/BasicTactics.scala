@@ -1,7 +1,7 @@
 package speedith.core.reasoning.tactical.euler
 
 import speedith.core.reasoning.automatic.wrappers.{PrimarySpiderDiagramOccurrence, CompoundSpiderDiagramOccurrence}
-import speedith.core.reasoning.tactical.{Tactic, TacticApplicationResult}
+import speedith.core.reasoning.tactical.TacticApplicationResult
 import speedith.core.reasoning.Goals
 import speedith.core.reasoning.rules.util.ReasoningUtils
 import speedith.core.reasoning.tactical.euler.Auxiliary._
@@ -14,10 +14,7 @@ import speedith.core.reasoning.tactical._
 
   /**
   * Tactics to work on a proof. The Tactics chain several tactics
-  * by using the tacticals. Some of these
-  * tactics are normally able to remove a subgoal, as long as it consists
-  * of an implication, where the conclusion is a single unitary diagram (and if the
-  * conclusion is a consequence of the premises)
+  * by using the tacticals.
    *
   * @author Sven Linker [s.linker@brighton.ac.uk]
   *
@@ -155,21 +152,23 @@ object BasicTactics {
     val concShadedZones = getShadedZonesInConclusion(subGoalIndex, state)
     val concUnshadedZones = getUnshadedZonesInConclusion(subGoalIndex, state)
     val concVisibleZones = getVisibleZonesInConclusion(subGoalIndex, state)
-    THEN(
       THEN(
         THEN(
           THEN(
-            REPEAT(ORELSE(trivialTautology)(
-              introduceContour(containsLessContours(concContours), someGivenContoursButNotInDiagram(concContours)))))(
-            REPEAT(ORELSE(trivialTautology)(
-              eraseContour(containsOtherContours(concContours), someInDiagramButNotInGivenContours(concContours))))))(
-          REPEAT(ORELSE(trivialTautology)(
-            introduceShadedZone(isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones))))))(
-        REPEAT(ORELSE(trivialTautology)(
-          eraseShading(isPrimaryAndContainsShadedZones, someVisibleShadedZonesInGivenZones(concUnshadedZones))))))(
-      REPEAT(ORELSE(trivialTautology)(
-        removeShadedZone(isPrimaryAndContainsShadedZones, someVisibleShadedZoneNotInGivenZones(concShadedZones)))))(name)(state)(subGoalIndex)(result)
-  }
+            THEN(
+              THEN(
+                REPEAT(introduceContour(containsLessContours(concContours), someGivenContoursButNotInDiagram(concContours))
+                ))(
+                REPEAT(eraseContour(containsOtherContours(concContours), someInDiagramButNotInGivenContours(concContours)))
+              ))(
+              REPEAT(introduceShadedZone(isPrimaryAndContainsMissingZones, someMissingZoneInGivenZones(concVisibleZones)))
+            ))(
+            REPEAT(eraseShading(isPrimaryAndContainsShadedZones, someVisibleShadedZonesInGivenZones(concUnshadedZones)))
+          ))(
+          REPEAT(removeShadedZone(isPrimaryAndContainsShadedZones, someVisibleShadedZoneNotInGivenZones(concShadedZones)))
+        ))(TRY(trivialTautology)
+      )(name)(state)(subGoalIndex)(result)
+    }
 
 
     /**
@@ -186,7 +185,7 @@ object BasicTactics {
           ORELSE(
             idempotency)(
             ORELSE(
-              removeShadedZonesForCopyContour)(
+              hideShadedZonesForCopyContour)(
               copyContour))))
   }
 
@@ -209,15 +208,50 @@ object BasicTactics {
             introduceMissingZonesForCopyShading))))
   }
 
-  def copyEveryThing: Tactic =  {
+  def copyEveryThingOnce: Tactic =  {
     THEN(
-      DEPTH_FIRST(
+       DEPTH_FIRST(
         isUnitaryDiagram)(
         THEN(
           COND(isUnitaryDiagram)(id)(copyShadings))(
           COND(isUnitaryDiagram)(id)(copyTopologicalInformation))))(
       matchConclusion)
   }
+
+    def copyEveryThingRepeated: Tactic =  {
+      REPEAT(COND(isEmptyGoalList)(fail)(THEN(
+        DEPTH_FIRST(
+          isUnitaryDiagram)(
+          THEN(
+            COND(isUnitaryDiagram)(id)(copyShadings))(
+            COND(isUnitaryDiagram)(id)(copyTopologicalInformation))))(
+        matchConclusion)))
+    }
+
+    def autoCopy: Tactic = {
+      REPEAT_TIMES(1000)(COND(isEmptyGoalList)(fail)(
+        THEN(
+          DEPTH_FIRST_TIMES(1000)(GOR(isSubGoalSolved, GOR(isUnitaryDiagram, containsDisjunction)))(
+            THEN(
+              COND(isUnitaryDiagram)(id)(copyShadings))(
+              COND(isUnitaryDiagram)(id)(copyTopologicalInformation))) //(
+        )(ORELSE(ORELSE(splitDisjunction)(splitConjunction))(
+          matchConclusion))))
+
+    }
+
+    def autoVenn: Tactic = {
+      REPEAT_TIMES(1000)(COND(isEmptyGoalList)(fail)(
+        THEN(
+          DEPTH_FIRST_TIMES(1000)(GOR(isSubGoalSolved, GOR(isUnitaryDiagram, containsDisjunction)))(
+            THEN(
+              THEN(
+                vennifyFocused)(
+                unifyContourSetsFocused))(
+              combineAll))
+        )(ORELSE(ORELSE(splitDisjunction)(splitConjunction))(
+          matchConclusion))))
+    }
 
     /**
       * Applies Introduce Shaded Zone to create new possibilites to for Copy Shading to be applied.
@@ -226,7 +260,7 @@ object BasicTactics {
       */
   def introduceMissingZonesForCopyShading : Tactic = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) =>{
     val goal = getSubGoal(subGoalIndex,state)
-    if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+    if (ReasoningUtils.isImplication(goal)) {
       // get a conjunction of primary diagrams, where one conjunct contains a missing region that
       // corresponds to a region in the other operand
       val target = firstMatchingDiagram(goal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0), isConjunctionContainingMissingZonesToCopy).asInstanceOf[Option[CompoundSpiderDiagramOccurrence]]
@@ -252,9 +286,9 @@ object BasicTactics {
     }
   }
 
-    def removeShadedZonesForCopyContour: Tactic = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
+    def hideShadedZonesForCopyContour: Tactic = (name:String) => (state:Goals) => (subGoalIndex:Int) => (result:TacticApplicationResult) => {
       val goal = getSubGoal(subGoalIndex, state)
-      if (ReasoningUtils.isImplicationOfConjunctions(goal)) {
+      if (ReasoningUtils.isImplication(goal)) {
         val target = firstMatchingDiagram(goal.asInstanceOf[CompoundSpiderDiagramOccurrence].getOperand(0), isConjunctionWithContoursToCopy).asInstanceOf[Option[CompoundSpiderDiagramOccurrence]]
         target match {
           case None => fail(name)(state)(subGoalIndex)(result)

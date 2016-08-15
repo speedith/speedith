@@ -8,16 +8,14 @@ import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.automatic.rules.PossibleRuleApplication;
 import speedith.core.reasoning.automatic.strategies.NoStrategy;
 import speedith.core.reasoning.automatic.strategies.Strategy;
+import speedith.core.reasoning.automatic.wrappers.HeuristicsComparator;
 import speedith.core.reasoning.automatic.wrappers.ProofAttempt;
 import speedith.core.reasoning.automatic.wrappers.SpiderDiagramOccurrence;
 import speedith.core.reasoning.rules.util.AutomaticUtils;
 import speedith.core.reasoning.tactical.TacticApplicationException;
 
 import java.text.DecimalFormat;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.PriorityQueue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -54,9 +52,13 @@ public class HeuristicSearch extends AutomaticProver {
         }
         // the set of already visited proofs (not necessary for the algorithm itself, but nice for
         // getting a clue how many proofs have been analysed)
-        Set<ProofAttempt> closed = new HashSet<>();
+        //Set<ProofAttempt> closed = new HashSet<>();
+
+        //the number of analysed proof attempts (for statistics)
+        int closed = 0;
+
         // the list of proof attempts, which still have to be visited
-        PriorityQueue<ProofAttempt> attempts = new PriorityQueue<>();
+        PriorityQueue<ProofAttempt> attempts = new PriorityQueue<>(11, new HeuristicsComparator());
         ProofAttempt pw = new ProofAttempt(p,getStrategy());
         attempts.add(pw);
         // get all names of contours present in the goals. This bounds the
@@ -83,32 +85,33 @@ public class HeuristicSearch extends AutomaticProver {
                 ProofTrace newCurrent = new ProofTrace(currentProof.getGoals(), currentProof.getInferenceApplications());
                 boolean superfl = nextRule.isSuperfluous(newCurrent);
                 if (superfl) numOfSuperFl++;
-                boolean hasBeenApplied =  !superfl  && nextRule.apply(newCurrent, getPrettyName());
+                boolean hasBeenApplied =  /*!superfl  && */nextRule.apply(newCurrent, getPrettyName());
                 if (hasBeenApplied) {
                     // save the new proof within the set of not yet considered proofs
                     ProofAttempt newAttempt = new ProofAttempt(newCurrent, getStrategy());
                     attempts.add(newAttempt);
                 }
             }
-            closed.add(currentAttempt);
+            attempts.remove(currentAttempt);
+            closed++;
         }
         // TODO: remove sysout
         printStatistics(closed, attempts,startTime,numOfSuperFl);
         return null;
     }
 
-    private void printStatistics(Set<ProofAttempt> closed, PriorityQueue<ProofAttempt> attempts, long startTime, long superfluousAttemps) {
+    private void printStatistics(int closed, Collection<ProofAttempt> attempts, long startTime, long superfluousAttemps) {
         long duration = System.nanoTime() - startTime;
         DecimalFormat format = new DecimalFormat("###,###,###,###");
-        String fullNumber= format.format(closed.size()+attempts.size());
-        String considered = format.format(closed.size());
+        String fullNumber= format.format(closed+attempts.size());
+        String considered = format.format(closed);
         String superfluous = format.format(superfluousAttemps);
         System.out.println("Prover: "+getPrettyName());
         System.out.println("Considered proof attempts: "+considered);
         System.out.println("Complete number of created proofs: "+fullNumber);
         System.out.println("Number of prevented rule applications: "+superfluous);
         System.out.println("Time needed: "+ TimeUnit.NANOSECONDS.toMillis(duration)+"ms ("+ TimeUnit.NANOSECONDS.toSeconds(duration)+"s)" );
-        System.out.println("Average per Attempt: " + TimeUnit.NANOSECONDS.toMillis(duration)/closed.size() +"ms\n");
+        System.out.println("Average per Attempt: " + TimeUnit.NANOSECONDS.toMillis(duration)/closed +"ms\n");
     }
 
     @Override

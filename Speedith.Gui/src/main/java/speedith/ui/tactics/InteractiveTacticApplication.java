@@ -6,6 +6,7 @@ import speedith.core.reasoning.args.SubgoalIndexArg;
 import speedith.core.reasoning.tactical.InferenceTactic;
 import speedith.core.reasoning.tactical.TacticApplicationException;
 import speedith.core.reasoning.tactical.TacticApplicationResult;
+import speedith.ui.selection.SelectSubgoalDialog;
 
 import javax.swing.*;
 
@@ -19,7 +20,7 @@ public final class InteractiveTacticApplication {
     private InteractiveTacticApplication() {}
 
     public static boolean applyTacticInteractively(JFrame window, InferenceTactic<? extends RuleArg> rule, int subgoalIndex, Proof proof) throws RuleApplicationException,TacticApplicationException {
-        return applyTacticInteractively(window, rule, subgoalIndex, proof, null) != null;
+        return applyTacticInteractively(window, rule, proof, null) != null;
     }
 
     /**
@@ -29,14 +30,14 @@ public final class InteractiveTacticApplication {
      *
      * @param window
      * @param rule
-     * @param subgoalIndex
+     *
      * @param proof
      * @param goals
      * @return
      * @throws RuleApplicationException
      */
     @SuppressWarnings("unchecked")
-    private static InferenceApplicationResult applyTacticInteractively(JFrame window, InferenceTactic<? extends RuleArg> rule, int subgoalIndex, Proof proof, Goals goals) throws RuleApplicationException,TacticApplicationException {
+    private static InferenceApplicationResult applyTacticInteractively(JFrame window, InferenceTactic<? extends RuleArg> rule, Proof proof, Goals goals) throws RuleApplicationException,TacticApplicationException {
         // If the caller provided a proof object, use it to get the last goals
         // from and apply the rule one. Otherwise use the goals.
         // Throw an exception if not exactly one of them is null.
@@ -54,14 +55,27 @@ public final class InteractiveTacticApplication {
             }
 
             RuleArg ruleArg;
+            int subgoalIndex = 0;
+            // if there is more than one current subgoal, let
+            // the user select the subgoal the tactic should work on
+            if (goals.getGoalsCount() > 1) {
+                try {
+                    SelectSubgoalDialog dsd = new SelectSubgoalDialog(window, true, goals);
+                    dsd.pack();
+                    dsd.setVisible(true);
 
-            try {
-                ruleArg = new SubgoalIndexArg(subgoalIndex);
-            } catch (RuntimeException e) {
-                return null;
+                    if (dsd.isCancelled()) {
+                        throw new RuntimeException("User Cancelled");
+                    } else {
+                        subgoalIndex = dsd.getSelectedIndex();
+                    }
+
+                } catch (RuntimeException e) {
+                    return null;
+                }
             }
-
-            // Finally, apply the inference rule.
+            ruleArg = new SubgoalIndexArg(subgoalIndex);
+            // Finally, apply the inference .
             if (proof != null) {
                 return proof.applyRule((Inference<RuleArg, TacticApplicationResult>) rule, ruleArg, RuleApplicationType.TACTIC,"");
             } else {

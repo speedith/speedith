@@ -4,11 +4,10 @@ import speedith.core.lang._
 import speedith.core.reasoning.args._
 import speedith.core.reasoning.automatic.wrappers._
 import speedith.core.reasoning.rules._
-import speedith.core.reasoning.rules.util.{AutomaticUtils, ReasoningUtils}
 import speedith.core.reasoning.tactical.{Chooser, TacticApplicationResult, TacticApplicationException, DiagramPredicate, Tactic}
 import speedith.core.reasoning.tactical.euler.Auxiliary._
 import speedith.core.reasoning.tactical.euler.Predicates._
-
+import speedith.core.reasoning.tactical._
 import speedith.core.reasoning._
 
 import scala.collection.JavaConversions._
@@ -242,6 +241,41 @@ object RuleTactics {
         case None => None
         case Some(diagram) =>
           createResults(state, new TrivialImplicationTautology().asInstanceOf[InferenceRule[RuleArg]],
+            new SubDiagramIndexArg(subGoalIndex, diagram.getOccurrenceIndex),name, result)
+      }
+    }
+    catch {
+      case e: TacticApplicationException => None
+      case e: TransformationException => None
+    }
+  }
+
+
+  def splitConjunction :  Tactic = (name:String) => (state: Goals) => (subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
+    try {
+      val subgoal = getSubGoal(subGoalIndex, state)
+      val target = firstMatchingDiagram(subgoal, AND(isConjunction,isAtPositivePosition(subgoal)))
+      target match {
+        case None => None
+        case Some(diagram) =>
+          createResults(state, new SplitConjunction().asInstanceOf[InferenceRule[RuleArg]],
+            new SubDiagramIndexArg(subGoalIndex, diagram.getOccurrenceIndex),name, result)
+      }
+    }
+    catch {
+      case e: TacticApplicationException => None
+      case e: TransformationException => None
+    }
+  }
+
+  def splitDisjunction:  Tactic = (name:String) => (state: Goals) => (subGoalIndex:Int)=> (result : TacticApplicationResult) =>{
+    try {
+      val subgoal = getSubGoal(subGoalIndex, state)
+      val target = firstMatchingDiagram(subgoal, AND(isDisjunction,isAtNegativePosition(subgoal)))
+      target match {
+        case None => None
+        case Some(diagram) =>
+          createResults(state, new SplitDisjunction().asInstanceOf[InferenceRule[RuleArg]],
             new SubDiagramIndexArg(subGoalIndex, diagram.getOccurrenceIndex),name, result)
       }
     }

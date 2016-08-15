@@ -1,9 +1,11 @@
 package speedith.core.reasoning.automatic.wrappers;
 
 import speedith.core.lang.PrimarySpiderDiagram;
+import speedith.core.lang.Region;
 import speedith.core.lang.SpiderDiagram;
 import speedith.core.lang.Zone;
 
+import java.util.SortedMap;
 import java.util.SortedSet;
 
 /**
@@ -30,6 +32,8 @@ public class PrimarySpiderDiagramOccurrence extends SpiderDiagramOccurrence {
     public SortedSet<Zone> getPresentZones() {
         return ((PrimarySpiderDiagram) getDiagram()).getPresentZones();
     }
+
+    public SortedMap<String, Region> getHabitats() {return ((PrimarySpiderDiagram) getDiagram()).getHabitats(); }
 
     public PrimarySpiderDiagram getPrimaryDiagram() { return (PrimarySpiderDiagram) getDiagram();}
 

@@ -32,6 +32,7 @@ import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubgoalIndexArg;
 import speedith.core.reasoning.tactical.TacticApplicationException;
+import speedith.ui.selection.SelectSubgoalDialog;
 import speedith.ui.selection.SelectionDialog;
 
 /**
@@ -58,7 +59,6 @@ public final class InteractiveRuleApplication {
      * @param window this window will be used as the parent of all opened modal
      * dialogs.
      * @param ruleName the inference rule to apply.
-     * @param subgoalIndex the index of the subgoal on which to apply the rule.
      * @param proof the proof that contains the goals on which to apply the
      * inference rule.
      * @return {@code true} if the inference rule was applied. If the user
@@ -67,8 +67,8 @@ public final class InteractiveRuleApplication {
      * application failed (while the rule was being applied). This could be due
      * to invalid arguments or similar.
      */
-    public static boolean applyRuleInteractively(JFrame window, String ruleName, int subgoalIndex, Proof proof) throws RuleApplicationException,TacticApplicationException {
-        return applyRuleInteractively(window, InferenceRules.getInferenceRule(ruleName), subgoalIndex, proof);
+    public static boolean applyRuleInteractively(JFrame window, String ruleName,  Proof proof) throws RuleApplicationException,TacticApplicationException {
+        return applyRuleInteractively(window, InferenceRules.getInferenceRule(ruleName),  proof);
     }
 
     /**
@@ -80,7 +80,6 @@ public final class InteractiveRuleApplication {
      * @param window this window will be used as the parent of all opened modal
      * dialogs.
      * @param rule the inference rule to apply.
-     * @param subgoalIndex the index of the subgoal on which to apply the rule.
      * @param proof the proof that contains the goals on which to apply the
      * inference rule.
      * @return {@code true} if the inference rule was applied. If the user
@@ -89,8 +88,28 @@ public final class InteractiveRuleApplication {
      * application failed (while the rule was being applied). This could be due
      * to invalid arguments or similar.
      */
-    public static boolean applyRuleInteractively(JFrame window, InferenceRule<? extends RuleArg> rule, int subgoalIndex, Proof proof) throws RuleApplicationException, TacticApplicationException {
-        return applyRuleInteractively(window, rule, subgoalIndex, proof, null) != null;
+    public static boolean applyRuleInteractively(JFrame window, InferenceRule<? extends RuleArg> rule,  Proof proof) throws RuleApplicationException, TacticApplicationException {
+        return applyRuleInteractively(window, rule, proof, null) != null;
+    }
+
+    /**
+     * Applies the inference rule with the given name on the subgoal with the
+     * specified index in the provided goals. This method interactively asks the
+     * user to provide additional information for the inference rule (if the
+     * inference rule requires it).
+     *
+     * @param window this window will be used as the parent of all opened modal
+     * dialogs.
+     * @param rule the inference rule to apply.
+     * @param goals the goals on which to apply the inference rule.
+     * @return the result of the rule application. However, if the user
+     * cancelled the process {@code null} is returned.
+     * @throws RuleApplicationException this exception is thrown if the rule
+     * application failed (while the rule was being applied). This could be due
+     * to invalid arguments or similar.
+     */
+    public static InferenceApplicationResult applyRuleInteractively(JFrame window, InferenceRule<? extends RuleArg> rule, Goals goals) throws RuleApplicationException, TacticApplicationException {
+        return applyRuleInteractively(window, rule,  null, goals);
     }
 
     /**
@@ -110,30 +129,9 @@ public final class InteractiveRuleApplication {
      * application failed (while the rule was being applied). This could be due
      * to invalid arguments or similar.
      */
-    public static InferenceApplicationResult applyRuleInteractively(JFrame window, InferenceRule<? extends RuleArg> rule, int subgoalIndex, Goals goals) throws RuleApplicationException, TacticApplicationException {
-        return applyRuleInteractively(window, rule, subgoalIndex, null, goals);
-    }
-
-    /**
-     * Applies the inference rule with the given name on the subgoal with the
-     * specified index in the provided goals. This method interactively asks the
-     * user to provide additional information for the inference rule (if the
-     * inference rule requires it).
-     *
-     * @param window this window will be used as the parent of all opened modal
-     * dialogs.
-     * @param rule the inference rule to apply.
-     * @param subgoalIndex the index of the subgoal on which to apply the rule.
-     * @param goals the goals on which to apply the inference rule.
-     * @return the result of the rule application. However, if the user
-     * cancelled the process {@code null} is returned.
-     * @throws RuleApplicationException this exception is thrown if the rule
-     * application failed (while the rule was being applied). This could be due
-     * to invalid arguments or similar.
-     */
-    public static InferenceApplicationResult applyRuleInteractively(JFrame window, String rule, int subgoalIndex, Goals goals) throws RuleApplicationException, TacticApplicationException {
-        return applyRuleInteractively(window, InferenceRules.getInferenceRule(rule), subgoalIndex, null, goals);
-    }
+//    public static InferenceApplicationResult applyRuleInteractively(JFrame window, String rule, Goals goals) throws RuleApplicationException, TacticApplicationException {
+//        return applyRuleInteractively(window, InferenceRules.getInferenceRule(rule), null, goals);
+//    }
 
     /**
      * Applies the inference rule with the given name on the first subgoal in
@@ -152,7 +150,7 @@ public final class InteractiveRuleApplication {
      * to invalid arguments or similar.
      */
     public static InferenceApplicationResult applyRuleInteractively(JFrame window, String rule, Goals goals) throws RuleApplicationException, TacticApplicationException {
-        return applyRuleInteractively(window, InferenceRules.getInferenceRule(rule), 0, null, goals);
+        return applyRuleInteractively(window, InferenceRules.getInferenceRule(rule), null, goals);
     }
 
     /**
@@ -170,7 +168,7 @@ public final class InteractiveRuleApplication {
      * to invalid arguments or similar.
      */
     public static InferenceApplicationResult applyRuleInteractively(String rule, Goals goals) throws RuleApplicationException, TacticApplicationException {
-        return applyRuleInteractively(null, InferenceRules.getInferenceRule(rule), 0, null, goals);
+        return applyRuleInteractively(null, InferenceRules.getInferenceRule(rule), null, goals);
     }
 
     /**
@@ -187,7 +185,7 @@ public final class InteractiveRuleApplication {
      * to invalid arguments or similar.
      */
     public static InferenceApplicationResult applyRuleInteractively(String rule, SpiderDiagram diagram) throws RuleApplicationException, TacticApplicationException {
-        return applyRuleInteractively(null, InferenceRules.getInferenceRule(rule), 0, null, Goals.createGoalsFrom(diagram));
+        return applyRuleInteractively(null, InferenceRules.getInferenceRule(rule), null, Goals.createGoalsFrom(diagram));
     }
 
     public static RuleArg collectArgument(JFrame window, InferenceRule<? extends RuleArg> rule, int subgoalIndex, Goals goals) {
@@ -222,14 +220,13 @@ public final class InteractiveRuleApplication {
      *
      * @param window
      * @param rule
-     * @param subgoalIndex
      * @param proof
      * @param goals
      * @return
      * @throws RuleApplicationException
      */
     @SuppressWarnings("unchecked")
-    private static InferenceApplicationResult applyRuleInteractively(JFrame window, InferenceRule<? extends RuleArg> rule, int subgoalIndex, Proof proof, Goals goals) throws RuleApplicationException,TacticApplicationException {
+    private static InferenceApplicationResult applyRuleInteractively(JFrame window, InferenceRule<? extends RuleArg> rule, Proof proof, Goals goals) throws RuleApplicationException,TacticApplicationException {
         // If the caller provided a proof object, use it to get the last goals
         // from and apply the rule one. Otherwise use the goals.
         // Throw an exception if not exactly one of them is null.
@@ -247,6 +244,23 @@ public final class InteractiveRuleApplication {
             }
 
             RuleArg ruleArg;
+            int subgoalIndex = 0;
+            if (goals.getGoalsCount() > 1) {
+                try {
+                    SelectSubgoalDialog dsd = new SelectSubgoalDialog(window, true, goals);
+                    dsd.pack();
+                    dsd.setVisible(true);
+
+                    if (dsd.isCancelled()) {
+                        throw new RuntimeException("User Cancelled");
+                    } else {
+                        subgoalIndex = dsd.getSelectedIndex();
+                    }
+
+                } catch (RuntimeException e) {
+                    return null;
+                }
+            }
 
             try {
                 ruleArg = collectArgument(window, rule, subgoalIndex, goals);

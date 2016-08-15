@@ -40,6 +40,8 @@ public class Tactics {
         registerProvider(PrepareCopyContours.class);
         registerProvider(PrepareCopyShading.class);
         registerProvider(DeVennify.class);
+        registerProvider(AutoCopy.class);
+        registerProvider(AutoVenn.class);
 
     }
 

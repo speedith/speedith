@@ -56,7 +56,7 @@ public class RemoveShading extends SimpleInferenceRule<MultipleRuleArgs>
 
     public static final String InferenceRuleName = "Erase Shading";
 
-    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram);
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
     private static final long serialVersionUID = -4093837815231375163L;
 
     @Override

@@ -26,27 +26,25 @@
  */
 package speedith.core.reasoning.rules;
 
-import speedith.core.lang.DiagramType;
-import speedith.core.lang.IdTransformer;
-import speedith.core.lang.Transformer;
-import speedith.core.reasoning.ApplyStyle;
-import speedith.core.reasoning.RuleApplicationInstruction;
+import speedith.core.lang.*;
+import speedith.core.reasoning.*;
+import speedith.core.reasoning.args.RuleArg;
 import speedith.core.reasoning.args.SubDiagramIndexArg;
+import speedith.core.reasoning.rules.instructions.SelectSingleOperatorInstruction;
+import speedith.core.reasoning.rules.transformers.SplitDisjunctionTransformer;
 
 import java.io.Serializable;
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Matej Urbas [matej.urbas@gmail.com]
  */
-public class ConjunctionIntroduction extends UnaryForwardRule implements Serializable {
+public class SplitDisjunction extends UnaryForwardRule implements Serializable {
 
-    public static final String InferenceRuleName = "Conjunction Introduction";
+    public static final String InferenceRuleName = "Split Disjunction";
 
-    private static final Set<DiagramType> applicableTypes = EnumSet.noneOf(DiagramType.class);
-    private static final long serialVersionUID = 5705804693584296643L;
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
+    private static final long serialVersionUID = 8744415346744101321L;
 
     @Override
     protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {
@@ -70,7 +68,7 @@ public class ConjunctionIntroduction extends UnaryForwardRule implements Seriali
 
     @Override
     public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new SelectSingleOperatorInstruction(Operator.Disjunction);
     }
 
     @Override
@@ -78,4 +76,23 @@ public class ConjunctionIntroduction extends UnaryForwardRule implements Seriali
         return applicableTypes;
     }
 
+
+    @Override
+    protected RuleApplicationResult apply(final RuleArg args, Goals goals, ApplyStyle applyStyle) throws RuleApplicationException {
+        SubDiagramIndexArg arg = getTypedRuleArgs(args);
+        List<SpiderDiagram> newSubgoals = new LinkedList<>();
+        for (int i=0; i< goals.getGoalsCount();i++) {
+            if (i == arg.getSubgoalIndex()) {
+                SpiderDiagram target = getSubgoal(arg, goals);
+                newSubgoals.add(
+                        target.transform(new SplitDisjunctionTransformer(arg.getSubDiagramIndex(), applyStyle, 0)));
+                newSubgoals.add(
+                        target.transform(new SplitDisjunctionTransformer(arg.getSubDiagramIndex(), applyStyle, 1)));
+            } else {
+                newSubgoals.add(goals.getGoalAt(i));
+            }
+
+        }
+        return createRuleApplicationResult(newSubgoals.toArray(new SpiderDiagram[goals.getGoalsCount()+1]));
+    }
 }
